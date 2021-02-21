@@ -1,0 +1,5 @@
+1017;J;N;1530781;DfufA70;AFV;200729621;6062781;08-02-2021;NL;100042863043;3;;6004691;;;N;W;IRD-00162;Melding is buiten de wettelijke termijn, u kunt verder gaan om de melding vast te leggen.;;
+1017;J;N;1530781;DfufA70;AFV;200729621;6062781;07-02-2021;NL;100189901008;3;;6004691;;;N;W;IRD-00162;Melding is buiten de wettelijke termijn, u kunt verder gaan om de melding vast te leggen.;;
+1017;J;J;1530781;DfufA70;AFV;200729621;6062781;07-02-2021;NL;100189801018;3;;6004691;;;J;W;IRD-00162;Melding is buiten de wettelijke termijn, u kunt verder gaan om de melding vast te leggen.;315560628;
+1017;J;J;1530781;DfufA70;AFV;200729621;6062781;07-02-2021;NL;100189801296;3;;6004691;;;J;W;IRD-00162;Melding is buiten de wettelijke termijn, u kunt verder gaan om de melding vast te leggen.;315560629;
+1017;J;J;1530781;DfufA70;AFV;200729621;6062781;08-02-2021;NL;100043911192;3;;6004691;;;J;W;IRD-00162;Melding is buiten de wettelijke termijn, u kunt verder gaan om de melding vast te leggen.;315560630;
