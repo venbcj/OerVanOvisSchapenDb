@@ -321,8 +321,7 @@ ORDER BY m.skip, if (h.datum < mhd.datum, 1, if(h.datum > (curdate() + interval 
 	$respId = $row['respId'];
 	$sucind = $row['sucind'];		if(!isset($ubn_bst)) { $bericht = 'Ubn van bestemming is onbekend'; }
 									else if($sucind == 'J' && !isset($foutmeld)) { $bericht = 'RVO meldt : Melding correct'; }
-									else if($sucind == 'J' && isset($foutmeld)) { $bericht = 'RVO meldt : De Melding is geaccepteerd o.v.v. '. $foutmeld; } 
-									else if($sucind == 'N' && isset($foutmeld)) { $bericht = 'RVO meldt : '.$foutmeld; } 
+									else if(isset($foutmeld)) { $bericht = 'RVO meldt : '.$foutmeld; } 
 									else if(isset($respId)) { $bericht = 'Resultaat van melding is onbekend'; }
 	$dmmin = $row['datummin'];
 	$mindm = $row['mindatum'];
