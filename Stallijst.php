@@ -60,7 +60,7 @@ WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_b
 ") or die (mysqli_error($db));
 
 	while($rij = mysqli_fetch_array($stapel))
-		{ 	   echo "Aantal schapen {$rij['aant']}";		}
+		{ 	   echo "Aantal schapen ".$rij['aant'];		}
 ?>
 </td><td colspan = 4 style = 'font-size:13px';>&nbsp waarvan
 </td><td width ="150"><a href = '<?php echo $url;?>Stallijst_pdf.php' style = 'color : blue' > print pagina </a></td></tr>
