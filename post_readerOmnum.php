@@ -39,7 +39,7 @@ foreach($array as $recId => $id) {
 
 									}
 
-// CONTROLE op alle verplichten velden bij adoptie lam
+// CONTROLE op alle verplichten velden bij omnummeren lam
 if ( isset($fldDay))
 {
 	
@@ -91,7 +91,7 @@ include "maak_request.php";
 	$updateReader = "UPDATE impAgrident SET verwerkt = 1 WHERE Id = ".mysqli_real_escape_string($db,$recId)." ";
 		mysqli_query($db,$updateReader) or die (mysqli_error($db));	
 }
-// EINDE CONTROLE op alle verplichten velden bij spenen lam
+// EINDE CONTROLE op alle verplichten velden bij omnummeren lam
 		
 										} // EINDE Alleen als checkbox Del de waarde 0 heeft  
     }
