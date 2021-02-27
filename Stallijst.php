@@ -36,7 +36,7 @@ FROM tblSchaap s
 	 join tblHistorie h on (st.stalId = h.stalId)
 	WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = s.schaapId) 
-WHERE st.lidId = ".mysqli_real_escape_string($datb,$lidid)." and isnull(st.rel_best) and ".$Sekse." and ".$Ouder." 
+WHERE st.lidId = '".mysqli_real_escape_string($datb,$lidid)."' and isnull(st.rel_best) and ".$Sekse." and ".$Ouder." 
 ");
 
 if($vw_aantalFase)
