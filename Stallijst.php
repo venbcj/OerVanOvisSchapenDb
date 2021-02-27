@@ -6,6 +6,7 @@ $versie = '11-12-2016'; /* actId = 3 genest */
 $versie = '27-03-2017'; /* geslacht niet verplicht gemaakt */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '14-2-2020'; /* geneste query uit query $stapel gehaald. Was left join en deed verder niks */
+$versie = '27-2-2020'; /* SQL beveiligd met quotes en 'Transponder bekend' toegevoegd */
  session_start(); ?>
 <html>
 <head>
@@ -26,16 +27,16 @@ if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) 
 
 function aantal_fase($datb,$lidid,$Sekse,$Ouder) {
 $vw_aantalFase = mysqli_query($datb,"
-select count(distinct(s.schaapId)) aant 
-from tblSchaap s
+SELECT count(distinct(s.schaapId)) aant 
+FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
  left join (
-	select st.schaapId
-	from tblStal st
+	SELECT st.schaapId
+	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 3 and h.skip = 0
+	WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = s.schaapId) 
-where st.lidId = ".mysqli_real_escape_string($datb,$lidid)." and isnull(st.rel_best) and ".$Sekse." and ".$Ouder." 
+WHERE st.lidId = ".mysqli_real_escape_string($datb,$lidid)." and isnull(st.rel_best) and ".$Sekse." and ".$Ouder." 
 ");
 
 if($vw_aantalFase)
@@ -52,10 +53,10 @@ if($vw_aantalFase)
 <tr><td colspan = 7 align = 'right'>
 <?php
 $stapel = mysqli_query($db,"
-select count(distinct(s.schaapId)) aant
-from tblSchaap s
+SELECT count(distinct(s.schaapId)) aant
+FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
-where st.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(st.rel_best)
+WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best)
 ") or die (mysqli_error($db));
 
 	while($rij = mysqli_fetch_array($stapel))
@@ -109,27 +110,29 @@ else if($vaders > 1)
 
 		<td  >	<?php
 $result = mysqli_query($db,"
-select s.levensnummer, right(s.levensnummer, $Karwerk) werknum, date_format(hg.datum,'%d-%m-%Y') gebdm, s.geslacht, prnt.datum aanw
-from tblSchaap s
+SELECT s.levensnummer, right(s.levensnummer, $Karwerk) werknum, s.transponder, date_format(hg.datum,'%d-%m-%Y') gebdm, s.geslacht, prnt.datum aanw
+FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
  left join tblHistorie hg on (st.stalId = hg.stalId and hg.actId = 1) 
  left join (
-	select st.schaapId, datum
-	from tblStal st
+	SELECT st.schaapId, datum
+	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 3 and h.skip = 0
+	WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = s.schaapId) 
-where st.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(st.rel_best)
-order by right(s.levensnummer, $Karwerk)
+WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best)
+ORDER BY right(s.levensnummer, $Karwerk)
 ") or die (mysqli_error($db));
  ?>
 
 
 <tr style = "font-size:12px;">
 <th width = 0 height = 30></th>
-<th style = "text-align:center;"valign="bottom";width= 80>werknr<hr></th>
+<th style = "text-align:center;"valign="bottom";width= 80>Transponder<br> bekend<hr></th>
 <th width = 1></th>
-<th style = "text-align:center;"valign="bottom";width= 80>levensnummer<hr></th>
+<th style = "text-align:center;"valign="bottom";width= 80>Werknr<hr></th>
+<th width = 1></th>
+<th style = "text-align:center;"valign="bottom";width= 80>Levensnummer<hr></th>
 <th width = 1></th>
 <th style = "text-align:center;"valign="bottom";width= 100>Geboren<hr></th>
 <th width = 1></th>
@@ -145,18 +148,24 @@ order by right(s.levensnummer, $Karwerk)
  </tr>
 
 <?php
-		while($row = mysqli_fetch_array($result))
-		{
-		$geslacht = $row['geslacht']; 
-		$aanw = $row['aanw']; 
-		if(isset($aanw)) {if($geslacht == 'ooi') { $fase = 'moeder'; } else if($geslacht == 'ram') { $fase = 'vader'; } } else {$fase = 'lam'; } ?>
+	while($row = mysqli_fetch_array($result))
+	{
+	$transponder = $row['transponder']; if(isset($transponder)) {$transp = 'Ja'; } else {$transp = 'Nee'; }
+	$werknr = $row['werknum'];
+	$levnr = $row['levensnummer'];
+	$gebdm = $row['gebdm'];
+	$geslacht = $row['geslacht']; 
+	$aanw = $row['aanw']; 
+	if(isset($aanw)) {if($geslacht == 'ooi') { $fase = 'moeder'; } else if($geslacht == 'ram') { $fase = 'vader'; } } else {$fase = 'lam'; } ?>
 <tr align = center>	
 	   <td width = 0> </td>	   
-	   <td width = 100 style = "font-size:15px;"> <?php echo $row['werknum'] ?> <br> </td>
-	   <td width = 1> </td>	   
-	   <td width = 100 style = "font-size:15px;"> <?php echo $row['levensnummer'] ?> <br> </td>
+	   <td width = 100 style = "font-size:13px;"> <?php echo $transp; ?> <br> </td>
 	   <td width = 1> </td>
-	   <td width = 100 style = "font-size:15px;"> <?php echo $row['gebdm'] ?> <br> </td>	   
+	   <td width = 100 style = "font-size:15px;"> <?php echo $werknr; ?> <br> </td>
+	   <td width = 1> </td>	   
+	   <td width = 100 style = "font-size:15px;"> <?php echo $levnr; ?> <br> </td>
+	   <td width = 1> </td>
+	   <td width = 100 style = "font-size:15px;"> <?php echo $gebdm; ?> <br> </td>	   
 	   <td width = 1> </td>
 	   <td width = 100 style = "font-size:15px;"> <?php echo $geslacht; ?> <br> </td>
 	   <td width = 1> </td>
