@@ -2,7 +2,8 @@
 20-1-2017 : Query's aangepast n.a.v. nieuwe tblDoel en hidden velden in insOverplaats.php verwijderd en codering hier aangepast 		22-1-2017 : tblBezetting gewijzigd naar tblBezet 
 28-6-2017 : insert tblPeriode verwijderd Priode wordt sinds 12-2-2017 niet meer opgeslagen in tblBezet.
 11-6-2020 : onderscheid gemaakt tussen reader Agrident en Biocontrol 
-13-7-2020 : impVerplaatsing gewijzigd in impAgrident -->
+13-7-2020 : impVerplaatsing gewijzigd in impAgrident 
+27-2-2021 : Opslaan transponder bij schaap als deze niet bestaat -->
 
 <?php
 include "url.php";
@@ -42,6 +43,42 @@ foreach($array as $recId => $id) {
 	if ($key == 'kzlHok' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldHok = $value; }
 
 									}
+
+
+
+
+if($reader == 'Agrident') {
+$zoek_transponder = mysqli_query($db, "
+SELECT transponder tran, levensnummer levnr
+FROM impAgrident
+WHERE Id = '".mysqli_real_escape_string($db,$recId)."'
+") or die (mysqli_error($db)); 
+
+    while( $zt = mysqli_fetch_assoc($zoek_transponder)) { 
+      $tran_rd  = $zt['tran']; 
+      $fldLevnr = $zt['levnr']; }
+
+
+$zoek_transponder_schaap = mysqli_query($db, "
+SELECT schaapId, transponder tran
+FROM tblSchaap
+WHERE levensnummer = '".mysqli_real_escape_string($db,$fldLevnr)."'
+") or die (mysqli_error($db)); 
+
+    while( $zts = mysqli_fetch_assoc($zoek_transponder_schaap)) { 
+    	$schaapId = $zt['schaapId'];
+    	$tran_db = $zt['tran']; }
+
+if(isset($tran_rd) && !isset($tran_db)) {
+  $update_tblSchaap = "UPDATE tblSchaap set transponder = '".mysqli_real_escape_string($db,$tran_rd)."' WHERE schaapId = '".mysqli_real_escape_string($db,$schaapId)."' ";
+
+  /*echo $update_tblSchaap.'<br>';*/  mysqli_query($db,$update_tblSchaap) or die (mysqli_error($db));
+}
+
+}
+
+
+
 
 // CONTROLE op alle verplichten velden bij overplaatsen lam
 if ( !empty($fldDag) && isset($fldHok))
