@@ -18,6 +18,7 @@ $versie = '7-3-2019'; /* gewicht gedeeld door 100 ipv 10 */
 $versie = '24-4-2020'; /* url Javascript libary aangepast */
 $versie = '24-6-2020'; /* onderscheid gemaakt tussen reader Agrident en Biocontrol */
 $versie = '4-7-2020'; /* 1 tabel impAgrident gemaakt */
+$versie = '28-2-2020'; /* $fase gebaseerd om omschrijving geslacht */
 
  session_start(); ?>
 <html>
@@ -272,8 +273,7 @@ $uitvdm = date('d-m-Y', strtotime($date2));
 	$levnr_db = $array['levnr_db'];
 	$ras_rd = $array['ras_rd'];
 	$ras_db = $array['ras_db'];
-	$sekse = $array['geslacht']; /*if($reader == 'Agrident' && $sekse == 0) { $sekse = 'ram'; } 
-								 elseif ($reader == 'Agrident') { $sekse = 'ooi'; }*/
+	$sekse = $array['geslacht'];
 	$gewicht = $array['gewicht']; 
 	$moeder = $array['moeder'];
 	$mderId = $array['mdrId'];
@@ -286,7 +286,7 @@ if($reader == 'Agrident') {
 		$fase = 'lam';
 	}
 	else { 
-	if($sekse == 0) { $fase = 'vader'; }
+	if($sekse == 'ram') { $fase = 'vader'; }
 	else { $fase = 'moeder'; }
 	}
 }
