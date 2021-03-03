@@ -633,14 +633,14 @@ From (
   $insert_tblHistorie = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$dmafv)."', actId = 3 ";
 		mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
  
- if(!empty($_POST['kzlHok'])) {
+/* if(!empty($_POST['kzlHok'])) {
 $hokId_aanw = $_POST['kzlHok'];
 $zoek_hisId = mysqli_query($db," SELECT hisId FROM tblHistorie WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."' and actId = 3 ") or die (mysqli_error($db));
 	while( $ha = mysqli_fetch_assoc($zoek_hisId)) { $hisId_a = $ha['hisId']; }
  
   $insert_tblBezet = "INSERT INTO tblBezet set hisId = '".mysqli_real_escape_string($db,$hisId_a)."', hokId = '".mysqli_real_escape_string($db,$hokId_aanw)."' ";
 		mysqli_query($db,$insert_tblBezet) or die (mysqli_error($db));
- }
+ }*/
  
 	$zoek_geslacht = mysqli_query($db,"SELECT geslacht FROM tblSchaap WHERE schaapId = '".mysqli_real_escape_string($db,$schaapId)."'	") or die(mysqli_error($db));
 	 while( $gsl = mysqli_fetch_assoc($zoek_geslacht)) { $mn_vr = $gsl['geslacht']; } if($mn_vr == 'ooi') { $parent = 'moederdier'; } else if($mn_vr == 'ram') { $parent = 'vaderdier'; }
@@ -847,7 +847,7 @@ else {
 $show = "
 SELECT st.kleur, st.halsnr hnr, s.levensnummer, date_format(hg.datum,'%d-%m-%Y') gebdm, hg.kg gebkg, s.rasId, s.geslacht, mdr.schaapId mdrId, right(mdr.levensnummer,$Karwerk) werknr_ooi, vdr.schaapId vdrId, right(vdr.levensnummer,$Karwerk) werknr_ram, date_format(hs.datum,'%d-%m-%Y') speendm, hs.kg speenkg, ouder.datum dmaanw, date_format(ouder.datum,'%d-%m-%Y') aanwdm,
 st.rel_best, haf.hisId afvhisId, date_format(haf.datum,'%d-%m-%Y') afvoerdm, haf.kg afvoerkg, haf.actie, lower(haf.actie) status, s.momId, s.redId,
-st_max.stalId, b.dmafsluit, b.periId, b.hoknr hoknr_lst, hk.bezId, hk.hoknr hokooi, hk.datum dmOoiIn, date_format(hk.datum,'%d-%m-%Y') ooiInDm
+st_max.stalId, b.dmafsluit, b.periId, b.hoknr hoknr_lst, hk.bezId, hk.hoknr, hk.datum dmOoiIn, date_format(hk.datum,'%d-%m-%Y') ooiInDm
 
 FROM tblSchaap s
  join (
@@ -968,14 +968,14 @@ $show = mysqli_query($db,$show) or die (mysqli_error($db));
 	$periId = $record['periId']; // Om te achterhalen of het hok van deze periode nog actief is
 	$hok = $record['hoknr_lst']; // Het verblijf waar naar hersteld kan worden
 	$bezId = $record['bezId']; // Het bezId van schaap nu in hok (t.b.v. zit moederdier al in een verblijf ja of nee)
-	$hokooi = $record['hokooi']; // Het verblijf van schaap nu in hok (t.b.v. moederdier uit verblijf halen)
+	$hoknr = $record['hoknr']; // Het verblijf van schaap nu in hok (t.b.v. moederdier uit verblijf halen)
 	$dmOoiIn = $record['dmOoiIn']; 
 	$ooiInDm = $record['ooiInDm']; 
 	}	
 	
 if(isset($_POST['knpUitHok'])) {
 
- if(empty($_POST['txtHokOoiDm'])) { $fout = "Datum dat het ".$fase." ".strtolower($hokooi)." verlaat is onbekend."; }
+ if(empty($_POST['txtHokOoiDm'])) { $fout = "Datum dat het ".$fase." ".strtolower($hoknr)." verlaat is onbekend."; }
  else {
 
 	$invoerdatum = date_create($_POST['txtHokOoiDm']); $invoerdate = date_format($invoerdatum,'Y-m-d');
@@ -1837,7 +1837,7 @@ WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."' and h.skip = 1 and r
 
 <tr>
  
- <td colspan = 2> <?php if(isset($afvhis)) { ?>Herstellen : <?php  $radio = "radHerst"; } else { $radio = "radAfv"; }?>
+ <td colspan = 2> <?php if(isset($afvhis)) { ?> Herstellen : <?php  $radio = "radHerst"; } else { $radio = "radAfv"; } ?>
 	<i style= "font-size : 13px"> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp datum : </i><input id="datepicker5" type = text name = "txtEinddm" size = 8 style= "font-size : 11px" value = <?php echo $hersdm; ?> >
 
 <?php if(isset($optie4) || isset($optie5) || isset($dmaanw) /* uitscharen lammeren niet mogelijk gemaakt */) { ?>
@@ -1882,10 +1882,9 @@ if(isset($optie3)) { ?>
  <td colspan = 2 >
 	 <input type = radio name = <?php echo $radio; ?> value = 3 > <?php echo $optie3; /*Aanhouden als vader- of moederdier */ ?>
 <!-- kzlVerblijf -->
- <i style= "font-size : 13px"> &nbsp verblijf : </i>
- <select name= "kzlHok" style= "width:80; font-size : 12px" >
- <option></option>
-<?php $count = count($hoknum);
+ <!-- <select name= "kzlHok" style= "width:80; font-size : 12px" >
+ <option></option> -->
+<?php /*$count = count($hoknum);
 for ($i = 0; $i < $count; $i++){
 
 	$opties = array($hoknId[$i]=>$hoknum[$i]);		
@@ -1900,8 +1899,8 @@ for ($i = 0; $i < $count; $i++){
 		}
 			}
 		
-		} ?>		
- </select>	
+		}*/ ?>		
+<!-- </select>	-->
 <!-- Einde kzlVerblijf -->
  </td> 
 </tr>  
@@ -2024,7 +2023,7 @@ for ($i = 0; $i < $count; $i++){
 	<input type="text" id="datepicker2" name= "txtHokOoiDm" size = 8 >
  <?php } 
  elseif (!isset($afvhis) && isset($bezId)) {
- 	echo ucfirst($fase)." uit ".strtolower($hokooi)." halen."; ?> 
+ 	echo ucfirst($fase)." uit ".strtolower($hoknr)." halen."; ?> 
 
 <br> per datum 
 	<input type="text" id="datepicker2" name= "txtHokOoiDm" size = 8 >
