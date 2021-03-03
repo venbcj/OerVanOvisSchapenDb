@@ -127,7 +127,7 @@ FROM tblSchaap s
 	 join tblStal st on (st.stalId = h.stalId)
 	 join tblBezet b on (b.hisId = h.hisId)
 	WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."'
-	group by h.stalId
+	GROUP BY h.stalId
  ) hmax on (hmax.stalId = st.stalId)
  join tblHistorie h on (h.hisId = hmax.hisId)
  join tblBezet b on (b.hisId = h.hisId)
@@ -138,14 +138,14 @@ FROM tblSchaap s
 	 join tblActie a1 on (a1.actId = h1.actId)
 	 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
 	 join tblActie a2 on (a2.actId = h2.actId)
-	where b.hokId = '".mysqli_real_escape_string($db,$Id)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
-	group by b.bezId, h1.hisId
+	WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
+	GROUP BY b.bezId, h1.hisId
  ) uit on (uit.hisv = h.hisId)
  join (
 	SELECT schaapId
 	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 3
+	WHERE h.actId = 3
  ) prnt on (prnt.schaapId = st.schaapId)
 
 WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' and isnull(uit.bezId)
@@ -357,49 +357,42 @@ if($aanwezig3 > 0) {
 <?php
 $hok_inhoud_vanaf_aanwas = mysqli_query ($db,"
 SELECT s.schaapId, right(s.levensnummer,$Karwerk) werknr, r.ras, s.geslacht, date_format(hg.datum,'%d-%m-%Y') geb, date_format(prnt.datum,'%d-%m-%Y') aanw, date_format(h.datum,'%d-%m-%Y') van, b.hisId
-FROM (
-	SELECT b.hisId, b.hokId
-	FROM tblBezet b
-	 join tblHistorie h on (b.hisId = h.hisId)
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join (
+	SELECT max(h.hisId) hisId, h.stalId
+	FROM tblHistorie h
 	 join tblStal st on (st.stalId = h.stalId)
-	 join (
-		SELECT st.schaapId, h.hisId, h.datum
-		FROM tblStal st
-		join tblHistorie h on (st.stalId = h.stalId)
-		WHERE h.actId = 3
-	 ) prnt on (prnt.schaapId = st.schaapId)
-	WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' and h.datum >= prnt.datum
- ) b
- join tblHistorie h on (b.hisId = h.hisId)
- join tblStal st on (st.stalId = h.stalId)
- join tblSchaap s on (s.schaapId = st.schaapId)
- left join tblRas r on (r.rasId = s.rasId)
- left join tblVolwas v on (v.volwId = s.volwId)
- left join tblSchaap mdr on (v.mdrId = mdr.schaapId)
- left join 
- (
+	 join tblBezet b on (b.hisId = h.hisId)	 
+	WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."'
+	GROUP BY h.stalId
+ ) hmax on (hmax.stalId = st.stalId)
+ join tblHistorie h on (h.hisId = hmax.hisId)
+ join tblBezet b on (b.hisId = h.hisId)
+ left join (
 	SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
 	FROM tblBezet b
 	 join tblHistorie h1 on (b.hisId = h1.hisId)
 	 join tblActie a1 on (a1.actId = h1.actId)
 	 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
 	 join tblActie a2 on (a2.actId = h2.actId)
-	 join tblStal st on (h1.stalId = st.stalId)
-	WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+	WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
 	GROUP BY b.bezId, h1.hisId
- ) uit on (uit.hisv = b.hisId)
+ ) uit on (uit.hisv = h.hisId)
+ join (
+	SELECT schaapId, h.datum
+	FROM tblStal st
+	 join tblHistorie h on (st.stalId = h.stalId)
+	WHERE h.actId = 3
+ ) prnt on (prnt.schaapId = st.schaapId)
  left join (
 	SELECT st.schaapId, h.datum
 	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
 	WHERE h.actId = 1
  ) hg on (hg.schaapId = st.schaapId)
- join (
-	SELECT st.schaapId, h.datum
-	FROM tblStal st
-	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 3
- ) prnt on (prnt.schaapId = st.schaapId)
+ left join tblRas r on (r.rasId = s.rasId)
+
 WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' and isnull(uit.bezId)
 ORDER BY right(s.levensnummer,$Karwerk)
 ") or die (mysqli_error($db));
