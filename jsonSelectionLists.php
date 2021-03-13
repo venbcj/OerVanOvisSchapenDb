@@ -73,6 +73,20 @@ ORDER BY naam
 
 }
 
+// Reden afvoer
+if($i == 2) {
+$result = mysqli_query($db,"
+SELECT ru.redId Id, r.reden `name`
+FROM tblReden r
+ join tblRedenuser ru on (r.redId = ru.redId)
+WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidid)."' and ru.afvoer = 1 and r.actief = 1
+ORDER BY reden
+") or die (mysqli_error($db)); 
+
+//$rows = mysqli_num_rows($result);
+
+}
+
 // Sterfte oorzaak bij taak Verplaatsing
 if($i == 3) {
 $result = mysqli_query($db,"
