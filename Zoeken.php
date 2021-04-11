@@ -20,6 +20,7 @@ $versie = '15-2-2020'; /* tabelnaam gewijzigd van HIS naar his en van TOEL naar 
 $versie = '23-5-2020'; /* unset gem groei spenen en afvoer en stamboeknummer. Geadopteerd aan historie toegevoegd */
 $versie = '27-9-2020'; /* Handmatig omnummeren toegevoegd */
 $versie = '27-2-2020'; /* SQL beveiligd met quotes en 'Transponder bekend' toegevoegd */
+$versie = '11-4-2021'; /* Adoptie losgekoppeld van verblijf */
 
  session_start();  ?>
 <html>
@@ -623,7 +624,7 @@ FROM
 ) his
 left join 
 (
-	SELECT h.hisId, concat('Bij ooi ', right(mdr.levensnummer,$Karwerk), ' in ', lower(ho.hoknr),' voor ',datediff(coalesce(ht.datum,curdate()), h.datum), If(datediff(coalesce(ht.datum,curdate()), h.datum) = 1, ' dag', ' dagen')) toel
+	SELECT h.hisId, concat('Bij ooi ', right(mdr.levensnummer,$Karwerk)) toel
 	FROM tblHistorie h
 	 join impAgrident vp on (h.datum = vp.datum)
 	 join tblStal st on (h.stalId = st.stalId)
@@ -634,21 +635,6 @@ left join
 	 	 join tblStal st on (mdr.schaapId = st.schaapId)
 	 	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 	 ) mdr on (vp.moeder = mdr.levensnummer)
-	 join tblBezet b on (b.hisId = h.hisId)
-	 join tblHok ho on (b.hokId = ho.hokId)
-	 left join (
-		SELECT h1.hisId hisv, min(h2.hisId) hist
-		FROM tblHistorie h1
-		 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
-		 join tblStal st on (st.stalId = h1.stalId)
-		 join tblSchaap s on (s.schaapId = st.schaapId)
-		 join tblActie a1 on (a1.actId = h1.actId)
-		 join tblActie a2 on (a2.actId = h2.actId)
-		WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)/*lammeren in hok geplaatst */."' and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-		and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
-		GROUP BY h1.hisId
-	 ) uit on (uit.hisv = b.hisId)
-	 left join tblHistorie ht on (ht.hisId = uit.hist)
 	WHERE h.actId = 15 and vp.actId = 15 and vp.lidId = '".mysqli_real_escape_string($db,$lidId)/*adoptie lammeren*/."' and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
 
 Union
