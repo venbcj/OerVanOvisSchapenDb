@@ -1,6 +1,7 @@
 <?php 
 $versie = '27-12-2019'; /* gekopieerd van HokOverpl.php */
 $versie = '16-2-2020'; /* in variabele $tabel 'and h2.actId != 3' toegevoegd zodat moederdier wordt getoond */
+$versie = '27-4-2021'; /* Datum aanwas hoeft niet meer kleiner of gelijk te zijn aan datum in verblijf. sql beveiligd met quotes */
 
  session_start(); ?>
 <html>
@@ -28,7 +29,7 @@ if(isset($_POST['knpVerder_']) && isset($_POST['txtDatumall_']))	{
  $sess_dag = $_SESSION["DT1"]; 
 
 $zoek_hok = mysqli_query ($db,"
-SELECT hoknr FROM tblHok where hokId = ".mysqli_real_escape_string($db,$ID)."
+SELECT hoknr FROM tblHok WHERE hokId = '".mysqli_real_escape_string($db,$ID)."'
 ") or die (mysqli_error($db));
 	while ($h = mysqli_fetch_assoc($zoek_hok)) { $hoknr = $h['hoknr']; }
 /*		
@@ -43,9 +44,9 @@ FROM (
 		SELECT st.schaapId, h.hisId, h.datum
 		FROM tblStal st
 		join tblHistorie h on (st.stalId = h.stalId)
-		where h.actId = 3
+		WHERE h.actId = 3
 	) prnt on (prnt.schaapId = st.schaapId)
-	where b.hokId = ".mysqli_real_escape_string($db,$ID)." and h.datum >= prnt.datum
+	WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and h.datum >= prnt.datum
  ) b
  join tblHistorie h on (b.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
@@ -58,16 +59,16 @@ FROM (
 	 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
 	 join tblActie a2 on (a2.actId = h2.actId)
 	 join tblStal st on (h1.stalId = st.stalId)
-	where b.hokId = ".mysqli_real_escape_string($db,$ID)." and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
+	WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
 	group by b.bezId, h1.hisId
  ) uit on (uit.hisv = b.hisId)
  join (
 	SELECT st.schaapId, h.datum
 	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 3
+	WHERE h.actId = 3
  ) prnt on (prnt.schaapId = st.schaapId)
-where b.hokId = ".mysqli_real_escape_string($db,$ID)." and isnull(uit.bezId)
+WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId)
 ") or die (mysqli_error($db));
 		
 	while($nu_p = mysqli_fetch_assoc($zoek_nu_in_verblijf_parent))
@@ -90,7 +91,7 @@ FROM tblSchaap s
 	SELECT max(hisId) hisId, h.stalId
 	FROM tblHistorie h
 	 join tblStal st on (st.stalId = h.stalId)
-	where st.lidId = ".mysqli_real_escape_string($db,$lidId)."
+	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 	group by h.stalId
  ) hmax on (hmax.stalId = st.stalId)
  join tblHistorie hm on (hm.hisId = hmax.hisId)
@@ -105,9 +106,9 @@ FROM tblSchaap s
 		SELECT st.schaapId, h.hisId, h.datum
 		FROM tblStal st
 		join tblHistorie h on (st.stalId = h.stalId)
-		where h.actId = 3
+		WHERE h.actId = 3
 	) prnt on (prnt.schaapId = st.schaapId)
-	where b.hokId = ".mysqli_real_escape_string($db,$ID)." and h.datum >= prnt.datum
+	WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."'
  ) b_prnt on (b_prnt.hisId = h.hisId)
  left join (
 	SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
@@ -116,18 +117,18 @@ FROM tblSchaap s
 	 join tblActie a1 on (a1.actId = h1.actId)
 	 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
 	 join tblActie a2 on (a2.actId = h2.actId)
-	where b.hokId = ".mysqli_real_escape_string($db,$ID)." and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
+	WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
 	group by b.bezId, h1.hisId
  ) uit on (uit.hisv = b_prnt.hisId)
  left join (
 	SELECT st.schaapId, h.datum
 	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 3
+	WHERE h.actId = 3
  ) prnt on (prnt.schaapId = st.schaapId)
-where b_prnt.hokId = ".mysqli_real_escape_string($db,$ID)." and isnull(uit.bezId)
+WHERE b_prnt.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId)
 ) tbl ";
-$WHERE = " where hokId = ".mysqli_real_escape_string($db,$ID)." and isnull(bezId) ";
+$WHERE = " WHERE hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(bezId) ";
 
 include "paginas.php";
 
