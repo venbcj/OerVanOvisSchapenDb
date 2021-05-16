@@ -2,7 +2,8 @@
  12-03-2017 : Aangpast na.v. Release 2 of wel nieuwe databasestructuur, verwijderen mogelijk gemaakt en mysql verandert in mysqli 
 Toegepast in : InsMedicijn.php 
 15-11-2020 : onderscheid gemaakt tussen reader Agrident en Biocontrol 
-24-1-2021 : Sql beveiligd met quotes. Transponder nummer opslaan in tblSchaap als deze nog niet bestaat Verschil tussen kiezen of verwijderen herschreven 31-1 $schaapId gewijzigd naar $schaapId_db -->
+24-1-2021 : Sql beveiligd met quotes. Transponder nummer opslaan in tblSchaap als deze nog niet bestaat Verschil tussen kiezen of verwijderen herschreven 31-1 $schaapId gewijzigd naar $schaapId_db 
+8-5-2021 : isset($verwerkt) toegevoegd om dubbele invoer te voorkomen -->
 
 <?php
 // include "url.php"; Zit al in InsMedicijn.php
@@ -71,7 +72,27 @@ if (isset($schaapId_db) && $tran_rd <> $tran_db) {
 }
 // Einde Transponder nummer inlezen als deze nog niet bestaat in tblSchaap
 
-if ($fldKies == 1 && $fldDel == 0) {
+// (extra) controle of readerregel reeds is verwerkt. Voor als de pagina 2x wordt verstuurd bij fouten op de pagina
+unset($verwerkt);
+if($reader == 'Agrident') {
+$zoek_readerRegel_verwerkt = mysqli_query($db,"
+SELECT verwerkt
+FROM impAgrident
+WHERE Id = '".mysqli_real_escape_string($db,$recId)."'
+") or die (mysqli_error($db)); 
+}
+else {
+$zoek_readerRegel_verwerkt = mysqli_query($db,"
+SELECT verwerkt
+FROM impReader
+WHERE readId = '".mysqli_real_escape_string($db,$recId)."'
+") or die (mysqli_error($db));
+}
+while($verw = mysqli_fetch_array($zoek_readerRegel_verwerkt))
+{ $verwerkt = $verw['verwerkt']; }
+// Einde (extra) controle of readerregel reeds is verwerkt.
+
+if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt)) { // isset($verwerkt) is een extra controle om dubbele invoer te voorkomen
 
 // CONTROLE op alle verplichten velden bij medicatie
 if (isset($flddag) && isset($fldAantal) && isset($fldinkId))
@@ -258,8 +279,6 @@ else {
 
 if ($fldKies == 0 && $fldDel == 1) {
 
-  foreach($id as $key => $value) {	
-
   if($reader == 'Agrident')  {
     $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' " ;
  		}
@@ -267,8 +286,6 @@ if ($fldKies == 0 && $fldDel == 1) {
     $updateReader = "UPDATE impReader set verwerkt = 1 WHERE readId = '".mysqli_real_escape_string($db,$recId)."' " ;
 		}
 		/*echo $updateReader.'<br>';*/		mysqli_query($db,$updateReader) or die (mysqli_error($db));
-	}
-
 }
 
 

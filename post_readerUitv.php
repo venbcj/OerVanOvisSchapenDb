@@ -2,7 +2,8 @@
 16-11-2014 include "Maak_Request.php"; toegevoegd 
 2-3-2017 : het kunnen verwijderen toegevoegd en $recId zodat hidden velden in insUitval.php weg kunnen 
 13-7-2020 : Onderscheid gemaakt tussen reader Biocontrol en Agrident gemaakt 
-23-1-2021 : In UPDATE impAgrident readId gewijzigd in Id. Sql beveiligd met quotes verschil tussen kiezen of verwijderen herschreven -->
+23-1-2021 : In UPDATE impAgrident readId gewijzigd in Id. Sql beveiligd met quotes verschil tussen kiezen of verwijderen herschreven 
+8-5-2021 : isset($verwerkt) toegevoegd om dubbele invoer te voorkomen -->
 
 <?php
 /* post_readerGeb.php toegepast in :
@@ -48,9 +49,29 @@ foreach($array as $recId => $id) {
 	 else if ($key == 'kzlreden' && empty($value)) { $updreden = ''; }
 	 
 									}
+// (extra) controle of readerregel reeds is verwerkt. Voor als de pagina 2x wordt verstuurd bij fouten op de pagina
+unset($verwerkt);
+if($reader == 'Agrident') {
+$zoek_readerRegel_verwerkt = mysqli_query($db,"
+SELECT verwerkt
+FROM impAgrident
+WHERE Id = '".mysqli_real_escape_string($db,$recId)."'
+") or die (mysqli_error($db)); 
+}
+else {
+$zoek_readerRegel_verwerkt = mysqli_query($db,"
+SELECT verwerkt
+FROM impReader
+WHERE readId = '".mysqli_real_escape_string($db,$recId)."'
+") or die (mysqli_error($db));
+}
+while($verw = mysqli_fetch_array($zoek_readerRegel_verwerkt))
+{ $verwerkt = $verw['verwerkt']; }
+// Einde (extra) controle of readerregel reeds is verwerkt.
 
+if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt)) { // isset($verwerkt) is een extra controle om dubbele invoer te voorkomen
 // CONTROLE op alle verplichten velden bij uitval
-if ($fldKies == 1 && $fldDel == 0 && isset($flddag) && isset($fldlevnr))
+if (isset($flddag) && isset($fldlevnr))
 { 
 
 		$update_tblSchaap = "UPDATE tblSchaap SET redId = ". db_null_input($updreden) ." WHERE levensnummer = '".mysqli_real_escape_string($db,$fldlevnr)."' ";	
@@ -88,17 +109,16 @@ include "maak_request.php";
 }
 // EINDE CONTROLE op alle verplichten velden bij uitval
 									
+} // Einde if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt))
 
+if ($fldKies == 0 && $fldDel == 1) {
 
-if ($fldKies == 0 && $fldDel == 1)
-{
-
-if($reader == 'Agrident') {
-	$updateReader = "UPDATE impAgrident SET verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' ";
-} else {	
-    $updateReader = "UPDATE impReader SET verwerkt = 1 WHERE readId = '".mysqli_real_escape_string($db,$recId)."' " ;
-}
-/*echo $updateReader.'<br>';*/		mysqli_query($db,$updateReader) or die (mysqli_error($db));
+	if($reader == 'Agrident') {
+		$updateReader = "UPDATE impAgrident SET verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' ";
+	} else {	
+	    $updateReader = "UPDATE impReader SET verwerkt = 1 WHERE readId = '".mysqli_real_escape_string($db,$recId)."' " ;
+	}
+	/*echo $updateReader.'<br>';*/		mysqli_query($db,$updateReader) or die (mysqli_error($db));
 
 }
 	

@@ -1,10 +1,11 @@
 <?php 
 $versie = '30-9-2020'; /* Gekopieerd van insOmnummeren.php */
+$versie = '16-5-2021'; /* sql beveiligd met quotes */
 
  session_start(); ?>
 <html>
 <head>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <title>Registratie</title>
 </head>
 <body>
@@ -22,7 +23,7 @@ if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) 
 
 if (isset ($_POST['knpInsert_'])) {
 	
-	Include "post_readerHalsnum.php"; #Deze include moet voor de vervversing in de functie header()
+	Include "post_readerHalsnum.php";
 	
 	}
 
@@ -38,11 +39,11 @@ impAgrident rd
 	 FROM tblSchaap s
 	  join tblStal st on (st.schaapId = s.schaapId)
 	  join tblHistorie h on (st.stalId = h.stalId)
-	 WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and h.skip = 0
+	 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
 	 GROUP BY s.schaapId, s.levensnummer, s.geslacht
  ) s on (rd.levensnummer = s.levensnummer)
  
- left join tblStal st on (st.schaapId = s.schaapId and st.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(st.rel_best))
+ left join tblStal st on (st.schaapId = s.schaapId and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best))
  left join (
 	SELECT h.hisId, a.actie, a.af, h.datum
 	FROM tblHistorie h
@@ -56,7 +57,7 @@ impAgrident rd
  ) hu on (hu.schaapId = s.schaapId)
 ";
 
-$WHERE = "WHERE rd.lidId = ".mysqli_real_escape_string($db,$lidId)." and rd.actId = 1717 and isnull(rd.verwerkt) ";
+$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 1717 and isnull(rd.verwerkt) ";
 
 include "paginas.php";
 
@@ -101,6 +102,7 @@ if(isset($data))  {	foreach($data as $key => $array)
 
 // Controleren of ingelezen waardes worden gevonden .
 $dag = $datum ; $dmdag = $date;
+
 if (isset($_POST['knpVervers_'])) { $dag = $_POST["txtDag_$Id"]; 
 	$makeday = date_create($_POST["txtDag_$Id"]); $dmdag =  date_format($makeday, 'Y-m-d');
 	$kleur = $_POST["kzlKleur_$Id"];
@@ -110,7 +112,7 @@ if (isset($_POST['knpVervers_'])) { $dag = $_POST["txtDag_$Id"];
 $zoek_halsnr_db = mysqli_query($db,"
 SELECT schaapId
 FROM tblStal
-WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." and kleur = '".mysqli_real_escape_string($db,$kleur)."' and halsnr = ".mysqli_real_escape_string($db,$halsnr)." and isnull(rel_best)
+WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and kleur = '".mysqli_real_escape_string($db,$kleur)."' and halsnr = ".mysqli_real_escape_string($db,$halsnr)." and isnull(rel_best)
 ") or die (mysqli_error($db));
 	while ($zh = mysqli_fetch_assoc($zoek_halsnr_db)) { $halsnummer_db = $zh['schaapId']; }
 
@@ -187,7 +189,6 @@ foreach ( $opties as $key => $waarde)
  ?> </center>
 	<input type = "hidden" size = 8 style = "font-size : 9px;" name = <?php echo "txtStatus_$Id"; ?> value = <?php echo $status; ?> > <!--hiddden-->
  </td>
-
  <td style = "color : red"> <?php 
  unset($halsnummer_db);
 if($dmdag < $dmmax) { echo "Datum ligt voor $maxdm ."; } ?>

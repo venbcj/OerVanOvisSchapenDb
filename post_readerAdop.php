@@ -1,6 +1,7 @@
 <!-- 23-5-2020 : Gekopieerd van post_readerOvp.php
 13-7-2020 : impVerplaatsing gewijzigd in impAgrident 
-11-4-2021 : Adoptie losgekoppeld van verblijf -->
+11-4-2021 : Adoptie losgekoppeld van verblijf 
+5-5-2021 : isset($verwerkt) toegevoegd om dubbele invoer te voorkomen. Verschil tussen kiezen of verwijderen herschreven -->
 
 <?php
 include "url.php";
@@ -27,21 +28,41 @@ foreach($array as $recId => $id) {
 //echo '$recId = '.$recId.'<br>'; 
 // Einde Id ophalen
 
- foreach($id as $key => $value) {
- if ($key == 'chbkies' && $value == 1 ) 	{ /* Alleen als checkbox chbkies de waarde 1 heeft  /*echo $key.'='.$value.' ';*/  $box = $value ;
- foreach($id as $key => $value) {
- if ($key == 'chbDel' && $value == 0 ) 	{ /* Alleen als checkbox Del de waarde 0 heeft  /*echo $key.'='.$value.' ';*/ ;
- 
   foreach($id as $key => $value) {
+
+  if ($key == 'chbkies')   { $fldKies = $value; }
+  if ($key == 'chbDel')   { $fldDel = $value; }
 
 	if ($key == 'txtDag' && !empty($value)) { $dag = date_create($value); $valuedate =  date_format($dag, 'Y-m-d'); 
 									/*echo $key.'='.$valuedate.' ';*/ $fldDay = $valuedate; }
 	if ($key == 'kzlHok' && !empty($value)) { $hokId = $value; /*echo $key.'='.$valuedate.' ';*/ }
 
 									}
+// (extra) controle of readerregel reeds is verwerkt. Voor als de pagina 2x wordt verstuurd bij fouten op de pagina
+unset($verwerkt);
+if($reader == 'Agrident') {
+$zoek_readerRegel_verwerkt = mysqli_query($db,"
+SELECT verwerkt
+FROM impAgrident
+WHERE Id = '".mysqli_real_escape_string($db,$recId)."'
+") or die (mysqli_error($db)); 
+}
+else {
+$zoek_readerRegel_verwerkt = mysqli_query($db,"
+SELECT verwerkt
+FROM impReader
+WHERE readId = '".mysqli_real_escape_string($db,$recId)."'
+") or die (mysqli_error($db));
+}
+while($verw = mysqli_fetch_array($zoek_readerRegel_verwerkt))
+{ $verwerkt = $verw['verwerkt']; }
+// Einde (extra) controle of readerregel reeds is verwerkt.
+
+if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt)) { // isset($verwerkt) is een extra controle om dubbele invoer te voorkomen
+
 
 // CONTROLE op alle verplichten velden bij adoptie lam
-if ( isset($fldDay) && isset($hokId))
+if (isset($fldDay) && isset($hokId))
 {
 	
 $zoek_levensnummer = mysqli_query($db,"
@@ -109,27 +130,17 @@ WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."' and actId = '".mysql
 }
 // EINDE CONTROLE op alle verplichten velden bij spenen lam
 		
-										} // EINDE Alleen als checkbox Del de waarde 0 heeft  
-    }
 
-										} // EINDE Alleen als checkbox chbkies de waarde 1 heeft
-	}
+}  // Einde if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt))
 
- foreach($id as $key => $value) {
- if ($key == 'chbkies' && $value == 0 ) 	{ /* Alleen als checkbox chbkies de waarde 0 heeft  /*echo $key.'='.$value.' ';*/  $box = $value ;
- foreach($id as $key => $value) {
- if ($key == 'chbDel' && $value == 1 ) 	{ /* Alleen als checkbox Del de waarde 1 heeft  /*echo $key.'='.$value.' ';*/ ;
-	
+  if($fldKies == 0 && $fldDel == 1) {	
 
     $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' " ;
 	mysqli_query($db,$updateReader) or die (mysqli_error($db));
 
-										} // EINDE Alleen als checkbox Del de waarde 1 heeft 
-	}
-										} // EINDE Alleen als checkbox chbkies de waarde 0 heeft
     }
 
 
 	
-						}
+						} // Einde foreach($array as $recId => $id)
 ?>
