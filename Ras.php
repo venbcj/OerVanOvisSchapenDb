@@ -4,9 +4,11 @@ $versie = '8-3-2015'; /*Login toegevoegd*/
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '30-5-2020'; /* Scannummer t.b.v. reader Agrident aangepast. Hidden velden scan en actief verwijderd */
 $versie = '30-5-2020'; /* function db_null_input toegevoegd en pagina opgebouwd/ingedeeld als Hok.php */
+$versie = '13-6-2020'; /* Mogelijkheid eigen rassen toevoegen */
 session_start(); ?>
 <html>
 <head>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <title>Beheer</title>
 </head>
 <body>
@@ -22,8 +24,67 @@ Include "header.php"; ?>
 $file = "Ras.php";
 Include "login.php"; 
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { 
+?>
 
+	<script>
+function verplicht() {
+var eigenRas = document.getElementById("txtRas"); var eigenRas_v = eigenRas.value;
+
+	 if(eigenRas_v.length > 50) eigenRas.focus() 	+ alert("Het Ras mag max 50 karakters zijn.");
+}
+</script>
+<?php
 if (isset ($_POST['knpSave_'])) { include "save_ras.php"; }
+
+
+if (isset ($_POST['knpInsert2_'])) { 
+
+if (empty($_POST['txtRas_']))			{ $fout = "Er is geen ras ingevoerd."; }
+else {
+$txtRas = $_POST['txtRas_'];
+
+$zoek_ras = mysqli_query($db,"
+SELECT ras
+FROM tblRas r
+ join tblRasuser ru
+WHERE r.ras = '". mysqli_real_escape_string($db,$txtRas)."' and ru.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+") or die (mysqli_error($db));
+
+	while( $z = mysqli_fetch_assoc($zoek_ras)) { $eigenras_db = $z['ras']; }
+
+if(isset($eigenras_db)) { $fout = "Dit ras bestaat al."; }
+else{
+
+$query_ras_toevoegen = "
+  INSERT INTO tblRas
+  SET ras = '".mysqli_real_escape_string($db,$txtRas)."',
+      eigen = '".mysqli_real_escape_string($db,$lidId)."'";
+
+				/*echo $query_ras_toevoegen;*/ mysqli_query($db,$query_ras_toevoegen) or die (mysqli_error($db));
+
+$zoekRasId = mysqli_query($db,"
+SELECT rasId
+FROM tblRas
+WHERE eigen = '".mysqli_real_escape_string($db,$lidId)."'
+") or die (mysqli_error($db));
+	while( $zr = mysqli_fetch_assoc($zoekRasId)) { $rasId = $zr['rasId']; }
+
+$query_rasuser_toevoegen = "
+  INSERT INTO tblRasuser
+  SET lidId = '".mysqli_real_escape_string($db,$lidId)."',
+      rasId = '".mysqli_real_escape_string($db,$rasId)."'";
+
+				/*echo $query_ras_toevoegen;*/ mysqli_query($db,$query_rasuser_toevoegen) or die (mysqli_error($db));
+
+$update_tblRas = "
+UPDATE tblRas set eigen = 1 WHERE eigen = '".mysqli_real_escape_string($db,$lidId)."' ";
+
+		mysqli_query($db,$update_tblRas) or die (mysqli_error($db));
+} // Einde else van if(isset($eigenras_db))
+
+} // Einde else van if (empty($_POST['txtRas_']))
+
+} // Einde if (isset ($_POST['knpInsert2_']))
 
 if (isset ($_POST['knpInsert_']))
 {
@@ -80,13 +141,17 @@ WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
 <form action="Ras.php" method="post">
 <table border = 0>
 <tr>
- <td width = 450 valign = 'top'>
+ <td valign = 'top'>
 <table border = 0>
 <tr>
  <td>
  	<?php if($reader == 'Agrident') { $kop = 'sortering reader'; } else { $kop = 'code tbv reader'; }  ?>
  	<b> Nieuw ras :</b> <td align = center width = 10 style ="font-size:12px;"> <b> <?php echo $kop; ?> </b>
  </td>
+ <td colspan = 2>
+ </td>
+  <td>
+  	<b> Eigen Ras</b>
  </td>
 </tr>
 <tr>
@@ -98,7 +163,7 @@ $qryRas = mysqli_query($db,"
 SELECT r.rasId, r.ras
 FROM tblRas r 
  left join tblRasuser ru on (ru.rasId = r.rasId and ru.lidId = '".mysqli_real_escape_string($db,$lidId)."')
-WHERE isnull(ru.rasId) and r.actief = 1
+WHERE isnull(ru.rasId) and r.actief = 1 and eigen = 0
 ORDER BY r.ras
  ") or die (mysqli_error($db));?>
  <select style="width:180;" name="kzlRas_" value = "" style = "font-size:12px;">
@@ -112,7 +177,7 @@ ORDER BY r.ras
 			{
 						$keuze = '';
 		
-		if( (!isset($_POST['knpInsert_']) && $rasId == $raak) || (isset($_POST['kzlRas_']) && $_POST['kzlRas_'] == $key) )
+		if( (isset($_POST['kzlRas_']) && $_POST['kzlRas_'] == $key) )
 		{
 			echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
 		}
@@ -133,7 +198,15 @@ ORDER BY r.ras
 	<input type= "text" name= "insScan_" size = 1 title = "Leg hier de code vast die u tijdens het scannen met de reader gaat gebruiken." value = <?php if(isset($txtScan)) { echo $txtScan; } ?> >
 <?php } ?>
  </td>
- <td colspan = 3 align = center><input type = "submit" name="knpInsert_" value = "Toevoegen" > </td>
+ <td align = center><input type = "submit" name="knpInsert_" value = "Toevoegen" > </td>
+  <td width="125">
+  </td>
+  <td>
+  	<input type="text" name="txtRas_" id="txtRas">
+ </td>
+ <td> <input type = "submit" name= "knpInsert2_" onfocus = "verplicht()" value = "Toevoegen" style = "font-size:12px;"> </td>
+ <td width="125">
+  </td>
 </tr>
 </table>
 
@@ -145,9 +218,11 @@ ORDER BY r.ras
  <td align = center style ="font-size:12px;"> <?php echo $kop; ?> </td>
  <td align = center style ="font-size:12px;"> in gebruik </td>
  <td> <input type = "submit" name= "knpSave_" value = "Opslaan" style = "font-size:12px;"> </td>
- <td width= 200 align = "right">
+ <td width= 100 align = "right">
  	<a href= '<?php echo $url;?>Ras_pdf.php?Id=<?php echo $pdf; ?>' style = 'color : blue'>
-	print pagina </a> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+	print pagina </a> 
+ </td>
+ <td width="50">
  </td>
 </tr>
 <tr>
