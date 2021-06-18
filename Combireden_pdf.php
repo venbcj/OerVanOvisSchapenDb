@@ -16,8 +16,8 @@ $stal = $_GET['Id'];
 
 $rapport = 'Combinaties met redenen';
 $Afdrukstand = 'P';
-if ($Afdrukstand == 'P') { $headerWidth = 190; $imageWidth = 183; }
-if ($Afdrukstand == 'L') { $headerWidth = 277; $imageWidth = 270; }
+if ($Afdrukstand == 'P') { $headerWidth = 190; $imageWidth = 169; }
+if ($Afdrukstand == 'L') { $headerWidth = 277; $imageWidth = 256; }
 
 $zoek_lid = mysqli_query($db,"
 SELECT lidId
@@ -130,7 +130,7 @@ global $array_p;
 		$this->Cell($headerWidth,15,$rapport,0,1,'C',true);
 
 
-		$this->Image('schaap.jpg',$imageWidth,11,16);
+		$this->Image('OER_van_OVIS.jpg',$imageWidth,11,30,14);
 
 		$this->SetFillColor(158,179,104); // Groen
 		$this->Cell($headerWidth,5,'',0,1,'',true);

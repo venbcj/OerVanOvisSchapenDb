@@ -18,8 +18,8 @@ $tot = $_GET['d2'];
 
 $rapport = 'Meerling in periode';
 $Afdrukstand = 'P';
-if ($Afdrukstand == 'P') { $headerWidth = 190; $imageWidth = 183; }
-if ($Afdrukstand == 'L') { $headerWidth = 277; $imageWidth = 270; }
+if ($Afdrukstand == 'P') { $headerWidth = 190; $imageWidth = 169; }
+if ($Afdrukstand == 'L') { $headerWidth = 277; $imageWidth = 256; }
 
 $zoek_lid = mysqli_query($db,"
 SELECT lidId
@@ -42,7 +42,7 @@ global $imageWidth;
 		$this->SetFillColor(166,198,235); // Blauw
 		$this->Cell($headerWidth,15,$rapport,0,1,'C',true);
 
-		$this->Image('schaap.jpg',$imageWidth,11,16);
+		$this->Image('OER_van_OVIS.jpg',$imageWidth,11,30,14);
 
 		$this->SetFillColor(158,179,104); // Groen
 		$this->Cell($headerWidth,5,'',0,1,'',true);
@@ -99,7 +99,7 @@ $tot = '2018-12-01';*/
 
 $zoek_meerling = mysqli_query($db,"
 SELECT right(lam.levensnummer,$Karwerk) lam, lam.geslacht, count(wrp.volwId) worp, h.datum date, date_format(h.datum,'%d-%m-%Y') datum, right(mdr.levensnummer,$Karwerk) ooi, round(((lstkg.kg - h.kg)*1000)/datediff(mx.mdm,h.datum),2) gemgroei, date_format(mx.mdm,'%d-%m-%Y') kgdag, st.stalId
-FROM tblschaap lam
+FROM tblSchaap lam
  join tblVolwas v on (lam.volwId = v.volwId)
  join tblSchaap mdr on (mdr.schaapId = v.mdrId)
  join tblSchaap wrp on (lam.volwId = wrp.volwId)

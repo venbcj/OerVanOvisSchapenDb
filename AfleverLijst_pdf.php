@@ -17,8 +17,8 @@ $his = $_GET['hisId'];
 
 $rapport = 'Afleverlijst';
 $Afdrukstand = 'P';
-if ($Afdrukstand == 'P') { $headerWidth = 190; $imageWidth = 183; }
-if ($Afdrukstand == 'L') { $headerWidth = 277; $imageWidth = 270; }
+if ($Afdrukstand == 'P') { $headerWidth = 190; $imageWidth = 169; }
+if ($Afdrukstand == 'L') { $headerWidth = 277; $imageWidth = 256; }
 
 $zoek = mysqli_query($db,"
 SELECT st.lidId, date_format(datum,'%d-%m-%Y') datum, datum date, rel_best, p.naam
@@ -80,7 +80,7 @@ global $schpn;
 
 		//put logo
 		//$this->Image('schaap.jpg',5,7,18);
-		$this->Image('schaap.jpg',$imageWidth,11,16);
+		$this->Image('OER_van_OVIS.jpg',$imageWidth,11,30,14);
 
 		$this->SetFillColor(158,179,104); // Groen
 		$this->Cell($headerWidth,5,'',0,1,'',true);

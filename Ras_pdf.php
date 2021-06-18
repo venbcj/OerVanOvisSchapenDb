@@ -16,8 +16,8 @@ $rasnr = $_GET['Id'];
 
 $rapport = 'Rassen';
 $Afdrukstand = 'P';
-if ($Afdrukstand == 'P') { $headerWidth = 190; $imageWidth = 183; }
-if ($Afdrukstand == 'L') { $headerWidth = 277; $imageWidth = 270; }
+if ($Afdrukstand == 'P') { $headerWidth = 190; $imageWidth = 169; }
+if ($Afdrukstand == 'L') { $headerWidth = 277; $imageWidth = 256; }
 
 $zoek_lid = mysqli_query($db,"
 SELECT lidId
@@ -26,6 +26,14 @@ WHERE rasuId = ".mysqli_real_escape_string($db,$rasnr)."
 ") or die (mysqli_error($db));
 
 while ($row = mysqli_fetch_assoc($zoek_lid)) {	$lidId = $row['lidId']; }
+
+$zoek_reader = mysqli_query($db,"
+SELECT reader
+FROM tblLeden
+WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." 
+") or die (mysqli_error($db));
+
+while ($re = mysqli_fetch_assoc($zoek_reader)) {	$reader = $re['reader']; }
 
 
 class PDF extends FPDF {
@@ -40,7 +48,7 @@ global $imageWidth;
 		$this->SetFillColor(166,198,235); // Blauw
 		$this->Cell($headerWidth,15,$rapport,0,1,'C',true);
 
-		$this->Image('schaap.jpg',$imageWidth,11,16);
+		$this->Image('OER_van_OVIS.jpg',$imageWidth,11,30,14);
 
 		$this->SetFillColor(158,179,104); // Groen
 		$this->Cell($headerWidth,5,'',0,1,'',true);
@@ -55,11 +63,15 @@ global $imageWidth;
 		$this->SetFillColor(166,198,235);
 		$this->SetDrawColor(50,50,100);
 		$this->Cell(75,3,'','',0,'',false);
+if($reader == 'Biocontrol') {
 		$this->Cell(15,3,'Code','',0,'C',false);
+}
 		$this->Cell(18,3,'','',1,'C',false);
 
 		$this->Cell(75,5,'','',0,'',false);
+if($reader == 'Biocontrol') {
 		$this->Cell(15,5,'reader','',0,'C',false);
+}
 		$this->Cell(18,5,'Ras','',1,'C',false);
 		
 	}
@@ -90,14 +102,14 @@ $pdf->AddPage();
 $pdf->SetFont('Times','',9);
 $pdf->SetDrawColor(200,200,200); // Grijs
 
-$zoek_verblijf = mysqli_query($db,"
+$zoek_ras = mysqli_query($db,"
 SELECT ras, scan
 FROM tblRas r
  join tblRasuser ru on (r.rasId = ru.rasId)
 WHERE ru.actief = 1 and lidId = ".mysqli_real_escape_string($db,$lidId)."
-ORDER BY ras
+ORDER BY sort, ras
 ") or die (mysqli_error($db));
-while ($row = mysqli_fetch_assoc($zoek_verblijf)) {
+while ($row = mysqli_fetch_assoc($zoek_ras)) {
 	$ras = $row['ras'];
 	$scan = $row['scan'];
 
@@ -105,7 +117,9 @@ while ($row = mysqli_fetch_assoc($zoek_verblijf)) {
 $border = 'T'; 
 
 	$pdf->Cell(75,5,'','',0);
- 	$pdf->Cell(15,5,$scan,$border,0,'C');
+if($reader == 'Biocontrol') {
+ 	$pdf->Cell(15,5,$veld,$border,0,'C');
+}
  	$pdf->Cell(18,5,$ras,$border,1,''); 
   	
 
