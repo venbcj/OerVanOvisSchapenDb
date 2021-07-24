@@ -21,6 +21,7 @@ $versie = '23-5-2020'; /* unset gem groei spenen en afvoer en stamboeknummer. Ge
 $versie = '27-9-2020'; /* Handmatig omnummeren toegevoegd */
 $versie = '27-2-2020'; /* SQL beveiligd met quotes en 'Transponder bekend' toegevoegd */
 $versie = '11-4-2021'; /* Adoptie losgekoppeld van verblijf */
+$versie = '11-4-2021'; /* Union SELECT uit.hist hisId, concat(ho.hoknr,' verlaten ') toel   aangepast. ht.actId = 7 toegevoegd en niet alleen volwassen dieren kunnen nu de status 'verlaten' hebben. */
 
  session_start();  ?>
 <html>
@@ -721,14 +722,8 @@ Union
 		GROUP BY h1.hisId
 	 ) uit on (uit.hisv = b.hisId)
 	 left join tblHistorie ht on (ht.hisId = uit.hist)
-	 join (
-		SELECT st.schaapId, h.datum
-		FROM tblStal st
-		 join tblHistorie h on (st.stalId = h.stalId)
-		WHERE h.actId = 3
-	 ) prnt on (prnt.schaapId = st.schaapId)
 	WHERE a.aan = 1 and ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-	 and prnt.datum <= h.datum
+	 and ht.actId = 7
 
 Union
 
