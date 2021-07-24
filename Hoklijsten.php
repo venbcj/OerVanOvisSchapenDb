@@ -15,6 +15,7 @@ $versie = '20-12-2019'; /* tabelnaam gewijzigd van UIT naar uit tabelnaam */
 $versie = '22-12-2019'; /* Dubbele querys $zoek_nu_in_verblijf_geb, $zoek_nu_in_verblijf_spn en $zoek_nu_in_verblijf_prnt verwijderd */
 $versie = '8-2-2021'; /* $zoek_nu_in_verblijf_prnt herschreven i.v.m. dubbele records. Sql beveiligd met quotes 
 h2.actId != 3 uit query $hok_inhoud_vanaf_aanwas gehaald zodat aanwas ook uit verblijf wordt gehaald. Dit leverde nl. een dubbele record op i.c.m. een overplaatsing bij schaapId 5856 */
+$versie = '11-7-2021'; /* Schapen uit verblijf herzien. Join gewijzigd van h.hisId = uit.hisv naar b.bezId = uit.bezId */
 
  session_start(); ?>
 <html>
@@ -42,6 +43,189 @@ SELECT hoknr FROM tblHok WHERE hokId = '".mysqli_real_escape_string($db,$Id)."'
 ") or die (mysqli_error($db));
 	while ($h = mysqli_fetch_assoc($zoek_hok)) { $hoknr = $h['hoknr']; } 
 
+// ***** BEZETTING VANAF LAATSTE PERIODE ***** 
+$zoek_startdatum_programma = mysqli_query($db,"
+SELECT date_format(dmcreate,'%d-%m-%Y') startdm
+FROM tblLeden
+WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
+") or die (mysqli_error($db));
+	while ($sp = mysqli_fetch_assoc($zoek_startdatum_programma)) { 
+		$startdm = $sp['startdm']; }
+
+// Doelgroep geboren
+$zoek_data_aantal_geb = mysqli_query($db,"
+SELECT count(st.schaapId) aant, date_format(endgeb.dmstop,'%d-%m-%Y') stopdm
+FROM tblBezet b
+ join tblHistorie h on (h.hisId = b.hisId)
+ join (
+	SELECT b.bezId, min(h2.hisId) hist
+   FROM tblBezet b
+    join tblHistorie h1 on (b.hisId = h1.hisId)
+    join tblActie a1 on (a1.actId = h1.actId)
+    join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
+    join tblActie a2 on (a2.actId = h2.actId)
+    join tblStal st on (h1.stalId = st.stalId)
+   WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+   GROUP BY b.bezId
+ ) uit on (uit.bezId = b.bezId)
+ join tblHistorie ht on (ht.hisId = uit.hist)
+ join tblStal st on (st.stalId = h.stalId)
+ left join (
+	SELECT st.schaapId, h.datum
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 4
+ ) spn on (spn.schaapId = st.schaapId)
+ left join (
+	SELECT st.schaapId, h.datum
+	FROM tblStal st
+	 join tblHistorie h on (st.stalId = h.stalId)
+	WHERE h.actId = 3
+ ) prnt on (prnt.schaapId = st.schaapId)
+ left join (
+	SELECT p.hokId, max(p.dmafsluit) dmstop
+	FROM tblPeriode p
+	WHERE p.hokId = '".mysqli_real_escape_string($db,$Id)."' and p.doelId = 1 and dmafsluit is not null
+	GROUP BY p.hokId
+ ) endgeb on (endgeb.hokId = b.hokId)
+WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."'
+ and (isnull(ht.hisId) or ht.datum > coalesce(dmstop,'1973-09-11'))
+ and (isnull(spn.schaapId) or h.datum < spn.datum)
+ and (isnull(prnt.schaapId) or h.datum < prnt.datum)
+GROUP BY endgeb.dmstop
+") or die (mysqli_error($db));
+	while ($zda = mysqli_fetch_assoc($zoek_data_aantal_geb)) { 
+		$totat_geb = $zda['aant'];
+		$stopdm_geb = $zda['stopdm']; } 
+
+if(!isset($totat_geb)) {
+$totat_geb = 0;
+
+$zoek_laatste_afsluitdm_geb = mysqli_query($db,"
+SELECT date_format(max(p.dmafsluit),'%d-%m-%Y') stopdm
+FROM tblPeriode p
+WHERE p.hokId = '".mysqli_real_escape_string($db,$Id)."' and p.doelId = 1 and dmafsluit is not null
+") or die (mysqli_error($db));
+	while ($lag = mysqli_fetch_assoc($zoek_laatste_afsluitdm_geb)) { 
+		$stopdm_geb = $lag['stopdm']; } 
+}
+		if(!isset($stopdm_geb)) { $stopdm_geb = $startdm; }
+// Einde Doelgroep geboren
+// Doelgroep gespeend
+$zoek_data_aantal_spn = mysqli_query($db,"
+SELECT count(st.schaapId) aant, date_format(endspn.dmstop,'%d-%m-%Y') stopdm
+FROM tblBezet b
+ join tblHistorie h on (h.hisId = b.hisId)
+ join (
+	SELECT b.bezId, min(h2.hisId) hist
+   FROM tblBezet b
+    join tblHistorie h1 on (b.hisId = h1.hisId)
+    join tblActie a1 on (a1.actId = h1.actId)
+    join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
+    join tblActie a2 on (a2.actId = h2.actId)
+    join tblStal st on (h1.stalId = st.stalId)
+   WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+   GROUP BY b.bezId
+ ) uit on (uit.bezId = b.bezId)
+ join tblHistorie ht on (ht.hisId = uit.hist)
+ join tblStal st on (st.stalId = h.stalId)
+ join (
+	SELECT st.schaapId, h.datum
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 4
+ ) spn on (spn.schaapId = st.schaapId)
+ left join (
+	SELECT st.schaapId, h.datum
+	FROM tblStal st
+	 join tblHistorie h on (st.stalId = h.stalId)
+	WHERE h.actId = 3
+ ) prnt on (prnt.schaapId = st.schaapId)
+ left join (
+	SELECT p.hokId, max(p.dmafsluit) dmstop
+	FROM tblPeriode p
+	WHERE p.hokId = '".mysqli_real_escape_string($db,$Id)."' and p.doelId = 2 and dmafsluit is not null
+	GROUP BY p.hokId
+ ) endspn on (endspn.hokId = b.hokId)
+WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."'
+ and (isnull(ht.hisId) or ht.datum > coalesce(dmstop,'1973-09-11'))
+ and h.datum >= spn.datum
+ and (isnull(prnt.schaapId) or h.datum < prnt.datum)
+GROUP BY endspn.dmstop
+") or die (mysqli_error($db));
+	while ($zda = mysqli_fetch_assoc($zoek_data_aantal_spn)) { 
+		$totat_spn = $zda['aant'];
+		$stopdm_spn = $zda['stopdm']; } 
+
+if(!isset($totat_spn)) {
+$totat_spn = 0;
+
+$zoek_laatste_afsluitdm_spn = mysqli_query($db,"
+SELECT date_format(max(p.dmafsluit),'%d-%m-%Y') stopdm
+FROM tblPeriode p
+WHERE p.hokId = '".mysqli_real_escape_string($db,$Id)."' and p.doelId = 2 and dmafsluit is not null
+") or die (mysqli_error($db));
+	while ($las = mysqli_fetch_assoc($zoek_laatste_afsluitdm_spn)) { 
+		$stopdm_spn = $las['stopdm']; } 
+}
+		if(!isset($stopdm_spn)) { $stopdm_spn = $startdm; }
+// EindeDoelgroep gespeend
+// Doelgroep volwassen
+$zoek_data_aantal_prnt = mysqli_query($db,"
+SELECT count(st.schaapId) aant, date_format(endprnt.dmstop,'%d-%m-%Y') stopdm
+FROM tblBezet b
+ join tblHistorie h on (h.hisId = b.hisId)
+ join (
+	SELECT b.bezId, min(h2.hisId) hist
+   FROM tblBezet b
+    join tblHistorie h1 on (b.hisId = h1.hisId)
+    join tblActie a1 on (a1.actId = h1.actId)
+    join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
+    join tblActie a2 on (a2.actId = h2.actId)
+    join tblStal st on (h1.stalId = st.stalId)
+   WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+   GROUP BY b.bezId
+ ) uit on (uit.bezId = b.bezId)
+ join tblHistorie ht on (ht.hisId = uit.hist)
+ join tblStal st on (st.stalId = h.stalId)
+ join (
+	SELECT st.schaapId, h.datum
+	FROM tblStal st
+	 join tblHistorie h on (st.stalId = h.stalId)
+	WHERE h.actId = 3
+ ) prnt on (prnt.schaapId = st.schaapId)
+ left join (
+	SELECT p.hokId, max(p.dmafsluit) dmstop
+	FROM tblPeriode p
+	WHERE p.hokId = '".mysqli_real_escape_string($db,$Id)."' and p.doelId = 3 and dmafsluit is not null
+	GROUP BY p.hokId
+ ) endprnt on (endprnt.hokId = b.hokId)
+WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."'
+ and (isnull(ht.hisId) or ht.datum > coalesce(dmstop,'1973-09-11'))
+ and h.datum >= prnt.datum
+GROUP BY endprnt.dmstop
+") or die (mysqli_error($db));
+	while ($zda = mysqli_fetch_assoc($zoek_data_aantal_prnt)) { 
+		$totat_prnt = $zda['aant'];
+		$stopdm_prnt = $zda['stopdm']; } 
+
+if(!isset($totat_prnt)) {
+$totat_prnt = 0;
+
+$zoek_laatste_afsluitdm_prnt = mysqli_query($db,"
+SELECT date_format(max(p.dmafsluit),'%d-%m-%Y') stopdm
+FROM tblPeriode p
+WHERE p.hokId = '".mysqli_real_escape_string($db,$Id)."' and p.doelId = 3 and dmafsluit is not null
+") or die (mysqli_error($db));
+	while ($las = mysqli_fetch_assoc($zoek_laatste_afsluitdm_prnt)) { 
+		$stopdm_prnt = $las['stopdm']; } 
+}
+		if(!isset($stopdm_prnt)) { $stopdm_prnt = $startdm; }
+// Einde Doelgroep volwassen
+
+// ***** EINDE BEZETTING VANAF LAATSTE PERIODE ***** 
+
+// ***** ACTUELE BEZETTING ***** 
 $zoek_nu_in_verblijf_geb = mysqli_query($db,"
 SELECT count(b.bezId) aantin
 FROM tblBezet b
@@ -49,7 +233,7 @@ FROM tblBezet b
  join tblStal st on (st.stalId = h.stalId)
  left join 
  (
-	SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
+	SELECT b.bezId, min(h2.hisId) hist
 	FROM tblBezet b
 	 join tblHistorie h1 on (b.hisId = h1.hisId)
 	 join tblActie a1 on (a1.actId = h1.actId)
@@ -57,8 +241,8 @@ FROM tblBezet b
 	 join tblActie a2 on (a2.actId = h2.actId)
 	 join tblStal st on (h1.stalId = st.stalId)
 	WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-	GROUP BY b.bezId, h1.hisId
- ) uit on (uit.hisv = b.hisId)
+	GROUP BY b.bezId
+ ) uit on (uit.bezId = b.bezId)
  left join (
 	SELECT st.schaapId, h.datum
 	FROM tblStal st
@@ -86,7 +270,7 @@ FROM tblBezet b
  join tblStal st on (st.stalId = h.stalId)
  left join 
  (
-	SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
+	SELECT b.bezId, min(h2.hisId) hist
 	FROM tblBezet b
 	 join tblHistorie h1 on (b.hisId = h1.hisId)
 	 join tblActie a1 on (a1.actId = h1.actId)
@@ -94,8 +278,8 @@ FROM tblBezet b
 	 join tblActie a2 on (a2.actId = h2.actId)
 	 join tblStal st on (h1.stalId = st.stalId)
 	WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-	GROUP BY b.bezId, h1.hisId
- ) uit on (uit.hisv = b.hisId)
+	GROUP BY b.bezId
+ ) uit on (uit.bezId = b.bezId)
  join (
 	SELECT st.schaapId, h.datum
 	FROM tblStal st
@@ -132,15 +316,15 @@ FROM tblSchaap s
  join tblHistorie h on (h.hisId = hmax.hisId)
  join tblBezet b on (b.hisId = h.hisId)
  left join (
-	SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
+	SELECT b.bezId, min(h2.hisId) hist
 	FROM tblBezet b
 	 join tblHistorie h1 on (b.hisId = h1.hisId)
 	 join tblActie a1 on (a1.actId = h1.actId)
 	 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
 	 join tblActie a2 on (a2.actId = h2.actId)
 	WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
-	GROUP BY b.bezId, h1.hisId
- ) uit on (uit.hisv = h.hisId)
+	GROUP BY b.bezId
+ ) uit on (uit.bezId = b.bezId)
  join (
 	SELECT schaapId
 	FROM tblStal st
@@ -167,7 +351,7 @@ WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' and isnull(uit.bezId)
 if($aanwezig1 > 0) { ?>
 
 <tr height = 35 valign =bottom>
- <td colspan = 6><i style = "font-size : 15px;" >Aantal lammeren voor spenen :  &nbsp </i><b style = "font-size:15px;"><?php echo $aanwezig1;?> </b></td>
+ <td colspan = 6><i style = "font-size : 15px;" >Aantal lammeren voor spenen aanwezig :  &nbsp </i><b style = "font-size:15px;"><?php echo $aanwezig1;?> </b></td>
 </tr>
 <?php
 $hok_inhoud_geb = mysqli_query ($db,"
@@ -181,7 +365,7 @@ FROM tblBezet b
  left join tblSchaap mdr on (v.mdrId = mdr.schaapId)
  left join 
  (
-	SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
+	SELECT b.bezId, min(h2.hisId) hist
 	FROM tblBezet b
 	 join tblHistorie h1 on (b.hisId = h1.hisId)
 	 join tblActie a1 on (a1.actId = h1.actId)
@@ -189,8 +373,8 @@ FROM tblBezet b
 	 join tblActie a2 on (a2.actId = h2.actId)
 	 join tblStal st on (h1.stalId = st.stalId)
 	WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-	GROUP BY b.bezId, h1.hisId
- ) uit on (uit.hisv = b.hisId)
+	GROUP BY b.bezId
+ ) uit on (uit.bezId = b.bezId)
  left join (
 	SELECT st.schaapId, h.datum
 	FROM tblStal st
@@ -256,7 +440,7 @@ if($aanwezig2 > 0) {
 	if($aanwezig1 >0) { $height_spn = 50; } else { $height_spn = 35; } /* alleen eerste blok is 35 hoog anders 50*/ ?>
 
 <tr height = <?php echo $height_spn; ?> valign =bottom>
- <td colspan = 6><i style = "font-size : 15px;" >Aantal lammeren na spenen :  &nbsp </i><b style = "font-size:15px;"><?php echo $aanwezig2;?> </b></td>
+ <td colspan = 6><i style = "font-size : 15px;" >Aantal lammeren na spenen aanwezig :  &nbsp </i><b style = "font-size:15px;"><?php echo $aanwezig2;?> </b></td>
 </tr>
 <?php
 $hok_inhoud_spn = mysqli_query ($db,"
@@ -270,7 +454,7 @@ FROM tblBezet b
  left join tblSchaap mdr on (v.mdrId = mdr.schaapId)
  left join 
  (
-	SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
+	SELECT b.bezId, min(h2.hisId) hist
 	FROM tblBezet b
 	 join tblHistorie h1 on (b.hisId = h1.hisId)
 	 join tblActie a1 on (a1.actId = h1.actId)
@@ -278,8 +462,8 @@ FROM tblBezet b
 	 join tblActie a2 on (a2.actId = h2.actId)
 	 join tblStal st on (h1.stalId = st.stalId)
 	WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-	GROUP BY b.bezId, h1.hisId
- ) uit on (uit.hisv = b.hisId)
+	GROUP BY b.bezId
+ ) uit on (uit.bezId = b.bezId)
  left join (
 	SELECT st.schaapId, h.datum
 	FROM tblStal st
@@ -352,7 +536,7 @@ if($aanwezig3 > 0) {
 
 	if($aanwezig1 >0 || $aanwezig2 >0 ) { $height_prnt = 50; } else { $height_prnt = 35; } /* alleen eerste blok is 35 hoog anders 50*/ ?>
 <tr height = <?php echo $height_prnt; ?> valign =bottom>
- <td colspan = 6><i style = "font-size : 15px;" >Aantal volwassen schapen :  &nbsp </i><b style = "font-size:15px;"><?php echo $aanwezig3;?> </b></td>
+ <td colspan = 6><i style = "font-size : 15px;" >Aantal volwassen schapen aanwezig :  &nbsp </i><b style = "font-size:15px;"><?php echo $aanwezig3;?> </b></td>
 </tr>
 <?php
 $hok_inhoud_vanaf_aanwas = mysqli_query ($db,"
@@ -370,15 +554,15 @@ FROM tblSchaap s
  join tblHistorie h on (h.hisId = hmax.hisId)
  join tblBezet b on (b.hisId = h.hisId)
  left join (
-	SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
+	SELECT b.bezId, min(h2.hisId) hist
 	FROM tblBezet b
 	 join tblHistorie h1 on (b.hisId = h1.hisId)
 	 join tblActie a1 on (a1.actId = h1.actId)
 	 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
 	 join tblActie a2 on (a2.actId = h2.actId)
 	WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
-	GROUP BY b.bezId, h1.hisId
- ) uit on (uit.hisv = h.hisId)
+	GROUP BY b.bezId
+ ) uit on (uit.bezId = b.bezId)
  join (
 	SELECT schaapId, h.datum
 	FROM tblStal st
@@ -461,7 +645,7 @@ if($aanwezig1 == 0 && $aanwezig2 == 0 && $aanwezig3 == 0) { ?>
 <tr> <td height = 25></td>
 </tr>
 
-<?php } ?>
+<?php } // ***** EINDE ACTUELE BEZETTING ***** ?>
 </tr>				
 </table> </td><td>
 <table border = 0>
@@ -517,6 +701,28 @@ if ($aanwezig3 > 0) { $_SESSION["DT1"] = NULL; $_SESSION["BST"] = NULL; ?>
  </td>
 </tr>
 </table>
+</td>
+<td width="25"></td>
+<td>
+<table border="0">
+<tr>
+ <td style = "font-size : 12px;">
+<?php echo 'Bezetting van '.$hoknr.' in huidige periode <br> incl. verlaten<br><br>';
+?> <u><b> <?php echo 'Schapen voor spenen <br>'; ?> </b></u> <?php
+echo 'Totaal : '.$totat_geb.' in gezeten sinds start periode : '.$stopdm_geb.'<br><br>';
+echo 'Gemiddelde groei vorige periode(s) : '.$Id/10 .'kg <br>';
+echo 'Gemiddelde kg voer vorige periode(s) : '.$Id .'kg <br><br>';
+
+?> <u><b> <?php echo 'Schapen na spenen <br>'; ?> </b></u> <?php
+echo 'Totaal : '.$totat_spn.' in gezeten sinds start periode : '.$stopdm_spn.'<br><br>';
+
+?> <u><b> <?php echo 'Volwassen schapen <br>'; ?> </b></u> <?php
+echo 'Totaal : 33 in gezeten sinds start periode : '.$stopdm_prnt.'<br><br>';
+ ?>
+ </td>
+</tr>
+</table>
+
 </td></tr></table>
 	</TD>
 <?php Include "menu1.php"; } ?>
