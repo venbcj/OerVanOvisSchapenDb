@@ -16,6 +16,7 @@ $versie = '28-6-2020'; /* datum in verblijf van volwassen dieren toegevoegd zoda
 $versie = '8-2-2021'; /* $zoek_nu_in_verblijf_prnt herschreven i.v.m. dubbele records. Sql beveiligd met quotes */
 $versie = '4-6-2021'; /* Verblijf ook zichtbaar als enkel volwassen dieren in het verblijf hebben gezeten */
 $versie = '9-7-2021'; /* Schapen uit verblijf herzien. Join gewijzigd van h.hisId = uit.hisv naar b.bezId = uit.bezId */
+$versie = '4-8-2021'; /* Schapen die 0 dagen in verblijf zitten ook meegeteld. Zie bijv (h.datum = spn.datum && h.hisId >= spn.hisId) */
 
  session_start(); ?>
 <html>
@@ -262,7 +263,7 @@ FROM (
 	 join tblHistorie ht on (ht.hisId = uit.hist)
 	 join tblStal st on (st.stalId = h.stalId)
 	 left join (
-		SELECT st.schaapId, h.datum
+		SELECT h.hisId, st.schaapId, h.datum
 		FROM tblStal st
 		 join tblHistorie h on (st.stalId = h.stalId)
 		WHERE h.actId = 4
@@ -281,7 +282,9 @@ FROM (
 		GROUP BY p.hokId
 	 ) endgeb on (endgeb.hokId = b.hokId)
 	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ht.datum > coalesce(dmstop,'1973-09-11') 
-	 and ( isnull(spn.schaapId)  or (spn.datum  > coalesce(dmstop,'1973-09-11') and h.datum < spn.datum) ) 
+	 and ( isnull(spn.schaapId)  or (spn.datum  > coalesce(dmstop,'1973-09-11') and 
+	 		( h.datum < spn.datum || (h.datum = spn.datum && h.hisId < spn.hisId) ) )
+	 	 )
 	 and ( isnull(prnt.schaapId) or (prnt.datum > coalesce(dmstop,'1973-09-11') and h.datum < prnt.datum) )
 
 	UNION
@@ -337,7 +340,7 @@ FROM (
 	 join tblHistorie ht on (ht.hisId = uit.hist)
 	 join tblStal st on (st.stalId = h.stalId)
 	 join (
-		SELECT st.schaapId, h.datum
+		SELECT h.hisId, st.schaapId, h.datum
 		FROM tblStal st
 		 join tblHistorie h on (st.stalId = h.stalId)
 		WHERE h.actId = 4
@@ -356,7 +359,8 @@ FROM (
 		GROUP BY p.hokId
 	 ) endspn on (endspn.hokId = b.hokId)
 	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId /*9-1-2019 weggehaald and (isnull(prnt.schaapId) or prnt.datum > coalesce(dmstop,'1973-09-11')) */)."' and ht.datum > coalesce(dmstop,'1973-09-11') 
-	 and h.datum >= spn.datum and (isnull(prnt.schaapId) or h.datum < prnt.datum)
+	 and (h.datum > spn.datum || (h.datum = spn.datum && h.hisId >= spn.hisId) )
+	 and (isnull(prnt.schaapId) or h.datum < prnt.datum)
 	 
 
 	UNION
@@ -405,7 +409,7 @@ FROM (
 	 join tblHistorie ht on (ht.hisId = uit.hist)
 	 join tblStal st on (st.stalId = h.stalId)
 	 join (
-		SELECT st.schaapId, h.datum
+		SELECT h.hisId, st.schaapId, h.datum
 		FROM tblStal st
 		 join tblHistorie h on (st.stalId = h.stalId)
 		WHERE h.actId = 3
@@ -418,7 +422,7 @@ FROM (
 		GROUP BY p.hokId
 	 ) endspn on (endspn.hokId = b.hokId)
 	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ht.datum > coalesce(dmstop,'1973-09-11') 
-	 and h.datum >= prnt.datum
+	 and (h.datum > prnt.datum || (h.datum = prnt.datum && h.hisId >= prnt.hisId) )
 
  ) ingebr
  join tblHok h on (ingebr.hokId = h.hokId)
