@@ -6,7 +6,7 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $versie = '28-12-2018'; /* Controle toegevoegd. Definitieve melding mag niet als controlemelding terugkomen. Leeg maanden (indien alleen verwijderen bevat) niet tonen */
 $versie = '26-9-2020'; /* Omnummeren toegevoegd */
 $versie = '20-12-2020'; /* Menu gewijzigd */
-$versie = '21-8-2021'; /* and rs.melding = '$code' toegevoegd aan subquery lresp */
+$versie = '21-8-2021'; /* and rs.melding = '$code' toegevoegd aan subquery lresp. Wanneer een definitieve melding als controle melding terugkomt nu de tekst : Definitieve melding is teruggekomen als een controle melding ! Kijk op de portal van RVO wat te doen. */
 
  session_start(); ?>
 <html>
@@ -297,7 +297,7 @@ ORDER BY m.skip, if(isnull(m.fout),0,1), rq.dmmeld desc, right(s.levensnummer,$K
 		  $resptime = $row['resptime'];
 		  
   if ($skip_h == 1)								{ $bericht = 'Let op : Afvoer is hersteld na melden RVO.'; }
-  else if ($req_def == 'J' && $sucind == 'J' && $resp_def == 'N' && $resptime > $meldtime) { $bericht = 'Definitieve melding is teruggekomen als een controle melding !! Meld dit bij de beheerder'; }
+  else if ($req_def == 'J' && $sucind == 'J' && $resp_def == 'N' && $resptime > $meldtime) { $bericht = 'Definitieve melding is teruggekomen als een controle melding ! Kijk op de portal van RVO wat te doen.'; }
   else if ($meldnr) { $bericht = 'RVO meldt : Melding correct'; }
   else if ($sucind == 'J' && isset($foutmeld) && $gemeld == $meldtijd) { $bericht = 'RVO meldt : '. $foutmeld; }
   else if ($sucind == 'N' && isset($foutmeld))	{ $bericht = 'RVO meldt : '.$foutmeld; }
