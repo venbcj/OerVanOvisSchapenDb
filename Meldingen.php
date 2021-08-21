@@ -6,6 +6,7 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $versie = '28-12-2018'; /* Controle toegevoegd. Definitieve melding mag niet als controlemelding terugkomen. Leeg maanden (indien alleen verwijderen bevat) niet tonen */
 $versie = '26-9-2020'; /* Omnummeren toegevoegd */
 $versie = '20-12-2020'; /* Menu gewijzigd */
+$versie = '21-8-2021'; /* and rs.melding = '$code' toegevoegd aan subquery lresp */
 
  session_start(); ?>
 <html>
@@ -249,7 +250,7 @@ FROM tblRequest rq
 	 "join tblMelding m on (m.reqId = rs.reqId)
 	 join tblHistorie h on (m.hisId = h.hisId)
 	 join tblStal st on (st.stalId = h.stalId)
-	WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)."
+	WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and rs.melding = '$code'
 	GROUP BY rs.reqId, s.schaapId 
  ) lresp on (lresp.reqId = rq.reqId and lresp.schaapId = s.schaapId)
  left join impRespons lr on (lr.respId = lresp.respId)
