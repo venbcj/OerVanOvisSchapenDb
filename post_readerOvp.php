@@ -33,12 +33,16 @@ foreach($array as $recId => $id) {
 
   foreach($id as $key => $value) {
 
+  	if ($key == 'chbkies')   { $fldKies = $value; }
+  	if ($key == 'chbDel')   { $fldDel = $value; }
+
 	if ($key == 'txtOvpldag' ) { $dag = date_create($value); $valuedatum =  date_format($dag, 'Y-m-d'); 
 									/*echo $key.'='.$valuedatum.' ';*/ $fldDag = $valuedatum; }
 
 	if ($key == 'kzlHok' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldHok = $value; }
 
 									}
+
 
 // (extra) controle of readerregel reeds is verwerkt. Voor als de pagina 2x wordt verstuurd bij fouten op de pagina
 unset($verwerkt);
@@ -216,7 +220,7 @@ if($reader == 'Agrident') {
 else {
     $updateReader = "UPDATE impReader set verwerkt = 1 WHERE readId = '".mysqli_real_escape_string($db,$recId)."' " ;
 }
-	mysqli_query($db,$updateReader) or die (mysqli_error($db));
+/*echo $updateReader.'<br>';*/	mysqli_query($db,$updateReader) or die (mysqli_error($db));
 
     }
 
