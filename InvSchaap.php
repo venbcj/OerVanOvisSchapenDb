@@ -210,7 +210,6 @@ function verplicht() {
 var levnr = document.getElementById("levnr"); 		var levnr_v = levnr.value;
 var fase  = document.getElementById("fase");		var fase_v = fase.value;
 var sekse = document.getElementById("sekse");		var sekse_v = sekse.value;
-var ras   = document.getElementById("ras");			var ras_v = ras.value;
 var gebdm = document.getElementById("datepicker1");	var gebdm_v = gebdm.value;
 var gewicht = document.getElementById("gewicht");	if(gewicht) { var gewicht_v = gewicht.value; } // bij modtech bestaat variable gewicht niet. Daardoor werkt deze functie niet.
 var verblijf = document.getElementById("verblijf");	if(verblijf) { var verblijf_v = verblijf.value; } // bij modtech bestaat variable verblijf niet. Daardoor werkt deze functie niet.
