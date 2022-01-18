@@ -1,6 +1,8 @@
 <?php $versie = '19-10-2016';
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '11-7-2020'; /* € gewijzigd in &euro; */
+$versie = '17-1-2022'; /* Btw 0% toegevoegd */
+
 session_start(); ?>  
 <html>
 <head>
