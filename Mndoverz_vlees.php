@@ -209,12 +209,12 @@ FROM (
 	SELECT p.periId, nutat/sum(dgn) kgDag
 	FROM (
 
-		SELECT p.periId, p.hokId, date_format(dmcreate,'%Y-%m-01') pStart, min(p.dmafsluit) pEind
+		SELECT p.periId, p.hokId, date_format(p.dmcreate,'%Y-%m-01') pStart, min(p.dmafsluit) pEind
 		FROM tblPeriode p
 		 join tblHok ho on (p.hokId = ho.hokId)
 		 join tblLeden l on (ho.lidId = l.lidId)
 		WHERE doelId = 2 and l.lidId = ".mysqli_real_escape_string($db,$lidId)."
-		GROUP BY p.periId, p.hokId, date_format(dmcreate,'%Y-%m-01')
+		GROUP BY p.periId, p.hokId, date_format(p.dmcreate,'%Y-%m-01')
 		union
 
 		SELECT p2.periId, p2.hokId, max(p1.dmafsluit) pStart, p2.dmafsluit pEind
@@ -276,7 +276,7 @@ FROM (
 	SELECT p.periId, date_format(spn.datum,'%Y%m') jaarmaand, sum(s.dgn) dgn
 	FROM (
 
-		SELECT p.periId, p.hokId, date_format(dmcreate,'%Y-%m-01') pStart, min(p.dmafsluit) pEind
+		SELECT p.periId, p.hokId, date_format(p.dmcreate,'%Y-%m-01') pStart, min(p.dmafsluit) pEind
 		FROM tblPeriode p
 		 join tblHok ho on (p.hokId = ho.hokId)
 		 join tblLeden l on (ho.lidId = l.lidId)

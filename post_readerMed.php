@@ -3,7 +3,9 @@
 Toegepast in : InsMedicijn.php 
 15-11-2020 : onderscheid gemaakt tussen reader Agrident en Biocontrol 
 24-1-2021 : Sql beveiligd met quotes. Transponder nummer opslaan in tblSchaap als deze nog niet bestaat Verschil tussen kiezen of verwijderen herschreven 31-1 $schaapId gewijzigd naar $schaapId_db 
-8-5-2021 : isset($verwerkt) toegevoegd om dubbele invoer te voorkomen -->
+8-5-2021 : isset($verwerkt) toegevoegd om dubbele invoer te voorkomen 
+25-6-20221 Bij $zoek_totale_voorraad GROUP BY inkId toegevoegd 
+22-9-2021 : Functie inlezen_pil toegevoegd -->
 
 <?php
 // include "url.php"; Zit al in InsMedicijn.php
@@ -34,13 +36,13 @@ foreach($array as $recId => $id) {
   	if ($key == 'chbDel') 	{ $fldDel = $value; }
 
 	if ($key == 'txtDatum' && !empty($value)) { $dag = date_create($value); $valuedatum =  date_format($dag, 'Y-m-d'); 
-									/*echo $key.'='.$valuedatum.' ';*/ $flddag = $valuedatum; }
+									/*echo $key.'='.$valuedatum.' ';*/ $fldDay = $valuedatum; }
 	
-	if ($key == 'kzlPil' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldinkId = $value; }
-	if ($key == 'txtAantal' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldAantal = $value; }
+	if ($key == 'kzlPil' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldArtId = $value; }
+	if ($key == 'txtAantal' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldToedat = $value; }
 
-	if ($key == 'kzlReden' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldreden = $value; }
-	 //else if ($key == 'kzlReden' && empty($value)) { /*echo $key.'='.$value.' ';*/ $fldreden = ''; }
+	if ($key == 'kzlReden' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldReden = $value; }
+	 //else if ($key == 'kzlReden' && empty($value)) { /*echo $key.'='.$value.' ';*/ $fldReden = ''; }
 	 
 									}
 // Transponder nummer inlezen als deze nog niet bestaat in tblSchaap
@@ -95,7 +97,7 @@ while($verw = mysqli_fetch_array($zoek_readerRegel_verwerkt))
 if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt)) { // isset($verwerkt) is een extra controle om dubbele invoer te voorkomen
 
 // CONTROLE op alle verplichten velden bij medicatie
-if (isset($flddag) && isset($fldAantal) && isset($fldinkId))
+if (isset($fldDay) && isset($fldToedat) && isset($fldArtId))
 {
 
 if($reader == 'Agrident') {	
@@ -121,6 +123,7 @@ WHERE rd.readId = '".mysqli_real_escape_string($db,$recId)."'
 
 /* CONTROLE */
 // Controle op afvoerdatum
+unset($dmafv);
 $zoek_afvoerdatum = mysqli_query($db,"
 SELECT h.datum date, date_format(h.datum,'%d-%m-%Y') datum
 FROM tblHistorie h
@@ -132,7 +135,7 @@ WHERE h.stalId = '".mysqli_real_escape_string($db,$stalId)."' and a.af = 1
 
 
 
-if(isset($dmafv) && $dmafv <= $flddag) {
+if(isset($dmafv) && $dmafv <= $fldDay) {
 $zoek_levensnummer = mysqli_query($db,"
 SELECT s.levensnummer
 FROM tblSchaap s
@@ -150,100 +153,33 @@ WHERE st.stalId = '".mysqli_real_escape_string($db,$stalId)."'
 
 else
 { /* INVOEREN */ 
-$zoek_artikel = mysqli_query($db,"
-SELECT a.artId, a.naam, a.stdat
+$zoek_artikel_gegevens = mysqli_query($db,"
+SELECT a.naam, a.stdat
 FROM tblArtikel a
- join tblInkoop i on (a.artId = i.artId)
-WHERE i.inkId = '".mysqli_real_escape_string($db,$fldinkId)."'
+WHERE artId = '".mysqli_real_escape_string($db,$fldArtId)."'
 ") or die (mysqli_error($db));
-	while( $std = mysqli_fetch_assoc($zoek_artikel)) { $artId = $std['artId']; $naam = $std['naam']; $stdat = $std['stdat']; }
+	while( $std = mysqli_fetch_assoc($zoek_artikel_gegevens)) { $naam = $std['naam']; $stdat = $std['stdat']; }
 
-$hoeveel = $fldAantal*$stdat;
+$toedtotal = $fldToedat*$stdat;
 
 
-$zoek_inkIds_met_voorraad = mysqli_query($db,"
-SELECT sum(vrdat) vrdat,stdat
-FROM (
-	SELECT i.inkat - sum(coalesce(n.nutat,0)) vrdat, a.stdat
-	FROM tblArtikel a
-	 join tblInkoop i on (a.artId = i.artId)
-	 left join (
-	 	SELECT inkId, sum(nutat*stdat) nutat
-	 	FROM tblNuttig 
-	 ) n on (i.inkId = n.inkId)
-	WHERE i.artId = '".mysqli_real_escape_string($db,$artId)."'
-	GROUP BY i.inkat, a.stdat
- ) a
-GROUP BY stdat
-") or die (mysqli_error($db));
-	while ($check = mysqli_fetch_assoc($zoek_inkIds_met_voorraad)) { $tot_vrd = $check['vrdat']; }
-
-	
-$zoek_voorraad_laatste_ink = mysqli_query ($db,"
-SELECT i.inkat - sum(coalesce(n.nutat*n.stdat,0)) vrdat, a.stdat
+$zoek_totale_voorraad = mysqli_query($db,"
+SELECT sum(i.inkat) - sum(coalesce(n.nutat,0)) vrdat
 FROM tblInkoop i
- join tblArtikel a on (a.artId = i.artId)
- left join tblNuttig n on (i.inkId = n.inkId)
-WHERE i.inkId = '".mysqli_real_escape_string($db,$fldinkId)."'
-GROUP BY i.inkat, a.stdat
+ left join (
+ 	SELECT inkId, sum(nutat*stdat) nutat
+ 	FROM tblNuttig 
+ 	GROUP BY inkId
+ ) n on (i.inkId = n.inkId)
+WHERE i.artId = '".mysqli_real_escape_string($db,$fldArtId)."'
 ") or die (mysqli_error($db));
-	while ($i_vrd = mysqli_fetch_assoc($zoek_voorraad_laatste_ink)) { $ink_vrd = $i_vrd['vrdat']; }
+	while ($check = mysqli_fetch_assoc($zoek_totale_voorraad)) { $tot_vrd = $check['vrdat']; }
 
+if ($tot_vrd < $toedtotal)	{$fout = "De voorraad van ".$naam." is niet toereikend";}
 
-if ($tot_vrd < $hoeveel)	{$fout = "De voorraad van ".$naam." is niet toereikend";}
-else if($ink_vrd < $hoeveel)	{ // Als de voorraad van de inkoophoeveelheid niet toereikend is
-	$rest_vrd = $ink_vrd; $new_vrd = $hoeveel-$ink_vrd;
-	$hoev1 = $rest_vrd/$stdat ;
-	$hoev2 = $new_vrd/$stdat ;
-
-/* Restant inlezen */
-$insert_tblHistorie = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$flddag)."', actId = 8 ";
-/*echo $insert_tblHistorie.'<br>';*/		mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
-
-$zoek_hisId = mysqli_query ($db,"
-SELECT max(hisId) hisId
-FROM tblHistorie
-WHERE actId = 8 and stalId = '".mysqli_real_escape_string($db,$stalId)."'
-") or die (mysqli_error($db));
-	while ($hi = mysqli_fetch_assoc($zoek_hisId)) { $hisId1 = $hi['hisId']; }
-
-$insertNuttig_rest = "INSERT INTO tblNuttig SET hisId = '".mysqli_real_escape_string($db,$hisId1)."', inkId = '".mysqli_real_escape_string($db,$fldinkId)."', nutat = '".mysqli_real_escape_string($db,$hoev1)."', stdat = '".mysqli_real_escape_string($db,$stdat)."', reduId = " . db_null_input($fldreden);	
-/*echo $insertNuttig_rest.'<br>';*/		mysqli_query($db,$insertNuttig_rest) or die (mysqli_error($db));
-/* Einde Restant inlezen */
-
-/* Eerst volgende aankoop aanspreken */
-$zoek_inkId2 = mysqli_query ($db,"
-SELECT min(inkId) inkId
-FROM tblInkoop
-WHERE artId = '".mysqli_real_escape_string($db,$artId)."' and inkId > '".mysqli_real_escape_string($db,$fldinkId)."'
-") or die (mysqli_error($db));
-	while ($ink = mysqli_fetch_assoc($zoek_inkId2)) { $inkId2 = $ink['inkId']; }
-	
-$insert_tblHistorie = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$flddag)."', actId = 8 ";
-/*echo $insert_tblHistorie.'<br>';*/		mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
-
-$zoek_hisId = mysqli_query ($db,"
-SELECT max(hisId) hisId
-FROM tblHistorie
-WHERE actId = 8 and stalId = '".mysqli_real_escape_string($db,$stalId)."'
-") or die (mysqli_error($db));
-	while ($hi = mysqli_fetch_assoc($zoek_hisId)) { $hisId2 = $hi['hisId']; }
-	
-	$insertNuttig_new = "INSERT INTO tblNuttig SET hisId = '".mysqli_real_escape_string($db,$hisId2)."', inkId = '".mysqli_real_escape_string($db,$inkId2)."', nutat = '".mysqli_real_escape_string($db,$hoev2)."', stdat = '".mysqli_real_escape_string($db,$stdat)."', reduId = " . db_null_input($fldreden);	
-/*echo $insertNuttig_new.'<br>';*/		mysqli_query($db,$insertNuttig_new) or die (mysqli_error($db));
-/* Einde Eerst volgende aankoop aanspreken */
-
-if($reader == 'Agrident')  {
-    $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' " ;
-	 }
-else { 
-	$updateReader = "UPDATE impReader SET verwerkt = 1 WHERE readId = '".mysqli_real_escape_string($db,$recId)."' " ;
-	 }
-	 
-} // Einde Als de voorraad van de inkoophoeveelheid niet toereikend is
 else {
 
-$insert_tblHistorie = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$flddag)."', actId = 8 ";
+$insert_tblHistorie = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$fldDay)."', actId = 8 ";
 /*echo $insert_tblHistorie.'<br>';*/		mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
 
 $zoek_hisId = mysqli_query ($db,"
@@ -253,11 +189,8 @@ WHERE actId = 8 and stalId = '".mysqli_real_escape_string($db,$stalId)."'
 ") or die (mysqli_error($db));
 	while ($hi = mysqli_fetch_assoc($zoek_hisId)) { $hisId = $hi['hisId']; }
 
-$hoev = $hoeveel/$stdat; 
-	$insert_tblNuttig = "INSERT INTO tblNuttig SET hisId = '".mysqli_real_escape_string($db,$hisId)."', inkId = '".mysqli_real_escape_string($db,$fldinkId)."', nutat = '".mysqli_real_escape_string($db,$hoev)."', stdat = '".mysqli_real_escape_string($db,$stdat)."', reduId = " . db_null_input($fldreden);
-/*echo $insert_tblNuttig.'<br>';*/		mysqli_query($db,$insert_tblNuttig) or die (mysqli_error($db));	
+inlezen_pil($db, $hisId, $fldArtId, $fldToedat, $fldDay, $fldReden);
 
-		
 if($reader == 'Agrident')  {
     $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' " ;
 	 }
@@ -265,9 +198,8 @@ else {
 	$updateReader = "UPDATE impReader SET verwerkt = 1 WHERE readId = '".mysqli_real_escape_string($db,$recId)."' " ;
 	 }
 
-	}	
+/*echo $updateReader.'<br>';*/	mysqli_query($db,$updateReader) or die (mysqli_error($db));
 
-	if(isset($updateReader)) { /*echo $updateReader.'<br>';*/	mysqli_query($db,$updateReader) or die (mysqli_error($db));  
 }
 
 
@@ -275,7 +207,7 @@ else {
 
 } // CONTROLE op alle verplichten velden bij medicatie
 
-} // Einde if ($fldKies == 1 && $fldDel == 0)
+} // Einde if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt))
 
 if ($fldKies == 0 && $fldDel == 1) {
 
@@ -291,7 +223,7 @@ if ($fldKies == 0 && $fldDel == 1) {
 
 
 //echo '<br>'.'einde '.$recId.'<br>';
-unset($dmafv);
+
 	}
 
 ?>

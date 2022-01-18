@@ -29,39 +29,69 @@ Include "login.php";
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 //include "vw_Voorraad.php"; // incl. $vw_Voorraden t.b.v. save_voer.php
 
+$qryKeuzelijstVoer = "
+SELECT i.artId, a.naam, a.stdat, e.eenheid, sum(i.inkat-coalesce(v.vbrat,0)) vrdat
+FROM tblEenheid e
+ join tblEenheiduser eu on (e.eenhId = eu.eenhId)
+ join tblInkoop i on (i.enhuId = eu.enhuId)
+ join tblArtikel a on (i.artId = a.artId)
+ left join (
+   SELECT v.inkId, sum(v.nutat*v.stdat) vbrat
+   FROM tblVoeding v
+    join tblInkoop i on (v.inkId = i.inkId)
+     join tblEenheiduser eu on (i.enhuId = eu.enhuId)
+    WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+   GROUP BY v.inkId
+ ) v on (i.inkId = v.inkId)
+WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and i.inkat-coalesce(v.vbrat,0) > 0 and a.soort = 'voer'
+GROUP BY a.naam, a.stdat, e.eenheid
+ORDER BY a.naam";
+
 if (empty ($_GET['pstId'])) { $Id = $_POST['txtId']; } // Id = hokId
 else { $Id = $_GET['pstId']; }
 
 
 if (isset($_POST['knpSave1'])) { 
-	if(!empty($_POST['txtSluitdm1']) )  { $sluitdm1 = $_POST['txtSluitdm1']; $date = date_create("$sluitdm1");	$dmsluit = date_format($date,'Y-m-d'); 
-		$sluitdm = $_POST['txtSluitdm1']; /*t.b.v. save_afsluiten.php*/ } 
-	else { $fout = "Afsluitdatum is niet bekend"; }
 	if(!empty($_POST['txtKg1'])) 		{ $txtKg = $_POST['txtKg1']; }
-	if(!empty($_POST['kzlArtikel1']))	{ $fldInk = $_POST['kzlArtikel1']; }
+	if(!empty($_POST['kzlArtikel1']))	{ $fldArt = $_POST['kzlArtikel1']; }
 	$doelId = 1;
 
-	Include "save_afsluiten.php"; }
+	if(!empty($_POST['txtSluitdm1']) )  { $sluitdm1 = $_POST['txtSluitdm1']; $date = date_create("$sluitdm1");	$dmsluit = date_format($date,'Y-m-d'); 
+		
+		$sluitdm = $_POST['txtSluitdm1']; /*t.b.v. save_afsluiten.php*/ 
+		Include "save_afsluiten.php"; 
+	}
+	else { $fout = "Afsluitdatum is niet bekend";
+	}
+	}
 
-if (isset($_POST['knpSave2'])) { 
-	if(!empty($_POST['txtSluitdm2']) )  { $sluitdm2 = $_POST['txtSluitdm2']; $date = date_create("$sluitdm2");	$dmsluit = date_format($date,'Y-m-d'); 
-		$sluitdm = $_POST['txtSluitdm2']; /*t.b.v. save_afsluiten.php*/ } 
-	else { $fout = "Afsluitdatum is niet bekend"; }
+if (isset($_POST['knpSave2'])) {
 	if(!empty($_POST['txtKg2'])) 		{ $txtKg = $_POST['txtKg2']; }
-	if(!empty($_POST['kzlArtikel2']))	{ $fldInk = $_POST['kzlArtikel2']; }
+	if(!empty($_POST['kzlArtikel2']))	{ $fldArt = $_POST['kzlArtikel2']; }
 	$doelId = 2;
 
-	Include "save_afsluiten.php"; }
+	if(!empty($_POST['txtSluitdm2']) )  { $sluitdm2 = $_POST['txtSluitdm2']; $date = date_create("$sluitdm2");	$dmsluit = date_format($date,'Y-m-d'); 
 
-if (isset($_POST['knpSave3'])) { 
-	if(!empty($_POST['txtSluitdm3']) )  { $sluitdm3 = $_POST['txtSluitdm3']; $date = date_create("$sluitdm3");	$dmsluit = date_format($date,'Y-m-d'); 
-		$sluitdm = $_POST['txtSluitdm3']; /*t.b.v. save_afsluiten.php*/ }
-	else { $fout = "Afsluitdatum is niet bekend"; }
+		$sluitdm = $_POST['txtSluitdm2']; /*t.b.v. save_afsluiten.php*/ 
+		Include "save_afsluiten.php"; 
+	} 
+	else { $fout = "Afsluitdatum is niet bekend"; 
+	}
+	}
+
+if (isset($_POST['knpSave3'])) {
 	if(!empty($_POST['txtKg3'])) 		{ $txtKg = $_POST['txtKg3']; }
-	if(!empty($_POST['kzlArtikel3']))	{ $fldInk = $_POST['kzlArtikel3']; }
+	if(!empty($_POST['kzlArtikel3']))	{ $fldArt = $_POST['kzlArtikel3']; }
 	$doelId = 3;
 
-	Include "save_afsluiten.php"; } ?>
+	if(!empty($_POST['txtSluitdm3']) )  { $sluitdm3 = $_POST['txtSluitdm3']; $date = date_create("$sluitdm3");	$dmsluit = date_format($date,'Y-m-d');
+
+		$sluitdm = $_POST['txtSluitdm3']; /*t.b.v. save_afsluiten.php*/
+		Include "save_afsluiten.php";
+	}
+	else { $fout = "Afsluitdatum is niet bekend";
+	}
+	} ?>
 
 <form action= <?php echo "HokAfsluiten.php"; ?> method="post">
 	<table border = 0> <!-- table1 -->
@@ -171,35 +201,18 @@ Hoeveelheid voer </td><td valign = 'top'><input type ="text" name = "txtKg1" siz
 <?php
 
 //kzl voer
-$queryStock = mysqli_query($db,"
-SELECT min(i.inkId) inkId, a.naam, a.stdat, e.eenheid, sum(i.inkat-coalesce(v.vbrat,0)) vrdat
-FROM tblEenheid e
- join tblEenheiduser eu on (e.eenhId = eu.eenhId)
- join tblInkoop i on (i.enhuId = eu.enhuId)
- join tblArtikel a on (i.artId = a.artId)
- left join (
-	SELECT v.inkId, sum(v.nutat*v.stdat) vbrat
-	FROM tblVoeding v
-	 join tblPeriode p on (p.periId = v.periId)
-	 join tblHok ho on (ho.hokId = p.hokId)
-	WHERE ho.lidId = ".mysqli_real_escape_string($db,$lidId)."
-	GROUP BY v.inkId
- ) v on (i.inkId = v.inkId)
-WHERE eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and i.inkat-coalesce(v.vbrat,0) > 0 and a.soort = 'voer'
-GROUP BY a.naam, a.stdat, e.eenheid
-ORDER BY a.naam
-") or die (mysqli_error($db));
+$qryVoer = mysqli_query($db,$qryKeuzelijstVoer) or die (mysqli_error($db));
 $name = 'kzlArtikel1';
 $width= 250 ;
 ?>
 <select name=<?php echo"$name";?> style="width:<? echo "$width";?>;\" >";
  <option></option>
-<?php		while($row = mysqli_fetch_array($queryStock))
+<?php		while($row = mysqli_fetch_array($qryVoer))
 		{
 $vrd = str_replace('.00', '', $row[vrdat]);
 $stdrd = str_replace('.00', '', $row[stdat]);
 		
-$kzlkey="$row[inkId]";
+$kzlkey="$row[artId]";
 $kzlvalue="$row[naam] &nbsp per $stdrd $row[eenheid] &nbsp ($vrd $row[eenheid])";
 
 include "kzl.php";
@@ -327,35 +340,18 @@ Hoeveelheid voer </td><td valign = 'top'><input type ="text" name = "txtKg2" siz
 <?php
 
 //kzl voer
-$queryStock = mysqli_query($db,"
-SELECT min(i.inkId) inkId, a.naam, a.stdat, e.eenheid, sum(i.inkat-coalesce(v.vbrat,0)) vrdat
-FROM tblEenheid e
- join tblEenheiduser eu on (e.eenhId = eu.eenhId)
- join tblInkoop i on (i.enhuId = eu.enhuId)
- join tblArtikel a on (i.artId = a.artId)
- left join (
-	SELECT v.inkId, sum(v.nutat*v.stdat) vbrat
-	FROM tblVoeding v
-	 join tblPeriode p on (p.periId = v.periId)
-	 join tblHok ho on (ho.hokId = p.hokId)
-	WHERE ho.lidId = ".mysqli_real_escape_string($db,$lidId)."
-	GROUP BY v.inkId
- ) v on (i.inkId = v.inkId)
-WHERE eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and i.inkat-coalesce(v.vbrat,0) > 0 and a.soort = 'voer'
-GROUP BY a.naam, a.stdat, e.eenheid
-ORDER BY a.naam
-") or die (mysqli_error($db));
+$qryVoer = mysqli_query($db,$qryKeuzelijstVoer) or die (mysqli_error($db));
 $name = 'kzlArtikel2';
 $width= 250 ;
 ?>
 <select name=<?php echo"$name";?> style="width:<? echo "$width";?>;\" >";
  <option></option>
-<?php		while($row = mysqli_fetch_array($queryStock))
+<?php		while($row = mysqli_fetch_array($qryVoer))
 		{
 $vrd = str_replace('.00', '', $row[vrdat]);
 $stdrd = str_replace('.00', '', $row[stdat]);
 		
-$kzlkey="$row[inkId]";
+$kzlkey="$row[artId]";
 $kzlvalue="$row[naam] &nbsp per $stdrd $row[eenheid] &nbsp ($vrd $row[eenheid])";
 
 include "kzl.php";
@@ -474,35 +470,18 @@ Hoeveelheid voer </td><td valign = 'top'><input type ="text" name = "txtKg3" siz
 <?php
 
 //kzl voer
-$queryStock = mysqli_query($db,"
-SELECT min(i.inkId) inkId, a.naam, a.stdat, e.eenheid, sum(i.inkat-coalesce(v.vbrat,0)) vrdat
-FROM tblEenheid e
- join tblEenheiduser eu on (e.eenhId = eu.eenhId)
- join tblInkoop i on (i.enhuId = eu.enhuId)
- join tblArtikel a on (i.artId = a.artId)
- left join (
-	SELECT v.inkId, sum(v.nutat*v.stdat) vbrat
-	FROM tblVoeding v
-	 join tblPeriode p on (p.periId = v.periId)
-	 join tblHok ho on (ho.hokId = p.hokId)
-	WHERE ho.lidId = ".mysqli_real_escape_string($db,$lidId)."
-	GROUP BY v.inkId
- ) v on (i.inkId = v.inkId)
-WHERE eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and i.inkat-coalesce(v.vbrat,0) > 0 and a.soort = 'voer'
-GROUP BY a.naam, a.stdat, e.eenheid
-ORDER BY a.naam
-") or die (mysqli_error($db));
+$qryVoer = mysqli_query($db,$qryKeuzelijstVoer) or die (mysqli_error($db));
 $name = 'kzlArtikel3';
 $width= 250 ;
 ?>
 <select name=<?php echo"$name";?> style="width:<? echo "$width";?>;\" >";
  <option></option>
-<?php		while($row = mysqli_fetch_array($queryStock))
+<?php		while($row = mysqli_fetch_array($qryVoer))
 		{
 $vrd = str_replace('.00', '', $row[vrdat]);
 $stdrd = str_replace('.00', '', $row[stdat]);
 		
-$kzlkey="$row[inkId]";
+$kzlkey="$row[artId]";
 $kzlvalue="$row[naam] &nbsp per $stdrd $row[eenheid] &nbsp ($vrd $row[eenheid])";
 
 include "kzl.php";

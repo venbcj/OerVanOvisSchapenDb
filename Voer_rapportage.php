@@ -229,7 +229,7 @@ GROUP BY month(p.dmafsluit), date_format(p.dmafsluit,'%Y')
 ORDER BY jaar desc, month(p.dmafsluit) desc
 ";
 
-echo $maandjaren.'<br>';
+//echo $maandjaren.'<br>';
 $maandjaren = mysqli_query($db,$maandjaren) or die (mysqli_error($db));
   while ($rij = mysqli_fetch_assoc($maandjaren))
 		{  // START LOOP maandnaam jaartal

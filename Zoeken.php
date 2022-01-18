@@ -923,7 +923,7 @@ UNION
 Select hisId1 hisId, mdr.levensnummer, mdr.geslacht, date_format(mdr.worp1,'%d-%m-%Y') datum, mdr.worp1 date, NULL actId, 'Eerste worp' actie, 'worp' actie_if, NULL kg, mdr.dmaanw, concat(lam.lmrn) toel, NULL hiscom, NULL comment
 From
  (
-	SELECT s.levensnummer, s.geslacht, ouder.datum dmaanw, min(hl.datum) worp1, min(hisId) hisId1
+	SELECT s.levensnummer, s.geslacht, ouder.datum dmaanw, min(hl.datum) worp1, min(hl.hisId) hisId1
 	From tblStal st
 	 join tblSchaap s on (s.schaapId = st.schaapId)
 	 join tblVolwas v on (v.mdrId = s.schaapId)

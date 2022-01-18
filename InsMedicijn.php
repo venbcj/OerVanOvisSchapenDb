@@ -11,7 +11,9 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $versie = '20-1-2019'; /* alles aan- en uitzetten met javascript */
 $versie = '24-4-2020'; /* url Javascript libary aangepast */
 $versie = '14-11-2020'; /* Onderschied gemaakt tussen reader Agrident en Biocontrol */
-$versie = '15-1-2021'; /* Toedien aantal uit tabel impAgrident gehaald */
+$versie = '15-01-2021'; /* Toedien aantal uit tabel impAgrident gehaald */
+$versie = '07-09-2021'; /* In query's $zoek_afvoerdatum en $zoek_fase h.skip = 0 in where clause toegevoegd */
+$versie = '22-09-2021'; /* func_artikelnuttigen.php toegevoegd */
 
  session_start(); ?>
 <html>
@@ -31,6 +33,8 @@ Include "header.php"; ?>
 $file = "InsMedicijn.php";
 Include "login.php"; 
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
+
+include "func_artikelnuttigen.php";
 
 If (isset ($_POST['knpInsert_'])) {
 	//Include "url.php"; Zit al in header.php 
@@ -171,8 +175,8 @@ $date  = date('Y-m-d', strtotime($dm));
 	$levnr = $array['levnr'];
 	$scan = $array['scan']; # het scannummer uit het veld reden_pil in tabel impReader
 	$schaapId = $array['schaapId']; 
-	$inkId = $array['inkId']; #InkId uit vw_Voorraad indien voorradig anders uit tblInkoop
-	$artId = $array['artId']; #Artikel uit impAgrident of uit tblCombiReden
+	//$inkId = $array['inkId']; #InkId uit vw_Voorraad indien voorradig anders uit tblInkoop
+	$artId_rd = $array['artId']; #Artikel uit impAgrident of uit tblCombiReden
 	$aantal = $array['toedat']; #Toedien aantal uit impAgrident
 	$stdat = $array['stdat']; #stdat aantal uit tblCombiReden
 	$eenheid = $array['eenheid']; 
@@ -181,6 +185,7 @@ $date  = date('Y-m-d', strtotime($dm));
 	$r_act = $array['r_act'];
 	$vrrd = $array['vrdat'];
 
+	$kzlArt = $artId_rd;
 	$kzlRedu = $reduId;
 	
 if(isset($schaapId)) {
@@ -198,7 +203,7 @@ FROM tblSchaap s
 	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
 	 join tblActie a on (a.actId = h.actId)
-	WHERE a.af = 1 and lidId = '".mysqli_real_escape_string($db,$lidId)."' and schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+	WHERE a.af = 1 and lidId = '".mysqli_real_escape_string($db,$lidId)."' and schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and h.skip = 0
  ) af on (af.stalId = mst.stalId)
  left join (
 	SELECT st.schaapId
@@ -230,7 +235,7 @@ $zoek_afvoerdatum = mysqli_query($db,"
 SELECT h.datum date, date_format(h.datum,'%d-%m-%Y') datum
 FROM tblHistorie h
  join tblActie a on (a.actId = h.actId)
-WHERE h.stalId = '".mysqli_real_escape_string($db,$stalId)."' and a.af = 1
+WHERE h.stalId = '".mysqli_real_escape_string($db,$stalId)."' and a.af = 1 and h.skip = 0
 ") or die (mysqli_error($db));
 	while( $afv = mysqli_fetch_assoc($zoek_afvoerdatum)) { $dmafv = $afv['date']; $afvdm = $afv['datum']; }
 // Einde Zoek op afvoerdatum ter controle op toedien datum
@@ -243,11 +248,11 @@ if (isset($_POST['knpVervers_'])) {
 	$dag = $_POST["txtDatum_$Id"];
 		$makedate = date_create($dag);
 		$date =  date_format($makedate, 'Y-m-d');
-	$inkId = $_POST["kzlPil_$Id"];
+	$kzlArt = $_POST["kzlPil_$Id"];
 	$aantal = $_POST["txtAantal_$Id"];
 	$reduId = $_POST["kzlReden_$Id"];
 	
-	if(empty($inkId)) {$vrrd = '';} else {
+	if(empty($kzlArt)) {$vrrd = '';} else {
 $zoek_voorraad = mysqli_query($db,"
 SELECT inkId, vrdat, actief v_actief 
 FROM (
@@ -292,7 +297,7 @@ FROM (
 	WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 	GROUP BY i.artId, vrd.vrdat, actief
 ) A
-WHERE inkId = '".mysqli_real_escape_string($db,$inkId)."'
+WHERE artId = '".mysqli_real_escape_string($db,$kzlArt)."'
 ") or die (mysqli_error($db));
 			while ($qry_st = mysqli_fetch_assoc($zoek_voorraad)) {
 	$vrrd = $qry_st['vrdat']; 
@@ -312,14 +317,14 @@ WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ru.reduId = '".
 
 
 // Als medicijn uit Reader niet wordt gevonden of medicijn wordt aangepast moet $stdat en $eenheid opnieuw gezocht worden.
-if (!empty($inkId)) {
+if (!empty($kzlArt)) {
 $qryPorties = mysqli_query($db,"
 SELECT a.stdat, e.eenheid
 FROM tblInkoop i
  join tblArtikel a on (i.artId = a.artId)
  join tblEenheiduser eu on (i.enhuId = eu.enhuId)
  join tblEenheid e on (e.eenhId = eu.eenhId)
-WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and i.inkId = '".mysqli_real_escape_string($db,$inkId)."'
+WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and i.artId = '".mysqli_real_escape_string($db,$kzlArt)."'
 ") or die (mysqli_error($db));
 	While ($por = mysqli_fetch_assoc($qryPorties))
 		{ $stdat = $por['stdat'];
@@ -330,7 +335,7 @@ WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and i.inkId = '".my
 	
 If	 ( empty($fase)   					|| /*levensnummer moet bestaan */	
 		empty($dag)						|| # of datum is leeg
-		empty($inkId) || $p_act <> 1	|| # medicijn bestaat niet in kezeuelijst of is niet actief
+		empty($kzlArt) || $p_act <> 1	|| # medicijn bestaat niet in kezeuelijst of is niet actief
 		empty($vrrd) || $vrrd == 0		|| # medcijn niet meer op voorraad
 		empty($aantal)					|| # aantal is leeg
 		empty($stdat)					|| # Standaard hoeveelheid is leeg
@@ -372,8 +377,8 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 
 <?php 
 // Declaratie MEDICIJN (De medicijnen uit voorraad)
-$min_inkId_met_vrd = mysqli_query($db," 
-SELECT min(i.inkId) inkId, a.naam, a.stdat, e.eenheid, sum(i.inkat-coalesce(n.vbrat,0)) vrdat
+$zoek_artId_op_voorraad = mysqli_query($db," 
+SELECT a.artId, a.naam, a.stdat, e.eenheid, sum(i.inkat-coalesce(n.vbrat,0)) vrdat
 FROM tblEenheid e
  join tblEenheiduser eu on (e.eenhId = eu.eenhId)
  join tblInkoop i on (i.enhuId = eu.enhuId)
@@ -384,16 +389,16 @@ FROM tblEenheid e
 	GROUP BY n.inkId
  ) n on (i.inkId = n.inkId)
 WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and i.inkat-coalesce(n.vbrat,0) > 0 and a.soort = 'pil'
-GROUP BY a.naam, a.stdat, e.eenheid
+GROUP BY a.artId, a.naam, a.stdat, e.eenheid
 ORDER BY a.naam
 ") or die (mysqli_error($db));
 
 $index = 0;
-while ($pil = mysqli_fetch_array($min_inkId_met_vrd))
+while ($pil = mysqli_fetch_array($zoek_artId_op_voorraad))
 {
-   $pilId[$index] = $pil['inkId'];
+   $pilId[$index] = $pil['artId'];
    $pilln[$index] = $pil['naam'];
-   $pilRaak[$index] = $pil['inkId'];
+   $pilRaak[$index] = $pil['artId'];
    $index++;
 }
 unset($index);
@@ -410,7 +415,7 @@ for ($i = 0; $i < $count; $i++){
 	$opties = array($pilId[$i]=>$pilln[$i]);
 			foreach($opties as $key => $waarde)
 			{
-  if ((!isset($_POST['knpVervers_']) && $inkId == $pilRaak[$i]) || (isset($_POST["kzlPil_$Id"]) && $_POST["kzlPil_$Id"] == $key)){
+  if ((!isset($_POST['knpVervers_']) && $artId_rd == $pilRaak[$i]) || (isset($_POST["kzlPil_$Id"]) && $_POST["kzlPil_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
@@ -426,10 +431,10 @@ for ($i = 0; $i < $count; $i++){
 
  <td align=center >
 <?php 
-if(!empty($inkId) || isset($_POST['knpVervers_'])) {echo $stdat;} ?>
+if(!empty($kzlArt) || isset($_POST['knpVervers_'])) {echo $stdat;} ?>
  </td>
  <td>
-<?php if(!empty($inkId) || isset($_POST['knpVervers_'])) { echo $eenheid; } ?>
+<?php if(!empty($kzlArt) || isset($_POST['knpVervers_'])) { echo $eenheid; } ?>
  </td>
 <?php 
 if(empty($reduId)) { $kzlRedu = 'NULL'; } else { $kzlRedu = $reduId; } /*echo '$kzlRedu = '.$kzlRedu;*/
@@ -505,13 +510,13 @@ for ($i = 0; $i < $count; $i++){
 
 
 // Kijken of artikel voorradig is
- if (isset($artId)){
+ if (isset($artId_rd)){
  //Bestaat artikel? 
  $zoek_artikel = mysqli_query($db,"
 SELECT artId, naam
 FROM tblArtikel a
  join tblEenheiduser eu on (a.enhuId = eu.enhuId)
-WHERE artId = '".mysqli_real_escape_string($db,$artId)."' and lidId = '".mysqli_real_escape_string($db,$lidId)."'
+WHERE artId = '".mysqli_real_escape_string($db,$artId_rd)."' and lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die (mysqli_error($db));
 	while( $art = mysqli_fetch_assoc($zoek_artikel)) { $medicijn = $art['artId']; $naam = $art['naam']; }
  //Bestaat artikel? 
@@ -537,7 +542,7 @@ WHERE artId = '".mysqli_real_escape_string($db,$artId)."' and lidId = '".mysqli_
  }
 // Einde Kijken of artikel voorradig is
  	if (isset($medicijn) && $pil_voorraad == 0 && !isset($_POST['knpVervers_'])){ ?> <center style = "color : red; font-size : 11px;"> <?php echo $naam. " is niet op voorraad."; }
-	else if (!empty($inkId) && $p_act <> 1) { ?> <center style = "color : red; font-size : 11px;"> <?php echo "Dit medicijn is niet meer beschikbaar."; }
+	else if (!empty($kzlArt) && $p_act <> 1) { ?> <center style = "color : red; font-size : 11px;"> <?php echo "Dit medicijn is niet meer beschikbaar."; }
 	else if (isset($reduId) && $r_act <> 1) { ?> <center style = "color : red; font-size : 11px;"> <?php echo "Deze reden is niet meer beschikbaar."; }
 	else if (isset($dmafv) && $dmafv <= $date) { ?> <center style = "color : red; font-size : 11px;"> <?php echo 'Datum moet voor afvoerdatum '.$afvdm.' liggen.'; }
 	

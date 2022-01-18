@@ -1,15 +1,25 @@
 <?php /* 15-3-2020 : Aantal nog in te lezen gesplitst i.v.m. 2 verschillende readers
 2-6-2020 : ovleg gewijzigd in adop
 4-7-2020 : 1 tabel impAgrident gemaakt 
-14-11-2020 $aantpil aangepast naar impAgrident */
+14-11-2020 $aantpil aangepast naar impAgrident 
+20-06-2021 Voerregistratie toegevoegd 
+$versie = '18-12-2021'; /* Dekken en Dracht toegevoegd */
 
-// Aantal nog in te lezen DRACHT
+// Aantal nog in te lezen DEKKEN
+$zoek_dekken = mysqli_query($db,"
+SELECT count(datum) aant 
+FROM impAgrident
+WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." and actId = 18 and isnull(verwerkt)
+") or die (mysqli_error($db));
+ while ($dek = mysqli_fetch_assoc($zoek_dekken))  { $aantdek = $dek['aant'];    }
+// EINDE Aantal nog in te lezen DEKKEN
+ // Aantal nog in te lezen DRACHT
 $zoek_dracht = mysqli_query($db,"
 SELECT count(datum) aant 
-FROM impReader 
-WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." and moeder_dr is not NULL and isnull(verwerkt)
+FROM impAgrident
+WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." and actId = 19 and isnull(verwerkt)
 ") or die (mysqli_error($db));
- while ($dra = mysqli_fetch_assoc($zoek_dracht))  {	$aantdra = $dra['aant'];	}
+ while ($dra = mysqli_fetch_assoc($zoek_dracht))  { $aantdra = $dra['aant'];    }
 // EINDE Aantal nog in te lezen DRACHT
 // Aantal nog in te lezen GEBOORTES
 $lammeren = mysqli_query($db,"
@@ -122,4 +132,13 @@ WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." and actId = 1717 and isn
 ") or die (mysqli_error($db));
  while ($rec_hals = mysqli_fetch_assoc($halsnummer)) {	$aanthals = $rec_hals['aant'];	}
 // EINDE Aantal nog in te lezen HALSNUMMERS
+
+// Aantal nog in te lezen VOERREGISTRATIE
+$voerregistratie = mysqli_query($db,"
+SELECT count(datum) aant 
+FROM impAgrident 
+WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." and actId = 8888 and isnull(verwerkt)
+") or die (mysqli_error($db));
+ while ($rec_voer = mysqli_fetch_assoc($voerregistratie)) {  $aantvoer = $rec_voer['aant'];  }
+// EINDE Aantal nog in te lezen VOERREGISTRATIE
 ?>

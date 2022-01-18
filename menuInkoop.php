@@ -1,9 +1,10 @@
 <!-- 14-11-2015 naamwijziging van Medicijnen naar Medicijnenbestand en Voersoorten naar Voerbestand
-12-12-2015 :  $versie toegveoged -->
+12-12-2015 :  $versie toegveoged 
+29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.php -->
 <html>
 
 <body>
-<?php include "msg.php";
+<?php include "javascriptsAfhandeling.php";
 include "url.php"; ?>
 
 <td width = '150' height = '100' valign='top'>

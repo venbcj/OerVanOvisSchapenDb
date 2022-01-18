@@ -1,8 +1,9 @@
-<!-- 25-11-206 : versie weergave toegevoegd -->
+<!-- 25-11-206 : versie weergave toegevoegd 
+29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.php -->
 <html>
 
 <body>
-<?php include "msg.php";
+<?php include "javascriptsAfhandeling.php";
 include "url.php"; ?>
 <td width = '150' height = '100' valign='top'>
 Menu : </br>

@@ -1,6 +1,8 @@
 <?php /* 27-2-2020 bestand gekopieerd van impVerplaatsing.php 
 15-11-2020 Diverse imp... bestanden teruggebracht naar een bestand impAgrident.php 
-23-1-2021 : Transponder toegevoegd */
+23-1-2021 : Transponder toegevoegd 
+20-6-2021 : Voerregistratie toegevoegd
+18-12-2021 : Dekken en Dracht toegevoegd */
 
 include"connect_db.php";
 $string = '';
@@ -54,7 +56,7 @@ switch ($_SERVER['REQUEST_METHOD']) { // Switch
 
 		$data = json_decode($input); 
 
-$taken = array('Worpregistratie', 'Doodgeboren', 'Groepsgeboorte', 'Verplaatsing', 'Spenen', 'Afvoer', 'Aanvoer', 'Omnummeren', 'Medicaties', 'Halsnummers', 'Groepsafvoer');
+$taken = array('Worpregistratie', 'Doodgeboren', 'Groepsgeboorte', 'Verplaatsing', 'Spenen', 'Afvoer', 'Aanvoer', 'Omnummeren', 'Medicaties', 'Halsnummers', 'Groepsafvoer', 'Voerregistratie', 'Dekken', 'Dracht');
 
 
 foreach($data as $index => $item) {			 	
@@ -96,6 +98,15 @@ if($i == 9) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum'
 if($i == 10) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum', 'Ubn', 'Transponder', 'Levensnummer');
 												include "impAgrident.php"; }
 
+if($i == 11) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum', 'HokId', 'DoelId', 'ArtId', 'Toedat');
+												include "impAgrident.php"; }
+
+if($i == 12) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum', 'VdrId', 'MoederTransponder', 'Moeder');
+												include "impAgrident.php"; }
+
+if($i == 13) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum', 'MoederTransponder', 'Moeder', 'Drachtig', 'Grootte');
+												include "impAgrident.php"; }
+echo $i.'<br>';
 			 } 
 
 

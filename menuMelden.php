@@ -1,8 +1,9 @@
-<!-- 20-12-2020 : Pagina gemaakt -->
+<!-- 20-12-2020 : Pagina gemaakt 
+29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.php -->
 <html>
 
 <body>
-<?php include "msg.php"; ?>
+<?php include "javascriptsAfhandeling.php"; ?>
 <td width = '150' height = '100' valign='top'>
 Menu : </br>
 <hr/style ='color : #A6C6EB'>

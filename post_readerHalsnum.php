@@ -84,7 +84,7 @@ WHERE schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and lidId = '".m
 
 	
 	$update_tblStal = "UPDATE tblStal set kleur = '".mysqli_real_escape_string($db,$fldKleur)."', halsnr = '".mysqli_real_escape_string($db,$fldHalsnr)."'
-		WHERE stalId = '".mysqli_real_escape_string($db,$fldHalsnr)."'
+		WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."'
 	 ";
 		mysqli_query($db,$update_tblStal) or die (mysqli_error($db));
 

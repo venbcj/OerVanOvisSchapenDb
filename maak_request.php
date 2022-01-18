@@ -1,4 +1,5 @@
 <!-- 21-12-2015 : include "maak_request_func.php"; verplaatst naar InsAanvoer.php, InsAfleveren.php, Insgeboortes.php en InsUitval.php
+11-1-2022 sql Beveiligd met quotes
 
 
 maak_request.php toegepast in :
@@ -15,14 +16,14 @@ unset($reqId); // Nodig als er diverse soorten meldingen tegelijk worden aangema
 // *** HET REQUEST ***
 //Zoeken naar een openstaand request		
 $zoek_req = mysqli_query($db,"
-select r.reqId
-from tblRequest r
+SELECT r.reqId
+FROM tblRequest r
  join tblMelding m on (r.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h. hisId)
  join tblStal st on (st.stalId = h.stalId)
-where st.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(r.dmmeld) and r.code = '".mysqli_real_escape_string($db,$Melding)."' and h.skip = 0
-group by r.reqId
-having (count(r.reqId) < 60)
+WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(r.dmmeld) and r.code = '".mysqli_real_escape_string($db,$Melding)."' and h.skip = 0
+GROUP BY r.reqId
+HAVING (count(r.reqId) < 60)
 ") or die (mysqli_error($db));
 	while ($req = mysqli_fetch_assoc($zoek_req))	{ $reqId = $req['reqId']; } // Einde Zoeken naar een openstaand request
 		
@@ -44,7 +45,7 @@ having (count(r.reqId) < 60)
 		/*echo $insert_tblMelding.'<br>';*/	mysqli_query($db,$insert_tblMelding) or die (mysqli_error($db));
 		
 		if(isset($newlidId)) {
-		$update_tblRequest = "UPDATE tblRequest SET lidId_new = NULL where reqId = ".$reqId." ";
+		$update_tblRequest = "UPDATE tblRequest SET lidId_new = NULL where reqId = '".mysqli_real_escape_string($db,$reqId)."' ";
 			mysqli_query($db,$update_tblRequest) or die (mysqli_error($db));
 		unset($newlidId);
 		}			

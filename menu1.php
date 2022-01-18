@@ -4,12 +4,16 @@
 18-11-2015 Hok gewijzigd naar verblijf 
 6-12-2015 :  $versie toegveoged 
 19-12-2015 : query $moduleFinancieel verplaatst naar login.php 
-20-12-2020 : Alerts toegevoegd -->
+20-12-2020 : Alerts toegevoegd 
+29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.php 
+25-12-2021 : Dracht.php hernoemd naar Dekkingen.php 11-1-2022 kleur link variabel gemaakt -->
 <html>
 
 <body>
-<?php include "msg.php";
+<?php include "javascriptsAfhandeling.php";
 include "url.php"; 
+
+if($modtech == 0) { $color = 'grey'; } else { $color = 'blue'; }
 ?>
 <td width = '150' height = '100' valign='top'>
 Menu : </br>
@@ -54,17 +58,13 @@ Verblijven in gebruik</a>
 <a href='<?php echo $url;?>Zoeken.php' style = 'color : blue'>
 Schaap opzoeken</a>
 <hr/style ='color : #E2E2E2'>
-<?php  if($modtech == 1) { ?> <a href='<?php echo $url;?>Med_registratie.php' style = 'color : blue'> <?php }
-					else { ?> <a href='<?php echo $url;?>Med_registratie.php' style = 'color : grey'> <?php } ?>
+<a href='<?php echo $url;?>Med_registratie.php' style = "color : <?php echo $color; ?> ;" > 
 Medicijn toediening</a>
 <hr/style ='color : #E2E2E2'>
-<a href='<?php echo $url;?>Dracht.php' style = 'color : blue'>
-Dracht</a>
+<a href='<?php echo $url;?>Dekkingen.php' style = 'color : blue'>
+Dekkingen / Dracht</a>
 <hr/style ='color : #E2E2E2'>
-
-<?php if($modmeld == 0) { ?> <a href='<?php echo $url;?>Meldingen.php' style = 'color : grey'> <?php }
-else { ?>
-<a href='<?php echo $url; ?>Alerts.php' style = 'color : blue'> <?php } ?>
+<a href='<?php echo $url; ?>Alerts.php' style = "color : <?php echo $color; ?> ;">
 Raederalerts</a>
 <hr/style ='color : #E2E2E2'>
 
@@ -74,12 +74,10 @@ Rapporten</a>
 <a href='<?php echo $url;?>Beheer.php' style = 'color : blue'>
 Beheer</a>
 <hr/style ='color : #E2E2E2'>
-<?php  if($modtech == 1) { ?> <a href='<?php echo $url;?>Inkoop.php' style = 'color : blue'> <?php }
-					else { ?> <a href='<?php echo $url;?>Inkoop.php' style = 'color : grey'> <?php } ?>
+<a href='<?php echo $url;?>Inkoop.php' style = "color : <?php echo $color; ?> ;">
 Voorraadbeheer</a>
 <hr/style ='color : #E2E2E2'>
-<?php  if($modtech == 1) { ?> <a href='<?php echo $url;?>Finance.php' style = 'color : blue'> <?php }
-					else { ?> <a href='<?php echo $url;?>Finance.php' style = 'color : grey'> <?php } ?>
+<a href='<?php echo $url;?>Finance.php' style = "color : <?php echo $color; ?> ;">
 Financieel</a>
 <hr/style ='color : #E2E2E2'>
 

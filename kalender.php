@@ -35,10 +35,10 @@ $(document).ready(function() {
     }
         
     $('#datepicker1').datepicker(options);
-     $('#datepicker2').datepicker(options);
-      $('#datepicker3').datepicker(options);
-       $('#datepicker4').datepicker(options);
-        $('#datepicker5').datepicker(options);
+    $('#datepicker2').datepicker(options);
+    $('#datepicker3').datepicker(options);
+    $('#datepicker4').datepicker(options);
+    $('#datepicker5').datepicker(options);
 
   	/*$('#datepicker2').datepicker({
   	dateFormat: "dd-mm-yy",

@@ -13,6 +13,7 @@
  13-7-2020 : impGeboortes vervangen door impAgrident 18-7 juiste uitvaldatum vastgelegd nl. txtUitvaldm anders txtDatum
  23-1-2021 : transponder toegevoegd. Sql beveiligd met quotes. Verschil tussen kiezen of verwijderen herschreven 30-1 $mdrId gewijzigd naar $moederId
  7-2-2021 : isset($verwerkt) toegevoegd om dubbele invoer te voorkomen
+ 10-1-2022: Code aangepast n.a.v. registratie dekkingen en dracht
 -->
 <?php
 /* post_readerGeb.php toegepast in :
@@ -37,9 +38,15 @@ foreach($_POST as $key => $value) {
 foreach($array as $recId => $id) {
 
 // Id ophalen
-#echo '<br>'.'$recId = '.$recId.'<br>'; 
+//echo '<br>'.'$recId = '.$recId.'<br>'; #/#
 // Einde Id ophalen
     
+  unset($fldRas);
+  unset($fldSekse);
+  unset($fldKg);
+  unset($fldMom);
+  unset($fldUitvdag);
+  unset($fldRed);
   
   foreach($id as $key => $value) { // Alle velden vullen in variabelen  
 
@@ -49,16 +56,17 @@ foreach($array as $recId => $id) {
   if ($key == 'txtDatum' && !empty($value)) { $dag = date_create($value); $fldDag = date_format($dag, 'Y-m-d');  
                   /*echo $key.'='.$valuedag.' ';*/  }
   
+  
   if ($key == 'kzlRas' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldRas = $value; }
-   else if ($key == 'kzlRas' && empty($value)) { /*echo $key.'='.$value.' ';*/ $fldRas = '' ; }
+  // else if ($key == 'kzlRas' && empty($value)) { /*echo $key.'='.$value.' ';*/ $fldRas = '' ; }
 
   
-  if ($key == 'kzlSekse' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldSekse = $value; }
-   else if ($key == 'kzlSekse' && empty($value)) { /*echo $key.'='.$value.' ';*/ $fldSekse = '' ; }
+  if ($key == 'kzlSekse' && !empty($value)) { /*echo $key.'='.$value.'<br>';*/ $fldSekse = $value; }
+  // else if ($key == 'kzlSekse' && empty($value)) { /*echo $key.'='.$value.' ';*/ $fldSekse = '' ; }
 
 
    if ($key == 'txtKg' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldKg = str_replace(',', '.', $value); }
-   else if ($key == 'txtKg' && empty($value)) { /*echo $key.'='.$value.' ';*/ $fldKg = ''; }
+   //else if ($key == 'txtKg' && empty($value)) { /*echo $key.'='.$value.' ';*/ $fldKg = ''; }
    
 
   if ($key == 'kzlOoi' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldMoeder = $value; 
@@ -113,6 +121,7 @@ foreach($array as $recId => $id) {
 
                             } // Einde Alle velden vullen in variabelen
 
+
 // (extra) controle of readerregel reeds is verwerkt. Voor als de pagina 2x wordt verstuurd bij fouten op de pagina
 unset($verwerkt);
 if($reader == 'Agrident') {
@@ -152,9 +161,9 @@ WHERE readId = '".mysqli_real_escape_string($db,$recId)."'
 }
 
     while( $lv = mysqli_fetch_assoc($zoek_levensnummer_transponder)) { 
-      $tran    = $lv['tran']; 
-      $fldLevnr= $lv['lam'];
-      $moeder = $lv['moeder']; 
+      $tran     = $lv['tran']; 
+      $fldLevnr = $lv['lam'];
+      $moeder   = $lv['moeder']; 
       $mdrTran_rd = $lv['mdr_tran']; }
 
 #echo '$fldKies = '.$fldKies. 'en $fldDel = '.$fldDel.'<br>';
@@ -175,41 +184,83 @@ if($mdrTran_rd <> $mdrTran_sch) {
 }
 // Einde Transponder moeder inlezen als deze niet bestaat in tblSchaap
 
-// LEVEND GEBOREN
-//if(!isset($dmafv_mdr)) { $dmafv_mdr = $fldDag; }
-if (
- ($modtech == 1 && isset($fldDag) && isset($fldLevnr) && isset($fldMoeder) && $fldDag >= $dmaanv_mdr && (!isset($dmafv_mdr) || $fldDag <= $dmafv_mdr) && isset($fldHok)) // Veplichte velden bij module Technisch
-|| ($modtech == 0 && isset($fldDag) && isset($fldLevnr) ) // Veplichte velden zonder module Technisch
-) {
-// SCHAAP invoeren
-if($modtech == 0) {
- $insert_tblSchaap = "
- INSERT INTO tblSchaap set levensnummer = '".mysqli_real_escape_string($db,$fldLevnr)."', transponder = " . db_null_input($tran) . ", rasId = " . db_null_input($fldRas) . ", geslacht =  " . db_null_input($fldSekse); }
 
-else if($modtech == 1) { // Bij module technisch = 1  
+// ********************
+//    BEPAAL VOLWID
+// ********************
+if(isset($fldMoeder)) {
 
 unset($volwId);
 
-if(isset($fldMoeder)) {
-// Zoek moeder binnen dracht (afgelopen 183 dagen). Als deze niet bestaat dan moeder toevoegen in tblVolwas.
- $zoek_dracht = mysqli_query($db,"
- SELECT volwId
- FROM tblVolwas
- WHERE mdrId = '".mysqli_real_escape_string($db,$fldMoeder)."' and datum > date_add(curdate(), interval -183 day)
+// Zoek een huidige worp
+ $zoek_huidige_worp = mysqli_query($db,"
+   SELECT l.volwId
+   FROM tblSchaap l
+    join tblVolwas v on (l.volwId = v.volwId)
+    join tblStal st on (l.schaapId = st.schaapId)
+    join tblHistorie h on (h.stalId = st.stalId) 
+   WHERE v.mdrId = '".mysqli_real_escape_string($db,$fldMoeder)."' and h.actId = 1 and h.datum = '".mysqli_real_escape_string($db,$fldDag)."'
  ") or die (mysqli_error($db));
-  while ( $vw = mysqli_fetch_assoc($zoek_dracht)) { $volwId = $vw['volwId']; }
+  while ( $zhw = mysqli_fetch_assoc($zoek_huidige_worp)) { $volwId = $zhw['volwId']; }
+
+//if(isset($volwId)) { echo 'actuele worp = '.$volwId. '. Werpdatum = '.$fldDag.'<br>'; } #/#
+if(!isset($volwId)) {
+// Zoek vorige worp
+unset($lst_volwId);
+
+ $zoek_vorige_worp = mysqli_query($db,"
+   SELECT max(l.volwId) volwId
+   FROM tblSchaap l
+    join tblVolwas v on (l.volwId = v.volwId)
+    join tblStal st on (l.schaapId = st.schaapId)
+    join tblHistorie h on (h.stalId = st.stalId)
+    left join tblSchaap k on (k.volwId = v.volwId)
+     left join (
+        SELECT s.schaapId
+        FROM tblSchaap s
+         join tblStal st on (s.schaapId = st.schaapId)
+         join tblHistorie h on (st.stalId = h.stalId)
+        WHERE h.actId = 3
+     ) ha on (k.schaapId = ha.schaapId) 
+   WHERE v.mdrId = '".mysqli_real_escape_string($db,$fldMoeder)."' and h.actId = 1 and h.datum < '".mysqli_real_escape_string($db,$fldDag)."' and isnull(ha.schaapId)
+ ") or die (mysqli_error($db));
+  while ( $zvw = mysqli_fetch_assoc($zoek_vorige_worp)) { $lst_volwId = $zvw['volwId']; }
+
+// Zoek een bestaande dracht
+ $zoek_actuele_dracht = mysqli_query($db,"
+ SELECT v.volwId
+ FROM tblVolwas v
+  join tblDracht d on (v.volwId = d.volwId)
+  join tblHistorie h on (d.hisId = h.hisId)
+ WHERE h.skip = 0 and v.mdrId = '".mysqli_real_escape_string($db,$fldMoeder)."' and v.volwId > '".mysqli_real_escape_string($db,$lst_volwId)."'
+ ") or die (mysqli_error($db));
+  while ( $zadr = mysqli_fetch_assoc($zoek_actuele_dracht)) { $volwId = $zadr['volwId']; }
+
+//if(isset($volwId)) { echo 'actuele dracht = '.$volwId.'<br>'; } #/#
+}
+
+
+if(!isset($volwId)) {
+// Zoek een bestaande dekking
+ $zoek_actuele_dekking = mysqli_query($db,"
+ SELECT max(v.volwId) volwId
+ FROM tblVolwas v
+  join tblHistorie h on (v.hisId = h.hisId)
+ WHERE h.skip = 0 and v.mdrId = '".mysqli_real_escape_string($db,$fldMoeder)."' and v.volwId > '".mysqli_real_escape_string($db,$lst_volwId)."'
+ ") or die (mysqli_error($db));
+  while ( $zade = mysqli_fetch_assoc($zoek_actuele_dekking)) { $volwId = $zade['volwId']; }
+
+//if(isset($volwId)) { echo 'actuele dekking = '.$volwId.'<br>'; } #/#
+  }
+
 
 if(!isset($volwId)) {
 
-  //Bepaald fictieve drachtdatum
-  $var145dagen = 60*60*24*145;
-  $datumdracht = strtotime($fldDag) - $var145dagen; $drachtday = date("Y-m-d", $datumdracht);
+  // Koppel maken
+ $insert_tblVolwas = "INSERT INTO tblVolwas set mdrId = '".mysqli_real_escape_string($db,$fldMoeder)."', drachtig = 1 ";
 
-  // Aanvullen tblVolwas
- $insert_tblVolwas = "INSERT INTO tblVolwas set datum = '".mysqli_real_escape_string($db,$drachtday)."', mdrId = '".mysqli_real_escape_string($db,$fldMoeder)."' ";
-
-/*echo $insert_tblVolwas.'<br>';*/  mysqli_query($db,$insert_tblVolwas) or die (mysqli_error($db));
-  // Einde Aanvullen tblVolwas
+/*echo $insert_tblVolwas.'<br>';  ##*/mysqli_query($db,$insert_tblVolwas) or die (mysqli_error($db));
+  // Einde Koppel maken
 
  $zoek_volwId = mysqli_query($db,"
  SELECT max(volwId) volwId
@@ -218,200 +269,164 @@ if(!isset($volwId)) {
  ") or die (mysqli_error($db));
   while ( $vw = mysqli_fetch_assoc($zoek_volwId)) { $volwId = $vw['volwId']; }
 } // Einde if(!isset($volwId))
-// Einde Zoek moeder binnen dracht (afgelopen 183 dagen). Als deze niet bestaat dan moeder toevoegen in tblVolwas.
+// Einde Zoek een bestaande worp
+else
+{ // Drachtig Ja vastleggen
+
+$zoek_drachtig = mysqli_query($db,"
+ SELECT v.drachtig
+ FROM tblVolwas v
+ WHERE v.volwId = '".mysqli_real_escape_string($db,$volwId)."'
+ ") or die (mysqli_error($db));
+  while ( $zdr = mysqli_fetch_assoc($zoek_drachtig)) { $drachtig_db = $zdr['drachtig']; }
+
+if(!isset($drachtig_db) || $drachtig_db == 0) {
+
+$updateDracht = "UPDATE tblVolwas set drachtig = 1 WHERE volwId = '".mysqli_real_escape_string($db,$volwId)."' " ; 
+
+/*echo "$updateDracht".'<br>'.'<br>';         ##*/mysqli_query($db,$updateDracht) or die (mysqli_error($db));
+}
+
+
+} // Einde Drachtig Ja vastleggen
 
 // Worpverloop vastleggen
 if($reader == 'Agrident') {
 
-$zoek_worpverloop = mysqli_query($db,"
+$zoek_worpverloop_reader = mysqli_query($db,"
  SELECT verloop
  FROM impAgrident
  WHERE Id = '".mysqli_real_escape_string($db,$recId)."'
  ") or die (mysqli_error($db));
-  while ( $vl = mysqli_fetch_assoc($zoek_worpverloop)) { $verloop = $vl['verloop']; }
+  while ( $zvr = mysqli_fetch_assoc($zoek_worpverloop_reader)) { $verloop_rd = $zvr['verloop']; }
 
-$updateDracht = "UPDATE tblVolwas set verloop = '".mysqli_real_escape_string($db,$verloop)."' WHERE volwId = '".mysqli_real_escape_string($db,$volwId)."' " ; 
+$zoek_worpverloop_db = mysqli_query($db,"
+ SELECT verloop
+ FROM tblVolwas
+ WHERE volwId = '".mysqli_real_escape_string($db,$volwId)."'
+ ") or die (mysqli_error($db));
+  while ( $zvb = mysqli_fetch_assoc($zoek_worpverloop_db)) { $verloop_db = $zvb['verloop']; }
 
-/*echo "$updateDracht".'<br>'.'<br>'; */          mysqli_query($db,$updateDracht) or die (mysqli_error($db));
+if(!isset($verloop_db) && isset($verloop_rd)) {
+
+$updateDracht = "UPDATE tblVolwas set verloop = '".mysqli_real_escape_string($db,$verloop_rd)."' WHERE volwId = '".mysqli_real_escape_string($db,$volwId)."' " ; 
+
+/*echo "$updateDracht".'<br>'.'<br>';      ##*/mysqli_query($db,$updateDracht) or die (mysqli_error($db));
+}
 
 }
 // Einde Worpverloop vastleggen
-}
-else { $volwId = ''; }
+
+} // Einde if($modtech == 1 && isset($fldMoeder))
+// ********************
+// EINDE BEPAAL VOLWID
+// ********************
 
 
+// ***************************
+//    GEGEVENS INLEZEN
+// ***************************
+
+unset($rel_best);
+//if(!isset($dmafv_mdr)) { $dmafv_mdr = $fldDag; }
+if (
+ (isset($fldDag) && isset($fldLevnr) && isset($fldMoeder) && $fldDag >= $dmaanv_mdr && (!isset($dmafv_mdr) || $fldDag <= $dmafv_mdr) && isset($fldHok)) // Veplichte velden bij module Technisch. $fldMoeder is verplicht bij module technisch
+|| ($modtech == 0 && isset($fldDag) && isset($fldLevnr) ) // Veplichte velden zonder module Technisch
+) { $scenario = 'Geboren_lam'; }
+
+else if(!isset($fldLevnr) && isset($fldDag) && ((isset($fldMoeder) && $modtech == 1) || ($modtech == 0)) ) 
+  { $scenario = 'Dood_geboren'; 
+    $rel_best = $rendac_Id;
+    $fldLevnr = $ubn;
+  }
+
+if(isset($scenario)) {
+// SCHAAP invoeren
 
  $insert_tblSchaap = "
- INSERT INTO tblSchaap set levensnummer = '".mysqli_real_escape_string($db,$fldLevnr)."', transponder = " . db_null_input($tran) . ", rasId = " . db_null_input($fldRas) . ", geslacht = " . db_null_input($fldSekse) . ", volwId = ". db_null_input($volwId); 
+ INSERT INTO tblSchaap set levensnummer = '".mysqli_real_escape_string($db,$fldLevnr)."', rasId = " . db_null_input($fldRas) . ", geslacht = " . db_null_input($fldSekse) . ", volwId = " . db_null_input($volwId). ", momId = " . db_null_input($fldMom) . ", redId = " . db_null_input($fldRed) . ", transponder = " . db_null_input($tran); 
 
-}
-// Einde Bij module technisch = 1
-
-/*echo '$insert_LEVEND'.$insert_tblSchaap.'<br>';*/   mysqli_query($db,$insert_tblSchaap) or die (mysqli_error($db)); 
+/*echo $insert_tblSchaap.'<br>';   ##*/mysqli_query($db,$insert_tblSchaap) or die (mysqli_error($db)); 
 // Einde SCHAAP invoeren
 
-// Insert tblStal
-  $zoek_schaapId = mysqli_query($db,"SELECT schaapId FROM tblSchaap WHERE levensnummer = '".mysqli_real_escape_string($db,$fldLevnr)."' ") or die (mysqli_error($db));
-    while ( $sId = mysqli_fetch_assoc ($zoek_schaapId)) { $schaapId = $sId['schaapId']; }
+$zoek_schaapId = mysqli_query($db,"
+SELECT schaapId
+FROM tblSchaap
+WHERE levensnummer = '".mysqli_real_escape_string($db,$fldLevnr)."'
+") or die (mysqli_error($db));
+    while ( $zs = mysqli_fetch_assoc ($zoek_schaapId)) { $schaapId = $zs['schaapId']; }
 
-  $insert_tblStal = "INSERT INTO tblStal set lidId = '".mysqli_real_escape_string($db,$lidId)."', schaapId = '".mysqli_real_escape_string($db,$schaapId)."' ";
-/*echo "$insert_tblStal".'<br>';*/    mysqli_query($db,$insert_tblStal) or die (mysqli_error($db));
+if(isset($schaapId) && isset($rel_best)) {
+
+// ubn uit veld levensnummer verwijderen
+$update_tblSchaap = "UPDATE tblSchaap set levensnummer = NULL WHERE schaapId = '".mysqli_real_escape_string($db,$schaapId)."' ";
+
+/*echo $update_tblSchaap.'<br>';  ##*/mysqli_query($db,$update_tblSchaap) or die (mysqli_error($db));
+unset($levnr);
+}
+
+// Insert tblStal
+$insert_tblStal = "INSERT INTO tblStal set lidId = '".mysqli_real_escape_string($db,$lidId)."', schaapId = '".mysqli_real_escape_string($db,$schaapId)."', rel_best = " . db_null_input($rel_best) ;
+/*echo "$insert_tblStal".'<br>';   ##*/mysqli_query($db,$insert_tblStal) or die (mysqli_error($db));
 // Einde Insert tblStal
+
 // Insert tblHistorie
-  $zoek_stalId = mysqli_query($db,"SELECT stalId FROM tblStal WHERE schaapId = '".mysqli_real_escape_string($db,$schaapId)."' ") or die (mysqli_error($db));
-    while ( $stId = mysqli_fetch_assoc ($zoek_stalId)) { $stalId = $stId['stalId']; }
+$zoek_stalId = mysqli_query($db,"
+SELECT stalId
+FROM tblStal
+WHERE schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+") or die (mysqli_error($db));
+    while ( $zst = mysqli_fetch_assoc ($zoek_stalId)) { $stalId = $zst['stalId']; }
       
- if($modtech == 0) { $insert_tblHistorie = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$fldDag)."', actId = 1 ";}
- if($modtech == 1) { $insert_tblHistorie = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$fldDag)."', kg = " . db_null_input($fldKg) . ", actId = 1 ";}
-/*echo "$insert_tblHistorie".'<br>';*/    mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
+
+  $insert_tblHistorie = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$fldDag)."', kg = " . db_null_input($fldKg) . ", actId = 1 "; 
+
+/*echo "$insert_tblHistorie".'<br>';   ##*/mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
+
+$zoek_hisId = mysqli_query($db,"
+SELECT hisId
+FROM tblHistorie
+WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."'
+") or die (mysqli_error($db));
+    while ( $zh = mysqli_fetch_assoc ($zoek_hisId)) { $hisId = $zh['hisId']; } // t.b.v. tblBezet en/of tblMelding
+
+if(isset($rel_best)) { // Bij doodgeboren
+  if(isset($fldUitvdag)) { $doodday = $fldUitvdag; } else { $doodday = $fldDag; }
+
+$insert_tblHistorie_14 = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$doodday)."', actId = 14 ";
+
+/*echo $insert_tblHistorie_14.'<br>';    ##*/mysqli_query($db,$insert_tblHistorie_14) or die (mysqli_error($db));
+}
 // Einde Insert tblHistorie
 
-$zoek_hisId = mysqli_query($db,"SELECT hisId FROM tblHistorie WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."' ") or die (mysqli_error($db));
-    while ( $hId = mysqli_fetch_assoc ($zoek_hisId)) { $hisId = $hId['hisId']; }
-
-if($modtech == 1) {
-    
+if($modtech == 1 && !isset($rel_best)) {
+// Insert tblBezet 
   $insert_tblBezet = "INSERT INTO tblBezet set hisId = ".mysqli_real_escape_string($db,$hisId).", hokId = ".mysqli_real_escape_string($db,$fldHok)." " ;
-/*echo "$insert_tblBezet".'<br>';*/ mysqli_query($db,$insert_tblBezet) or die (mysqli_error($db));  
+/*echo "$insert_tblBezet".'<br>'; ##*/mysqli_query($db,$insert_tblBezet) or die (mysqli_error($db));  
 // Einde Insert tblBezet  
 }
 
-if ($modmeld == 1 ) {// Insert tblMeldingen 
+if ($modmeld == 1 && !isset($rel_best)) { // Insert tblMeldingen 
 $Melding = 'GER'; //geboren
-include "maak_request.php";
+##include "maak_request.php";
 // Einde Insert tblMeldingen
 }
 /* Bijwerken tabel impReader*/    
 
 if($reader == 'Agrident') { 
-$updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' " ; }
+$updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' " ;
+}
 else { 
-$updateReader = "UPDATE impReader set verwerkt = 1 WHERE readId = '".mysqli_real_escape_string($db,$recId)."' " ; }
-
-/*echo '$updateReader LEVEND'.$updateReader.'<br>'.'<br>';*/           mysqli_query($db,$updateReader) or die (mysqli_error($db)); 
-
-}
-// EINDE LEVEND GEBOREN
-
-
-
-
-// DOOD GEBOREN
-if(!isset($fldLevnr) && isset($fldDag) && ((isset($fldMoeder) && $modtech == 1) || ($modtech == 0)) ) { // Wanneer levensnummer leeg is en verplichte velden zijn gevuld
-
-
-
-// SCHAAP invoeren
-$insert_tblSchaap = "INSERT INTO tblSchaap set levensnummer = '".mysqli_real_escape_string($db,$ubn)."', rasId = " . db_null_input($fldRas) . ", geslacht = " . db_null_input($fldSekse) .", momId = " . db_null_input($fldMom) . ", redId = " . db_null_input($fldRed);
-
-/*echo '$insert_DOOD'.$insert_tblSchaap.'<br>';*/    mysqli_query($db,$insert_tblSchaap) or die (mysqli_error($db));
-
-
-// moeder invoeren
-if(isset($fldMoeder)) { // Als $modtech == 0 dan bestaat keuzelijst moeder niet.
-
-unset($volwId);
-
-// Zoek moeder binnen dracht (afgelopen 183 dagen). Als deze niet bestaat dan moeder toevoegen in tblVolwas.
- $zoek_dracht = mysqli_query($db,"
- SELECT volwId
- FROM tblVolwas
- WHERE mdrId = '".mysqli_real_escape_string($db,$fldMoeder)."' and datum > date_add(curdate(), interval -183 day)
- ") or die (mysqli_error($db));
-  while ( $vw = mysqli_fetch_assoc($zoek_dracht)) { $volwId = $vw['volwId']; }
-
-if(!isset($volwId)) {
-
-  //Bepaald fictieve drachtdatum
-  $var145dagen = 60*60*24*145;
-  $datumdracht = strtotime($fldDag) - $var145dagen; $drachtday = date("Y-m-d", $datumdracht);
-
-    // Aanvullen tblVolwas
- $insert_tblVolwas = "INSERT INTO tblVolwas set datum = '".mysqli_real_escape_string($db,$drachtday)."', mdrId = '".mysqli_real_escape_string($db,$fldMoeder)."' ";
-
-/*echo $insert_tblVolwas.'<br>';*/  mysqli_query($db,$insert_tblVolwas) or die (mysqli_error($db));
-  // Einde Aanvullen tblVolwas
-
- $zoek_volwId = mysqli_query($db," SELECT max(volwId) volwId FROM tblVolwas WHERE mdrId = '".mysqli_real_escape_string($db,$fldMoeder)."'
- ") or die (mysqli_error($db));
-  while ( $vw = mysqli_fetch_assoc($zoek_volwId)) { $volwId = $vw['volwId']; }
-} // Einde if(!isset($volwId))
-
-
-$zoek_schaapId = mysqli_query($db,"
- SELECT schaapId
- FROM tblSchaap
- WHERE levensnummer = '".mysqli_real_escape_string($db,$ubn)."'
- ") or die (mysqli_error($db));
-  while ( $sch = mysqli_fetch_assoc($zoek_schaapId)) { $schaapId = $sch['schaapId']; }
-
-
-$update_tblSchaap = "UPDATE tblSchaap set volwId = '".mysqli_real_escape_string($db,$volwId)."' WHERE schaapId = '".mysqli_real_escape_string($db,$schaapId)."' ";
-
- /*echo $update_tblSchaap.'<br>';*/  mysqli_query($db,$update_tblSchaap) or die (mysqli_error($db));
-// Einde Zoek moeder binnen dracht (afgelopen 183 dagen). Als deze niet bestaat dan moeder toevoegen in tblVolwas.
-
-// Worpverloop vastleggen
-if($reader == 'Agrident') {
-
-$zoek_worpverloop = mysqli_query($db,"
- SELECT verloop
- FROM impAgrident
- WHERE Id = '".mysqli_real_escape_string($db,$recId)."'
- ") or die (mysqli_error($db));
-  while ( $vl = mysqli_fetch_assoc($zoek_worpverloop)) { $verloop = $vl['verloop']; }
-
-$updateDracht = "UPDATE tblVolwas set verloop = '".mysqli_real_escape_string($db,$verloop)."' WHERE volwId = '".mysqli_real_escape_string($db,$volwId)."' " ; 
-
-/*echo "$updateDracht".'<br>'.'<br>'; */          mysqli_query($db,$updateDracht) or die (mysqli_error($db));
-
-}
-// Einde Worpverloop vastleggen
-
-
-} // Einde moeder invoeren
-
-
-// ubn uit veld levensnummer verwijderen
-$update_tblSchaap = "UPDATE tblSchaap set levensnummer = NULL WHERE schaapId = '".mysqli_real_escape_string($db,$schaapId)."' ";
-
- /*echo $update_tblSchaap.'<br>';*/  mysqli_query($db,$update_tblSchaap) or die (mysqli_error($db));
-// Einde SCHAAP invoeren
-
-// Stal invoeren
-$insert_tblStal = "INSERT INTO tblStal set lidId = '".mysqli_real_escape_string($db,$lidId)."', schaapId = '".mysqli_real_escape_string($db,$schaapId)."', rel_best = '".mysqli_real_escape_string($db,$rendac_Id)."' ";
-/*echo "$insert_tblStal".'<br>';*/    mysqli_query($db,$insert_tblStal) or die (mysqli_error($db));
-// Einde Stal invoeren
-// Historie invoeren
-$zoek_stalId = mysqli_query($db, "
-SELECT stalId FROM tblStal WHERE schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-") or die (mysqli_error($db));
-
-    while( $st = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $st['stalId']; }
-
-
-$insert_tblHistorie_1 = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$fldDag)."', actId = 1 ";
-/*echo $insert_tblHistorie_1.'<br>';*/    mysqli_query($db,$insert_tblHistorie_1) or die (mysqli_error($db));
-
-if(isset($fldUitvdag)) { $doodday = $fldUitvdag; } else { $doodday = $fldDag; }
-$insert_tblHistorie_14 = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$doodday)."', actId = 14 ";
-/*echo $insert_tblHistorie_14.'<br>';*/    mysqli_query($db,$insert_tblHistorie_14) or die (mysqli_error($db));
-// Einde Historie invoeren
-
-
-/* Bijwerken tabel impReader*/
-
-if($reader == 'Agrident') {
- $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' " ;
+$updateReader = "UPDATE impReader set verwerkt = 1 WHERE readId = '".mysqli_real_escape_string($db,$recId)."' " ;
 }
 
-else {
- $updateReader = "UPDATE impReader set verwerkt = 1 WHERE readId = '".mysqli_real_escape_string($db,$recId)."' " ;
-}
-/*echo '$updateReader DOOD'.$updateReader.'<br>'.'<br>';*/           mysqli_query($db,$updateReader) or die (mysqli_error($db)); 
+/*echo $updateReader.'<br>'.'<br>';  ##*/mysqli_query($db,$updateReader) or die (mysqli_error($db)); 
 
-} // Einde Wanneer levensnummer leeg is
-// EINDE DOOD GEBOREN
+} // Einde if(isset($scenario))
+
+// ***************************
+//   EINDE GEGEVENS INLEZEN
+// ***************************
 
 } // EINDE if ($fldKies == 1 && $fldDel == 0)
 

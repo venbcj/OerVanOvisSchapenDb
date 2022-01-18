@@ -11,6 +11,8 @@ $versie = '15-3-2020'; /* Onderscheid gemaakt tussen reader Agrident en Biocontr
 $versie = '4-6-2020'; /* Overleggen gewijzigd in adoptie */
 $versie = '30-9-2020'; /* Halsnummers toegevoegd */
 $versie = '14-11-2020'; /* Medicatie aangepast i.v.m. mogelijk vanuit reader Agrident */
+$versie = '20-06-2021'; /* Voerregistratie toegevoegd */
+$versie = '18-12-2021'; /* Dekken en Dracht toegevoegd */
 
 session_start(); ?>
 <html>
@@ -111,49 +113,166 @@ else if( $reader == 'Biocontrol') { Include("inlezenBiocontrol.php"); }
 <table border = 0>
 <?php $leeg = "<a href=' ". $url . "InlezenReader.php' style = 'color : blue'>"; ?>
 
-<tr><td> <?php if (!empty($aantdra)){ ?> <a href='<?php echo $url;?>InsDracht.php' style = 'color : blue'> <?php } else {echo "$leeg"; } ?>
-inlezen dracht</a> </td><td style = "font-size : 12px;"><?php if (!empty($aantdra)){	echo "&nbsp $aantdra dracht in te lezen.";	}?></td></tr>
+<tr>
+ <td>
+    <?php if (!empty($aantdek)){ ?> <a href='<?php echo $url;?>InsDekken.php' style = 'color : blue'> <?php }
+          else { echo "$leeg"; } ?>
+inlezen dekken </a>
+ </td>
+ <td style = "font-size : 12px;">
+    <?php if (!empty($aantdek)){ echo "&nbsp $aantdek dekkingen in te lezen.";   } ?>
+ </td>
+</tr>
 
-<tr><td> <?php if (!empty($aantgeb)){ ?> <a href='<?php echo $url;?>InsGeboortes.php' style = 'color : blue'> <?php } else {echo "$leeg"; } ?>
-inlezen geboortes</a> </td><td style = "font-size : 12px;"><?php if (!empty($aantgeb)){	echo "&nbsp $aantgeb geboorte(s) in te lezen.";	}?></td></tr>
+<tr>
+ <td>
+    <?php if (!empty($aantdra)){ ?> <a href='<?php echo $url;?>InsDracht.php' style = 'color : blue'> <?php }
+          else { echo "$leeg"; } ?>
+inlezen dracht </a>
+ </td>
+ <td style = "font-size : 12px;">
+    <?php if (!empty($aantdra)){ echo "&nbsp $aantdra dracht in te lezen.";   } ?>
+ </td>
+</tr>
 
-<?php if($reader == 'Agrident') { ?>
-<tr><td> <?php if (!empty($aantLbar)){ ?> <a href='<?php echo $url;?>InsLambar.php' style = 'color : blue'> <?php } else {echo "$leeg"; } ?>
-inlezen lambar</a> </td><td style = "font-size : 12px;"><?php if (!empty($aantLbar)){ echo "&nbsp $aantLbar lambar in te lezen."; }?></td></tr>
+<tr>
+ <td>
+  <?php if (!empty($aantgeb)){ ?> <a href='<?php echo $url;?>InsGeboortes.php' style = 'color : blue'> <?php }
+        else { echo "$leeg"; } ?>
+inlezen geboortes </a>
+ </td>
+ <td style = "font-size : 12px;">
+    <?php if (!empty($aantgeb)){ echo "&nbsp $aantgeb geboorte(s) in te lezen."; } ?>
+ </td>
+</tr>
+
+<?php if($reader == 'Agrident') { ?> 
+<tr>
+ <td>
+  <?php if (!empty($aantLbar)){ ?> <a href='<?php echo $url;?>InsLambar.php' style = 'color : blue'> <?php }
+        else { echo "$leeg"; } ?>
+inlezen lambar </a>
+ </td>
+ <td style = "font-size : 12px;">
+    <?php if (!empty($aantLbar)){ echo "&nbsp $aantLbar lambar in te lezen."; } ?>
+ </td>
+</tr>
 <?php } ?>
-<tr><td><?php if (!empty($aantspn)){ ?><a href='<?php echo $url;?>InsSpenen.php' style = 'color : blue'><?php } else { echo "$leeg"; } ?>
-inlezen gespeenden</a> </td><td style = "font-size : 12px;"><?php if (!empty($aantspn)){	echo "&nbsp $aantspn gespeenden in te lezen.";	}?></td></tr>
 
-<tr><td><?php if (!empty($aantafl)){ ?><a href='<?php echo $url;?>InsAfvoer.php' style = 'color : blue'><?php } else { echo "$leeg"; } ?>
-inlezen afvoer</a> </td><td style = "font-size : 12px;"><?php if (!empty($aantafl)){	echo "&nbsp $aantafl afgeleverden in te lezen.";	}?></td></tr>
+<tr>
+ <td>
+  <?php if (!empty($aantspn)){ ?> <a href='<?php echo $url;?>InsSpenen.php' style = 'color : blue'> <?php }
+        else { echo "$leeg"; } ?>
+inlezen gespeenden </a>
+ </td>
+ <td style = "font-size : 12px;">
+    <?php if (!empty($aantspn)){ echo "&nbsp $aantspn gespeenden in te lezen.";	} ?>
+ </td>
+</tr>
 
-<tr><td> <?php if (!empty($aantuitv)){ ?><a href='<?php echo $url;?>InsUitval.php' style = 'color : blue'> <?php } else {echo "$leeg"; } ?>
-inlezen uitval</a> </td><td style = "font-size : 12px;"><?php if (!empty($aantuitv)){	echo "&nbsp $aantuitv uitval in te lezen.";	}?></td></tr>
+<tr>
+ <td>
+  <?php if (!empty($aantafl)){ ?><a href='<?php echo $url;?>InsAfvoer.php' style = 'color : blue'><?php }
+        else { echo "$leeg"; } ?>
+inlezen afvoer </a>
+ </td>
+ <td style = "font-size : 12px;">
+    <?php if (!empty($aantafl)){ echo "&nbsp $aantafl afgeleverden in te lezen."; } ?>
+ </td>
+</tr>
 
-<tr><td> <?php if (!empty($aantaanw)){ ?> <a href='<?php echo $url;?>InsAanvoer.php' style = 'color : blue'>  <?php } else {echo "$leeg"; } ?>
-inlezen aanvoer</a> </td><td style = "font-size : 12px;"><?php if (!empty($aantaanw)){	echo "&nbsp $aantaanw aanwas in te lezen.";	}?></td></tr>
+<tr>
+ <td>
+  <?php if (!empty($aantuitv)){ ?><a href='<?php echo $url;?>InsUitval.php' style = 'color : blue'> <?php }
+        else { echo "$leeg"; } ?>
+inlezen uitval </a>
+ </td>
+ <td style = "font-size : 12px;">
+    <?php if (!empty($aantuitv)){ echo "&nbsp $aantuitv uitval in te lezen."; } ?>
+ </td>
+</tr>
 
-<tr><td> <?php if (!empty($aantovpl)){ ?> <a href='<?php echo $url;?>InsOverplaats.php' style = 'color : blue'>  <?php } else {echo "$leeg"; } ?>
-inlezen overplaatsen</a> </td><td style = "font-size : 12px;">
+<tr>
+ <td> <?php if (!empty($aantaanw)){ ?> <a href='<?php echo $url;?>InsAanvoer.php' style = 'color : blue'>  <?php }
+            else {echo "$leeg"; } ?>
+inlezen aanvoer </a>
+ </td>
+ <td style = "font-size : 12px;">
+    <?php if (!empty($aantaanw)){ echo "&nbsp $aantaanw aanwas in te lezen."; } ?>
+ </td>
+</tr>
+
+<tr>
+ <td> <?php if (!empty($aantovpl)){ ?> <a href='<?php echo $url;?>InsOverplaats.php' style = 'color : blue'>  <?php }
+            else { echo "$leeg"; } ?>
+inlezen overplaatsen </a>
+ </td>
+ <td style = "font-size : 12px;">
 	<?php if (!empty($aantovpl) && empty($speen_ovpl)){	echo "&nbsp $aantovpl overplaatsingen in te lezen.";	}
 	else if (!empty($aantovpl) && $speen_ovpl == 1)	{	echo "&nbsp $aantovpl overplaatsingen in te lezen waarvan er $speen_ovpl eerst moet worden gespeend. *";	}
-	else if (!empty($aantovpl) && $speen_ovpl > 1)	{	echo "&nbsp $aantovpl overplaatsingen in te lezen waarvan er $speen_ovpl eerst moeten worden gespeend. *";	}
-	?></td></tr>
+	else if (!empty($aantovpl) && $speen_ovpl > 1)	{	echo "&nbsp $aantovpl overplaatsingen in te lezen waarvan er $speen_ovpl eerst moeten worden gespeend. *";	} ?>
+ </td>
+</tr>
 
-<tr><td> <?php if (!empty($aantadop)){ ?> <a href='<?php echo $url;?>InsAdoptie.php' style = 'color : blue'>  <?php } else {echo "$leeg"; } ?>
-inlezen adoptie</a> </td><td style = "font-size : 12px;"><?php if (!empty($aantadop)){  echo "&nbsp $aantadop adoptie in te lezen."; }?></td></tr>
+<tr>
+ <td> <?php if (!empty($aantadop)){ ?> <a href='<?php echo $url;?>InsAdoptie.php' style = 'color : blue'>  <?php }
+            else { echo "$leeg"; } ?>
+inlezen adoptie </a>
+ </td>
+ <td style = "font-size : 12px;">
+    <?php if (!empty($aantadop)){ echo "&nbsp $aantadop adoptie in te lezen."; } ?>
+ </td>
+</tr>
 
-<tr><td> <?php if (!empty($aantpil)){ ?> <a  href='<?php echo $url;?>InsMedicijn.php' style = 'color : blue' >     <?php } else {echo "$leeg"; } ?>
-inlezen medicatie </a>  </td> <td style = "font-size : 12px;"><?php if (!empty($aantpil)){	echo "&nbsp $aantpil medicatie in te lezen.";	}?></td></tr>
+<tr>
+ <td> <?php if (!empty($aantpil)){ ?> <a  href='<?php echo $url;?>InsMedicijn.php' style = 'color : blue' > <?php }
+            else { echo "$leeg"; } ?>
+inlezen medicatie </a>
+ </td>
+ <td style = "font-size : 12px;">
+    <?php if (!empty($aantpil)){ echo "&nbsp $aantpil medicatie in te lezen."; } ?>
+ </td>
+</tr>
 
-<tr><td><?php if (!empty($aantwg)){ ?><a href='<?php echo $url;?>InsWegen.php' style = 'color : blue'><?php } else { echo "$leeg"; } ?>
-inlezen wegingen</a> </td><td style = "font-size : 12px;"><?php if (!empty($aantwg)){   echo "&nbsp $aantwg wegingen in te lezen."; }?></td></tr>
+<tr>
+ <td> <?php if (!empty($aantwg)){ ?> <a href='<?php echo $url;?>InsWegen.php' style = 'color : blue' > <?php }
+            else { echo "$leeg"; } ?>
+inlezen wegingen </a>
+ </td>
+ <td style = "font-size : 12px;">
+    <?php if (!empty($aantwg)){ echo "&nbsp $aantwg wegingen in te lezen."; } ?>
+ </td>
+</tr>
 
-<tr><td><?php if (!empty($aantomn)){ ?><a href='<?php echo $url;?>InsOmnummeren.php' style = 'color : blue'><?php } else { echo "$leeg"; } ?>
-inlezen omnummeren</a> </td><td style = "font-size : 12px;"><?php if (!empty($aantomn)){   echo "&nbsp $aantomn omnummeren in te lezen."; }?></td></tr>
+<tr>
+ <td> <?php if (!empty($aantomn)){ ?> <a href='<?php echo $url;?>InsOmnummeren.php' style = 'color : blue'><?php }
+            else { echo "$leeg"; } ?>
+inlezen omnummeren </a>
+ </td>
+ <td style = "font-size : 12px;">
+    <?php if (!empty($aantomn)){ echo "&nbsp $aantomn omnummeren in te lezen."; } ?>
+ </td>
+</tr>
 
-<tr><td><?php if (!empty($aanthals)){ ?><a href='<?php echo $url;?>InsHalsnummers.php' style = 'color : blue'><?php } else { echo "$leeg"; } ?>
-inlezen halsnummers</a> </td><td style = "font-size : 12px;"><?php if (!empty($aanthals)){   echo "&nbsp $aanthals halsnummers in te lezen."; }?></td></tr>
+<tr>
+ <td> <?php if (!empty($aanthals)){ ?> <a href='<?php echo $url;?>InsHalsnummers.php' style = 'color : blue'><?php }
+            else { echo "$leeg"; } ?>
+inlezen halsnummers </a>
+ </td>
+ <td style = "font-size : 12px;">
+    <?php if (!empty($aanthals)){ echo "&nbsp $aanthals halsnummers in te lezen."; } ?>
+ </td>
+</tr>
+
+<tr>
+ <td> <?php if (!empty($aantvoer)){ ?> <a href='<?php echo $url;?>InsVoerregistratie.php' style = 'color : blue'><?php }
+            else { echo "$leeg"; } ?>
+inlezen voerregistratie </a>
+ </td>
+ <td style = "font-size : 12px;">
+    <?php if (!empty($aantvoer)){ echo "&nbsp $aantvoer voerregistraties in te lezen."; } ?>
+ </td>
+</tr>
 
 </table>
 <br><br><br>
