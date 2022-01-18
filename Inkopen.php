@@ -9,13 +9,14 @@ $versie = '7-4-2019'; /* Prijs in tblOpgaaf incl. btw gemaakt */
 $versie = '11-7-2020'; /* € gewijzigd in &euro; 1-8-2020 : kalender toegevoegd */
 $versie = '28-11-2020'; /* 28-11-2020 velde chkDel toegevoegd */
 $versie = '26-8-2021'; /* O.b.v. javascript inkopen per jaartal verborgen en zichtbaar gemaakt */
+$versie = '17-1-2022'; /* Btw 0% en javascript verplicht() toegevoegd. SQL beveiligd met quotes */
 
 session_start();
  ?>
 <html>
 <head>
 <title>Inkoop</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
     <style type="text/css">
         .selectt {
            /* color: #fff;
@@ -48,7 +49,7 @@ SELECT artId, stdat, naam, concat(' ', eenheid) heid, soort, eenheid
 FROM tblEenheid e
  join tblEenheiduser eu on (e.eenhId = eu.eenhId)
  join tblArtikel a on (a.enhuId = eu.enhuId)
-WHERE eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and a.actief = 1
+WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a.actief = 1
 ORDER BY soort desc, naam
 "; 
 
@@ -63,12 +64,18 @@ $array_eenheid[$lin['artId']] = $lin['eenheid'];
 } ?>
 <script>
 function verplicht() {
-var datum	 = document.getElementById("datum"); 		var datum_v = datum.value;
-var artikel	 = document.getElementById("artikel");		var artikel_v = artikel.value;
+
+var datum = document.getElementById("datepicker1"); 	var datum_v = datum.value;
+var artikel	= document.getElementById("artikel");		var artikel_v = artikel.value;
+var hoeveelheid	 = document.getElementById("hoeveelheid");		var hoeveelheid_v = hoeveelheid.value;
+var prijs	 = document.getElementById("prijs");		var prijs_v = prijs.value;
 
 
+/*artikel.focus() +*/ //alert('datum_v.length = ' + datum_v);
 	 if(datum_v.length == 0) datum.focus() + alert("Datum is onbekend.");
 else if(artikel_v.length == 0) artikel.focus() + alert("Omschrijving is onbekend.");
+else if(hoeveelheid_v.length == 0) hoeveelheid.focus() + alert("Het inkoopaantal is onbekend.");
+else if(prijs_v.length == 0) prijs.focus() + alert("De prijs is onbekend.");
 
 }
 
@@ -117,7 +124,7 @@ SELECT eenheid
 FROM tblEenheid e
  join tblEenheiduser eu on (e.eenhId = eu.eenhId)
  join tblArtikel a on (a.enhuId = eu.enhuId)
-WHERE eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and a.artId = '$_POST[txtArtikel_]' 
+WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a.artId = '$_POST[txtArtikel_]' 
 ") or die (mysqli_error($db));
 while ($keusnhd = mysqli_fetch_assoc($keuze_eenhd))
 {	$k_nhd = $keusnhd['eenheid'];	}
@@ -131,11 +138,9 @@ if (empty($_POST['txtInkdm_']))	{	$insInkdm = "inkdm = NULL";	}
 else		{	$dateink = date_create($_POST['txtInkdm_']);
 			$insInkdm = date_format($dateink, 'Y-m-d');	}
 
-if (empty($_POST['txtCharge_']))	{	$insCharge = 'NULL';	}
-else		{	$insCharge ="$_POST[txtCharge_]";	}
+if (!empty($_POST['txtCharge_']))	{	$insCharge = $_POST['txtCharge_'];	}
 
-if (empty($_POST['txtArtikel_']))	{	$insVoer = "NULL";	}
-else		{	$insVoer =" $_POST[txtArtikel_] ";	}
+if (!empty($_POST['txtArtikel_']))	{	$insVoer = $_POST['txtArtikel_'];	}
 
 $insInkat = $_POST['txtInkat_'];
 	
@@ -145,7 +150,7 @@ SELECT a.stdat, a.enhuId, a.btw, a.relId, a.rubuId, p.naam
 FROM tblArtikel a
  left join tblRelatie r on (a.relId = r.relId)
  left join tblPartij p on (r.partId = p.partId)
-WHERE a.artId = ".mysqli_real_escape_string($db,$insVoer)."
+WHERE a.artId = '".mysqli_real_escape_string($db,$insVoer)."'
 ") or die (mysqli_error($db));
 	while ($ln= mysqli_fetch_assoc($ophalen_waardes)) {
 		$enhuId = $ln['enhuId'];
@@ -156,18 +161,22 @@ WHERE a.artId = ".mysqli_real_escape_string($db,$insVoer)."
 			else		{	$insRc = "$ln[relId]";	}
 			
 			}
-$insert_tblInkoop = "INSERT INTO tblInkoop SET dmink = '".mysqli_real_escape_string($db,$insInkdm)."', artId = ".mysqli_real_escape_string($db,$insVoer).", charge = ". db_null_input($insCharge) .", inkat = ".mysqli_real_escape_string($db,$insInkat).", enhuId = ".mysqli_real_escape_string($db,$enhuId).", prijs = ".mysqli_real_escape_string($db,$insPrijs).", btw = ".mysqli_real_escape_string($db,$insBtw).", relId = ".mysqli_real_escape_string($db,$insRc)." "; 
 
-/*echo "$insert_tblInkoop".'<br>';*/ mysqli_query($db,$insert_tblInkoop) or die (mysqli_error($db));
+$insert_tblInkoop = "INSERT INTO tblInkoop SET dmink = '".mysqli_real_escape_string($db,$insInkdm)."', artId = '".mysqli_real_escape_string($db,$insVoer)."', charge = ". db_null_input($insCharge) .", inkat = '".mysqli_real_escape_string($db,$insInkat)."', enhuId = '".mysqli_real_escape_string($db,$enhuId)."', prijs = '".mysqli_real_escape_string($db,$insPrijs)."', btw = '".mysqli_real_escape_string($db,$insBtw)."', relId = " . db_null_input($insRc) ; 
+
+/*echo "$insert_tblInkoop".'<br>'; ##*/mysqli_query($db,$insert_tblInkoop) or die (mysqli_error($db));
 
 if($modfin == 1 && isset($rubuId)) {
 
-$btwBedrag = $insPrijs*$insBtw/100;
+if($insBtw > 1) { $btwBedrag = $insPrijs*$insBtw/100; }
+else { $btwBedrag = 0; }
+
 $PrijsInclBtw = $insPrijs + $btwBedrag;
-		$insert_tblOpgaaf = "INSERT INTO tblOpgaaf SET rubuId = '$rubuId', datum = '$insInkdm', bedrag = '$PrijsInclBtw', toel = '".$relatie."', liq = 1 ";
+		$insert_tblOpgaaf = "INSERT INTO tblOpgaaf SET rubuId = ". db_null_input($rubuId) .", datum = '".mysqli_real_escape_string($db,$insInkdm)."', bedrag = '".mysqli_real_escape_string($db,$PrijsInclBtw)."', toel = ". db_null_input($relatie) .", liq = 1 ";
 		
-				mysqli_query($db,$insert_tblOpgaaf) or die (mysqli_error($db));
+			/*	##*/mysqli_query($db,$insert_tblOpgaaf) or die (mysqli_error($db));
 	}
+
 } ?>
 <table border= 0><tr><td>
 
@@ -187,7 +196,7 @@ $PrijsInclBtw = $insPrijs + $btwBedrag;
  <td colspan = 2 width = 50 align = center>Totaalprijs excl. btw<hr></td> 
 </tr>
 <tr>
- <td><input id = "datepicker1" type="text" name = "txtInkdm_" id = "datum" size = 8 value = <?php if(isset($inkdatum)) { echo $inkdatum; } ?> ></td>
+ <td><input id = "datepicker1" type="text" name = "txtInkdm_" size = 8 value = <?php if(isset($inkdatum)) { echo $inkdatum; } ?> ></td>
  <td>
 
 <?php
@@ -224,7 +233,7 @@ $wrde = "$name$cijf$eenheid";
  </select>
 </td>
 <td><input type= "text" name = "txtCharge_" size = 14 value = <?php if(isset($txtcharge)) { echo $txtcharge; } ?> ></td>
-<td><input type= "text" name = "txtInkat_" size = 3 value = <?php if(!isset($inkwaarde)) { $inkwaarde = 1; } echo $inkwaarde; ?> title = "Totale hoeveelheid ingekocht"> 
+<td><input type= "text" id="hoeveelheid" name = "txtInkat_" size = 3 value = <?php if(!isset($inkwaarde)) { $inkwaarde = 1; } echo $inkwaarde; ?> title = "Totale hoeveelheid ingekocht"> 
 </td>
 <td>
 <p  id="aantal" > </p>
@@ -233,7 +242,7 @@ $wrde = "$name$cijf$eenheid";
 &euro;
 
 </td>
-<td><input type= "text" name = "txtPrijs_" size = 3  title = "Prijs totale hoeveelheid" <?php echo "value = $inkprijs "; ?> ></td> 
+<td><input type= "text" id="prijs" name = "txtPrijs_" size = 3  title = "Prijs totale hoeveelheid" <?php echo "value = $inkprijs "; ?> ></td> 
 
 <td colspan = 2><input type = "submit" name = "knpInsert_" onfocus = "verplicht()" value = "Toevoegen" style = "font-size:10px;"></td></tr>
 
@@ -266,7 +275,7 @@ FROM tblEenheid e
  join tblEenheiduser eu on (e.eenhId = eu.eenhId)
  join tblArtikel a on (a.enhuId = eu.enhuId)
  join tblInkoop i on (a.artId = i.artId)
-WHERE eu.lidId = ".mysqli_real_escape_string($db,$lidId)."
+WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 GROUP BY year(i.dmink)
 ORDER BY year(i.dmink) desc
 ") or die (mysqli_error($db));
@@ -306,6 +315,8 @@ ORDER BY year(i.dmink) desc
  </tr> 
 
 <?php
+$array_btw = array(1 => '0%', 9 => '9%', 21 => '21%');
+
 $query = mysqli_query($db,"
 SELECT i.inkId, date_format(i.dmink,'%d-%m-%Y') inkdm, i.dmink, i.artId, a.naam, i.charge chargenr, inkat, i.enhuId, e.eenheid, round((i.prijs/inkat),2) stprijs, i.prijs, i.btw, p.naam crediteur, min(n.nutId) nutId, min(v.voedId) voedId
 FROM tblInkoop i 
@@ -316,7 +327,7 @@ FROM tblInkoop i
  left join tblVoeding v on (v.inkId = i.inkId)
  left join tblRelatie r on (i.relId = r.relId)
  join tblPartij p on (r.partId = p.partId)
-WHERE eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and year(i.dmink) = " . mysqli_real_escape_string($db,$jaar). "
+WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and year(i.dmink) = '" . mysqli_real_escape_string($db,$jaar). "'
 GROUP BY i.inkId, i.dmink, i.dmink, i.artId, a.naam, i.charge, inkat, i.enhuId, e.eenheid, round((i.prijs/inkat),2), i.prijs, i.btw, p.naam
 ORDER BY i.dmink desc, inkId desc
 ") or die (mysqli_error($db));
@@ -332,7 +343,7 @@ ORDER BY i.dmink desc, inkId desc
 		$eenhd = $row['eenheid'];
 		$stprijs = $row['stprijs'];
 		$prijs = $row['prijs'];
-		$btw = $row['btw'];
+		$btw_db = $row['btw']; 	 $btw = $array_btw[$btw_db];
 		$rc = $row['crediteur'];
 		$nutId = $row['nutId'];
 		$voedId = $row['voedId'];
@@ -357,14 +368,14 @@ $delete_inkoop = "DELETE FROM tblInkoop WHERE inkId = ".mysqli_real_escape_strin
  <td width = "1"></td>
  <td align = right > &euro;&nbsp <input type = text name = <?php echo "txtPrijs_$inkid"; ?> size = 4 style = "font-size:11px; text-align:right;" value = <?php	echo $prijs;?> ></td>
  <td width = "1"></td>
- <td align = center style = "font-size:12px;"><?php if (!empty($btw)) {echo $btw."%";} ?></td>
+ <td align = center style = "font-size:12px;"><?php if (!empty($btw)) {echo $btw;} ?></td>
  <td width = "1"></td>
  <td align = center style = "font-size:14px;"><?php echo "$rc";?></td>
  <td align = center style = "font-size:14px;"><?php if(!isset($nutId) && !isset($voedId)) { ?> 
 
-<button class=btn btn-sm btn-danger delete_class id= <?php echo $inkid; ?> >Verwijder inkoop</button>
+<!--<button class=btn btn-sm btn-danger delete_class id= <?php echo $inkid; ?> >Verwijder inkoop</button> -->
 
- 	<!-- <input type = "checkbox" name= <?php echo "chkDel_$inkid"; ?> value = "Verwijder inkoop" style = "font-size:9px" >-->
+ 	 <input type = "checkbox" name= <?php echo "chkDel_$inkid"; ?> value = "Verwijder inkoop" style = "font-size:9px" >
 
  	 <?php } ?></td>
 </tr>

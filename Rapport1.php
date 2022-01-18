@@ -20,7 +20,7 @@ $file = "Rapport1.php";
 Include "login.php";
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { ?>
 
-<img src="schaap1.jpg" width=650 height=470 valign = "center"/>
+<img src="OER_van_OVIS.jpg" width = 650 height = 240 valign = "center"/>
 </td>
 <?php
 Include "menuRapport1.php"; } ?>
