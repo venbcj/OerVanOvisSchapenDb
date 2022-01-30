@@ -7,6 +7,7 @@ $versie = '4-12-2016'; /* Index keuzelijst 'vastleggen' kzlDef_ gewijigd van 0 e
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '20-1-2019'; /* alles aan- en uitzetten met javascript */
 $versie = '3-1-2020'; /* het pad ($file_r) naar FTP variabel gemaakt ipv uit tblLeden gehaald */
+$versie = '30-1-2022'; /* Keuze controle en knop melden bij elkaar gezet. Sql beveiligd met quotes */
 
  session_start(); ?>
 
@@ -42,23 +43,27 @@ $maxdag = date("Y-m-d");
 
 // De gegevens van het request
 $gegevensRequest = mysqli_query($db,"
-select min(rq.reqId) reqId, l.relnr
-from tblRequest rq
+SELECT min(rq.reqId) reqId, l.relnr
+FROM tblRequest rq
  join tblMelding m on (rq.reqId = m.reqId)
  join tblHistorie h on (h.hisId = m.hisId)
  join tblStal st on (st.stalId = h.stalId)
  join tblLeden l on (l.lidId = st.lidId)
-where l.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(rq.dmmeld) and rq.code = 'GER' 
-group by l.relnr
+WHERE l.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(rq.dmmeld) and rq.code = 'GER' 
+GROUP BY l.relnr
 ") or die (mysqli_error($db));
 	While ($req = mysqli_fetch_assoc($gegevensRequest))
-	{	$reqId = $req['reqId'];
-		$relnr = $req['relnr'];	}
+	{	$reqId = $req['reqId']; }
 // Einde De gegevens van het request
 //if (isset($requestId)) {$reqId = $requestId; } else {$reqId = "$_POST[txtRequest_]";}
 // Aantal dieren te melden 
 function aantal_melden($datb,$lidid,$fldReqId) {
-	$aantalmelden = mysqli_query($datb,"select count(*) aant from tblMelding m where m.reqId = ".$fldReqId." and m.skip <> 1 ");//Foutafhandeling zit in return FALSE
+
+$aantalmelden = mysqli_query($datb,"
+SELECT count(*) aant
+FROM tblMelding m
+WHERE m.reqId = '".mysqli_real_escape_string($datb,$fldReqId)."' and m.skip <> 1
+");//Foutafhandeling zit in return FALSE
 		if($aantalmelden)
 		{	$row = mysqli_fetch_assoc($aantalmelden);
 	            return $row['aant'];
@@ -66,7 +71,11 @@ function aantal_melden($datb,$lidid,$fldReqId) {
 		return FALSE;
 }
 // Maximum aantal meldingen binnen het request
-$max_meldingen = mysqli_query($db,"select count(*) aant from tblMelding m where m.reqId = ".$reqId." and m.skip = 0 ");
+$max_meldingen = mysqli_query($db,"
+SELECT count(*) aant
+FROM tblMelding m
+WHERE m.reqId = '".mysqli_real_escape_string($db,$reqId)."' and m.skip = 0
+");
 		while ($maxmelding = mysqli_fetch_assoc($max_meldingen)) {	$maxmeld = $maxmelding['aant'];	}
 // Einde Maximum aantal meldingen binnen het request
 
@@ -75,23 +84,24 @@ $aantMeld = aantal_melden($db,$lidId,$reqId);
 
 // Aantal dieren goed geregistreerd om automatisch te kunnen melden.
 function aantal_oke($datb,$lidid,$fldReqId) {
-	$juistaantal = mysqli_query ($datb,"
-	select count(*) aant
-	from tblMelding m
-	 join tblHistorie h on (h.hisId = m. hisId)
-	 join tblStal st on (st.stalId = h.stalId)
-	 join tblSchaap s on (st.schaapId = s.schaapId)
-	where m.reqId = ".$fldReqId." 
-	 and h.datum is not null
-	 and h.datum <= curdate()
-	 and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12 
-	 and m.skip <> 1
-	");
-		if($juistaantal)
-		{	$row = mysqli_fetch_assoc($juistaantal);
-				return $row['aant'];
-		}
-		return FALSE;
+
+$juistaantal = mysqli_query ($datb,"
+SELECT count(*) aant
+FROM tblMelding m
+ join tblHistorie h on (h.hisId = m. hisId)
+ join tblStal st on (st.stalId = h.stalId)
+ join tblSchaap s on (st.schaapId = s.schaapId)
+WHERE m.reqId = '".mysqli_real_escape_string($datb,$fldReqId)."' 
+ and h.datum is not null
+ and h.datum <= curdate()
+ and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12 
+ and m.skip <> 1
+");
+	if($juistaantal)
+	{	$row = mysqli_fetch_assoc($juistaantal);
+			return $row['aant'];
+	}
+	return FALSE;
 }
 $oke = aantal_oke($db,$lidId,$reqId);
 // Einde Aantal dieren goed geregistreerd om automatisch te kunnen melden. 
@@ -100,7 +110,11 @@ $oke = aantal_oke($db,$lidId,$reqId);
 if (isset($_POST['knpMeld_'])) { 	Include "save_melding.php"; $aantMeld = aantal_melden($db,$lidId,$reqId); $oke = aantal_oke($db,$lidId,$reqId);
 if( $aantMeld > 0 && $oke > 0) { 
 // Bestand maken
-$qry_Leden = mysqli_query($db,"select ubn, alias, root_files from tblLeden where lidId = ".mysqli_real_escape_string($db,$lidId)." ;") or die (mysqli_error($db)); 
+$qry_Leden = mysqli_query($db,"
+SELECT ubn, alias, root_files
+FROM tblLeden
+WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
+") or die (mysqli_error($db)); 
 	while ($row = mysqli_fetch_assoc($qry_Leden))
 		{	$ubn = $row['ubn'];
 			$naam = $row['alias']; } // Het pad naar alle php bestanden
@@ -115,15 +129,15 @@ $root = $end_dir_reader.$input_file;
    
 /* insert field values into data.txt */
     $qry_txtRequest_RVO = mysqli_query ($db,"
-select rq.reqId, l.prod, rq.def, l.urvo, l.prvo, rq.code melding, l.relnr, l.ubn, date_format(h.datum,'%d-%m-%Y'), 'NL' land, s.levensnummer, 3 soort,
+SELECT rq.reqId, l.prod, rq.def, l.urvo, l.prvo, rq.code melding, l.relnr, l.ubn, date_format(h.datum,'%d-%m-%Y'), 'NL' land, s.levensnummer, 3 soort,
  NULL ubn_herk, NULL ubn_best, NULL land_herk, NULL geboortedatum, NULL sucind, NULL foutind, NULL foutcode, NULL bericht, NULL meldnr
-from tblRequest rq
+FROM tblRequest rq
  join tblMelding m on (rq.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (h.stalId = st.stalId)
  join tblLeden l on (st.lidId = l.lidId)
  join tblSchaap s on (st.schaapId = s.schaapId)
-where rq.reqId = ".mysqli_real_escape_string($db,$reqId)." 
+WHERE rq.reqId = '".mysqli_real_escape_string($db,$reqId)."' 
  and h.datum is not null
  and h.datum <= curdate()
  and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12
@@ -145,7 +159,7 @@ where rq.reqId = ".mysqli_real_escape_string($db,$reqId)."
     fclose($fh);
 
 // Melddatum registreren in tblRequest bij > 0 te melden en definitieve melding
- $upd_tblRequest = "UPDATE tblRequest SET dmmeld = now() where reqId = ".mysqli_real_escape_string($db,$reqId)." and def = 'J' ";
+ $upd_tblRequest = "UPDATE tblRequest SET dmmeld = now() WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."' and def = 'J' ";
 	mysqli_query($db,$upd_tblRequest) or die (mysqli_error($db));
 
 		if($_POST['kzlDef_'] == 'J'){
@@ -155,7 +169,7 @@ where rq.reqId = ".mysqli_real_escape_string($db,$reqId)."
 
 else if ( $aantMeld == 0 || $oke == 0) {
 // Melddatum registreren in tblRequest bij 0 te melden
- $upd_tblRequest = "UPDATE tblRequest SET dmmeld = now() where reqId = ".mysqli_real_escape_string($db,$reqId)." and def = 'J' ";
+ $upd_tblRequest = "UPDATE tblRequest SET dmmeld = now() WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."' and def = 'J' ";
 	mysqli_query($db,$upd_tblRequest) or die (mysqli_error($db));
 	
 		if($_POST['kzlDef_'] == 'J'){
@@ -168,41 +182,49 @@ $aantMeld = aantal_melden($db,$lidId,$reqId);
 } // EINDE MELDEN
 
 // Ophalen 'vaststellen' cq 'controle'
-$definitief = mysqli_query($db, "select r.def from tblRequest r where r.reqId = $reqId " ) or die (mysqli_error($db));
+$definitief = mysqli_query($db, "
+SELECT r.def
+FROM tblRequest r
+WHERE r.reqId = '".mysqli_real_escape_string($db,$reqId)."'
+") or die (mysqli_error($db));
 
 	while($defi = mysqli_fetch_assoc($definitief))
 	{	$def = $defi['def'];	}
 ?>
 <form action="MeldGeboortes.php" method = "post">
 <table border = 0>
-<tr><td align = "right">Meldingnr : </td><td><?php echo $reqId; ?>
+<tr>
+ <td align = "right">Meldingnr : </td>
+ <td><?php echo $reqId; ?>
+	<input type = "hidden" size = 1 name = "txtRequest_" value = <?php echo $reqId ; ?>>
+ </td> <!--hiddden-->
+ <td width = 850 align = "right">Aantal dieren te melden : </td>
+ <td><?php echo $aantMeld." van de ".$maxmeld; ?></td> 
+</tr>
 
-<input type = "hidden" size = 1 name = "txtRequest_" value = <?php echo $reqId ; ?>></td> <!--hiddden-->
-
-<td align = 'right'>
-<!-- KZLDefinitief --> 
-<select <?php echo "name=\"kzlDef_\" "; ?> style = "width:100; font-size:13px;">
-<?php  
-$opties = array('N'=>'Controle', 'J'=>'Vastleggen');
-foreach ( $opties as $key => $waarde)
-{
-   if((!isset($_POST['knpSave_']) && $def == $key) || (isset($_POST["kzlDef_"]) && $_POST["kzlDef_"] == $key) ) {
-	echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
-  } else {
-	echo '<option value="' . $key . '">' . $waarde . '</option>';
-  }
-} ?> 
-</select> <!-- EINDE KZLDefinitief -->
-</td>
-<td>
-</td>
-<td width = 450 align = "right">Aantal dieren dat u wilt melden : </td><td><?php echo $aantMeld." van de ".$maxmeld; ?></td>
-<td></td>
-<td><input type = <?php echo $knptype; ?> name = "knpMeld_" value = "Melden"></td> </tr>
-
-<tr><td align = "right">Relatienr&nbsp &nbsp: </td><td><?php echo $relnr; ?></td>
-<td width = 180 > </td> </tr>
-<tr><td colspan = 10><hr></hr></td></tr>
+<tr>
+ <td align = "right">Ubn &nbsp &nbsp &nbsp &nbsp &nbsp: </td>
+ <td><?php echo $ubn; ?></td>
+ <td align = 'right'> 
+ 	<!-- KZLDefinitief --> 
+	<select <?php echo "name=\"kzlDef_\" "; ?> style = "width:100; font-size:13px;">
+	<?php  
+	$opties = array('N'=>'Controle', 'J'=>'Vastleggen');
+	foreach ( $opties as $key => $waarde)
+	{
+	   if((!isset($_POST['knpSave_']) && $def == $key) || (isset($_POST["kzlDef_"]) && $_POST["kzlDef_"] == $key) ) {
+		echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
+	  } else {
+		echo '<option value="' . $key . '">' . $waarde . '</option>';
+	  }
+	} ?> 
+	</select> <!-- EINDE KZLDefinitief -->
+ </td>
+ <td><input type = <?php echo $knptype; ?> name = "knpMeld_" value = "Melden"></td>
+</tr>
+<tr>
+ <td colspan = 10><hr></hr></td>
+</tr>
 </table>
 
 <table border = 0 >
@@ -239,11 +261,11 @@ FROM tblMelding m
  left join (
 	SELECT max(respId) respId, levensnummer
 	FROM impRespons
-	WHERE reqId = ".$reqId."
+	WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."'
 	GROUP BY levensnummer
  ) mresp on (mresp.levensnummer = s.levensnummer)
  left join impRespons rs on (rs.respId = mresp.respId)
-WHERE m.reqId = ".mysqli_real_escape_string($db,$reqId)."
+WHERE m.reqId = '".mysqli_real_escape_string($db,$reqId)."'
 ORDER BY m.skip, if(h.datum > curdate(),1,0 ) desc, right(s.levensnummer,".$Karwerk.")
 " ) or die (mysqli_error($db));
 

@@ -9,6 +9,7 @@ $versie = '26-1-2018'; /* Bij toch niet verwijderen wordt kzlBest weer gevuld */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '20-1-2019'; /* alles aan- en uitzetten met javascript */
 $versie = '3-1-2020'; /* het pad ($file_r) naar FTP variabel gemaakt ipv uit tblLeden gehaald */
+$versie = '30-1-2022'; /* Keuze controle en knop melden bij elkaar gezet. Sql beveiligd met quotes */
 
  session_start(); ?>
 
@@ -49,7 +50,7 @@ FROM (
 	 join tblMelding m on (rq.reqId = m.reqId)
 	 join tblHistorie h on (m.hisId = h.hisId)
 	 join tblStal st on (st.stalId = h.stalId)
-	WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and h.skip = 0 and isnull(rq.dmmeld) and rq.code = 'AFV' 
+	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0 and isnull(rq.dmmeld) and rq.code = 'AFV' 
  ) r
  join tblMelding m on (m.reqId = r.reqId)
  join tblHistorie h on (h.hisId = m.hisId)
@@ -59,8 +60,7 @@ WHERE h.skip = 0
 GROUP BY r.reqId, l.relnr
 ") or die (mysqli_error($db));
 	While ($req = mysqli_fetch_assoc($gegevensRequest))
-	{	$reqId = $req['reqId'];
-		$relnr = $req['relnr']; }
+	{	$reqId = $req['reqId']; }
 // Einde De gegevens van het request
 //if (isset($requestId)) {$reqId = $requestId; } else {$reqId = "$_POST[txtRequest_]";}
 // Aantal dieren te melden
@@ -69,7 +69,7 @@ function aantal_melden($datb,$lidid,$fldReqId) {
 	SELECT count(*) aant 
 	FROM tblMelding m 
 	 join tblHistorie h on (m.hisId = h.hisId)
-	WHERE reqId = ".$fldReqId." and m.skip <> 1 and h.skip = 0 ");//Foutafhandeling zit in return FALSE
+	WHERE reqId = '".mysqli_real_escape_string($datb,$fldReqId)."' and m.skip <> 1 and h.skip = 0 ");//Foutafhandeling zit in return FALSE
 		if($aantalmelden)
 		{	$row = mysqli_fetch_assoc($aantalmelden);
 	            return $row['aant'];
@@ -81,7 +81,7 @@ $max_meldingen = mysqli_query($db,"
 SELECT count(*) aant 
 FROM tblMelding m 
  join tblHistorie h on (m.hisId = h.hisId)
-WHERE reqId = ".$reqId." and h.skip = 0
+WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."' and h.skip = 0
 ");
 		while ($maxmelding = mysqli_fetch_assoc($max_meldingen)) {	$maxmeld = $maxmelding['aant'];	}
 // Einde Maximum aantal meldingen binnen het request
@@ -104,7 +104,7 @@ function aantal_oke($datb,$lidid,$fldReqId,$nestHistorieDm) {
 		WHERE hd.skip = 0 and (a.af = 0 or isnull(a.af)) and hd.actie != 'Gevoerd' and hd.actie not like '% gemeld'
 		GROUP BY schaapId
 	 ) mhd on (s.schaapId = mhd.schaapId)
-	WHERE m.reqId = '$fldReqId' 
+	WHERE m.reqId = '".mysqli_real_escape_string($datb,$fldReqId)."' 
 	 and h.datum is not null
 	 and h.datum >= mhd.lastdatum
 	 and h.datum <= (curdate() + interval 3 day)
@@ -126,7 +126,11 @@ $oke = aantal_oke($db,$lidId,$reqId,$vw_HistorieDm);
 if (isset($_POST['knpMeld_'])) {	Include "save_melding.php"; $aantMeld = aantal_melden($db,$lidId,$reqId); $oke = aantal_oke($db,$lidId,$reqId,$vw_HistorieDm);
 if( $aantMeld > 0 && $oke > 0) {
 // Bestand maken
-$qry_Leden = mysqli_query($db,"SELECT ubn, alias FROM tblLeden WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." ;") or die (mysqli_error($db)); 
+$qry_Leden = mysqli_query($db,"
+SELECT ubn, alias
+FROM tblLeden
+WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
+") or die (mysqli_error($db)); 
 	while ($row = mysqli_fetch_assoc($qry_Leden))
 		{	$ubn = $row['ubn'];
 			$naam = $row['alias']; } // Het pad naar alle php bestanden
@@ -157,7 +161,7 @@ FROM tblRequest rq
  ) mhd on (s.schaapId = mhd.schaapId)
  left join tblRelatie rl on (rl.relId = st.rel_best)
  left join tblPartij p on (rl.partId = p.partId)
-WHERE rq.reqId = ".mysqli_real_escape_string($db,$reqId)." 
+WHERE rq.reqId = '".mysqli_real_escape_string($db,$reqId)."' 
  and h.datum is not null
  and h.datum >= mhd.datum
  and h.datum <= (curdate() + interval 3 day) 
@@ -180,7 +184,7 @@ WHERE rq.reqId = ".mysqli_real_escape_string($db,$reqId)."
     fclose($fh);
 
 // Melddatum registreren in tblRequest bij > 0 te melden en definitieve melding
- $upd_tblRequest = "UPDATE tblRequest SET dmmeld = now() WHERE reqId = ".mysqli_real_escape_string($db,$reqId)." and def = 'J' ";
+ $upd_tblRequest = "UPDATE tblRequest SET dmmeld = now() WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."' and def = 'J' ";
 	mysqli_query($db,$upd_tblRequest) or die (mysqli_error($db));
 	
 		if($_POST['kzlDef_'] == 'J'){
@@ -190,7 +194,7 @@ WHERE rq.reqId = ".mysqli_real_escape_string($db,$reqId)."
 
 else if ( $aantMeld == 0 || $oke == 0) {
 // Melddatum registreren in tblRequest bij 0 te melden
- $upd_tblRequest = "UPDATE tblRequest SET dmmeld = now() WHERE reqId = ".mysqli_real_escape_string($db,$reqId)." and def = 'J' ";
+ $upd_tblRequest = "UPDATE tblRequest SET dmmeld = now() WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."' and def = 'J' ";
 	mysqli_query($db,$upd_tblRequest) or die (mysqli_error($db));
 	
 		if($_POST['kzlDef_'] == 'J'){
@@ -206,7 +210,7 @@ $aantMeld = aantal_melden($db,$lidId,$reqId);
 $definitief = mysqli_query($db, "
 SELECT r.def 
 FROM tblRequest r 
-WHERE r.reqId = ".mysqli_real_escape_string($db,$reqId)." 
+WHERE r.reqId = '".mysqli_real_escape_string($db,$reqId)."' 
 ") or die (mysqli_error($db));
 
 	while($defi = mysqli_fetch_assoc($definitief))
@@ -214,31 +218,36 @@ WHERE r.reqId = ".mysqli_real_escape_string($db,$reqId)."
 ?>
 <form name = "frmactive" action="MeldAfvoer.php" method = "post">
 <table border = 0>
-<tr><td align = "right">Meldingnr : </td><td><?php echo $reqId; ?>
-<td align = 'right'>
-<!-- KZLDefinitief --> 
-<select <?php echo "name=\"kzlDef_\" "; ?> style = "width:100; font-size:13px;">
-<?php  
-$opties = array('N'=>'Controle', 'J'=>'Vastleggen');
-foreach ( $opties as $key => $waarde)
-{
-   if((!isset($_POST['knpSave_']) && $def == $key) || (isset($_POST["kzlDef_"]) && $_POST["kzlDef_"] == $key) ) {
-	echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
-  } else {
-	echo '<option value="' . $key . '">' . $waarde . '</option>';
-  }
-} ?> 
-</select> <!-- EINDE KZLDefinitief -->
-</td>
-<td>
-</td>
-<td width = 450 align = "right">Aantal dieren te melden : </td><td><?php echo $aantMeld." van de ".$maxmeld; ?></td>
-<td></td>
-<td><input type = <?php echo $knptype; ?> name = "knpMeld_" value = "Melden"></td> </tr>
+<tr>
+ <td align = "right">Meldingnr : </td>
+ <td><?php echo $reqId; ?> </td>
+ <td width = 850 align = "right">Aantal dieren te melden : </td>
+ <td><?php echo $aantMeld." van de ".$maxmeld; ?></td>
+</tr>
 
-<tr><td align = "right">Relatienr&nbsp &nbsp: </td><td><?php echo $relnr; ?></td>
-<td width = 180 > </td> </tr>
-<tr><td colspan = 10><hr></hr></td></tr>
+<tr>
+ <td align = "right">Ubn &nbsp &nbsp &nbsp &nbsp &nbsp: </td>
+ <td><?php echo $ubn; ?></td>
+ <td align = 'right'>
+	<!-- KZLDefinitief --> 
+	<select <?php echo "name=\"kzlDef_\" "; ?> style = "width:100; font-size:13px;">
+	<?php  
+	$opties = array('N'=>'Controle', 'J'=>'Vastleggen');
+	foreach ( $opties as $key => $waarde)
+	{
+	   if((!isset($_POST['knpSave_']) && $def == $key) || (isset($_POST["kzlDef_"]) && $_POST["kzlDef_"] == $key) ) {
+		echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
+	  } else {
+		echo '<option value="' . $key . '">' . $waarde . '</option>';
+	  }
+	} ?> 
+	</select> <!-- EINDE KZLDefinitief -->
+ </td>
+ <td><input type = <?php echo $knptype; ?> name = "knpMeld_" value = "Melden"></td>
+</tr>
+<tr>
+ <td colspan = 10><hr></hr></td>
+</tr>
 </table>
 
 <table border = 0 >
@@ -298,7 +307,7 @@ FROM tblRequest rq
 	GROUP BY rs.reqId, rs.levensnummer
  ) lrs on (lrs.levensnummer = s.levensnummer and lrs.reqId = rq.reqId)
  left join impRespons rs on (lrs.respId = rs.respId)
-WHERE h.skip = 0 and m.reqId = ".mysqli_real_escape_string($db,$reqId)."
+WHERE h.skip = 0 and m.reqId = '".mysqli_real_escape_string($db,$reqId)."'
 ORDER BY m.skip, if (h.datum < mhd.datum, 1, if(h.datum > (curdate() + interval 3 day),1,0 )) desc, right(s.levensnummer,".$Karwerk.")
 " ) or die (mysqli_error($db));
 
@@ -350,12 +359,13 @@ ORDER BY m.skip, if (h.datum < mhd.datum, 1, if(h.datum > (curdate() + interval 
 
 <?php
 // Declaratie BESTEMMING			// lower(if(isnull(ubn),'6karakters',ubn)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen tblRelaties.
-$qryRelatie = ("
+$qryRelatie = "
 SELECT relId, lower(if(isnull(p.ubn),'6karakters',p.ubn)) ubn, p.naam
 FROM tblPartij p
  join tblRelatie r on (p.partId = r.partId) 
-WHERE p.lidId = ".mysqli_real_escape_string($db,$lidId)." and r.relatie = 'deb' and p.actief = 1 and r.actief = 1
-ORDER BY naam"); 
+WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and r.relatie = 'deb' and p.actief = 1 and r.actief = 1
+ORDER BY naam
+"; 
 $relatienr = mysqli_query ($db,$qryRelatie) or die (mysqli_error($db)); 
 
 $index = 0; 

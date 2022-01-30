@@ -5,6 +5,7 @@ $versie = '4-12-2016'; /* Index keuzelijst 'vastleggen' kzlDef_ gewijigd van 0 e
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '20-1-2019'; /* alles aan- en uitzetten met javascript */
 $versie = '1-1-2020'; /* het pad ($file_r) naar FTP variabel gemaakt ipv uit tblLeden gehaald */
+$versie = '30-1-2022'; /* Keuze controle en knop melden bij elkaar gezet. Sql beveiligd met quotes */
 
  session_start(); ?>
 
@@ -45,31 +46,36 @@ FROM tblRequest rq
  join tblHistorie h on (h.hisId = m.hisId)
  join tblStal st on (st.stalId = h.stalId)
  join tblLeden l on (l.lidId = st.lidId)
-WHERE l.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(rq.dmmeld) and rq.code = 'DOO' 
+WHERE l.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(rq.dmmeld) and rq.code = 'DOO' 
 GROUP BY rq.reqId, l.relnr
 ") or die (mysqli_error($db));
 	While ($req = mysqli_fetch_assoc($gegevensRequest))
-	{	$reqId = $req['reqId'];
-		$relnr = $req['relnr'];	}
+	{	$reqId = $req['reqId']; }
 // Einde De gegevens van het request
 
 // Aantal dieren te melden 
 function aantal_melden($datb,$fldReqId) {
-	$aantalmelden = mysqli_query($datb,"SELECT count(*) aant 
-										FROM tblMelding m
-										 join tblHistorie h on (h.hisId = m. hisId)
-										WHERE m.reqId = ".mysqli_real_escape_string($datb,$fldReqId)." and m.skip <> 1 and h.skip = 0 ");//Foutafhandeling zit in return FALSE
-		if($aantalmelden)
-		{	$row = mysqli_fetch_assoc($aantalmelden);
-	            return $row['aant'];
-		}
-		return FALSE;
+
+$aantalmelden = mysqli_query($datb,"
+SELECT count(*) aant 
+FROM tblMelding m
+ join tblHistorie h on (h.hisId = m. hisId)
+WHERE m.reqId = '".mysqli_real_escape_string($datb,$fldReqId)."' and m.skip <> 1 and h.skip = 0
+");//Foutafhandeling zit in return FALSE
+
+	if($aantalmelden)
+	{	$row = mysqli_fetch_assoc($aantalmelden);
+            return $row['aant'];
+	}
+	return FALSE;
 }
 // Maximum aantal meldingen binnen het request
-$max_meldingen = mysqli_query($db,"SELECT count(*) aant 
-								FROM tblMelding m
-								 join tblHistorie h on (m.hisId = h.hisId)
-								WHERE m.reqId = ".$reqId." and m.skip = 0 and h.skip = 0 ");
+$max_meldingen = mysqli_query($db,"
+SELECT count(*) aant 
+FROM tblMelding m
+ join tblHistorie h on (m.hisId = h.hisId)
+WHERE m.reqId = '".mysqli_real_escape_string($db,$reqId)."' and m.skip = 0 and h.skip = 0 
+");
 		while ($maxmelding = mysqli_fetch_assoc($max_meldingen)) {	$maxmeld = $maxmelding['aant'];	}
 // Einde Maximum aantal meldingen binnen het request
 
@@ -92,7 +98,7 @@ FROM tblMelding m
  ) mhd on (st.schaapId = mhd.schaapId)
  join tblRelatie r on (r.relId = st.rel_best)
  join tblPartij p on (r.partId = p.partId)
-WHERE m.reqId = ".mysqli_real_escape_string($datb,$fldReqId)."
+WHERE m.reqId = '".mysqli_real_escape_string($datb,$fldReqId)."'
  and h.datum is not null
  and h.datum >= mhd.datum
  and h.datum <= curdate()
@@ -114,7 +120,11 @@ $oke = aantal_oke($db,$reqId,$vw_HistorieDm);
 if (isset($_POST['knpMeld_'])) {	Include "save_melding.php"; $aantMeld = aantal_melden($db,$reqId); $oke = aantal_oke($db,$reqId,$vw_HistorieDm);
 if( $aantMeld > 0 && $oke > 0) {
 // Bestand maken
-$qry_Leden = mysqli_query($db,"SELECT ubn, alias FROM tblLeden WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." ;") or die (mysqli_error($db)); 
+$qry_Leden = mysqli_query($db,"
+SELECT ubn, alias
+FROM tblLeden
+WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' 
+") or die (mysqli_error($db)); 
 	while ($row = mysqli_fetch_assoc($qry_Leden))
 		{	$ubn = $row['ubn'];
 			$alias = $row['alias']; }
@@ -143,14 +153,15 @@ FROM tblRequest rq
 	WHERE hd.actId != 14 and actie != 'Gevoerd' and actie not like '% gemeld'
 	GROUP BY schaapId
  ) mhd on (s.schaapId = mhd.schaapId)
-WHERE rq.reqId = ".mysqli_real_escape_string($db,$reqId)."
+WHERE rq.reqId = '".mysqli_real_escape_string($db,$reqId)."'
  and h.datum is not null
  and h.datum >= mhd.datum
  and h.datum <= curdate()
  and st.rel_best is not null
  and m.skip <> 1 and h.skip = 0
  and isnull(m.fout) 
- ") or die (mysqli_error($db));	
+") or die (mysqli_error($db));
+
     while ($row = mysqli_fetch_array($qry_txtRequest_RVO)) {          
         $num = mysqli_num_fields($qry_txtRequest_RVO) ;
         $last = $num - 1;
@@ -165,7 +176,7 @@ WHERE rq.reqId = ".mysqli_real_escape_string($db,$reqId)."
     fclose($fh);
 	
 // Melddatum registreren in tblRequest bij > 0 te melden en definitieve melding
- $upd_tblRequest = "UPDATE tblRequest SET dmmeld = now() WHERE reqId = ".mysqli_real_escape_string($db,$reqId)." and def = 'J' ";
+ $upd_tblRequest = "UPDATE tblRequest SET dmmeld = now() WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."' and def = 'J' ";
 	mysqli_query($db,$upd_tblRequest) or die (mysqli_error($db));
 	
 		if($_POST['kzlDef_'] == 'J'){
@@ -175,7 +186,7 @@ WHERE rq.reqId = ".mysqli_real_escape_string($db,$reqId)."
 	
 else if ( $aantMeld == 0 || $oke == 0) { 
 // Melddatum registreren in tblRequest bij 0 te melden
- $upd_tblRequest = "UPDATE tblRequest SET dmmeld = now() WHERE reqId = ".mysqli_real_escape_string($db,$reqId)." and def = 'J' ";
+ $upd_tblRequest = "UPDATE tblRequest SET dmmeld = now() WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."' and def = 'J' ";
 	mysqli_query($db,$upd_tblRequest) or die (mysqli_error($db));
 	
 		if($_POST['kzlDef_'] == 'J'){
@@ -188,64 +199,71 @@ $aantMeld = aantal_melden($db,$reqId);
 } // EINDE MELDEN
 
 // Ophalen 'vaststellen' cq 'controle'
-$definitief = mysqli_query($db, "SELECT r.def FROM tblRequest r WHERE r.reqId = ".$reqId." " ) or die (mysqli_error($db));
+$definitief = mysqli_query($db, "
+SELECT r.def
+FROM tblRequest r
+WHERE r.reqId = '".mysqli_real_escape_string($db,$reqId)."' 
+") or die (mysqli_error($db));
 
 	while($defi = mysqli_fetch_assoc($definitief))
 	{	$def = $defi['def'];	}
 ?>
 <form action="MeldUitval.php" method = "post">
 <table border = 0>
-<tr><td align = "right">Meldingnr : </td><td><?php echo $reqId; ?>
+<tr>
+ <td align = "right">Meldingnr : </td>
+ <td><?php echo $reqId; ?>
+	<input type = "hidden" size = 1 name = "txtRequest_" value = <?php echo $reqId ; ?>>
+ </td> <!--hiddden-->
+ <td width = 850 align = "right">Aantal dieren te melden : </td>
+ <td><?php echo $aantMeld." van de ".$maxmeld; ?></td>
+</tr>
 
-<input type = "hidden" size = 1 name = "txtRequest_" value = <?php echo $reqId ; ?>></td> <!--hiddden-->
-
-<td align = 'right'>
-<!-- KZLDefinitief --> 
-<select <?php echo "name=\"kzlDef_\" "; ?> style = "width:100; font-size:13px;">
-<?php  
-$opties = array('N'=>'Controle', 'J'=>'Vastleggen');
-foreach ( $opties as $key => $waarde)
-{
-   if((!isset($_POST['knpSave_']) && $def == $key) || (isset($_POST["kzlDef_"]) && $_POST["kzlDef_"] == $key) ) {
-	echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
-  } else {
-	echo '<option value="' . $key . '">' . $waarde . '</option>';
-  }
-} ?> 
-</select> <!-- EINDE KZLDefinitief -->
+<tr>
+ <td align = "right">Ubn &nbsp &nbsp &nbsp &nbsp &nbsp: </td>
+ <td><?php echo $ubn; ?></td>
+ <td align = 'right'>
+	<!-- KZLDefinitief --> 
+	<select <?php echo "name=\"kzlDef_\" "; ?> style = "width:100; font-size:13px;">
+	<?php  
+	$opties = array('N'=>'Controle', 'J'=>'Vastleggen');
+	foreach ( $opties as $key => $waarde)
+	{
+	   if((!isset($_POST['knpSave_']) && $def == $key) || (isset($_POST["kzlDef_"]) && $_POST["kzlDef_"] == $key) ) {
+		echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
+	  } else {
+		echo '<option value="' . $key . '">' . $waarde . '</option>';
+	  }
+	} ?> 
+	</select> <!-- EINDE KZLDefinitief -->
 	<input type = 'hidden' name = "cntrDef_" size = 1 value = <?php echo $def; ?> > <!-- hiddden -->
-</td>
-<td>
-</td>
-<td width = 450 align = "right">Aantal dieren dat u wilt melden : </td><td><?php echo $aantMeld." van de ".$maxmeld; ?></td>
-<td></td>
-<td><input type = <?php echo $knptype; ?> name = "knpMeld_" value = "Melden"></td> </tr>
-
-<tr><td align = "right">Relatienr&nbsp &nbsp: </td><td><?php echo $relnr; ?></td>
-<td width = 180 > </td> </tr>
+ </td>
+ <td><input type = <?php echo $knptype; ?> name = "knpMeld_" value = "Melden"></td>
+</tr>
 <tr><td colspan = 10><hr></hr></td></tr>
 </table>
 
 <table border = 0 >
 <tr> 
-<td colspan = 2><input type = <?php echo $knptype; ?> name = "knpSave_" value = "Opslaan"></td>
+ <td colspan = 2><input type = <?php echo $knptype; ?> name = "knpSave_" value = "Opslaan"></td>
 <?php if($knptype == 'submit') { if($oke == 1) {$wwoord = 'wordt';} else {$wwoord = 'worden';} } 
 						  else { if($oke == 1) {$wwoord = 'is';} 	else {$wwoord = 'zijn';} }?>
-<td colspan = 4 width = 500 align = center > <b style = "color : red;"><?php if($oke <> $aantMeld) {echo $oke . " van de " .$aantMeld. " dieren ".$wwoord." gemeld bij RVO.";} ?> </b></td>
-<td></td>
-<td width = 50></td>
-<td></td></tr>
+ <td colspan = 4 width = 500 align = center > <b style = "color : red;"><?php if($oke <> $aantMeld) {echo $oke . " van de " .$aantMeld. " dieren ".$wwoord." gemeld bij RVO.";} ?> </b></td>
+ <td></td>
+ <td width = 50></td>
+ <td></td>
+</tr>
 <tr valign = bottom style = "font-size : 12px;">
-<td colspan = 20 height = 20></td>
+ <td colspan = 20 height = 20></td>
 
 </tr>
 <tr valign = bottom style = "font-size : 12px;">
-<th>Uitvaldatum<hr></th>
-<th>Levensnummer<hr></th>
-<th>Generatie<hr></th>
-<th>Verwij- deren<br> <input type="checkbox" id="selectall_del" /> <hr></th>
-<th>Bericht<hr></th>
-<th></th>
+ <th>Uitvaldatum<hr></th>
+ <th>Levensnummer<hr></th>
+ <th>Generatie<hr></th>
+ <th>Verwij- deren<br> <input type="checkbox" id="selectall_del" /> <hr></th>
+ <th>Bericht<hr></th>
+ <th></th>
 
 </tr>
 
@@ -279,11 +297,11 @@ FROM tblMelding m
  left join (
 	SELECT max(respId) respId, levensnummer
 	FROM impRespons
-	WHERE reqId = ".$reqId."
+	WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."'
 	GROUP BY levensnummer
  ) mresp on (mresp.levensnummer = s.levensnummer)
  left join impRespons rs on (rs.respId = mresp.respId)
-WHERE m.reqId = ".$reqId." and h.skip = 0
+WHERE m.reqId = '".mysqli_real_escape_string($db,$reqId)."' and h.skip = 0
 ORDER BY m.skip, if(h.datum < mhd.datum, 1, if(h.datum > curdate(),1,0 )) desc " ) or die (mysqli_error($db));
 
 	while($row = mysqli_fetch_assoc($qryMeldregels))
@@ -315,28 +333,28 @@ ORDER BY m.skip, if(h.datum < mhd.datum, 1, if(h.datum > curdate(),1,0 )) desc "
 <tr style = "font-size:15px;" >
 <!-- Id -->
 <?php if ($skip == 1) { $color = "#D8D8D8"; } ?>
-<td align = center width = 80 style = "color : <?php echo $color; ?>;" > <!--meldId:--> <input type= "hidden" size = 1 <?php echo "name=\"txtId_$Id\" value = $Id"; ?> > <!--hiddden-->
+ <td align = center width = 80 style = "color : <?php echo $color; ?>;" > <!--meldId:--> <input type= "hidden" size = 1 <?php echo "name=\"txtId_$Id\" value = $Id"; ?> > <!--hiddden-->
 <!-- DATUM -->
 <?php if ($skip == 1) { echo $schaapdm; $vldtype = "hidden"; } ?>
 <input type = <?php echo $vldtype; ?> size = 9 style = "font-size : 11px;" name = <?php echo " \"txtSchaapdm_$Id\" ;"?> value = <?php echo $schaapdm; ?> >
 <input type = "hidden" size = 9 style = "font-size : 11px;" name = <?php echo " \"cntrSchaapdm_$Id\" ;"?> value = <?php echo $schaapdm; ?> > <!--hiddden-->
 <input type = "hidden" size = 9 style = "font-size : 12px;" name = <?php echo " \"minSchaapdm_$Id\" ;"?> value = <?php echo $dmmin; ?> > <!--hiddden-->
-</td>
+ </td>
 
-<td align = center style = "color : <?php echo $color; ?>;" >	<?php echo $levnr; ?> 
+ <td align = center style = "color : <?php echo $color; ?>;" >	<?php echo $levnr; ?> 
    <input type = "hidden" name = <?php echo " \"cntrLevnr_$Id\" value = \"$levnr\" ;"?> size = 12 style = "font-size : 9px;"> </td>
 <!-- veld cntrLevnr_$Id is noodzakelijk voor variabele $cntrLevnr in Save_Melding.php-->
 
-<td align = center style = "color : <?php echo $color; ?>;" >	<?php echo $fase; ?> 
+ <td align = center style = "color : <?php echo $color; ?>;" >	<?php echo $fase; ?> 
 <input type = "hidden" size = 9 style = "font-size : 12px;" name = <?php echo " \"cntrfase_$Id\" ;"?> value = <?php echo $fase; ?> > </td> <!--hiddden-->
 
-<td align = "center">
+ <td width = 50 align = "center">
 <input type = "hidden" size = 1 style = "font-size : 11px;" name = <?php echo " \"chbSkip_$Id\" "; ?> value = 0 > <!--hiddden-->
 
 <input type = checkbox class="delete" name = <?php echo "chbSkip_$Id" ; ?> value = 1 <?php echo ($skip == 1) ? 'checked' : ''; ?>  >
-</td>
+ </td>
 	
-<td width = 600 style = "color : red; font-size : 14px;">	
+ <td width = 600 style = "color : red; font-size : 14px;">	
 
 <!-- Meldingen bij foutieve waardes wanneer deze niet zijn onstaan bij het invoeren binnen MeldGeboortes -->
 <?php 
@@ -351,7 +369,7 @@ ORDER BY m.skip, if(h.datum < mhd.datum, 1, if(h.datum > curdate(),1,0 )) desc "
 
 if($sucind == 'J' && $skip == 0) { $color = "green"; } // $sucind van laatste response kan J zijn maar inmiddels ook verwijderd.
 if(isset($boodschap)) { ?> <div style = "color : <?php echo $color; ?>;" > <?php echo $boodschap; } unset($color); unset($boodschap); ?></div>
-</td> 
+ </td> 
 </tr>
 <!--	**************************************
 	**	EINDE OPMAAK GEGEVENS	**
