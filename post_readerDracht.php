@@ -27,6 +27,8 @@ foreach($array as $recId => $id) {
 
 unset($fldRam);
 unset($fldGrootte);
+unset($fldKies);
+unset($fldDel);
    
  foreach($id as $key => $value) {
 
@@ -39,8 +41,6 @@ unset($fldGrootte);
 	if ($key == 'kzlOoi' && !empty($value)) { /*echo '$fldOoi = '.$value.'<br>';*/ $fldOoi = $value; } // betreft schaapId
 
 	if ($key == 'kzlRam' && !empty($value)) { /*echo '$fldRam = '.$value.'<br>';*/ $fldRam = $value; } // betreft levensnummer
-
-	if ($key == 'kzlDracht' && !empty($value)) {  $fldDracht = $value; }
 
 	if ($key == 'txtGrootte' && !empty($value)) {  $fldGrootte = $value; }
 	 
@@ -63,7 +63,7 @@ if ($fldKies == 1 && !isset($fldDel) && !isset($verwerkt)) { // isset($verwerkt)
 
 
 // CONTROLE op alle verplichten velden 
-if(isset($fldOoi) && isset($fldRam) && isset($fldDag)) {
+if(isset($fldOoi) && isset($fldDag)) {
 
 // Dracht binnen laatste 183 dagen mag geen worp hebben. Dit is reeds uitgesloten in InsDracht.php Alleen gedekte moeders zoeken volstaat hier dus
 // Scannen dracht wordt enkel moeder gevraagd in te geven. Vader wordt gebaseerd o.b.v. eventuele dekking.
@@ -87,8 +87,8 @@ WHERE isnull(s.volwId) and v.mdrId = '".mysqli_real_escape_string($db,$fldOoi)."
 if (!isset($volwId)) { // Als er geen koppel en dus ook geen dekking is geregistreerd
 
 	// koppel registreren zonder dekdatum
-	$insertKoppel = "INSERT INTO tblVolwas SET mdrId = '".mysqli_real_escape_string($db,$fldOoi)."', vdrId = " . db_null_input($fldRam) . ", drachtig = '".mysqli_real_escape_string($db,$fldDracht)."', grootte = " . db_null_input($fldGrootte) ;	
-/*echo $insertKoppel.'<br>';*/		mysqli_query($db,$insertKoppel) or die (mysqli_error($db));
+	$insertKoppel = "INSERT INTO tblVolwas SET mdrId = '".mysqli_real_escape_string($db,$fldOoi)."', vdrId = " . db_null_input($fldRam) . ", grootte = " . db_null_input($fldGrootte) ;	
+/*echo $insertKoppel.'<br>';	##*/mysqli_query($db,$insertKoppel) or die (mysqli_error($db));
 
 $zoek_volwId = mysqli_query($db,"
 SELECT max(volwId) volwId
@@ -100,32 +100,24 @@ WHERE mdrId = '".mysqli_real_escape_string($db,$fldOoi)."' and " . db_null_filte
 } // Einde Als er geen koppel en dus ook geen dekking is geregistreerd
 else { // Bij bestaand volwId kunnen gegevens zijn gewijzigd
 
-$zoek_vader_dracht_grootte_db = mysqli_query($db,"
-SELECT vdrId, drachtig, grootte
+$zoek_grootte_db = mysqli_query($db,"
+SELECT grootte
 FROM tblVolwas
 WHERE volwId = '".mysqli_real_escape_string($db,$volwId)."'
 ") or die (mysqli_error($db));
-	while ( $zvd = mysqli_fetch_assoc($zoek_vader_dracht_grootte_db)) { 
-		$vdrId_db = $zvd['vdrId']; 
-		$drachtig_db = $zvd['drachtig'];
+	while ( $zvd = mysqli_fetch_assoc($zoek_grootte_db)) { 
 		$grootte_db = $zvd['grootte']; }
 
-if($fldRam <> $vdrId_db) {
+if(isset($fldRam)) {
 
-$update_tblVolwas = "UPDATE tblVolwas set vdrId = " . db_null_input($fldRam) . " WHERE volwId = '".mysqli_real_escape_string($db,$volwId)."' ";
-/*echo $update_tblVolwas.'<br>';*/		mysqli_query($db,$update_tblVolwas) or die (mysqli_error($db));
-}
-
-if($fldDracht <> $drachtig_db) {
-
-$update_tblVolwas = "UPDATE tblVolwas set drachtig = '".mysqli_real_escape_string($db,$fldDracht)."' WHERE volwId = '".mysqli_real_escape_string($db,$volwId)."' ";
-/*echo $update_tblVolwas.'<br>';*/		mysqli_query($db,$update_tblVolwas) or die (mysqli_error($db));
+$update_tblVolwas = "UPDATE tblVolwas set vdrId = '".mysqli_real_escape_string($db,$fldRam)."' WHERE volwId = '".mysqli_real_escape_string($db,$volwId)."' ";
+/*echo $update_tblVolwas.'<br>';	##*/mysqli_query($db,$update_tblVolwas) or die (mysqli_error($db));
 }
 
 if($fldGrootte <> $grootte_db) {
 
 $update_tblVolwas = "UPDATE tblVolwas set grootte = " . db_null_input($fldGrootte) . " WHERE volwId = '".mysqli_real_escape_string($db,$volwId)."' ";
-/*echo $update_tblVolwas.'<br>';*/		mysqli_query($db,$update_tblVolwas) or die (mysqli_error($db));
+/*echo $update_tblVolwas.'<br>';	##*/mysqli_query($db,$update_tblVolwas) or die (mysqli_error($db));
 }
 
 
@@ -140,7 +132,7 @@ WHERE schaapId = '".mysqli_real_escape_string($db,$fldOoi)."' and lidId = '".mys
 	while ( $zs = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $zs['stalId']; }
 
 $insert_tblHistorie = "INSERT INTO tblHistorie SET stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$fldDag)."', actId = 19 ";	
-/*echo $insert_tblHistorie.'<br>';*/		mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
+/*echo $insert_tblHistorie.'<br>';	##*/mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
 
 $zoek_hisId = mysqli_query($db,"
 SELECT max(hisId) hisId
@@ -150,14 +142,14 @@ WHERE actId = 19 and stalId = '".mysqli_real_escape_string($db,$stalId)."'
 	while ( $zh = mysqli_fetch_assoc($zoek_hisId)) { $hisId = $zh['hisId']; }
 
 $insert_tblDracht = "INSERT INTO tblDracht SET readId = '".mysqli_real_escape_string($db,$recId)."', volwId = '".mysqli_real_escape_string($db,$volwId)."', hisId = '".mysqli_real_escape_string($db,$hisId)."' ";	
-/*echo $insert_tblDracht.'<br>';*/		mysqli_query($db,$insert_tblDracht) or die (mysqli_error($db));
+/*echo $insert_tblDracht.'<br>';	##*/mysqli_query($db,$insert_tblDracht) or die (mysqli_error($db));
 
 
 // Einde Registreren dracht
 
 
 		$updateReader = "UPDATE impAgrident SET verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' ";
-/*echo $updateReader.'<br>';*/		mysqli_query($db,$updateReader) or die (mysqli_error($db));
+/*echo $updateReader.'<br>';	##*/mysqli_query($db,$updateReader) or die (mysqli_error($db));
 
 
 unset($fldOoi); unset($fldRam); unset($volwId);
@@ -173,7 +165,7 @@ unset($fldOoi); unset($fldRam); unset($volwId);
  if($reader == 'Agrident') {
    	$updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' " ;
 }
-/*echo $updateReader.'<br>';*/		mysqli_query($db,$updateReader) or die (mysqli_error($db));
+/*echo $updateReader.'<br>';	##*/mysqli_query($db,$updateReader) or die (mysqli_error($db));
 	}
 
 

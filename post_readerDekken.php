@@ -75,7 +75,7 @@ WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."' and datum = '".mysql
 
 while($zh = mysqli_fetch_assoc($zoek_hisId)) { $hisId = $zh['hisId']; }
 
-	$insert_tblVolwas = "INSERT INTO tblVolwas SET readId = '".mysqli_real_escape_string($db,$recId)."', hisId = '".mysqli_real_escape_string($db,$hisId)."', mdrId = '".mysqli_real_escape_string($db,$fldOoi)."', vdrId = ". db_null_input($fldRam). ", drachtig = 0 ";	
+	$insert_tblVolwas = "INSERT INTO tblVolwas SET readId = '".mysqli_real_escape_string($db,$recId)."', hisId = '".mysqli_real_escape_string($db,$hisId)."', mdrId = '".mysqli_real_escape_string($db,$fldOoi)."', vdrId = ". db_null_input($fldRam);	
 /*echo $insert_tblVolwas.'<br>';*/		mysqli_query($db,$insert_tblVolwas) or die (mysqli_error($db));	
 
 		$updateReader = "UPDATE impAgrident SET verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' ";

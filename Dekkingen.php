@@ -34,8 +34,45 @@ $file = "Dekkingen.php";
 Include "login.php";
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech == 1) {
 
-include "vw_kzlOoien.php";
+include "vw_kzlOoien.php"; ?>
 
+<script type="text/javascript">
+
+function toon_txtDatum(id, datum, aantal) {
+
+var txtDrachtdm = 'drachtdatum_' + id;
+var kzlDrachtig = 'drachtig_' + id;
+var txtWorp = 'worp_' + id;
+
+dracht = document.getElementById(kzlDrachtig);		var dr = dracht.value;
+
+// if(mr.length > 0) alert(jArray_vdr[mr]);
+  if(dr == 'ja') {
+
+  	document.getElementById(txtDrachtdm).style.display = "inline-block";
+  	document.getElementById(txtDrachtdm).value = datum;
+  	document.getElementById(txtWorp).style.display = "inline-block";
+  	if(aantal > 0) {
+  	document.getElementById(txtWorp).value = aantal;
+  	}
+
+  }
+  else
+  {
+  	document.getElementById(txtDrachtdm).style.display = "none";
+  	document.getElementById(txtDrachtdm).value = null;
+  	document.getElementById(txtWorp).style.display = "none";
+  	document.getElementById(txtWorp).value = null;
+  }
+
+}
+
+
+
+</script>
+
+
+<?php
 // Declaratie vaderdier
 $resultvader = mysqli_query($db,"
 SELECT st.schaapId, right(s.levensnummer,$Karwerk) werknr
@@ -73,8 +110,7 @@ unset($index);
 	}
 	if(!empty($_POST['kzlWat_'])) { $registratie = $_POST['kzlWat_']; }
 	if(!empty($_POST['kzlOoi_'])) { $mdrId = $_POST['kzlOoi_']; } #echo 'Moeder : '.$mdrId.'<br>';
-	if(!empty($_POST['kzlRam_'])) { $vdrId = $_POST['kzlRam_']; } #echo 'Vader : '.$vdrId.'<br>';
-	if(isset($_POST['radDracht_'])) { $dracht = $_POST['radDracht_']; }  #echo 'Dracht : '.$dracht.'<br><br>';
+	if(!empty($_POST['kzlRamNew_'])) { $vdrId = $_POST['kzlRamNew_']; } #echo 'Vader : '.$vdrId.'<br>';
 	if(isset($_POST['txtWorp_'])) { $txtGrootte = $_POST['txtWorp_']; }  #echo 'Dracht : '.$dracht.'<br><br>';
 
 
@@ -181,7 +217,7 @@ $insert_tblVolwas = "INSERT INTO tblVolwas set hisId = '".mysqli_real_escape_str
 
 else if(!isset($fout) && $registratie == 'dracht') {
 
-$insert_tblVolwas = "INSERT INTO tblVolwas set mdrId = '".mysqli_real_escape_string($db,$mdrId)."', vdrId = " . db_null_input($vdrId) . ", drachtig = '".mysqli_real_escape_string($db,$dracht)."', grootte = " . db_null_input($txtGrootte) ;
+$insert_tblVolwas = "INSERT INTO tblVolwas set mdrId = '".mysqli_real_escape_string($db,$mdrId)."', vdrId = " . db_null_input($vdrId) . ", grootte = " . db_null_input($txtGrootte) ;
 /*echo $insert_tblVolwas;*/		mysqli_query($db,$insert_tblVolwas) or die (mysqli_error($db));
 
 $zoek_volwId = mysqli_query($db,"
@@ -230,11 +266,10 @@ if(isset($_POST['knpSave_'])) { include"save_dekkingen.php"; }
  <td align="center" width="100">Ooi<hr></hr></td> <!--<td style = "font-size:10px;"><i> Werknr - lammeren - halsnr </i>
  </td> -->
  <td align="center" width="100">Ram<hr></hr></td>
- <td align="center" width="100">Drachtig<hr></hr></td>
  <td align="center" width="100">Worpgrootte<hr></hr></td>
 </tr>
 <tr>
- <td align="center"><input type="text" id="datepicker2" name="txtDatum_" size = 8 value = <?php if(isset($dag)) { echo $dag; } else { echo date('d-m-Y'); } ?> >
+ <td align="center"><input type="text" id="datepicker1" name="txtDatum_" size = 8 value = <?php if(isset($dag)) { echo $dag; } else { echo date('d-m-Y'); } ?> >
  </td>
  <td align="center">
 <select name= "kzlWat_" style= "width:80;" > 
@@ -275,7 +310,7 @@ $result = mysqli_query($db,"(".$vw_kzlOoien.")  ") or die (mysqli_error($db)); ?
  </select>
  </td>
 <td align="center"> 
- <select name= "kzlRam_" style= "width:65;" >
+ <select name= "kzlRamNew_" style= "width:65;" >
  <option></option>	
 <?php	$count = count($vawerknr);
 for ($i = 0; $i < $count; $i++){
@@ -283,7 +318,7 @@ for ($i = 0; $i < $count; $i++){
 	$opties= array($vaRaak[$i]=>$vawerknr[$i]);
 			foreach ( $opties as $key => $waarde)
 			{
-	if(($vdrId == $vaRaak[$i]) || (isset($_POST['kzlRam_']) && $_POST['kzlRam_'] == $key)) {
+	if(($vdrId == $vaRaak[$i]) || (isset($_POST['kzlRamNew_']) && $_POST['kzlRamNew_'] == $key)) {
 		echo '<option value="'. $key .'" selected>' . $waarde . '</option>'; }
 		else
 		{
@@ -295,13 +330,6 @@ for ($i = 0; $i < $count; $i++){
  </select>
  </td>
 
-<td>
- 	<input type = radio name = 'radDracht_' value = 1
-		<?php if(isset($_POST['radDracht_']) && $_POST['radDracht_'] == 1 ) { echo "checked"; } ?> > Ja
-	 <input type = radio name = "radDracht_" value = 0
-		<?php if(!isset($_POST['radDracht_'])) { echo "checked"; } 
-		 else if(isset($_POST['radDracht_']) && $_POST['radDracht_'] == 0 ) { echo "checked"; } ?> > Nee 
- </td>
  <td align="center"><input type = "text" size = 1 name = "txtWorp_" style = "font-size:10px;" value = <?php echo $txtGrootte; ?> >
  </td>
  <td colspan = 2><input type = "submit" name = "knpInsert_" value = "Toevoegen" style = "font-size:10px;">
@@ -314,15 +342,37 @@ for ($i = 0; $i < $count; $i++){
 		EINDE NIEUWE INVOER VELDEN
 	********************************* -->
 
-</td></tr><tr><td align="right">
+</td></tr>
+
+<?php if(isset($_POST['txtJaar_'])) { $hisJaar = $_POST['txtJaar_']; } 
+else { $hisJaar = 2; } ?>
+
+<tr><td align="right">
 <!--*****************************
 	 		WIJZIGEN DEKKINGEN
 	***************************** -->
  <table border= 0>
- <tr> 
-  <td colspan =  16 > <b>Dekkingen :</b> 
+ <tr height = 17 valign="bottom"> 
+ </tr>
+ <tr>
+  <td colspan = 2 > <b>Dekkingen :</b> 
+  <td colspan = 6 align="right"> Toon laatste
+  	<input type="text" name="txtJaar_" size="1" style = "font-size:9px; text-align : center;" value = <?php echo $hisJaar; ?> >
+   jaar
   </td>
-  <td align="center" ><input type = "submit" name = "knpSave_" value = "Opslaan" style = "font-size:14px" >
+  <td align="right" rowspan="2"> 
+  	<input type="submit" name="knpVervers_" value="Ververs" style = "font-size:9px;">
+  </td>
+ </tr>
+ <tr>
+  <td colspan = 8 align="right" style="font-size: 13px;">
+  	Eerdere dekkingen tonen 
+  	<input type="radio" name="radAllDekkingen" value= 1 <?php if(isset($_POST['radAllDekkingen']) && $_POST['radAllDekkingen'] == 1) { echo "checked"; } ?> > Ja
+  	<input type="radio" name="radAllDekkingen" value= 0 <?php if(!isset($_POST['radAllDekkingen']) || $_POST['radAllDekkingen'] == 0) { echo "checked"; } ?>  > Nee
+  </td>
+</tr>
+<tr>
+ <td colspan = 16 align="right" ><input type = "submit" name = "knpSave_" value = "Opslaan" style = "font-size:14px" >
  </td>
 </tr>
 
@@ -330,28 +380,28 @@ for ($i = 0; $i < $count; $i++){
 
 <?php		
 $current_year = date("Y");
+$first_year = date("Y")-$hisJaar+1;
 
-// START LOOP
-$group_jaar = mysqli_query($db,"
-SELECT year(coalesce(hv.datum, date_add(hl.datum,interval -145 day), hd.datum)) jaar
-FROM tblVolwas v
- join tblSchaap mdr on (v.mdrId = mdr.schaapId)
- join tblStal st on (st.schaapId = mdr.schaapId)
- left join tblHistorie hv on (hv.hisId = v.hisId)
- left join tblDracht d on (v.volwId = d.volwId)
- left join tblHistorie hd on (hd.hisId = d.hisId)
- left join tblSchaap lam on (v.volwId = lam.volwId)
- left join tblStal stl on (stl.schaapId = lam.schaapId)
- left join tblHistorie hl on (stl.stalId = hl.stalId)
+$array_drachtdatum = array();
 
-WHERE (isnull(hv.skip) or hv.skip = 0) and (isnull(hd.skip) or hd.skip = 0) and (isnull(hl.hisId) or hl.actId = 1) and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and coalesce(hv.datum, date_add(hl.datum,interval -145 day), hd.datum) is not null 
-GROUP BY year(coalesce(hv.datum, date_add(hl.datum,interval -145 day), hd.datum))
-ORDER BY year(coalesce(hv.datum, date_add(hl.datum,interval -145 day), hd.datum)) desc
+// Historie jaren mogen niet verder in het verleden liggen dan het eerst dek- of drachtjaar. Het getoonde jaar moet dus altijd recenter of gelijk zijn aan het eerst dek- of drachtjaar
+$zoek_jaartal_eerste_dekking_dracht = mysqli_query($db,"
+SELECT year(min(h.datum)) jaar
+FROM tblHistorie h
+ join tblStal st on (st.stalId = h.stalId)
+WHERE (actId = 18 or actId = 19) and skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die (mysqli_error($db));
 
-	while($lus = mysqli_fetch_assoc($group_jaar))
-	{
-            $jaar = ($lus['jaar']);   ?>
+	while($zj = mysqli_fetch_assoc($zoek_jaartal_eerste_dekking_dracht)) { $first_year_db = $zj['jaar']; }
+
+
+if(!isset($first_year_db)) { $first_year = $current_year; }	// Als er geen dekking of dracht bestaat
+else if($first_year < $first_year_db) { $first_year = $first_year_db; } 
+
+
+
+for($jaar=$current_year; $jaar>=$first_year; $jaar--) { ?>
+
 <tr>
  <td colspan="9">
  	
@@ -376,44 +426,63 @@ ORDER BY year(coalesce(hv.datum, date_add(hl.datum,interval -145 day), hd.datum)
  </tr> 
 
 <?php
+if(!isset($_POST['radAllDekkingen']) || $_POST['radAllDekkingen'] == '0') { $alle_dekkingen = 'Nee'; } else { $alle_dekkingen = 'Ja'; }
+
 $zoek_dekkingen = mysqli_query($db,"
-SELECT v.volwId, v.hisId, date_format(hv.datum,'%d-%m-%Y') dekdatum ,right(mdr.levensnummer,$Karwerk) mdr, v.vdrId vdrId , coalesce(drachtig,0) drachtig, count(lam.schaapId) lamrn, date_format(d.datum,'%d-%m-%Y') drachtdatum, v.grootte, date_format(hl.datum,'%d-%m-%Y') werpdatum,
+SELECT v.volwId, v.hisId, dekdatum, right(mdr.levensnummer,$Karwerk) mdr, v.vdrId vdrId, count(lam.schaapId) lamrn, drachtdatum, v.grootte, werpdatum,
 lst_volwId
 FROM tblVolwas v
  join tblSchaap mdr on (v.mdrId = mdr.schaapId)
  join tblStal stm on (stm.schaapId = mdr.schaapId)
- left join tblHistorie hv on (v.hisId = hv.hisId)
- left join tblSchaap vdr on (v.vdrId = vdr.schaapId)
- left join tblStal stv on (stv.schaapId = vdr.schaapId)
  left join (
- 	SELECT d.volwId, h.datum
+ 	SELECT hisId, date_format(h.datum,'%d-%m-%Y') dekdatum, year(h.datum) dekjaar, skip
+ 	FROM tblHistorie h
+ 	 join tblStal st on (st.stalId = h.stalId)
+ 	WHERE skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+ ) hv on (v.hisId = hv.hisId)
+ left join tblSchaap vdr on (v.vdrId = vdr.schaapId)
+ left join (
+	SELECT d.volwId, date_format(h.datum,'%d-%m-%Y') drachtdatum, year(h.datum) drachtjaar
  	FROM tblDracht d 
-	 left join tblHistorie h on (h.hisId = d.hisId)
-	WHERE h.skip = 0
+	 join tblHistorie h on (h.hisId = d.hisId)
+	 join tblStal st on (st.stalId = h.stalId)
+	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
  ) d on (d.volwId = v.volwId)
  left join tblSchaap lam on (lam.volwId = v.volwId)
  left join tblStal stl on (stl.schaapId = lam.schaapId)
- left join tblHistorie hl on (stl.stalId = hl.stalId)
+ left join (
+ 	SELECT stalId, date_format(datum,'%d-%m-%Y') werpdatum, year(date_add(datum,interval -145 day)) dekjaar_obv_worp
+ 	FROM tblHistorie
+ 	WHERE actId = 1
+ ) hl on (stl.stalId = hl.stalId)
  join (
-    SELECT v.mdrId, max(v.volwId) lst_volwId
-    FROM tblVolwas v
-     left join tblSchaap k on (k.volwId = v.volwId)
-     left join (
-        SELECT s.schaapId
-        FROM tblSchaap s
-         join tblStal st on (s.schaapId = st.schaapId)
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 3
-     ) ha on (k.schaapId = ha.schaapId)
-    WHERE isnull(ha.schaapId)
+	SELECT v.mdrId, max(v.volwId) lst_volwId
+   FROM tblVolwas v
+    left join (
+   	SELECT hisId
+      FROM tblHistorie
+      WHERE actId = 18 and skip = 0
+    ) hv on (v.hisId = hv.hisId)
+    left join ( 
+   	SELECT volwId
+      FROM tblDracht d
+       join tblHistorie hd on (hd.hisId = d.hisId)
+      WHERE skip = 0
+    ) d on (d.volwId = v.volwId)
+    left join tblSchaap k on (k.volwId = v.volwId)
+    left join (
+   	SELECT s.schaapId
+      FROM tblSchaap s
+       join tblStal st on (s.schaapId = st.schaapId)
+       join tblHistorie h on (st.stalId = h.stalId)
+   	WHERE h.actId = 3
+    ) ha on (k.schaapId = ha.schaapId)
+    WHERE (hv.hisId is not null or d.volwId is not null) and isnull(ha.schaapId)
     GROUP BY mdrId
  ) lst_v on (lst_v.mdrId = v.mdrId)
-WHERE stm.lidId = '".mysqli_real_escape_string($db,$lidId)."'
- and (stv.lidId = '".mysqli_real_escape_string($db,$lidId)."' or isnull(stv.lidId)) and (isnull(hv.skip) or hv.skip = 0)
- and (isnull(hl.hisId) or hl.actId = 1)
- and year(coalesce(hv.datum, date_add(hl.datum,interval -145 day), d.datum)) = '" . mysqli_real_escape_string($db,$jaar) . "'
-GROUP BY v.volwId, v.hisId, hv.datum ,mdr.levensnummer, v.vdrId, drachtig, d.datum, hl.datum, v.grootte
-ORDER BY right(mdr.levensnummer,$Karwerk), hv.datum desc
+WHERE stm.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (dekdatum is not null or drachtdatum is not null) and coalesce(dekjaar, dekjaar_obv_worp, drachtjaar) = '".mysqli_real_escape_string($db,$jaar)."'
+GROUP BY v.volwId, v.hisId, dekdatum ,mdr.levensnummer, v.vdrId, drachtdatum, werpdatum, v.grootte
+ORDER BY right(mdr.levensnummer,$Karwerk), dekdatum desc
 ") or die (mysqli_error($db));
 
 	while($zd = mysqli_fetch_assoc($zoek_dekkingen))
@@ -423,20 +492,34 @@ ORDER BY right(mdr.levensnummer,$Karwerk), hv.datum desc
 		$dekdm = $zd['dekdatum'];
 		$moeder = $zd['mdr'];
 		$vaderId = $zd['vdrId'];
-		$drachtig = $zd['drachtig'];
-		$lamrn = $zd['lamrn'];
+		$lamrn = $zd['lamrn']; if($lamrn == 0) { unset($lamrn); }
 		$drachtdm = $zd['drachtdatum'];
 		$werpdm = $zd['werpdatum'];
 		$grootte = $zd['grootte'];
 		$lst_volwId = $zd['lst_volwId'];
 
+		if(isset($drachtdm) || isset($lamrn) || $_POST["kzlDrachtUpd_$Id"] == 'ja') { $drachtig = 'ja'; } else { $drachtig = 'nee'; }
+
+if($drachtig == 'nee' || isset($lamrn)) {
+	if($alle_dekkingen == 'Nee' && $Id == $lst_volwId) { $array_drachtdatum[] = $Id; }
+	else if($alle_dekkingen == 'Ja') { $array_drachtdatum[] = $Id; }
+}
+
+
+
+		if($Id <> $lst_volwId && !isset($lamrn)) { $color = 'grey'; $fontsize = '14px'; } 
+		else { $fontsize = '16px'; }
+
 	$txtGrootte = $grootte;
 
-if($Id <> $lst_volwId && $lamrn == 0) { $color = 'grey'; $fontsize = '14px'; } else { $fontsize = '16px'; } ?>
 
-<tr class= "<?php echo $jaar; ?> selectt" >
+if($Id <> $lst_volwId && !isset($lamrn) && (!isset($_POST['radAllDekkingen']) || $_POST['radAllDekkingen'] == '0') ) { $tonen = 'Nee'; } else { $tonen = 'Ja'; } 
+
+if($tonen == 'Ja') { ?>
+
+<tr class= "<?php echo $jaar; ?> selectt" > 
 <td><?php echo $Id; ?> </td>
- <td align = center style = "font-size:14px;"><?php if(!isset($drachtig) || $drachtig == 0) { ?> 
+ <td align = center style = "font-size:14px;"><?php if(!isset($drachtig) || $drachtig =='nee' ) { ?> 
 
 <!-- <button class=btn btn-sm btn-danger delete_class id= <?php echo $Id; ?> >Verwijder dekking</button> -->
 
@@ -446,14 +529,14 @@ if($Id <> $lst_volwId && $lamrn == 0) { $color = 'grey'; $fontsize = '14px'; } e
  </td>
  <td align = center style = "font-size: <?php echo $fontsize; ?> ; color : <?php echo $color; ?> ;"><?php echo $dekdm; ?></td><td width = "1">
  </td>
- <?php if($lamrn > 0) { unset($fontsize); } ?>
+ <?php if(isset($lamrn) ) { unset($fontsize); } ?>
  <td align = center style = "font-size: <?php echo $fontsize; ?> ; color : <?php echo $color; ?> ;"><?php echo "$moeder";?>
  </td>
  <td width = "1">
  </td> 
  <td align="center">
  <!-- KZLVADER -->
- 	<select name= <?php echo "kzlRamUpd_$Id"; ?> style= "width:65;" >
+ 	<select name= <?php echo "kzlRam_$Id"; ?> style= "width:65;" >
  <option></option>	
 <?php	$count = count($vawerknr);
 for ($i = 0; $i < $count; $i++){
@@ -461,7 +544,7 @@ for ($i = 0; $i < $count; $i++){
 	$opties= array($vaRaak[$i]=>$vawerknr[$i]);
 			foreach ( $opties as $key => $waarde)
 			{
-	if(($vaderId == $vaRaak[$i]) || (isset($_POST["kzlRamUpd_$Id"]) && $_POST["kzlRamUpd_$Id"] == $key)) {
+	if(($vaderId == $vaRaak[$i]) || (isset($_POST["kzlRam_$Id"]) && $_POST["kzlRam_$Id"] == $key)) {
 		echo '<option value="'. $key .'" selected>' . $waarde . '</option>'; }
 		else
 		{
@@ -476,11 +559,13 @@ for ($i = 0; $i < $count; $i++){
  <td width = "1">
  </td> 
  <td align="center"> 
-<?php $opties = array(1 => 'Ja', 0 => 'Nee');
+<?php $opties = array('ja' => 'Ja', 'nee' => 'Nee');
 
-if($lamrn > 0) { echo $opties[$drachtig]; } else { ?>
+$param = $Id . ", '" . $drachtdm . "', " . $txtGrootte;
+
+if(isset($lamrn) ) { echo $opties[$drachtig]; } else { ?>
  	<!-- Keuzelijst drachtig -->
- 	<select name = <?php echo "kzlDrachtUpd_$Id"; ?> style = "width:60; font-size:13px;">
+ 	<select id= <?php echo "drachtig_$Id"; ?> name = <?php echo "kzlDrachtUpd_$Id"; ?> onchange= "toon_txtDatum( <?php echo $param; ?> )" style = "width:60; font-size:13px;">
 <?php  
 
 foreach ( $opties as $key => $waarde)
@@ -495,19 +580,37 @@ foreach ( $opties as $key => $waarde)
 <!-- Einde Keuzelijst drachtig -->
 <?php } ?>
  </td>
- <td align = center style = "font-size: <?php echo $fontsize; ?> ; color : <?php echo $color; ?> ;"><?php echo $drachtdm; ?></td>
  <td align="center">
- 	<?php if(isset($drachtdm) && $lamrn == 0) { ?>
-	<input type = "text" size = 1 style = "font-size : 11px; text-align : right;" name = <?php echo "txtGrootte_$Id"; ?> value = <?php echo $txtGrootte; ?> >
-<?php } if($lamrn > 0) { echo $lamrn; } ?>
+ 	<input type="text"  size = 8 id= <?php echo "drachtdatum_$Id"; ?> class= "<?php echo $Id; ?> " name= <?php echo "txtDrachtdm_$Id"; ?> value = <?php echo $drachtdm; ?> >
+ 	<?php if(isset($lamrn) ) { echo $drachtdm; } ?>
  </td>
+
+
+
+ <td align="center">
+ 	<?php echo $lamrn ?>
+	<input type = "text" id= <?php echo "worp_$Id"; ?> class= "<?php echo $Id; ?>" size = 1 style = "font-size : 11px; text-align : center;" name = <?php echo "txtGrootte_$Id"; ?> value = <?php echo $txtGrootte; ?> >
+ </td>
+
+
  <td><?php echo $werpdm; ?></td>
+
+
+
 </tr>
+
+<?php } // Einde if($tonen == 'Ja') ?>
+
+
 </tr>
-<?php unset($color); } ?>
+<?php unset($color); 
+
+}
+  ?>
 <tr class= "<?php echo $jaar; ?> selectt" ><td height="50"></td></tr>
 
-<?php    } ?>
+<?php    } //var_dump($array_drachtdatum);
+ ?>
 
 </td></tr>
 
@@ -542,6 +645,23 @@ $('.' + cur_year).toggle();
             $("." + inputValue).toggle();
         });
     });
+
+
+
+var jArray_Id = <?php echo json_encode($array_drachtdatum); ?>;
+
+for (let i = 0; i < jArray_Id.length; i++) {
+
+	//alert(i);
+
+var drachtdm = 'drachtdatum_' + jArray_Id[i];
+
+	document.getElementById(drachtdm).value = null; // veld leegmaken indien gevuld
+	$('.' + jArray_Id[i]).toggle();
+}
+
+
+
 </script>
 
 

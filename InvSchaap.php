@@ -26,6 +26,7 @@ $versie = '9-1-2019'; /* javascript toegevoegd 13-1 : vaderdier obv dracht mbv j
 $versie = '6-2-2019'; /* Vaderdier is tot een jaar terug te kiezen */
 $versie = '2-2-2020'; /* keuzelijst geslacht uitgebreid met kween */
 $versie = '11-1-2022'; /* Script verbeterd/herschreven. SQL beveiligd d.m.v. quotes. Code aangepast n.a.v. registratie dekkingen en dracht */
+$versie = '05-02-2022'; /* Drachtig (ja/nee) wordt niet meer vastgelegd in tblVolwas */
  session_start();  ?>
 <html>
 <head>
@@ -738,7 +739,7 @@ $updateKoppel = "UPDATE tblVolwas set vdrId = '".mysqli_real_escape_string($db,$
 if(!isset($volwId)) {
 
   // Koppel maken
- $insert_tblVolwas = "INSERT INTO tblVolwas set mdrId = '".mysqli_real_escape_string($db,$kzlOoi)."', vdrId = " . db_null_input($kzlRam) . ", drachtig = 1 ";
+ $insert_tblVolwas = "INSERT INTO tblVolwas set mdrId = '".mysqli_real_escape_string($db,$kzlOoi)."', vdrId = " . db_null_input($kzlRam);
 
 /*echo $insert_tblVolwas.'<br>';  ##*/mysqli_query($db,$insert_tblVolwas) or die (mysqli_error($db));
   // Einde Koppel maken
@@ -750,25 +751,6 @@ if(!isset($volwId)) {
  ") or die (mysqli_error($db));
   while ( $zv = mysqli_fetch_assoc($zoek_volwId)) { $volwId = $zv['volwId']; }
 }
-
-
-
-// Drachtig Ja vastleggen
-$zoek_drachtig = mysqli_query($db,"
- SELECT v.drachtig
- FROM tblVolwas v
- WHERE v.volwId = '".mysqli_real_escape_string($db,$volwId)."'
- ") or die (mysqli_error($db));
-  while ( $zdr = mysqli_fetch_assoc($zoek_drachtig)) { $drachtig_db = $zdr['drachtig']; }
-
-if(!isset($drachtig_db) || $drachtig_db == 0) {
-
-$updateDracht = "UPDATE tblVolwas set drachtig = 1 WHERE volwId = '".mysqli_real_escape_string($db,$volwId)."' " ; 
-
-/*echo "$updateDracht".'<br>'.'<br>';  ##*/mysqli_query($db,$updateDracht) or die (mysqli_error($db));
-
-}
-// Einde Drachtig Ja vastleggen
 
 
 } // Einde if($modtech == 1 && !isset($levnr_db) && $kzlFase == 'lam')
@@ -862,7 +844,7 @@ $fout = "De volgende worp van dit moederdier is ".$volgend_worpdm.". Een ooi kan
 
 }
 else {
-$insert_tblVolwas = " INSERT INTO tblVolwas SET mdrId = " . db_null_input($kzlOoi) . ", vdrId = " . db_null_input($kzlRam) . ", drachtig = 1";
+$insert_tblVolwas = " INSERT INTO tblVolwas SET mdrId = " . db_null_input($kzlOoi) . ", vdrId = " . db_null_input($kzlRam);
 /*echo 'Aanvoer =>'. $insert_tblVolwas.'<br>';  ##*/mysqli_query($db,$insert_tblVolwas) or die (mysqli_error($db));
 
 $zoek_volwId = mysqli_query($db,"

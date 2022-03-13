@@ -75,16 +75,16 @@ if($i == 2) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum'
 if($i == 3) { $inhoud = $item -> {$taken[$i]} ; include "impVerplaatsing.php"; }
 
 if($i == 4) { $inhoud = $item -> {$taken[$i]} ; $velden_taak = array('ActId', 'Datum', 'HokId', 'Lammeren');
-												$velden_lam = array('Levensnummer', 'Gewicht');
-												include "impAgrident_lam.php"; }
+												$velden_dieren = array('Levensnummer', 'Gewicht');
+												include "impAgrident_dieren.php"; }
 
 if($i == 5) { $inhoud = $item -> {$taken[$i]} ; $velden_taak = array('ActId', 'Datum', 'Ubn', 'Reden', 'Lammeren');
-												$velden_lam = array('Transponder', 'Levensnummer', 'Gewicht');
-												include "impAgrident_lam.php"; }
+												$velden_dieren = array('Transponder', 'Levensnummer', 'Gewicht');
+												include "impAgrident_dieren.php"; }
 
 if($i == 6) { $inhoud = $item -> {$taken[$i]} ; $velden_taak = array('Datum', 'Ubn', 'RasId', 'HokId', 'Lammeren');
-												$velden_lam = array('Transponder', 'Levensnummer', 'Datumdier', 'ActId', 'Geslacht', 'Gewicht');
-												include "impAgrident_lam.php"; }
+												$velden_dieren = array('Transponder', 'Levensnummer', 'Datumdier', 'ActId', 'Geslacht', 'Gewicht');
+												include "impAgrident_dieren.php"; }
 
 if($i == 7) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum', 'Transponder', 'Levensnummer', 														'Nieuw_Transponder', 'Nieuw_Nummer');
 												include "impAgrident.php"; }
@@ -104,8 +104,9 @@ if($i == 11) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum
 if($i == 12) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum', 'VdrId', 'MoederTransponder', 'Moeder');
 												include "impAgrident.php"; }
 
-if($i == 13) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum', 'MoederTransponder', 'Moeder', 'Drachtig', 'Grootte');
-												include "impAgrident.php"; }
+if($i == 13) { $inhoud = $item -> {$taken[$i]} ; $velden_taak = array('ActId', 'Datum', 'Ooien');
+												 $velden_dieren = array('MoederTransponder', 'Moeder', 'Drachtig', 'Grootte');
+												include "impAgrident_dieren.php"; }
 echo $i.'<br>';
 			 } 
 
