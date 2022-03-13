@@ -298,7 +298,7 @@ ORDER BY m.skip, if(isnull(m.fout),0,1), rq.dmmeld desc, right(s.levensnummer,$K
 		  
   if ($skip_h == 1)								{ $bericht = 'Let op : Afvoer is hersteld na melden RVO.'; }
   else if ($req_def == 'J' && $sucind == 'J' && $resp_def == 'N' && $resptime > $meldtime) { $bericht = 'Definitieve melding is teruggekomen als een controle melding ! Kijk op de portal van RVO wat te doen.'; }
-  else if ($meldnr) { $bericht = 'RVO meldt : Melding correct'; }
+  else if (isset($meldnr)) { $bericht = 'RVO meldt : Melding correct'; }
   else if ($sucind == 'J' && isset($foutmeld) && $gemeld == $meldtijd) { $bericht = 'RVO meldt : '. $foutmeld; }
   else if ($sucind == 'N' && isset($foutmeld))	{ $bericht = 'RVO meldt : '.$foutmeld; }
   else if ($gemeld == 'Foutief')				{ $bericht = 'Niet gemeld'; }

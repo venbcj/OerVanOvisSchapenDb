@@ -31,21 +31,21 @@ function numeriek($subject) {
 
 if (isset($_POST['knpSave_'])) {	Include "save_melding.php";  header("Location: ".$curr_url); }
 
-$knptype = "submit"; $vldtype = "text";
-$maxdag = date("Y-m-d"); // tbv save_melding.php
+$knptype = "submit";
+$today = date("Y-m-d");
 
 // De gegevens van het request
-$gegevensRequest = mysqli_query($db,"
-SELECT rq.reqId, l.relnr
+$zoek_oudste_request_niet_definitief_gemeld = mysqli_query($db,"
+SELECT min(rq.reqId) reqId, l.relnr
 FROM tblRequest rq
  join tblMelding m on (rq.reqId = m.reqId)
  join tblHistorie h on (h.hisId = m.hisId)
  join tblStal st on (st.stalId = h.stalId)
  join tblLeden l on (l.lidId = st.lidId)
 WHERE l.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(rq.dmmeld) and rq.code = 'VMD' 
-GROUP BY rq.reqId, l.relnr
+GROUP BY l.relnr
 ") or die (mysqli_error($db));
-	While ($req = mysqli_fetch_assoc($gegevensRequest))
+	While ($req = mysqli_fetch_assoc($zoek_oudste_request_niet_definitief_gemeld))
 	{	$reqId = $req['reqId'];	}
 // Einde De gegevens van het request
 
@@ -55,19 +55,22 @@ function aantal_melden($datb,$fldReqId) {
 $aantalmelden = mysqli_query($datb,"
 SELECT count(*) aant 
 FROM tblMelding m
-WHERE m.reqId = '".mysqli_real_escape_string($datb,$fldReqId)."' and m.skip <> 1
-"); // Foutafhandeling zit in return FALSE
+ join tblHistorie h on (m.hisId = h.hisId)
+WHERE m.reqId = '".mysqli_real_escape_string($datb,$fldReqId)."' and m.skip <> 1 and h.skip = 0
+");//Foutafhandeling zit in return FALSE
+
 	if($aantalmelden)
 	{	$row = mysqli_fetch_assoc($aantalmelden);
 			return $row['aant'];
 	}
 	return FALSE;
 }
+
 $aantMeld = aantal_melden($db,$reqId);
 // Einde Aantal dieren te melden
 
 // Aantal dieren goed geregistreerd om automatisch te kunnen melden. De datum mag hier niet liggen na de afvoerdatum.
-function aantal_oke($datb,$fldReqId,$fldFout) {
+function aantal_oke($datb,$fldReqId) {
 
 $juistaantal = mysqli_query ($datb,"
 SELECT count(*) aant 
@@ -88,7 +91,6 @@ WHERE m.reqId = '".mysqli_real_escape_string($datb,$fldReqId)."'
  and (h.datum <= afv.datum or isnull(afv.datum))
  and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12 
  and m.skip <> 1
- and ".$fldFout." 
 ");
 
 	if($juistaantal)
@@ -97,13 +99,12 @@ WHERE m.reqId = '".mysqli_real_escape_string($datb,$fldReqId)."'
 	}
 	return FALSE;
 }
-$vldFout = '(isnull(fout) or fout is not null)';
-$oke = aantal_oke($db,$reqId,$vldFout);
+$oke = aantal_oke($db,$reqId);
 // Einde Aantal dieren goed geregistreerd om automatisch te kunnen melden.
  
 // MELDEN
-if (isset($_POST['knpMeld_'])) {	Include "save_melding.php"; $vldFout = 'isnull(fout)'; $oke = aantal_oke($db,$reqId,$vldFout);
-if(aantal_melden($db,$reqId) > 0 && $oke > 0) {
+if (isset($_POST['knpMeld_'])) {	Include "save_melding.php"; $aantMeld = aantal_melden($db,$reqId); $oke = aantal_oke($db,$reqId);
+if( $aantMeld > 0 && $oke > 0) {
 // Bestand maken
 $qry_Leden = mysqli_query($db,"
 SELECT ubn, alias
@@ -137,11 +138,12 @@ FROM tblRequest rq
  left join tblRelatie rl on (rl.relId = st.rel_herk)
  
 WHERE rq.reqId = '".mysqli_real_escape_string($db,$reqId)."'
-	and h.datum is not null
-	and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12 
-	and m.skip <> 1
-	and isnull(m.fout) 
-") or die (mysqli_error($db));   /* Herkomst (ubn_herk) is niet verplicht te melden */
+ and h.datum is not null
+ and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12 
+ and m.skip <> 1
+ and isnull(m.fout) 
+") or die (mysqli_error($db));
+
     while ($row = mysqli_fetch_array($qry_txtRequest_RVO)) {          
         $num = mysqli_num_fields($qry_txtRequest_RVO) ;    
         $last = $num - 1;
@@ -164,20 +166,21 @@ WHERE rq.reqId = '".mysqli_real_escape_string($db,$reqId)."'
 	$goed = "De melding is verstuurd.";
 }
 
-else if (aantal_melden($db,$reqId) == 0 || $oke == 0) {
+else if ( $aantMeld == 0 || $oke == 0) {
 // Melddatum registreren in tblRequest bij 0 te melden
- $upd_tblRequest = "UPDATE tblRequest set dmmeld = now() WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."' and def = 'J' ";
+ $upd_tblRequest = "UPDATE tblRequest SET dmmeld = now() WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."' and def = 'J' ";
 	mysqli_query($db,$upd_tblRequest) or die (mysqli_error($db));
 	
 		if($_POST['kzlDef_'] == 'J'){
-	$knptype = "hidden"; }
-	$goed = "De schapen kunnen handmatig worden gemeld.";
+	$knptype = "hidden";
+	$goed = "De schapen kunnen handmatig worden gemeld."; }
+		else {
+	$goed = "Er is niets te controleren."; }
 }
-$Melddm = 'dmmeld is not null'; $ReqId = "reqId = $reqId";
 $aantMeld = aantal_melden($db,$reqId);
 } // EINDE MELDEN
 
-// Ophalen vaststellen cq controle
+// Ophalen 'vaststellen' cq 'controle'
 $definitief = mysqli_query($db, "
 SELECT r.def 
 FROM tblRequest r 
@@ -191,7 +194,9 @@ WHERE r.reqId = '".mysqli_real_escape_string($db,$reqId)."'
 <table border = 0>
 <tr>
  <td align = "right">Meldingnr : </td>
- <td><?php echo $reqId; ?> </td>
+ <td>
+ 	<?php echo $reqId; ?>
+ </td>
  <td width = 850 align = "right">Aantal dieren te melden : </td>
  <td><?php echo $aantMeld; ?></td>
 </tr>
@@ -246,12 +251,9 @@ WHERE r.reqId = '".mysqli_real_escape_string($db,$reqId)."'
 </tr>
 
 <?php
-
-$qryMeldregels = mysqli_query($db, "
-SELECT m.meldId, date_format(h.datum,'%d-%m-%Y') schaapdm, h.datum dmschaap, h.oud_nummer, s.levensnummer, s.geslacht, ouder.datum dmaanw, st.stalId, m.skip, rq.dmmeld, m.fout, rs.respId, rs.sucind, rs.foutmeld, lastdm.datum dmlst, date_format(lastdm.datum,'%d-%m-%Y') lstdm
-
-FROM tblRequest rq
- join tblMelding m on (rq.reqId = m.reqId)
+$zoek_meldregels = mysqli_query($db, "
+SELECT m.meldId, date_format(h.datum,'%d-%m-%Y') schaapdm, h.datum dmschaap, h.oud_nummer, s.levensnummer, s.geslacht, ouder.datum dmaanw, st.stalId, m.skip, m.fout, rs.respId, rs.sucind, rs.foutmeld, lastdm.datum dmlst, date_format(lastdm.datum,'%d-%m-%Y') lstdm
+FROM tblMelding m
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (h.stalId = st.stalId)
  join tblSchaap s on (s.schaapId = st.schaapId)
@@ -279,99 +281,103 @@ WHERE m.reqId = '".mysqli_real_escape_string($db,$reqId)."'
 ORDER BY m.skip 
 ") or die (mysqli_error($db));
 
-	while($row = mysqli_fetch_assoc($qryMeldregels))
+	while($row = mysqli_fetch_assoc($zoek_meldregels))
 	{
 	$Id = $row['meldId'];
+	$schaapdm = $row['schaapdm'];
+	$dmschaap = $row['dmschaap'];
 	$levnr_old = $row['oud_nummer'];
 	$levnr = $row['levensnummer'];
 	$geslacht = $row['geslacht']; 
 	$dmaanw = $row['dmaanw']; 	if(isset($dmaanw)) { if($geslacht == 'ooi') { $fase = 'moederdier';} else if($geslacht == 'ram') { $fase = 'vaderdier'; } } else { $fase = 'lam'; }
-	$schaapdm = $row['schaapdm'];
-	$dmschaap = $row['dmschaap'];
 	$stalId = $row['stalId']; // Ter controle van eerdere stalId's
 	$skip = $row['skip'];
 	$dmmeld = $row['dmmeld'];
-	$fout = $row['fout'];  			if(isset($dmmeld) && isset($fout)) { $foutieve_invoer = 'Niet gemeld ivm '.strtolower($fout); } 
-									else { $foutieve_invoer = $fout; }
+	$fout_db = $row['fout'];
 	$foutmeld = $row['foutmeld'];
 	$respId = $row['respId'];
-	$sucind = $row['sucind'];		if($sucind == 'J' && !isset($foutmeld)) { $bericht = 'RVO meldt : Melding correct'; } 
-									else if($sucind == 'N' && isset($foutmeld)) { $bericht = 'RVO meldt : '.$foutmeld; } 
-									else if(isset($respId)) { $bericht = 'Resultaat van melding is onbekend'; }
+	$sucind = $row['sucind'];		
 	$dmlst = $row['dmlst']; // Laatste datum van het vorige stalId van deze user
 	$lstdm = $row['lstdm']; // t.b.v. commentaar
 	
 
 // Controleren of de te melden gegevens de juiste voorwaarde hebben .
-	 If	( 
-		empty($schaapdm)						||
-		empty($levnr)	 						||
-		$dmschaap > $maxdag 					|| # datum ligt na vandaag
-		(isset($dmlst) && $dmschaap < $dmlst)	   # datum ligt voor de laatste datum van het vorige stalId van deze user 
-		)
-		 {	$check = 1;	} else {	$check = 0;	} 
-// EINDE Controleren of de te melden gegevens de juiste voorwaarde hebben .  ?>
+if	( 
+	empty($schaapdm)						|| # datum is leeg
+	empty($levnr)	 						|| # levensnummer is leeg
+	$dmschaap > $today 						|| # datum ligt na vandaag
+	(isset($dmlst) && $dmschaap < $dmlst)	|| # datum ligt voor de laatste datum van het vorige stalId van deze user 
+	intval(str_replace('-','',$schaapdm)) == 0 # Van datum naar nummer is 0 of te wel datum = 00-00-0000. Als $dmlst niet bestaat !
+)
+	 {	$check = 1;	$waarschuwing = ' Dit dier wordt niet gemeld.'; } else { $check = 0; unset($waarschuwing); } 
+// EINDE Controleren of de te melden gegevens de juiste voorwaarde hebben . 
+
+// Berichtgeving o.b.v. eigen foute registratie
+if (isset($fout_db)) { $foutieve_invoer = $fout_db.' '.$waarschuwing; }
+// Einde Berichtgeving o.b.v. eigen foute registratie
+
+// Berichtgeving o.b.v. terugkoppeling RVO
+if($sucind == 'J' && !isset($foutmeld)) { $bericht = 'RVO meldt : Melding correct'; }
+elseif(isset($foutmeld)) 				{ $bericht = 'RVO meldt : '.$foutmeld; }
+elseif(isset($respId)) 					{ $bericht = 'Resultaat van melding is onbekend'; }
+// Einde Berichtgeving o.b.v. terugkoppeling RVO
+?>
 
 <!--	**************************************
-	**	   OPMAAK  GEGEVENS		**
-	************************************** -->
+			**	   OPMAAK  GEGEVENS		**
+		************************************** -->
 
 <tr style = "font-size:15px;" >
 <!-- Id -->
 <?php if ($skip == 1) { $color = "#D8D8D8"; } ?>
-<td align = center style = "color : <?php echo $color; ?>;" >
+ <td align = center style = "color : <?php echo $color; ?>;" >
 <!-- DATUM -->
-<?php if ($skip == 1) { echo $schaapdm; } else { ?>
-<input type = text size = 9 style = "font-size : 12px;" name = <?php echo " \"txtSchaapdm_$Id\" ;"?> value = <?php echo $schaapdm; ?> > <?php } ?>
-</td>
+<?php //echo $Id;
+if ($skip == 1) { echo $schaapdm; }
+else { ?>
+	<input type = text size = 9 style = "font-size : 12px;" name = <?php echo " \"txtSchaapdm_$Id\" ;"?> value = <?php echo $schaapdm; ?> >
+<?php } ?>
+ </td>
 
-<td style = "color : <?php echo $color; ?>;" >
+ <td style = "color : <?php echo $color; ?>;" >
 <?php echo $levnr_old;  ?>
-</td>
+ </td>
 
-<td style = "color : <?php echo $color; ?>;" >
+ <td style = "color : <?php echo $color; ?>;" >
 <?php
 if ($skip == 1) { echo $levnr; } 
 else { ?> 
 	<input type = text name = <?php echo " \"txtLevnr_$Id\"; " ?> value = <?php echo $levnr; ?> size = 15 style = "font-size : 12px;"> 
 <?php } ?>
-</td>
+ </td>
 
-<td align = center style = "color : <?php echo $color; ?>;" >
+ <td align = center style = "color : <?php echo $color; ?>;" >
 <?php echo $fase; ?>
-</td>
+ </td>
 
-<td  width = 50 align = center>
-<input type = "hidden" size = 1 style = "font-size : 11px;" name = <?php echo " \"chbSkip_$Id\" "; ?> value = 0 > <!--hiddden-->
+ <td  width = 50 align = center>
+	<input type = "hidden" size = 1 style = "font-size : 11px;" name = <?php echo " \"chbSkip_$Id\" "; ?> value = 0 > <!--hiddden-->
 
-<input type = checkbox class="delete" name = <?php echo "chbSkip_$Id" ; ?> value = 1 <?php echo ($check == 1 || $skip == 1) ? 'checked' : ''; if ($check == 1) { ?> disabled <?php } ?>  >
-</td>
+	<input type = checkbox class="delete" name = <?php echo "chbSkip_$Id" ; ?> value = 1 <?php echo ($check == 1 || $skip == 1) ? 'checked' : ''; if ($check == 1) { ?> disabled <?php } ?>  >
+ </td>
 
-<td width = 400 style = "color : red; font-size : 12px;">		
+ <td width = 400 style = "color : red; font-size : 12px;">		
 
-<!-- Meldingen bij foutieve waardes wanneer deze niet zijn onstaan bij het invoeren binnen MeldGeboortes -->
-<?php 
-		if (empty($schaapdm)  )			{ $wrong = "Datum moet zijn gevuld."; }  
-		else if (empty($levnr)  )  		{ $wrong = "Levensnummer moet zijn gevuld."; }
-		else if ($dmschaap > $maxdag ) 	{ $wrong = "De datum mag niet in de toekomst liggen."; }
-		else if (isset($dmlst) && $dmschaap < $dmlst) 	{ $wrong = "De datum mag niet voor ".$lstdm." liggen."; } ?>
-<!-- EINDE Meldingen bij foutieve waardes wanneer deze niet zijn onstaan bij het invoeren binnen MeldGeboortes -->
 <?php
-
-	if($skip == 1) 						{ $boodschap = "Verwijderd"; 	$color = "black"; }
-	else if(isset($bericht)) 			{ $boodschap = $bericht; 		$color = "#FF4000"; unset($bericht); }
-	else if(isset($foutieve_invoer) )	{ $boodschap = $foutieve_invoer; unset($foutieve_invoer); /*unset($wrong);*/ } // $foutieve_invoer en $wrong kan gelijktijdig van toepassing zijn 
-	else if(isset($wrong) )				{ $boodschap = $wrong; unset($wrong); }
+	if($skip == 1) 					{ $boodschap = "Verwijderd"; 	 $color = "black"; }
+elseif(isset($bericht)) 			{ $boodschap = $bericht; 		 $color = "#FF4000"; unset($bericht); }
+elseif(isset($foutieve_invoer) )	{ $boodschap = $foutieve_invoer; $color = "blue"; unset($foutieve_invoer); /*unset($wrong);*/ } // $foutieve_invoer en $wrong kan gelijktijdig van toepassing zijn 
+else 								{ $color = 'red';  $boodschap = $waarschuwing; } 
 
 if($sucind == 'J' && $skip == 0) { $color = "green"; } // $sucind van laatste response kan J zijn maar inmiddels ook verwijderd.
-if(isset($boodschap)) { ?> <div style = "color : <?php echo $color; ?>;" > <?php echo $boodschap; } unset($color); unset($boodschap); ?></div>
-
-
-</td> 
+if(isset($boodschap)) { ?>
+	<div style = "color : <?php echo $color; ?>;" > <?php echo $boodschap; } unset($color); unset($boodschap); ?>
+	</div>
+ </td> 
 </tr>
 <!--	**************************************
-	**	EINDE OPMAAK GEGEVENS	**
-	************************************** -->
+			**	EINDE OPMAAK GEGEVENS	**
+		************************************** -->
 <?php 
 } ?>	
 </table>
@@ -379,7 +385,7 @@ if(isset($boodschap)) { ?> <div style = "color : <?php echo $color; ?>;" > <?php
 
 	</TD>
 <?php
-Include "menu1.php"; } ?>
+Include "menuMelden.php"; } ?>
 </tr>
 
 </table>
