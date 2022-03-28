@@ -9,7 +9,7 @@ include "url.php";
 			{
 						$keuze = '';
 		
-		if(isset($_POST[$name]) && $_POST[$name] == $key)
+		if((isset($kzlId) && $kzlId == $key) || (isset($_POST[$name]) && $_POST[$name] == $key) )
 		{
 			$keuze = ' selected ';
 		}
