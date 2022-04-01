@@ -5,7 +5,8 @@
 28-8-2020 : Omnummering toegevoegd in array 
 26-9-2020 : in te lezen velden in impRespons aangepast ivm Omnummeren 
 4-11-2020 : een quute in een response melding veroorzaakt geen foute query stateent meer door str_replace("'", "''", $regel[$ii]); 
-12-12-2020 : Gearchiveerde bestanden RVO aangevuld met tijdstip van melden versus ontvangen response -->
+12-12-2020 : Gearchiveerde bestanden RVO aangevuld met tijdstip van melden versus ontvangen response 
+1-4-2022 sql beveiligd met quotes -->
 
 <?php
 include "url.php";
@@ -151,7 +152,7 @@ $meldname = array('GER'=>'geboorte','AAN'=>'aanwas', 'AFV'=>'afvoer', 'DOO'=>'ui
 $zoek_status_request = mysqli_query ($db,"
 SELECT r.def, r.code
 FROM tblRequest r
-WHERE reqId = ".mysqli_real_escape_string($db,$reqId)."
+WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."'
 ") or die (mysqli_error($db));
 
 while ($req = mysqli_fetch_assoc($zoek_status_request)) {	$def_req = $req['def']; $code = $req['code']; }
@@ -164,7 +165,7 @@ FROM impRespons r
  join (
  	SELECT max(respId) respId
  	FROM impRespons
- 	WHERE reqId = ".mysqli_real_escape_string($db,$reqId)."
+ 	WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."'
  ) lr on (r.respId = lr.respId)
 ") or die (mysqli_error($db));
 
@@ -183,7 +184,7 @@ if($def_req == 'N' && $def_resp == 'J') {
 if($def_req == 'J' && $def_resp == 'J') { $goed = 'De definitieve '.$melding.'melding is verwerkt op '.$datum.' Kijk onder meldingen naar het definitieve resultaat.'; 
 
 if(isset($response_filedate)) {
-	$opslaan_response_datum = "UPDATE tblRequest SET dmresponse = '".mysqli_real_escape_string($db,$response_filedate)."' where reqId = ".mysqli_real_escape_string($db,$reqId)." ";
+	$opslaan_response_datum = "UPDATE tblRequest SET dmresponse = '".mysqli_real_escape_string($db,$response_filedate)."' where reqId = '".mysqli_real_escape_string($db,$reqId)."' ";
 	
 	/*echo $opslaan_response_datum.'<br>';*/ mysqli_query($db,$opslaan_response_datum) or die (mysqli_error($db));
 							}

@@ -1,8 +1,8 @@
 <!-- 10-11-2014 gemaakt 
 5-12-2016 : kzlPartij gesplitst in kzlHerk en kzlBest 	9-2-2017 ctr-velden verwijderd 
-5-5-2017 : Controle bij wijzigen datum aangepast van $updDay < $maxDay naar $updDay > $maxDay
+5-5-2017 : Controle bij wijzigen datum aangepast van $updDay < $last_day naar $updDay > $last_day
 26-1-2018 : Bij verwijderen melding wordt kzlBest niet meer leeggemaakt 
-19-2-2022 : SQL beveiligd met quotes-->
+19-2-2022 : SQL beveiligd met quotes -->
 
 <?php
 /*Save_Melding.php toegpast in :
@@ -66,9 +66,9 @@ $nummer_van_datum = intval(str_replace('-','',$txtDag));
 //echo '$txtDag '.str_replace('-','',$txtDag).' = '.intval(str_replace('-','',$txtDag)).'<br>'; #/#
 
 
-/* Minimale datum zoeken ter controle bij afvoer bedrijf */
+/* Laatste datum zoeken ter controle bij afvoer bedrijf */
 if($code == 'AFV' || $code == 'DOO') {
-$zoek_max_datum_stalaf = mysqli_query($db,"
+$zoek_laatste_datum_stalaf = mysqli_query($db,"
 SELECT max(datum) date, date_format(max(datum),'%d-%m-%Y') datum
 FROM tblHistorie h
  join (
@@ -79,13 +79,13 @@ FROM tblHistorie h
 	WHERE m.meldId = '".mysqli_real_escape_string($db,$recId)."'
  ) st on (st.stalId = h.stalId and st.hisId <> h.hisId)
 ") or die (mysqli_error($db));
-	while( $mi = mysqli_fetch_assoc($zoek_max_datum_stalaf)) { $minDay =  $mi['date']; $minDag =  $mi['datum']; }
+	while( $mi = mysqli_fetch_assoc($zoek_laatste_datum_stalaf)) { $last_day = $mi['date']; $laatste_dag = $mi['datum']; }
 }
-/* Einde Minimale datum zoeken ter controle bij afvoer bedrijf */	
+/* Einde Laatste datum zoeken ter controle bij afvoer bedrijf */	
 
-/* Maximale datum zoeken ter controle bij aanvoer bedrijf */
+/* Eerste datum zoeken ter controle bij aanvoer bedrijf */
 if($code == 'AAN' || $code == 'GER') {
-$zoek_min_datum_stalop = mysqli_query($db,"
+$zoek_eerste_datum_stalop = mysqli_query($db,"
 SELECT min(datum) date, date_format(min(datum),'%d-%m-%Y') datum
 FROM tblHistorie h
  join (
@@ -96,9 +96,9 @@ FROM tblHistorie h
 	WHERE m.meldId = '".mysqli_real_escape_string($db,$recId)."'
  ) st on (st.stalId = h.stalId and st.hisId <> h.hisId)
 ") or die (mysqli_error($db));
-	while( $mi = mysqli_fetch_assoc($zoek_min_datum_stalop)) { $maxDay =  $mi['date']; $maxDag =  $mi['datum']; }
+	while( $mi = mysqli_fetch_assoc($zoek_eerste_datum_stalop)) { $first_day = $mi['date']; $eerste_dag = $mi['datum']; }
 }
-/* Einde Maximale datum zoeken ter controle bij aanvoer bedrijf */
+/* Einde Eerste datum zoeken ter controle bij aanvoer bedrijf */
 	
 /* Maximale datum RVO bepalen ter controle */	
 if($code == 'AAN' || $code == 'GER' || $code == 'DOO') { $maxday_rvo = date("Y-m-d"); }
@@ -110,13 +110,13 @@ if($nummer_van_datum == 0)
 {
 	$wrong_dag = "De datum is onjuist";
 }
-elseif (isset($minDay) && $updDay < $minDay)
+elseif (isset($first_day) && $updDay < $first_day)
 {
-	$wrong_dag = "De datum (".$updDag.") kan niet voor ".$minDag." liggen";
+	$wrong_dag = "De datum (".$updDag.") kan niet voor ".$eerste_dag." liggen";
 }
-elseif (isset($maxDay) && $updDay > $maxDay)
+elseif (isset($last_day) && $updDay > $last_day)
 {
-	$wrong_dag = "De datum (".$updDag.") kan niet na ".$maxDag." liggen";
+	$wrong_dag = "De datum (".$updDag.") kan niet na ".$laatste_dag." liggen";
 }
 elseif ($updDay > $maxday_rvo)
 {
@@ -215,7 +215,7 @@ WHERE m.meldId = '".mysqli_real_escape_string($db,$recId)."'
 // CONTROLE op gewijzigde velden
 
 // Wijzigen datum
-//if(!isset($minDay)) {$minDay = date_format(date_create('11-09-1973'), 'Y-m-d');} // tbv MeldGeboortes.php daar bestaat geen minDag
+//if(!isset($first_day)) {$first_day = date_format(date_create('11-09-1973'), 'Y-m-d');} // tbv MeldGeboortes.php daar bestaat geen minDag
 	
 if (!empty($updDay) && $updDay <> $datum_db && !isset($wrong_dag))
 {

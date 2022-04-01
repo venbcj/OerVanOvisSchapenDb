@@ -2,7 +2,8 @@
 4-12-2016 : Response bestand in de map BRIGHT wordt gezocht o.b.v. requestId zonder melddatum (dmmeld) niet meer o.b.v. requestId zonder meldnummer 
 12-2-2017 : Response bestand in de map BRIGHT wordt gezocht o.b.v. def = N uit de tabel impRespons niet meer o.b.v. requestId zonder melddatum (dmmeld). Als een melding wordt vastgelegd wordt het response-bestand anders niet ingelezen 
 28-12-2018 : response bestand wordt ingelezen als requestbestand ook nog in de map BRIGHT staat. Als het response bestand (spontaan) nogmaals wordt aangeleverd wordt deze nu niet meer ingelezen 
-20-2-2020 locatie van bestanden gebaseerd op een functie --> 
+20-2-2020 locatie van bestanden gebaseerd op een functie 
+1-4-2022 sql beveiligd met quotes --> 
 <?php
 /* Toegepast in :
 - Home.php
@@ -16,7 +17,7 @@ include "url.php";
 
 /*** Script ter controle van het bestaan van Response.txt bestanden afkomstig van RVO ***/
 // Lokatie en klant gegegevens Responsbestand ophalen
-$result = mysqli_query($db,"SELECT alias FROM tblLeden WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." ") or die (mysqli_error($db)); 
+$result = mysqli_query($db,"SELECT alias FROM tblLeden WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' ") or die (mysqli_error($db)); 
 	while ($row = mysqli_fetch_assoc($result))
 		{ $alias = $row['alias']; }
 
@@ -36,7 +37,7 @@ FROM tblRequest r
 	GROUP BY reqId
 	) lr on (r.reqId = lr.reqId)
  left join impRespons rp on (rp.respId = lr.respId)
-WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and (rp.def = 'N' or isnull(rp.def))
+WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (rp.def = 'N' or isnull(rp.def))
 GROUP BY r.reqId, l.ubn
 ORDER BY r.reqId
 ") or die (mysqli_error($db));

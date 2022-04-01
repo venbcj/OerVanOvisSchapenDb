@@ -340,7 +340,7 @@ if($modtech == 1 && isset($data))  {
 
 	$Id = $array['readId'];
 	$datu = $array['datum'];
-    $moe = $array['moeder'];
+   $moe = $array['moeder'];
 
 
 if(isset($_POST['knpVervers_'])) { $datu = $_POST["txtDatum_$Id"]; $moeId = $_POST["kzlOoi_$Id"]; 
@@ -348,7 +348,12 @@ if(isset($_POST['knpVervers_'])) { $datu = $_POST["txtDatum_$Id"]; $moeId = $_PO
 //echo $moeId.'<br>';
 
 if(empty($moeId)) { $moeId = 1; }
-$zoek_ooi = mysqli_query($db,"SELECT levensnummer FROM tblSchaap WHERE schaapId = ".mysqli_real_escape_string($db,$moeId) ) or die (mysqli_error($db));
+$zoek_ooi = mysqli_query($db,"
+SELECT levensnummer
+FROM tblSchaap
+WHERE schaapId = ". mysqli_real_escape_string($db,$moeId) ."
+") or die (mysqli_error($db));
+
 while ($m = mysqli_fetch_assoc($zoek_ooi)) { $moe = $m['levensnummer']; //echo 'Levensnummer = '.$moe.'<br>'; 
 
 					$ar_DatumMoeder[] = array( 1 => $datu, 6 => $moe); }

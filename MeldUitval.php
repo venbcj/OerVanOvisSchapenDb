@@ -6,6 +6,7 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $versie = '20-1-2019'; /* alles aan- en uitzetten met javascript */
 $versie = '1-1-2020'; /* het pad ($file_r) naar FTP variabel gemaakt ipv uit tblLeden gehaald */
 $versie = '30-1-2022'; /* Keuze controle en knop melden bij elkaar gezet. Sql beveiligd met quotes */
+$versie = '1-4-2022'; /* $code binnen save_melding.php werd opgehaald uit responscheck.php */
 
  session_start(); ?>
 
@@ -30,7 +31,7 @@ if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) 
 include "vw_HistorieDm.php";
 Include "responscheck.php";
 
-if (isset($_POST['knpSave_'])) {	Include "save_melding.php";  header("Location: ".$curr_url); } 
+if (isset($_POST['knpSave_'])) { /* $code bestaat ook in responscheck.php */ $code = 'DOO';	Include "save_melding.php";  header("Location: ".$curr_url); } 
 
 $knptype = "submit"; $vldtype = "text";
 $today = date("Y-m-d"); // tbv save_melding.php
