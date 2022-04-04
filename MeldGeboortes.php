@@ -9,6 +9,7 @@ $versie = '20-1-2019'; /* alles aan- en uitzetten met javascript */
 $versie = '3-1-2020'; /* het pad ($file_r) naar FTP variabel gemaakt ipv uit tblLeden gehaald */
 $versie = '30-1-2022'; /* Keuze controle en knop melden bij elkaar gezet. Sql beveiligd met quotes */
 $versie = '1-4-2022'; /* $code binnen save_melding.php werd opgehaald uit responscheck.php */
+$versie = '4-4-2022'; /* veld geslacht niet verplicht bij module melden */
 
  session_start(); ?>
 
@@ -281,13 +282,13 @@ ORDER BY m.skip, if(h.datum > curdate(),1,0 ) desc, right(s.levensnummer,".$Karw
 	$sucind = $row['sucind'];
 
 	 
-if (empty($schaapdm) 		|| # datum is leeg
-	empty($levnr)	 		|| # levensnummer is leeg
-	empty($sekse)	 		|| # geslacht is leeg
-	$dmschaap > $today 		|| # geboorte datum ligt in de toekomst 
-	strlen($levnr)<> 12 	|| # of levensnummer is geen 12 karakters lang
-	numeriek($levnr) == 1	|| # het levensnummer bevat een letter
-	intval($levnr) == 0 	|| # het levensnummer is 000000000000 of te wel onjuist
+if (empty($schaapdm) 				 || # datum is leeg
+	empty($levnr)	 				 || # levensnummer is leeg
+	(empty($sekse) && $modtech == 1) || # geslacht is leeg bij module technisch of financieel
+	$dmschaap > $today 				 || # geboorte datum ligt in de toekomst 
+	strlen($levnr)<> 12 			 || # of levensnummer is geen 12 karakters lang
+	numeriek($levnr) == 1			 || # het levensnummer bevat een letter
+	intval($levnr) == 0 			 || # het levensnummer is 000000000000 of te wel onjuist
 	intval(str_replace('-','',$schaapdm)) == 0 # Van datum naar nummer is 0 of te wel datum = 00-00-0000
 ) 	 
  	{	$check = 1;	$waarschuwing = ' Dit dier wordt niet gemeld.'; } else { $check = 0; unset($waarschuwing); } 
