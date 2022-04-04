@@ -2,7 +2,8 @@
 5-12-2016 : kzlPartij gesplitst in kzlHerk en kzlBest 	9-2-2017 ctr-velden verwijderd 
 5-5-2017 : Controle bij wijzigen datum aangepast van $updDay < $last_day naar $updDay > $last_day
 26-1-2018 : Bij verwijderen melding wordt kzlBest niet meer leeggemaakt 
-19-2-2022 : SQL beveiligd met quotes -->
+19-2-2022 : SQL beveiligd met quotes 
+4-4-2022 : Controle $zoek_laatste_datum_stalaf uitgezet want reden van deze controle onbekend -->
 
 <?php
 /*Save_Melding.php toegpast in :
@@ -67,7 +68,7 @@ $nummer_van_datum = intval(str_replace('-','',$txtDag));
 
 
 /* Laatste datum zoeken ter controle bij afvoer bedrijf */
-if($code == 'AFV' || $code == 'DOO') {
+/*if($code == 'AFV' || $code == 'DOO') {
 $zoek_laatste_datum_stalaf = mysqli_query($db,"
 SELECT max(datum) date, date_format(max(datum),'%d-%m-%Y') datum
 FROM tblHistorie h
@@ -80,7 +81,7 @@ FROM tblHistorie h
  ) st on (st.stalId = h.stalId and st.hisId <> h.hisId)
 ") or die (mysqli_error($db));
 	while( $mi = mysqli_fetch_assoc($zoek_laatste_datum_stalaf)) { $last_day = $mi['date']; $laatste_dag = $mi['datum']; }
-}
+}*/
 /* Einde Laatste datum zoeken ter controle bij afvoer bedrijf */	
 
 /* Eerste datum zoeken ter controle bij aanvoer bedrijf */
@@ -114,10 +115,10 @@ elseif (isset($first_day) && $updDay < $first_day)
 {
 	$wrong_dag = "De datum (".$updDag.") kan niet voor ".$eerste_dag." liggen";
 }
-elseif (isset($last_day) && $updDay > $last_day)
+/*elseif (isset($last_day) && $updDay > $last_day)
 {
 	$wrong_dag = "De datum (".$updDag.") kan niet na ".$laatste_dag." liggen";
-}
+}*/
 elseif ($updDay > $maxday_rvo)
 {
 	$wrong_dag = $txtDag." ligt voor RVO te ver in de toekomst";
