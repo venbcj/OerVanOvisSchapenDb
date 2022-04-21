@@ -119,7 +119,7 @@ elseif (isset($first_day) && $updDay < $first_day)
 {
 	$wrong_dag = "De datum (".$updDag.") kan niet na ".$laatste_dag." liggen";
 }*/
-elseif ($updDay > $maxday_rvo)
+elseif (isset($maxday_rvo) && $updDay > $maxday_rvo)
 {
 	$wrong_dag = $txtDag." ligt voor RVO te ver in de toekomst";
 }
