@@ -1,5 +1,5 @@
 <?php /*15-11-2020 bestand gekopieerd van impGroepsgeboorte.php en diverse imp... bestanden teruggebracht naar dit ene bestand 
- */
+26-11-2022 Als datum is "0001-01-01T00:00:00" dan Null zie taak Aanvoer */
 
 
 $cnt_velden = count($velden);
@@ -14,7 +14,7 @@ for($h = 0; $h < $cnt_velden; $h++) { // Er zijn 3 elementen
 	
 
 
-if($waarde -> {$velden[$h]} == "" || $waarde -> {$velden[$h]} == "0") {  $insert_qry .= "$velden[$h] = NULL, "; }
+if($waarde -> {$velden[$h]} == "" || $waarde -> {$velden[$h]} == "0" || $waarde -> {$velden[$h]} == "0001-01-01T00:00:00") {  $insert_qry .= "$velden[$h] = NULL, "; }
 else { $insert_qry .= "$velden[$h] = '" . mysqli_real_escape_string($db, $waarde -> {$velden[$h]} ) . "', "; }
 
 
