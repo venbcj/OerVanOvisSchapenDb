@@ -111,7 +111,7 @@ var moeder = document.getElementById(ooi);		var mr = moeder.value;
 function toon_vader_uit_koppel(m, i) {
 	//document.getElementById('result_vader').innerHTML = jArray_vdr[m];
 
-// alert('ooiId = ' + m + ' Id = ' + i); #/#
+ alert('ooiId = ' + m + ' Id = ' + i); //#/#
 
 var ram = 'ram_' + i;
 var resultRam = 'result_ram_' + i;
@@ -122,7 +122,7 @@ var dbRam = 'dbRam_' + i;
 	document.getElementById(ram).style.display = "none";
   	document.getElementById(ram).value = null; // veld leegmaken indien gevuld
   	document.getElementById(resultRam).innerHTML = jArray_vdr[m];
-	document.getElementById(dbRam).style.display = "none";
+	document.getElementById(dbRam).style.display = "inline-block";
 	}
   	else 
   	{

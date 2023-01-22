@@ -299,6 +299,15 @@ unset($lst_volwId);
 unset($dmwerp);
 unset($dagen_verschil_worp);
 
+$zoek_vader_laatste_dekkingen = mysqli_query($db,"
+SELECT right(levensnummer,".$Karwerk.") werknr
+FROM tblSchaap vdr
+ join tblVolwas v on (v.vdrId = vdr.schaapId)
+WHERE v.volwId = '".mysqli_real_escape_string($db,$act_volwId)."'
+") or die (mysqli_error($db));
+
+while ($zvd = mysqli_fetch_assoc($zoek_vader_laatste_dekkingen)) { $vdr_worp = $zvd['werknr']; }
+
 $zoek_laatste_worp = mysqli_query($db,"
 SELECT max(v.volwId) volwId
 FROM tblVolwas v
@@ -316,7 +325,7 @@ WHERE v.mdrId = '".mysqli_real_escape_string($db,$kzlOoi)."' and isnull(ha.schaa
 
 while ($zlw = mysqli_fetch_assoc($zoek_laatste_worp)) { $lst_volwId = $zlw['volwId']; }
 
-if(isset($lst_volwId)) {
+if(isset($lst_volwId)) { echo $lst_volwId.'<br>';
 $zoek_werpdatum = mysqli_query($db,"
 SELECT h.datum, date_format(h.datum,'%d-%m-%Y') werpdm
 FROM tblVolwas v
@@ -422,6 +431,7 @@ for ($i = 0; $i < $count; $i++){
 	<!-- EINDE KZLMOEDER --> 
  </td>
  <td> 
+ 	<?php if(isset($vdr_worp)) { echo $vdr_worp; } else { ?>
 	<!-- KZLVADER -->
  <select style= "width:<?php echo $width; ?>; font-size:12px;" name = <?php echo "kzlRam_$Id"; ?> >
  <option></option>	
@@ -442,6 +452,7 @@ for ($i = 0; $i < $count; $i++){
 } ?>
  </select>
 	<!-- EINDE KZLVADER -->
+<?php } // Einde if(isset($vdr_worp)) ?>
  </td>
  
 <?php if (!isset($moeder_db) || empty($kzlOoi))	{ $color = 'red'; $bericht = 'Ooi '.$moeder_rd.' onbekend'; }
