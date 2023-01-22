@@ -53,7 +53,11 @@ if(isset($_POST['knpSave___'])) { include "save_liquiditeit.php"; }  //toon_jaar
 
 <form action = "Liquiditeit.php" method = "post">
 <table border = 0>
-<tr> <td width = 350> </td> <?php
+<tr>
+ <td>
+	<input type = submit name = 'knpCreate___' value = <?php echo $new_jaar."_aanmaken"; ?> >
+ </td>
+ <td width = 350> </td> <?php
 // Declaratie JAAR
 $qryJaar = mysqli_query($db,"
 SELECT year(datum) jaar
@@ -75,8 +79,8 @@ unset($index);
 // EINDE Declaratie JAAR ?>
 
 
-<td style = "text-align:center;"valign= 'bottom'; width= 80 ><h3>Jaar</h3> </td>
-<td valign = "top" style = "font-size : 11px;">
+ <td style = "text-align:center;"valign= 'bottom'; width= 80 ><h3>Jaar</h3> </td>
+ <td valign = "top" style = "font-size : 11px;">
 <!-- KZLJAAR -->
 <?php $width = 65 ; ?>
  <select style= "width:<?php echo $width; ?>;" name = "kzlJaar___" style = "font-size:12px;">
@@ -97,8 +101,8 @@ for ($i = 0; $i < $count; $i++){
 	<!-- EINDE KZLJAAR --> </td>
  <td valign = "top" ><input type = submit name = "knpToon___" value = 'Toon' ></td>
  <td width = 400 valign = "top" align = 'right'><input type = <?php echo $knptype; ?> name = "knpSave___" value = 'Opslaan' ></td>
- </tr>
- </table>
+</tr>
+</table>
 <?php if(isset($last_jaar)) { ?>
 <!-- RIJKOPPEN --> 
 
@@ -172,30 +176,6 @@ Where li.rubuId = '".mysqli_real_escape_string($db,$rubuId)."' and month(li.datu
 	}
 
 
-/*$qryVerplichting = mysqli_query($db,"
-SELECT li.rubuId, li.bedrag, 'prog' status
-SELECT a.rubuId, sum(i.prijs), 'verp' status
-FROM tblinkoop i
- join tblArtikel a on (a.artId = i.artId)
-WHERE a.soort = 'pil' and a.rubuId = '".mysqli_real_escape_string($db,$rubuId)."' and month(i.dmink) = '".mysqli_real_escape_string($db,$i)."' and year(i.dmink) = '".mysqli_real_escape_string($db,$toon_jaar)."'
-GROUP BY a.rubuId
-
-union
-
-SELECT a.rubuId, sum(i.prijs), 'verp' status
-FROM tblinkoop i
- join tblArtikel a on (a.artId = i.artId)
-WHERE a.soort = 'voer' and a.rubuId = '".mysqli_real_escape_string($db,$rubuId)."' and month(i.dmink) = '".mysqli_real_escape_string($db,$i)."' and year(i.dmink) = '".mysqli_real_escape_string($db,$toon_jaar)."'
-GROUP BY a.rubuId
-") or die (mysqli_error($db)); 
-
-	while ($prs = mysqli_fetch_assoc($qryRealiteit)) {
-		$Id = $prs['rubuId']; 
-		$mndprijs = $prs['bedrag'];
-		$stat = $prs['status'];
-	}*/
-
-
 $qryRealiteit = mysqli_query($db,"
 SELECT li.rubuId, li.bedrag, 'prog' status
 From tblLiquiditeit li
@@ -241,9 +221,13 @@ if(isset($tota)) {$tota = $tota+$mndprijs; } else { $tota = $mndprijs; }
  <!-- Einde SUBTOTALEN -->
 <?php if(isset($totaal)) {$totaal = $totaal+$tota; } else {$totaal = $tota; } unset($tota); 
 	} // Einde rubrieken ?> </tr>
- <tr><td colspan = 15><hr></td></tr>
+<tr>
+ <td colspan = 15><hr></td>
+</tr>
 <!-- TOTALEN -->
- <tr><td colspan = 15 align = 'right' style= "font-size : 14px;"><b> <?php echo 'Totale '.htmlentities($hrub, ENT_COMPAT,'ISO-8859-1', true).'&nbsp&nbsp '.euro_format($totaal); unset($totaal); ?> </b></td></tr>
+<tr>
+ <td colspan = 15 align = 'right' style= "font-size : 14px;"><b> <?php echo 'Totale '.htmlentities($hrub, ENT_COMPAT,'ISO-8859-1', true).'&nbsp&nbsp '.euro_format($totaal); unset($totaal); ?> </b></td>
+</tr>
  <!-- Einde TOTALEN -->
  <?php } // Einde hoofdrubrieken ?>
  
@@ -359,7 +343,9 @@ FROM (
 { if ($i > 1 && $i % 2 == 1) { ?> <td colspan = 2 align=right> <?php echo euro_format($mndtot[$i]); ?> </td> <?php } } ?>
 </tr>
 
-<tr><td colspan = 15><hr></td></tr>
+<tr>
+ <td colspan = 15><hr></td>
+</tr>
 
 <tr style = "font-size : 14px;">
  <td rowspan = 2><b>Eindsaldo liquide middelen</b></td>
@@ -372,16 +358,11 @@ FROM (
 <?php for ($i=2; $i<12; $i++)
 { if ($i > 1 && $i % 2 == 1) { ?> <td colspan = 2 align=right><b> <?php echo euro_format($cumtot[$i]); ?> </b></td> <?php } } ?>
 </tr>
-<tr><td colspan = 15><hr></td></tr>
- </table>
- <?php } ?>
-<table border = 0 > 
-<tr><td width = 700></td>
- <td>
-	<input type = submit name = 'knpCreate___' style =" width: 230px;" value = <?php echo "Liquiditeit_".$new_jaar."_aanmaken"; ?> >
- </td>
+<tr>
+ <td colspan = 15><hr></td>
 </tr>
- </table>
+</table>
+ <?php } ?>
 </form> 
  
 
