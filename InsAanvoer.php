@@ -19,6 +19,7 @@ $versie = '24-4-2020'; /* url Javascript libary aangepast */
 $versie = '24-6-2020'; /* onderscheid gemaakt tussen reader Agrident en Biocontrol */
 $versie = '4-7-2020'; /* 1 tabel impAgrident gemaakt */
 $versie = '28-2-2020'; /* $fase gebaseerd om omschrijving geslacht */
+$versie = '26-11-2022'; /* geboortedatum toegevoegd en sql beveiligd met enkele quotes */
 
  session_start(); ?>
 <html>
@@ -56,14 +57,14 @@ function numeriek($subject) {
 // Aantal nog in te lezen AANVOER
 /*$aanvoer = mysqli_query($db,"SELECT count(*) aant 
 							FROM impReader 
-							WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." and teller_aanv is not NULL and isnull(verwerkt) ") or die (mysqli_error($db));
+							WHERE lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and teller_aanv is not NULL and isnull(verwerkt) ") or die (mysqli_error($db));
 	$row = mysqli_fetch_assoc($aanvoer);
 		$aantaanw = $row['aant'];*/
 // EINDE Aantal nog in te lezen AANVOER
 
 if($reader == 'Agrident') {
-$velden = "rd.actId, rd.Id readId, rd.datum, rd.levensnummer levnr, rd.ubn ubn_aanv, rd.rasId ras_rd, rd.geslacht, NULL moeder, rd.hokId hok_rd, rd.gewicht,
-s.levensnummer levnr_db, p.ubn ubn_db, r.rasId ras_db, m.schaapId mdrId, m.levensnummer mdr_db, ho.hokId hok_db ";
+$velden = "rd.actId, rd.Id readId, rd.datum, rd.levensnummer levnr_rd, rd.ubn ubn_aanv, rd.rasId ras_rd, rd.geslacht, NULL moeder, rd.hokId hok_rd, rd.gewicht, rd.datumdier geb_datum, 
+s.levensnummer levnr_db, p.ubn ubn_db, r.rasId ras_db, m.schaapId mdrId, m.levensnummer mdr_db, ho.hokId hok_db, dup.dubbelen ";
 
 $tabel = "
 impAgrident rd
@@ -72,10 +73,10 @@ impAgrident rd
 	FROM tblSchaap s
 	 join tblStal st on (st.schaapId = s.schaapId)
 	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and h.skip = 0
+	WHERE st.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and h.skip = 0
 	GROUP BY s.schaapId, s.levensnummer, s.geslacht
  ) s on (rd.levensnummer = s.levensnummer)
- left join tblPartij p on (rd.ubn = p.ubn and p.lidId = ".mysqli_real_escape_string($db,$lidId).")
+ left join tblPartij p on (rd.ubn = p.ubn and p.lidId = '" . mysqli_real_escape_string($db,$lidId) . "')
  left join (
 	SELECT ru.lidId, r.rasId
 	FROM tblRas r
@@ -86,18 +87,25 @@ impAgrident rd
  left join (
 	SELECT ho.hokId
 	FROM tblHok ho
-	WHERE ho.lidId = ".mysqli_real_escape_string($db,$lidId)."
+	WHERE ho.lidId = '" . mysqli_real_escape_string($db,$lidId) . "'
  ) ho on (rd.hokId = ho.hokId)
+ left join (
+ 	SELECT rd.Id, count(dup.Id) dubbelen
+	FROM impAgrident rd
+	 join impAgrident dup on (rd.lidId = dup.lidId and rd.levensnummer = dup.levensnummer and rd.Id <> dup.Id and rd.actId = dup.actId and isnull(dup.verwerkt))
+	WHERE rd.actId = 2 or rd.actId = 3
+	GROUP BY rd.Id
+ ) dup on (rd.Id = dup.Id)
 ";
 
-$WHERE = "WHERE rd.lidId = ".mysqli_real_escape_string($db,$lidId)." and (rd.actId = 2 or rd.actId = 3) and isnull(rd.verwerkt)";
+$WHERE = "WHERE rd.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and (rd.actId = 2 or rd.actId = 3) and isnull(rd.verwerkt)";
 
 include "paginas.php";
 
 $data = $page_nums->fetch_data($velden, "ORDER BY rd.datum, rd.Id");
 }
 else {
-$velden = "rd.readId, rd.datum, rd.levnr_aanv levnr, rd.ubn_aanv, lower(rd.rascode) ras_rd, lower(rd.geslacht) geslacht, rd.moeder, lower(rd.hokcode) hok_rd, rd.gewicht/100 gewicht,
+$velden = "rd.readId, rd.datum, rd.levnr_aanv levnr_rd, rd.ubn_aanv, lower(rd.rascode) ras_rd, lower(rd.geslacht) geslacht, rd.moeder, lower(rd.hokcode) hok_rd, rd.gewicht/100 gewicht,
 s.levensnummer levnr_db, l.ubn ubn_db, r.scan ras_db, m.schaapId mdrId, m.levensnummer mdr_db, ho.scan hok_db ";
 
 $tabel = "
@@ -107,10 +115,10 @@ impReader rd
 	FROM tblSchaap s
 	 join tblStal st on (st.schaapId = s.schaapId)
 	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and h.skip = 0
+	WHERE st.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and h.skip = 0
 	GROUP BY s.schaapId, s.levensnummer, s.geslacht
  ) s on (rd.levnr_aanv = s.levensnummer)
- left join tblLeden l on (rd.ubn_aanv = l.ubn and l.lidId = ".mysqli_real_escape_string($db,$lidId).")
+ left join tblLeden l on (rd.ubn_aanv = l.ubn and l.lidId = '" . mysqli_real_escape_string($db,$lidId) . "')
  left join (
 	SELECT ru.lidId, ru.scan
 	FROM tblRas r
@@ -119,11 +127,11 @@ impReader rd
  ) r on (lower(rd.rascode) = r.scan and r.lidId = rd.lidId)
  left join (".$vw_kzlOoien.") m on (rd.moeder = m.levensnummer)
  left join (
-	SELECT ho.scan FROM tblHok ho WHERE ho.lidId = ".mysqli_real_escape_string($db,$lidId)."
+	SELECT ho.scan FROM tblHok ho WHERE ho.lidId = '" . mysqli_real_escape_string($db,$lidId) . "'
  ) ho on (rd.hokcode = ho.scan)
 ";
 
-$WHERE = "WHERE rd.lidId = ".mysqli_real_escape_string($db,$lidId)." and rd.teller_aanv is not null and isnull(rd.verwerkt)";
+$WHERE = "WHERE rd.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and rd.teller_aanv is not null and isnull(rd.verwerkt)";
 
 include "paginas.php";
 
@@ -151,6 +159,7 @@ echo $page_numbers; ?></td>
  <th>Generatie<hr></th>
 <?php if($modtech == 1) { ?>
  <th>Gewicht<hr></th>
+ <th>Geboren<hr></th>
 	<?php if(isset($verwijderd_sinds_17_2_2018)) { ?>
  <th>Moederdier<hr></th> <?php } ?>
  <th>Verblijf*<hr></th>
@@ -166,7 +175,7 @@ $qryRassen = ("
 SELECT r.rasId, r.ras, lower(coalesce(isnull(ru.scan),'6karakters')) scan
 FROM tblRas r
  join tblRasuser ru on (r.rasId = ru.rasId)
-WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and r.actief = 1 and ru.actief = 1
+WHERE ru.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and r.actief = 1 and ru.actief = 1
 ORDER BY ras
 "); 
 $RAS = mysqli_query($db,$qryRassen) or die (mysqli_error($db)); 
@@ -211,7 +220,7 @@ unset($index);
 $qryHoknummer = mysqli_query($db,"
 SELECT hokId, hoknr, lower(if(isnull(scan),'6karakters',scan)) scan
 FROM tblHok
-WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." and actief = 1
+WHERE lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and actief = 1
 ORDER BY hoknr
 ") or die (mysqli_error($db));
 
@@ -230,13 +239,13 @@ unset($index);
 // Declaratie HERKOMST			// lower(if(isnull(ubn),'6karakters',ubn)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.
 $qryRelatie = ("SELECT r.relId, '6karakters' ubn, p.naam
 			FROM tblPartij p join tblRelatie r on (p.partId = r.partId)	
-			WHERE p.lidId = ".mysqli_real_escape_string($db,$lidId)." and relatie = 'cred' and isnull(r.uitval) and p.actief = 1 and r.actief = 1
+			WHERE p.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and relatie = 'cred' and isnull(r.uitval) and p.actief = 1 and r.actief = 1
 				  and isnull(p.ubn)
 			union
 			
 			SELECT r.relId, p.ubn, p.naam
 			FROM tblPartij p join tblRelatie r on (p.partId = r.partId)	
-			WHERE p.lidId = ".mysqli_real_escape_string($db,$lidId)." and relatie = 'cred' and isnull(r.uitval) and p.actief = 1 and r.actief = 1 
+			WHERE p.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and relatie = 'cred' and isnull(r.uitval) and p.actief = 1 and r.actief = 1 
 				  and ubn is not null
 			ORDER BY naam"); 
 $relatienr = mysqli_query($db,$qryRelatie) or die (mysqli_error($db)); 
@@ -269,12 +278,14 @@ $uitvdm = date('d-m-Y', strtotime($date2));
 		} else { $uitvdm = '' ; } 
 	
 	$Id = $array['readId'];
-	$levnr = $array['levnr']; //if (strlen($levnr)== 11) {$levnr = '0'.$array['levnr'];}
+	$levnr_rd = $array['levnr_rd']; //if (strlen($levnr_rd)== 11) {$levnr_rd = '0'.$array['levnr'];}
+	$levnr_dupl = $array['dubbelen']; // twee keer in reader bestand
 	$levnr_db = $array['levnr_db'];
 	$ras_rd = $array['ras_rd'];
 	$ras_db = $array['ras_db'];
 	$sekse = $array['geslacht'];
-	$gewicht = $array['gewicht']; 
+	$gewicht = $array['gewicht'];
+	$geb_datum = $array['geb_datum']; if(isset($geb_datum)) { $gebdm = date('d-m-Y', strtotime($geb_datum)); }
 	$moeder = $array['moeder'];
 	$mderId = $array['mdrId'];
 	$mdr_db = $array['mdr_db'];
@@ -308,11 +319,12 @@ if($modtech == 1) { $gewicht = $_POST["txtkg_$Id"]; /*$kzlOoi = $_POST["kzlooi_$
 	 }
 	 If	 
 	 ( /*Aanvoer moeders*/   ( ($fase == 'moeder' || $fase == 'vader') && #generatie moet moeder of vader zijn
-						(	($levnr_db > 0)		|| # of levensnummer bestaat al
-							strlen($levnr)<> 12		|| # of levensnummer is geen 12 karakters lang of dus leeg
-							numeriek($levnr) == 1	|| # of levensnummer bevat een letter 
-							empty($datum)			|| # of aanvoerdatum is leeg
-						    //empty($kzlRas) 			|| # of ras is onbekend of leeg
+						(	($levnr_db > 0)			|| # of levensnummer bestaat al
+							isset($levnr_dupl)    	|| # of levensnummer bestaat al in reader bestand
+							strlen($levnr_rd)<> 12	|| # of levensnummer is geen 12 karakters lang of dus leeg
+							numeriek($levnr_rd) == 1	|| # of levensnummer bevat een letter 
+							empty($datum)				|| # of aanvoerdatum is leeg
+						    //empty($kzlRas) 		|| # of ras is onbekend of leeg
 					($fase == 'moeder' && $sekse =='ram') || #generatie en geslacht is tegenstrijdig
 					($fase == 'vader' && $sekse =='ooi') ) #generatie en geslacht is tegenstrijdig
 							
@@ -320,8 +332,8 @@ if($modtech == 1) { $gewicht = $_POST["txtkg_$Id"]; /*$kzlOoi = $_POST["kzlooi_$
 	||	
 	/*Aanvoer lammeren*/  (  $fase == 'lam' && #generatie moet lam zijn
 						(	($levnr_db > 0)		|| # of levensnummer bestaat al
-							strlen($levnr)<> 12		|| # of levensnummer is geen 12 karakters lang of dus leeg
-							numeriek($levnr) == 1	|| # of levensnummer bevat een letter  
+							strlen($levnr_rd)<> 12		|| # of levensnummer is geen 12 karakters lang of dus leeg
+							numeriek($levnr_rd) == 1	|| # of levensnummer bevat een letter  
 							empty($datum)			|| # of datum is leeg
 						    //empty($kzlRas) 		|| # of ras is onbekend of leeg
 		  //($modtech == 1 && empty($gewicht))		|| # of gewicht leeg
@@ -360,10 +372,10 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 <?php if (isset($_POST['knpVervers_'])) { $datum = $_POST["txtaanwdm_$Id"]; } ?>
 	<input type = "text" size = 9 style = "font-size : 11px;" name = <?php echo "txtaanwdm_$Id"; ?> value = <?php echo $datum; ?> >
  </td>
-<?php if ($levnr_db == 0 && strlen($levnr) == 12 && numeriek($levnr) <> 1) { ?> 
+<?php if ($levnr_db == 0 && strlen($levnr_rd) == 12 && numeriek($levnr_rd) <> 1) { ?> 
  <td>
-<?php echo $levnr; } else { ?> <td style = "color : red;" > <?php echo $levnr; } ?>
-<!-- <input type = "hidden" name = <p??hp echo " \"txtlevgeb_$Id\" value = \"$levnr\" ;"?> size = 9 style = "font-size : 9px;"> -->
+<?php echo $levnr_rd; } else { ?> <td style = "color : red;" > <?php echo $levnr_rd; } ?>
+<!-- <input type = "hidden" name = <p??hp echo " \"txtlevgeb_$Id\" value = \"$levnr_rd\" ;"?> size = 9 style = "font-size : 9px;"> -->
  </td>
  <td>
 <!-- HALSKLEUR -->
@@ -444,6 +456,10 @@ foreach ( $opties as $key => $waarde)
 <?php if(isset($_POST["knpVervers_"])) {	$gewicht = $_POST["txtkg_$Id"];	}?>	
  <td align = center style = "font-size : 11px;"> <input type = "text" name = <?php echo "txtkg_$Id"; ?> size = 1 value = <?php echo $gewicht;?> >
  </td> <!-- EINDE GEWICHT -->
+ <!-- GEBOORTE DATUM -->
+<?php if(isset($_POST["knpVervers_"])) {	$gebdm = $_POST["txtGebdm_$Id"];	}?>	
+ <td> <input type = "text" align = center size = 9 style = "font-size : 11px;" name = <?php echo "txtGebdm_$Id"; ?>  value = <?php echo $gebdm; unset($gebdm); ?> >
+ </td> <!-- EINDE GEBOORTE DATUM -->
 <?php if(isset($verwijderd_sinds_17_2_2018)) { ?>
  <td style = "font-size : 11px;">
 <!-- KZLMOEDER -->
@@ -489,11 +505,7 @@ for ($i = 0; $i < $count; $i++){
 <?php 
 if ( !empty($hok_rd) && empty($hok_db) && !isset($_POST['knpVervers_']) ) {echo $hok_rd; ?> <b style = "color : red;"> ! </b>  <?php } ?>
  </td> <!-- EINDE KZLHOKNR -->
-<?php } 
-
-if ( !empty($levnr) && $levnr_db > 0) 		{ $bericht = "Staat al op stallijst."; }
-else if (isset($levnr) && strlen($levnr) <> 12) { $bericht = "Levensnummer geen 12 karakters."; }  
-else if (numeriek($levnr) == 1) 				{ $bericht = "Levensnummer bevat een letter."; } ?>
+<?php } ?>
 
  <td style = "font-size : 11px;">
 <!-- KZLHERKOMST -->
@@ -516,10 +528,14 @@ for ($i = 0; $i < $count; $i++){
 <?php if( isset($ubn_rd) && empty($ubn_db) && !isset($_POST['knpVervers_']) && !isset($bericht) ) {echo $ubn_rd; ?> <b style = "color : red;"> ! </b>  <?php } ?>
  </td> <!-- EINDE KZLHERKOMST -->	
 
+<?php
+if ( !empty($levnr_rd) && $levnr_db > 0) 		{ $color = 'red'; $bericht = "Staat al op stallijst."; }
+else if (isset($levnr_dupl) ) 					{ $color = 'blue'; $bericht =  "Dubbel in de reader."; }
+else if (isset($levnr_rd) && strlen($levnr_rd) <> 12) { $color = 'red'; $bericht = "Levensnummer geen 12 karakters."; }  
+else if (numeriek($levnr_rd) == 1) 				{ $color = 'red'; $bericht = "Levensnummer bevat een letter."; } ?>
 
 
-
- <td colspan = 3 style = "color : red; font-size : 11px;"> <?php if(isset($bericht)) { echo $bericht; unset($bericht); } ?>
+ <td colspan = 3 style = "color : <?php echo $color; ?> ; font-size : 11px;"> <?php if(isset($bericht)) { echo $bericht; unset($bericht); unset($color); } ?>
 <!-- EINDE Als levensnummer uniek is EN 12 karakters lang is EN geen letter bevat --> 
  </td> 
 </tr>
