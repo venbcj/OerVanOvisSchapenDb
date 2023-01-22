@@ -333,7 +333,7 @@ while ($red = mysqli_fetch_assoc($redenen))
 unset($index); 
 // EINDE Declaratie REDEN bij Agrident
 
-// ARRAY Zoek naar meerdere datums per moeder
+// ARRAY Zoek naar meerdere werpdatums per moeder
 
 if($modtech == 1 && isset($data))  {	
 	foreach($data as $key => $array) {
@@ -351,7 +351,7 @@ if(empty($moeId)) { $moeId = 1; }
 $zoek_ooi = mysqli_query($db,"
 SELECT levensnummer
 FROM tblSchaap
-WHERE schaapId = ". mysqli_real_escape_string($db,$moeId) ."
+WHERE schaapId = '". mysqli_real_escape_string($db,$moeId) ."'
 ") or die (mysqli_error($db));
 
 while ($m = mysqli_fetch_assoc($zoek_ooi)) { $moe = $m['levensnummer']; //echo 'Levensnummer = '.$moe.'<br>'; 
@@ -402,7 +402,7 @@ echo '<br>';
 }
 }
 
-// Einde ARRAY Zoek naar meerdere datums per moeder
+// Einde ARRAY Zoek naar meerdere werpdatums per moeder
 
 
 if(isset($data))  {	foreach($data as $key => $array)
