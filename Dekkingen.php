@@ -518,7 +518,7 @@ if($Id <> $lst_volwId && !isset($lamrn) && (!isset($_POST['radAllDekkingen']) ||
 if($tonen == 'Ja') { ?>
 
 <tr class= "<?php echo $jaar; ?> selectt" > 
-<td><?php echo $Id; ?> </td>
+<td><?php #echo $Id; ?> </td>
  <td align = center style = "font-size:14px;"><?php if(!isset($drachtig) || $drachtig =='nee' ) { ?> 
 
 <!-- <button class=btn btn-sm btn-danger delete_class id= <?php echo $Id; ?> >Verwijder dekking</button> -->
