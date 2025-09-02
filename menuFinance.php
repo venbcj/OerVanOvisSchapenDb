@@ -1,7 +1,8 @@
 <!-- 6-12-2015 :  $versie toegveoged 
 28-12-2016 : linken grijs bij module niet in gebruik 
 29-12-2016 : Archief gewijzigd in Betaalde 
-29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.php -->
+29-08-2021: msg.php gewijzigd naar javascriptsAfhandeling.php 
+07-01-2025: De omschrijving Invulformulier gewijzigd naar Inboeken -->
 
 <html>
 
@@ -15,7 +16,7 @@ Home</a> <br/>
 <hr/style ='color : #E2E2E2'>
 <?php  if($modfin == 1) { ?> <a href='<?php echo $url;?>Kostenopgaaf.php' style = 'color : blue'> <?php }
 					else { ?> <a href='<?php echo $url;?>Kostenopgaaf.php' style = 'color : grey'> <?php } ?>
-Invulformulier</a>
+Inboeken</a>
 <hr/style ='color : #E2E2E2'>
 <?php  if($modfin == 1) { ?> <a href='<?php echo $url;?>Deklijst.php' style = 'color : blue'> <?php }
 					else { ?> <a href='<?php echo $url;?>Deklijst.php' style = 'color : grey'> <?php } ?>
