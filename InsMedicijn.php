@@ -14,8 +14,11 @@ $versie = '14-11-2020'; /* Onderschied gemaakt tussen reader Agrident en Biocont
 $versie = '15-01-2021'; /* Toedien aantal uit tabel impAgrident gehaald */
 $versie = '07-09-2021'; /* In query's $zoek_afvoerdatum en $zoek_fase h.skip = 0 in where clause toegevoegd */
 $versie = '22-09-2021'; /* func_artikelnuttigen.php toegevoegd */
-
+$versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '15-01-2025'; /*  and isnull(st.rel_best) toegevoegd aan opvragen van gegevens uit tabel impAgrident zodat stalId's van uitgeschaarden niet worden getoond */
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -23,15 +26,13 @@ $versie = '22-09-2021'; /* func_artikelnuttigen.php toegevoegd */
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Inlezen Medicatie';
-$subtitel = ''; 
-Include "header.php"; ?>
-	<TD width = 960 height = 400 valign = "top">
-<?php 
 $file = "InsMedicijn.php";
-Include "login.php"; 
+Include "login.php"; ?>
+
+			<TD valign = "top">
+<?php 
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
 include "func_artikelnuttigen.php";
@@ -125,7 +126,7 @@ left join
 		FROM tblNuttig n
 		 join tblHistorie h on (n.hisId = h.hisId)
 		 join tblStal st on (h.stalId = st.stalId)
-		WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+		WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
 		GROUP BY n.inkId
 	 ) n on (i.inkId = n.inkId)
 	WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)/* deze query betreft min_inkId_met_vrd */."' and i.inkat-coalesce(n.vbrat,0) > 0 and a.soort = 'pil'
@@ -135,21 +136,15 @@ left join
 
 $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.teller_pil is not null and isnull(rd.verwerkt) ";
 
-include "paginas.php";
+
 
 $data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.readId");
 
 } ?>
 
 <table border = 0>
-<tr> <form action="InsMedicijn.php" method = "post">
- <td colspan = 2 style = "font-size : 13px;"> 
-  <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
- <td colspan = 2 align = center style = "font-size : 14px;"><?php 
-echo $page_numbers; ?></td>
- <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
- <td colspan = 2 align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
- <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td></tr>
+<form action="InsMedicijn.php" method = "post">
+
 <tr valign = bottom style = "font-size : 12px;">
  <th>Inlezen<br><b style = "font-size : 10px;">Ja/Nee</b><br> <input type="checkbox" id="selectall" checked /> <hr></th>
  <th>Verwij-<br>deren<br> <input type="checkbox" id="selectall_del" /> <hr></th>
@@ -209,7 +204,7 @@ FROM tblSchaap s
 	SELECT st.schaapId
 	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 3
+	WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
  
@@ -285,7 +280,7 @@ FROM (
 				FROM tblStal st
 				 join tblHistorie h on (h.stalId = st.stalId)
 				 join tblNuttig n on (n.hisId = h.hisId)
-				WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+				WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
 				GROUP BY n.inkId
 			 ) n on (i.inkId = n.inkId)
 			WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."'
@@ -354,7 +349,7 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 		************************************** -->
 
 <tr style = "font-size:13px;">
- <td align = center> 
+ <td align = "center"> 
 
 	<input type = hidden size = 1 name = <?php echo "chbkies_$Id"; ?> value = 0 > <!-- hiddden -->
 	<input type = checkbox 		  name = <?php echo "chbkies_$Id"; ?> value = 1 
@@ -363,192 +358,11 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 	  if ($oke == 0) /*Als voorwaarde niet klopt */ { ?> disabled <?php } else { ?> class="checkall" <?php } /* class="checkall" zorgt dat alles kan worden uit- of aangevinkt*/ ?> >
 	<input type = hidden size = 1 name = <?php echo "laatsteOke_$Id"; ?> value = <?php echo $oke; ?> > <!-- hiddden -->
  </td>
- <td align = center>
+ <td align = "center">
 	<input type = hidden size = 1 name = <?php echo "chbDel_$Id"; ?> value = 0 >
 	<input type = checkbox class="delete" name = <?php echo "chbDel_$Id"; ?> value = 1 <?php if(isset($cbDel)) { echo $cbDel == 1 ? 'checked' : ''; } ?> >
  </td>
- <td>
-	<input type = "text" size = 9 style = "font-size : 11px;" name = <?php echo "txtDatum_$Id"; ?> value = <?php echo $dag; ?> >
- </td>
-
-<?php if(!empty($fase)) { ?> <td> <?php echo $levnr;} else { ?> <td style = "color : red"> <?php echo $levnr;} ?>
- </td>
-
-
-<?php 
-// Declaratie MEDICIJN (De medicijnen uit voorraad)
-$zoek_artId_op_voorraad = mysqli_query($db," 
-SELECT a.artId, a.naam, a.stdat, e.eenheid, sum(i.inkat-coalesce(n.vbrat,0)) vrdat
-FROM tblEenheid e
- join tblEenheiduser eu on (e.eenhId = eu.eenhId)
- join tblInkoop i on (i.enhuId = eu.enhuId)
- join tblArtikel a on (i.artId = a.artId)
- left join (
-	SELECT n.inkId, sum(n.nutat*n.stdat) vbrat
-	FROM tblNuttig n
-	GROUP BY n.inkId
- ) n on (i.inkId = n.inkId)
-WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and i.inkat-coalesce(n.vbrat,0) > 0 and a.soort = 'pil'
-GROUP BY a.artId, a.naam, a.stdat, e.eenheid
-ORDER BY a.naam
-") or die (mysqli_error($db));
-
-$index = 0;
-while ($pil = mysqli_fetch_array($zoek_artId_op_voorraad))
-{
-   $pilId[$index] = $pil['artId'];
-   $pilln[$index] = $pil['naam'];
-   $pilRaak[$index] = $pil['artId'];
-   $index++;
-}
-unset($index);
-// EINDE Declaratie MEDICIJN ?>	
-
-
- <td style = "font-size : 9px;" >
-<!-- KZLMEDICIJN -->
- <select style="width:145; font-size:12px;" name = <?php echo "kzlPil_$Id"; ?> >
-  <option></option>
-<?php	$count = count($pilln);
-for ($i = 0; $i < $count; $i++){
-
-	$opties = array($pilId[$i]=>$pilln[$i]);
-			foreach($opties as $key => $waarde)
-			{
-  if ((!isset($_POST['knpVervers_']) && $artId_rd == $pilRaak[$i]) || (isset($_POST["kzlPil_$Id"]) && $_POST["kzlPil_$Id"] == $key)){
-    echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
-  } else { 
-    echo '<option value="' . $key . '" >' . $waarde . '</option>';  
-  }		
-			}
-}
-?> </select>
- </td> <!-- EINDE KZLMEDICIJN -->
-
- <td>
-	<input type = "text" style = "font-size : 10px; text-align : right;" size = 1 name = <?php echo "txtAantal_$Id"; ?>  value = <?php echo $aantal; ?> >
- </td>
-
- <td align=center >
-<?php 
-if(!empty($kzlArt) || isset($_POST['knpVervers_'])) {echo $stdat;} ?>
- </td>
- <td>
-<?php if(!empty($kzlArt) || isset($_POST['knpVervers_'])) { echo $eenheid; } ?>
- </td>
-<?php 
-if(empty($reduId)) { $kzlRedu = 'NULL'; } else { $kzlRedu = $reduId; } /*echo '$kzlRedu = '.$kzlRedu;*/
-$zoek_aantal_reden = mysqli_query($db,"
-SELECT count(reduId) aant 
-FROM (
-	SELECT ru.reduId 
-	FROM tblRedenuser ru
-	WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ru.pil = 1
-   union
-	SELECT ru.reduId
-	FROM tblRedenuser ru
-	WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ru.reduId = '".mysqli_real_escape_string($db,$kzlRedu)."'
- ) B 
-") or die (mysqli_error($db)); 
-	while ($red = mysqli_fetch_array($zoek_aantal_reden)) { $records_klzReden = $red['aant'];	}  
-	
-// Declaratie REDEN (De redenen waaruit kan worden gekozen)
-$queryReden = ("
-SELECT reduId, reden 
-FROM (
-	SELECT ru.reduId, r.reden  
-	FROM tblReden r
-	 join tblRedenuser ru on (r.redId = ru.redId)
-	WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ru.pil = 1
-   union
-	SELECT ru.reduId, r.reden
-	FROM tblReden r
-	 join tblRedenuser ru on (r.redId = ru.redId)
-	WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ru.reduId = '".mysqli_real_escape_string($db,$kzlRedu)."'
- ) A
-GROUP BY reduId, reden
-ORDER BY reden
-			  "); 
-$qryReden = mysqli_query($db,$queryReden) or die (mysqli_error($db)); 
-
-
-$index = 0; 
-while ($red = mysqli_fetch_array($qryReden)) 
-{ 
-   $rduId[$index] = $red['reduId'];
-   $redn[$index] = $red['reden'];
-   $index++; 
-}
-unset($index); 
-//dan het volgende: 
-// EINDE Declaratie REDEN
-?>
- <td>
-<!-- KZLREDEN -->
- <select style="width:145; font-size:12px;" name = <?php echo "kzlReden_$Id"; ?> >
-  <option></option>
-<?php	$count = $records_klzReden;
-for ($i = 0; $i < $count; $i++){
-
-	$opties = array($rduId[$i]=>$redn[$i]);
-			foreach($opties as $key => $waarde)
-			{
-  if ((!isset($_POST['knpVervers_']) && $reduId == $rduId[$i]) || (isset($_POST["kzlReden_$Id"]) && $_POST["kzlReden_$Id"] == $key)){
-    echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
-  } else { 
-    echo '<option value="' . $key . '" >' . $waarde . '</option>';  
-  }		
-			}
-} 
-?> </select>
- </td> <!-- EINDE KZLREDEN -->
-	
-	
-	
-	
- <td><center><?php 
-
-
-// Kijken of artikel voorradig is
- if (isset($artId_rd)){
- //Bestaat artikel? 
- $zoek_artikel = mysqli_query($db,"
-SELECT artId, naam
-FROM tblArtikel a
- join tblEenheiduser eu on (a.enhuId = eu.enhuId)
-WHERE artId = '".mysqli_real_escape_string($db,$artId_rd)."' and lidId = '".mysqli_real_escape_string($db,$lidId)."'
-") or die (mysqli_error($db));
-	while( $art = mysqli_fetch_assoc($zoek_artikel)) { $medicijn = $art['artId']; $naam = $art['naam']; }
- //Bestaat artikel? 
-
-	if(isset($medicijn)){
-		$zoek_totale_inkoop = mysqli_query($db,"
-			SELECT sum(inkat) inkat
-			FROM tblInkoop
-			WHERE artId = '".mysqli_real_escape_string($db, $medicijn)."'
-			") or die (mysqli_error($db));
-	while( $toti = mysqli_fetch_assoc($zoek_totale_inkoop)) { $totaal_i = $toti['inkat'] + 0; }
-
-	$zoek_totaal_genuttigd = mysqli_query($db,"
-		SELECT sum(nutat*stdat) nutat
-		FROM tblNuttig n
-		 join tblInkoop i on (n.inkId = i.inkId)
-		WHERE i.artId = '".mysqli_real_escape_string($db, $medicijn)."'
-			") or die (mysqli_error($db));
-	while( $totn = mysqli_fetch_assoc($zoek_totaal_genuttigd)) { $totaal_n = $totn['nutat'] + 0; }
-
-	$pil_voorraad = $totaal_i - $totaal_n;
-	}
- }
-// Einde Kijken of artikel voorradig is
- 	if (isset($medicijn) && $pil_voorraad == 0 && !isset($_POST['knpVervers_'])){ ?> <center style = "color : red; font-size : 11px;"> <?php echo $naam. " is niet op voorraad."; }
-	else if (!empty($kzlArt) && $p_act <> 1) { ?> <center style = "color : red; font-size : 11px;"> <?php echo "Dit medicijn is niet meer beschikbaar."; }
-	else if (isset($reduId) && $r_act <> 1) { ?> <center style = "color : red; font-size : 11px;"> <?php echo "Deze reden is niet meer beschikbaar."; }
-	else if (isset($dmafv) && $dmafv <= $date) { ?> <center style = "color : red; font-size : 11px;"> <?php echo 'Datum moet voor afvoerdatum '.$afvdm.' liggen.'; }
-	
-	else if (empty($fase)) {echo "Levensnummer onbekend";} 
-	else { echo"$fase";} unset($fase); ?></center>
- </td>
+ 
 
 </tr>
 <!--	**************************************
@@ -567,7 +381,6 @@ Include "menu1.php"; } ?>
 </tr>
 
 </table>
-</center>
 
 </body>
 </html>

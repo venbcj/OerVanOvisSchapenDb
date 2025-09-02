@@ -1,12 +1,17 @@
 <?php 
-$versie = '3-9-2017';  /* aangemaakt */
-$versie = '20-3-2018';  /* Meerdere pagina's gemaakt 12-5-2018 : if(isset($data)) toegevoegd. Als alle records zijn verwerkt bestaat $data nl. niet meer !! */
-$versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
-$versie = '20-1-2019'; /* alles aan- en uitzetten met javascript */
-$versie = '7-3-2019'; /* gewicht gedeeld door 100 ipv 10 */
-$versie = '24-4-2020'; /* url Javascript libary aangepast */
+$versie = '03-09-2017';  /* aangemaakt */
+$versie = '20-03-2018';  /* Meerdere pagina's gemaakt 12-5-2018 : if(isset($data)) toegevoegd. Als alle records zijn verwerkt bestaat $data nl. niet meer !! */
+$versie = '28-09-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
+$versie = '20-01-2019'; /* alles aan- en uitzetten met javascript */
+$versie = '07-03-2019'; /* gewicht gedeeld door 100 ipv 10 */
+$versie = '24-04-2020'; /* url Javascript libary aangepast */
+$versie = '02-12-2023'; /* Toepassing bij reader Agrident mogelijk gemaakt */
+$versie = '31-12-2023'; /* op 1 plek and h.skip = 0 toegevoegd bij tblHistorie */
+$versie = '24-11-2024'; /* subquery haf aangepast. Er werd gezocht naar max(hisId). Laatste hisId hoeft niet afvoer te zijn. sql beveiligd met quotes */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
 
  session_start();?>  
+<!DOCTYPE html>
 <html>
 <head>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -14,17 +19,14 @@ $versie = '24-4-2020'; /* url Javascript libary aangepast */
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Inlezen Wegingen';
-$subtitel = '';
-Include "header.php"; ?>
-	<TD width = 960 height = 400 valign = "top">
-<?php 
 $file = "InsWegen.php";
-Include "login.php"; 
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
+Include "login.php"; ?>
 
+			<TD valign = "top">
+<?php
+if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
 If (isset($_POST['knpInsert_']))  {
 	Include "url.php";
@@ -32,62 +34,93 @@ If (isset($_POST['knpInsert_']))  {
 }
 
 // Aantal nog in te lezen WEGINGEN
-$wegingen = mysqli_query ($db,"
+$zoek_wegingen = mysqli_query ($db,"
 SELECT count(datum) aant
-from impReader 
-where lidId = ".mysqli_real_escape_string($db,$lidId)." and teller_sp is not NULL and levnr_weeg is not null and isnull(verwerkt) 
+FROM impAgrident
+WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 9 and isnull(verwerkt)
 ") or die (mysqli_error($db));
- While ($rec_wgn = mysqli_fetch_assoc($wegingen))
- {	$aantwg = $rec_wgn['aant'];	}
+ While ($zw = mysqli_fetch_assoc($zoek_wegingen))
+ {	$aantwg = $zw['aant'];	}
 // EINDE Aantal nog in te lezen WEGINGEN
 
-$velden = "str_to_date(rd.datum,'%d/%m/%Y') sort , rd.datum, rd.readId, s.schaapId, rd.levnr_weeg levnr, round((rd.weegkg/100),2) kg,
- s.levensnummer, s.geslacht,
- lstday.datum dmafv, lower(lstday.actie) actie, ouder.datum dmaanw";
+$velden = "str_to_date(rd.datum,'%Y-%m-%d') sort , rd.datum, rd.Id readId, rd.levensnummer levnr, rd.gewicht kg,
+ dup.dubbelen,
+ s.schaapId, s.levensnummer, s.geslacht,
+ lower(haf.actie) actie, haf.af, haf.datum dmafv,
+
+ date_format(hlst.datum,'%d-%m-%Y') weegdm, hlst.datum dmweeg, ouder.datum dmaanw,
+
+ lstday.datum dmlst ";
 
 $tabel = "
-impReader rd
+impAgrident rd
+ left join ( 
+ 	SELECT levensnummer, max(stalId) stalId
+ 	FROM tblSchaap s
+ 	 join tblStal st on (s.schaapId = st.schaapId)
+ 	GROUP BY levensnummer
+ ) lstst on (lstst.levensnummer = rd.levensnummer)
  left join (
-	 select max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
-	 from tblSchaap s
+ 	SELECT stalId, schaapId
+ 	FROM tblStal
+ 	WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
+ ) st on (st.stalId = lstst.stalId)
+ left join (
+	 SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
+	 FROM tblSchaap s
 	  join tblStal st on (st.schaapId = s.schaapId)
 	  join tblHistorie h on (st.stalId = h.stalId)
-	 where st.lidId = ".mysqli_real_escape_string($db,$lidId)." and h.skip = 0
-	 group by s.schaapId, s.levensnummer, s.geslacht
- ) s on (rd.levnr_weeg = s.levensnummer)
+	 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
+	 GROUP BY s.schaapId, s.levensnummer, s.geslacht
+ ) s on (st.schaapId = s.schaapId)
  left join (
-	select hisId, actie, af
-	from tblHistorie h
-	 join tblActie a on (h.actId = a.actId)
- ) h on (h.hisId = s.hisId)
- left join (
-	select st.schaapId, h.datum
-	from tblStal st
+	SELECT st.schaapId, a.actie, a.af, h.datum
+	FROM tblStal st 
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 3 and h.skip = 0
+	 join tblActie a on (h.actId = a.actId)
+	WHERE a.af = 1 and h.skip = 0
+ ) haf on (haf.schaapId = s.schaapId)
+ left join (
+	SELECT st.schaapId, max(h.datum) datum
+	FROM tblStal st
+	 join tblHistorie h on (st.stalId = h.stalId)
+	WHERE h.actId = 9 and h.skip = 0
+	GROUP BY st.schaapId
+ ) hlst on (hlst.schaapId = s.schaapId)
+ left join (
+	SELECT st.schaapId, h.datum
+	FROM tblStal st
+	 join tblHistorie h on (st.stalId = h.stalId)
+	WHERE h.actId = 3 and h.skip = 0
  ) ouder on (ouder.schaapId = s.schaapId)
  
  left join (
-	select s.levensnummer, h.datum, a.actie
-	from tblSchaap s 
-	 join tblStal st on (st.schaapId = s.schaapId)
+ 	SELECT rd.Id, count(dup.Id) dubbelen
+	FROM impAgrident rd
+	 join impAgrident dup on (rd.lidId = dup.lidId and rd.levensnummer = dup.levensnummer and rd.actId = dup.actId and rd.Id <> dup.Id)
+	WHERE rd.actId = 9 and rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ISNULL(rd.verwerkt) and ISNULL(dup.verwerkt)
+	GROUP BY rd.Id
+ ) dup on (rd.Id = dup.Id)
+ left join (
+	SELECT st.schaapId, max(h.datum) datum
+	FROM tblStal st 
 	 join tblHistorie h on (st.stalId = h.stalId)
-	 join tblActie a on (h.actId = a.actId)
-	where st.lidId = ".mysqli_real_escape_string($db,$lidId)." and s.levensnummer is not null and h.skip = 0 and a.af = 1 
- ) lstday on (lstday.levensnummer = rd.levnr_weeg )
-";
+	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
+	GROUP BY st.schaapId 
+ ) lstday on (lstday.schaapId = st.schaapId)
+ " ;
 
-$WHERE = "where rd.lidId = ".mysqli_real_escape_string($db,$lidId)." and rd.teller_sp is not null and levnr_weeg is not null and isnull(rd.verwerkt)  ";
+$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 9 and isnull(rd.verwerkt)";
 
 include "paginas.php";
 
-$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.readId"); ?>
+$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id"); ?>
 
 <table border = 0>
 <tr> <form action="InsWegen.php" method = "post">
  <td colspan = 2 style = "font-size : 13px;">
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
- <td colspan = 2 align = center style = "font-size : 14px;"><?php 
+ <td colspan = 2 align = "center" style = "font-size : 14px;"><?php 
 echo $page_numbers; ?></td>
  <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
  <td align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
@@ -101,57 +134,12 @@ echo $page_numbers; ?></td>
  <th>Generatie<hr></th>
  <th colspan = 2 ><hr></th>
 </tr>
+
 <?php
-
-/*
-$vw_Reader_wg = "
-select str_to_date(rd.datum,'%d/%m/%Y') sort , rd.datum, rd.readId, s.schaapId, rd.levnr_weeg levnr, round((rd.weegkg/100),2) kg,
-
- s.levensnummer, s.geslacht,
-
- lstday.datum dmafv, lower(lstday.actie) actie, ouder.datum dmaanw
-
-from impReader rd
- left join (
-	 select max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
-	 from tblSchaap s
-	  join tblStal st on (st.schaapId = s.schaapId)
-	  join tblHistorie h on (st.stalId = h.stalId)
-	 where st.lidId = ".mysqli_real_escape_string($db,$lidId)." and h.skip = 0
-	 group by s.schaapId, s.levensnummer, s.geslacht
- ) s on (rd.levnr_weeg = s.levensnummer)
- left join (
-	select hisId, actie, af
-	from tblHistorie h
-	 join tblActie a on (h.actId = a.actId)
- ) h on (h.hisId = s.hisId)
- left join (
-	select st.schaapId, h.datum
-	from tblStal st
-	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 3 and h.skip = 0
- ) ouder on (ouder.schaapId = s.schaapId)
- 
- left join (
-	select s.levensnummer, h.datum, a.actie
-	from tblSchaap s 
-	 join tblStal st on (st.schaapId = s.schaapId)
-	 join tblHistorie h on (st.stalId = h.stalId)
-	 join tblActie a on (h.actId = a.actId)
-	where st.lidId = ".mysqli_real_escape_string($db,$lidId)." and s.levensnummer is not null and h.skip = 0 and a.af = 1 
- ) lstday on (lstday.levensnummer = rd.levnr_weeg )
-
-where rd.lidId = ".mysqli_real_escape_string($db,$lidId)." and rd.teller_sp is not null and levnr_weeg is not null and isnull(rd.verwerkt) 
-
-order by sort, readId LIMIT 30
- ";
-
-$query = mysqli_query($db,$vw_Reader_wg) or die (mysqli_error($db));
-
-
-	while($row = mysqli_fetch_assoc($query))*/
 if(isset($data))  {	foreach($data as $key => $array)
 	{
+unset($fase);
+
 		$var = $array['datum'];
 $date = str_replace('/', '-', $var);
 $datum = date('d-m-Y', strtotime($date));
@@ -163,9 +151,9 @@ $dm	   = date('Y-m-d', strtotime($date));
 	$levnr_exist = $array['levensnummer'];
 	$kg = $array['kg'];
 	$geslacht = $array['geslacht'];
-	$dmaanw = $array['dmaanw']; if(isset($dmaanw)) { if($geslacht == 'ooi') {$fase = 'moederdier'; } else if($geslacht == 'ram') { $fase = 'vaderdier';} } 
-								else { $fase = 'lam';} 
-	$actie = $array['actie']; if(isset($actie)) { $status = $array['actie']; }
+	$dmaanw = $array['dmaanw']; if(isset($dmaanw) && isset($schaapId)) { if($geslacht == 'ooi') {$fase = 'moederdier'; } else if($geslacht == 'ram') { $fase = 'vaderdier';} } 
+								else if(isset($schaapId)) { $fase = 'lam';} 
+	$status = $array['actie'];
 	$dmafv = $array['dmafv']; if(isset($dmafv))	{ $afvdm = date('d-m-Y', strtotime($dmafv)); } // weeg datum mag niet na afvoerdatum liggen
 
 
@@ -174,14 +162,15 @@ if (isset($_POST['knpVervers_'])) { $datum = $_POST["txtWeegdag_$Id"]; $kg = $_P
 	$makeday = date_create($_POST["txtWeegdag_$Id"]); $dm =  date_format($makeday, 'Y-m-d');
 }
 
-	 If	 
-	 (	!isset($schaapId)				|| # levensnummer is onbekend
-	 	empty($datum)					|| # of datum is leeg
-	 	empty($kg)						|| # of gewicht is leeg
-		(isset($dmafv) && $dm > $dmafv)	   # of datum ligt na afvoerdatum
-	 											
-	 )
-	 {	$oke = 0;	} else {	$oke = 1;	} // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
+unset($foutbericht);
+
+	 if (!isset($schaapId)) 						{ $foutbericht = 'Levensnummer onbekend';}
+else if(empty($datum)) 								{ $foutbericht = 'De datum ontbreekt.'; } 
+else if(empty($kg)) 									{ $foutbericht = 'Gewicht is onbekend.'; } 
+else if(isset($dmafv) && $dm > $dmafv) 		{ $foutbericht = 'Dit dier is ' . $status . '.'; }
+
+
+if	(isset($foutbericht)) {	$oke = 0;	} else {	$oke = 1;	} // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
 // EINDE Controleren of ingelezen waardes corretc zijn.  
 
 	 if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1) /* Als onvolledig is gewijzigd naar volledig juist */ {$cbKies = 1; $cbDel = $_POST["chbDel_$Id"]; }
@@ -193,7 +182,7 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 		************************************** -->
 
 <tr style = "font-size:14px;">
- <td align = center>
+ <td align = "center">
 
 	<input type = hidden size = 1 name = <?php echo "chbkies_$Id"; ?> value = 0 > <!-- hiddden -->
 	<input type = checkbox 		  name = <?php echo "chbkies_$Id"; ?> value = 1 
@@ -202,7 +191,7 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 	  if ($oke == 0) /*Als voorwaarde niet klopt */ { ?> disabled <?php } else { ?> class="checkall" <?php } /* class="checkall" zorgt dat alles kan worden uit- of aangevinkt*/ ?> >
 	<input type = hidden size = 1 name = <?php echo "laatsteOke_$Id"; ?> value = <?php echo $oke; ?> > <!-- hiddden -->
  </td>
- <td align = center>
+ <td align = "center">
 	<input type = hidden size = 1 name = <?php echo "chbDel_$Id"; ?> value = 0 >
 	<input type = checkbox class="delete" name = <?php echo "chbDel_$Id"; ?> value = 1 <?php if(isset($cbDel)) { echo $cbDel == 1 ? 'checked' : ''; } ?> >
  </td>
@@ -223,9 +212,7 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 
  <td width = 200 style = "color : red">
 <!-- Foutmeldingen --> <?php 
-	 if (!isset($schaapId)) 							{ echo "Levensnummer onbekend";}
-else if(empty($kg)) 									{ echo "Gewicht is onbekend."; } 
-else if(isset($dmafv) && $dm > $dmafv) 					{ echo "Datum ligt na $afvdm ."; } ?>
+	 if	(isset($foutbericht)) { echo $foutbericht; } ?>
  </td>	
 </tr>
 <!--	**************************************
@@ -245,7 +232,6 @@ Include "menu1.php"; } ?>
 </tr>
 
 </table>
-</center>
 
 </body>
 </html>

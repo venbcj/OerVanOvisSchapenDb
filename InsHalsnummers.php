@@ -1,8 +1,11 @@
 <?php 
-$versie = '30-9-2020'; /* Gekopieerd van insOmnummeren.php */
-$versie = '16-5-2021'; /* sql beveiligd met quotes */
+$versie = '30-09-2020'; /* Gekopieerd van insOmnummeren.php */
+$versie = '16-05-2021'; /* sql beveiligd met quotes */
+$versie = '31-12-2023'; /* ".mysqli_real_escape_string($db,$halsnr)." beveiligd met quotes */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
 
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -10,15 +13,13 @@ $versie = '16-5-2021'; /* sql beveiligd met quotes */
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Inlezen Halsnummers';
-$subtitel = '';
-Include "header.php"; ?>
-	<TD width = 960 height = 400 valign = "top">
-<?php
 $file = "InsHalsnummers.php";
-Include "login.php"; 
+Include "login.php"; ?>
+
+				<TD valign = "top">
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { 
 
 if (isset ($_POST['knpInsert_'])) {
@@ -48,6 +49,7 @@ impAgrident rd
 	SELECT h.hisId, a.actie, a.af, h.datum
 	FROM tblHistorie h
 	 join tblActie a on (h.actId = a.actId)
+	WHERE h.skip = 0
  ) h on (h.hisId = s.hisId)
  left join (
 	SELECT st.schaapId, h.datum
@@ -67,7 +69,7 @@ $data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id");
 <tr> <form action="InsHalsnummers.php" method = "post">
  <td colspan = 2 style = "font-size : 13px;">
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
- <td colspan = 2 align = center style = "font-size : 14px;"><?php 
+ <td colspan = 2 align = "center" style = "font-size : 14px;"><?php 
 echo $page_numbers; ?></td>
  <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
  <td colspan = 3 align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
@@ -112,7 +114,7 @@ if (isset($_POST['knpVervers_'])) { $dag = $_POST["txtDag_$Id"];
 $zoek_halsnr_db = mysqli_query($db,"
 SELECT schaapId
 FROM tblStal
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and kleur = '".mysqli_real_escape_string($db,$kleur)."' and halsnr = ".mysqli_real_escape_string($db,$halsnr)." and isnull(rel_best)
+WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and kleur = '".mysqli_real_escape_string($db,$kleur)."' and halsnr = '".mysqli_real_escape_string($db,$halsnr)."' and isnull(rel_best)
 ") or die (mysqli_error($db));
 	while ($zh = mysqli_fetch_assoc($zoek_halsnr_db)) { $halsnummer_db = $zh['schaapId']; }
 
@@ -138,7 +140,7 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 		************************************** -->
 
 <tr style = "font-size:13px;">
- <td align = center>
+ <td align = "center">
 	<input type = hidden size = 1 name = <?php echo "chbkies_$Id"; ?> value = 0 > <!-- hiddden -->
 	<input type = checkbox 		  name = <?php echo "chbkies_$Id"; ?> value = 1 
 	  <?php echo $cbKies == 1 ? 'checked' : ''; /* Als voorwaarde goed zijn of checkbox is aangevinkt */
@@ -146,7 +148,7 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 	  if ($oke == 0) /*Als voorwaarde niet klopt */ { ?> disabled <?php } else { ?> class="checkall" <?php } /* class="checkall" zorgt dat alles kan worden uit- of aangevinkt*/ ?> >
 	<input type = hidden size = 1 name = <?php echo "laatsteOke_$Id"; ?> value = <?php echo $oke; ?> > <!-- hiddden -->
  </td>
- <td align = center>
+ <td align = "center">
 	<input type = hidden size = 1 name = <?php echo "chbDel_$Id"; ?> value = 0 >
 	<input type = checkbox class="delete" name = <?php echo "chbDel_$Id"; ?> value = 1 <?php if(isset($cbDel)) { echo $cbDel == 1 ? 'checked' : ''; } ?> >
  </td>
@@ -177,16 +179,16 @@ foreach ( $opties as $key => $waarde)
 
  <td> <input type = "text" size = 5 style = "font-size : 11px;" name = <?php echo "txtHalsnr_$Id"; ?> value = <?php echo $halsnr; ?> >
  </td>	
- <td align = center >
+ <td align = "center" >
  	<?php echo $kleur_db.' '.$halsnr_db; ?>
  </td>
- <td style = "color : red"><center><?php 
+ <td style = "color : red" align="center"><?php 
  		 if (empty($status)) 		{ echo "Onbekend levensnummer"; }
  	else if (empty($kleur)) 		{ echo "Kleur is onbekend"; }
  	else if (empty($halsnr)) 		{ echo "Halsnummer is onbekend"; }
  	else if (isset($halsnummer_db))	{ echo "Dit halsnummer is al in gebruik"; }
  	else if(isset($af) && $af == 1) { echo 'Dit dier is '. $status; } 
- ?> </center>
+ ?>
 	<input type = "hidden" size = 8 style = "font-size : 9px;" name = <?php echo "txtStatus_$Id"; ?> value = <?php echo $status; ?> > <!--hiddden-->
  </td>
  <td style = "color : red"> <?php 
@@ -212,7 +214,6 @@ Include "menu1.php"; } ?>
 </tr>
 
 </table>
-</center>
 
 </body>
 </html>

@@ -1,7 +1,13 @@
 <?php 
 $versie = '18-12-2021'; /* Gekopieerd van insDracht.php */
+$versie = '02-03-2023'; /* $zoek_vader_laatste_dekkingen toegevoegd */
+$versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */
+$versie = '07-09-2024'; /* Periode tussen werpen en dekken teruggebracht naar 60 i.p.v. 183 dagen */
+$versie = '23-11-2024'; /* In keuzelijst moeder- en vaderdieren  uitgeschaarde dieren wel tonen. $zoek_afvoerstatus_mdr aangevuld met h.actId != 10 */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
 
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -9,18 +15,14 @@ $versie = '18-12-2021'; /* Gekopieerd van insDracht.php */
 </head>
 <body>
 
-<center>
 <?php
-$titel = 'Inlezen Dekken';
-$subtitel = ''; 
-Include "header.php"; ?>
-	<TD width = 960 height = 400 valign = "top">
-<?php 
+$titel = 'Inlezen Dekken'; 
 $file = "InsDekken.php";
-Include "login.php"; 
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
+Include "login.php"; ?>
 
-include "vw_kzlOoien.php";
+		<TD valign = "top">
+<?php
+if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
 If (isset($_POST['knpInsert_']))  {
 	//Include "url.php";
@@ -31,6 +33,7 @@ function numeriek($subject) {
 	if (preg_match('/([[a-zA-Z])/', $subject, $matches)) {  /*var_dump($matches[1]); */ return 1; }
 }
 
+unset($vdrId_rd);
 //if($reader == 'Agrident') {
 $velden = "rd.Id Id, rd.datum, rd.moeder, mdr.schaapId mdrId, rd.vdrId, vdr.vader";
 
@@ -52,7 +55,7 @@ $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.ac
 
 include "paginas.php";
 
-$data = $page_nums->fetch_data($velden, "ORDER BY str_to_date(rd.datum,'%d/%m/%Y'), rd.Id"); ?>
+$data = $page_nums->fetch_data($velden, "ORDER BY date_format(rd.datum,'%d/%m/%Y'), rd.Id"); ?>
 
 <table border = 0>
 <tr> <form action="InsDekken.php" method = "post">
@@ -75,7 +78,7 @@ echo $page_numbers; ?></td>
 
 <?php
 if($modtech == 1) {
-// Declaratie MOEDERDIER alleen op stal en niet geworpen laatste 183 dagen
+// Declaratie MOEDERDIER alleen op stal en niet geworpen laatste 60 dagen
 $zoek_moederdieren = mysqli_query($db,"
 SELECT st.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr
 FROM tblSchaap s
@@ -84,7 +87,7 @@ FROM tblSchaap s
  	SELECT stalId, hisId
  	FROM tblHistorie h
  	 join tblActie a on (h.actId = a.actId)
- 	WHERE a.af = 1
+ 	WHERE a.af = 1 and h.actId != 10 and h.skip = 0
  ) haf on (haf.stalId = st.stalId)
  join (
  	SELECT schaapId
@@ -116,7 +119,7 @@ FROM tblSchaap s
 	SELECT stalId, hisId, datum
  	FROM tblHistorie h
  	 join tblActie a on (h.actId = a.actId)
- 	WHERE a.af = 1
+ 	WHERE a.af = 1 and h.actId != 10 and h.skip = 0
  ) haf on (haf.stalId = st.stalId)
  join (
  	SELECT schaapId
@@ -259,7 +262,7 @@ FROM tblVolwas v
 		SELECT hisId
 		FROM tblHistorie h
 		 join tblStal st on (st.stalId = h.stalId)
-		WHERE skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$kzlOoi)."'
+		WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$kzlOoi)."'
  ) hv on (hv.hisId = v.hisId)
  left join (
 		SELECT d.volwId, date_format(h.datum,'%d-%m-%Y') drachtdatum
@@ -274,7 +277,7 @@ FROM tblVolwas v
     FROM tblSchaap s
      join tblStal st on (s.schaapId = st.schaapId)
      join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3
+    WHERE h.actId = 3 and h.skip = 0
  ) ha on (k.schaapId = ha.schaapId)
 WHERE (hv.hisId is not null or d.volwId is not null) and isnull(ha.schaapId) and v.mdrId = '".mysqli_real_escape_string($db,$kzlOoi)."'
 GROUP BY v.mdrId
@@ -289,7 +292,7 @@ SELECT h.datum dmdracht, date_format(h.datum,'%d-%m-%Y') drachtdm
 FROM tblVolwas v
  join tblDracht d on (v.volwId = d.volwId)
  join tblHistorie h on (d.hisId = h.hisId)
-WHERE skip = 0 and v.volwId = '".mysqli_real_escape_string($db,$act_volwId)."'
+WHERE h.skip = 0 and v.volwId = '".mysqli_real_escape_string($db,$act_volwId)."'
 ") or die (mysqli_error($db));
 
 while ($zddm = mysqli_fetch_assoc($zoek_drachtdatum)) { $dmdracht = $zddm['dmdracht']; $drachtdm = $zddm['drachtdm']; }
@@ -318,21 +321,21 @@ FROM tblVolwas v
 	FROM tblSchaap s
 	 join tblStal st on (s.schaapId = st.schaapId)
     join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 3
+	WHERE h.actId = 3 and h.skip = 0
  ) ha on (k.schaapId = ha.schaapId)
 WHERE v.mdrId = '".mysqli_real_escape_string($db,$kzlOoi)."' and isnull(ha.schaapId)
 ") or die (mysqli_error($db));
 
 while ($zlw = mysqli_fetch_assoc($zoek_laatste_worp)) { $lst_volwId = $zlw['volwId']; }
 
-if(isset($lst_volwId)) { echo $lst_volwId.'<br>';
+if(isset($lst_volwId)) {
 $zoek_werpdatum = mysqli_query($db,"
 SELECT h.datum, date_format(h.datum,'%d-%m-%Y') werpdm
 FROM tblVolwas v
  join tblSchaap l on (l.volwId = v.volwId)
  join tblStal st on (l.schaapId = st.schaapId)
  join tblHistorie h on (h.stalId = st.stalId)
-WHERE h.actId = 1 and v.volwId = '".mysqli_real_escape_string($db,$lst_volwId)."'
+WHERE h.actId = 1 and h.skip = 0 and v.volwId = '".mysqli_real_escape_string($db,$lst_volwId)."'
 ") or die (mysqli_error($db));
 
 while ($zwd = mysqli_fetch_assoc($zoek_werpdatum)) { $dmwerp = $zwd['datum']; $werpdm = $zwd['werpdm']; }
@@ -347,7 +350,7 @@ $dagen_verschil_worp 	= $verschil_drachtdm_worp->days;
 
 unset($afv_status_mdr);
 $zoek_afvoerstatus_mdr = mysqli_query($db,"
-SELECT a.actie
+SELECT lower(a.actie) actie
 FROM tblStal st
  join (
  	SELECT max(stalId) stalId
@@ -356,7 +359,7 @@ FROM tblStal st
  ) maxst on (maxst.stalId = st.stalId)
  join tblHistorie h on (h.stalId = st.stalId)
  join tblActie a on (a.actId = h.actId)
-WHERE a.af = 1
+WHERE a.af = 1 and h.actId != 10 and h.skip = 0
 ") or die (mysqli_error($db));
 
 while ($sm = mysqli_fetch_assoc($zoek_afvoerstatus_mdr)) 
@@ -367,19 +370,18 @@ while ($sm = mysqli_fetch_assoc($zoek_afvoerstatus_mdr))
 
 } // Einde if(!empty($kzlOoi)) 
 
+unset($onjuist);
+unset($color);
+
+if (!isset($moeder_db) || empty($kzlOoi))	{ $color = 'red'; $onjuist = 'Ooi '.$moeder_rd.' onbekend'; }
+ else if ($cnt_ooien > 1 ) 					{ $color = 'blue'; $onjuist = "Dubbel in de reader."; }
+ else if (isset($dmdracht)) 				{ $color = 'red'; $onjuist = 'Deze ooi is reeds drachtig per '.$drachtdm; }
+ else if(isset($dagen_verschil_worp) && $dagen_verschil_worp < 60) { $color = 'red'; $onjuist = 'Deze ooi heeft op '.$werpdm.' nog geworpen. Een ooi kan 1x per 2 maanden werpen.'; } // moederdier heeft laatste 60 dagen al gelammerd
+ else if (isset($afv_status_mdr)) 					 { $color = 'red'; $onjuist = 'Ooi '.$moeder_db.' is '.$afv_status_mdr; }
+ else if (!isset($txtDatum) && empty($txtDatum)) 					 { $color = 'red'; $onjuist = 'De datum is onbekend.'; }
 
 
-	if (
-		(!isset($moeder_db) || empty($kzlOoi))		||	// moeder is onbekend
-	 	(isset($dagen_verschil_worp) && $dagen_verschil_worp < 183)	|| // moederdier heeft laatste 183 al gelammerd
-	 	$cnt_ooien > 1    	 							|| # moeder bestaat al in reader bestand
-	 	isset($dmdracht)									|| // drachtdatum bestaat al
-	 	(!isset($txtDatum) && empty($txtDatum))	|| // dekdatum is onbekend
-	 	empty($txtDatum)								   // drachtdatum is onbekend
-	 												
-	   )
-
-	 {	$oke = 0;	} else {	$oke = 1;	} // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
+	if (isset($onjuist)) {	$oke = 0;	} else {	$oke = 1;	} // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
 // EINDE Controleren of ingelezen waardes worden gevonden . 
 
 	 if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1) /* Als onvolledig is gewijzigd naar volledig juist */ {$cbKies = 1; $cbDel = $_POST["chbDel_$Id"]; }
@@ -454,17 +456,10 @@ for ($i = 0; $i < $count; $i++){
 	<!-- EINDE KZLVADER -->
 <?php } // Einde if(isset($vdr_worp)) ?>
  </td>
- 
-<?php if (!isset($moeder_db) || empty($kzlOoi))	{ $color = 'red'; $bericht = 'Ooi '.$moeder_rd.' onbekend'; }
- else if ($cnt_ooien > 1 ) 					{ $color = 'blue'; $bericht = "Dubbel in de reader."; }
- else if (isset($dmdracht)) { $color = 'red'; $bericht = 'Deze ooi is reeds drachtig per '.$drachtdm; }
- else if(isset($dagen_verschil_worp) && $dagen_verschil_worp < 183) { $color = 'red'; $bericht = 'Deze ooi heeft op '.$werpdm.' nog geworpen. Een ooi kan 1x per half jaar werpen.'; }
- else if (isset($afv_status_mdr) && !isset($kzlOoi)) 					 { $color = 'red'; $bericht = 'Ooi '.$moeder_db.' is '.$afv_status_mdr; }
-?>
- <td style = "color: <?php echo $color; ?> ; font-size:12px; " > <center> <?php 
+ <td style = "color: <?php echo $color; ?> ; font-size:12px; " > <?php 
 
- if (	isset($bericht) ) { echo $bericht; unset($bericht); unset($color); } ?>
-</center>
+ if (isset($onjuist)) { echo $onjuist; } ?>
+
  </td>
  <td></td>	
  <td></td> 
@@ -487,7 +482,6 @@ Include "menu1.php"; } ?>
 </tr>
 
 </table>
-</center>
 
 </body>
 </html>

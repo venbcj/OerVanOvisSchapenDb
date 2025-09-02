@@ -16,8 +16,12 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $versie = '20-1-2019'; /* alles aan- en uitzetten met javascript */
 $versie = '24-4-2020'; /* url Javascript libary aangepast */
 $versie = '4-7-2020'; /* 1 tabel impAgrident gemaakt */
+$versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie en sql beveiligd met quotes */
+$versie = '10-03-2024'; /* Keuzelijst verblijf breder gemaakt van width:65 naar width:84 */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
 
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -25,17 +29,14 @@ $versie = '4-7-2020'; /* 1 tabel impAgrident gemaakt */
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Inlezen Overplaatsen';
-$subtitel = '';
-Include "header.php"; ?>
-	<TD width = 960 height = 400 valign = "top">
-<?php
 $file = "InsOverplaats.php";
-Include "login.php"; 
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { 
+Include "login.php"; ?>
 
+			<TD valign = "top">
+<?php
+if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { 
 
 If (isset ($_POST['knpInsert_'])) {
 	// 	Include "url.php"; Zit al in header.php
@@ -54,22 +55,23 @@ impAgrident rd
  left join (
 	SELECT levensnummer, Id 
 	FROM impAgrident 
-	WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." and actId = 4 and isnull(verwerkt)
+	WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 4 and isnull(verwerkt)
  ) rs on (rd.levensnummer = rs.levensnummer)
  left join (
 	 SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
 	 FROM tblSchaap s
 	  join tblStal st on (st.schaapId = s.schaapId)
 	  join tblHistorie h on (st.stalId = h.stalId)
-	 WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and h.skip = 0
+	 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
 	 GROUP BY s.schaapId, s.levensnummer, s.geslacht
  ) s on (rd.levensnummer = s.levensnummer)
  
- left join tblStal st on (st.schaapId = s.schaapId and st.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(st.rel_best))
+ left join tblStal st on (st.schaapId = s.schaapId and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best))
  left join (
 	SELECT h.hisId, a.actie, a.af, h.datum
 	FROM tblHistorie h
 	 join tblActie a on (h.actId = a.actId)
+	WHERE h.skip = 0
  ) h on (h.hisId = s.hisId)
  left join (
 	SELECT st.schaapId
@@ -92,11 +94,11 @@ impAgrident rd
  left join (
 	SELECT hokId
 	FROM tblHok
-	WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." and actief = 1
+	WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief = 1
  ) hb on (rd.hokId = hb.hokId)
 ";
 
-$WHERE = "WHERE rd.lidId = ".mysqli_real_escape_string($db,$lidId)." and rd.actId = 5 and isnull(rd.verwerkt) and isnull(rs.Id) ";
+$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 5 and isnull(rd.verwerkt) and isnull(rs.Id) ";
 
 include "paginas.php";
 
@@ -112,22 +114,23 @@ impReader rd
  left join (
 	SELECT levnr_sp, readId 
 	FROM impReader 
-	WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." and teller_sp is not null and isnull(verwerkt)
+	WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and teller_sp is not null and isnull(verwerkt)
  ) rs on (rd.levnr_ovpl = rs.levnr_sp)
  left join (
 	 SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
 	 FROM tblSchaap s
 	  join tblStal st on (st.schaapId = s.schaapId)
 	  join tblHistorie h on (st.stalId = h.stalId)
-	 WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and h.skip = 0
+	 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
 	 GROUP BY s.schaapId, s.levensnummer, s.geslacht
  ) s on (rd.levnr_ovpl = s.levensnummer)
  
- left join tblStal st on (st.schaapId = s.schaapId and st.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(st.rel_best))
+ left join tblStal st on (st.schaapId = s.schaapId and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best))
  left join (
 	SELECT h.hisId, a.actie, a.af, h.datum
 	FROM tblHistorie h
 	 join tblActie a on (h.actId = a.actId)
+	WHERE h.skip = 0
  ) h on (h.hisId = s.hisId)
  left join (
 	SELECT st.schaapId
@@ -150,11 +153,11 @@ impReader rd
  left join (
 	SELECT scan
 	FROM tblHok
-	WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." and actief = 1
+	WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief = 1
  ) hb on (rd.hok_ovpl = hb.scan)
 ";
 
-$WHERE = "WHERE rd.lidId = ".mysqli_real_escape_string($db,$lidId)." and rd.teller_ovpl is not null and isnull(rd.verwerkt) and isnull(rs.readId) ";
+$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.teller_ovpl is not null and isnull(rd.verwerkt) and isnull(rs.readId) ";
 
 include "paginas.php";
 
@@ -165,7 +168,7 @@ $data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.readId");
 <tr> <form action="InsOverplaats.php" method = "post">
  <td colspan = 2 style = "font-size : 13px;">
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
- <td colspan = 2 align = center style = "font-size : 14px;"><?php 
+ <td colspan = 2 align = "center" style = "font-size : 14px;"><?php 
 echo $page_numbers; ?></td>
  <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
  <td colspan = 3 align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
@@ -175,7 +178,7 @@ echo $page_numbers; ?></td>
  <th>Verwij-<br>deren<br> <input type="checkbox" id="selectall_del" /> <hr></th>
  <th>Overplaats<br>datum<hr></th>
  <th>Levensnummer<hr></th>
- <th>naar<br>Verblijf<hr></th>
+ <th>Naar verblijf<hr></th>
  <th>Doelgroep<hr></th>
  <th><hr></th>
  <th><hr></th>
@@ -186,7 +189,7 @@ echo $page_numbers; ?></td>
 $qryHoknummer = mysqli_query($db,"
 SELECT h.hokId, hoknr, lower(coalesce(scan,'6karakters')) scan
 FROM tblHok h
-WHERE h.lidId = ".mysqli_real_escape_string($db,$lidId)."
+WHERE h.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ORDER BY hoknr
 ") or die (mysqli_error($db)); 
 
@@ -246,7 +249,7 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 		************************************** -->
 
 <tr style = "font-size:13px;">
- <td align = center>
+ <td align = "center">
 
 	<input type = hidden size = 1 name = <?php echo "chbkies_$Id"; ?> value = 0 > <!-- hiddden -->
 	<input type = checkbox 		  name = <?php echo "chbkies_$Id"; ?> value = 1 
@@ -255,7 +258,7 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 	  if ($oke == 0) /*Als voorwaarde niet klopt */ { ?> disabled <?php } else { ?> class="checkall" <?php } /* class="checkall" zorgt dat alles kan worden uit- of aangevinkt*/ ?> >
 	<input type = hidden size = 1 name = <?php echo "laatsteOke_$Id"; ?> value = <?php echo $oke; ?> > <!-- hiddden -->
  </td>
- <td align = center>
+ <td align = "center">
 	<input type = hidden size = 1 name = <?php echo "chbDel_$Id"; ?> value = 0 >
 	<input type = checkbox class="delete" name = <?php echo "chbDel_$Id"; ?> value = 1 <?php if(isset($cbDel)) { echo $cbDel == 1 ? 'checked' : ''; } ?> >
  </td>
@@ -269,7 +272,7 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 
 <!-- KZLHOKNR -->
 <?php  ?>
- <select style="width:65; font-size:12px;" name = <?php echo "kzlHok_$Id"; ?> >
+ <select style="width:84; font-size:12px;" name = <?php echo "kzlHok_$Id"; ?> >
   <option></option>
 <?php
 $count = count($hoknum);
@@ -296,10 +299,11 @@ if( isset($hok_rd) && empty($hok_db) && empty($_POST["kzlHok_$Id"]) && $levnr > 
  </td> <!-- EINDE KZLHOKNR -->
  <td><?php echo $doelgr ; ?>
  </td>	
- <td style = "color : red"><center><?php 
+ <td style = "color : red" align="center"> 
+ <?php 
  		 if (empty($status)) 		{ echo "Levensnummer onbekend"; } 
- 	else if(isset($af) && $af == 1) { echo $status; } 
- ?> </center>
+ 	else if(isset($af) && $af == 1) { echo $status; } ?>
+
 	<input type = "hidden" size = 8 style = "font-size : 9px;" name = <?php echo "txtStatus_$Id"; ?> value = <?php echo $status; ?> > <!--hiddden-->
  </td>
  <td style = "color : red"> <?php 
@@ -324,7 +328,6 @@ Include "menu1.php"; } ?>
 </tr>
 
 </table>
-</center>
 
 </body>
 </html>

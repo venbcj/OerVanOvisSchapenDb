@@ -19,8 +19,12 @@ $versie = '24-4-2020'; /* url Javascript libary aangepast */
 $versie = '8-6-2020'; /* Onderscheid gemaakt tussen reader Agrident en Biocontrol */
 $versie = '8-6-2020'; /* Geslacht toegevoegd */
 $versie = '4-7-2020'; /* 1 tabel impAgrident gemaakt */
+$versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie en sql beveiligd met quotes */
+$versie = '10-03-2024'; /* Keuzelijst verblijf breder gemaakt van width:65 naar width:84 */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
 
  session_start();?>  
+<!DOCTYPE html>
 <html>
 <head>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -28,17 +32,14 @@ $versie = '4-7-2020'; /* 1 tabel impAgrident gemaakt */
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Inlezen Gespeenden';
-$subtitel = '';
-Include "header.php"; ?>
-	<TD width = 960 height = 400 valign = "top">
-<?php 
 $file = "InsSpenen.php";
-Include "login.php"; 
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
+Include "login.php"; ?>
 
+				<TD valign = "top">
+<?php
+if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
 If (isset($_POST['knpInsert_']))  {
 	Include "url.php";
@@ -61,20 +62,21 @@ impAgrident rd
  left join (
 	SELECT lidId, levensnummer, hokId
 	FROM impAgrident
-	WHERE actId = 5 and lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(verwerkt) 
+	WHERE actId = 5 and lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(verwerkt) 
  ) ro on (rd.levensnummer = ro.levensnummer)
  left join (
 	 SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
 	 FROM tblSchaap s
 	  join tblStal st on (st.schaapId = s.schaapId)
 	  join tblHistorie h on (st.stalId = h.stalId)
-	 WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and h.skip = 0
+	 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
 	 GROUP BY s.schaapId, s.levensnummer, s.geslacht
  ) s on (rd.levensnummer = s.levensnummer)
  left join (
 	SELECT h.hisId, a.actie, a.af
 	FROM tblHistorie h
 	 join tblActie a on (h.actId = a.actId)
+	WHERE h.skip = 0
  ) h on (h.hisId = s.hisId)
  left join (
 	SELECT st.schaapId, h.datum
@@ -89,12 +91,12 @@ impAgrident rd
 	WHERE h.actId = 3 and h.skip = 0
  ) ouder on (ouder.schaapId = s.schaapId)
  
- left join tblHok kh on (coalesce(rd.hokId,ro.hokId) = kh.hokId and kh.lidId = ".mysqli_real_escape_string($db,$lidId).")
+ left join tblHok kh on (coalesce(rd.hokId,ro.hokId) = kh.hokId and kh.lidId = '".mysqli_real_escape_string($db,$lidId)."')
  left join (
  	SELECT rd.Id, count(dup.Id) dubbelen
 	FROM impAgrident rd
 	 join impAgrident dup on (rd.lidId = dup.lidId and rd.levensnummer = dup.levensnummer and rd.actId = dup.actId and rd.Id <> dup.Id)
-	WHERE rd.actId = 4 and rd.lidId = ".mysqli_real_escape_string($db,$lidId)." and ISNULL(rd.verwerkt) and ISNULL(dup.verwerkt)
+	WHERE rd.actId = 4 and rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ISNULL(rd.verwerkt) and ISNULL(dup.verwerkt)
 	GROUP BY rd.Id
  ) dup on (rd.Id = dup.Id)
  left join (
@@ -104,14 +106,14 @@ impAgrident rd
 		FROM tblSchaap s 
 		 join tblStal st on (st.schaapId = s.schaapId)
 		 join tblHistorie h on (st.stalId = h.stalId)
-		WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and s.levensnummer is not null and h.skip = 0
+		WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.levensnummer is not null and h.skip = 0
 		
 	) m
 	GROUP BY m.levensnummer 
  ) lstday on (lstday.levensnummer = rd.levensnummer )
  " ;
 
-$WHERE = "WHERE rd.lidId = ".mysqli_real_escape_string($db,$lidId)." and actId = 4 and isnull(rd.verwerkt)";
+$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 4 and isnull(rd.verwerkt)";
 
 include "paginas.php";
 
@@ -142,13 +144,14 @@ impReader rd
 	 FROM tblSchaap s
 	  join tblStal st on (st.schaapId = s.schaapId)
 	  join tblHistorie h on (st.stalId = h.stalId)
-	 WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and h.skip = 0
+	 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
 	 GROUP BY s.schaapId, s.levensnummer, s.geslacht
  ) s on (rd.levnr_sp = s.levensnummer)
  left join (
 	SELECT h.hisId, a.actie, a.af
 	FROM tblHistorie h
 	 join tblActie a on (h.actId = a.actId)
+	 WHERE h.skip = 0
  ) h on (h.hisId = s.hisId)
  left join (
 	SELECT st.schaapId, h.datum
@@ -163,12 +166,12 @@ impReader rd
 	WHERE h.actId = 3 and h.skip = 0
  ) ouder on (ouder.schaapId = s.schaapId)
  
- left join tblHok kh on (coalesce(rd.hok_sp,ro.hok_ovpl) = kh.scan and kh.lidId = ".mysqli_real_escape_string($db,$lidId).")
+ left join tblHok kh on (coalesce(rd.hok_sp,ro.hok_ovpl) = kh.scan and kh.lidId = '".mysqli_real_escape_string($db,$lidId)."')
  left join (
  	SELECT rd.readId, count(dup.readId) dubbelen
 	FROM impReader rd
 	 join impReader dup on (rd.lidId = dup.lidId and rd.levnr_sp = dup.levnr_sp and rd.readId <> dup.readId)
-	WHERE rd.teller_sp is not null and rd.lidId = ".mysqli_real_escape_string($db,$lidId)." and ISNULL(rd.verwerkt) and ISNULL(dup.verwerkt)
+	WHERE rd.teller_sp is not null and rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ISNULL(rd.verwerkt) and ISNULL(dup.verwerkt)
 	GROUP BY rd.readId
  ) dup on (rd.readId = dup.readId)
  left join (
@@ -178,14 +181,14 @@ impReader rd
 		FROM tblSchaap s 
 		 join tblStal st on (st.schaapId = s.schaapId)
 		 join tblHistorie h on (st.stalId = h.stalId)
-		WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and s.levensnummer is not null and h.skip = 0
+		WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.levensnummer is not null and h.skip = 0
 		
 	) m
 	GROUP BY m.levensnummer 
  ) lstday on (lstday.levensnummer = rd.levnr_sp )
  " ;
 
-$WHERE = "WHERE rd.lidId = ".mysqli_real_escape_string($db,$lidId)." and rd.teller_sp is not null and isnull(rd.verwerkt)";
+$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.teller_sp is not null and isnull(rd.verwerkt)";
 
 include "paginas.php";
 
@@ -196,7 +199,7 @@ $data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.readId");
 <tr> <form action="InsSpenen.php" method = "post">
  <td colspan = 3 style = "font-size : 13px;">
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
- <td colspan = 2 align = center style = "font-size : 14px;"><?php 
+ <td colspan = 2 align = "center" style = "font-size : 14px;"><?php 
 /*echo '<br>'; 
 echo '$page_nums->total_pages : '.$page_nums->total_pages.'<br>'; 
 echo '$page_nums->total_records : '.$page_nums->total_records.'<br>'; 
@@ -224,7 +227,7 @@ echo /*'$page_numbers : '.*/$page_numbers/*.'<br> '.$record_numbers.'<br>'*/;
 $qryHoknummer = mysqli_query($db,"
 SELECT hokId, hoknr, lower(coalesce(scan,'6karakters')) scan
 FROM tblHok hb
-WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." and actief = 1
+WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief = 1
 ORDER BY hoknr
 ") or die (mysqli_error($db)); 
 
@@ -290,7 +293,7 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 		************************************** -->
 
 <tr style = "font-size:14px;">
- <td align = center> <?php //echo $Id; ?>
+ <td align = "center"> <?php //echo $Id; ?>
 	
 	<input type = hidden size = 1 name = <?php echo "chbkies_$Id"; ?> value = 0 > <!-- hiddden -->
 	<input type = checkbox 		  name = <?php echo "chbkies_$Id"; ?> value = 1 
@@ -299,7 +302,7 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 	  if ($oke == 0) /*Als voorwaarde niet klopt */ { ?> disabled <?php } else { ?> class="checkall" <?php } /* class="checkall" zorgt dat alles kan worden uit- of aangevinkt*/ ?> >
 	<input type = hidden size = 1 name = <?php echo "laatsteOke_$Id"; ?> value = <?php echo $oke; ?> > <!-- hiddden -->
  </td>
- <td align = center>
+ <td align = "center">
 	<input type = hidden size = 1 name = <?php echo "chbDel_$Id"; ?> value = 0 >
 	<input type = checkbox class="delete" name = <?php echo "chbDel_$Id"; ?> value = 1 <?php if(isset($cbDel)) { echo $cbDel == 1 ? 'checked' : ''; } ?> >
  </td>
@@ -316,9 +319,9 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
  <td style = "font-size : 9px;"> 
 	<input type = "text" size = 3 style = "font-size : 11px;" name = <?php echo "txtKg_$Id" ?> value = <?php echo $kg; ?> > </td>
 
- <td align = center>
+ <td align = "center">
 <!-- KZLVERBLIJF -->
- <select style="width:65; font-size:12px;" name = <?php echo "kzlHok_$Id"; ?> >
+ <select style="width:84; font-size:12px;" name = <?php echo "kzlHok_$Id"; ?> >
   <option></option>
 <?php
 $count = count($hoknum);
@@ -369,7 +372,6 @@ Include "menu1.php"; } ?>
 </tr>
 
 </table>
-</center>
 
 </body>
 </html>

@@ -1,8 +1,11 @@
 <?php 
 $versie = '20-6-2021'; /* Gekopieerd van insOmnummeren.php */
 $versie = '5-9-2021'; /* func_artikelnuttigen.php toegevoegd en eenheid toegevoegd */
+$versie = '24-6-2023'; /* Registraties samengevoegd tot 1 regeistratie per verblijf, Voer en doelgroep */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
 
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -20,17 +23,13 @@ $versie = '5-9-2021'; /* func_artikelnuttigen.php toegevoegd en eenheid toegevoe
 </head>
 <body>
 
-
-
-<center>
 <?php
 $titel = 'Inlezen Voerregistratie';
-$subtitel = '';
-Include "header.php"; ?>
-	<TD width = 960 height = 400 valign = "top">
-<?php
 $file = "InsVoerregistratie.php";
-Include "login.php"; 
+Include "login.php"; ?>
+
+			<TD valign = "top">
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { 
 
 include"kalender.php";
@@ -61,13 +60,18 @@ ntot.totat, i.actief a_act, i.vrdat,
 hk.hoknr";
 
 $tabel = "
-impAgrident rd
+(
+	SELECT max(Id) Id, hokId, artId, doelId
+	FROM impAgrident rd
+	WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 8888 and isnull(verwerkt)
+	GROUP BY hokId, artId, doelId
+) rd
  join (
-	SELECT min(datum) dmeerst, max(datum) dmlaatst, hokId, artId, sum(coalesce(toedat_upd, toedat)) toedtot, doelId
+	SELECT max(Id) Id, min(datum) dmeerst, max(datum) dmlaatst, hokId, artId, sum(coalesce(toedat_upd, toedat)) toedtot, doelId
 	FROM impAgrident
 	WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 8888 and isnull(verwerkt)
 	GROUP BY hokId, artId, doelId
- ) md on (md.dmeerst = rd.datum and md.hokId = rd.hokId and md.artId = rd.artId and md.doelId = rd.doelId)
+ ) md on (md.Id = rd.Id)
  join tblHok hk on (rd.hokId = hk.hokId) 
  join tblArtikel a on (rd.artId = a.artId)
   join (
@@ -96,7 +100,7 @@ impAgrident rd
 ) i on (rd.artId = i.artId)
 ";
 
-$WHERE = "WHERE rd.lidId = ".mysqli_real_escape_string($db,$lidId)." and rd.actId = 8888 and isnull(rd.verwerkt) ";
+//$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 8888 and isnull(rd.verwerkt) ";
 
 include "paginas.php";
 
@@ -106,7 +110,7 @@ $data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id");
 <tr> <form action="InsVoerregistratie.php" method = "post">
  <td colspan = 2 style = "font-size : 13px;">
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
- <td colspan = 2 align = center style = "font-size : 14px;"><?php 
+ <td colspan = 2 align = "center" style = "font-size : 14px;"><?php 
 echo $page_numbers; ?></td>
  <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
  <td colspan = 3 align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
@@ -275,7 +279,7 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 		************************************** -->
 
 <tr style = "font-size:13px;">
- <td align = center>
+ <td align = "center">
 	<input type = hidden size = 1 name = <?php echo "chbkies_$Id"; ?> value = 0 > <!-- hiddden -->
 	<input type = checkbox 		  name = <?php echo "chbkies_$Id"; ?> value = 1 
 	  <?php echo $cbKies == 1 ? 'checked' : ''; /* Als voorwaarde goed zijn of checkbox is aangevinkt */
@@ -283,7 +287,7 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 	  if ($oke == 0) /*Als voorwaarde niet klopt */ { ?> disabled <?php } else { ?> class="checkall" <?php } /* class="checkall" zorgt dat alles kan worden uit- of aangevinkt*/ ?> >
 	<input type = hidden size = 1 name = <?php echo "laatsteOke_$Id"; ?> value = <?php echo $oke; ?> > <!-- hiddden -->
  </td>
- <td align = center>
+ <td align = "center">
 	<input type = hidden size = 1 name = <?php echo "chbDel_$Id"; ?> value = 0 >
 	<input type = checkbox class="delete" name = <?php echo "chbDel_$Id"; ?> value = 1 <?php if(isset($cbDel)) { echo $cbDel == 1 ? 'checked' : ''; } ?> >
  </td>
@@ -351,7 +355,7 @@ for ($i = 0; $i < $count; $i++){
 	<input type = "text" size = 9 style = "font-size : 11px;" name = <?php echo "txtAfslDatum_$Id"; ?> value = <?php echo $txtPeriode; ?>  >
  </td>
 
- <td style = "color : red"><center> 
+ <td style = "color : red" align="center"> 
 
 <?php  	
 if (isset($artikel) && $vrdat == 0){  echo $artikel. " is niet op voorraad."; }
@@ -360,8 +364,6 @@ else if ( /*!isset($_POST['knpVervers_']) &&*/ $vrdat < $totat) {  echo "Nog maa
 else if (isset($periId))						{ echo "Deze afsluitdatum bestaat al"; } 
 else if (!empty($artId_rd) && $v_act <> 1)	{ echo "Dit voer is uitlopend."; }
 ?>
-
- </center>
 	
  </td>
  <td style = "color : red"> 
@@ -432,9 +434,6 @@ Include "menu1.php"; } ?>
 </tr>
 
 </table>
-</center>
-
-
 
 </body>
 </html>
