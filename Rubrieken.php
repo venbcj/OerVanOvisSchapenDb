@@ -4,71 +4,72 @@ $versie = '21-12-2015'; /*hoofdrubrieken gesorteerd*/
 $versie = '19-10-2016';
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '12-7-2020'; /* ë uit database gewijzigd in echo htmlentities($string, ENT_COMPAT,'ISO-8859-1', true); bron https://www.php.net/htmlspecialchars via https://www.phphulp.nl/php/forum/topic/speciale-tekens-in-code-omzetten/50786/ */
-session_start(); ?>
+$versie = '31-12-2023'; /* sql beveiligd met quotes */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align="center" valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+
+ session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Financieel</title>
 </head>
 <body>
 
-<center>
 <?php
-if (isset($_POST['knpSave_']) ) { 
-	Include "url.php";
-	header("Location:  " . $url . "Rubrieken.php"); }
 $titel = 'Rubrieken';
-$subtitel = '';
-Include "header.php"; ?>
-
-		<TD width = 960 height = 400 valign = "top">
-<?php
 $file = "Rubrieken.php";
-Include "login.php";
+Include "login.php"; ?>
+
+		<TD align="center" valign = 'top'>
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modfin == 1) {
 
+if (isset ($_POST['knpSave_'])) { include "save_rubriek.php"; }
 
 //*****************************
 //** RUBRIEKEN IN GEBRUIK
 //*****************************
 ?>
 <form action="Rubrieken.php" method="post" > 
-<table border = 0 > <tr><td width = 350> <!-- Overkoepelende tabel -->
- <table border= 0   align =  "left" > 
- <tr> 
- <td colspan =  3 > 
- <b>Rubrieken in gebruik :</b> 
- </td></tr> 
-
-
- <tr style =  "font-size:12px;" valign =  "bottom"> 
-		 <th width = 180>Rubriek</th>
-		 <th>Actief</th>
-		 <th>t.b.v.<br> Saldo-<br>&nbsp&nbspberekening</th>
- </tr> 
-<?php		
+<table border = 0 style="border-color: blue; border-style: solid;" > <!-- Overkoepelende tabel -->
+<tr>
+ <td width = 350>
+	<table border = 0 style="border-color: green; border-style: solid;"  align =  "left" > <!-- Tabel met rubrieken in gebruik -->
+	<tr> 
+	 <td colspan =  3 > <b>Rubrieken in gebruik :</b> </td>
+	</tr> 
+	<tr style =  "font-size:12px;" valign =  "bottom"> 
+	 <th width = 180>Rubriek</th>
+	 <th>Actief</th>
+	 <th>t.b.v.<br> Saldo-<br>&nbsp&nbspberekening</th>
+	</tr> 
+<?php
 // START LOOP Hoofdrubrieken
 $loopHRub = mysqli_query($db,"
-select hr.rubhId, hr.rubriek 
-from tblRubriekhfd hr 
+SELECT hr.rubhId, hr.rubriek 
+FROM tblRubriekhfd hr 
  join tblRubriek r on (hr.rubhId = r.rubhId)
  join tblRubriekuser ru on (r.rubId = ru.rubId)
-where ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and hr.actief = 1 and r.actief = 1 and (ru.actief = 1 or ru.sal = 1) 
-group by hr.rubhId, hr.rubriek 
-order by hr.sort ") or die (mysqli_error($db));
+WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and hr.actief = 1 and r.actief = 1 and (ru.actief = 1 or ru.sal = 1) 
+GROUP BY hr.rubhId, hr.rubriek 
+ORDER BY hr.sort 
+") or die (mysqli_error($db));
 
 	while($rij = mysqli_fetch_assoc($loopHRub))
 	{
 		$rubhId = $rij['rubhId'];
 		$hrubr = $rij['rubriek']; ?>
-<tr><th height = 50 valign = bottom align = 'left'> <?php echo htmlentities($hrubr, ENT_COMPAT,'ISO-8859-1', true); ?>	<hr></th></tr>
+	<tr>
+	 <th height = 50 valign = bottom align = 'left'> <?php echo htmlentities($hrubr, ENT_COMPAT,'ISO-8859-1', true); ?>	<hr></th>
+	</tr>
 <?php
 // START LOOP Rubrieken
 $loopRub = mysqli_query($db,"
-select ru.rubuId, r.rubriek, ru.actief, ru.sal
-from tblRubriek r
+SELECT ru.rubuId, r.rubriek, ru.actief, ru.sal
+FROM tblRubriek r
  join tblRubriekuser ru on (r.rubId = ru.rubId)
-where ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and r.rubhId = '$rubhId' and r.actief = 1 and (ru.actief = 1 or ru.sal = 1)
-order by r.rubriek
+WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and r.rubhId = '$rubhId' and r.actief = 1 and (ru.actief = 1 or ru.sal = 1)
+ORDER BY r.rubriek
 ") or die (mysqli_error($db));
 
 	while($row = mysqli_fetch_assoc($loopRub))
@@ -77,41 +78,35 @@ order by r.rubriek
 		$rubr = "{$row['rubriek']}";
 		$actief = "{$row['actief']}";
 ?>
-<tr style = "font-size:12px;">
-<td width = 180 style = "font-size : 14px;"><input type= "hidden" name= <?php echo "txtId_$Id"; ?> size = 1 value = <?php echo "$Id";?> > <!--hiddden-->
-<!-- Veld Rubrieknaam -->
-	<?php echo $rubr; ?>
-<!-- EINDE  Veld Rubrieknaam  -->
-</td>
+	<tr style = "font-size:12px;">
+	 <td width = 180 style = "font-size : 14px;"> <?php echo $rubr; // Rubrieknaam ?>
+	 </td>
+	 <td align = "center">
+		<input type = "hidden" name = <?php echo "chkActief_$Id"; ?> size = 1 value =0 > <!-- hiddden -->
 
-<td align = center>
-<input type = "hidden" name = <?php echo "chkActief_$Id"; ?> size = 1 value =0 >
-<input type = "checkbox" name = <?php echo "chkActief_$Id"; ?> id="c1" value="1" <?php echo $row['actief'] == 1 ? 'checked' : ''; ?> 		title = "Is Rubriek te gebruiken ja/nee ?"> </td>
+		<input type = "checkbox" name = <?php echo "chkActief_$Id"; ?> id="c1" value="1" <?php echo $row['actief'] == 1 ? 'checked' : ''; ?> 		title = "Is Rubriek te gebruiken ja/nee ?"> 
+	 </td>
+	 <td align = "center">
+		<input type = "checkbox" name = <?php echo "chkSalber_$Id"; ?> id="c1" value="1" <?php echo $row['sal'] == 1 ? 'checked' : ''; ?> 		title = "te gebruiken bij saldoberekening ja/nee ?">
+	 </td>
+	</tr>
 
-<td align = center>
-<input type = "hidden" name = <?php echo "chkSalber_$Id"; ?> size = 1 value =0 >
-<input type = "checkbox" name = <?php echo "chkSalber_$Id"; ?> id="c1" value="1" <?php echo $row['sal'] == 1 ? 'checked' : ''; ?> 		title = "te gebruiken bij saldoberekening ja/nee ?"> </td>
+<?php
+	}
+	}
+	?>
+
 </tr>
-
-	</td>
-<?php		
-	}
-	}
-	if (isset ($_POST['knpSave_']))
-{
- include "save_rubriek.php";	
-}	?>
-
-<td></td></tr>
-</table>
+</table> <!-- Einde Tabel met rubrieken in gebruik -->
 <!--
 *************************************
 ** EINDE RUBRIEKEN IN GEBRUIK
 *************************************
 -->
 
-</td> <!-- Ruimte tussen de twee tabellen--> <td width = 200 align = center valign = 'top'> 
-<input type = "submit" name="knpSave_" value = "Opslaan" >
+</td> 
+<td width = 200 align = "center" valign = 'top'> <!-- Ruimte tussen de twee tabellen--> 
+	<input type = "submit" name="knpSave_" value = "Opslaan" >
 </td>
 	
 
@@ -122,51 +117,54 @@ order by r.rubriek
 //***************************** 
 // Aantal rubrieken niet in gebruik 
 $Aantal_uit = mysqli_query($db,"
-select count(rubuId) aant
-from tblRubriekuser
-where lidId = ".mysqli_real_escape_string($db,$lidId)." and actief = 0 and sal = 0
+SELECT count(rubuId) aant
+FROM tblRubriekuser
+WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief = 0 and sal = 0
 ") or die (mysqli_error($db));
 	while ($uit = mysqli_fetch_assoc($Aantal_uit))
 	{	$niet_actief = $uit['aant'];	}
 if ($niet_actief > 0) {
 ?>
-<td width = 350 align = 'right' valign = 'top'> <!--betreft cel van overkoepelende tabel -->
-<table border = 0 >
- <tr> 
- <td colspan =  4 valign = "bottom"> 
- <b>Rubrieken niet in gebruik:</b> 
- </td></tr> 
+ <td width = 350 align = 'right' valign = 'top'> <!--betreft rechter cel in de overkoepelende tabel -->
+	<table border = 0 style="border-color: red; border-style: solid;"> <!-- Tabel met rubrieken niet in gebruik -->
+	<tr> 
+	 <td colspan =  4 valign = "bottom"> 
+	 <b>Rubrieken niet in gebruik:</b> 
+	 </td>
+	</tr> 
 
 
- <tr style =  "font-size:12px;" valign =  "bottom"> 
-		 <th align = "left" >Rubriek</th>
-		 <th>Actief</th>
-		 <th>t.b.v.<br> Saldo-<br>&nbsp&nbspberekening</th>
- </tr> 
+	<tr style =  "font-size:12px;" valign =  "bottom"> 
+	 <th align = "left" >Rubriek</th>
+	 <th>Actief</th>
+	 <th>t.b.v.<br> Saldo-<br>&nbsp&nbspberekening</th>
+	</tr> 
 <?php
 // START LOOP Hoofdrubrieken
 $loopHRub = mysqli_query($db,"
-select hr.rubhId, hr.rubriek 
-from tblRubriekhfd hr 
+SELECT hr.rubhId, hr.rubriek 
+FROM tblRubriekhfd hr 
  join tblRubriek r on (hr.rubhId = r.rubhId)
  join tblRubriekuser ru on (r.rubId = ru.rubId)
-where ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and (hr.actief = 0 or r.actief = 0 or (ru.actief = 0 and ru.sal = 0)) 
-group by hr.rubhId, hr.rubriek 
-order by hr.sort ") or die (mysqli_error($db));
+WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (hr.actief = 0 or r.actief = 0 or (ru.actief = 0 and ru.sal = 0)) 
+GROUP BY hr.rubhId, hr.rubriek 
+ORDER BY hr.sort 
+") or die (mysqli_error($db));
 
 	while($rij = mysqli_fetch_assoc($loopHRub))
 	{
 		$rubhId = $rij['rubhId'];
 		$hrubr = $rij['rubriek']; ?>
-<tr><th height = 50 valign = bottom align = 'left'> <?php echo htmlentities($hrubr, ENT_COMPAT,'ISO-8859-1', true); ?>	<hr></th></tr>
+	<tr><th height = 50 valign = bottom align = 'left'> <?php echo htmlentities($hrubr, ENT_COMPAT,'ISO-8859-1', true); ?>	<hr></th>
+	</tr>
 <?php
 // START LOOP Rubrieken
 $loopRub = mysqli_query($db,"
-select ru.rubuId, r.rubriek, ru.actief, ru.sal
-from tblRubriek r
+SELECT ru.rubuId, r.rubriek, ru.actief, ru.sal
+FROM tblRubriek r
  join tblRubriekuser ru on (r.rubId = ru.rubId)
-where ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and r.rubhId = '$rubhId' and r.actief = 1 and ru.actief = 0 and ru.sal = 0
-order by r.rubriek
+WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and r.rubhId = '".mysqli_real_escape_string($db,$rubhId)."' and r.actief = 1 and ru.actief = 0 and ru.sal = 0
+ORDER BY r.rubriek
 ") or die (mysqli_error($db));
 
 
@@ -176,33 +174,30 @@ order by r.rubriek
 		$rubr = "{$row['rubriek']}";
 		$actief = "{$row['actief']}";
 ?>
-		<tr style = "font-size:12px;">
-		<td style = "font-size : 14px;"><input type= "hidden" name= <?php echo "txtId_$Id"; ?> size = 1 value = <?php echo "$Id";?> > <!-- hiddden -->
+	<tr style = "font-size:12px;">
+	 <td style = "font-size : 14px;"> <?php echo $rubr; // Rubrieknaam ?>
+	 </td>
+	 <td align = "center">
+		<input type = "hidden" name = <?php echo "chkActief_$Id"; ?> size = 1 value =0 > <!-- hiddden -->
+		<input type = "checkbox" name = <?php echo "chkActief_$Id"; ?> id="c1" value="1" <?php echo $row['actief'] == 1 ? 'checked' : ''; ?> >
+	 </td>
+	 <td align = "center">
+		<input type = "checkbox" name = <?php echo "chkSalber_$Id"; ?> id="c1" value="1" <?php echo $row['sal'] == 1 ? 'checked' : ''; ?> 		title = "te gebruiken bij saldoberekening ja/nee ?"> 
+	 </td>
+
 <?php
-// Veld Rubrieknaam
-echo $rubr; 
-// EINDE  Veld Rubrieknaam
-?></td>
-<td align = center>
-<input type = "hidden" name = <?php echo "chkActief_$Id"; ?> size = 1 value =0 > <!-- hiddden -->
-<input type = "checkbox" name = <?php echo "chkActief_$Id"; ?> id="c1" value="1" <?php echo $row['actief'] == 1 ? 'checked' : ''; ?> > </td>
-
-<td align = center>
-<input type = "hidden" name = <?php echo "chkSalber_$Id"; ?> size = 1 value =0 >
-<input type = "checkbox" name = <?php echo "chkSalber_$Id"; ?> id="c1" value="1" <?php echo $row['sal'] == 1 ? 'checked' : ''; ?> 		title = "te gebruiken bij saldoberekening ja/nee ?"> </td>
-
-
-	</td>
-<?php		
-	}
-	}
+	} // Einde while($row = mysqli_fetch_assoc($loopRub))
+	} // Einde while($rij = mysqli_fetch_assoc($loopHRub))
 ?>
 
-<td></td></tr>
-</td></tr></table> <!-- Einde Overkoepelende tabel -->
+	</tr>
+</td> <!-- EInde betreft rechter cel in de overkoepelende tabel -->
+
+</tr>
+</table> <!-- Einde Tabel met rubrieken niet in gebruik -->
 <?php    } ?> 
 </td></tr>
-
+</table> <!-- Einde Overkoepelende tabel -->
 
 <!--
 *************************************
@@ -210,8 +205,6 @@ echo $rubr;
 ************************************* -->
 <?php  // EINDE Aantal rubrieken niet in gebruik  ?>
 
-
-</table>
 </form> 
 
 

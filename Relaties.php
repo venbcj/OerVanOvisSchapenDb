@@ -4,24 +4,29 @@ $versie = '11-11-2014'; /*header("Location: http://localhost:8080/schapendb/....
 $versie = '8-3-2015'; /*Login toegevoegd*/
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '9-8-2018'; /* veld naamreader toegevoegd */
-session_start(); ?>
+$versie = '8-4-2023'; /* Standraad relatie Vermist niet tonen en SQL beveiligd met quotes  */
+$versie = '22-7-2023'; /* empty($_POST['insPartij_']))	{	$insPartij = "NULL"; vervangen in empty($_POST['insPartij_']))	{	$insPartij = '';	} De quotes werden op verschillende plekken niet goed gebruikt waardoor er quotes voor en achter de tekst in de database kwam te staan 
+
+26-10-2024 : INSERT query werd getoond en is niet meer zichtbaar gemaakt */ 
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '27-02-2025'; /* <input type= "hidden" name= echo "txtcreId_$Id"; en <input type= "hidden" name= <?php echo "txtId_$Id" verwijderd 
+08-07-2025 : naam txtcredPres_ gewijzigd naar insPres_ */
+
+ session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Beheer</title>
 </head>
 <body>
 
-<center>
 <?php
-if (isset ($_POST['knpSave_'])) { /*header("Location: ".$url."Relaties.php");*/ }
 $titel = 'Relaties';
-$subtitel = '';
-Include "header.php"; ?>
-
-		<TD width = 960 height = 400 valign = "top">
-<?php
 $file = "Relaties.php";
-Include "login.php"; 
+Include "login.php"; ?>
+
+			<TD valign = 'top'>
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
 if (isset($_POST['knpdebSave_'])) { include "save_debiteuren.php"; }
@@ -30,15 +35,17 @@ if (isset($_POST['knpcreSave_'])) { include "save_crediteuren.php"; }
 if (isset($_POST['knpInsert_']))
 {
 
+$newPartij = $_POST['insPartij_'];
+
 	$controle = mysqli_query($db,"
 	SELECT count(p.partId) aantal
 	FROM tblPartij p
 	 join tblRelatie r on (p.partId = r.partId)
-	WHERE p.lidId = ".mysqli_real_escape_string($db,$lidId)." and p.naam = '$_POST[insPartij_]'
+	WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.naam = '".mysqli_real_escape_string($db,$newPartij)."'
 	") or die (mysqli_error($db));
 				while ($rij = mysqli_fetch_assoc($controle))
 				{
-					$dubbel = ("{$rij['aantal']}");
+					$dubbel = $rij['aantal'];
 				}
 
 	
@@ -69,29 +76,29 @@ if (isset($_POST['knpInsert_']))
 	}
 	else 
 	{
-if (empty($_POST['insUbn_']))	{	$insUbn = "NULL";	}
-  else	{	$insUbn = "'$_POST[insUbn_]'";	}
+if (empty($_POST['insUbn_']))	{	$insUbn = '';	}
+  else	{	$insUbn = $_POST['insUbn_'];	}
 
-if (empty($_POST['insPartij_']))	{	$insPartij = "NULL";	}
-  else		{	$insPartij = " '$_POST[insPartij_]' ";	$Partij = $_POST[insPartij_]; }
+if (empty($_POST['insPartij_']))	{	$insPartij = '';	}
+  else		{	$insPartij = $_POST['insPartij_'];	$Partij = $_POST['insPartij_']; }
 
 if (!isset($_POST['insPres_']) || empty($_POST['insPres_']))	{	$insPres = $Partij;	}
-  else		{	$insPres = $_POST[insPres_];	}
+  else		{	$insPres = $_POST['insPres_'];	}
 
-if (empty($_POST['insStraat_']))	{	$insStraat = "NULL";	}
-  else		{	$insStraat = " '$_POST[insStraat_]' ";	}
+if (empty($_POST['insStraat_']))	{	$insStraat = '';	}
+  else		{	$insStraat = $_POST['insStraat_'];	}
 
-if (empty($_POST['insNr_']))	{	$insNr = "NULL";	}
-  else		{	$insNr = " '$_POST[insNr_]' ";	}
+if (empty($_POST['insNr_']))	{	$insNr = '';	}
+  else		{	$insNr = $_POST['insNr_'];	}
 
-if (empty($_POST['insPc_']))	{	$insPc = "NULL";	}
-  else	{	$insPc = "' $_POST[insPc_]'";	}
+if (empty($_POST['insPc_']))	{	$insPc = '';	}
+  else	{	$insPc = $_POST['insPc_'];	}
   
-if (empty($_POST['insPlaats_']))	{	$insPlaats = "NULL";	}
-  else	{	$insPlaats = "'$_POST[insPlaats_]'";	}  
+if (empty($_POST['insPlaats_']))	{	$insPlaats = '';	}
+  else	{	$insPlaats = $_POST['insPlaats_'];	}  
 
-if (empty($_POST['insTel_']))	{	$insTel = "NULL";	}
-  else	{	$insTel = "'$_POST[insTel_]'";	}
+if (empty($_POST['insTel_']))	{	$insTel = '';	}
+  else	{	$insTel = $_POST['insTel_'];	}
 
 
 // Functie : Maak readernamen uniek
@@ -103,7 +110,7 @@ function getReadername($datb, $lidid, $naam, $n) {
 		$result = mysqli_query($datb,"
 			SELECT count(*) aant 
 			FROM tblPartij p
-			WHERE lidId = ".mysqli_real_escape_string($datb,$lidid)." and naamreader = '".mysqli_real_escape_string($datb,$readername)."' ;") or die (mysqli_error($datb)); 
+			WHERE lidId = '".mysqli_real_escape_string($datb,$lidid)."' and naamreader = '".mysqli_real_escape_string($datb,$readername)."' ;") or die (mysqli_error($datb)); 
 
 		while ($row = mysqli_fetch_assoc($result)) { $count = $row['aant']; }
 
@@ -117,7 +124,7 @@ $readernaam = substr($insPres, 0, 20);
 $zoek_readernaam = mysqli_query($db,"
 			SELECT count(*) aant 
 			FROM tblPartij p 
-			WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." and naamreader = '".mysqli_real_escape_string($db,$readernaam)."' ;") or die (mysqli_error($db)); 
+			WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and naamreader = '".mysqli_real_escape_string($db,$readernaam)."' ;") or die (mysqli_error($db)); 
 
 		while ($dup = mysqli_fetch_assoc($zoek_readernaam)) { $count = $dup['aant']; }
 
@@ -125,32 +132,33 @@ $zoek_readernaam = mysqli_query($db,"
 $readernaam = getReadername($db, $lidId, $insPres, $d);
 }
 
-		$insert_tblPartij = "INSERT INTO tblPartij SET lidId = ".mysqli_real_escape_string($db,$lidId).", ubn = ".$insUbn.", naam = ".$insPartij.", naamreader = '".$readernaam."', tel=  ".$insTel." ";
+		$insert_tblPartij = "INSERT INTO tblPartij SET lidId = '".mysqli_real_escape_string($db,$lidId)."', ubn = ".db_null_input($insUbn).", naam = '".mysqli_real_escape_string($db,$insPartij)."', naamreader = " . db_null_input($readernaam) . ", tel = " . db_null_input($insTel) ;
 /*echo $insert_tblPartij.'<br>';*/		mysqli_query($db,$insert_tblPartij) or die (mysqli_error($db));
 		
 $zoek_partId = mysqli_query($db,"
 SELECT partId 
 FROM tblPartij 
-WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." and naam = ".$insPartij."
+WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and naam = '".mysqli_real_escape_string($db,$insPartij)."'
 ") or die(mysqli_error($db));
 	while( $par = mysqli_fetch_assoc($zoek_partId)) { $insPartId = $par['partId']; }
-	
-		$insert_tblRelatie = "INSERT INTO tblRelatie SET partId = ".mysqli_real_escape_string($db,$insPartId).", relatie = '$_POST[kzlRelatie_]' ";
 
-/*echo $insert_tblRelatie.'<br>';*/		mysqli_query($db,$insert_tblRelatie) or die (mysqli_error($db));
+$relatie = $_POST[kzlRelatie_];	
+		$insert_tblRelatie = "INSERT INTO tblRelatie SET partId = '".mysqli_real_escape_string($db,$insPartId)."', relatie = '".mysqli_real_escape_string($db,$relatie)."' ";
+
+/*echo $insert_tblRelatie.'<br>';*/	mysqli_query($db,$insert_tblRelatie) or die (mysqli_error($db));
 
 if (!empty($_POST['insStraat_']) || !empty($_POST['insNr_']) || !empty($_POST['insPc_']) || !empty($_POST['insPlaats_'])) {
 $zoek_relId = mysqli_query($db,"
 SELECT relId 
 FROM tblPartij p
  join tblRelatie r on (p.partId = r.partId)
-WHERE p.lidId = ".mysqli_real_escape_string($db,$lidId)." and p.naam = ".$insPartij."
+WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.naam = '".mysqli_real_escape_string($db,$insPartij)."'
 ") or die(mysqli_error($db));
 	while( $rel = mysqli_fetch_assoc($zoek_relId)) { $insRelId = $rel['relId']; }
 
-		$insert_tblAdres = "INSERT INTO tblAdres SET relId = ".mysqli_real_escape_string($db,$insRelId).", straat = ".$insStraat.", nr = ".$insNr.", pc = ".$insPc.", plaats = ".$insPlaats." ";
+		$insert_tblAdres = "INSERT INTO tblAdres SET relId = '".mysqli_real_escape_string($db,$insRelId)."', straat = " . db_null_input($insStraat) . ", nr = " . db_null_input($insNr) . ", pc = " . db_null_input($insPc) . ", plaats = " . db_null_input($insPlaats) ;
 
-	mysqli_query($db,$insert_tblAdres) or die (mysqli_error($db));	
+/*echo $insert_tblAdres.'<br>';*/	mysqli_query($db,$insert_tblAdres) or die (mysqli_error($db));	
 }	
 	}
 } ?>
@@ -181,29 +189,18 @@ WHERE p.lidId = ".mysqli_real_escape_string($db,$lidId)." and p.naam = ".$insPar
 </tr>
 <?php
 // START LOOP debiteuren
-$debiteuren = mysqli_query($db,"
-SELECT relId, naam
-FROM tblPartij p
- join tblRelatie r on (r.partId = p.partId)
-WHERE p.lidId = ".mysqli_real_escape_string($db,$lidId)." and r.relatie = 'deb'
-ORDER BY r.actief desc, p.naam
-") or die (mysqli_error($db));
-
-	while($record = mysqli_fetch_assoc($debiteuren))
-	{
-            $Id = ("{$record['relId']}");  
-
-$query = mysqli_query($db,"
-SELECT p.partId, r.relId, r.relatie, p.ubn, p.naam, p.naamreader, a.straat, a.nr, a.pc, a.plaats, p.tel, r.actief, adrId
+$zoek_debiteuren = mysqli_query($db,"
+SELECT r.relId, p.partId, r.relId, r.relatie, p.ubn, p.naam, p.naamreader, a.straat, a.nr, a.pc, a.plaats, p.tel, r.actief, adrId
 FROM tblPartij p
  join tblRelatie r on (r.partId = p.partId)
  left join tblAdres a on (r.relId = a.relId)
-WHERE r.relId = '$Id'
-ORDER BY naam
+WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and r.relatie = 'deb'
+ORDER BY r.actief desc, p.naam
 ") or die (mysqli_error($db));
 
-	while($row = mysqli_fetch_assoc($query))
+	while($row = mysqli_fetch_assoc($zoek_debiteuren))
 	{
+		$Id = $row['relId'];
 		$partId = $row['partId'];
 		$ubn = $row['ubn'];
 		$naam = $row['naam'];
@@ -215,20 +212,21 @@ ORDER BY naam
 
 if(isset($_POST['knpCred_'.$Id])) {
 // crediteur toevoegen		
-$insert_relatie = "INSERT INTO tblRelatie set partId = ".mysqli_real_escape_string($db,$partId).", relatie = 'cred' ";
+$insert_relatie = "INSERT INTO tblRelatie set partId = '".mysqli_real_escape_string($db,$partId)."', relatie = 'cred' ";
 	mysqli_query($db,$insert_relatie) or die (mysqli_error($db));
 //echo '<br>'.$insert_relatie.'<br>';	
 // Einde crediteur toevoegen
 // Als adres bestaat ook adres toevoegen aan crediteur-relatie. LET OP emtpy NIET veranderen in isset want variabelen bestaan altijd !!
 if(!empty($straat) || !empty($nr) || !empty($pc) || !empty($plaats)) { //toevoegen adres
-$zoek_relId = mysqli_query($db,"SELECT relId FROM tblRelatie WHERE partId = ".mysqli_real_escape_string($db,$partId)." and relatie = 'cred'") or die (mysqli_error($db));
+$zoek_relId = mysqli_query($db,"SELECT relId FROM tblRelatie WHERE partId = '".mysqli_real_escape_string($db,$partId)."' and relatie = 'cred'") or die (mysqli_error($db));
  while( $rel = mysqli_fetch_assoc($zoek_relId)) { $rel_cred = $rel['relId']; }
 
-if(!empty($straat)) { $newStraat = "'".$straat."'"; } else { $newStraat = "NULL"; }
-if(!empty($nr)) { $newNr = $nr; } else { $newNr = "NULL"; }
-if(!empty($pc)) { $newPc = "'".$pc."'"; } else { $newPc = "NULL"; }
-if(!empty($plaats)) { $newPlaats = "'".$plaats."'"; } else { $newPlaats = "NULL"; }
-$insert_adres = "INSERT INTO tblAdres set relId = ".mysqli_real_escape_string($db,$rel_cred).", straat = ".$newStraat.", nr = ".$newNr.", pc = ".$newPc.", plaats = ".$newPlaats." ";
+if(!empty($straat)) { $newStraat = $straat; } else { $newStraat = ''; }
+if(!empty($nr)) { $newNr = $nr; } else { $newNr = ''; }
+if(!empty($pc)) { $newPc = $pc; } else { $newPc = ''; }
+if(!empty($plaats)) { $newPlaats = $plaats; } else { $newPlaats = ''; }
+
+$insert_adres = "INSERT INTO tblAdres set relId = '".mysqli_real_escape_string($db,$rel_cred)."', straat = ".db_null_input($newStraat).", nr = ".db_null_input($newNr).", pc = ".db_null_input($newPc).", plaats = ".db_null_input($newPlaats);
 	mysqli_query($db,$insert_adres) or die (mysqli_error($db));
 //echo $insert_adres.'<br>';
 	}
@@ -238,7 +236,7 @@ $insert_adres = "INSERT INTO tblAdres set relId = ".mysqli_real_escape_string($d
 		
 ?>		 
 <tr style = "font-size:12px;">
- <td><!--Id --><input type= "hidden" name= <?php echo "txtId_$Id"; ?> size = 1 style= "font-size : 11px" value = <?php echo $Id; ?> > <!-- hiddden -->
+ <td>
  <input type= "text" name= <?php echo "txtdebUbn_$Id"; ?> size = 5 style= "font-size : 11px" value = <?php echo $ubn; ?> ></td>
  <td><input type= "text" name= <?php echo "txtdebNaam_$Id"; ?> style= "font-size : 11px" value = <?php echo " \"$naam\" "; ?> ></td>
  <?php if($reader == 'Agrident') { ?>
@@ -257,7 +255,7 @@ $insert_adres = "INSERT INTO tblAdres set relId = ".mysqli_real_escape_string($d
  <td width = 80> <a href='<?php echo $url; ?>Relatie.php?pstid=<?php echo $partId; ?>' style = "color : blue"> meer gegevens </a> </td>
  <td> 			 <a href='<?php echo $url; ?>Contact.php?pstid=<?php echo $partId; ?>' style = "color : blue"> contacten </a> </td>
 <?php
-$zoek_cred = mysqli_query($db,"SELECT relId FROM tblRelatie WHERE partId = ".mysqli_real_escape_string($db,$partId)." and relatie = 'cred' ") or die(mysqli_error($db)); 
+$zoek_cred = mysqli_query($db,"SELECT relId FROM tblRelatie WHERE partId = '".mysqli_real_escape_string($db,$partId)."' and relatie = 'cred' ") or die(mysqli_error($db)); 
 	while( $cr = mysqli_fetch_assoc($zoek_cred)) { $cred_exists = $cr['relId']; } 
 if(!isset($cred_exists)) { ?>
  <td> <input type= "submit" name= <?php echo "knpCred_$Id"; ?> value= "maak ook crediteur" style = "font-size:9px;" > </td> <?php } unset($cred_exists); ?>
@@ -268,9 +266,7 @@ if(!isset($cred_exists)) { ?>
 
  <td> </td>
 </tr>
-	
 
-<?php    } ?>
 </td>
 </tr>
 			<!-------------------------------------------------
@@ -298,29 +294,30 @@ if(!isset($cred_exists)) { ?>
 </tr>
 <?php		
 // START LOOP crediteuren
-$crediteuren = mysqli_query($db,"
+
+//Crediteur Vermist niet tonen m.u.v. Bedrijfsnaam
+$zoek_crediteur_vermist = mysqli_query($db,"
 SELECT relId, naam
 FROM tblPartij p
  join tblRelatie r on (r.partId = p.partId)
-WHERE p.lidId = ".mysqli_real_escape_string($db,$lidId)." and r.relatie = 'cred'
-ORDER BY r.actief desc, p.naam
+WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.naam = 'Vermist'
 ") or die (mysqli_error($db));
 
-	while($record = mysqli_fetch_assoc($crediteuren))
-	{
-            $Id = ("{$record['relId']}");  
+	while($zcv = mysqli_fetch_assoc($zoek_crediteur_vermist))
+	{ $niet_tonen = $zcv['relId']; }
 
-$query = mysqli_query($db,"
-SELECT p.partId, r.relId, relatie, ubn, naam, naamreader, straat, nr, pc, plaats, tel, r.actief, uitval
+$zoek_crediteuren = mysqli_query($db,"
+SELECT r.relId, p.partId, r.relId, relatie, ubn, naam, naamreader, straat, nr, pc, plaats, tel, r.actief, uitval
 FROM tblPartij p
  join tblRelatie r on (r.partId = p.partId)
  left join tblAdres a on (r.relId = a.relId)
-WHERE r.relId = '$Id'
-ORDER BY naam
+WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and r.relatie = 'cred' and r.relId not like '".mysqli_real_escape_string($db,$niet_tonen)."'
+ORDER BY r.actief desc, p.naam
 ") or die (mysqli_error($db));
 
-	while($row = mysqli_fetch_assoc($query))
+	while($row = mysqli_fetch_assoc($zoek_crediteuren))
 	{
+		$Id = $row['relId'];
 		$partId = $row['partId'];
 		$ubn = $row['ubn'];
 		$naam = $row['naam'];
@@ -334,20 +331,21 @@ ORDER BY naam
 		
 if(isset($_POST['knpDeb_'.$Id])) {
 // debiteur toevoegen		
-$insert_relatie = "INSERT INTO tblRelatie set partId = ".mysqli_real_escape_string($db,$partId).", relatie = 'deb' ";
+$insert_relatie = "INSERT INTO tblRelatie set partId = '".mysqli_real_escape_string($db,$partId)."', relatie = 'deb' ";
 	mysqli_query($db,$insert_relatie) or die (mysqli_error($db));
 //echo '<br>'.$insert_relatie.'<br>';	
 // Einde debiteur toevoegen
 // Als adres bestaat ook adres toevoegen aan debiteur-relatie. LET OP emtpy NIET veranderen in isset want variabelen bestaan altijd !!
 if(!empty($straat) || !empty($nr) || !empty($pc) || !empty($plaats)) { //toevoegen adres
-$zoek_relId = mysqli_query($db,"SELECT relId FROM tblRelatie WHERE partId = ".mysqli_real_escape_string($db,$partId)." and relatie = 'deb'") or die (mysqli_error($db));
+$zoek_relId = mysqli_query($db,"SELECT relId FROM tblRelatie WHERE partId = '".mysqli_real_escape_string($db,$partId)."' and relatie = 'deb'") or die (mysqli_error($db));
  while( $rel = mysqli_fetch_assoc($zoek_relId)) { $rel_deb = $rel['relId']; }
 
-if(!empty($straat)) { $newStraat = "'".$straat."'"; } else { $newStraat = "NULL"; }
-if(!empty($nr)) { $newNr = $nr; } else { $newNr = "NULL"; }
-if(!empty($pc)) { $newPc = "'".$pc."'"; } else { $newPc = "NULL"; }
-if(!empty($plaats)) { $newPlaats = "'".$plaats."'"; } else { $newPlaats = "NULL"; }
-$insert_adres = "INSERT INTO tblAdres set relId = ".mysqli_real_escape_string($db,$rel_deb).", straat = ".$newStraat.", nr = ".$newNr.", pc = ".$newPc.", plaats = ".$newPlaats." ";
+if(!empty($straat)) { $newStraat = "'".$straat."'"; } else { $newStraat = ''; }
+if(!empty($nr)) { $newNr = $nr; } else { $newNr = ''; }
+if(!empty($pc)) { $newPc = "'".$pc."'"; } else { $newPc = ''; }
+if(!empty($plaats)) { $newPlaats = "'".$plaats."'"; } else { $newPlaats = ''; }
+$insert_adres = "INSERT INTO tblAdres set relId = '".mysqli_real_escape_string($db,$rel_deb)."', straat = ".db_null_input($newStraat).", nr = ".db_null_input($newNr).", pc = ".db_null_input($newPc).", plaats = ".db_null_input($newPlaats);
+
 	mysqli_query($db,$insert_adres) or die (mysqli_error($db));
 //echo $insert_adres.'<br>';
 	}
@@ -356,7 +354,7 @@ $insert_adres = "INSERT INTO tblAdres set relId = ".mysqli_real_escape_string($d
 }
 ?>		 
 <tr style = "font-size:12px;">
- <td><!--Id --><input type= "hidden" name= <?php echo "txtcreId_$Id"; ?> size = 1 style= "font-size : 11px" value = <?php echo $Id; ?> > <!-- hiddden -->
+ <td>
 <?php if($uitval <> 1) { ?> 
  <input type= "text" name= <?php echo "txtcreUbn_$Id"; ?> size = 5 style= "font-size : 11px" value = <?php echo $ubn; ?> > <?php } ?> </td>
  <td>
@@ -387,8 +385,8 @@ $insert_adres = "INSERT INTO tblAdres set relId = ".mysqli_real_escape_string($d
 $zoek_deb = mysqli_query($db,"
 SELECT relId 
 FROM tblRelatie r
-WHERE partId = ".mysqli_real_escape_string($db,$partId)." and relatie = 'deb' or (
-	exists( SELECT relId FROM tblRelatie rl WHERE rl.partId = r.partId and rl.partId = ".mysqli_real_escape_string($db,$partId)." and rl.uitval = 1)
+WHERE partId = '".mysqli_real_escape_string($db,$partId)."' and relatie = 'deb' or (
+	exists( SELECT relId FROM tblRelatie rl WHERE rl.partId = r.partId and rl.partId = '".mysqli_real_escape_string($db,$partId)."' and rl.uitval = 1)
 )
 ") or die(mysqli_error($db)); 
 	while( $cr = mysqli_fetch_assoc($zoek_deb)) { $deb_exists = $cr['relId']; } 
@@ -401,9 +399,7 @@ if(!isset($deb_exists)) { ?>
 
  <td> </td>
 </tr>
-	
 
-<?php    } ?>
 </td>
 </tr>
 			<!-------------------------------------------------
@@ -415,7 +411,7 @@ if(!isset($deb_exists)) { ?>
 <td><input type= "text" name= "insPartij_" style= "font-size : 11px" <?php if (isset($txtPartij)) { ?> value = <?php echo "'".$txtPartij."'"; } ?> ></td>
 
   <?php if($reader == 'Agrident') { ?>
- <td><input type= "text" name= "txtcredPres_" size = 17 style= "font-size : 11px" ></td>
+ <td><input type= "text" name= "insPres_" size = 17 style= "font-size : 11px" ></td>
  <?php } ?>
 
 <td><input type= "text" name= "insStraat_" style= "font-size : 11px" <?php if (isset($txtStraat)) { ?> value = <?php echo "'".$txtStraat."'"; } ?> ></td>
