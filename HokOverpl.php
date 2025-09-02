@@ -7,103 +7,123 @@ $versie = "12-2-2017"; /* tblPeriode verwijderd en hok direct aan tblBezet gekop
 $versie = '21-05-2018';  /* Meerdere pagina's gemaakt */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '20-12-2019'; /* tabelnaam gewijzigd van UIT naar uit tabelnaam */
-
+$versie = '30-12-2023'; /* and h.skip = 0 toegevoegd aan tblHistorie en sql beveiligd */
+$versie = '05-01-2024'; /* Schapen die in het verblijf spenen de status aanwas kregen werden niet getoond. Dit is aangepast */
+$versie = '07-01-2024'; /* Select_all toegevoegd en include"kalender.php"; op een andere plek gezet omdat dit elkaar anders bijt. */
+$versie = '12-01-2024'; /* Keuze alleen lammeren of alleen volwassenen mogelijk gemaakt incl sortering op fase en werknr */
+$versie = '20-01-2024'; /* in nestquery 'uit' is 'and a1.aan = 1' uit WHERE gehaald. De hisId die voorkomt in tblBezet volstaat. Bovendien is bij Pieter hisId met actId 3 gekoppeld aan tblBezet en heeft het veld 'aan' in tblActie de waarde 0. De WHERE incl. 'and a1.aan = 1' geeft dus een fout resultaat. */
+$versie = "11-03-2024"; /* Bij geneste query uit 
+join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
+join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 */
+$versie = '26-12-2024'; /* <TD width = 940 height = 400 valign = "top"> gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
+	 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <title>Registratie</title>
 </head>
 <body>
 
-<center>
 <?php
-include"kalender.php";
 $titel = 'Overplaatsen';
-$subtitel = '';
-Include "header.php";
-?>
-		<TD width = 940 height = 400 valign = "top">
-<?php 
 $file = "HokkenBezet.php";
-Include "login.php";
+Include "login.php"; ?>
+
+				<TD align = "center" valign = "top">
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
 if(isset($_GET['pstId']))	{ $_SESSION["ID"] = $_GET['pstId']; } $ID = $_SESSION["ID"]; /* zorgt het Id wordt onthouden bij het opnieuw laden van de pagina */
+
+if($_POST['radFase_'] == 'lam') { $_SESSION["KZ"] = 1; }
+else if($_POST['radFase_'] == 'volw') { $_SESSION["KZ"] = 2; }
+else if($_POST['radFase_'] == 'alles') { $_SESSION["KZ"] = NULL; }
+
+$KEUZE = $_SESSION["KZ"];
+
+
+##echo '$KEUZE = '.$KEUZE.'<br>';
+
+
 if(isset($_POST['knpVerder_']) && isset($_POST['kzlHokall_']))	{
 	$datum = $_POST['txtDatumall_']; $_SESSION["DT1"] = $datum;
 	$hokkeuze = $_POST['kzlHokall_']; $_SESSION["BST"] = $hokkeuze; } 
  else { $hokkeuze = $_SESSION["BST"];  } $sess_dag = $_SESSION["DT1"]; $sess_bestm = $_SESSION["BST"];
 
 $zoek_hok = mysqli_query ($db,"
-select hoknr from tblHok where hokId = ".mysqli_real_escape_string($db,$ID)."
+SELECT hoknr
+FROM tblHok
+WHERE hokId = '".mysqli_real_escape_string($db,$ID)."'
 ") or die (mysqli_error($db));
 	while ($h = mysqli_fetch_assoc($zoek_hok)) { $hoknr = $h['hoknr']; }
 
 $zoek_nu_in_verblijf_geb_spn = mysqli_query($db,"
-select count(b.bezId) aantin
-from tblBezet b
+SELECT count(b.bezId) aantin
+FROM tblBezet b
  join tblHistorie h on (b.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
  left join 
  (
-	select b.bezId, h1.hisId hisv, min(h2.hisId) hist
-	from tblBezet b
+	SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
+	FROM tblBezet b
 	 join tblHistorie h1 on (b.hisId = h1.hisId)
 	 join tblActie a1 on (a1.actId = h1.actId)
-	 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
+	 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 	 join tblActie a2 on (a2.actId = h2.actId)
 	 join tblStal st on (h1.stalId = st.stalId)
-	where b.hokId = ".mysqli_real_escape_string($db,$ID)." and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-	group by b.bezId, h1.hisId
+	WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+	GROUP BY b.bezId, h1.hisId
  ) uit on (uit.hisv = b.hisId)
  left join (
-	select st.schaapId, h.datum
-	from tblStal st
+	SELECT st.schaapId, h.datum
+	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 3
+	WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-where b.hokId = ".mysqli_real_escape_string($db,$ID)." and isnull(uit.bezId) and isnull(prnt.schaapId)
+WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and h.skip = 0 and isnull(uit.bezId) and isnull(prnt.schaapId)
 ") or die (mysqli_error($db));
 		
 	while($nu_l = mysqli_fetch_assoc($zoek_nu_in_verblijf_geb_spn))
 		{ $nu_lam = $nu_l['aantin']; }
 		
 $zoek_nu_in_verblijf_parent = mysqli_query($db,"
-select count(b.hisId) aantin
-from (
-	select b.hisId, b.hokId
-	from tblBezet b
+SELECT count(b.hisId) aantin
+FROM (
+	SELECT b.hisId, b.hokId
+	FROM tblBezet b
 	 join tblHistorie h on (b.hisId = h.hisId)
 	 join tblStal st on (st.stalId = h.stalId)
 	 join (
-		select st.schaapId, h.hisId, h.datum
-		from tblStal st
+		SELECT st.schaapId, h.hisId, h.datum
+		FROM tblStal st
 		join tblHistorie h on (st.stalId = h.stalId)
-		where h.actId = 3
+		WHERE h.actId = 3 and h.skip = 0
 	) prnt on (prnt.schaapId = st.schaapId)
-	where b.hokId = ".mysqli_real_escape_string($db,$ID)." and h.datum >= prnt.datum
+	WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and h.skip = 0 and h.datum >= prnt.datum
  ) b
  join tblHistorie h on (b.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
  left join 
  (
-	select b.bezId, h1.hisId hisv, min(h2.hisId) hist
-	from tblBezet b
+	SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
+	FROM tblBezet b
 	 join tblHistorie h1 on (b.hisId = h1.hisId)
 	 join tblActie a1 on (a1.actId = h1.actId)
-	 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
+	 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 	 join tblActie a2 on (a2.actId = h2.actId)
 	 join tblStal st on (h1.stalId = st.stalId)
-	where b.hokId = ".mysqli_real_escape_string($db,$ID)." and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
-	group by b.bezId, h1.hisId
+	WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
+	GROUP BY b.bezId, h1.hisId
  ) uit on (uit.hisv = b.hisId)
  join (
-	select st.schaapId, h.datum
-	from tblStal st
+	SELECT st.schaapId, h.datum
+	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 3
+	WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-where b.hokId = ".mysqli_real_escape_string($db,$ID)." and isnull(uit.bezId)
+WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId)
 ") or die (mysqli_error($db));
 		
 	while($nu_p = mysqli_fetch_assoc($zoek_nu_in_verblijf_parent))
@@ -116,10 +136,10 @@ if(isset($_POST['knpSave_'])) { include "save_overpl.php"; } // staat hier omdat
 // Declaratie HOKNUMMER KEUZE
 
 $qryHokkeuze = mysqli_query($db,"
-select hokId, hoknr
-from tblHok h
-where lidId = ".mysqli_real_escape_string($db,$lidId)." and hokId != ".mysqli_real_escape_string($db,$ID)." and actief = 1
-order by hoknr
+SELECT hokId, hoknr
+FROM tblHok h
+WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and hokId != '".mysqli_real_escape_string($db,$ID)."' and actief = 1
+ORDER BY hoknr
 ") or die (mysqli_error($db));
 
 $index = 0;
@@ -131,94 +151,102 @@ while ($hnr = mysqli_fetch_array($qryHokkeuze))
    $index++; 
 } 
 unset($index);
-// EINDE Declaratie HOKNUMMER  KEUZE ?>
+// EINDE Declaratie HOKNUMMER  KEUZE 
 
-<form action="HokOverpl.php" method = "post"><?php 
+		 if($KEUZE == 1) { $filterResult = ' and isnull(prnt)'; }
+else if($KEUZE == 2) { $filterResult = ' and prnt is not null'; }
+
 // Opbouwen paginanummering 
 $velden = " schaapId, levensnummer, geslacht, datum, dag, prnt ";
 
 $tabel = " (
-select s.schaapId, s.levensnummer, s.geslacht, hm.datum, date_format(hm.datum,'%d-%m-%Y') dag, prnt.schaapId prnt, b.hokId, uit.bezId
-from tblSchaap s
+
+SELECT s.schaapId, s.levensnummer, s.geslacht, hm.datum, date_format(hm.datum,'%d-%m-%Y') dag, prnt.schaapId prnt, b.hokId, uit.bezId, 'lam' sort
+FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join (
-	select max(hisId) hisId, stalId
-	from tblHistorie
-	group by stalId
+	SELECT max(hisId) hisId, stalId
+	FROM tblHistorie
+	WHERE skip = 0
+	GROUP BY stalId
  ) hmax on (hmax.stalId = st.stalId)
  join tblHistorie hm on (hm.hisId = hmax.hisId)
  
  join tblHistorie h on (st.stalId = h.stalId)
  join tblBezet b on (b.hisId = h.hisId)
  left join (
-	select b.bezId, h1.hisId hisv, min(h2.hisId) hist
-	from tblBezet b
+	SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
+	FROM tblBezet b
 	 join tblHistorie h1 on (b.hisId = h1.hisId)
 	 join tblActie a1 on (a1.actId = h1.actId)
-	 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
+	 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 	 join tblActie a2 on (a2.actId = h2.actId)
-	where b.hokId = ".mysqli_real_escape_string($db,$ID)." and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-	group by b.bezId, h1.hisId
+	WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+	GROUP BY b.bezId, h1.hisId
  ) uit on (uit.bezId = b.bezId)
  left join (
-	select st.schaapId, h.datum
-	from tblStal st
+	SELECT st.schaapId, h.datum
+	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 3
+	WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-where b.hokId = ".mysqli_real_escape_string($db,$ID)." and isnull(uit.bezId) and isnull(prnt.schaapId)
+WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and h.skip = 0 and isnull(uit.bezId) and isnull(prnt.schaapId)
 
-union
+UNION
 
-select s.schaapId, s.levensnummer, s.geslacht, hm.datum, date_format(hm.datum,'%d-%m-%Y') dag, prnt.schaapId prnt, b.hokId, uit.bezId
-from tblSchaap s
+SELECT s.schaapId, s.levensnummer, s.geslacht, hm.datum, date_format(hm.datum,'%d-%m-%Y') dag, prnt.schaapId prnt, b.hokId, uit.bezId, s.geslacht sort
+FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join (
-	select max(hisId) hisId, stalId
-	from tblHistorie
-	group by stalId
+		SELECT max(hisId) hisId, stalId
+		FROM tblHistorie
+		WHERE skip = 0
+		GROUP BY stalId
  ) hmax on (hmax.stalId = st.stalId)
  join tblHistorie hm on (hm.hisId = hmax.hisId)
  
  join tblHistorie h on (st.stalId = h.stalId)
  join (
-	select b.hisId, b.hokId
-	from tblBezet b
-	 join tblHistorie h on (b.hisId = h.hisId)
-	 join tblStal st on (st.stalId = h.stalId)
-	 join (
-		select st.schaapId, h.hisId, h.datum
-		from tblStal st
-		join tblHistorie h on (st.stalId = h.stalId)
-		where h.actId = 3
-	) prnt on (prnt.schaapId = st.schaapId)
-	where b.hokId = ".mysqli_real_escape_string($db,$ID)." and h.datum >= prnt.datum
+		SELECT b.hisId, b.hokId
+		FROM tblBezet b
+		 join tblHistorie h on (b.hisId = h.hisId)
+		 join tblStal st on (st.stalId = h.stalId)
+		 join (
+				SELECT st.schaapId, h.hisId, h.datum
+				FROM tblStal st
+				join tblHistorie h on (st.stalId = h.stalId)
+				WHERE h.actId = 3 and h.skip = 0
+		) prnt on (prnt.schaapId = st.schaapId)
+		WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and h.skip = 0
  ) b on (b.hisId = h.hisId)
  left join (
-	select b.bezId, h1.hisId hisv, min(h2.hisId) hist
-	from tblBezet b
-	 join tblHistorie h1 on (b.hisId = h1.hisId)
-	 join tblActie a1 on (a1.actId = h1.actId)
-	 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
-	 join tblActie a2 on (a2.actId = h2.actId)
-	where b.hokId = ".mysqli_real_escape_string($db,$ID)." and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
-	group by b.bezId, h1.hisId
+		SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
+		FROM tblBezet b
+		 join tblHistorie h1 on (b.hisId = h1.hisId)
+		 join tblActie a1 on (a1.actId = h1.actId)
+		 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+		 join tblActie a2 on (a2.actId = h2.actId)
+		WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
+		GROUP BY b.bezId, h1.hisId
  ) uit on (uit.hisv = b.hisId)
- left join (
-	select st.schaapId, h.datum
-	from tblStal st
-	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 3
+ join (
+		SELECT st.schaapId, h.datum
+		FROM tblStal st
+		 join tblHistorie h on (st.stalId = h.stalId)
+		WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId) 
+ WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and h.skip = 0 and isnull(uit.bezId)
+
 ) tbl ";
-$WHERE = " where hokId = ".mysqli_real_escape_string($db,$ID)." and isnull(bezId) ";
+$WHERE = " WHERE hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(bezId) ". $filterResult;
 
 include "paginas.php";
 
-$data = $page_nums->fetch_data($velden, "order by levensnummer"); 
+$data = $page_nums->fetch_data($velden, "ORDER BY sort, right(levensnummer,$Karwerk)"); 
 // Einde Opbouwen paginanummering
 if(!isset($sess_dag) && !isset($sess_bestm)) { $width = 100; } 
 else { $width = 200; } ?>
+<form action="HokOverpl.php" method = "post">
 <table border = 0 > <!-- tabel1 --> <tr> <td>
 <table border = 0 > <!-- tabel2 -->
 <tr> 
@@ -226,7 +254,9 @@ else { $width = 200; } ?>
   <b> <?php echo $hoknr; ?></b>
 </td>
 
- <?php if(!isset($sess_dag) && !isset($sess_bestm)) { ?>
+ <?php if(!isset($sess_dag) && !isset($sess_bestm)) {
+  include"kalender.php"; ?>
+ 	
  	<td width = 750 style = "font-size : 14px;"> 
  &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Optioneel een datum voor alle schapen
   <input id="datepicker1" type = text name = 'txtDatumall_' size = 8 value = <?php if(isset($sess_dag)) { echo $sess_dag; } ?> > &nbsp
@@ -268,19 +298,28 @@ for ($i = 0; $i < $count; $i++){
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
   }		
-			}
+			}	
 }
 ?> </select> &nbsp
 
  <!-- EINDE KZLVERBLIJF KEUZE -->
- <?php } ?> 
 </td><td></td></tr>
+<tr height = 50>
+ <td></td>
+ <td align="center">
+ 	<input type="radio" name="radFase_" value="lam"> Enkel lammeren 
+ 	<input type="radio" name="radFase_" value="volw"> Enkel volwassenen
+ 	<input type="radio" name="radFase_" value="alles" <?php if(!isset($_POST['radFase_'])) { echo "checked"; } ?>> Beide
+ </td>
+</tr>
+ <?php } ?> 
+
 </table> <!-- einde tabel2 --> </td> </tr>
 								<tr> <td>
 <table border = 0 align = left > <!-- tabel3 -->
 <?php if(isset($sess_dag) || isset($sess_bestm)) { ?>
 <tr valign = bottom style = "font-size : 12px;">
-<th>Overplaatsen<br><b style = "font-size : 10px;">Ja/Nee</b><hr></th>
+<th valign = bottom >Overplaatsen<br><b style = "font-size : 10px;">Ja/Nee</b><br> <input type="checkbox" id="selectall" checked /> <hr></th>
 <th>Overplaatsdatum<hr></th>
 <th>Levensnummer<hr></th>
 <th>naar verblijf<hr></th>
@@ -296,7 +335,7 @@ if(isset($data)) {
 		$dmmax = $array['datum'];
 		$maxdm = $array['dag'];
 		$sekse = $array['geslacht'];
-		$prnt = $array['prnt']; if(isset($prnt)) { if($sekse = 'ooi') { $fase = 'moeder'; } else if($sekse = 'ram') { $fase = 'vader'; } } else { $fase = 'lam'; }
+		$prnt = $array['prnt']; if(isset($prnt)) { if($sekse == 'ooi') { $fase = 'moeder'; } else if($sekse == 'ram') { $fase = 'vader'; } } else { $fase = 'lam'; }
 
 
 if( (isset($_POST['knpVervers_']) || isset($_POST['knpSave_']) ) && !isset($_POST['kzlHokall_']) ) { $cbKies = $_POST["chbkies_$schaapId"]; $datum = $_POST["txtDatum_$schaapId"]; }
@@ -307,8 +346,7 @@ if( (isset($_POST['knpVervers_']) || isset($_POST['knpSave_']) ) && !isset($_POS
 // Controleren of ingelezen waardes correct zijn.
 	if( empty($datum)													|| # Overplaatsdatum is leeg
 		$day < $dmmax													|| # speendag is kleiner dan laatste registratiedatum
-		($hokkeuze == 0 && !isset($_POST["kzlHok_$schaapId"])) 			|| # Hok is de eertse keer leeg
-		(empty($_POST["kzlHok_$schaapId"])	&& !isset($_POST['kzlHokall_']))   # Hok is leeg bij verversen
+		empty($hokkeuze) # Hok is leeg
 	)
 	{$oke = 0; } else { $oke = 1; }
 	 
@@ -321,10 +359,12 @@ if (isset($_POST['knpVervers_']) && !isset($_POST['kzlHokall_'])) { $cbKies = $_
 
 <tr style = "font-size:14px;">
  <td align = center> 
-	<input type = hidden size = 1 name = <?php echo "txtOke_$schaapId"; ?>  value = <?php echo $oke; ?> ><!--hiddden Dit veld zorgt ervoor dat chbkies wordt aangevinkt als het ingebruk wordt gesteld -->
+<!--	<input type = hidden size = 1 name = <?php #echo "txtOke_$schaapId"; ?>  value = <?php #echo $oke; ?> > --><!--hiddden Dit veld zorgt ervoor dat chbkies wordt aangevinkt als het ingebruk wordt gesteld -->
 	<input type = hidden size = 1 name = <?php echo "chbkies_$schaapId"; ?> value = 0 > <!-- hiddden -->
-	<input type = checkbox 		  name = <?php echo "chbkies_$schaapId"; ?> value = 1 <?php echo $cbKies == 1 ? 'checked' : ''; if ($oke <> 1) { ?> disabled <?php }  else if ($txtOke == 0) {	echo 'checked';} /* else if ($txtOke == 0) wordt maar 1x gepasseerd nl. als onvolledige gegevens voor het eerst volledig zijn ingevuld. Anders is óf het eerst gedeeldte van het if-statement van toepassing of $txtOke == 1.  */ ?> >
+	<input type = checkbox 		  name = <?php echo "chbkies_$schaapId"; ?> value = 1 <?php echo $cbKies == 1 ? 'checked' : ''; if ($oke <> 1) { ?> disabled <?php }  else {	?> class="checkall" <?php } /* else if ($txtOke == 0) wordt maar 1x gepasseerd nl. als onvolledige gegevens voor het eerst volledig zijn ingevuld. Anders is óf het eerst gedeeldte van het if-statement van toepassing of $txtOke == 1.  */ ?> >
+
  </td>
+
 <!-- Overplaatsdatum -->
  <td align = center>
  <input type = "text" size = 9 style = "font-size : 11px;" name = <?php echo "txtDatum_$schaapId"; ?> value = <?php if(isset($datum)) { echo $datum; } ?> >
@@ -379,3 +419,24 @@ for ($i = 0; $i < $count; $i++){
 Include "menu1.php"; } ?>
 </body>
 </html>
+<SCRIPT language="javascript">
+$(function(){
+
+	 // add multiple select / deselect functionality
+	 $("#selectall").click(function () {
+		  	$('.checkall').attr('checked', this.checked);
+	 });
+
+	 // if all checkbox are selected, check the selectall checkbox
+	 // and viceversa
+	 $(".checkall").click(function(){
+
+			if($(".checkall").length == $(".checkall:checked").length) {
+				 $("#selectall").attr("checked", "checked");
+			} else {
+				 $("#selectall").removeAttr("checked");
+			}
+
+	 });
+});
+</SCRIPT>

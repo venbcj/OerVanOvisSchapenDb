@@ -6,29 +6,37 @@ $versie = "13-2-2017"; /* tekst hok gewijzigd naar verblijf */
 $versie = "1-3-2017"; /* Ras niet verplicht gemaakt door left join te maken */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '20-12-2019'; /* tabelnaam gewijzigd van UIT naar uit tabelnaam */
+$versie = '30-12-2023'; /* and h.skip = 0 toegevoegd aan tblHistorie en sql beveiligd met quotes */
+$versie = "11-03-2024"; /* Bij geneste query uit 
+join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
+join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" align = "center"> gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Actueel</title>
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Verblijfoverzicht';
-$subtitel = '';
-Include "header.php"; ?>
-
-
-		<TD width = 960 height = 400 valign = "top" align = "center">
-<?php
 $file = "hoklijst.php";
-Include "login.php";
+Include "login.php"; ?>
+
+		<TD align = "center" valign = "top">
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
 $pstId = $_GET['pstgroep'];
 
-$zoek_doel = mysqli_query($db,"select doel from tblDoel where doelId = ".mysqli_real_escape_string($db,$pstId)." ") or die (mysqli_error($db));
+$zoek_doel = mysqli_query($db,"
+SELECT doel
+FROM tblDoel
+WHERE doelId = '".mysqli_real_escape_string($db,$pstId)."' 
+") or die (mysqli_error($db));
 while($dl = mysqli_fetch_array($zoek_doel)){ $dgroep = $dl['doel']; } ?>
 
 <table border = 0 >
@@ -44,8 +52,8 @@ while($dl = mysqli_fetch_array($zoek_doel)){ $dgroep = $dl['doel']; } ?>
 <?php
 if($pstId == 1) {
 $zoek_hok_ingebruik_geb = mysqli_query($db,"
-select ho.hokId, ho.hoknr
-from tblBezet b
+SELECT ho.hokId, ho.hoknr
+FROM tblBezet b
  join tblHok ho on (b.hokId = ho.hokId)
  join tblHistorie h on (b.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
@@ -53,36 +61,36 @@ from tblBezet b
  left join tblRas r on (s.rasId = r.rasId)
  left join 
  (
-	select b.bezId, h1.hisId hisv, min(h2.hisId) hist
-	from tblBezet b
+	SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
+	FROM tblBezet b
 	 join tblHistorie h1 on (b.hisId = h1.hisId)
 	 join tblActie a1 on (a1.actId = h1.actId)
-	 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
+	 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 	 join tblActie a2 on (a2.actId = h2.actId)
 	 join tblStal st on (h1.stalId = st.stalId)
-	where st.lidId = ".mysqli_real_escape_string($db,$lidId)." and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-	group by b.bezId, h1.hisId
+	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+	GROUP BY b.bezId, h1.hisId
  ) uit on (uit.hisv = b.hisId)
  left join (
-	select st.schaapId
-	from tblStal st
+	SELECT st.schaapId
+	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 4
+	WHERE h.actId = 4 and h.skip = 0
  ) spn on (spn.schaapId = st.schaapId)
  left join (
-	select st.schaapId
-	from tblStal st
+	SELECT st.schaapId
+	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 3
+	WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-where st.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(uit.bezId) and isnull(spn.schaapId) and isnull(prnt.schaapId)
-group by ho.hokId, ho.hoknr
+WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0 and isnull(uit.bezId) and isnull(spn.schaapId) and isnull(prnt.schaapId)
+GROUP BY ho.hokId, ho.hoknr
 ") or die (mysqli_error($db)); $zoek_hok_ingebruik = $zoek_hok_ingebruik_geb; }
 
 if($pstId == 2) {
 $zoek_hok_ingebruik_spn = mysqli_query($db,"
-select ho.hokId, ho.hoknr
-from tblBezet b
+SELECT ho.hokId, ho.hoknr
+FROM tblBezet b
  join tblHok ho on (b.hokId = ho.hokId)
  join tblHistorie h on (b.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
@@ -90,30 +98,30 @@ from tblBezet b
  left join tblRas r on (s.rasId = r.rasId)
  left join 
  (
-	select b.bezId, h1.hisId hisv, min(h2.hisId) hist
-	from tblBezet b
+	SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
+	FROM tblBezet b
 	 join tblHistorie h1 on (b.hisId = h1.hisId)
 	 join tblActie a1 on (a1.actId = h1.actId)
-	 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
+	 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 	 join tblActie a2 on (a2.actId = h2.actId)
 	 join tblStal st on (h1.stalId = st.stalId)
-	where st.lidId = ".mysqli_real_escape_string($db,$lidId)." and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-	group by b.bezId, h1.hisId
+	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+	GROUP BY b.bezId, h1.hisId
  ) uit on (uit.hisv = b.hisId)
  join (
-	select st.schaapId
-	from tblStal st
+	SELECT st.schaapId
+	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 4
+	WHERE h.actId = 4 and h.skip = 0
  ) spn on (spn.schaapId = st.schaapId)
  left join (
-	select st.schaapId
-	from tblStal st
+	SELECT st.schaapId
+	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 3
+	WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-where st.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(uit.bezId) and isnull(prnt.schaapId)
-group by ho.hokId, ho.hoknr
+WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0 and isnull(uit.bezId) and isnull(prnt.schaapId)
+GROUP BY ho.hokId, ho.hoknr
 ") or die (mysqli_error($db)); $zoek_hok_ingebruik = $zoek_hok_ingebruik_spn; }
 		
 	while($hk = mysqli_fetch_assoc($zoek_hok_ingebruik))
@@ -131,8 +139,8 @@ group by ho.hokId, ho.hoknr
 <?php
 if($pstId == 1) {
 $zoek_nu_in_verblijf_geb = mysqli_query($db,"
-select ho.hoknr, count(b.bezId) nu, r.ras, s.geslacht
-from tblBezet b
+SELECT ho.hoknr, count(b.bezId) nu, r.ras, s.geslacht
+FROM tblBezet b
  join tblHok ho on (b.hokId = ho.hokId)
  join tblHistorie h on (b.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
@@ -140,36 +148,36 @@ from tblBezet b
  left join tblRas r on (s.rasId = r.rasId)
  left join 
  (
-	select b.bezId, h1.hisId hisv, min(h2.hisId) hist
-	from tblBezet b
+	SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
+	FROM tblBezet b
 	 join tblHistorie h1 on (b.hisId = h1.hisId)
 	 join tblActie a1 on (a1.actId = h1.actId)
-	 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
+	 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 	 join tblActie a2 on (a2.actId = h2.actId)
 	 join tblStal st on (h1.stalId = st.stalId)
-	where b.hokId = ".mysqli_real_escape_string($db,$hokId)." and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-	group by b.bezId, h1.hisId
+	WHERE b.hokId = '".mysqli_real_escape_string($db,$hokId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+	GROUP BY b.bezId, h1.hisId
  ) uit on (uit.hisv = b.hisId)
  left join (
-	select st.schaapId
-	from tblStal st
+	SELECT st.schaapId
+	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 4
+	WHERE h.actId = 4 and h.skip = 0
  ) spn on (spn.schaapId = st.schaapId)
  left join (
-	select st.schaapId
-	from tblStal st
+	SELECT st.schaapId
+	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 3
+	WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-where b.hokId = ".mysqli_real_escape_string($db,$hokId)." and isnull(uit.bezId) and isnull(spn.schaapId) and isnull(prnt.schaapId)
-group by ho.hoknr, r.ras, s.geslacht
+WHERE b.hokId = '".mysqli_real_escape_string($db,$hokId)."' and h.skip = 0 and isnull(uit.bezId) and isnull(spn.schaapId) and isnull(prnt.schaapId)
+GROUP BY ho.hoknr, r.ras, s.geslacht
 ") or die (mysqli_error($db));  $zoek_nu_in_verblijf = $zoek_nu_in_verblijf_geb; }
 
 if($pstId == 2) {
 $zoek_nu_in_verblijf_spn = mysqli_query($db,"
-select ho.hoknr, count(b.bezId) nu, r.ras, s.geslacht
-from tblBezet b
+SELECT ho.hoknr, count(b.bezId) nu, r.ras, s.geslacht
+FROM tblBezet b
  join tblHok ho on (b.hokId = ho.hokId)
  join tblHistorie h on (b.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
@@ -177,30 +185,30 @@ from tblBezet b
  left join tblRas r on (s.rasId = r.rasId)
  left join 
  (
-	select b.bezId, h1.hisId hisv, min(h2.hisId) hist
-	from tblBezet b
+	SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
+	FROM tblBezet b
 	 join tblHistorie h1 on (b.hisId = h1.hisId)
 	 join tblActie a1 on (a1.actId = h1.actId)
-	 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
+	 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 	 join tblActie a2 on (a2.actId = h2.actId)
 	 join tblStal st on (h1.stalId = st.stalId)
-	where b.hokId = ".mysqli_real_escape_string($db,$hokId)." and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-	group by b.bezId, h1.hisId
+	WHERE b.hokId = '".mysqli_real_escape_string($db,$hokId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+	GROUP BY b.bezId, h1.hisId
  ) uit on (uit.hisv = b.hisId)
  join (
-	select st.schaapId
-	from tblStal st
+	SELECT st.schaapId
+	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 4
+	WHERE h.actId = 4 and h.skip = 0
  ) spn on (spn.schaapId = st.schaapId)
  left join (
-	select st.schaapId
-	from tblStal st
+	SELECT st.schaapId
+	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 3
+	WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-where b.hokId = ".mysqli_real_escape_string($db,$hokId)." and isnull(uit.bezId) and isnull(prnt.schaapId)
-group by ho.hoknr, r.ras, s.geslacht
+WHERE b.hokId = '".mysqli_real_escape_string($db,$hokId)."' and h.skip = 0 and isnull(uit.bezId) and isnull(prnt.schaapId)
+GROUP BY ho.hoknr, r.ras, s.geslacht
 ") or die (mysqli_error($db));  $zoek_nu_in_verblijf =$zoek_nu_in_verblijf_spn; } ?>
 		
  
@@ -245,7 +253,6 @@ Include "menu1.php"; } ?>
 </tr>
 
 </table>
-</center>
 
 </body>
 </html>
