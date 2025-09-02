@@ -3,26 +3,25 @@
 $versie = '25-11-2016';  /* actId = 3 uit on clause gehaald en als sub query genest */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '5-7-2020'; /* wdgn gewijzigd naar wdgn_v en wdgn_m */
+$versie = '29-4-2023'; /* sql beveiligd met quotes */
+$versie = '31-12-2023'; /* and h.skip = 0 aangevuld aan tblHistorie */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
 
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Rapport</title>
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Rapportage per medicijn';
-$subtitel = '';
-
-$label = "Kies een medicijn &nbsp " ;
-If (isset($_POST['knpToon']) && !empty($_POST['kzlpil'])) {	$label = ""; }
-Include "header.php"; ?>
-		<TD width = 960 height = 400 valign = "top" >
-<?php
 $file = "Med_rapportage.php";
-Include "login.php"; 
+Include "login.php"; ?>
+
+				<TD valign = "top">
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech ==1) {
 
 function aantal_fase($datb,$lidid,$M,$J,$V,$Sekse,$Ouder) { // Functie die het aantal lammeren, moederdieren of vaders telt
@@ -39,8 +38,8 @@ FROM tblSchaap s
 	 join tblHistorie h on (st.stalId = h.stalId)
 	WHERE h.actId = 3 and h.skip = 0
  ) oudr on (s.schaapId = oudr.schaapId)
-WHERE month(h.datum) = $M and date_format(h.datum,'%Y') = $J and i.artId = $V and ".$Sekse." and ".$Ouder."
-	and st.lidId = ".mysqli_real_escape_string($datb,$lidid)." and h.actId = 8
+WHERE h.skip = 0 and month(h.datum) = $M and date_format(h.datum,'%Y') = $J and i.artId = $V and ".$Sekse." and ".$Ouder."
+	and st.lidId = '".mysqli_real_escape_string($datb,$lidid)."' and h.actId = 8
 GROUP BY date_format(h.datum,'%Y%m')
 ");
 
@@ -66,7 +65,7 @@ FROM tblSchaap s
 	WHERE h.actId = 3 and h.skip = 0
  ) oudr on (s.schaapId = oudr.schaapId)
 WHERE month(h.datum) = $M and date_format(h.datum,'%Y') = $J and i.artId = $V and ".$Sekse." and ".$Ouder."
- and st.lidId = ".mysqli_real_escape_string($datb,$lidid)."
+ and st.lidId = '".mysqli_real_escape_string($datb,$lidid)."' and h.skip = 0
 GROUP BY concat(date_format(h.datum,'%Y'),month(h.datum))
 ");
 
@@ -94,7 +93,7 @@ FROM tblEenheid e
 	 join tblHistorie h on (st.stalId = h.stalId)
 	WHERE h.actId = 3 and h.skip = 0
  ) oudr on (s.schaapId = oudr.schaapId)
-WHERE eu.lidId = ".mysqli_real_escape_string($datb,$lidid)." and month(h.datum) = $M and date_format(h.datum,'%Y') = $J and i.artId = $V and ".$Sekse." and ".$Ouder."
+WHERE h.skip = 0 and eu.lidId = '".mysqli_real_escape_string($datb,$lidid)."' and month(h.datum) = $M and date_format(h.datum,'%Y') = $J and i.artId = $V and ".$Sekse." and ".$Ouder."
 GROUP BY e.eenheid
 ");
 
@@ -104,7 +103,7 @@ if($vw_totaalFase)
 		}
 		return FALSE; // Foutafhandeling
 }
-$minjaar = date("Y")-3;
+$minjaar = date("Y")-8;
 $maxjaar = date("Y");
 if(isset($_POST['knpToon'])) {$kzlpil = $_POST['kzlpil'];}
 
@@ -118,13 +117,13 @@ FROM tblEenheid e
  join tblInkoop i on (a.artId = i.artId)
  join tblNuttig n on (n.inkId = i.inkId)
  join tblHistorie h on (h.hisId = n.hisId)
-WHERE eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and date_format(h.datum,'%Y') >= $minjaar and date_format(h.datum,'%Y') <= $maxjaar and a.artId = $kzlpil
+WHERE h.skip = 0 and eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(h.datum,'%Y') >= '".$minjaar."' and date_format(h.datum,'%Y') <= '".$maxjaar."' and a.artId = '".$kzlpil."'
 GROUP BY date_format(h.datum,'%Y%m')
 ORDER BY date_format(h.datum,'%Y%m') desc
 ");
-}?>
+} ?>
 
-<table Border = 0 align = center>
+<table Border = 0 align = "center">
 
 <?php
 $kzl = mysqli_query($db,"
@@ -133,7 +132,7 @@ FROM tblEenheiduser eu
  join tblArtikel a on (eu.enhuId = a.enhuId)
  join tblInkoop i on (a.artId = i.artId)
  join tblNuttig n on (n.inkId = i.inkId)
-WHERE eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and a.soort = 'pil'
+WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a.soort = 'pil'
 GROUP BY a.naam
 ORDER BY a.naam
 ") or die (mysqli_error($db));
@@ -152,7 +151,7 @@ $kzlpil = $_POST['kzlpil'];
 $aantperiodes = mysqli_query($db,"SELECT tbl.jrmnd FROM (".$JrMndPil.") tbl	") or die (mysqli_error($db));
    $rows_per = mysqli_num_rows($aantperiodes);
 		if ($rows_per >1) {
-echo "&nbsp Mogelijkheid filter periode " ;
+echo "Mogelijkheid filter periode " ;
  //kzlJaarMaand
 // Verzameld alle jaarmaanden van een toegediend medicijn. 
 $kzljrmnd = mysqli_query($db,$JrMndPil) or die (mysqli_error($db)); 
@@ -180,8 +179,10 @@ include "kzl.php";
 
  </td>
 
-<td colspan = 3>
+<td colspan = 3> 
 <?php
+$label = "Kies een medicijn &nbsp " ;
+If (isset($_POST['knpToon']) && !empty($_POST['kzlpil'])) {	$label = ""; }
 echo $label;
 
 //kzlMedicijn
@@ -215,16 +216,19 @@ If (isset($_POST['knpToon']) && !empty($_POST['kzlpil']) ) {
 	else if ($rows_per > 1 && !empty($_POST['kzlmdjr'])) { $resJrmnd = "( date_format(h.datum,'%Y%m') = $_POST[kzlmdjr] )"; }
 
 //$maandjaren verzameld alle maandjaren die worden gevonden
-$maandjaren = mysqli_query($db,"
+$maandjaren = "
 SELECT month(h.datum) mnd, date_format(h.datum,'%Y') jaar 
 FROM tblEenheiduser eu
  join tblArtikel a on (eu.enhuId = a.enhuId)
  join tblInkoop i on (a.artId = i.artId)
  join tblNuttig n on (n.inkId = i.inkId)
  join tblHistorie h on (h.hisId = n.hisId)
-WHERE eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and date_format(h.datum,'%Y') >= $minjaar and date_format(h.datum,'%Y') <= $maxjaar and i.artId = $_POST[kzlpil] and ".$resJrmnd."
+WHERE h.skip = 0 and eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(h.datum,'%Y') >= '".$minjaar."' and date_format(h.datum,'%Y') <= '".$maxjaar."' and i.artId = '".$_POST[kzlpil]."' and ".$resJrmnd."
 GROUP BY month(h.datum), date_format(h.datum,'%Y')
-ORDER BY date_format(h.datum,'%Y') desc, month(h.datum) desc ") or die (mysqli_error($db));
+ORDER BY date_format(h.datum,'%Y') desc, month(h.datum) desc ";
+
+$maandjaren = mysqli_query($db,$maandjaren) or die (mysqli_error($db));
+
   while ($rij = mysqli_fetch_assoc($maandjaren))
 		{
 		$mndnr = $rij['mnd'];
@@ -234,7 +238,7 @@ $mndnaam = array('','januari', 'februari', 'maart','april','mei','juni','juli','
 		
 $tot = date("Ym"); 
 	$maand = date("m");
-	$jaarstart = date("Y")-2;
+	$jaarstart = date("Y")-8;
 //$vanaf = "$jaarstart$maand";
 ?>
 <tr style = "font-size:18px;" ><td></td><td colspan = 3><b><?php echo "$mndnaam[$mndnr] &nbsp $rij[jaar]"; ?></b></td></tr>
@@ -251,7 +255,7 @@ $voer = voer_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
 $eenheid = eenheid_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
 ?>
 		
-<tr align = center>	
+<tr align = "center">	
  <td width = 0> </td>	   
  <td width = 100 style = "font-size:15px;"><b></b><br> </td>	   
  <td width = 1> </td>
@@ -274,7 +278,7 @@ $werknrs = aantal_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
 $voer = voer_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
 $eenheid = eenheid_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
 	?>
-<tr align = center>	
+<tr align = "center">	
  <td width = 0> </td>	   
  <td width = 100 style = "font-size:15px;"> <b> </b><br> </td>	   
  <td width = 1> </td>
@@ -297,7 +301,7 @@ $werknrs = aantal_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
 $voer = voer_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
 $eenheid = eenheid_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
 	?>
-<tr align = center>	
+<tr align = "center">	
  <td width = 0> </td>	   
  <td width = 100 style = "font-size:15px;"> <b> </b><br> </td>	   
  <td width = 1> </td>
@@ -317,7 +321,7 @@ $eenheid = eenheid_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
 <?php
 
 
-$result = mysqli_query($db,"
+$result = "
 SELECT date_format(h.datum,'%Y%m') jrmnd, date_format(h.datum,'%Y') jaar, month(h.datum) maand, 
  right(s.levensnummer,$Karwerk) werknr, s.geslacht, oudr.hisId ouder, 
  date_format(h.datum,'%d-%m-%Y') toedm, h.datum, DATEDIFF(CURRENT_DATE(),h.datum) rest, round(sum(n.nutat*n.stdat),2) totat, e.eenheid,
@@ -336,11 +340,13 @@ FROM tblSchaap s
 	 join tblHistorie h on (st.stalId = h.stalId)
 	WHERE h.actId = 3 and h.skip = 0
  ) oudr on (s.schaapId = oudr.schaapId)
-WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and month(h.datum) = $mndnr and year(h.datum) = \"$rij[jaar]\" and a.artId = $_POST[kzlpil]
+WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and month(h.datum) = '".$mndnr."' and year(h.datum) = '".$rij[jaar]."' and a.artId = '".$_POST[kzlpil]."'
 GROUP BY date_format(h.datum,'%Y%m'), date_format(h.datum,'%Y'), month(h.datum), right(s.levensnummer,$Karwerk), s.geslacht, oudr.hisId,
  date_format(h.datum,'%d-%m-%Y'), h.datum, DATEDIFF(CURRENT_DATE(),h.datum), e.eenheid, i.charge, a.wdgn_v, a.wdgn_m
 ORDER BY h.datum desc, right(s.levensnummer,$Karwerk)
-") or die (mysqli_error($db));
+";
+
+$result = mysqli_query($db,$result) or die (mysqli_error($db));  
 
 
 ?>
@@ -374,20 +380,20 @@ $wdgn_m = $row['wdgn_m']; if ($wdgn_m > $rest) {$restdgn_m = $wdgn_m-$rest; } el
 $geslacht = $row['geslacht'];
 if(!empty($row['ouder'])) { if($geslacht == 'ooi') {$fase = 'moeder'; } else if($geslacht == 'ram') {$fase = 'vader'; } } else {$fase = 'lam'; } ?>
 		
-<tr align = center>	
+<tr align = "center">	
  <td width = 0> </td>	   
- <td width = 100 style = "font-size:15px;"> <?php echo "$row[werknr]"; ?> <br> </td>	   
+ <td width = 100 style = "font-size:15px;"> <?php echo $row['werknr']; ?> <br> </td>	   
  <td width = 1> </td>
  <td width = 100 style = "font-size:15px;"> <?php echo $fase; ?> <br> </td>
  <td width = 1> </td>
 
- <td width = 100 style = "font-size:15px;"> <?php echo "$row[toedm]"; ?> <br> </td>
+ <td width = 100 style = "font-size:15px;"> <?php echo $row['toedm']; ?> <br> </td>
  <td width = 1> </td>
- <td width = 100 style = "font-size:15px;"> <?php echo "$row[totat]"; ?> <br> </td>
+ <td width = 100 style = "font-size:15px;"> <?php echo $row['totat']; ?> <br> </td>
  <td width = 1> </td>
- <td width = 100 style = "font-size:15px;"> <?php echo "$row[eenheid]"; ?> <br> </td>
+ <td width = 100 style = "font-size:15px;"> <?php echo $row['eenheid']; ?> <br> </td>
  <td width = 1> </td>
- <td width = 100 style = "font-size:15px;"> <?php echo "$row[charge]"; ?> <br> </td>
+ <td width = 100 style = "font-size:15px;"> <?php echo $row['charge']; ?> <br> </td>
  <td width = 1> </td>
  <td width = 100 style = "font-size:15px;"> <?php echo $restdgn_v.' &nbsp&nbsp&nbsp&nbsp '.$restdgn_m; ?> <br> </td>
  <td width = 1> </td>

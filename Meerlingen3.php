@@ -1,23 +1,24 @@
 <?php 
 $versie = '1-2-2019'; /* gemaakt */
+$versie = '28-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie sql voorzien van enkele quotes */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = 'top' align = center > gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Rapport</title>
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Meerling oplopend';
-$subtitel = '';
-Include "header.php"; ?>
-<TD width = 960 height = 400 valign = 'top' align = center >
-<?php
 $file = "Meerlingen3.php";
-Include "login.php"; 
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech ==1) {
+Include "login.php"; ?>
 
+				<TD valign = 'top' align = 'center'>
+<?php
+if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech ==1) {
 
 function aantal_meerlingen_perOoi($datb,$Lidid,$Ooiid,$Nr) {
 
@@ -30,9 +31,9 @@ FROM tblSchaap mdr
  join tblStal st on (st.schaapId = lam.schaapId)
  join tblHistorie h on (st.stalId = h.stalId)
  
-WHERE isnull(stm.rel_best) and st.lidId = ".mysqli_real_escape_string($datb,$Lidid)." and h.actId = 1 and mdr.schaapId = ".mysqli_real_escape_string($datb,$Ooiid)."
+WHERE isnull(stm.rel_best) and st.lidId = '".mysqli_real_escape_string($datb,$Lidid)."' and h.actId = 1 and mdr.schaapId = '".mysqli_real_escape_string($datb,$Ooiid)."' and h.skip = 0
 GROUP BY v.volwId
-HAVING count(st.schaapId) in (".mysqli_real_escape_string($datb,$Nr).")
+HAVING count(st.schaapId) in ('".mysqli_real_escape_string($datb,$Nr)."')
 ORDER BY date_format(h.datum,'%Y') desc, date_format(h.datum,'%m') desc
 ";
 //echo $zoek_meerlingen;
@@ -48,7 +49,7 @@ SELECT date_format(h.datum,'%Y') jaar, date_format(h.datum,'%m')*1 mndnr
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
  join tblHistorie h on (st.stalId = h.stalId)
-WHERE s.volwId = ".mysqli_real_escape_string($datb,$Volwid)." and h.actId = 1
+WHERE s.volwId = '".mysqli_real_escape_string($datb,$Volwid)."' and h.actId = 1 and h.skip = 0
 GROUP BY date_format(h.datum,'%Y'), date_format(h.datum,'%m')
 ") or die(mysqli_error($datb));
 
@@ -65,7 +66,7 @@ SELECT coalesce(geslacht,'---') geslacht, coalesce(right(s.levensnummer,$KarWerk
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
  join tblHistorie h on (st.stalId = h.stalId)
-WHERE s.volwId = ".mysqli_real_escape_string($datb,$Volwid)." and h.actId = 1
+WHERE s.volwId = '".mysqli_real_escape_string($datb,$Volwid)."' and h.actId = 1 and h.skip = 0
 ORDER BY coalesce(geslacht,'zzz')
 ") or die(mysqli_error($datb));
 
@@ -76,7 +77,7 @@ return $rr;
 
 <form action= "Meerlingen3.php" method="post">
 <table border = 0> 
-<tr align = center valign = 'top' ><td colspan = 10>	
+<tr align = "center" valign = 'top' ><td colspan = 10>	
 
 <table border = 0>
 <tr>
@@ -90,7 +91,7 @@ return $rr;
 
 </table>		</td></tr>	
 
-<tr><td colspan = 10 align = center><h3>lammeren per moederdier </td></tr>
+<tr><td colspan = 10 align = "center"><h3>lammeren per moederdier </td></tr>
 <tr><td colspan = 10 ><hr></td></tr>
 <tr><td></td></tr>
 <!--	Einde Gegevens tbv MOEDERDIER		-->
@@ -111,7 +112,7 @@ FROM (
 	 join tblVolwas v on (mdr.schaapId = v.mdrId)
 	 join tblSchaap lam on (v.volwId = lam.volwId)
 	 join tblStal st on (lam.schaapId = st.schaapId)
-	WHERE isnull(stm.rel_best) and stm.lidId = ".mysqli_real_escape_string($db,$lidId)." and st.lidId = ".mysqli_real_escape_string($db,$lidId)."
+	WHERE isnull(stm.rel_best) and stm.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 	GROUP BY mdr.schaapId, right(mdr.levensnummer,$Karwerk), v.volwId
 	HAVING count(v.volwId) > 1
 	 ) perWorp
@@ -134,7 +135,7 @@ while($jm = mysqli_fetch_assoc($ooien_met_meerlingworpen)) {
 	<input type = "submit" name="descTotat" value = "Z" style= "font-size:7px";></td>
 </tr>
 
-<tr align = center style = "font-size : 14px;"  >
+<tr align = "center" style = "font-size : 14px;"  >
  <td></td>
  <td><b> 2-ling </b><hr></td>
  <td><b> 3-ling </b><hr></td>
@@ -392,7 +393,6 @@ $lam_mrl2 = de_lammeren($db,$vw,$Karwerk);
 Include "menuRapport1.php"; } ?>
 </tr>
 </table>
-</center>
 
 </body>
 </html>

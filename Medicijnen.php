@@ -9,29 +9,24 @@ $versie = '5-7-2020'; /* Veld Per gewicht toegevoegd en wachtdagen gesplitst in 
 $versie = '9-8-2020'; /* Veld naamreader toegevoegd */
 $versie = '14-11-2020'; /* De knop activeren van per medicijn vervangen door checkbox. Met de knop werden alle medicijnen geactiveerd. 15-11 : Eenheid niet meer te wijzigen na eerste inkoop */
 $versie = '17-1-2022'; /* Btw 0% en javascript verplicht() toegevoegd. SQL beveiligd met quotes */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '23-04-2025'; /* De letters kg achter het veld geplaaats i.p.v. er onder */
 
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Inkoop</title>
 </head>
 <body>
 
-<center>
 <?php
-if (isset ($_POST['knpSave_']) ) {
-	Include "url.php";
-	header("Location: ".$url."Medicijnen.php");
-}
-
 $titel = 'Medicijnen';
-$subtitel = '';
-Include "header.php"; ?>
-
-		<TD width = 960 height = 400 valign = "top">
-<?php
 $file = "Medicijnen.php";
-Include "login.php";
+Include "login.php"; ?>
+
+				<TD valign = "top">
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech ==1) { ?>
 
 <script type="text/javascript">
@@ -76,17 +71,9 @@ GROUP BY a.naam
 			$dubbel = ($rij['aantal']);
 		}
 
-	if (empty($_POST["insNaam_"]))
-	{ ?>
-		<center style = "color : red;"> U heeft geen omschrijving ingevoerd.
-<?php }
-	else if (empty($_POST["insNhd_"]))
-	{ ?>
-		<center style = "color : red;"> Eenheid is niet ingevoerd.
-<?php }
-	else if (!empty($dubbel) && $dubbel >= 1 )
+if (!empty($dubbel) && $dubbel >= 1 )
 	{ 
-		echo "Dit medicijn bestaat al.";
+		$fout = "Dit medicijn bestaat al.";
 	}
 	else 
 	{
@@ -178,7 +165,7 @@ $insert_tblArtikel = "INSERT INTO tblArtikel SET soort = 'pil', naam = ".$insNaa
 </tr> 
 
 
-<tr style = "font-size:12px;" align = center valign = "bottom"> 
+<tr style = "font-size:12px;" align = "center" valign = "bottom"> 
  <th width = 200 >Omschrijving *</th>
  <?php if($reader == 'Agrident') { ?>
  <th>Presentatie reader</th>
@@ -187,7 +174,7 @@ $insert_tblArtikel = "INSERT INTO tblArtikel SET soort = 'pil', naam = ".$insNaa
  
  <th width = 20>&nbsp&nbspStand. &nbsp&nbspaantal</th>
  <th>Eenheid *</th> 
- <th width = 20>per gewicht</th>
+ <th width = 80>per gewicht</th>
  <th>Btw</th> 
  <th>Leverancier</th>
  <th>Wachtdagen <br> vlees &nbsp&nbsp melk</th> 
@@ -679,55 +666,19 @@ echo $pil;
 // EINDE  Veld Medicijnnaam
 ?></td>
  <td width = 1></td>
- <td><!--Registratienummer -->
- <?php echo $regnr ; ?>
-		
- </td>
-
- <td align = center >
-<!-- Standaard verbruiksaantal -->
-<?php echo $stdat; ?>		
-
- </td><td align = center >
-<?php // Verbruikseenheid
-echo $eenhd; ?>
- </td><td align = center >
-<?php // Per gewicht
-echo $perkg.' kg'; ?>
- </td>
-<?php
-// EINDE Per gewicht
-
-?>
- <td align = center >
-<?php
-// Btw
-echo $btw; ?>
- </td>
-<!-- EINDE Btw
- Leverancier -->
- <td> 
-	<?php if(isset($relatie)) { echo $relatie; } ?>
- </td>
-<!-- EINDE Leverancier
-
-wachtdagen -->
- <td align = center>
-	<?php echo $wdgn_v.'&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp'.$wdgn_m; ?>
- </td>
-<!-- EINDE wachtdagen -->
-
-<!-- Rubriek -->
- <td align = center>
-	<?php echo $rubriek; ?>
- </td>
-<!--EINDE Rubriek -->
- <td align = center>
+ <td> 									<?php echo $regnr ; /* Registratienummer */ ?>	</td>
+ <td align = "center" > <?php echo $stdat; /* Standaard verbruiksaantal */ ?> </td>
+ <td align = "center" > <?php echo $eenhd; /* Verbruikseenheid */ ?> </td>
+ <td align = "center" > <?php echo $perkg.' kg'; /* Per gewicht */ ?> </td>
+ <td align = "center" > <?php echo $btw; // Btw ?> </td>
+ <td>									  <?php if(isset($relatie)) { echo $relatie; } //Leverancier ?> </td>
+ <td align = "center"> 	<?php echo $wdgn_v.'&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp'.$wdgn_m; //wachtdagen ?> </td>
+ <td align = "center"> 	<?php echo $rubriek; //Rubriek ?> </td>
+ <td align = "center">
  	<input type = "checkbox" name = <?php echo "chkActief_$Id"; ?> id="c1" value="1" <?php echo $actief == 1 ? 'checked' : ''; ?> title = "Is medicijn te gebruiken ja/nee ?">
  </td>
-
-
- <td></td></tr>
+ <td></td>
+</tr>
 
 <?php } ?> 
  </td>
