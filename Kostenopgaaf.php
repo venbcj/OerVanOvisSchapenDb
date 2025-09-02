@@ -2,23 +2,23 @@
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '11-7-2020'; /* € gewijzigd in &euro; */
 $versie = '17-1-2022'; /* Btw 0% toegevoegd */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" align = center> gewijzigd naar <TD valign = "top" align = center> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
 
-session_start(); ?>  
+ session_start(); ?>  
+<!DOCTYPE html>
 <html>
 <head>
 <title>Financieel</title>
 </head>
 <body>
 
-<center>
 <?php
-$titel = 'Invulformulier kosten/opbrengsten';
-$subtitel = '';
-Include "header.php"; ?>
-	<TD width = 960 height = 400 valign = "top" align = center>
-<?php 
+$titel = 'Inboeken kosten/opbrengsten';
 $file = "Kostenopgaaf.php";
-Include "login.php"; 
+Include "login.php"; ?>
+
+		<TD valign = "top" align = "center">
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modfin ==1) {
 
 if(isset($_POST['knpSave_'])) {
@@ -26,7 +26,11 @@ if(isset($_POST['knpSave_'])) {
  
  
 if(isset($_POST['knpInsert_'])) {
+	if(isset($_POST['insLiq_'])) { $insLiq = 1; } else { $insLiq = 0; }
 		$rubr =	$_POST['insRubr_'];
+		$date = date_create($_POST['insDatum_']);
+		 $dag =  date_format($date, 'd-m-Y');
+		 $day =  date_format($date, 'Y-m-d');
 		$bedrag = $_POST['insBedrag_'];
 		$toel = $_POST['insToel_'];
 		
@@ -35,7 +39,7 @@ if(isset($_POST['knpInsert_'])) {
 	 if(!empty($_POST['insBedrag_'])) { $bedrag = $_POST['insBedrag_']; }
 	 if(!empty($_POST['insToel_'])) { $toel = $_POST['insToel_']; }
 	}
-	else if(empty($_POST['insDatum_']) ) { $fout = "Datum is onbekend";
+	else if(empty($date) ) { $fout = "Datum is onbekend";
 	 if(!empty($_POST['insBedrag_'])) { $bedrag = $_POST['insBedrag_']; }
 	 if(!empty($_POST['insToel_'])) { $toel = $_POST['insToel_']; }
 	}
@@ -44,12 +48,11 @@ if(isset($_POST['knpInsert_'])) {
 	 if(!empty($_POST['insToel_'])) { $toel = $_POST['insToel_']; }
 	}
 	else {
-		$create_dag = date_create($_POST['insDatum_']);
-		$dag =  date_format($create_dag, 'd-m-Y');
-		$day =  date_format($create_dag, 'Y-m-d');
 		
-	$insert_Opgaaf = "INSERT INTO tblOpgaaf SET rubuId = $rubr, datum = '$day', bedrag = $bedrag, toel = '$toel' ";
-		mysqli_query($db,$insert_Opgaaf) or die (mysqli_error($db));
+		
+	$insert_Opgaaf = "INSERT INTO tblOpgaaf SET rubuId = '".mysqli_real_escape_string($db,$rubr)."', datum = '".mysqli_real_escape_string($db,$day)."', bedrag = '".mysqli_real_escape_string($db,$bedrag)."', toel = '".mysqli_real_escape_string($db,$toel)."', liq = '".mysqli_real_escape_string($db,$insLiq)."' ";
+		
+		/*echo '$insert_Opgaaf = '.$insert_Opgaaf.'<br>';*/ mysqli_query($db,$insert_Opgaaf) or die (mysqli_error($db));
 	  }
 }
 else { 
@@ -59,24 +62,24 @@ else {
 ?>
 <form action="Kostenopgaaf.php" method = "post">
 <table border = 0>
-<tr><th align = center valign = 'bottom' style = "font-size : 13px">t.b.v. liquiditeit<hr></th>
+<tr><th align = "center" valign = 'bottom' style = "font-size : 13px">t.b.v. liquiditeit<hr></th>
 <th valign = 'bottom' >Rubriek<hr></th>
-<th valign = 'bottom' align = center >Datum<hr></th>
+<th valign = 'bottom' align = "center" >Datum<hr></th>
 <th valign = 'bottom' >Bedrag<hr></th>
 <th valign = 'bottom' align = left>&nbsp&nbsp&nbsp Toelichting<hr></th></tr>
 <!--*************************
 	INVOERVELDEN
      ************************* --->
-<tr><td width = 50 align = center><input type = checkbox name = 'chbLiq_' value = 1 checked = 'checked' ></td>
+<tr><td width = 50 align = "center"><input type = checkbox name = 'insLiq_' value = 1 checked = 'checked' ></td>
 <td>
 <?php
 // KzlSubrubriek nieuwe invoer
 $qrySubRubriek = mysqli_query($db,"
-select ru.rubuId, r.rubriek
-from tblRubriekuser ru
+SELECT ru.rubuId, r.rubriek
+FROM tblRubriekuser ru
  join tblRubriek r on (ru.rubId = r.rubId)
-where lidId = ".mysqli_real_escape_string($db,$lidId)." and r.actief = 1 and ru.actief = 1
-order by r.rubriek
+WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and r.actief = 1 and ru.actief = 1
+ORDER BY r.rubriek
 ") or die (mysqli_error($db)); ?>
  <select name= "insRubr_" style= "width:200;" >
  <option></option>
@@ -115,41 +118,38 @@ order by r.rubriek
 <!--*************************
 	OPMAAK VELDEN
      ************************* --->
-<tr><td align = center></td>
+<tr><td align = "center"></td>
 <td colspan = 4 ></td>
-<td width = 40 align = center style = "font-size : 13px">Betaald</td>
-<td width = 40 align = center style = "font-size : 13px">Verwij-<br>deren</td>
+<td width = 40 align = "center" style = "font-size : 13px">Betaald</td>
+<td width = 40 align = "center" style = "font-size : 13px">Verwij-<br>deren</td>
 <td> <input type = 'submit' name = 'knpSave_' value = "Opslaan" > </td><td></td></tr>	 
 <?php
-$result = mysqli_query($db,"
-select op.opgId, op.rubuId, date_format(op.datum,'%d-%m-%Y') datum, op.bedrag, op.toel, op.liq, op.his
-from tblOpgaaf op
+$zoek_inboekingen = mysqli_query($db,"
+SELECT op.opgId, op.rubuId, date_format(op.datum,'%d-%m-%Y') datum, op.bedrag, op.toel, op.liq, op.his
+FROM tblOpgaaf op
  join tblRubriekuser ru on (op.rubuId = ru.rubuId)
-where ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and (isnull(op.his) or op.his =0)
+WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (isnull(op.his) or op.his =0)
 ") or die (mysqli_error($db));
-	while ( $res = mysqli_fetch_assoc($result)) {
-		$Id = $res['opgId'];
-		$rubuId = $res['rubuId'];
-		$datum = $res['datum'];
-		$bedrag = $res['bedrag'];
-		$toel = $res['toel']; 
-		$liq = $res['liq']; 
-		$his = $res['his']; 
+	while ( $zi = mysqli_fetch_assoc($zoek_inboekingen)) {
+		$Id = $zi['opgId'];
+		$rubuId = $zi['rubuId'];
+		$datum = $zi['datum'];
+		$bedrag = $zi['bedrag'];
+		$toel = $zi['toel']; 
+		$liq = $zi['liq']; 
+		$his = $zi['his']; 
 		
 		if(isset($POST_["chbLiq_$Id"])) { $liq = $POST_["chbLiq_$Id"]; } ?>
 
 
 <tr>
-<td width = 50 align = center>
- <input type = hidden name = <?php echo "txtId_$Id"; ?> size = 2 value = <?php echo $Id; ?> > <!-- hiddden -->
- <input type = hidden name = <?php echo "chbLiq_$Id"; ?> size = 1 value = 0 > <!-- hiddden -->
- <input type = checkbox name = <?php echo "chbLiq_$Id"; ?> value = 1 <?php echo $liq == 1 ? 'checked' : '';  ?> >
- <input type = hidden name = <?php echo "ctrLiq_$Id"; ?> size = 1 value = <?php echo $liq; ?> ></td> <!-- hiddden -->
-
-<td>
+ <td width = 50 align = "center">
+<?php /*echo $Id;*/ ?>
+	<input type = checkbox name = <?php echo "chbLiq_$Id"; ?> value = 1 <?php echo $liq == 1 ? 'checked' : '';  ?> >
+ <td>
 <?php
 // KzlSubrubriek
-$qrySubRubriek = mysqli_query($db,"SELECT ru.rubuId, r.rubriek FROM tblRubriekuser ru join tblRubriek r on (ru.rubId = r.rubId) WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." and r.actief = 1 and ru.actief = 1 ORDER BY r.rubriek ") or die (mysqli_error($db)); 
+$qrySubRubriek = mysqli_query($db,"SELECT ru.rubuId, r.rubriek FROM tblRubriekuser ru join tblRubriek r on (ru.rubId = r.rubId) WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and r.actief = 1 and ru.actief = 1 ORDER BY r.rubriek ") or die (mysqli_error($db)); 
 
 $index = 0;
 	while ( $sub = mysqli_fetch_array($qrySubRubriek)) 
@@ -186,15 +186,19 @@ for ($i = 0; $i < $count; $i++){
 
 // Einde KzlSubrubriek
 ?>
-</td>
-<td><input type = text name = <?php echo "txtDatum_$Id"; ?> size = 8 value = <?php echo $datum; ?> ></td>
-<td><?php echo "&euro;"; ?><input type = text name = <?php echo "txtBedrag_$Id"; ?> size = 5 style="text-align : right"; value = <?php echo $bedrag; ?> ></td>
-<td><input type = text name = <?php echo "txtToel_$Id"; ?> size = 45 value = <?php echo "'"."$toel"."'"; ?> ></td>
-<td width = 40 align = center>
- <input type = hidden name = <?php echo "chbArch_$Id"; ?> value = 0 >
- <input type = checkbox name = <?php echo "chbArch_$Id"; ?> value = 1 <?php if(isset($his)) { echo $his == 1 ? 'checked' : ''; } ?> ></td>
-<td width = 40 align = center>
- <input type = hidden name = <?php echo "chbDel_$Id"; ?> value = 0 >
+ </td>
+ <td>
+ 	<input type = text name = <?php echo "txtDatum_$Id"; ?> size = 8 value = <?php echo $datum; ?> >
+ </td>
+ <td><?php echo "&euro;"; ?>
+	<input type = text name = <?php echo "txtBedrag_$Id"; ?> size = 5 style="text-align : right"; value = <?php echo $bedrag; ?> >
+ </td>
+ <td>
+ 	<input type = text name = <?php echo "txtToel_$Id"; ?> size = 45 value = <?php echo "'"."$toel"."'"; ?> >
+ </td>
+ <td width = 40 align = "center">
+	<input type = checkbox name = <?php echo "chbArch_$Id"; ?> value = 1 <?php if(isset($his)) { echo $his == 1 ? 'checked' : ''; } ?> ></td>
+<td width = 40 align = "center">
  <input type = checkbox name = <?php echo "chbDel_$Id"; ?> value = 1 <?php if(isset($cbDel)) { echo $cbDel == 1 ? 'checked' : ''; } ?> ></td>
 <td width = 10></td></tr>
 <!--******************************
@@ -213,7 +217,6 @@ Include "menuFinance.php"; } ?>
 </tr>
 
 </table>
-</center>
 
 </body>
 </html>

@@ -13,23 +13,24 @@ UItleg Liquiditeit :
 Bedragen Verplichtingen */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '11-7-2020'; /* € gewijzigd in &euro; 12-7 ë uit database gewijzigd in echo htmlentities($string, ENT_COMPAT,'ISO-8859-1', true); bron https://www.php.net/htmlspecialchars via https://www.phphulp.nl/php/forum/topic/speciale-tekens-in-code-omzetten/50786/ */
+$versie = '26-12-2024'; /* <TD width = 1010 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '11-03-2025'; /* Het hidden veld type = 'hidden' name = <?php echo "txtM_$Id"."_$i"; ?> verwijderd. txtM_$Id"."_$i wordt alleen getoond als $tesktveld == 'tonen' */
 
-session_start(); ?>
+ session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Financieel</title>
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Liquiditeit';
-$subtitel = '';
-Include "header.php"; ?>
-		<TD width = 1010 height = 400 valign = "top" >
-<?php
 $file = "Liquiditeit.php";
-Include "login.php"; 
+Include "login.php"; ?>
+
+				<TD valign = "top">
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modfin == 1) {
 
 include "func_euro.php";
@@ -128,10 +129,10 @@ ORDER BY hr.sort, hr.rubhId
  <td></td>
 <?php for ($i = 1; $i<=12; $i++)
 { ?>
- <td align = center style = "color : <?php if(date('Yn') == $toon_jaar.$i) { echo 'blue'; } ?> " > <i> <?php echo $mndnr[$i]; ?> <hr></i></td>
+ <td align = "center" style = "color : <?php if(date('Yn') == $toon_jaar.$i) { echo 'blue'; } ?> " > <i> <?php echo $mndnr[$i]; ?> <hr></i></td>
 
 <?php } ?>
- <td align = center width = 80><i>Totaal<hr></i></td></tr>
+ <td align = "center" width = 80><i>Totaal<hr></i></td></tr>
 <?php // Rubriek ophalen
 $qryRubriek = mysqli_query($db,"
 SELECT ru.rubuId, r.rubId, r.rubriek
@@ -157,58 +158,61 @@ ORDER BY r.rubriek
 <?php 
 for ($i = 1; $i<=12; $i++)
 { 
- $qryBegroting = mysqli_query($db,"
-SELECT li.rubuId, o.bedrag, 'eff' status
-From tblLiquiditeit li
-left join (
+ $zoek_realiteit = mysqli_query($db,"
+SELECT li.rubuId, o.bedrag, 'realisatie' status
+FROM tblLiquiditeit li
+join (
 	SELECT rubuId, date_format(datum,'%Y%m') jrmnd, sum(bedrag) bedrag 
 	FROM tblOpgaaf
 	WHERE month(datum) = '".mysqli_real_escape_string($db,$i)."' and year(datum) = '".mysqli_real_escape_string($db,$toon_jaar)."' and liq = 1
 	GROUP BY rubuId, date_format(datum,'%Y%m') 
 ) o on (li.rubuId = o.rubuId and date_format(li.datum,'%Y%m') = o.jrmnd)
-Where li.rubuId = '".mysqli_real_escape_string($db,$rubuId)."' and month(li.datum) = '".mysqli_real_escape_string($db,$i)."' and year(li.datum) = '".mysqli_real_escape_string($db,$toon_jaar)."' and o.bedrag is not null
+WHERE li.rubuId = '".mysqli_real_escape_string($db,$rubuId)."' and month(li.datum) = '".mysqli_real_escape_string($db,$i)."' and year(li.datum) = '".mysqli_real_escape_string($db,$toon_jaar)."'
 ") or die (mysqli_error($db));
 
-	while ($prs = mysqli_fetch_assoc($qryBegroting)) {
-		$Id = $prs['rubuId']; 
-		$mndprijs = $prs['bedrag'];
-		$stat = $prs['status'];
+	while ($zr = mysqli_fetch_assoc($zoek_realiteit)) {
+		$Id = $zr['rubuId'];
+		$mndprijs = $zr['bedrag'];
+		$status = $zr['status'];
 	}
 
 
-$qryRealiteit = mysqli_query($db,"
-SELECT li.rubuId, li.bedrag, 'prog' status
-From tblLiquiditeit li
+$zoek_begroting = mysqli_query($db,"
+SELECT li.rubuId, li.bedrag, 'begroot' status
+FROM tblLiquiditeit li
 left join (
 	SELECT rubuId, date_format(datum,'%Y%m') jrmnd, sum(bedrag) bedrag 
 	FROM tblOpgaaf
 	WHERE month(datum) = '".mysqli_real_escape_string($db,$i)."' and year(datum) = '".mysqli_real_escape_string($db,$toon_jaar)."' and liq = 1 and rubuId = '".mysqli_real_escape_string($db,$rubuId)."'
 	GROUP BY rubuId, date_format(datum,'%Y%m') 
 ) o on (li.rubuId = o.rubuId and date_format(li.datum,'%Y%m') = o.jrmnd)
-Where li.rubuId = '".mysqli_real_escape_string($db,$rubuId)."' and month(li.datum) = '".mysqli_real_escape_string($db,$i)."' and year(li.datum) = '".mysqli_real_escape_string($db,$toon_jaar)."' and isnull(o.bedrag)
+WHERE li.rubuId = '".mysqli_real_escape_string($db,$rubuId)."' and month(li.datum) = '".mysqli_real_escape_string($db,$i)."' and year(li.datum) = '".mysqli_real_escape_string($db,$toon_jaar)."' and isnull(o.bedrag)
 ") or die (mysqli_error($db)); 
 
 
-	while ($prs = mysqli_fetch_assoc($qryRealiteit)) {
-		$Id = $prs['rubuId']; 
-		$mndprijs = $prs['bedrag'];
-		$stat = $prs['status'];
+	while ($zb = mysqli_fetch_assoc($zoek_begroting)) {
+		$Id = $zb['rubuId'];
+		$mndprijs = $zb['bedrag'];
+		$status = $zb['status'];
 	}
 # *********************************
  	
-	if($stat == 'eff') {$txttype = 'hidden'; $align = 'right'; $color = 'green'; $value = euro_format($mndprijs);} // Als er posten zijn
-	else if(empty($mndprijs) && (date('Ym')>$toon_jaar.$mndstr[$i] || $rubId == 39)) {$txttype = 'hidden'; $align = 'center'; $color = 'black'; $value = '-';} // Als liquiditeit leeg is
-	else if($rubId == 39 && !empty($mndprijs) && date('Ym')>$toon_jaar.$mndstr[$i]) {$txttype = 'hidden'; $align = 'right'; $color = 'grey'; $value = euro_format($mndprijs);} // Als rubriek = Verkoop lammeren en verleden
-	else if($rubId == 39 && !empty($mndprijs)) {$txttype = 'hidden'; $align = 'right'; $color = 'black'; $value = euro_format($mndprijs);} // Als rubriek = Verkoop lammeren niet verleden
-	else if($stat == 'prog' && date('Ym')>$toon_jaar.$mndstr[$i]) {$txttype = 'text'; $align = 'right'; $color = 'grey'; unset($value);} // Als er liquiditeit is
-	else {$txttype = 'text'; $align = 'right'; $color = 'black'; unset($value);} // Anders ?>
+	if($status == 'realisatie') {$tesktveld = 'verbergen'; $align = 'right'; $color = 'green'; $value = euro_format($mndprijs);} // Als er posten zijn
+	else if(empty($mndprijs) && (date('Ym')>$toon_jaar.$mndstr[$i] || $rubId == 39)) {$tesktveld = 'verbergen'; $align = 'center'; $color = 'black'; $value = '-';} // Als liquiditeit leeg is
+	else if($rubId == 39 && !empty($mndprijs) && date('Ym')>$toon_jaar.$mndstr[$i]) {$tesktveld = 'verbergen'; $align = 'right'; $color = 'grey'; $value = euro_format($mndprijs);} // Als rubriek = Verkoop lammeren en verleden
+	else if($rubId == 39 && !empty($mndprijs)) {$tesktveld = 'verbergen'; $align = 'right'; $color = 'black'; $value = euro_format($mndprijs);} // Als rubriek = Verkoop lammeren niet verleden
+	else if($status == 'begroot' && date('Ym')>$toon_jaar.$mndstr[$i]) {$tesktveld = 'tonen'; $align = 'right'; $color = 'grey'; unset($value);} // Als er liquiditeit is
+	else {$tesktveld = 'tonen'; $align = 'right'; $color = 'black'; unset($value);} // Anders ?>
  
  
  
  
- <td width = 62 align = <?php echo $align; ?> style = "color : <?php echo $color; ?>" ><!-- MAANDEN -->  
- <input type = <?php echo $txttype; ?> name = <?php echo "txtM_$Id"."_$i"."_$txttype"; ?> size = 6 style = "font-size : 12px; text-align : right; color : <?php echo $color; ?>  " value = <?php echo $mndprijs; ?> >
- <?php if(isset($value)) {echo $value; } ?>
+ <td width = 62 align = <?php echo $align; ?> style = "color : <?php echo $color; ?>" ><!-- MAANDEN --> 
+ <?php if($tesktveld == 'tonen') { ?> 
+ <input type = 'text' name = <?php echo "txtM_$Id"."_$i"; ?> size = 6 style = "font-size : 12px; text-align : right; color : <?php echo $color; ?>  " value = <?php echo $mndprijs; ?> >
+ <?php }
+
+ if(isset($value)) { echo $value; } ?>
  </td>
 <?php 
 	

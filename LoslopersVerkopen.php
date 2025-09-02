@@ -1,28 +1,29 @@
 <?php 
 $versie = '23-12-2019'; /* Gekopieerd van HokAfleveren.php */
-  session_start(); ?>
+$versie = '31-12-2023'; /* and h.skip = 0 aangevuld aan tblHistorie en sql beveiligd */
+$versie = "11-03-2024"; /* Bij geneste query uit 
+join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
+join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 */
+$versie = '26-12-2024'; /* <TD width = 940 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+
+ session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Registratie</title>
 </head>
 <body>
 
-<center>
 <?php
-include"kalender.php";
-/*$paginanaam = $_SERVER['PHP_SELF']; 
-	if($paginanaam == '/LoslopersAfleveren.php') { $pagina = 'Afleveren'; }
-	if($paginanaam == '/LoslopersVerkopen.php') { $pagina = 'Verkopen'; }
-$titel = $pagina;*/
 $titel = 'Verkopen';
-$subtitel = '';
-Include "header.php";
-?>
-		<TD width = 940 height = 400 valign = "top">
-<?php 
 $file = "Bezet.php";
-Include "login.php";
+Include "login.php"; ?>
+
+				<TD valign = "top">
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
+include"kalender.php";
 
 if ($modmeld == 1 ) { include "maak_request_func.php"; }
 
@@ -38,7 +39,7 @@ if(isset($_POST['knpSave_'])) { $actId = 13; include "save_afleveren.php"; }
 $qryRelatiekeuze = mysqli_query($db,"SELECT r.relId, p.naam
 			FROM tblPartij p
 			 join tblRelatie r on (r.partId = p.partId)
-			WHERE p.lidId = ".mysqli_real_escape_string($db,$lidId)." and r.relatie = 'deb' and p.actief = 1 and r.actief = 1
+			WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and r.relatie = 'deb' and p.actief = 1 and r.actief = 1
 			ORDER BY p.naam") or die (mysqli_error($db)); 
 
 $index = 0; 
@@ -63,38 +64,38 @@ $tabel = "tblSchaap s
 	FROM tblStal st 
 	 join tblHistorie h on (st.stalId = h.stalId)
 	 join tblActie a on (a.actId = h.actId) 
-	WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(st.rel_best) and a.aan = 1
+	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best) and a.aan = 1 and h.skip = 0
 	GROUP BY st.schaapId
  ) hin on (hin.schaapId = s.schaapId)
  left join tblBezet b on (hin.hisId = b.hisId)
  left join (
-	select b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
-	from tblBezet b
+	SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
+	FROM tblBezet b
 	 join tblHistorie h1 on (b.hisId = h1.hisId)
 	 join tblActie a1 on (a1.actId = h1.actId)
-	 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
+	 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 	 join tblActie a2 on (a2.actId = h2.actId)
 	 join tblStal st on (h1.stalId = st.stalId)
-	where st.lidId = ".mysqli_real_escape_string($db,$lidId)." and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-	group by b.bezId, st.schaapId, h1.hisId
+	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+	GROUP BY b.bezId, st.schaapId, h1.hisId
  ) uit on (uit.hisv = hin.hisId)
  left join (
 	SELECT st.schaapId
 	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 4
+	WHERE h.actId = 4 and h.skip = 0
  ) spn on (spn.schaapId = hin.schaapId)
  left join (
 	SELECT st.schaapId
 	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 3
+	WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = hin.schaapId)
  join (
 	SELECT st.schaapId, max(hisId) hisId
 	FROM tblStal st 
 	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(st.rel_best)
+	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best) and h.skip = 0
 	GROUP BY st.schaapId
  ) hmax on (hmax.schaapId = s.schaapId)
  join tblHistorie h on (hmax.hisId = h.hisId)";
@@ -121,10 +122,10 @@ else { $width = 200; } ?>
  <?php } else { ?> <td style = "font-size : 14px;">  <?php } ?>
 <!-- Opmaak paginanummering -->
  Regels Per Pagina: <?php echo $kzlRpp;
-if(isset($sess_dag) || isset($sess_bestm)) { ?> </td> <td align = center > <?php echo $page_numbers.'<br>'; ?> </td> <td> <?php } 
+if(isset($sess_dag) || isset($sess_bestm)) { ?> </td> <td align = "center" > <?php echo $page_numbers.'<br>'; ?> </td> <td> <?php } 
 // Einde Opmaak paginanummering ?>
  </td>
- <td width = 150 align = center>
+ <td width = 150 align = "center">
 <?php if(!isset($sess_dag) && !isset($sess_bestm)) { ?>
   &nbsp &nbsp &nbsp <input type = submit name = "knpVerder_" value = "Verder">
  </td>
@@ -213,27 +214,27 @@ if (isset($_POST['knpVervers_']) && !isset($_POST['kzlRelall_'])) { $cbKies = $_
 	************************************** -->
 
 <tr style = "font-size:14px;">
-	<td align = center>
+	<td align = "center">
 	<input type = hidden size = 1 name = <?php echo "txtOke_$Id"; ?> 	value = <?php echo $oke; ?> ><!--hiddden Dit veld zorgt ervoor dat chbkies wordt aangevinkt als het ingebruk wordt gesteld -->
 	<input type = hidden size = 1 name = <?php echo "chbkies_$Id"; ?> value = 0 > <!-- hiddden -->
 	<input type = checkbox 		  name = <?php echo "chbkies_$Id"; ?> 	value = 1 <?php echo $cbKies == 1 ? 'checked' : ''; if ($oke <> 1) { ?> disabled <?php }  else if ($txtOke == 0) {	echo 'checked';} ?> >
 </td>
 <!-- Speendatum -->
-<td align = center>
+<td align = "center">
  <input type = "text" size = 9 style = "font-size : 11px;" name = <?php echo "txtDatum_$Id"; ?> value = <?php if(isset($datum)) { echo $datum; } ?> >
 </td>
 
-<td width = 80 align = center> <?php echo $werknr; ?>
+<td width = 80 align = "center"> <?php echo $werknr; ?>
 </td>
 </td>
 
-<td width = 110 align = center> <?php echo $levnr; ?>
+<td width = 110 align = "center"> <?php echo $levnr; ?>
 </td>
 	
-<td width = 80 align = center style = "font-size : 9px;"> 
+<td width = 80 align = "center" style = "font-size : 9px;"> 
 <input type = "text" size = 3 style = "font-size : 11px;" name = <?php echo "txtKg_$Id"; ?> value = <?php if(isset($kg)) { echo $kg; } ?> > </td>
 
-<td width = 100 align = center>
+<td width = 100 align = "center">
 
 <!-- KZLBESTEMMING -->
 
