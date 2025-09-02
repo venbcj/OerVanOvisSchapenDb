@@ -1,5 +1,5 @@
 <!-- 21-12-2015 : include "maak_request_func.php"; verplaatst naar InsAanvoer.php, InsAfleveren.php, Insgeboortes.php en InsUitval.php
-11-1-2022 sql Beveiligd met quotes
+11-1-2022 sql Beveiligd met quotes. Per 2-9-2023 $insert_tblMelding ook beveiligd
 
 
 maak_request.php toegepast in :
@@ -41,7 +41,7 @@ HAVING (count(r.reqId) < 60)
 // *** DE MELDINGEN ***		
 // Insert tblMeldingen
 
-		$insert_tblMelding = "INSERT INTO tblMelding SET reqId = ".$reqId.", hisId = ".$hisId." ";
+		$insert_tblMelding = "INSERT INTO tblMelding SET reqId = '".mysqli_real_escape_string($db,$reqId)."', hisId = '".mysqli_real_escape_string($db,$hisId)."' ";
 		/*echo $insert_tblMelding.'<br>';*/	mysqli_query($db,$insert_tblMelding) or die (mysqli_error($db));
 		
 		if(isset($newlidId)) {
