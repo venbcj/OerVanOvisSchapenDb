@@ -1,36 +1,40 @@
 <?php 
-$versie = "3-9-2017"; /* 16-7-2017 gemaakt 	3-9-2017 kg voer te wijzigen*/
-$versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
+$versie = "03-09-2017"; /* 16-7-2017 gemaakt 	3-9-2017 kg voer te wijzigen*/
+$versie = '28-09-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '16-11-2019'; /* Hoeveelheid opnieuw gebouwd i.v.m. andere manier van kg voer vastleggen. Incl. toevoegen van optie Volwassen dieren */
 $versie = '20-12-2019'; /* tabelnaam gewijzigd van UIT naar uit tabelnaam */
-$versie = '6-3-2020'; /* Rapport ook zichtbaar gemaakt als voer niet wordt gebruikt */
+$versie = '06-03-2020'; /* Rapport ook zichtbaar gemaakt als voer niet wordt gebruikt */
+$versie = '01-01-2024'; /* and h.skip = 0 aangevuld bij tblHistorie en sql verder beveiligd */
+$versie = "11-03-2024"; /* Bij geneste query uit 
+join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
+join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" align = center> gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '19-02-2025'; /* Gegevens werden niet getoond omdat geneste query's als variabele in mysqli_real_escape_string($db,... stonden. 23-02-2025 Titel gewijzigd van Overzicht voertoediening naar Voer rapportage*/
+
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Rapport</title>		
 </head>
 <body>
 
-<center>
 <?php
- Include "login.php"; 
+$titel = 'Voer rapportage';
+$file = "Voer_rapportage.php";
+ Include "login.php"; ?>
+
+				<TD valign = 'top' align = 'center'>
+<?php
+if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech == 1) { 
+ 
 if(isset($_POST['knpSave_'])) { include "save_voerrapport.php";  
-		Include "url.php";
 		//header("Location: ".$url."Voer_rapportage.php"); 
 	}
-
-$titel = 'Overzicht voertoediening';
-$subtitel = '';
-Include "header.php"; ?>
-		<TD width = 960 height = 400 valign = "top" align = center>
-<?php
-$file = "Voer_rapportage.php";
-
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech == 1) { 
-
 	?>
 
-<table border = 0 align = center>
+<table border = 0 align = "center">
 
 <form action = "Voer_rapportage.php" method = "post">
 <tr>
@@ -59,17 +63,17 @@ $name = "kzlVoer_"; ?>
 <select name= <?php echo"$name";?> width = 60 >
  <option></option>
 <?php		
-$kzlVoer = mysqli_query($db,"
+$zoek_voer = mysqli_query($db,"
 SELECT a.artId, a.naam
 FROM tblEenheid e
  join tblEenheiduser eu on (e.eenhId = eu.eenhId)
  join tblArtikel a on (a.enhuId = eu.enhuId)
  join tblInkoop i on (a.artId = i.artId)
-WHERE a.soort = 'voer' and eu.lidId = ".mysqli_real_escape_string($db,$lidId)."
+WHERE a.soort = 'voer' and eu.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 GROUP BY a.artId, a.naam 
 ORDER BY a.naam
 ") or die (mysqli_error($db));
-	while($row = mysqli_fetch_array($kzlVoer))
+	while($row = mysqli_fetch_array($zoek_voer))
 		{
 $kzlkey="$row[artId]";
 $kzlvalue="$row[naam]";
@@ -101,20 +105,21 @@ If ((isset($_POST['knpToon_']) || isset($_POST['knpSave_'])) ) {
 
 if(isset($_POST['radVoer_']) && $_POST['radVoer_']==1 ) { $metVoer = 'ja'; } else { $metVoer = 'nee';  }
 
-if (empty($_POST['kzlVoer_'])) { $periode_metVoer = " isnull(i.artId)"; }
-else { $periode_metVoer = "i.artId = $_POST[kzlVoer_]"; }
+$fldVoer = $_POST['kzlVoer_'];
 
 
 // Controle meerdere maanden om keuzelijst kzlJaarMaand te laten zien bij meer dan 1 maand.
 // $aantjaarmaanden zoekt het aantal jaarmaanden in tblPeriode o.b.v. lidId, al dan niet het voer en de doelgroep
-$aantjaarmaanden = mysqli_query($db," 
+$aantjaarmaanden = " 
 SELECT count(date_format(p.dmafsluit,'%Y%m')) jrmnd
 FROM tblPeriode p
  join tblHok h on (p.hokId = h.hokId)
  left join tblVoeding v on (p.periId = v.periId)
  left join tblInkoop i on (i.inkId = v.inkId) 
-WHERE h.lidId = ".mysqli_real_escape_string($db,$lidId)." and ".mysqli_real_escape_string($db,$periode_metVoer)." and p.doelId = $_POST[kzlDoel_]
-") or die (mysqli_error($db));
+WHERE h.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ".db_null_filter('i.artId', $fldVoer)." and p.doelId = $_POST[kzlDoel_]
+";
+
+$aantjaarmaanden = mysqli_query($db,$aantjaarmaanden) or die (mysqli_error($db));
    $row = mysqli_fetch_assoc($aantjaarmaanden);
 		$rows_jrmnd = $row['jrmnd'];
 		
@@ -130,7 +135,7 @@ FROM tblPeriode p
  left join tblArtikel a on (a.artId = i.artId)
  left join tblEenheiduser eu on (a.enhuId = eu.enhuId)
  left join tblEenheid e on (e.eenhId = eu.eenhId)
-WHERE eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and ".mysqli_real_escape_string($db,$periode_metVoer)."
+WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ".db_null_filter('i.artId', $fldVoer)."
 GROUP BY date_format(p.dmafsluit,'%Y%m')
 ") or die (mysqli_error($db)); 
 
@@ -155,7 +160,7 @@ FROM tblHok h
  join tblPeriode p on (p.hokId = h.hokId)
  left join tblVoeding v on (p.periId = v.periId)
  left join tblInkoop i on (i.inkId = v.inkId)
-WHERE h.lidId = ".mysqli_real_escape_string($db,$lidId)." and ".mysqli_real_escape_string($db,$periode_metVoer)." and p.doelId = $_POST[kzlDoel_]
+WHERE h.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ".db_null_filter('i.artId', $fldVoer)." and p.doelId = $_POST[kzlDoel_]
 ") or die (mysqli_error($db));
 
 	$row = mysqli_fetch_assoc($aantverblijven);
@@ -169,7 +174,7 @@ FROM tblHok h
  join tblPeriode p on (p.hokId = h.hokId)
  left join tblVoeding v on (p.periId = v.periId)
  left join tblInkoop i on (i.inkId = v.inkId)
-WHERE h.lidId = ".mysqli_real_escape_string($db,$lidId)." and ".mysqli_real_escape_string($db,$periode_metVoer)."
+WHERE h.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ".db_null_filter('i.artId', $fldVoer)."
 GROUP BY h.hoknr
 ") or die (mysqli_error($db));
 
@@ -224,12 +229,12 @@ FROM tblHok ho
  left join tblVoeding v on (v.periId = p.periId)
  left join tblInkoop i on (i.inkId = v.inkId)
  left join tblArtikel a on (a.artId = i.artId) 
-WHERE ho.lidId = ".mysqli_real_escape_string($db,$lidId)." and p.doelId = $_POST[kzlDoel_] and ".mysqli_real_escape_string($db,$periode_metVoer)." and ".$resJrmnd." and ".$resHok."
+WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = $_POST[kzlDoel_] and ".db_null_filter('i.artId', $fldVoer)." and ".$resJrmnd." and ".$resHok."
 GROUP BY month(p.dmafsluit), date_format(p.dmafsluit,'%Y')
 ORDER BY jaar desc, month(p.dmafsluit) desc
 ";
 
-//echo $maandjaren.'<br>';
+//echo '$maandjaren = '.$maandjaren.'<br>';
 $maandjaren = mysqli_query($db,$maandjaren) or die (mysqli_error($db));
   while ($rij = mysqli_fetch_assoc($maandjaren))
 		{  // START LOOP maandnaam jaartal
@@ -251,7 +256,7 @@ $mndnaam = array('','januari', 'februari', 'maart','april','mei','juni','juli','
 <tr style = "font-size:12px;">
 
 <tr style = "font-size:15px;" valign = top>
-<th width = 70></th>
+<th style = "text-align:center;"valign="bottom";width = 70>Verblijf<hr></th>
 <th style = "text-align:center;"valign="bottom";width= 90>start<hr></th>
 <th style = "text-align:center;"valign="bottom";width= 80>einddatum<hr></th>
 <th style = "text-align:center;"valign="bottom";width= 80><?php if($metVoer == 'ja') { ?> voerdatum <?php } else { ?> afsluit- / voerdatum <?php } ?> <hr></th>
@@ -267,36 +272,62 @@ $mndnaam = array('','januari', 'februari', 'maart','april','mei','juni','juli','
 $zoek_startdatum = mysqli_query($db," 
 SELECT date_format(dmcreate,'%Y-%m-01') dmstart
 FROM tblLeden
-WHERE lidId = ".mysqli_real_escape_string($db,$lidId)."
+WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die(mysql_error($db));
 	while ($st = mysqli_fetch_assoc($zoek_startdatum)) { $dmstart = $st['dmstart']; }
 
 
-$eerstePeriode_met_fictieveStartdatum = "SELECT p.hokId, p.doelId, l.dmcreate dmbegin, min(p.dmafsluit) dmeind FROM tblPeriode p join tblHok ho on (p.hokId = ho.hokId) join tblLeden l on (ho.lidId = l.lidId) WHERE ho.lidId = ".mysqli_real_escape_string($db,$lidId)." and p.doelId = $_POST[kzlDoel_] GROUP BY p.hokId, p.doelId";
+// subquery v binnen $allePeriodes_met_BeginEnEindDatum_inlc_Voer = Artikel met voeraantal per periode
+$allePeriodes_met_BeginEnEindDatum_inlc_Voer = "
+SELECT p2.periId, p2.hokId, p1.doelId, max(p1.dmafsluit) dmbegin, p2.dmafsluit dmeind, v.artId, v.nutat
+FROM tblPeriode p1
+ join tblPeriode p2 on (p1.hokId = p2.hokId and p1.doelId = p2.doelId and p1.dmafsluit < p2.dmafsluit)
+ join tblHok ho on (ho.hokId = p1.hokId) 
+ left join ( 
+ 		SELECT v.periId, i.artId, sum(v.nutat) nutat
+		FROM tblVoeding v
+		 join tblPeriode p on (v.periId = p.periId)
+		 join tblHok ho on (ho.hokId = p.hokId)
+		 join tblInkoop i on (v.inkId = i.inkId)
+		WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = $_POST[kzlDoel_]
+		GROUP BY v.periId, i.artId
+ ) v on (p2.periId = v.periId)
+WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p1.doelId = $_POST[kzlDoel_]
+GROUP BY p2.periId, p2.hokId, p1.doelId, p2.dmafsluit, v.nutat
+";
 
-$artikel_met_voeraantal_PerPeriode = "SELECT v.periId, i.artId, sum(v.nutat) nutat FROM tblVoeding v join tblPeriode p on (v.periId = p.periId) join tblHok ho on (ho.hokId = p.hokId) join tblInkoop i on (v.inkId = i.inkId) WHERE ho.lidId = ".mysqli_real_escape_string($db,$lidId)." and p.doelId = $_POST[kzlDoel_] GROUP BY v.periId, i.artId";
-
-$allePeriodes_met_BeginEnEindDatum_inlc_Voer = "SELECT p2.periId, p2.hokId, p1.doelId, max(p1.dmafsluit) dmbegin, p2.dmafsluit dmeind, v.artId, v.nutat FROM tblPeriode p1 join tblPeriode p2 on (p1.hokId = p2.hokId and p1.doelId = p2.doelId and p1.dmafsluit < p2.dmafsluit) join tblHok ho on (ho.hokId = p1.hokId) left join ( ".mysqli_real_escape_string($db,$artikel_met_voeraantal_PerPeriode).") v on (p2.periId = v.periId) WHERE ho.lidId = ".mysqli_real_escape_string($db,$lidId)." and p1.doelId = $_POST[kzlDoel_] GROUP BY p2.periId, p2.hokId, p1.doelId, p2.dmafsluit, v.nutat";
-
+// subquery p1 binnen $begin_eind_periode = Eerste periode met_fictieve startdatum
+// subquery v binnen $begin_eind_periode = Artikel met voeraantal per periode
 $begin_eind_periode = "
-	SELECT p.periId, ho.hokId, ho.hoknr, date_format(p.dmeind,'%Y%m') jrmnd, p.dmbegin, p.dmeind, p.artId, p.nutat
+SELECT p.periId, ho.hokId, ho.hoknr, date_format(p.dmeind,'%Y%m') jrmnd, p.dmbegin, p.dmeind, p.artId, p.nutat
+FROM (
+	SELECT p.periId, p1.hokId, p1.doelId, p1.dmbegin, p1.dmeind, v.artId, v.nutat 
 	FROM (
-		SELECT p.periId, p1.hokId, p1.doelId, p1.dmbegin, p1.dmeind, v.artId, v.nutat 
-		FROM (
-		 	".mysqli_real_escape_string($db,$eerstePeriode_met_fictieveStartdatum)."
-		 ) p1
-		 join tblPeriode p on (p1.hokId = p.hokId and p1.doelId = p.doelId and p1.dmeind = p.dmafsluit)
-		 left join (
-		 	".mysqli_real_escape_string($db,$artikel_met_voeraantal_PerPeriode)."
-		 ) v on (p.periId = v.periId)
+	 	SELECT p.hokId, p.doelId, l.dmcreate dmbegin, min(p.dmafsluit) dmeind
+		FROM tblPeriode p
+		 join tblHok ho on (p.hokId = ho.hokId)
+		 join tblLeden l on (ho.lidId = l.lidId)
+		WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = $_POST[kzlDoel_]
+		GROUP BY p.hokId, p.doelId
+	 ) p1
+	 join tblPeriode p on (p1.hokId = p.hokId and p1.doelId = p.doelId and p1.dmeind = p.dmafsluit)
+	 left join (
+	 	SELECT v.periId, i.artId, sum(v.nutat) nutat
+		FROM tblVoeding v
+		 join tblPeriode p on (v.periId = p.periId)
+		 join tblHok ho on (ho.hokId = p.hokId)
+		 join tblInkoop i on (v.inkId = i.inkId)
+		WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = $_POST[kzlDoel_]
+		GROUP BY v.periId, i.artId
+	 ) v on (p.periId = v.periId)
 
-		union
+	union
 
-		".mysqli_real_escape_string($db,$allePeriodes_met_BeginEnEindDatum_inlc_Voer)."
-	) p
-	 join tblHok ho on (ho.hokId = p.hokId)
-	 left join tblArtikel i on (i.artId = p.artId)
-	WHERE ho.lidId = ".mysqli_real_escape_string($db,$lidId)." and p.doelId = $_POST[kzlDoel_] and ".mysqli_real_escape_string($db,$periode_metVoer)." and date_format(p.dmeind,'%Y%m') = ".mysqli_real_escape_string($db,$jrmnd)."
+	$allePeriodes_met_BeginEnEindDatum_inlc_Voer
+ ) p
+ join tblHok ho on (ho.hokId = p.hokId)
+ left join tblArtikel i on (i.artId = p.artId)
+WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = $_POST[kzlDoel_] and ".db_null_filter('i.artId', $fldVoer)." and date_format(p.dmeind,'%Y%m') = '".mysqli_real_escape_string($db,$jrmnd)."'
 ";
 
 # if( $mndnr == 6) { echo $begin_eind_periode.'<br>'; }
@@ -310,18 +341,11 @@ $begin_eind_periode = mysqli_query($db,$begin_eind_periode) or die (mysqli_error
 			$periId = $mld['periId']; 
 			$dmbegin = $mld['dmbegin']; 
 			$dmeind = $mld['dmeind']; 
-?>
 
+if($_POST['kzlDoel_'] == 1) { $filterDoel = ' and (his_in.datum < spn.datum or (isnull(spn.schaapId) and isnull(prn.schaapId)) )'; }
+if($_POST['kzlDoel_'] == 2) { $filterDoel = ' and (his_in.datum >= spn.datum and (his_in.datum < prn.datum or isnull(prn.schaapId)) )'; }
+if($_POST['kzlDoel_'] == 3) { $filterDoel = ' and (his_in.datum >= spn.datum)'; }
 
-
-
-
-
-
-<?php
-if($_POST['kzlDoel_'] == 1) { $peendm = ' and (his_in.datum < spn.datum or (isnull(spn.schaapId) and isnull(prn.schaapId)) )'; }
-if($_POST['kzlDoel_'] == 2) { $peendm = ' and (his_in.datum >= spn.datum and (his_in.datum < prn.datum or isnull(prn.schaapId)) )'; }
-if($_POST['kzlDoel_'] == 3) { $peendm = ' and (his_in.datum >= spn.datum)'; }
 $periode_totalen = "
 SELECT p.periId, ho.hokId, ho.hoknr, p.dmbegin, date_format(p.dmbegin,'%d-%m-%Y') begindm, min(his_in.datum) dmschaap1, date_format(min(his_in.datum),'%d-%m-%Y') schaap1dm,
  p.dmeind, date_format(p.dmeind,'%d-%m-%Y') einddm, max(coalesce(his_uit.datum,p.dmeind)) dmschaapend, 
@@ -337,7 +361,7 @@ FROM tblHok ho
 	 	SELECT p.hokId, p.doelId, '".mysqli_real_escape_string($db,$dmstart)."' dmbegin, min(p.dmafsluit) dmeind
 		FROM tblPeriode p
 		 join tblHok ho on (p.hokId = ho.hokId)
-		WHERE ho.lidId = ".mysqli_real_escape_string($db,$lidId)." and p.doelId = $_POST[kzlDoel_]
+		WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = $_POST[kzlDoel_]
 		GROUP BY p.hokId, p.doelId
 	 ) p1
 	 join tblPeriode p on (p1.hokId = p.hokId and p1.doelId = p.doelId and p1.dmeind = p.dmafsluit)
@@ -347,7 +371,7 @@ FROM tblHok ho
 	 	 join tblPeriode p on (v.periId = p.periId)
 	 	 join tblHok ho on (ho.hokId = p.hokId)
 	 	 join tblInkoop i on (v.inkId = i.inkId)
-	 	WHERE ho.lidId = ".mysqli_real_escape_string($db,$lidId)." and p.doelId = $_POST[kzlDoel_]
+	 	WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = $_POST[kzlDoel_]
 	 	GROUP BY v.periId, i.artId
 	 ) v on (p.periId = v.periId)
 
@@ -363,10 +387,10 @@ FROM tblHok ho
 	 	 join tblPeriode p on (v.periId = p.periId)
 	 	 join tblHok ho on (ho.hokId = p.hokId)
 	 	 join tblInkoop i on (v.inkId = i.inkId)
-	 	WHERE ho.lidId = ".mysqli_real_escape_string($db,$lidId)." and p.doelId = $_POST[kzlDoel_]
+	 	WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = $_POST[kzlDoel_]
 	 	GROUP BY v.periId, i.artId
 	 ) v on (p2.periId = v.periId)
-	WHERE ho.lidId = ".mysqli_real_escape_string($db,$lidId)." and p1.doelId = $_POST[kzlDoel_]
+	WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p1.doelId = $_POST[kzlDoel_]
 	GROUP BY p2.periId, p2.hokId, p1.doelId, p2.dmafsluit, v.nutat
  ) p  on (p.hokId = ho.hokId)
  left join tblVoeding v on (p.periId = v.periId)
@@ -378,71 +402,65 @@ FROM tblHok ho
 	FROM tblBezet b
 	 join tblHistorie h1 on (b.hisId = h1.hisId)
 	 join tblActie a1 on (a1.actId = h1.actId)
-	 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
+	 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 	 join tblActie a2 on (a2.actId = h2.actId)
 	 join tblStal st on (h1.stalId = st.stalId)
-	WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and b.hokId = ".mysqli_real_escape_string($db,$hokId)."
+	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and b.hokId = '".mysqli_real_escape_string($db,$hokId)."'
 	GROUP BY b.bezId, st.schaapId, h1.hisId
  ) uit on (uit.hisv = b.hisId)
  left join (
  	SELECT hisId, '".mysqli_real_escape_string($db,$dmbegin)."' datum, h.stalId
  	FROM tblHistorie h
  	 join tblStal st on (h.stalId = st.stalId)
- 	WHERE datum <= '".mysqli_real_escape_string($db,$dmbegin)."' and st.lidId = ".mysqli_real_escape_string($db,$lidId)."
+ 	WHERE h.skip = 0 and datum <= '".mysqli_real_escape_string($db,$dmbegin)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
  
  union
 
  	SELECT hisId, datum, h.stalId
  	FROM tblHistorie h
  	 join tblStal st on (h.stalId = st.stalId)
- 	WHERE datum > '".mysqli_real_escape_string($db,$dmbegin)."' and st.lidId = ".mysqli_real_escape_string($db,$lidId)."
+ 	WHERE h.skip = 0 and datum > '".mysqli_real_escape_string($db,$dmbegin)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 
  ) his_in on (b.hisId = his_in.hisId)
  left join (
 	SELECT hisId, '".mysqli_real_escape_string($db,$dmeind)."' datum
  	FROM tblHistorie h
  	 join tblStal st on (h.stalId = st.stalId)
- 	WHERE datum >= '".mysqli_real_escape_string($db,$dmeind)."' and st.lidId = ".mysqli_real_escape_string($db,$lidId)."
+ 	WHERE h.skip = 0 and datum >= '".mysqli_real_escape_string($db,$dmeind)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
  
  union
 
  	SELECT hisId, datum
  	FROM tblHistorie h
  	 join tblStal st on (h.stalId = st.stalId)
- 	WHERE datum < '".mysqli_real_escape_string($db,$dmeind)."' and st.lidId = ".mysqli_real_escape_string($db,$lidId)."
+ 	WHERE h.skip = 0 and datum < '".mysqli_real_escape_string($db,$dmeind)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
  ) his_uit on (uit.hist = his_uit.hisId)
  left join tblStal st on (st.stalId = his_in.stalId)
  left join (
 	SELECT st.schaapId, h.datum
 	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 4 and st.lidId = ".mysqli_real_escape_string($db,$lidId)."
+	WHERE h.actId = 4 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
  ) spn on (spn.schaapId = st.schaapId)
  left join (
 	SELECT st.schaapId, h.datum
 	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 3 and st.lidId = ".mysqli_real_escape_string($db,$lidId)."
+	WHERE h.actId = 3 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
  ) prn on (prn.schaapId = st.schaapId)
-WHERE ho.lidId = ".mysqli_real_escape_string($db,$lidId)." and ho.hokId = ".mysqli_real_escape_string($db,$hokId)." and p.doelId = $_POST[kzlDoel_] and ".mysqli_real_escape_string($db,$periode_metVoer)." 
- and date_format(p.dmeind,'%Y%m') = $jrmnd and his_in.datum < p.dmeind and coalesce(his_uit.datum,CURDATE()) > p.dmbegin ".mysqli_real_escape_string($db,$peendm)."
- and ". mysqli_real_escape_string($db,$resHok)."
+WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ho.hokId = '".mysqli_real_escape_string($db,$hokId)."' and p.doelId = $_POST[kzlDoel_] and ".db_null_filter('i.artId', $fldVoer)." 
+ and date_format(p.dmeind,'%Y%m') = $jrmnd and his_in.datum < p.dmeind and coalesce(his_uit.datum,CURDATE()) > p.dmbegin ".mysqli_real_escape_string($db,$filterDoel)."
+ and ".mysqli_real_escape_string($db,$resHok)."
  
 GROUP BY p.periId, ho.hokId, ho.hoknr, p.dmbegin, p.dmeind, p.nutat
 ORDER BY ho.hokId, p.dmeind
-
-
-
-
 ";
-
 
 //if($mndnr == 6) { echo $periode_totalen.'<br>'.'<br>'; }
 $periode_totalen = mysqli_query($db,$periode_totalen) or die (mysqli_error($db));
 
 
 if (mysqli_num_rows($periode_totalen) == 0) { 
-
 
 $periode_totalen_met_voer_zonder_schapen = "
 SELECT p.periId, ho.hokId, ho.hoknr, p.dmbegin, date_format(p.dmbegin,'%d-%m-%Y') begindm, NULL dmschaap1, NULL schaap1dm,
@@ -455,7 +473,7 @@ FROM tblHok ho
 	 	SELECT p.hokId, p.doelId, '".mysqli_real_escape_string($db,$dmstart)."' dmbegin, min(p.dmafsluit) dmeind
 		FROM tblPeriode p
 		 join tblHok ho on (p.hokId = ho.hokId)
-		WHERE ho.lidId = ".mysqli_real_escape_string($db,$lidId)." and p.doelId = $_POST[kzlDoel_]
+		WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = $_POST[kzlDoel_]
 		GROUP BY p.hokId, p.doelId
 	 ) p1
 	 join tblPeriode p on (p1.hokId = p.hokId and p1.doelId = p.doelId and p1.dmeind = p.dmafsluit)
@@ -465,7 +483,7 @@ FROM tblHok ho
 	 	 join tblPeriode p on (v.periId = p.periId)
 	 	 join tblHok ho on (ho.hokId = p.hokId)
 	 	 join tblInkoop i on (v.inkId = i.inkId)
-	 	WHERE ho.lidId = ".mysqli_real_escape_string($db,$lidId)." and p.doelId = $_POST[kzlDoel_]
+	 	WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = $_POST[kzlDoel_]
 	 	GROUP BY v.periId, i.artId
 	 ) v on (p.periId = v.periId)
 
@@ -481,18 +499,18 @@ FROM tblHok ho
 	 	 join tblPeriode p on (v.periId = p.periId)
 	 	 join tblHok ho on (ho.hokId = p.hokId)
 	 	 join tblInkoop i on (v.inkId = i.inkId)
-	 	WHERE ho.lidId = ".mysqli_real_escape_string($db,$lidId)." and p.doelId = $_POST[kzlDoel_]
+	 	WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = $_POST[kzlDoel_]
 	 	GROUP BY v.periId, i.artId
 	 ) v on (p2.periId = v.periId)
-	WHERE ho.lidId = ".mysqli_real_escape_string($db,$lidId)." and p1.doelId = $_POST[kzlDoel_]
+	WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p1.doelId = $_POST[kzlDoel_]
 	GROUP BY p2.periId, p2.hokId, p1.doelId, p2.dmafsluit, v.nutat
  ) p  on (p.hokId = ho.hokId)
  left join tblVoeding v on (p.periId = v.periId)
  left join tblInkoop i on (i.inkId = v.inkId)
  
-WHERE ho.lidId = ".mysqli_real_escape_string($db,$lidId)." and ho.hokId = ".mysqli_real_escape_string($db,$hokId)." and p.doelId = $_POST[kzlDoel_] and ".mysqli_real_escape_string($db,$periode_metVoer)." 
+WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ho.hokId = '".mysqli_real_escape_string($db,$hokId)."' and p.doelId = $_POST[kzlDoel_] and ".db_null_filter('i.artId', $fldVoer)." 
  and date_format(p.dmeind,'%Y%m') = $jrmnd
- and ". mysqli_real_escape_string($db,$resHok)."
+ and '".mysqli_real_escape_string($db,$resHok)."'
  
 GROUP BY p.periId, ho.hokId, ho.hoknr, p.dmbegin, p.dmeind, p.nutat
 ORDER BY ho.hokId, p.dmeind
@@ -510,7 +528,7 @@ $periode_totalen = mysqli_query($db,$periode_totalen) or die (mysqli_error($db))
 
 
   while ($mld = mysqli_fetch_assoc($periode_totalen))
-		{  
+		{
 		$Id = $mld['periId'];
 		$hokId = $mld['hokId'];  
 		$hoknr = $mld['hoknr'];
@@ -533,8 +551,8 @@ $periode_totalen = mysqli_query($db,$periode_totalen) or die (mysqli_error($db))
 <tr ><td colspan = 25></td></tr>
 <?php
 
-if($_POST['kzlDoel_'] == 1) { $peendm = ' and (his_in.datum < spn.datum or (isnull(spn.schaapId) and isnull(prn.schaapId)) )'; }
-if($_POST['kzlDoel_'] == 2) { $peendm = ' and (his_in.datum >= spn.datum or (isnull(spn.schaapId) and prn.schaapId is not null))'; }
+if($_POST['kzlDoel_'] == 1) { $filterDoel = ' and (his_in.datum < spn.datum or (isnull(spn.schaapId) and isnull(prn.schaapId)) )'; }
+if($_POST['kzlDoel_'] == 2) { $filterDoel = ' and (his_in.datum >= spn.datum or (isnull(spn.schaapId) and prn.schaapId is not null))'; }
 
 
 
@@ -542,7 +560,7 @@ if($_POST['kzlDoel_'] == 2) { $peendm = ' and (his_in.datum >= spn.datum or (isn
 
 
 		
-<tr align = center style = "font-size:15px;">	
+<tr align = "center" style = "font-size:15px;">	
  <td><?php echo $hoknr; ?></td>
  <td width = 90 > <?php echo $begindm; ?>  </td>
  <td width = 80 > <?php echo $einddm; ?>  </td>
@@ -587,13 +605,13 @@ FROM tblBezet b
  	FROM tblHistorie h
  	 join tblStal st on (st.stalId = h.stalId)
  	 join tblBezet alleen_his_uit_bez on (alleen_his_uit_bez.hisId = h.hisId)
- 	WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and h.datum < '".mysqli_real_escape_string($db,$dmbegin)."'
+ 	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.datum < '".mysqli_real_escape_string($db,$dmbegin)."'
  	union 
  	SELECT h.hisId, h.stalId, h.datum
  	FROM tblHistorie h
  	 join tblStal st on (st.stalId = h.stalId)
  	 join tblBezet alleen_his_uit_bez on (alleen_his_uit_bez.hisId = h.hisId)
- 	WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and h.datum >= '".mysqli_real_escape_string($db,$dmbegin)."'
+ 	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.datum >= '".mysqli_real_escape_string($db,$dmbegin)."'
  ) his_in on (his_in.hisId = b.hisId)
 
  join tblStal st on (st.stalId = his_in.stalId)
@@ -604,39 +622,39 @@ FROM tblBezet b
 		FROM tblBezet b
 		 join tblHistorie h1 on (b.hisId = h1.hisId)
 		 join tblActie a1 on (a1.actId = h1.actId)
-		 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
+		 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 		 join tblActie a2 on (a2.actId = h2.actId)
 		 join tblStal st on (h1.stalId = st.stalId)
-		WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+		WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
 		GROUP BY b.bezId, st.schaapId, h1.hisId
 	 ) uit on (uit.hisv = b.hisId)
  left join (
  	SELECT h.hisId, h.stalId, '".mysqli_real_escape_string($db,$dmeind)."' datum
  	FROM tblHistorie h
  	 join tblStal st on (st.stalId = h.stalId)
- 	WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and h.datum > '".mysqli_real_escape_string($db,$dmeind)."'
+ 	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.datum > '".mysqli_real_escape_string($db,$dmeind)."'
  	union 
  	SELECT h.hisId, h.stalId, h.datum
  	FROM tblHistorie h
  	 join tblStal st on (st.stalId = h.stalId)
- 	WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and h.datum <= '".mysqli_real_escape_string($db,$dmeind)."'
+ 	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.datum <= '".mysqli_real_escape_string($db,$dmeind)."'
  ) his_uit on (his_uit.hisId = uit.hist)
 
  left join (
 	SELECT st.schaapId, h.datum
 	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 4 and st.lidId = ".mysqli_real_escape_string($db,$lidId)."
+	WHERE h.actId = 4 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
  ) spn on (spn.schaapId = st.schaapId)
   left join (
 	SELECT st.schaapId, h.datum
 	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 3 and st.lidId = ".mysqli_real_escape_string($db,$lidId)."
+	WHERE h.actId = 3 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
  ) prn on (prn.schaapId = st.schaapId)
  join tblPeriode p on (p.hokId = b.hokId and p.dmafsluit = '".mysqli_real_escape_string($db,$dmeind)."')
-WHERE b.hokId = ".mysqli_real_escape_string($db,$hokId) ."
- and his_in.datum < '".mysqli_real_escape_string($db,$dmeind)."' and (isnull(uit.bezId) or his_uit.datum > '".mysqli_real_escape_string($db,$dmbegin)."') and p.doelId = $_POST[kzlDoel_] ".mysqli_real_escape_string($db,$peendm)."
+WHERE b.hokId = '".mysqli_real_escape_string($db,$hokId)."'
+ and his_in.datum < '".mysqli_real_escape_string($db,$dmeind)."' and (isnull(uit.bezId) or his_uit.datum > '".mysqli_real_escape_string($db,$dmbegin)."') and p.doelId = $_POST[kzlDoel_] ".mysqli_real_escape_string($db,$filterDoel)."
 ORDER BY dmin, dmuit
 "; ?>
 
@@ -662,7 +680,7 @@ $schaap_gegevens = mysqli_query($db,$schaap_gegevens) or die (mysqli_error($db))
 
 
 		?> 
-<tr align = center style = "font-size:15px;"> 
+<tr align = "center" style = "font-size:15px;"> 
 <td></td>
 <td width = 80 >  <?php echo $indm; ?> </td>
 <td width = 80 >  <?php echo $uitdm; ?> </td>

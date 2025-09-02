@@ -1,28 +1,29 @@
 <?php 
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '9-1-2020'; /* schapencentrum.. vervangen door Oer van Ovis */
+$versie = '26-12-2024'; /* <TD width = 1160 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'>  */
 
-session_start(); ?>  
+ session_start(); ?>  
+<!DOCTYPE html>
 <html>
 <head>
 <title>Welkom</title>
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Welkompagina';
-$subtitel = '';
+$file = "";
 Include "header.php"; ?>
-	<TD width = 1160 height = 400 valign = "top">
-<?php 
-$file = "";  ?>
+
+		<TD valign = 'top'>
+
 <form action= "Welkom.php" method= "post" >
-<table border = 0 align = center>
+<table border = 0 align = "center">
 <tr>
 <td valign = 'top'>
 	<table border = 0>
-<tr style = "color : blue;"><td colspan = 7 align = center>
+<tr style = "color : blue;"><td colspan = 7 align = "center">
 <h3>Welkom in de demo-omgeving van het management programma<br/> OER van OVIS.<br/><br/>
 </td></tr>
 <tr>
@@ -59,15 +60,15 @@ Oer van Ovis
 
 
 
-<tr><td colspan = 7 align = center height = 20></td></tr>
+<tr><td colspan = 7 align = "center" height = 20></td></tr>
 </table>
 
 
 <td valign = top>
 	<table border = 0>
-	<tr><td height = 80 align = center valign = 'top' ><img src='deklijst.jpg' width='285' height='220'>
+	<tr><td height = 80 align = "center" valign = 'top' ><img src='deklijst.jpg' width='285' height='220'>
 	</td></tr>
-	<tr><td height = 400 valign = center><img src='ooikaart.jpg' width='325' height='250'>
+	<tr><td height = 400 valign = "center"><img src='ooikaart.jpg' width='325' height='250'>
 	</td></tr>
 	<tr><td>
 	</td></tr>
@@ -85,7 +86,6 @@ Oer van Ovis
 
 </table>
 </form>
-</center>
 
 </body>
 </html>

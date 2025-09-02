@@ -5,29 +5,23 @@ $versie = '1-8-2017'; /* save_artikel.php toegevoegd */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '7-4-2019'; /* Btw gewijzigd van 6 naar 9% */
 $versie = '17-1-2022'; /* Btw 0% en javascript verplicht() toegevoegd. SQL beveiligd met quotes */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
 
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Inkoop</title>
 </head>
 <body>
 
-<center>
 <?php
-If (isset ($_POST['knpSave_']) || isset($_POST['knpActive_']) ) {
-	Include "url.php";
-	//header("Location: ".$url."Voer.php");
-}
-
 $titel = 'Voer';
-$subtitel = '';
-Include "header.php"; ?>
-
-		<TD width = 960 height = 400 valign = "top">
-<?php
 $file = "Voer.php";
-Include "login.php"; 
+Include "login.php"; ?>
+
+			<TD valign = 'top'>
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech ==1) { ?>
 
 <script>
@@ -107,7 +101,7 @@ $insert_tblArtikel = "INSERT INTO tblArtikel SET soort = 'voer', naam = '".mysql
 </tr> 
 
 
- <tr style =  "font-size:12px;" align = center valign =  "bottom"> 
+ <tr style =  "font-size:12px;" align = "center" valign =  "bottom"> 
 		 <th width = 200 >Omschrijving *</th>
 		 <th></th> 
 		 <th>stand.<br>aantal</th> 
@@ -557,11 +551,11 @@ echo $voer;
 ?></td>
 <td width = 1></td>
 
-<td align = center >
+<td align = "center" >
 <!-- Standaard verbruiksaantal -->
 <?php echo $stdat; ?>		
 
-</td><td align = center >
+</td><td align = "center" >
 <?php // Verbruikseenheid
 echo $eenhd; ?>
 </td>	
@@ -569,7 +563,7 @@ echo $eenhd; ?>
 // EINDE Verbruikseenheid
 
 ?>		<td width = 1 ></td>
-<td align = center >
+<td align = "center" >
 <?php
 // Btw
 echo $btw;  ?>
@@ -582,11 +576,11 @@ echo $btw;  ?>
 <!-- EINDE Leverancier -->
 
 <!-- Rubriek -->
-<td align = center>
+<td align = "center">
 	<?php echo $rubriek; ?>
 </td>
 <!--EINDE Rubriek -->	
- <td align = center>Nee</td>
+ <td align = "center">Nee</td>
  <td>
   <input type = "submit" name="knpActive_" value = "Activeer"  style = "font-size:12px;">
  </td>
