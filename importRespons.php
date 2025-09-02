@@ -6,7 +6,9 @@
 26-9-2020 : in te lezen velden in impRespons aangepast ivm Omnummeren 
 4-11-2020 : een quute in een response melding veroorzaakt geen foute query stateent meer door str_replace("'", "''", $regel[$ii]); 
 12-12-2020 : Gearchiveerde bestanden RVO aangevuld met tijdstip van melden versus ontvangen response 
-1-4-2022 sql beveiligd met quotes -->
+01-04-2022 sql beveiligd met quotes 
+10-02-2025 : Bericht als definitieve melding terugkomt als controle melding aangepast
+23-08-2025 : ubn uit bestandsnaam $responsfile_rename en $requestfile_rename gehaald --> 
 
 <?php
 include "url.php";
@@ -105,7 +107,7 @@ copy($bright_map.$responsfile , $persoonlijke_map.$responsfile);
 // Verwijderen response bestand in Bright map  #echo '<br> verwijder Response '.$DelFile;
 unlink($DelFile)or die ("Kan bestand ".$responsfile." in de map BRIGHT niet verwijderen. " . mysqli_error($db));// verwijdert respons bestand op locatie BRIGHT
  
-$responsfile_rename = $ubn."_".$alias."_".$reqId."_response_".$response_filedate.".txt"; 
+$responsfile_rename = $alias."_".$reqId."_response_".$response_filedate.".txt"; 
 // Respons bestand in persoonlijke map hernoemen
 rename($persoonlijke_map.$responsfile , $persoonlijke_map.$responsfile_rename); // toevoegen van tijdstip responsebestand
 // Einde Respomse bestand in persoonlijke map hernoemen
@@ -139,7 +141,7 @@ copy($bright_map.$requestfile , $persoonlijke_map.$requestfile);
  #echo '<br> verwijder Request '.$DelFile;
 unlink($DelFile)or die ("Kan bestand ".$requestfile." in de map BRIGHT niet verwijderen. " . mysqli_error($db));// verwijdert request bestand op locatie BRIGHT
 
-$requestfile_rename = $ubn."_".$alias."_".$reqId."_request_".$request_filedate.".txt";
+$requestfile_rename = $alias."_".$reqId."_request_".$request_filedate.".txt";
 // Request bestand in persoonlijke map hernoemen
 rename($persoonlijke_map.$requestfile , $persoonlijke_map.$requestfile_rename); // toevoegen van tijdstip responsebestand
 // Einde Respomse bestand in persoonlijke map hernoemen
@@ -173,7 +175,8 @@ while ($resp = mysqli_fetch_assoc($zoek_status_response)) {	$def_resp = $resp['d
 
 // bericht als definitieve melding terugkomt als controle melding
 if($def_req == 'J' && $def_resp == 'N') { 
-	$fout = "Definitieve melding is teruggekomen als een controle melding !! Meld dit bij de beheerder. Heb je geen meldnummer dan is je melding niet gedaan."; }
+	$fout = "Definitieve melding is teruggekomen als een controle melding !! Heb je geen meldnummer dan is je melding niet gedaan. Op de pagina Overzicht meldingen kun je de melding weer openzetten om de melding nogmaals te versturen."; }
+// Oude melding : Meld dit bij de beheerder. Heb je geen meldnummer dan is je melding niet gedaan.
 // Einde bericht als definitieve melding terugkomt als controle melding
 
 // bericht als controle melding terugkomt als definitieve melding
