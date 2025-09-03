@@ -1,7 +1,8 @@
 <?php
 /* 21-10-2018 gemaakt 
 17-02-2021 : SQL beveiligd met quotes 
-25-12-2021 : Bestand hernoemd van save_dracht.php naar save_dekkingen.php */
+25-12-2021 : Bestand hernoemd van save_dracht.php naar save_dekkingen.php
+28-12-2023 : and h.skip = 0 toegevoegd bij tblHistorie */
 
 function getNaamFromKey($string) {
     $split_naam = explode('_', $string);
@@ -68,7 +69,7 @@ FROM tblSchaap s
  join tblVolwas v on (s.volwId = v.volwId)
  join tblStal st on (s.schaapId = st.schaapId)
  join tblHistorie h on (st.stalId = h.stalId)
-WHERE h.actId = 1 and v.mdrId = '".mysqli_real_escape_string($db,$ooiId)."'
+WHERE h.actId = 1 and v.mdrId = '".mysqli_real_escape_string($db,$ooiId)."' and h.skip = 0
 ") or die (mysqli_error($db));
 	while ( $zdm = mysqli_fetch_assoc($zoek_laatste_worpdatum)) { $dmWorp = $zdm['dmworp']; }
 

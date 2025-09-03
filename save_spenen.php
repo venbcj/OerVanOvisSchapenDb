@@ -4,7 +4,8 @@
 13-2-2017 : tblPeriode verwijderd en verblijf opgeslagen in tblBezet
 13-4-2019 : Volwassendieren kunnen ook uit verblijf worden gehaald door overplaasten of verlaten 
 26-4-2020 : $minDag als extra ontrole weggehaald. Controle zit ook al in HokSpenen.php
-11-4-2021 : extra controle of speendatum al bestaat met isset($actId). Bijv. als pagina meerdere malen wordt verstuurd */
+11-4-2021 : extra controle of speendatum al bestaat met isset($actId). Bijv. als pagina meerdere malen wordt verstuurd 
+29-12-2023 : and h.skip = 0 toegevoegd bij tblHistorie */
 
 include "url.php";
 
@@ -47,7 +48,7 @@ $zoek_generatie = mysqli_query($db,"
 SELECT hisId
 FROM tblStal st
  join tblHistorie h on (st.stalId = h.stalId)
-WHERE st.schaapId = '".mysqli_real_escape_string($db,$recId)."' and h.actId = 3
+WHERE st.schaapId = '".mysqli_real_escape_string($db,$recId)."' and h.actId = 3 and h.skip = 0
 ") or die(mysqli_error($db));
 
 	while ($ge = mysqli_fetch_assoc($zoek_generatie)) { $aanw = $ge['hisId']; }
@@ -58,7 +59,7 @@ $zoek_spenen = mysqli_query($db,"
 SELECT hisId
 FROM tblStal st
  join tblHistorie h on (st.stalId = h.stalId)
-WHERE st.schaapId = '".mysqli_real_escape_string($db,$recId)."' and h.actId = 4
+WHERE st.schaapId = '".mysqli_real_escape_string($db,$recId)."' and h.actId = 4 and h.skip = 0
 ") or die(mysqli_error($db));
 
 	while ($sp = mysqli_fetch_assoc($zoek_spenen)) { $speen = $sp['hisId']; }

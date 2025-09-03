@@ -1,7 +1,9 @@
 <?php
 /* 6-3-2015 : sql beveiligd 
 30-5-2020 : hidden velden ctrScan en ctrActief verwijderd en aangepast op Agrident reader
-02-08-2020 : veld sort toegevoegd */
+02-08-2020 : veld sort toegevoegd 
+20-04-2024 : Verblijven kunnen worden verwijderd zolang er geen relatie ligt met andere tabellen 
+10-03-2025 : Hidden veld chbActief_$Id in Hok.php verwijderd en hier lege checkbox gedefinieerd */
 
 function getNaamFromKey($string) {
     $split_naam = explode('_', $string);
@@ -17,66 +19,49 @@ foreach($_POST as $fldname => $fldvalue) {  //  Voor elke post die wordt doorlop
     
     $multip_array[getIdFromKey($fldname)][getNaamFromKey($fldname)] = $fldvalue;  // Opbouwen van een Multidimensional array met 2 indexen. [Id] [naamveld] en een waarde nl. de veldwaarde. 
 }
-foreach($multip_array as $recId => $id) {  
-unset($fldScan);
+foreach($multip_array as $recId => $id) {
 unset($fldSort);
+unset($fldActief);
+unset($fldDelete);
 
 #echo '<br>'.'$recId = '.$recId.'<br>';
 
-if(!empty($recId)) {
-
-
 foreach($id as $key => $value) {
-
-	if ($key == 'txtScan' && !empty($value)) { $fldScan = $value; }
 
 	if ($key == 'txtSort' && !empty($value)) { $fldSort = $value; }
 	
-	if ($key == 'chkActief' ) { $fldActief = $value; /*echo $key.'='.$value."<br/>";*/ }
+	if ($key == 'chbActief' ) { $fldActief = $value; /*echo $key.'='.$value."<br/>";*/ }
+
+	if ($key == 'chbDel' ) { $fldDelete = $value; /*echo $key.'='.$value."<br/>";*/ }
 
 								}
 
+if(!isset($fldActief)) { $fldActief = 0; }
+
+if($recId > 0) {
 
 $zoek_db_waardes = mysqli_query($db,"
-SELECT scan, sort, actief
+SELECT sort, actief
 FROM tblHok
 WHERE hokId = '".mysqli_real_escape_string($db,$recId)."'
 ") or die (mysqli_error($db));
 
-
 while($row = mysqli_fetch_assoc($zoek_db_waardes))
-	{ $dbScan = $row['scan'];
-	  $dbSort = $row['sort'];
-	$dbActief = $row['actief']; }
+	{ $Sort_db = $row['sort'];
+	$Actief_db = $row['actief']; }
 
-/*echo '$fldScan = '.$fldScan.'<br>';									
-echo '$dbScan = '.$dbScan.'<br>';	*/
 /*echo '$fldSort = '.$fldSort.'<br>';									
-echo '$dbSort = '.$dbSort.'<br>';	*/
+echo '$Sort_db = '.$Sort_db.'<br>';	*/
 
-if($reader == 'Biocontrol' && $fldScan <> $dbScan) { //$fldScan bestaat niet bij Agrident reader
-// Zoeken naar dubbel scancode
-$dublicate_scannr = mysqli_query($db,"
-SELECT hoknr, scan
-FROM tblHok
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and ". db_null_filter('scan', $fldScan) ." and scan is not NULL
-") or die(mysqli_error($db));
-	while ( $zoekscannr = mysqli_fetch_assoc($dublicate_scannr)) { $hoknum = $zoekscannr['hoknr']; $aantsc = $zoekscannr['scan']; }
-// EINDE Zoeken naar dubbel scancode
-if(isset($aantsc))	{ $fout = " Het scannr bestaat al bij verblijf ".$hoknum."."; }
-else {
-$updateScan = "UPDATE tblHok SET scan = ". db_null_input($fldScan) ." WHERE hokId = '".mysqli_real_escape_string($db,$recId)."' ";	
-		mysqli_query($db,$updateScan) or die (mysqli_error($db));
-	}
-		}
-
-if($reader == 'Agrident' && $fldSort <> $dbSort) {
+if($fldSort <> $Sort_db) {
 
 	$updateSort = "UPDATE tblHok SET sort = ". db_null_input($fldSort) ." WHERE hokId = '".mysqli_real_escape_string($db,$recId)."' ";
 	/*echo $updateSort; */ mysqli_query($db, $updateSort) or die (mysqli_error($db));
+
+	$goed = 'De wijziging is opgeslagen. Vergeet niet de reader bij te werken!';
 }
 
-if($fldActief <> $dbActief) {	
+if($fldActief <> $Actief_db) {	
 // Zoeken naar hoeveelheid schapen per hok
 $aanwezige_schapen = mysqli_query($db,"SELECT hoknr, nu aantal FROM (".$vw_HoknBeschikbaar.") hb WHERE hokId = ".mysqli_real_escape_string($db,$recId)." ") or die (mysqli_error($db));
 	while ($rij = mysqli_fetch_assoc($aanwezige_schapen))
@@ -97,11 +82,18 @@ $aanwezige_schapen = mysqli_query($db,"SELECT hoknr, nu aantal FROM (".$vw_HoknB
 else {
 	$updateHok = "UPDATE tblHok SET actief = '". mysqli_real_escape_string($db,$fldActief) ."' WHERE hokId = '".mysqli_real_escape_string($db,$recId)."' ";
 		mysqli_query($db,$updateHok) or die (mysqli_error($db));
+
+		$goed = 'De wijziging is opgeslagen. Vergeet niet de reader bij te werken!';
 	 }
 
 }
 
+if(isset($fldDelete)) {
 
+	$deleteHok = "DELETE FROM tblHok WHERE hokId = '".mysqli_real_escape_string($db,$recId)."' ";
+		mysqli_query($db,$deleteHok) or die (mysqli_error($db));
+
+}
 
 
 

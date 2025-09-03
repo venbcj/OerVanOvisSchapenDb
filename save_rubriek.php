@@ -1,5 +1,4 @@
 <!-- 23-10-2015 : gemaakt -->
-
 <?php
 /* toegepast in :
 	- Componenten.php */
@@ -18,55 +17,42 @@ foreach($_POST as $fldname => $fldvalue) {  //  Voor elke post die wordt doorlop
     
     $multip_array[getIdFromKey($fldname)][getNaamFromKey($fldname)] = $fldvalue;  // Opbouwen van een Multidimensional array met 2 indexen. [Id] [naamveld] en een waarde nl. de veldwaarde. 
 }
-foreach($multip_array as $id) {  
+foreach($multip_array as $recId => $id) {  
+unset($fldActief); 
+unset($fldSalber);
+
+#echo '<br>'.'$recId = '.$recId.'<br>';
+
+if(!empty($recId)) {
 
 
- foreach($id as $key => $value) { 
-
-
-if($key == 'txtId') {
 foreach($id as $key => $value) {
 
-	     if ($key == 'txtId' ) { $updId = $value; /*echo $key.'='.$value."<br/>";*/}    
-
-    if ($key == 'chkActief' && !empty($value)) {  $fldActief = $value; }
-     else if ($key == 'chkActief' && empty($value)) {  $fldActief = '0' ; }
+    if ($key == 'chkActief' ) {  $fldActief = $value; /*echo '$fldActief = '.$value.'<br>';*/ }
 	 
 	if ($key == 'chkSalber' /*&& !empty($value)*/) {  $fldSalber = $value; }
-     /*else if ($key == 'chkSalber' && empty($value)) {  $fldSalber = '0' ; }*/
-	 
+	else { $fldSalber = 0; }
 
 	
 }
-/*
-echo $updId."<br/>";
+
+/*echo $recId."<br/>";
 echo $fldActief."<br/>";*/
 
 $Update_Rubriek = "
-update tblRubriekuser
-set actief = '$fldActief', sal = ".$fldSalber."
-where rubuId = '$updId' ";
+UPDATE tblRubriekuser
+SET actief = '". mysqli_real_escape_string($db,$fldActief) ."', sal = '". mysqli_real_escape_string($db,$fldSalber) ."'
+WHERE rubuId = '".mysqli_real_escape_string($db,$recId)."' ";
+
 		mysqli_query($db,$Update_Rubriek) or die (mysqli_error($db));
+
+//echo $Update_Rubriek.'<br>';
 
 }
 
 
-
-
-								
-
+	
 						
-    
-
-
-
-
-
-
-					
-	
-	
-						}
 }
 ?>
 					

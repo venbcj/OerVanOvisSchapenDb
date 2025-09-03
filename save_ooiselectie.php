@@ -1,5 +1,6 @@
 <!-- 19-12-2020 : gekopieerd van save_ras.php 
 	31-1-2021 : Transponder uit database gehaald
+	29-12-2023 : and h.skip = 0 toegevoegd bij tblHistorie
  -->
 
 <?php
@@ -68,7 +69,7 @@ FROM tblSchaap s
 	WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
 	GROUP BY s.volwId
  ) w on (s.volwId = w.volwId)
-WHERE s.geslacht = 'ooi' and isnull(st.rel_best) and h.actId = 1 and h.datum >= '".mysqli_real_escape_string($db,$flddagvan)."' and h.datum <= '".mysqli_real_escape_string($db,$flddagtot)."' and w.aant = '".mysqli_real_escape_string($db,$recId)."'
+WHERE s.geslacht = 'ooi' and isnull(st.rel_best) and h.actId = 1 and h.skip = 0 and h.datum >= '".mysqli_real_escape_string($db,$flddagvan)."' and h.datum <= '".mysqli_real_escape_string($db,$flddagtot)."' and w.aant = '".mysqli_real_escape_string($db,$recId)."'
 ORDER BY levensnummer
 
 ") or die (mysqli_error($db));

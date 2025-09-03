@@ -1,4 +1,6 @@
-<!-- 23-10-2015 : gemaakt -->
+<!-- 23-10-2015 : gemaakt 
+29-12-2023 sql beveiligd 
+07-03-2025 Hidden velden in Componenten.php verwijderd en hier lege checkboxen gedefinieerd -->
 
 <?php
 /* toegepast in :
@@ -18,60 +20,44 @@ foreach($_POST as $fldname => $fldvalue) {  //  Voor elke post die wordt doorlop
     
     $multip_array[getIdFromKey($fldname)][getNaamFromKey($fldname)] = $fldvalue;  // Opbouwen van een Multidimensional array met 2 indexen. [Id] [naamveld] en een waarde nl. de veldwaarde. 
 }
-foreach($multip_array as $id) {  
 
+foreach($multip_array as $recId => $id) {  
+//echo '<br>'.'$recId = '.$recId.'<br>';
 
- foreach($id as $key => $value) { 
+unset($fldWaarde);
+unset($fldActief);
+unset($fldSalber);
 
-
-if($key == 'txtId') {
-foreach($id as $key => $value) {
-
-	     if ($key == 'txtId' ) { $updId = $value; /*echo $key.'='.$value."<br/>";*/}    
+foreach($id as $key => $value) {  
 
     if ($key == 'txtWaarde' && !empty($value)) {  $fldWaarde = $value; }    
-     else if ($key == 'txtWaarde' && empty($value)) {  $fldWaarde= 'NULL' ; }
+     /*else if ($key == 'txtWaarde' && empty($value)) {  $fldWaarde= 'NULL' ; }*/
     
-    if ($key == 'chkActief' && !empty($value)) {  $fldActief = $value; }
-     else if ($key == 'chkActief' && empty($value)) {  $fldActief = '0' ; }
+    if ($key == 'chkActief') {  $fldActief = $value; }
 	
-	if ($key == 'chkSalber' /*&& !empty($value)*/) {  $fldSalber = $value; }
-     /*else if ($key == 'chkSalber' && empty($value)) {  $fldSalber = '0' ; }*/
+	if ($key == 'chkSalber') {  $fldSalber = $value; }
 	 
 
 	
 }
+
+if(!isset($fldActief)) {  $fldActief = '0' ; }
+if(!isset($fldSalber)) {  $fldSalber = '0' ; }
 /*
-echo $updId."<br/>";
 echo $fldWaarde."<br/>";
 echo $fldActief."<br/>";*/
 
+if($recId > 0) {
+
 $Update_Element = "
-update tblElementuser
-set waarde = '$fldWaarde', actief = '$fldActief', sal = ".$fldSalber." 
-where elemuId = '$updId' ";
-		mysqli_query($db,$Update_Element) or die (mysqli_error($db));
-
-}
+UPDATE tblElementuser
+SET waarde = ".db_null_input($fldWaarde).", actief = '".mysqli_real_escape_string($db,$fldActief)."', sal = '".mysqli_real_escape_string($db,$fldSalber)."'
+WHERE elemuId = '".mysqli_real_escape_string($db,$recId)."' ";
+/*echo $Update_Element.'<br>';*/		mysqli_query($db,$Update_Element) or die (mysqli_error($db));
 
 
+} 
 
-
-								
-
-						
-    
-
-
-
-
-
-
-					
-	
-	
-						}
-}
-?>
+} ?>
 					
 	

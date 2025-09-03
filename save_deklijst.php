@@ -1,4 +1,6 @@
 <?php
+/*29-12-2023 : sql beveiligd 
+09-03-2025 : In Deklijst.php veld txtId_$Id verwijderd en hier $recId gedefinieerd*/
 
 
 function getNaamFromKey($string) {
@@ -15,40 +17,37 @@ foreach($_POST as $fldname => $fldvalue) {  //  Voor elke post die wordt doorlop
     
     $multip_array[getIdFromKey($fldname)][getNaamFromKey($fldname)] = $fldvalue;  // Opbouwen van een Multidimensional array met 2 indexen. [Id] [naamveld] en een waarde nl. de veldwaarde. 
 }
-foreach($multip_array as $id) {  
+foreach($multip_array as $recId => $id) {  
 
 
- foreach($id as $key => $value) { 
+unset($flddekat);
+unset($fldwerpat);
 
+foreach($id as $key => $value) {  
 
-if($key == 'txtId') {
-foreach($id as $key => $value) {
-
-	     if ($key == 'txtId' ) { $updId = $value; /*echo $key.'='.$value."<br/>";*/}    
-
-	if ($key == 'txtDekat' && !empty($value) ) { $flddekat = $value; } else if ($key == 'txtDekat' && empty($value)) {  $flddekat = 'NULL' ; }
-    if ($key == 'ctrDekat' ) { $ctrdekat = $value; }
-
-    if ($key == 'txtWerpat' && !empty($value) ) { $fldwerpat = $value; }  else if ($key == 'txtWerpat' && empty($value)) {  $fldwerpat = 'NULL' ; }
-    if ($key == 'ctrWerpat' ) { $ctrwerpat = $value; }
+	if ($key == 'txtDekat') 	{ $flddekat = $value; }
 }
-/*
-echo $updId."<br/>";
-echo $flddekat."<br/>";*/
+
+if($recId > 0) {
+
+$zoek_prognose_weken = mysqli_query($db,"
+SELECT dekat
+FROM tblDeklijst 
+WHERE dekId = '".mysqli_real_escape_string($db,$recId)."'
+") or die (mysqli_error($db));
+
+	while($zpw = mysqli_fetch_assoc($zoek_prognose_weken))
+	{	
+		$dekat_db = $zpw['dekat'];
+	}
+
 // Bijwerken dekaantal
-if(isset($flddekat) && $flddekat <> $ctrdekat) {
-	$update_Dekat = "UPDATE tblDeklijst SET dekat = ".$flddekat." WHERE dekId = '$updId' ";
+if($flddekat <> $dekat_db) {
+	$update_Dekat = "UPDATE tblDeklijst SET dekat = ".db_null_input($flddekat)." WHERE dekId = '".mysqli_real_escape_string($db,$recId)."' ";
 		mysqli_query($db,$update_Dekat) or die (mysqli_error($db));
  }
 
- 
-// Bijwerken dekaantal
-if(isset($fldwerpat) && $fldwerpat <> $ctrwerpat) {
-	$update_Werpat = "UPDATE tblDeklijst SET werpat = ".$fldwerpat." WHERE dekId = '$updId' ";
-		mysqli_query($db,$update_Werpat) or die (mysqli_error($db));
- }
- 
-}
+
 }
 }
 ?>

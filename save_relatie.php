@@ -1,6 +1,7 @@
 
 <?php
-/* toegepast in :
+/* 29-12-2023 : sql beveiligd met quotes en db_null_input() en veld actief bij Rendac niet wijigbaar gemaakt 
+ toegepast in :
 	- Relatie.php */
 	
 function getNaamFromKey($string) {
@@ -41,9 +42,9 @@ if(isset($updId)) {
 
 // Wijzigen ADRES
 $zoek_adres = mysqli_query($db,"
-	select a.adrId
-	from tblAdres a
-	where a.relId = ".mysqli_real_escape_string($db,$updId)."
+	SELECT a.adrId
+	FROM tblAdres a
+	WHERE a.relId = '".mysqli_real_escape_string($db,$updId)."'
 ") or die(mysqli_error($db));
 	while( $ad = mysqli_fetch_assoc($zoek_adres)) { $adrId = $ad['adrId']; }
 // Invoer adres als deze nog niet bestaat
@@ -51,8 +52,8 @@ if(!isset($adrId) && ( // als adres niet bestaat en plaats, nr, postcode of woon
   $fldStraat != '' || $fldNr != '' || $fldPc != '' || $fldPlaats != ''
   )) {
 $invoeradres = "
-	insert into tblAdres
-	set relId = ".mysqli_real_escape_string($db,$updId)."
+	INSERT INTO tblAdres
+	SET relId = '".mysqli_real_escape_string($db,$updId)."'
 ";
 		mysqli_query($db,$invoeradres) or die (mysqli_error($db));
 //echo $invoeradres;
@@ -60,19 +61,19 @@ $invoeradres = "
 // Einde Invoer adres als deze nog niet bestaat
 // Wijzigen straat
 $zoek_straat = mysqli_query($db,"
-	select a.straat
-	from tblPartij p
+	SELECT a.straat
+	FROM tblPartij p
 	 join tblRelatie r on (p.partId = r.partId)
 	 join tblAdres a on (a.relId = r.relId)
-	where r.relId = ".mysqli_real_escape_string($db,$updId)."
+	WHERE r.relId = '".mysqli_real_escape_string($db,$updId)."'
 ") or die(mysqli_error($db));
 	while( $st = mysqli_fetch_assoc($zoek_straat)) { $straat = $st['straat']; } if(!isset($straat)) { $straat = ''; }
 if(isset($fldStraat) && $fldStraat <> $straat) {
-  if($fldStraat == '') { $fldStraat = 'NULL'; } else { $fldStraat = "'".$fldStraat."'"; }
+  
 $wijzigstraat = "
-	update tblAdres
-	set straat = ".$fldStraat." 
-	where relId = ".mysqli_real_escape_string($db,$updId)."
+	UPDATE tblAdres
+	SET straat = ".db_null_input($fldStraat)." 
+	WHERE relId = '".mysqli_real_escape_string($db,$updId)."'
 ";
 		mysqli_query($db,$wijzigstraat) or die (mysqli_error($db));
 //echo $wijzigstraat;	
@@ -82,19 +83,19 @@ unset($straat); // Als een adres in een volgend record (partij) niet bestaat mag
 
 // Wijzigen huisnummer
 $zoek_nr = mysqli_query($db,"
-	select a.nr
-	from tblPartij p
+	SELECT a.nr
+	FROM tblPartij p
 	 join tblRelatie r on (p.partId = r.partId)
 	 join tblAdres a on (a.relId = r.relId)
-	where r.relId = ".mysqli_real_escape_string($db,$updId)."
+	WHERE r.relId = '".mysqli_real_escape_string($db,$updId)."'
 ") or die(mysqli_error($db));
 	while( $nr = mysqli_fetch_assoc($zoek_nr)) { $huisnr = $nr['nr']; } if(!isset($huisnr)) { $huisnr = ''; }
 if(isset($fldNr) && $fldNr <> $huisnr) {
-  if($fldNr == '') { $fldNr = 'NULL'; } else { $fldNr = "'".$fldNr."'"; }
+
 $wijzignummer = "
-	update tblAdres
-	set nr = ".$fldNr."
-	where relId = ".mysqli_real_escape_string($db,$updId)."
+	UPDATE tblAdres
+	SET nr = ".db_null_input($fldNr)."
+	WHERE relId = '".mysqli_real_escape_string($db,$updId)."'
 ";
 		mysqli_query($db,$wijzignummer) or die (mysqli_error($db));
 //echo $wijzignummer;
@@ -104,18 +105,18 @@ unset($huisnr);
 
 // Wijzigen postcode
 $zoek_postcode = mysqli_query($db,"
-	select a.pc
-	from tblRelatie r
+	SELECT a.pc
+	FROM tblRelatie r
 	 join tblAdres a on (a.relId = r.relId)
-	where r.relId = ".mysqli_real_escape_string($db,$updId)."
+	WHERE r.relId = '".mysqli_real_escape_string($db,$updId)."'
 ") or die(mysqli_error($db));
 	while( $pc = mysqli_fetch_assoc($zoek_postcode)) { $postcode = $pc['pc']; } if(!isset($postcode)) { $postcode = ''; }
 if(isset($fldPc) && $fldPc <> $postcode) {
-  if($fldPc == '') { $fldPc = 'NULL'; } else { $fldPc = "'".$fldPc."'"; }
+
 $wijzigpostcode = "
-	update tblAdres
-	set pc = ".$fldPc."
-	where relId = ".mysqli_real_escape_string($db,$updId)."
+	UPDATE tblAdres
+	SET pc = ".db_null_input($fldPc)."
+	WHERE relId = '".mysqli_real_escape_string($db,$updId)."'
 ";
 		mysqli_query($db,$wijzigpostcode) or die (mysqli_error($db));
 //echo $wijzigpostcode;
@@ -125,18 +126,18 @@ unset($postcode);
 
 // Wijzigen plaats
 $zoek_plaats = mysqli_query($db,"
-	select a.plaats
-	from tblRelatie r
+	SELECT a.plaats
+	FROM tblRelatie r
 	 join tblAdres a on (a.relId = r.relId)
-	where r.relId = ".mysqli_real_escape_string($db,$updId)."
+	WHERE r.relId = '".mysqli_real_escape_string($db,$updId)."'
 ") or die(mysqli_error($db));
 	while( $st = mysqli_fetch_assoc($zoek_plaats)) { $plaats = $st['plaats']; } if(!isset($plaats)) { $plaats = ''; }
 if(isset($fldPlaats) && $fldPlaats <> $plaats) {
-  if($fldPlaats == '') { $fldPlaats = 'NULL'; } else { $fldPlaats = "'".$fldPlaats."'"; }
+
 $wijzigplaats = "
-	update tblAdres
-	set plaats = ".$fldPlaats."
-	where relId = ".mysqli_real_escape_string($db,$updId)."
+	UPDATE tblAdres
+	SET plaats = ".db_null_input($fldPlaats)."
+	WHERE relId = '".mysqli_real_escape_string($db,$updId)."'
 ";
 		mysqli_query($db,$wijzigplaats) or die (mysqli_error($db));
 //echo $wijzigplaats;
@@ -147,24 +148,37 @@ unset($plaats);
 
 
 
-// Wijzigen actief
+// Wijzigen actief excl. Rendac
+$zoek_rendac = mysqli_query($db,"
+	SELECT relId
+	FROM tblRelatie r
+	 join tblPartij p on (r.partId = p.partId)
+	WHERE r.relId = '".mysqli_real_escape_string($db,$updId)."' and p.naam = 'Rendac'
+") or die(mysqli_error($db));
+	while( $zr = mysqli_fetch_assoc($zoek_rendac)) { $rel_ren = $zr['relId']; }
+
+
 $zoek_actief = mysqli_query($db,"
-	select actief
-	from tblRelatie
-	where relId = ".mysqli_real_escape_string($db,$updId)."
+	SELECT actief
+	FROM tblRelatie
+	WHERE relId = '".mysqli_real_escape_string($db,$updId)."'
 ") or die(mysqli_error($db));
 	while( $ac = mysqli_fetch_assoc($zoek_actief)) { $actief = $ac['actief']; } if(!isset($actief)) { $actief = ''; }
 	
-if(isset($fldActief) ) { $fldActief = 1; } else { $fldActief = 0; }
-  if($fldActief <> $actief) {
+
+
 $wijzigactief = "
-	update tblRelatie
-	set actief = ".$fldActief."
-	where relId = ".mysqli_real_escape_string($db,$updId)."
+	UPDATE tblRelatie
+	SET actief = ".db_null_input($fldActief)."
+	WHERE relId = '".mysqli_real_escape_string($db,$updId)."'
 ";
+
+if(!isset($rel_ren)) {
 		mysqli_query($db,$wijzigactief) or die (mysqli_error($db));
+	}
+	unset($rel_ren);
 //echo $wijzigactief;
- }
+
 unset($fldActief); // Als een volgend record (relatie) niet actief is mag $fldActief niet meer bestaan.
 // Einde Wijzigen actief
 
