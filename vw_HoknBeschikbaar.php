@@ -1,9 +1,12 @@
 <?php 
 /* 20-1-2017 : Query aangepast n.a.v. nieuwe tblDoel	22-1-2017 : tblBezetting gewijzigd naar tblBezet
 20-12-2019 tabelnaam gewijzigd van UIT naar uit tabelnaam
+11-03-2024 : Bij geneste query uit 
+join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
+join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 
 
 Toegepast in : 
-	x	MutSchaap.php
 	-	save_hok.php via Hok.php
 	-	
 */
@@ -27,7 +30,7 @@ left join (
 			from tblBezet b
 			 join tblHistorie h1 on (b.hisId = h1.hisId)
 			 join tblActie a1 on (a1.actId = h1.actId)
-			 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
+			 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 			 join tblActie a2 on (a2.actId = h2.actId)
 			 join tblStal st on (h1.stalId = st.stalId)
 			 join tblPeriode p on (p.periId = b.periId)

@@ -7,47 +7,47 @@
 29-11-2016 : quey aangepast om opnieuw aanvoer moederdier zichtbaar te krijgen. => actId = 3 aangpast en 'not exist' gekoppeld met stalId i.p.v. schaapId
 2-12-2016 : Opnieuw aangvoerde dieren ook in query opgenomen
 12-2-2017 : halsnummer toegevoegd
+23-11-2024 : sql beveiligd met quotes en subquery 'afgevoerde dieren' herzien. Dit was not exist in where clause. Uitgeschaarden worden niet gezien als afvoer.
+10-07-2025 : Where clause aangepast van afv.datum < date_add(curdate(), interval -2 month) naar afv.datum > date_add(curdate(), interval -2 month)
 
 Toegepast in : 
-	- 	Dracht.php
+	- 	Dekkingen.php
 	-	InsAanwas.php
 	-	InsGeboortes.php
 	-	InvSchaap.php
-	x	MutSchaap.php
-	x	UpdSchaap.php
-	x	WijzigSchaap.php
+	-	UpdSchaap.php
 */
 
 
 $vw_kzlOoien =
 ("
-select st.stalId, st.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr, count(lam.schaapId) lamrn, concat(st.kleur,' ',st.halsnr) halsnr
-from (
-	select max(stalId) stalId, schaapId
-	from tblStal
-	where lidId = ".mysqli_real_escape_string($db,$lidId)."
-	group by schaapId
+SELECT st.stalId, st.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr, count(lam.schaapId) lamrn, concat(st.kleur,' ',st.halsnr) halsnr
+FROM (
+	SELECT max(stalId) stalId, schaapId
+	FROM tblStal
+	WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
+	GROUP BY schaapId
  ) stm
  join tblStal st on (stm.stalId = st.stalId)
  join tblSchaap s on (st.schaapId = s.schaapId)
  join (
-	select schaapId
-	from tblStal st
+	SELECT schaapId
+	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 3 and h.skip = 0
+	WHERE h.actId = 3 and h.skip = 0
  ) ouder on (ouder.schaapId = st.schaapId)
  left join tblVolwas v on (s.schaapId = v.mdrId)
  left join tblSchaap lam on (lam.volwId = v.volwId)
-where s.geslacht = 'ooi'
-and not exists (
-	select stal.stalId, stal.schaapId
-	from tblStal stal
-	 join tblHistorie h on (h.stalId = stal.stalId)
-	 join tblActie  a on (a.actId = h.actId)
-	where stal.stalId = st.stalId and a.af = 1 and h.skip = 0 and lidId = ".mysqli_real_escape_string($db,$lidId)." and h.datum < date_add(curdate(), interval -2 month)
- )
+ left join (
+ 	SELECT st.stalId, datum
+ 	FROM tblStal st
+ 	 join tblHistorie h on (st.stalId = h.stalId)
+ 	 join tblActie a on (h.actId = a.actId)
+ 	WHERE a.af = 1 and h.actId <> 10 and lidId = '".mysqli_real_escape_string($db,$lidId)."'
+ 	) afv on (afv.stalId = st.stalId)
+WHERE s.geslacht = 'ooi' and (isnull(afv.stalId) or afv.datum > date_add(curdate(), interval -2 month) )
 
-group by st.stalId, st.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk)
-order by right(s.levensnummer,$Karwerk), count(lam.schaapId)
+GROUP BY st.stalId, st.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk)
+ORDER BY right(s.levensnummer,$Karwerk), count(lam.schaapId)
 ")
 ?>
