@@ -1,6 +1,7 @@
 <!-- 17-11-2016; Aangemaakt als kopie van post_readerAanv.php 
 10-11-2018 invoer nieuwe schapen verwijderd (incl. ras dus) i.v.m. alleen ooien en rammen van stallijst 
-7-5-2021 : isset($verwerkt) toegevoegd om dubbele invoer te voorkomen. Verschil tussen kiezen of verwijderen herschreven. SQL beveiligd met quotes. -->
+7-5-2021 : isset($verwerkt) toegevoegd om dubbele invoer te voorkomen. Verschil tussen kiezen of verwijderen herschreven. SQL beveiligd met quotes. 
+31-12-2023 : and skip = 0 toegevoegd aan $zoek_laatste_koppel_zonder_worp_obv_alleen_moederdier -->
 
 <?php
 function getNameFromKey($key) {
@@ -77,7 +78,7 @@ FROM tblVolwas v
     FROM tblSchaap s
      join tblStal st on (s.schaapId = st.schaapId)
      join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3
+    WHERE h.actId = 3 and skip = 0
  ) ha on (k.schaapId = ha.schaapId)
 WHERE isnull(s.volwId) and v.mdrId = '".mysqli_real_escape_string($db,$fldOoi)."' and isnull(ha.schaapId)
 ") or die (mysqli_error($db));

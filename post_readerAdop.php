@@ -1,7 +1,8 @@
 <!-- 23-5-2020 : Gekopieerd van post_readerOvp.php
 13-7-2020 : impVerplaatsing gewijzigd in impAgrident 
 11-4-2021 : Adoptie losgekoppeld van verblijf 
-5-5-2021 : isset($verwerkt) toegevoegd om dubbele invoer te voorkomen. Verschil tussen kiezen of verwijderen herschreven -->
+5-5-2021 : isset($verwerkt) toegevoegd om dubbele invoer te voorkomen. Verschil tussen kiezen of verwijderen herschreven 
+31-12-2023 :  and h.skip = 0 toegevoegd aan $zoek_laatste_hisId -->
 
 <?php
 include "url.php";
@@ -87,7 +88,7 @@ $zoek_laatste_hisId = mysqli_query($db,"
 SELECT max(hisId) hisId
 FROM tblHistorie h
  join tblActie a on (a.actId = h.actId)
-WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."' and (a.aan = 1 or a.uit = 1)
+WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."' and (a.aan = 1 or a.uit = 1) and h.skip = 0
 ") or die (mysqli_error($db));
 	while ($zlh = mysqli_fetch_assoc($zoek_laatste_hisId)) { $last_his = $zlh['hisId']; }
 

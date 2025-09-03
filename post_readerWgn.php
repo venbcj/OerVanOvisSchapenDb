@@ -31,7 +31,7 @@ foreach($array as $recId => $id) {
   	if ($key == 'chbkies') { $fldKies = $value; }
   	if ($key == 'chbDel') { $fldDel = $value; }
 
-	if ($key == 'txtWeegdag' && !empty($value)) { $dag = date_create($value); $flddag =  date_format($dag, 'Y-m-d');  }
+	if ($key == 'txtWeegdag' && !empty($value)) { $dag = date_create($value); $fldday =  date_format($dag, 'Y-m-d');  }
 	
 	if ($key == 'txtKg' && !empty($value)) { $fldkg = str_replace(',', '.', $value); }
 		
@@ -59,36 +59,25 @@ while($verw = mysqli_fetch_array($zoek_readerRegel_verwerkt))
 if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt)) { // isset($verwerkt) is een extra controle om dubbele invoer te voorkomen
 
 // CONTROLE op alle verplichten velden
-if ( isset($flddag) && isset($fldkg) )
+if ( isset($fldday) && isset($fldkg) )
 {
 $zoek_levensnummer = mysqli_query($db,"
-SELECT levnr_weeg
-FROM impReader
-WHERE readId = '".mysqli_real_escape_string($db,$recId)."' 
+SELECT levensnummer
+FROM impAgrident
+WHERE Id = '".mysqli_real_escape_string($db,$recId)."' 
 ") or die (mysqli_error($db));
-	while ($lvn = mysqli_fetch_assoc($zoek_levensnummer)) { $levnr = $lvn['levnr_weeg']; }
+	while ($lvn = mysqli_fetch_assoc($zoek_levensnummer)) { $levnr = $lvn['levensnummer']; }
 	
-$zoek_schaapId = mysqli_query($db,"
-SELECT schaapId
-FROM tblSchaap
-WHERE levensnummer = '".mysqli_real_escape_string($db,$levnr)."'
-") or die (mysqli_error($db));
-	while ($sId = mysqli_fetch_assoc($zoek_schaapId)) { $schaapId = $sId['schaapId']; }
+$schaapId = zoek_schaapId_in_database($levnr);
 	
-$zoek_stalId = mysqli_query($db,"
-SELECT stalId
-FROM tblStal
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and isnull(rel_best)
-") or die (mysqli_error($db));
-	while ($stId = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $stId['stalId']; }
+$stalId = zoek_stalId_in_stallijst($lidId, $schaapId);
 
+insert_tblHistorie_kg($stalId,$fldday,9,$fldkg);
 
-	$insert_tblHistorie = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$flddag)."', kg = '".mysqli_real_escape_string($db,$fldkg)."', actId = 9 ";
-/*echo $insert_tblHistorie.'<br>';*/		mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
 unset ($fldkg);
 
 	
-	$updateReader	=	"UPDATE impReader SET verwerkt = 1 WHERE readId = '".mysqli_real_escape_string($db,$recId)."' ";
+	$updateReader	=	"UPDATE impAgrident SET verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' ";
 /*echo '$updateReader = '.$updateReader.'<br>';*/		mysqli_query($db,$updateReader) or die (mysqli_error($db));	
 
 }
@@ -100,7 +89,7 @@ unset ($fldkg);
 	
 if ($fldKies == 0 && $fldDel == 1) {	
 	
-    $updateReader = "UPDATE impReader SET verwerkt = 1 WHERE readId = '".mysqli_real_escape_string($db,$recId)."' " ;
+    $updateReader = "UPDATE impAgrident SET verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' " ;
 	mysqli_query($db,$updateReader) or die (mysqli_error($db));
 	}
 	
