@@ -13,6 +13,10 @@ $db_d = 'k36098_bvdvschapendbs';
 $db_t = 'k36098_bvdvSchapenDbT';
 
 $host = "localhost"; $user = "root"; $pw = "usbw"; $dtb = "SchapenDb1";
+if (php_uname('n') == 'basq') {
+    $user = 'oer';
+    $pw = 'schaapn';
+}
 
 
 ?>

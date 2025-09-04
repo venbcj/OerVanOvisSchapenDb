@@ -1,0 +1,5 @@
+#!/bin/bash
+for i in db/migrations/*sql; do
+    echo $i
+    cat $i | my SchapenDb1 && mv $i db/migrations/done/
+done

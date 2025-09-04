@@ -1,3 +1,4 @@
+==== BASE ====
 
 <link rel="stylesheet" type="text/css" href="style.css">
 
@@ -51,6 +52,9 @@ echo '$actuele_versie = '.$actuele_versie.'<br>';*/
 
 $host = $_SERVER['HTTP_HOST'];
 if($host == 'localhost:8080' )  	{ $tagid = 'balkOntw'; } 
+if (php_uname('n') == 'basq') {
+    $tagid = 'balkOntw';
+}
 if($host == 'test.oervanovis.nl') 	{ $tagid = 'balkTest'; }
 if($host == 'demo.oervanovis.nl')  	{ $tagid = 'balkDemo'; }
 if($host == 'ovis.oervanovis.nl') 	{ $tagid = 'balkProd'; }  ?>
@@ -74,3 +78,4 @@ if($host == 'ovis.oervanovis.nl') 	{ $tagid = 'balkProd'; }  ?>
 <tr height = 90> </tr>
 <TR>
 	
+==== BASE ====

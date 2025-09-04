@@ -1,3 +1,4 @@
+==== BASE ====
 <?php /* 8-8-2014 Aantal karakters werknr variabel gemaakt 
 11-8-2014 : veld type gewijzigd in fase 
 20-2-2015 : login toegevoegd 
@@ -498,16 +499,16 @@ while($row = mysqli_fetch_assoc($result))
 	$mdr = $row['werknr_ooi'];
 	$vdr = $row['werknr_ram'];
 	$status = $row['status'];
-	$opstal = $row{'af'};
-	$dmspn = $row{'dmspn'};
-	$spnkg = $row{'spnkg'};
-	$dmafl = $row{'dmafl'};
-	$aflkg = $row{'aflkg'};
-	$dmgeb = $row{'dmgeb'};
-	$gebkg = $row{'gebkg'};
-	$dmaanv = $row{'dmaanv'};
-	$aanvdm = $row{'aanvdm'};
-	$aankkg = $row{'aankkg'};
+	$opstal = $row['af'];
+	$dmspn = $row['dmspn'];
+	$spnkg = $row['spnkg'];
+	$dmafl = $row['dmafl'];
+	$aflkg = $row['aflkg'];
+	$dmgeb = $row['dmgeb'];
+	$gebkg = $row['gebkg'];
+	$dmaanv = $row['dmaanv'];
+	$aanvdm = $row['aanvdm'];
+	$aankkg = $row['aankkg'];
 	if(isset($dmgeb)) { $dmstart = $dmgeb; } else { $dmstart = $dmaanv;}
 	if(isset($gebkg)) { $startkg = $gebkg; } else { $startkg = $aankkg;}
 
@@ -1264,3 +1265,4 @@ Include "menu1.php"; }
 
 </body>
 </html>
+==== BASE ====
