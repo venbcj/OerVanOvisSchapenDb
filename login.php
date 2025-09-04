@@ -20,7 +20,7 @@
 
 include "url.php";
 Include "connect_db.php";  //inclusief include "passw.php" => "url.php"
-include "basisfuncties.php";
+require_once("basisfuncties.php");
 
 /*if($_SERVER["REQUEST_URI"] == '/Stallijst.php') { $Header = "header_search.php"; }
 	else {*/ $Header = "header.php"; #}

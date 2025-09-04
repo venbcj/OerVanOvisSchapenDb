@@ -1,0 +1,5 @@
+#!/bin/bash
+FILE=db/migrations/create-tbl$1.sql
+TABLE=tbl${1^}
+printf "drop table if exists $TABLE;\ncreate table $TABLE(\n);" > $FILE
+vi $FILE

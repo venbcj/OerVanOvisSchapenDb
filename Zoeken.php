@@ -498,16 +498,16 @@ while($row = mysqli_fetch_assoc($result))
 	$mdr = $row['werknr_ooi'];
 	$vdr = $row['werknr_ram'];
 	$status = $row['status'];
-	$opstal = $row{'af'};
-	$dmspn = $row{'dmspn'};
-	$spnkg = $row{'spnkg'};
-	$dmafl = $row{'dmafl'};
-	$aflkg = $row{'aflkg'};
-	$dmgeb = $row{'dmgeb'};
-	$gebkg = $row{'gebkg'};
-	$dmaanv = $row{'dmaanv'};
-	$aanvdm = $row{'aanvdm'};
-	$aankkg = $row{'aankkg'};
+	$opstal = $row['af'];
+	$dmspn = $row['dmspn'];
+	$spnkg = $row['spnkg'];
+	$dmafl = $row['dmafl'];
+	$aflkg = $row['aflkg'];
+	$dmgeb = $row['dmgeb'];
+	$gebkg = $row['gebkg'];
+	$dmaanv = $row['dmaanv'];
+	$aanvdm = $row['aanvdm'];
+	$aankkg = $row['aankkg'];
 	if(isset($dmgeb)) { $dmstart = $dmgeb; } else { $dmstart = $dmaanv;}
 	if(isset($gebkg)) { $startkg = $gebkg; } else { $startkg = $aankkg;}
 

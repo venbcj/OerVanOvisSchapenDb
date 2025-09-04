@@ -1,0 +1,11 @@
+#!/bin/bash
+FILE=$1
+if [ ! -f "db/migrations/done/$FILE" ]; then
+    FILE=create-tbl${FILE}.sql
+    if [ ! -f "db/migrations/done/$FILE" ]; then
+        echo "$FILE is not a done migration"
+        exit
+    fi
+fi
+mv db/migrations/done/$FILE db/migrations/
+vi db/migrations/$FILE

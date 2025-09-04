@@ -19,6 +19,9 @@
 #$url = "http://localhost:8080/Schapendb/";
 if ($_SERVER['HTTP_HOST'] == 'localhost:8080') {	$url = 'http://'.$_SERVER['HTTP_HOST'].'/Schapendb/'; } else {	$url = 'https://'.$_SERVER['HTTP_HOST'].'/';	}
 #$url = "http://testapp.masterwebsite.nl/";
+if (php_uname('n') == 'basq') {
+    $url = 'http://oer-dev/';
+}
 
 // Include bestanden
  $curr_url = 'https://'.$_SERVER['HTTP_HOST'].strtok($_SERVER["REQUEST_URI"],'?'); // strtok zorgt ervoor dat alles na de paginanaam wordt verwijderd. bron : http://stackoverflow.com/questions/6969645/how-to-remove-the-querystring-and-get-only-the-url

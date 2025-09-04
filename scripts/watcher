@@ -1,0 +1,16 @@
+#!/bin/bash
+
+RUNNER='scripts/suite'
+
+DIRS='./'
+
+watch() {
+    clear
+    $@
+    while inotifywait -q --exclude "\.swp|log*|vendor" -e modify,close_write --recursive $DIRS; do
+        clear
+        $@
+    done
+}
+
+watch $RUNNER $*
