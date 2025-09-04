@@ -47,7 +47,7 @@ $(document).ready(function(){
 
 	<div id = "rechts_uitlijnen" class = 'header_breed'><section> </section><img src='OER_van_OVIS.jpg' /></div>
 
-<ul class="header_smal" id =  >
+<ul class="header_smal" id = balkCoach >
 		
 	<li id = "rechts_uitlijnen"><a href='index.php' style = 'color : black'>Inloggen</a></li>
 
@@ -119,7 +119,7 @@ $(document).ready(function(){
 
 	<div id = "rechts_uitlijnen" class = 'header_breed'><section> </section><img src='OER_van_OVIS.jpg' /></div>
 
-<ul class="header_smal" id =  >
+<ul class="header_smal" id = balkCoach >
 		
 	<li id = "rechts_uitlijnen"><a href='http://oer-dev/index.php' style = 'color : black'>Inloggen</a></li>
 
@@ -142,6 +142,25 @@ $(document).ready(function(){
  </td>
 </tr>
 
+
+<tr align = center>
+ <td colspan = 3>
+	<input type="text" name="txtUser" size="20"><br>
+ </td>
+</tr>
+<tr align = center>
+ <td colspan = 3>
+	<input type="password" name="txtPassw" size="20"><br>
+ </td>
+</tr>
+<tr align = center>
+<td width = 300></td>
+ <td>
+	<input type="submit" value="Inloggen" name="knpLogin">
+ </td>
+ <td width = 300>
+ </td>
+</tr>
 
 </table>
  </form>

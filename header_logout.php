@@ -63,7 +63,7 @@ if($host == 'ovis.oervanovis.nl') 	{ $tagid = 'balkProd'; }  ?>
 
 <ul class="header_smal" id = <?php echo $tagid; ?> >
 		
-	<li id = "rechts_uitlijnen"><a href='<?php echo $url;?>index.php' style = 'color : black'>Inloggen</a></li>
+	<li id = "rechts_uitlijnen"><a href='<?php echo $url ?? '';?>index.php' style = 'color : black'>Inloggen</a></li>
 
 
 

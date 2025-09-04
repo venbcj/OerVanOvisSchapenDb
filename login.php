@@ -27,6 +27,15 @@ require_once("basisfuncties.php");
 
   //$host = "localhost"; $user = "bvdvschaapovis"; $pw = "MSenWL44"; $dtb = $db_p;
 if(($url == 'https://test.oervanovis.nl/' || $url == 'https://demo.oervanovis.nl/') && $dtb == 'k36098_bvdvSchapenDb') { ?> <h3 style="color : red ;"> PAS OP : Er is connectie met de productiedatabase ! </h3> <?php }
+if (php_uname('n') == 'basq' && isset($_GET['ingelogd'])) {
+    // met deze hack kan ik op mijn computer het ingelogd-zijn simuleren vanuit een unit test --BCB
+    $_SESSION['U1'] = 1;
+    $_SESSION['W1'] = 1;
+    $_SESSION['I1'] = 1;
+    $_SESSION['PA'] = 1;
+    $_SESSION['RPP'] = 30;
+    $_SESSION['ID'] = 1;
+}
 
  // *** ALS NIET IS INGELOGD ***
  if (!isset($_SESSION["U1"]) || !isset($_SESSION["W1"]) || !isset($_SESSION["I1"]) ) {

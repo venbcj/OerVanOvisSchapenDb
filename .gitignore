@@ -3,3 +3,4 @@
 coverage-html/*
 db
 tags
+*.actual

@@ -1,18 +1,47 @@
 <?php
 
+use Tests\Stringdiff;
+
 use PHPUnit\Framework\TestCase;
 
 class EndToEndCase extends TestCase {
 
     protected string $output = '';
 
-    private function simulateWebRequest($path) {
+    protected static function runfixture($name) {
+        if (file_exists($file = getcwd()."/tests/fixtures/$name.sql")) {
+            system("cat $file | scripts/console");
+        } else {
+            throw new Exception("fixture $name not found as $file.");
+        }
+    }
+
+    private function simulateGetRequest($path, $data) {
         $_SERVER['HTTP_HOST'] = 'basq';
         $_SERVER['REQUEST_URI'] = $path;
+        foreach ($data as $key => $value) {
+            $_GET[$key] = $value;
+        }
+    }
+
+    private function simulatePostRequest($path, $data) {
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        foreach ($data as $key => $value) {
+            $_POST[$key] = $value;
+        }
+    }
+
+    protected function get($path, $data = []) {
+        $this->simulateGetRequest($path, $data);
+        $this->visit($path);
+    }
+
+    protected function post($path, $data = []) {
+        $this->simulatePostRequest($path, $data);
+        $this->visit($path);
     }
 
     protected function visit($path) {
-        $this->simulateWebRequest($path);
         ob_start();
         include getcwd().$path;
         $this->output = ob_get_clean();
@@ -26,8 +55,10 @@ class EndToEndCase extends TestCase {
             touch($expected_file);
         }
         file_put_contents($actual_file, $this->output);
-        if (file_get_contents($expected_file) != $this->output) {
-            $this->fail("$actual_file is not same as $expected_file");
+        $expected = file_get_contents($expected_file);
+        if ($expected != $this->output) {
+            $diff = StringDiff::create(5, $expected, $this->output);
+            $this->fail($diff->diff());
         }
         $this->assertTrue(true); // anders maakt phpunit er een risky test van
     }
