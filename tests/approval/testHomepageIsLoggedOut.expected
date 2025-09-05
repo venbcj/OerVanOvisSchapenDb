@@ -78,7 +78,7 @@ $(document).ready(function(){
 	<br>
 
 
-  
+ 
 
 
 <link rel="stylesheet" type="text/css" href="style.css">
@@ -111,133 +111,53 @@ $(document).ready(function(){
 </script>
 
  
-<a href="javascript;" id="scroll" title="Scroll to Top" style="display: none;">Top<span></span></a> 
+<a href="javascript:void(0);" id="scroll" title="Scroll to Top" style="display: none;">Top<span></span></a> 
 
-<!-- Einde BackToTop button javascript	-->
+<!-- Einde BackToTop button javascript  -->
 
 
-	<div id = "rechts_uitlijnen" class = 'header_breed'><section style = "text-align : center"; > &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp </section><img src='OER_van_OVIS.jpg' /></div>
+
+	<div id = "rechts_uitlijnen" class = 'header_breed'><section> </section><img src='OER_van_OVIS.jpg' /></div>
 
 <ul class="header_smal" id = balkCoach >
-	<li class="dropdown"><a href= 'http://oer-dev/Home.php' style = 'color : black'>Home</a></li>
-	<li class="dropdown"><span>Registratie</span>
-		<div class="dropdown-content">
-			<a href='http://oer-dev/InvSchaap.php' style = 'color : black'>Aanvoer schaap</a></br></br>
-			<a href='http://oer-dev/Med_registratie.php' style = "color : black ;" >Medicijn toediening</a></br></br>
-			<a href='http://oer-dev/Dekkingen.php' style = "color : black ;" >Dekkingen / Dracht</a></br></br>
-		</div>
-	</li>
-
-	<li class="dropdown"><span>Reader</span>
-	  <div class="dropdown-content-smal">
-	  	<a href='http://oer-dev/InlezenReader.php' style = 'color : black'>Inlezen reader</a></br></br>
-	  	<a href='http://oer-dev/Alerts.php' style = 'color : black'>Raederalerts</a></br></br>
-	  </div>
-	</li>
-
-	<li class="dropdown"><span style = "color : black ;">RVO</span>
-	  <div class="dropdown-content-smal">
-	  	<a href='http://oer-dev/Melden.php' style = "color : black ;">Melden RVO</a></br></br>
-	  	<a href='http://oer-dev/Meldingen.php' style = 'color : black'> Meldingen</a></br></br>
-	  </div>
-	</li>
-
-	<li class="dropdown"><span>RAADPLEGEN</span>
-		<div class="dropdown-content">
-		<a href='http://oer-dev/Bezet.php' style = 'color : black'>Verblijven in gebruik</a></br></br>
-		<a href='http://oer-dev/Zoeken.php' style = 'color : black'>Schaap opzoeken</a><br/><br/>
-		<a href='http://oer-dev/Stallijst.php' style = 'color : black'>Stallijst</a></br></br>
-	  	<a href='http://oer-dev/ZoekAfldm.php' style = 'color : black'>Afleverlijst</a></br></br>
-		</div>
-	</li>
-
-	<li class="dropdown"><span>Rapporten</span>
-	  <div class="dropdown-content-breed">
-	  	<a href='http://oer-dev/Mndoverz_fok.php' style = "color : black ;">Maandoverz. fokkerij</a></br></br>
-	  	<a href='http://oer-dev/Mndoverz_vlees.php' style = "color : black ;">Maandoverz. vleeslam.</a></br></br>
-	  	<a href='http://oer-dev/Med_rapportage.php' style = "color : black ;">Medicijn rapportage</a></br></br>
-	  	<a href='http://oer-dev/Voer_rapportage.php' style = "color : black ;">Voer rapportage</a></br></br>
-	  	<a href='http://oer-dev/MaandTotalen.php' style = "color : black ;">Maandtotalen</a></br></br>
-	  	<a href='http://oer-dev/GroeiresultaatSchaap.php' style = "color : black ;">Groeiresultaten per schaap</a></br></br>
-	  	<a href='http://oer-dev/GroeiresultaatWeging.php' style = "color : black ;">Groeiresultaten per weging</a></br></br>
-	  	<a href='http://oer-dev/ResultHok.php' style = "color : black ;">Periode resultaten</a></br></br>
-
-
-	  	
-	  	<ul class="nested-dropdown">
-	  	<li class="dropdown2"><span>Ooi rapporten</span></br></br>
-	  		<div class="dropdown-content2">
-  			 <a href='http://oer-dev/Ooikaart.php' style = "color : black ;">Ooikaart detail</a></br></br>
-  			 <a href='http://oer-dev/OoikaartAll.php' style = "color : black ;">Ooikaart moeders</a></br></br>
-  			 <a href='http://oer-dev/Meerlingen5.php' style = "color : black ;">Meerling in periode</a></br></br>
-  			 <a href='http://oer-dev/Meerlingen.php' style = "color : black ;">Meerling per geslacht</a></br></br>
-  			 <a href='http://oer-dev/Meerlingen2.php' style = "color : black ;">Meerlingen per jaar</a></br></br>
-  			 <a href='http://oer-dev/Meerlingen3.php' style = "color : black ;">Meerling oplopend</a></br></br>
-  			 <a href='http://oer-dev/Meerlingen4.php' style = "color : black ;">Meerlingen aanwezig</a></br></br>
-	  		</div>
-	  	</li>
-	  	</ul>
-
-	  </div>
-	</li>
-	
-	<li class="dropdown"><span>Voorraadbeheer</span>
-	  <div class="dropdown-content">
-	  	<a href='http://oer-dev/Medicijnen.php' style = "color : black ;">Medicijnenbestand</a></br></br>
-	  	<a href='http://oer-dev/Voer.php' style = "color : black ;">Voerbestand</a></br></br>
-	  	<a href='http://oer-dev/Inkopen.php' style = "color : black ;">Inkopen</a></br></br>
-	  	<a href='http://oer-dev/Voorraad.php' style = "color : black ;">Voorraad</a></br></br>
-	  </div>
-	</li>
-	
-	<li class="dropdown"><span>Financieel</span>
-	  <div class="dropdown-content">
-	  	<a href='http://oer-dev/Kostenopgaaf.php' style = "color : black ;">Inboeken</a></br></br>
-	  	<a href='http://oer-dev/Deklijst.php' style = "color : black ;">Deklijst</a></br></br>
-	  	<a href='http://oer-dev/Liquiditeit.php' style = "color : black ;">Liquiditeit</a></br></br>
-	  	<a href='http://oer-dev/Saldoberekening.php' style = "color : black ;">Saldoberekening</a></br></br>
-	  	<a href='http://oer-dev/Rubrieken.php' style = "color : black ;">Rubrieken</a></br></br>
-	  	<a href='http://oer-dev/Componenten.php' style = "color : black ;">Componenten</a></br></br>
-	  	<a href='http://oer-dev/Kostenoverzicht.php' style = "color : black ;">Betaalde posten</a></br></br>
-	  </div>
-	</li>
-
-
-<li class="dropdown"><span style = 'color : black'>Beheer</span>
-	  <div class="dropdown-content">
-		<a href='http://oer-dev/Hok.php' style = "color : black ;">
-Verblijven</a><br/><br/>
-	  	<a href='http://oer-dev/Ras.php' style = 'color : black'>Rassen</a><br/><br/>
-		<a href='http://oer-dev/Uitval.php' style = 'color : black'>Redenen en momenten</a></br></br>
-		<a href='http://oer-dev/Combireden.php' style = 'color : black'>Combi redenen</a></br></br>
-		<a href='http://oer-dev/Vader.php' style = 'color : black'>Dekrammen</a><br/><br/>
-		<a href='http://oer-dev/Eenheden.php' style = "color : black ;">
-Eenheden</a></br></br>
-		<a href='http://oer-dev/Relaties.php' style = 'color : black'>Relaties</a></br></br>
-
-		<a href='http://oer-dev/Readerversies.php' style = "color : red ;">Readerversies</a></br></br>
-		<a href='http://oer-dev/Readerbestanden.php' style = 'color : black'>Readerbestanden</a></br></br>
-		<a href='http://oer-dev/Gebruikers.php' style = 'color : black'>
-Gebruikers</a></br></br> 		<a href='http://oer-dev/Systeem.php' style = 'color : black'>Instellingen</a></br></br>
-	  </div>
-	</li>
-
-	<li id = "rechts_uitlijnen"><a href='http://oer-dev/index.php' style = 'color : black'>Uitloggen</a></li>
+		
+	<li id = "rechts_uitlijnen"><a href='http://oer-dev/index.php' style = 'color : black'>Inloggen</a></li>
 
 
 
 
 </ul>
 
-<!-- <script src="test2_script_header.js"></script> -->
+<script src="test2_script_header.js"></script>
 
-<table id ="table1" align="center">
+<table id ="table1">
 <tbody>
 <tr height = 90> </tr>
 <TR>
 	
-
-
+<br>
+<form method="POST" action="Home.php">
+<table border = 0 align = center>
+<tr align = center>
+<td colspan = 3> Je bent niet ingelogd </td>
+</tr><tr align = center>
+ <td colspan = 3>
+    <input type="text" name="txtUser" size="20"><br>
+ </td>
+</tr>
+<tr align = center>
+ <td colspan = 3>
+    <input type="password" name="txtPassw" size="20"><br>
+ </td>
+</tr>
+<tr align = center>
+<td width = 300></td>
+ <td>
+    <input type="submit" value="Inloggen" name="knpLogin">
+ </td>
+ <td width = 300> </td>
+</tr></table>
+ </form>
 </TD>
 
 </body>

@@ -7,7 +7,7 @@ DIRS='./'
 watch() {
     clear
     $@
-    while inotifywait -q --exclude "\.swp|log*|vendor" -e modify,close_write --recursive $DIRS; do
+    while inotifywait -q --exclude "\.swp|log*|vendor|\.actual|\.cache" -e modify,close_write --recursive $DIRS; do
         clear
         $@
     done

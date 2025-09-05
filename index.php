@@ -2,7 +2,7 @@
 23-5-2020 logo aangepast 
 11-7-2020  $file = "index.php"; gewijzigd naar $file = "Home.php"; */
 $versie = '26-12-2024'; /* <TD width = 1390 height = 400 align = "center"> gewijzigd naar <TD align = "center">  */
-	session_start();
+	if (session_status() == PHP_SESSION_NONE) session_start();
  // destroy the session 
  session_destroy(); ?>
 <!DOCTYPE html>

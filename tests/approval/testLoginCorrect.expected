@@ -78,7 +78,7 @@ $(document).ready(function(){
 	<br>
 
 
-  
+ 
 
 
 <script>
@@ -292,7 +292,6 @@ Gebruikers</a></br></br> 		<a href='http://oer-dev/Systeem.php' style = 'color :
 <tr height = 90> </tr>
 <TR>
 	
-
 
 </TD>
 

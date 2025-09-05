@@ -25,6 +25,8 @@ class EndToEndCase extends TestCase {
     }
 
     private function simulatePostRequest($path, $data) {
+        $_SERVER['HTTP_HOST'] = 'basq';
+        $_SERVER['REQUEST_URI'] = $path;
         $_SERVER['REQUEST_METHOD'] = 'POST';
         foreach ($data as $key => $value) {
             $_POST[$key] = $value;
