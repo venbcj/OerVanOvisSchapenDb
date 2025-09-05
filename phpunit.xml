@@ -14,9 +14,5 @@
       <directory>vendor</directory>
     </exclude>
   </source>
-  <coverage>
-    <report>
-      <html outputDirectory="./coverage-html"/>
-    </report>
-  </coverage>
+  <coverage/>
 </phpunit>
