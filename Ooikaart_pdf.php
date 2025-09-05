@@ -2,6 +2,7 @@
 
 require('fpdf/fpdf.php');
 
+// TODO: je kunt hier connect_db niet gebruiken omdat dat ook passw includet zeker? --BCB
 include "database.php";
 
 	$db = mysqli_connect($host, $user, $pw, $dtb);

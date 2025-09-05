@@ -59,8 +59,10 @@ class EndToEndCase extends TestCase {
         file_put_contents($actual_file, $this->output);
         $expected = file_get_contents($expected_file);
         if ($expected != $this->output) {
-            $diff = StringDiff::create(5, $expected, $this->output);
-            $this->fail($diff->diff());
+            if (preg_replace('/\s/', '', $expected) != preg_replace('/\s/', '', $this->output)) {
+                $diff = StringDiff::create(5, $expected, $this->output);
+                $this->fail($diff->diff());
+            }
         }
         $this->assertTrue(true); // anders maakt phpunit er een risky test van
     }

@@ -2,7 +2,7 @@
 <link rel="stylesheet" type="text/css" href="style.css">
 
 <!-- BackToTop button javascript 
-	bron : https://www.wpromotions.eu/nl/hoe-een-scroll-to-top-knop-toevoegen-aan-website-in-webnode/	-->
+    bron : https://www.wpromotions.eu/nl/hoe-een-scroll-to-top-knop-toevoegen-aan-website-in-webnode/    -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 <!-- Deze links komen uit Zoeken.php per 14-12-2024 -->
@@ -28,7 +28,6 @@ $(document).ready(function(){
 });
 </script>
 
- 
 <a href="javascript:void(0);" id="scroll" title="Scroll to Top" style="display: none;">Top<span></span></a> 
 
 <!-- Einde BackToTop button javascript  -->
@@ -50,24 +49,26 @@ echo '$modbeheer = '.$modbeheer.'<br>';
 echo '$actuele_versie = '.$actuele_versie.'<br>';*/
 
 $host = $_SERVER['HTTP_HOST'];
-if($host == 'localhost:8080' )  	{ $tagid = 'balkOntw'; } 
+if ($host == 'localhost:8080') {
+    $tagid = 'balkOntw';
+}
 if (php_uname('n') == 'basq') {
     $tagid = 'balkCoach';
 }
-if($host == 'test.oervanovis.nl') 	{ $tagid = 'balkTest'; }
-if($host == 'demo.oervanovis.nl')  	{ $tagid = 'balkDemo'; }
-if($host == 'ovis.oervanovis.nl') 	{ $tagid = 'balkProd'; }  ?>
-
-
-	<div id = "rechts_uitlijnen" class = 'header_breed'><section> </section><img src='OER_van_OVIS.jpg' /></div>
+if ($host == 'test.oervanovis.nl') {
+    $tagid = 'balkTest';
+}
+if ($host == 'demo.oervanovis.nl') {
+    $tagid = 'balkDemo';
+}
+if ($host == 'ovis.oervanovis.nl') {
+    $tagid = 'balkProd';
+}
+?>
+<div id = "rechts_uitlijnen" class = 'header_breed'><section> </section><img src='OER_van_OVIS.jpg' /></div>
 
 <ul class="header_smal" id = <?php echo $tagid; ?> >
-		
-	<li id = "rechts_uitlijnen"><a href='<?php echo $url ?? '';?>index.php' style = 'color : black'>Inloggen</a></li>
-
-
-
-
+    <li id = "rechts_uitlijnen"><a href='<?php echo $url ?? '';?>index.php' style = 'color : black'>Inloggen</a></li>
 </ul>
 
 <script src="test2_script_header.js"></script>
@@ -76,4 +77,3 @@ if($host == 'ovis.oervanovis.nl') 	{ $tagid = 'balkProd'; }  ?>
 <tbody>
 <tr height = 90> </tr>
 <TR>
-	

@@ -4,15 +4,12 @@
 <title>Home</title>
 </head>
 <body>
-
- 
 <!-- <table><tr align = center style = "font-size : 30px ";><td>OER van OVIS</td> </tr>
 <tr align = center><td><sup style = "font-size : 18px "; >Optimalisering En Rendementverbetering van het Schaap</sup></td></tr></table>-->
-
 <link rel="stylesheet" type="text/css" href="style.css">
 
 <!-- BackToTop button javascript 
-	bron : https://www.wpromotions.eu/nl/hoe-een-scroll-to-top-knop-toevoegen-aan-website-in-webnode/	-->
+    bron : https://www.wpromotions.eu/nl/hoe-een-scroll-to-top-knop-toevoegen-aan-website-in-webnode/    -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 <!-- Deze links komen uit Zoeken.php per 14-12-2024 -->
@@ -38,22 +35,14 @@ $(document).ready(function(){
 });
 </script>
 
- 
 <a href="javascript:void(0);" id="scroll" title="Scroll to Top" style="display: none;">Top<span></span></a> 
 
 <!-- Einde BackToTop button javascript  -->
 
-
-
-	<div id = "rechts_uitlijnen" class = 'header_breed'><section> </section><img src='OER_van_OVIS.jpg' /></div>
+<div id = "rechts_uitlijnen" class = 'header_breed'><section> </section><img src='OER_van_OVIS.jpg' /></div>
 
 <ul class="header_smal" id = balkCoach >
-		
-	<li id = "rechts_uitlijnen"><a href='index.php' style = 'color : black'>Inloggen</a></li>
-
-
-
-
+    <li id = "rechts_uitlijnen"><a href='index.php' style = 'color : black'>Inloggen</a></li>
 </ul>
 
 <script src="test2_script_header.js"></script>
@@ -62,29 +51,22 @@ $(document).ready(function(){
 <tbody>
 <tr height = 90> </tr>
 <TR>
-	
 
 <TD align = "center">
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
 <img src="OER_van_OVIS.jpg" width=650 height=240 valign = "center"/>
-	<br>
-	<br>
-	<br>
-
-
- 
-
-
+    <br>
+    <br>
+    <br>
 <link rel="stylesheet" type="text/css" href="style.css">
 
 <!-- BackToTop button javascript 
-	bron : https://www.wpromotions.eu/nl/hoe-een-scroll-to-top-knop-toevoegen-aan-website-in-webnode/	-->
+    bron : https://www.wpromotions.eu/nl/hoe-een-scroll-to-top-knop-toevoegen-aan-website-in-webnode/    -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 <!-- Deze links komen uit Zoeken.php per 14-12-2024 -->
@@ -110,22 +92,14 @@ $(document).ready(function(){
 });
 </script>
 
- 
 <a href="javascript:void(0);" id="scroll" title="Scroll to Top" style="display: none;">Top<span></span></a> 
 
 <!-- Einde BackToTop button javascript  -->
 
-
-
-	<div id = "rechts_uitlijnen" class = 'header_breed'><section> </section><img src='OER_van_OVIS.jpg' /></div>
+<div id = "rechts_uitlijnen" class = 'header_breed'><section> </section><img src='OER_van_OVIS.jpg' /></div>
 
 <ul class="header_smal" id = balkCoach >
-		
-	<li id = "rechts_uitlijnen"><a href='http://oer-dev/index.php' style = 'color : black'>Inloggen</a></li>
-
-
-
-
+    <li id = "rechts_uitlijnen"><a href='http://oer-dev/index.php' style = 'color : black'>Inloggen</a></li>
 </ul>
 
 <script src="test2_script_header.js"></script>
@@ -134,7 +108,6 @@ $(document).ready(function(){
 <tbody>
 <tr height = 90> </tr>
 <TR>
-	
 <br>
 <form method="POST" action="Home.php">
 <table border = 0 align = center>
@@ -159,6 +132,5 @@ $(document).ready(function(){
 </tr></table>
  </form>
 </TD>
-
 </body>
 </html>

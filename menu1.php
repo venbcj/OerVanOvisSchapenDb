@@ -16,6 +16,7 @@ include "url.php";
 
 if($modtech == 0) { $color = 'grey'; } else { $color = 'blue'; }
 ?>
+
 <td width = '150' height = '100' valign='top'>
 Menu : <br>
 <hr style ='color : #A6C6EB'>
@@ -38,23 +39,23 @@ FROM tblRequest r
  join tblHistorie h on (h.hisId = m.hisId)
  join tblStal st on (st.stalId = h.stalId)
 WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and h.skip = 0 and isnull(r.dmmeld) and m.skip <> 1 ") or die (mysqli_error($db));
-		$row = mysqli_fetch_assoc($req_open);
-			$num_rows = $row['aant'];
-		if($num_rows == 0){  ?>
+        $row = mysqli_fetch_assoc($req_open);
+            $num_rows = $row['aant'];
+        if($num_rows == 0){  ?>
 <a href='<?php echo $url;?>Melden.php' style = 'color : blue'> <?php } else { ?>
 <a href='<?php echo $url;?>Melden.php' style = 'color : red'> <?php }  
 } ?>
 RVO</a> <br>
 <hr style ='color : #E2E2E2'>
 
-	<?php if($modtech == 0 && $modmeld == 1) { ?>
+    <?php if($modtech == 0 && $modmeld == 1) { ?>
 <a href='<?php echo $url;?>Afvoerstal.php' style = 'color : blue'>
 Afvoerlijst</a>
-	<?php } else { ?>
+    <?php } else { ?>
 <a href='<?php echo $url;?>Bezet.php' style = 'color : blue'>
 Verblijven in gebruik</a>
-	<?php } ?>
-	
+    <?php } ?>
+    
 <hr style ='color : #E2E2E2'>
 <a href='<?php echo $url;?>Zoeken.php' style = 'color : blue'>
 Schaap opzoeken</a>
@@ -73,7 +74,7 @@ Raederalerts</a>
 Rapporten</a>
 <hr style ='color : #E2E2E2'>
 <?php  if(isset($actuele_versie) || $reader != 'Agrident')   { ?> <a href='<?php echo $url; ?>Beheer.php' style = 'color : blue'> <?php }
-	else { ?> <a href='<?php echo $url; ?>Beheer.php' style = 'color : red'> <?php  } ?>
+    else { ?> <a href='<?php echo $url; ?>Beheer.php' style = 'color : red'> <?php  } ?>
 Beheer</a>
 <hr style ='color : #E2E2E2'>
 <a href='<?php echo $url;?>Inkoop.php' style = "color : <?php echo $color; ?> ;">
