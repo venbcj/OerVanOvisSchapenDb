@@ -1,5 +1,5 @@
 <!-- 11-8-2014 : veld type gewijzigd in fase
- 16-11-2014 include "maak_request.php"; toegevoegd -->
+ 16-11-2014 include maak_request toegevoegd -->
 
 <?php
 /* post_readerGeb.php toegepast in :

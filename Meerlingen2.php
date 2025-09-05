@@ -1,7 +1,7 @@
 <?php 
 $versie = '1-2-2019'; /* gemaakt */
 $versie = '28-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie sql voorzien van enkele quotes */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = 'top' align = center > gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = 'top' align = center > gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -14,7 +14,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = 'top' align = c
 <?php
 $titel = 'Meerlingen per jaar';
 $file = "Meerlingen2.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = 'top' align = 'center'>
 <?php
@@ -366,7 +366,7 @@ unset($volwId);
 
 </TD>
 <?php } else { ?> <img src='ooikaart_php.jpg'  width='970' height='550'/> <?php }
-Include "menuRapport1.php"; } ?>
+include "menuRapport1.php"; } ?>
 </tr>
 </table>
 

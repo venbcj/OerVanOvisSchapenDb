@@ -5,7 +5,7 @@ ALTER TABLE `tblleden` ADD `roep` VARCHAR(25) NULL DEFAULT NULL AFTER `passw`, A
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '27-10-2023'; /* Laatste inlog tijdstip toegevoegd */
 $versie = '29-10-2023'; /* Wachtwoord resetten mogelijk gemaakt */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 include "login.php"; voor include "header.php" gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -17,12 +17,12 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 
 <?php
 if (isset ($_POST['knpNieuw'])) {
-	Include "url.php";
+	include "url.php";
 	header("Location: ".$url."Newuser.php"); }
 	
 $titel = 'Gebruikers';
 $file = "Eenheden.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = "top">
 <?php
@@ -121,7 +121,7 @@ $goed = 'Het wachtwoord is gelijk gemaakt aan de inlognaam.';
 
 	</TD>
 <?php } else { ?> <img src='eenheden_php.jpg'  width='970' height='550'/> <?php }
-Include "menuBeheer.php"; } ?>
+include "menuBeheer.php"; } ?>
 
 </tr>
 </table>

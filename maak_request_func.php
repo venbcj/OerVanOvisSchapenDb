@@ -9,7 +9,7 @@ Toegepast in :
 <?php
 
 /* function maak_request maakt een nieuw request aan. In geval van : 1. Er staat geen melding open 2. Het aantal van 60 meldingen is bereikt. 
-De function wordt toegepast in maak_request.php. Dat script zit in een loop. Een function kan maar 1x worden aangemaakt. Includen van dit script, en dus het declareren vam de function, kan daar dus niet plaats vinden.
+De function wordt toegepast in maak_request.php. Dat script zit in een loop. Een function kan maar 1x worden aangemaakt. includen van dit script, en dus het declareren vam de function, kan daar dus niet plaats vinden.
 De include vindt plaats in bovengenoemde toegepaste scripts. Via de gelijknamige naam post_reader____.php wordt maak_request.php bereikt.
 Voor afleveren geldt dus : include in InsAfleveren.php => post_readerAflev.php  =>  maak_request.php */
 

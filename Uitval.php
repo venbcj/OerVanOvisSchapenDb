@@ -7,7 +7,7 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $versie = '30-5-2020'; /* Scannummer bij reader Agrident verwijderd bij momenten. 1-6 veld afvoer toegevoegd */
 $versie = '20-6-2020'; /* Verschillende redenen disabled bij reader Agrident */
 $versie = '12-02-2021'; /* Uitval gesplitst in Doodgeboren en sterfte SQL beveiligd met quotes. Titel gewijzigd */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -20,7 +20,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 <?php
 $titel = 'Redenen en momenten';
 $file = "Uitval.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = 'top'>
 <?php
@@ -280,7 +280,7 @@ ORDER BY moment
 
 	</TD>
 <?php
-Include "menuBeheer.php"; } ?>
+include "menuBeheer.php"; } ?>
 </tr>
 </table>
 

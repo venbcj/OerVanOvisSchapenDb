@@ -5,7 +5,7 @@ $versie = '09-01-2017'; /* : Link naar teamviewer toegevoegd */
 $versie = '23-01-2019'; /* aanmaken persoonlijke map toegevoegd */
 $versie = '12-08-2023'; /* veld ingescand toegevoegd en functie db_null_input() gebruikt. Sql beveiligd met quotes */
 $versie = '16-10-2023'; /* Aanmaken map /Readerversies toegevoegd */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 $versie = '29-08-2025'; /* Ubn wordt vanaf nu opgeslagen in tblUbn i.p.v. tblLeden. Tevens de keuze Biocontrol in het veld Reader verwijderd */
 
  session_start(); 
@@ -63,7 +63,7 @@ function getAlias($datb,$username,$vlgnr) {
 <?php
 $titel = 'Nieuwe gebruiker';
 $file = "Systeem.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD valign = 'top'>
 <?php
@@ -161,11 +161,11 @@ while ($zg = mysqli_fetch_assoc($zoek_gebruiker))
 $insert_tblUbn = "INSERT INTO tblUbn SET lidId = '".mysqli_real_escape_string($db,$newId)."', ubn = '".mysqli_real_escape_string($db,$txtUbn)."' ";
 /*echo '<br>'.$insert_tblUbn.'<br>'.'<br>';*/		mysqli_query($db,$insert_tblUbn) or die (mysqli_error($db));
 	
-Include"Newuser_data.php";
+include"Newuser_data.php";
 
 
 	$lidid = $newId;
-Include "Newreader_keuzelijsten.php";
+include "Newreader_keuzelijsten.php";
 
 
 $map = 'user_'.$newId;
@@ -303,7 +303,7 @@ foreach ( $opties as $key => $waarde)
 
 </TD>
 <?php
-Include "menuBeheer.php"; } ?>
+include "menuBeheer.php"; } ?>
 </tr>
 
 </table>

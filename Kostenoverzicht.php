@@ -5,7 +5,7 @@ $versie = '24-12-2016'; /* keuzelijst standaard huidig jaar */
 $versie = '18-4-2017'; /* Goup by verwijderd in laagste (rubriek) nivo */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '11-7-2020'; /* € gewijzigd in &euro; */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" align = center> gewijzigd naar <TD valign = "top" align = center> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" align = center> gewijzigd naar <TD valign = "top" align = center> 31-12-24 include login voor include header gezet */
 
  session_start();  ?>
 <!DOCTYPE html>
@@ -18,7 +18,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" align = c
 <?php
 $titel = 'Betaalde posten';
 $file = "Kostenoverzicht.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD valign = "top" align = "center">
 <?php
@@ -343,6 +343,6 @@ ORDER BY r.rubriek, o.datum desc
 </form>
 		</TD>
 <?php } else { ?> <img src='Kostenoverzicht_php.jpg'  width='970' height='550'/> <?php }
-Include "menuFinance.php"; } ?>
+include "menuFinance.php"; } ?>
 </body>
 </html>

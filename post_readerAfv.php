@@ -1,4 +1,4 @@
-<!-- 17-11-2014 include "Maak_Request.php"; toegevoegd 
+<!-- 17-11-2014 include Maak_Request toegevoegd 
 28-2-2017 :  Ras en gewicht niet veplicht gemaakt 
 20-4-2017 : gezorgd dat $fldKg bestaat als module technisch nvt is 
 29-6-2017 : unset($aanwas) toegevoegd nadat moeder is afgevoerd en het volgende dier is een lam 
@@ -13,7 +13,7 @@
 include "url.php";
 
 include "passw.php";
-Include "connect_db.php";*/ //Deze include zit ook in login.php maar binnen InsAfvoeren.php is include"login.php"; nog niet gepasseerd. Hier laten staan dus.
+include "connect_db.php";*/ //Deze include zit ook in login.php maar binnen InsAfvoeren.php is include login nog niet gepasseerd. Hier laten staan dus.
 
 function getNameFromKey($key) {
     $array = explode('_', $key);

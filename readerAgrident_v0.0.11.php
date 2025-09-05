@@ -10,7 +10,7 @@
 12-07-2025 : UbnId van gebruiker toegevoegd en taak ubn groepwijzigen toegevoegd
 */
 
-include"connect_db.php";
+include "connect_db.php";
 $string = '';
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
@@ -82,7 +82,7 @@ if($i == 3) { $inhoud = $item -> {$taken[$i]}; include "impVerplaatsing.php"; }
 
 if($i == 4) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'HokId', 'Levensnummer', 'Gewicht');
 												/*$velden_dieren = array('Levensnummer', 'Gewicht');
-												include "impAgrident_dieren.php";*/ 
+												include impAgrident_dieren*/ 
 												include "impAgrident.php"; }
 
 if($i == 5) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'Levensnummer', 'Gewicht');
@@ -91,7 +91,7 @@ if($i == 5) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum',
 
 if($i == 6) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'Ubn', 'Reden', 'Transponder', 'Levensnummer', 'Gewicht');
 												/*$velden_dieren = array('Transponder', 'Levensnummer', 'Gewicht');
-												include "impAgrident_dieren.php";*/ 
+												include impAgrident_dieren*/ 
 												include "impAgrident.php"; }
 
 if($i == 7) { $inhoud = $item -> {$taken[$i]}; $velden = array('Datum', 'UbnId', 'Ubn', 'RasId', 'HokId', 'Transponder', 'Levensnummer','Datumdier', 'Geslacht', 'ActId', 'Gewicht');
@@ -121,7 +121,7 @@ if($i == 14) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum'
 
 if($i == 15) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'MoederTransponder', 'Moeder', 'Drachtig', 'Grootte');
 												/* $velden_dieren = array('MoederTransponder', 'Moeder', 'Drachtig', 'Grootte');
-												include "impAgrident_dieren.php";*/ 
+												include impAgrident_dieren*/ 
 												include "impAgrident.php"; }
 if($i == 16) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'UbnId', 'HokId', 'Transponder', 'Levensnummer');
 												include "impAgrident.php"; }

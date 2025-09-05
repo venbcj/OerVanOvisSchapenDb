@@ -10,7 +10,7 @@ $versie = '21-8-2021'; /* and rs.melding = '$code' toegevoegd aan subquery lresp
 $versie = '31-12-2023'; /* and h.skip = 0 aangevuld aan tblHistorie en sql beveiligd met quotes */
 $versie = '10-06-2024'; /* Sortering kzlJaar aangepast. Het recentste jaar staat nu bovenaan */
 $versie = '12-12-2024'; /* kzlFouteMeld toegevoegd een aantallen getoond bij meldingen. Als een definitieve melding retour komt als controle melding kan binnen 30 dagen de melding weer worden 'open' gezet met kzlFouteMeld en knpOpenReq */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" align = center> gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" align = center> gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 include login voor include header gezet */
 $versie = '16-08-2025'; /* ubn van gebruiker toegevoegd. Per deze versie kan een gebruiker meerdere ubn's hebben */
 
  session_start(); ?>
@@ -24,13 +24,13 @@ $versie = '16-08-2025'; /* ubn van gebruiker toegevoegd. Per deze versie kan een
 <?php
 $titel = 'Overzicht meldingen';
 $file = "Meldingen.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD valign = 'top' align = 'center'>
 <?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modmeld == 1) {
 
-Include "responscheck.php";
+include "responscheck.php";
 
 if (isset($_POST['knpOpenReq']) ) { 
 // Foute meldingen heropenen
@@ -562,6 +562,6 @@ ORDER BY m.skip, if(isnull(m.fout),0,1), rq.dmmeld desc, u.ubn, right(s.levensnu
 </form>
 		</TD>
 <?php } else { ?> <img src='Meldingen_php.jpg'  width='970' height='550'/> <?php }
-Include "menuMelden.php"; } ?>
+include "menuMelden.php"; } ?>
 </body>
 </html>

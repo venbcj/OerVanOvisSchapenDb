@@ -1,7 +1,4 @@
 <?php
-/* include "passw.php" toegepast in :
-- connect_db.php
-- post_readerGeb.php */
 
 include "database.php";
  

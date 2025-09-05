@@ -1,6 +1,6 @@
 <?php
 $versie = '29-8-2020'; /* kopie gemaakt van MedOverzSchaap.php */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -13,7 +13,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
 <?php
 $titel = 'Voorraadcorrectie';
 $file = "Voorraad.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = 'top'>
 <?php
@@ -185,7 +185,7 @@ foreach ( $opties as $key => $waarde)
 
 		</TD>
 <?php
-Include "menuInkoop.php"; } ?>
+include "menuInkoop.php"; } ?>
 	</tr>
 
 </table>

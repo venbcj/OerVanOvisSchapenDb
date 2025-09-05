@@ -1,9 +1,9 @@
 <?php $versie = '19-10-2016'; 
-$versie = '5-11-2016'; /* include "func_euro.php"; toegevoegd */
+$versie = '5-11-2016'; /* include func_euro toegevoegd */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */ 
 $versie = '06-02-2022'; /* SQL beveiligd met quotes */ 
 $versie = '07-05-2023'; /* De beide variabele $dek_bedrag) <> euro_format($liq_bedrag in de controle $letop was niet altijd 2 decimale. Dit is aangepast met de functie  euro_format() */ 
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '09-03-2025'; /* veld txtId_$Id verwijderd <input type = hidden name = <?php echo "txtId_$Id"; ?> size = 1 value = <?php echo $Id; ?> >*/
 
 session_start();  ?> 
@@ -17,7 +17,7 @@ session_start();  ?>
 <?php
 $titel = 'Deklijst';
 $file = "Deklijst.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD align = "center" valign = "top">
 <?php
@@ -968,7 +968,7 @@ $zoek_afleverbedrag_per_maand = mysqli_query($db,$zoek_afleverbedrag_per_maand) 
 
 	</TD>
 <?php } else { ?> <img src='deklijst_php.jpg'  width='970' height='550'> <?php }
-Include "menuFinance.php"; } ?>
+include "menuFinance.php"; } ?>
 </tr>
 
 </table>

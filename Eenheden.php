@@ -2,7 +2,7 @@
 8-3-2015 : Login toegevoegd */
 $versie = '3-3-2017'; /* Alles m.b.t. invoer verwijderd */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 include login voor include header gezet */
  session_start(); ?>
 <!DOCTYPE html>
 <html>
@@ -13,12 +13,12 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 
 <?php
 if (isset ($_POST['knpUpdate'])) {
-	Include "url.php";
+	include "url.php";
 	header("Location: ".$url."Eenheden.php"); }
 
 $titel = 'Verbruikseenheden';
 $file = "Eenheden.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD align = "center" valign = "top">
 <?php
@@ -86,7 +86,7 @@ order by eenheid
 
 	</TD>
 <?php } else { ?> <img src='eenheden_php.jpg'  width='970' height='550'/> <?php }
-Include "menuBeheer.php"; } ?>
+include "menuBeheer.php"; } ?>
 
 	</tr>
 	</table>

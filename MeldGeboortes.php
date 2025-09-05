@@ -13,7 +13,7 @@ $versie = '4-4-2022'; /* veld geslacht niet verplicht bij module melden */
 $versie = '31-12-2023'; /* and h.skip = 0 aangevuld aan tblHistorie */
 $versie = '19-01-2024'; /* Controle melding verplicht gemaakt  */
 $versie = '10-03-2024'; /* Als alle regels moeten worden verwijderd kan dit vanaf nu worden verwerkt zonder eerst 1 melding als controle melding te versturen. Verwijderde regels worden bij definitief melden meteen onzichtbaar. De url t.b.v. javascript geactualisserd van http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js naar https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 $versie = '10-08-2025'; /* Ubn van gebruiker per regel getoond omdat een gebruiker per deze versie meerdere ubn's kan hebben */
 
  session_start(); ?>
@@ -28,19 +28,19 @@ $versie = '10-08-2025'; /* Ubn van gebruiker per regel getoond omdat een gebruik
 <?php
 $titel = 'Melden Geboortes';
 $file = "Melden.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = 'top'>
 <?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
-Include "responscheck.php";
+include "responscheck.php";
 
 function numeriek($subject) {
 	if (preg_match('/([[a-zA-Z])/', $subject, $matches)) {  /*var_dump($matches[1]); */ return 1; }
 } // toegepast in save_melding.php
 
-if (isset($_POST['knpSave_'])) { /* $code bestaat ook in responscheck.php */ $code = 'GER';	Include "save_melding.php";  header("Location: ".$curr_url); } 
+if (isset($_POST['knpSave_'])) { /* $code bestaat ook in responscheck.php */ $code = 'GER';	include "save_melding.php";  header("Location: ".$curr_url); } 
 
 $knptype = "submit";
 $today = date("Y-m-d");
@@ -66,7 +66,7 @@ $aantMeld = aantal_melden($db,$reqId); // Aantal dieren te melden. Functie gemaa
 $oke = aantal_oke($db,$reqId); // Aantal dieren goed geregistreerd om automatisch te kunnen melden. 
 
 // MELDEN
-if (isset($_POST['knpMeld_'])) { 	Include "save_melding.php"; $aantMeld = aantal_melden($db,$reqId); $oke = aantal_oke($db,$reqId);
+if (isset($_POST['knpMeld_'])) { 	include "save_melding.php"; $aantMeld = aantal_melden($db,$reqId); $oke = aantal_oke($db,$reqId);
 if( $aantMeld > 0 && $oke > 0) { 
 // Bestand maken
 $qry_Leden = mysqli_query($db,"
@@ -373,7 +373,7 @@ $vorig_ubn = $ubn;
 
 	</TD>
 <?php
-Include "menuMelden.php"; } ?>
+include "menuMelden.php"; } ?>
 </tr>
 
 </table>

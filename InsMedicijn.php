@@ -15,7 +15,7 @@ $versie = '15-01-2021'; /* Toedien aantal uit tabel impAgrident gehaald */
 $versie = '07-09-2021'; /* In query's $zoek_afvoerdatum en $zoek_fase h.skip = 0 in where clause toegevoegd */
 $versie = '22-09-2021'; /* func_artikelnuttigen.php toegevoegd */
 $versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '15-01-2025'; /*  and isnull(st.rel_best) toegevoegd aan opvragen van gegevens uit tabel impAgrident zodat stalId's van uitgeschaarden niet worden getoond */
  session_start(); ?>
 <!DOCTYPE html>
@@ -29,7 +29,7 @@ $versie = '15-01-2025'; /*  and isnull(st.rel_best) toegevoegd aan opvragen van 
 <?php
 $titel = 'Inlezen Medicatie';
 $file = "InsMedicijn.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD valign = "top">
 <?php 
@@ -38,8 +38,7 @@ if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) 
 include "func_artikelnuttigen.php";
 
 If (isset ($_POST['knpInsert_'])) {
-	//Include "url.php"; Zit al in header.php 
-	Include "post_readerMed.php"; #Deze include moet voor de vervversing in de functie header()
+	include "post_readerMed.php"; #Deze include moet voor de vervversing in de functie header()
 	//header("Location: ".$url."InsMedicijn.php"); 
 	} 
 
@@ -377,7 +376,7 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 
 	</TD>
 <?php
-Include "menu1.php"; } ?>
+include "menu1.php"; } ?>
 </tr>
 
 </table>

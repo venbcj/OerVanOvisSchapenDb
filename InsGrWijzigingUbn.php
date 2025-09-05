@@ -14,7 +14,7 @@ $versie = '30-08-2025'; /* Gekopieerd van InsAfvoer.php. ActId 12 (zijnde afgele
 <?php
 $titel = 'Inlezen Ubn wijziging';$subtitel = '';
 $file = "InsGrWijzigingUbn.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD valign = "top">
 <?php
@@ -26,7 +26,7 @@ if ($modmeld == 1 ) { include "maak_request_func.php"; }
 
 If (isset($_POST['knpInsert_'])) {
 
-	Include "post_readerUbn.php";#Deze include moet voor de verversing in de functie header()
+	include "post_readerUbn.php";#Deze include moet voor de verversing in de functie header()
 	}
 	
 $velden = "rd.Id readId, rd.datum, right(rd.levensnummer,".mysqli_real_escape_string($db,$Karwerk).") werknr, rd.levensnummer levnr, rd.hokId hok_rd, u_best.ubn ubn_best, rel_best.naam bestemming, rel_best.relId rel_best, gewicht kg, s.schaapId, s.geslacht, u_herk.ubn ubn_herk, rel_herk.naam herkomst, rel_herk.relId rel_herk, ouder.datum dmaanw, lower(haf.actie) actie, haf.af, ho.hokId hok_db, date_format(max.datummax_afv,'%d-%m-%Y') maxdatum_afv, max.datummax_afv, date_format(max.datummax_kg,'%d-%m-%Y') maxdatum_kg, max.datummax_kg ";
@@ -387,7 +387,7 @@ if (isset($onjuist)) { echo $onjuist; } ?>
 
 	</TD>
 <?php
-Include "menu1.php"; } ?>
+include "menu1.php"; } ?>
 </tr>
 </table>
 

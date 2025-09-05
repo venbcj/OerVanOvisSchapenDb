@@ -6,7 +6,7 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $versie = '05-07-2020'; /* wdgn gewijzigd in wdgn_v */
 $versie = '30-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie en sql beveiligd met quotes */
 $versie = '07-07-2024'; /* Werknr oplopend gesorteerd */
-$versie = '31-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '31-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '19-03-2025'; /* Gewicht toegevoegd en exporteren naar excel mogelijk gemaakt */
  session_start();  ?>
 <!DOCTYPE html>
@@ -19,13 +19,13 @@ $versie = '19-03-2025'; /* Gewicht toegevoegd en exporteren naar excel mogelijk 
 <?php
 $titel = 'Afleverlijst';
 $file = "ZoekAfldm.php";
-Include "login.php";
+include "login.php";
 ?>
 		<TD align = "center" valign = "top">
 <?php 
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
-//Include "vw_Voeding.php";
+//include vw_Voeding
 
 $hisId = $_POST['kzlPost']; // kzlPost bestaat in ZoekAfldm.php 
 
@@ -164,6 +164,6 @@ If (!empty($row['datum']))		{ ?>
 
 		</TD>
 <?php
-Include "menuRapport.php"; } ?>
+include "menuRapport.php"; } ?>
 </body>
 </html>

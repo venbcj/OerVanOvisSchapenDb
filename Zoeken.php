@@ -32,7 +32,7 @@ join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.
 I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 */
 $versie = '30-11-2024'; /* In keuzelijst moeder- en vaderdieren  uitgeschaarde dieren wel tonen. $zoek_afvoerstatus_mdr aangevuld met h.actId != 10 */
 $versie = '14-12-2024'; /* 4 links t.b.v. jquery en ajax verplaatst naar header.php */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '16-08-2025'; /* ubn van gebruiker toegevoegd. Per deze versie kan een gebruiker meerdere ubn's hebben */
 
  session_start();  ?>
@@ -46,15 +46,15 @@ $versie = '16-08-2025'; /* ubn van gebruiker toegevoegd. Per deze versie kan een
 <?php
 $titel = 'Schaap zoeken';
 $file = "Zoeken.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD align = "center" valign = "top">
 <?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
-if(isset($_POST['knpSave_'])) { include"save_commentzoeken.php"; }
-//include "vw_Bezetting.php";
-//include "vw_Hoklijsten.php";
+if(isset($_POST['knpSave_'])) { include "save_commentzoeken.php"; }
+//include vw_Bezetting
+//include vw_Hoklijsten
 
 If (empty($_POST['kzlLevnr_']) ) 	{	$levnr = '';	} else {	$levnr = $_POST['kzlLevnr_'];		}
 If (empty($_POST['kzlWerknr_']))	{	$werknr = '';	} else {	$werknr = $_POST['kzlWerknr_'];	}
@@ -1259,7 +1259,7 @@ while($row = mysqli_fetch_assoc($ouders)) {
 	});
 </script>
 <?php		
-Include "menu1.php"; }
+include "menu1.php"; }
 ?>
 
 </body>

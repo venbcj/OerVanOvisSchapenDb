@@ -20,7 +20,6 @@ if ($Afdrukstand == 'P') { $headerWidth = 190; $imageWidth = 169; }
 if ($Afdrukstand == 'L') { $headerWidth = 277; $imageWidth = 256; }
 
 session_start();
-//Include "login.php";
 	$lidId = $_SESSION["I1"];
 
 $zoek_doel = mysqli_query($db,"select doel from tblDoel where doelId = ".mysqli_real_escape_string($db,$groep)." ") or die (mysqli_error($db));

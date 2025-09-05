@@ -8,7 +8,7 @@ $versie = '24-04-2020'; /* url Javascript libary aangepast */
 $versie = '02-12-2023'; /* Toepassing bij reader Agrident mogelijk gemaakt */
 $versie = '31-12-2023'; /* op 1 plek and h.skip = 0 toegevoegd bij tblHistorie */
 $versie = '24-11-2024'; /* subquery haf aangepast. Er werd gezocht naar max(hisId). Laatste hisId hoeft niet afvoer te zijn. sql beveiligd met quotes */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 
  session_start();?>  
 <!DOCTYPE html>
@@ -22,15 +22,15 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
 <?php
 $titel = 'Inlezen Wegingen';
 $file = "InsWegen.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD valign = "top">
 <?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
 If (isset($_POST['knpInsert_']))  {
-	Include "url.php";
-	Include "post_readerWgn.php"; #Deze include moet voor de vervversing in de functie header()
+	include "url.php";
+	include "post_readerWgn.php"; #Deze include moet voor de vervversing in de functie header()
 }
 
 // Aantal nog in te lezen WEGINGEN
@@ -228,7 +228,7 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 
 	</TD>
 <?php
-Include "menu1.php"; } ?>
+include "menu1.php"; } ?>
 </tr>
 
 </table>

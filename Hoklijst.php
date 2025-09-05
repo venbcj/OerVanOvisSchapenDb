@@ -11,7 +11,7 @@ $versie = "11-03-2024"; /* Bij geneste query uit
 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" align = "center"> gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" align = "center"> gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -24,7 +24,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" align = "
 <?php
 $titel = 'Verblijfoverzicht';
 $file = "hoklijst.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD align = "center" valign = "top">
 <?php
@@ -247,7 +247,7 @@ GROUP BY ho.hoknr, r.ras, s.geslacht
 	</TD>
 
 <?php
-Include "menu1.php"; } ?>
+include "menu1.php"; } ?>
 
 
 </tr>

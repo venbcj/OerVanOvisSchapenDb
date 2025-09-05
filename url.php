@@ -4,7 +4,7 @@
     - Eenheden.php
     - InsAanwas.php
     - InsAfleveren.php
-    - InsGeboortes.php Ivm noodzakelijk voor include "header.php";
+    - InsGeboortes.php Ivm noodzakelijk voor include header
     - InsMedicijn.php
     - InsOverplaats.php
     - InsSpenen.php
@@ -26,7 +26,7 @@ if (php_uname('n') == 'basq') {
     $url = 'http://oer-dev/';
 }
 
-// Include bestanden
+// include bestanden
 $curr_url = 'https://'.$_SERVER['HTTP_HOST'].strtok($_SERVER["REQUEST_URI"], '?'); // strtok zorgt ervoor dat alles na de paginanaam wordt verwijderd. bron : http://stackoverflow.com/questions/6969645/how-to-remove-the-querystring-and-get-only-the-url
 if ($curr_url == $url."connect_db.php"
     || $curr_url == $url."header.php" // Dit bestand komt in de meeste scripts voor en zorgt ervoor dat variabele $url is gedeclareerd. Mn. in hyperlinks

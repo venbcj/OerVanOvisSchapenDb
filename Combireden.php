@@ -5,7 +5,7 @@ $versie = '28-12-2016';/* toevoegen en wijzigen mogelijk gemaakt. Combi's t.b.v.
 $versie = '7-1-2016';/* pdf-printen toegevoegd */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '28-9-2018'; /* Standaard aantal ($stdat) tonen in 2 decimalen  */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 
  session_start(); ?> 
 <!DOCTYPE html>
@@ -24,7 +24,7 @@ if ( isset($_POST['knpSave_d']) || isset($_POST['knpDelete_d']) || isset($_POST[
 
 $titel = 'Combinaties met redenen';
 $file = "Combireden.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD valign = "top" align = "center">
 <?php
@@ -882,6 +882,6 @@ for ($i = 0; $i < $count; $i++){
 
 	</TD>
 <?php
-Include "menuBeheer.php"; } ?>
+include "menuBeheer.php"; } ?>
 </body>
 </html>

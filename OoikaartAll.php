@@ -16,7 +16,7 @@ $versie = '10-3-2017';  /* join tblRas gewijzigd naar left join tblRas */
 $versie = '5-8-2017';  /* Gem groei bij spenen toegevoegd */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '28-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" align = "center"> gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" align = "center"> gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -29,7 +29,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" align = "
 <?php
 $titel = 'Ooikaart';
 $file = "OoikaartAll.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = 'top' align = 'center'>
 <?php
@@ -195,7 +195,7 @@ while($row = mysqli_fetch_assoc($result))
 
 <?php 
 } else { ?> <img src='ooikaartAll_php.jpg'  width='950' height='500'/> <?php }
-Include "menuRapport1.php"; } 
+include "menuRapport1.php"; } 
 include "table_sort.php"; ?>
 </tr>
 </table>

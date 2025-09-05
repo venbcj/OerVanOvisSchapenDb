@@ -24,7 +24,7 @@ join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd 
 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 */
 $versie = "10-11-2024"; /* Uitscharen toegevoegd */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '20-01-2025'; /* In subquery hg where clause gewijzigd van h.actId = 1 naar h.actId = 1 and h.skip = 0 */
 $versie = '23-02-2025'; /* $_SESSION["Fase"] = NULL toegevoegd */
 $versie = '13-07-2025'; /* veld Ubn toegevoegd */
@@ -39,7 +39,7 @@ $versie = '13-07-2025'; /* veld Ubn toegevoegd */
 <?php
 $titel = 'Verblijflijst';
 $file = "HokkenBezet.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = "top">
 <?php
@@ -786,7 +786,7 @@ echo 'Totaal : '.$totat_prnt.' in gezeten sinds start periode : '.$stopdm_prnt.'
 
 </td></tr></table>
 	</TD>
-<?php Include "menu1.php"; } ?>
+<?php include "menu1.php"; } ?>
 </tr>
 
 </body>

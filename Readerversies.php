@@ -1,6 +1,6 @@
 <?php 
 $versie = '21-10-2023'; /* Gekopieerd van Melden.php */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 
 $info_beheer = "In de readerApp zit een knop \'Schaapinfo inlezen\'. Met deze knop wordt een databse ingelezen in de reader met schaap gegevens. Bij het scannen van een schaap worden de volgende gegevens getoond op de reader: \\n Geslacht : Dit is het geslacht van het schaap \\n Ras : Dit is het ras van het schaap \\n Laatst gedekt : Als het een ooi betreft wordt hier de laatste dekdatum getoond mits deze bestaat \\n Laatste dekram : Dit is het werknr van de ram bij de laatste dekking van de gescande ooi \\n";
  session_start(); ?>
@@ -28,7 +28,7 @@ $info_beheer = "In de readerApp zit een knop \'Schaapinfo inlezen\'. Met deze kn
 <?php
 $titel = 'Beschikbare readerversies';
 $file = "Readerversies.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 				<TD valign = 'top'>	
 <?php
@@ -324,7 +324,7 @@ else { ?>
 
 
 
-Include "menuBeheer.php"; 
+include "menuBeheer.php"; 
  } // Einde if (isset($_SESSION["U1"]) && isset($_SESSI....... ?>
 </tr>
 </table>

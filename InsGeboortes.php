@@ -36,7 +36,7 @@ $versie = '10-1-2022'; /* Code aangepast n.a.v. registratie dekkingen en dracht 
 $versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */
 $versie = '10-03-2024'; /* Keuzelijst verblijf breder gemaakt van width:68 naar width:84 Veld datum smaller van size = 9 naar size = 7 */
 $versie = '24-11-2024'; /* In keuzelijst moederdieren uitgeschaarde dieren wel tonen. $zoek_einde_moeder aangevuld met h.actId = 10 */
-$versie = '26-12-2024'; /* <TD width = 1010 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 1010 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '09-04-2025'; /* De subquery mdr binnen query $data aangepast. Uitgeschaarden worden niet getoond in sybquery mdr. Als ze inmiddels terug zijn van uitscharen wordem 2 records getoond. Het veld stalId is verwijderd en de velden s.schaapId, s.levensnummer, af.datum worden bij deze gegroepeerd */
 $versie = '10-07-2025'; /* De index van kzlOoi gewijzigd van schaapId naar stalId zodat het ubnId makkelijker kan worden opgehaald */
 $versie = '29-08-2025'; /* Controle of ubn kan worden gevonden bij gebruikers die geen module technisch hebben toegevoegd */
@@ -53,13 +53,12 @@ $versie = '29-08-2025'; /* Controle of ubn kan worden gevonden bij gebruikers di
 <?php
 $titel = 'Inlezen Geboortes';
 $file = "InlezenReader.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
        <TD valign = "top">
 <?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
-//include "svwSchapenDm.php"; // ook gebrukt in post_readerGeb.php
 include "vw_kzlOoien.php";
 if ($modmeld == 1 ) { include "maak_request_func.php"; } 
 
@@ -67,11 +66,11 @@ $today_number = strtotime("now");
 $jaarlater = date('Y-m-d', strtotime('+ 1 year', $today_number));
 
 if (isset($_POST['knpSave_']) ) { 
-	Include "save_reader.php"; 
+	include "save_reader.php"; 
 	}
 	
 if (isset($_POST['knpInsert_']) ) { 
-	Include "post_readerGeb.php"; #Deze include moet voor de vervversing in de functie header()
+	include "post_readerGeb.php"; #Deze include moet voor de vervversing in de functie header()
 	}
 	
 function numeriek($subject) {
@@ -882,7 +881,7 @@ if(!isset($_POST['knpVervers_']) && !isset($_POST['knpInsert_']) && $red_rd <> N
 	</TD>
 <?php
 $handl = "Hndl_InsGeboortes.html";
-Include "menu1.php"; } ?>
+include "menu1.php"; } ?>
 	</tr>
 
 </table>

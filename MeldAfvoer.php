@@ -15,7 +15,7 @@ $versie = '31-12-2023'; /* and h.skip = 0 aangevuld aan tblHistorie */
 $versie = '01-01-2024'; /* hd.skip = 0 verwijderd i.v.m. vw_HistorieDm.php aangepast */
 $versie = '20-01-2024'; /* Controle melding verplicht gemaakt  */
 $versie = '10-03-2024'; /* Als alle regels moeten worden verwijderd kan dit vanaf nu worden verwerkt zonder eerst 1 melding als controle melding te versturen. Verwijderde regels worden bij definitief melden meteen onzichtbaar. De url t.b.v. javascript geactualisserd van http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js naar https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 $versie = '10-08-2025'; /* Ubn van gebruiker per regel getoond omdat een gebruiker per deze versie meerdere ubn's kan hebben */
 
 
@@ -31,17 +31,17 @@ $versie = '10-08-2025'; /* Ubn van gebruiker per regel getoond omdat een gebruik
 <?php
 $titel = 'Melden Afvoer';
 $file = "Melden.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = 'top'>
 <?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
 include "vw_HistorieDm.php";
-Include "responscheck.php";
+include "responscheck.php";
 
-if (isset($_POST['knpSave_'])) { /* $code bestaat ook in responscheck.php */ $code = 'AFV';	Include "save_melding.php";	 header("Location: ".$curr_url); } 
-// Include kan niet binnen de loop van $zoek_meldregels om dat de functies binnen 'save_melding' dan vaker wordt aangemaakt en dat kan niet. Via phphulp ben ik hier achter gekomen. bron : http://www.phphulp.nl/php/forum/topic/cannot-redeclare-makequote-previously/67477/
+if (isset($_POST['knpSave_'])) { /* $code bestaat ook in responscheck.php */ $code = 'AFV';	include "save_melding.php";	 header("Location: ".$curr_url); } 
+// include kan niet binnen de loop van $zoek_meldregels om dat de functies binnen 'save_melding' dan vaker wordt aangemaakt en dat kan niet. Via phphulp ben ik hier achter gekomen. bron : http://www.phphulp.nl/php/forum/topic/cannot-redeclare-makequote-previously/67477/
 
 $knptype = "submit";
 $overovermorgen = mktime(0, 0, 0, date("m")  , date("d")+3, date("Y"));
@@ -101,7 +101,7 @@ $oke = aantal_oke_afv($db,$lidId,$reqId,$vw_HistorieDm);
 // Einde Aantal dieren goed geregistreerd om automatisch te kunnen melden.
 
 // MELDEN
-if (isset($_POST['knpMeld_'])) {	Include "save_melding.php"; $aantMeld = aantal_melden($db,$reqId); $oke = aantal_oke_afv($db,$lidId,$reqId,$vw_HistorieDm);
+if (isset($_POST['knpMeld_'])) {	include "save_melding.php"; $aantMeld = aantal_melden($db,$reqId); $oke = aantal_oke_afv($db,$lidId,$reqId,$vw_HistorieDm);
 if( $aantMeld > 0 && $oke > 0) {
 // Bestand maken
 $qry_Leden = mysqli_query($db,"
@@ -447,7 +447,7 @@ $vorig_ubn = $ubn;
 
 	</TD>
 <?php
-Include "menuMelden.php"; } ?>
+include "menuMelden.php"; } ?>
 </tr>
 
 </table>

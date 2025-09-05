@@ -15,12 +15,12 @@ session_start(); ?>
 if (isset ($_POST['knpSave_'])) { /*header("Location: ".$url."Klanten.php");*/ }
 $titel = 'Debiteuren';
 $subtitel = ''; 
-Include "header.php"; ?>
+include "header.php"; ?>
 
 		<TD width = 960 height = 400 valign = "top">
 <?php
 $file = "Klanten.php";
-Include "login.php"; 
+include "login.php"; 
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
 if (isset($_POST['knpSave_'])) { include "save_klanten.php"; }
@@ -217,6 +217,6 @@ order by naam
 
 </TD>
 <?php
-Include "menuBeheer.php"; } ?>
+include "menuBeheer.php"; } ?>
 </body>
 </html>

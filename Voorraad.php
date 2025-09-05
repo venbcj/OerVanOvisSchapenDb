@@ -4,7 +4,7 @@
 <?php
 $versie = '12-12-2015';
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -17,7 +17,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
 <?php
 $titel = 'Voorraad';
 $file = "Voorraad.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = 'top'>
 <?php
@@ -144,7 +144,7 @@ while ($qryvr = mysqli_fetch_assoc($querypil))	{
 </table>
 </TD>
 <?php } else { ?> <img src='Voorraad_php.jpg'  width='970' height='550'/> <?php }
-Include "menuInkoop.php"; } ?>
+include "menuInkoop.php"; } ?>
 </tr>
 </table>
 

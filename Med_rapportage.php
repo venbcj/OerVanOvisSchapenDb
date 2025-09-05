@@ -5,7 +5,7 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $versie = '5-7-2020'; /* wdgn gewijzigd naar wdgn_v en wdgn_m */
 $versie = '29-4-2023'; /* sql beveiligd met quotes */
 $versie = '31-12-2023'; /* and h.skip = 0 aangevuld aan tblHistorie */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -18,7 +18,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 <?php
 $titel = 'Rapportage per medicijn';
 $file = "Med_rapportage.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 				<TD valign = "top">
 <?php
@@ -408,6 +408,6 @@ if(!empty($row['ouder'])) { if($geslacht == 'ooi') {$fase = 'moeder'; } else if(
 </table>
 		</TD>
 <?php } else { ?> <img src='med_rapportage_php.jpg'  width='970' height='550'/> <?php }
-Include "menuRapport.php"; } ?>
+include "menuRapport.php"; } ?>
 </body>
 </html>

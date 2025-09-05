@@ -21,7 +21,7 @@ $versie = '8-6-2020'; /* Geslacht toegevoegd */
 $versie = '4-7-2020'; /* 1 tabel impAgrident gemaakt */
 $versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie en sql beveiligd met quotes */
 $versie = '10-03-2024'; /* Keuzelijst verblijf breder gemaakt van width:65 naar width:84 */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 
  session_start();?>  
 <!DOCTYPE html>
@@ -35,15 +35,15 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
 <?php
 $titel = 'Inlezen Gespeenden';
 $file = "InsSpenen.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 				<TD valign = "top">
 <?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
 If (isset($_POST['knpInsert_']))  {
-	Include "url.php";
-	Include "post_readerSpn.php"; #Deze include moet voor de vervversing in de functie header()
+	include "url.php";
+	include "post_readerSpn.php"; #Deze include moet voor de vervversing in de functie header()
 }
 
 if($reader == 'Agrident') {
@@ -368,7 +368,7 @@ else if(isset($dmspeen)) 			{ $color = 'red';  $bericht =  "Dit schaap is al ges
 
 	</TD>
 <?php
-Include "menu1.php"; } ?>
+include "menu1.php"; } ?>
 </tr>
 
 </table>

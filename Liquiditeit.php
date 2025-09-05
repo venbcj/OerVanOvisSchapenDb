@@ -13,7 +13,7 @@ UItleg Liquiditeit :
 Bedragen Verplichtingen */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '11-7-2020'; /* € gewijzigd in &euro; 12-7 ë uit database gewijzigd in echo htmlentities($string, ENT_COMPAT,'ISO-8859-1', true); bron https://www.php.net/htmlspecialchars via https://www.phphulp.nl/php/forum/topic/speciale-tekens-in-code-omzetten/50786/ */
-$versie = '26-12-2024'; /* <TD width = 1010 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 1010 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '11-03-2025'; /* Het hidden veld type = 'hidden' name = <?php echo "txtM_$Id"."_$i"; ?> verwijderd. txtM_$Id"."_$i wordt alleen getoond als $tesktveld == 'tonen' */
 
  session_start(); ?>
@@ -27,7 +27,7 @@ $versie = '11-03-2025'; /* Het hidden veld type = 'hidden' name = <?php echo "tx
 <?php
 $titel = 'Liquiditeit';
 $file = "Liquiditeit.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 				<TD valign = "top">
 <?php
@@ -145,7 +145,7 @@ ORDER BY r.rubriek
 
 // Per rubriek alle maanden ophalen
 
-//include "vw_Liquiditeit.php"; ?>
+//include vw_Liquiditeit ?>
 
 
 
@@ -373,6 +373,6 @@ FROM (
 
 		</TD>
 <?php } else { ?> <img src='liquiditeit_php.jpg'  width='970' height='550'> <?php }
-Include "menuFinance.php"; } ?>
+include "menuFinance.php"; } ?>
 </body>
 </html>

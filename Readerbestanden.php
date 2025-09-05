@@ -13,7 +13,7 @@ $versie = '29-05-2025'; /* Gekopieerd van Readerversies.php */
 <?php
 $titel = 'Ingelezen readerbestanden';
 $file = "Readerbestanden.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = 'top'>
 <?php
@@ -126,7 +126,7 @@ echo $actId.' - '.$actie.'<br>';
 
 </TD>
 <?php
-Include "menuBeheer.php"; } ?>
+include "menuBeheer.php"; } ?>
 </tr>
 
 </table>

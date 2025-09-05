@@ -1,7 +1,7 @@
 <?php 
 $versie = '20-12-2020'; /* gemaakt */
 $versie = '31-12-2023'; /* and h.skip = 0 aangevuld aan tblHistorie */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = 'top' align = center > gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = 'top' align = center > gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -14,7 +14,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = 'top' align = c
 <?php
 $titel = 'Ooitjes uit meerlingen';
 $file = "OoilamSelectie.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = 'top' align = 'center'>
 <?php
@@ -116,7 +116,7 @@ $toon_meerlingen = mysqli_query($db,$query) or die (mysqli_error($db));
 
 </TD>
 <?php } else { ?> <img src='ooikaart_php.jpg'  width='970' height='550'/> <?php }
-Include "menuAlerts.php"; } ?>
+include "menuAlerts.php"; } ?>
 </tr>
 </table>
 

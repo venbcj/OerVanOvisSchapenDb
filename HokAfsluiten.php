@@ -15,7 +15,7 @@ $versie = "11-03-2024"; /* Bij geneste query uit
 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 */
-$versie = '26-12-2024'; /* <TD width = 940 height = 400 valign = "top"> gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 940 height = 400 valign = "top"> gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -28,13 +28,13 @@ $versie = '26-12-2024'; /* <TD width = 940 height = 400 valign = "top"> gewijzig
 <?php
 $titel = 'Afsluiten periode';
 $file = "Bezet.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD align = "center" valign = "top">
 <?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
-//include "vw_Voorraad.php"; // incl. $vw_Voorraden t.b.v. save_voer.php
-include"kalender.php";
+//include vw_Voorraad // incl. $vw_Voorraden t.b.v. save_voer.php
+include "kalender.php";
 
 $qryKeuzelijstVoer = "
 SELECT i.artId, a.naam, a.stdat, e.eenheid, sum(i.inkat-coalesce(v.vbrat,0)) vrdat
@@ -66,7 +66,7 @@ if (isset($_POST['knpSave1'])) {
 	if(!empty($_POST['txtSluitdm1']) )  { $sluitdm1 = $_POST['txtSluitdm1']; $date = date_create("$sluitdm1");	$dmsluit = date_format($date,'Y-m-d'); 
 		
 		$sluitdm = $_POST['txtSluitdm1']; /*t.b.v. save_afsluiten.php*/ 
-		Include "save_afsluiten.php"; 
+		include "save_afsluiten.php"; 
 	}
 	else { $fout = "Afsluitdatum is niet bekend";
 	}
@@ -80,7 +80,7 @@ if (isset($_POST['knpSave2'])) {
 	if(!empty($_POST['txtSluitdm2']) )  { $sluitdm2 = $_POST['txtSluitdm2']; $date = date_create("$sluitdm2");	$dmsluit = date_format($date,'Y-m-d'); 
 
 		$sluitdm = $_POST['txtSluitdm2']; /*t.b.v. save_afsluiten.php*/ 
-		Include "save_afsluiten.php"; 
+		include "save_afsluiten.php"; 
 	} 
 	else { $fout = "Afsluitdatum is niet bekend"; 
 	}
@@ -94,7 +94,7 @@ if (isset($_POST['knpSave3'])) {
 	if(!empty($_POST['txtSluitdm3']) )  { $sluitdm3 = $_POST['txtSluitdm3']; $date = date_create("$sluitdm3");	$dmsluit = date_format($date,'Y-m-d');
 
 		$sluitdm = $_POST['txtSluitdm3']; /*t.b.v. save_afsluiten.php*/
-		Include "save_afsluiten.php";
+		include "save_afsluiten.php";
 	}
 	else { $fout = "Afsluitdatum is niet bekend";
 	}
@@ -512,7 +512,7 @@ include "kzl.php";
 
 	</td>
 	</tr> <!-- table1 Einde rij3 -->
-<?php //if (isset ($_POST['knpJa']))	{ Include "save_voer.php"; } ?>
+<?php //if (isset ($_POST['knpJa']))	{ include save_voer } ?>
 
 	</table> <!-- Einde table1 -->
 
@@ -520,7 +520,7 @@ include "kzl.php";
 
 <?php
 
-Include "menu1.php"; } ?>
+include "menu1.php"; } ?>
 
 
 	</body>

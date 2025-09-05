@@ -12,7 +12,7 @@ session_start(); ?>
 <?php
 $titel = 'Ubn';
 $file = "Ubn_toevoegen.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 				<TD align = "center" valign = "top">
 <?php 
@@ -148,6 +148,6 @@ if($actief == 0) { $color = '#E2E2E2'; } else { $color = 'black'; }
 
 	</TD>
 <?php
-Include "menuBeheer.php"; } ?>
+include "menuBeheer.php"; } ?>
 </body>
 </html>

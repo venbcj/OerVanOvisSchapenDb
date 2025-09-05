@@ -10,7 +10,7 @@ $versie = '11-7-2020'; /* € gewijzigd in &euro; 1-8-2020 : kalender toegevoegd *
 $versie = '28-11-2020'; /* 28-11-2020 velde chkDel toegevoegd */
 $versie = '26-8-2021'; /* O.b.v. javascript inkopen per jaartal verborgen en zichtbaar gemaakt */
 $versie = '17-1-2022'; /* Btw 0% en javascript verplicht() toegevoegd. SQL beveiligd met quotes */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -35,7 +35,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
 <?php
 $titel = 'Inkopen';
 $file = "Inkopen.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD align = "center" valign = "top">
 <?php
@@ -101,7 +101,7 @@ function removeElement(e) {
 </script>
 <?php 
 
-if (isset($_POST['knpSave_']) ) { 	Include "save_inkoop.php"; 	}
+if (isset($_POST['knpSave_']) ) { 	include "save_inkoop.php"; 	}
 
 //*******************
 // NIEUWE INVOER POSTEN
@@ -401,7 +401,7 @@ $delete_inkoop = "DELETE FROM tblInkoop WHERE inkId = ".mysqli_real_escape_strin
 
 	</TD>
 <?php } else { ?> <img src='Inkopen_php.jpg'  width='970' height='550'/> <?php }
-Include "menuInkoop.php"; } ?>
+include "menuInkoop.php"; } ?>
 
 
 

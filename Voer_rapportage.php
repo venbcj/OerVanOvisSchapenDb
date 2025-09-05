@@ -9,7 +9,7 @@ $versie = "11-03-2024"; /* Bij geneste query uit
 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" align = center> gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" align = center> gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 include login voor include header gezet */
 $versie = '19-02-2025'; /* Gegevens werden niet getoond omdat geneste query's als variabele in mysqli_real_escape_string($db,... stonden. 23-02-2025 Titel gewijzigd van Overzicht voertoediening naar Voer rapportage*/
 
  session_start(); ?>
@@ -23,7 +23,7 @@ $versie = '19-02-2025'; /* Gegevens werden niet getoond omdat geneste query's al
 <?php
 $titel = 'Voer rapportage';
 $file = "Voer_rapportage.php";
- Include "login.php"; ?>
+ include "login.php"; ?>
 
 				<TD valign = 'top' align = 'center'>
 <?php
@@ -731,6 +731,6 @@ unset($begindm); unset($einddm); } // Einde $begin_eind_periode
 </form>
 		</TD>
 <?php } else { ?> <img src='Voer_rapportage_php.jpg'  width='970' height='550'/> <?php }
-Include "menuRapport.php"; } ?>
+include "menuRapport.php"; } ?>
 </body>
 </html>

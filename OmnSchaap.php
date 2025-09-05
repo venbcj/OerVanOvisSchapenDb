@@ -1,6 +1,6 @@
 <?php 
 $versie = '27-9-2020'; /* Gekopieerd van insOmnummeren.php */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -13,13 +13,13 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
 <?php
 $titel = 'Omnummeren';
 $file = "OmnSchaap.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = 'top'>
 <?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { 
 
-include"kalender.php";
+include "kalender.php";
 if ($modmeld == 1 ) { include "maak_request_func.php"; }
 
 function getIdFromKey($key) {
@@ -190,7 +190,7 @@ if(isset($_POST["knpSave_$pstnr"])) { $dag = $_POST["txtDag"]; $levnr_new = $_PO
 
 </TD>
 <?php
-Include "menu1.php"; } ?>
+include "menu1.php"; } ?>
 </tr>
 
 </table>

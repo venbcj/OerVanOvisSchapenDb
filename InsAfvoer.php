@@ -24,7 +24,7 @@ $versie = '4-7-2020'; /* 1 tabel impAgrident gemaakt 16-7 wdgn gewijzigd in wdgn
 $versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie en sql beveiligd met quotes */
 $versie = '23-03-2024'; /* Alleen gewicht registreren (tussenweging) mogelijk gemaakt */
 $versie = '27-10-2024'; /* Export-xlsx toegevoegd */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '24-08-2025'; /* Uitgeschaarde schapen konden worden afgevoerd. Nu niet meer */
 $versie = '30-08-2025'; /* ActId 12 (zijnde afgeleverd) uit tabel tblActie wordt vanaf nu ook gebruikt om ubn te wijzigen. Zie InsGrWijzigingUbn.php. Als het nieuwe veld ubnId in tabel impAgrident leeg is dan is het een reguliere afvoer van een lam. Is het veld ubnId gevuld dan betreft het een wijziging van ubn van de gebruiker */
 
@@ -40,7 +40,7 @@ $versie = '30-08-2025'; /* ActId 12 (zijnde afgeleverd) uit tabel tblActie wordt
 <?php
 $titel = 'Inlezen Afvoer';$subtitel = '';
 $file = "InsAfvoer.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD valign = "top">
 <?php
@@ -52,7 +52,7 @@ if ($modmeld == 1 ) { include "maak_request_func.php"; }
 
 If (isset($_POST['knpInsert_'])) {
 
-	Include "post_readerAfv.php";#Deze include moet voor de verversing in de functie header()
+	include "post_readerAfv.php";#Deze include moet voor de verversing in de functie header()
 	}
 	
 // Aantal nog in te lezen AFGELEVERDEN
@@ -527,7 +527,7 @@ $vandaag = date('Y-m-d');
 
 	</TD>
 <?php
-Include "menu1.php"; } ?>
+include "menu1.php"; } ?>
 </tr>
 </table>
 

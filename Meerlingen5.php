@@ -2,7 +2,7 @@
 $versie = '4-8-2019'; /* gemaakt */
 $versie = '11-11-2019'; /* kolomkop worp gewijzigd in worpgrootte */
 $versie = '28-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = 'top' align = center > gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = 'top' align = center > gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -15,7 +15,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = 'top' align = c
 <?php
 $titel = 'Meerling in periode';
 $file = "Meerlingen5.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = 'top' align = 'center'>
 <?php
@@ -177,7 +177,7 @@ $zoek_meerlingen = mysqli_query($db,$query) or die (mysqli_error($db));
 
 </TD>
 <?php } else { ?> <img src='ooikaart_php.jpg'  width='970' height='550'/> <?php }
-Include "menuRapport1.php"; } ?>
+include "menuRapport1.php"; } ?>
 </tr>
 </table>
 

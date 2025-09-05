@@ -33,7 +33,7 @@ $versie = "08-06-2024"; /* Afleveren aanwezige lammeren mogelijk gemaakt */
 $versie = "26-10-2024"; /* Het zoeken naar afgevoerde dieren en dier wel of niet in een verblijf 2 aparte querys van gemaakt */
 $versie = "03-11-2024"; /* Terug van uitscharen mogelijk gemaakt incl. medling naar RVO */
 $versie = "09-11-2024"; /* $invoerdate <= $dmOoiHokNa gewijzigd naar $invoerdate < $dmOoiHokNa */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 $versie = '18-02-2024'; /* De historie als 3e kolom getoond rechts naast de andere gegevens */
 
  session_start(); ?>
@@ -47,7 +47,7 @@ $versie = '18-02-2024'; /* De historie als 3e kolom getoond rechts naast de ande
 <?php
 $titel = 'Schaap bijwerken';
 $file = "Zoeken.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = 'top'>
 <?php
@@ -2383,6 +2383,6 @@ echo '$actie_afv = '.$actie_afv.'<br>';
 <?php } ?>
 </TD>
 <?php
-Include "menu1.php"; } ?>
+include "menu1.php"; } ?>
 </body>
 </html>

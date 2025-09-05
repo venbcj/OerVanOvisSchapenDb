@@ -9,14 +9,14 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $versie = '20-12-2019'; /* tabelnaam gewijzigd van UIT naar uit tabelnaam */
 $versie = '30-12-2023'; /* and h.skip = 0 toegevoegd aan tblHistorie en sql beveiligd */
 $versie = '05-01-2024'; /* Schapen die in het verblijf spenen de status aanwas kregen werden niet getoond. Dit is aangepast */
-$versie = '07-01-2024'; /* Select_all toegevoegd en include"kalender.php"; op een andere plek gezet omdat dit elkaar anders bijt. */
+$versie = '07-01-2024'; /* Select_all toegevoegd en include kalender op een andere plek gezet omdat dit elkaar anders bijt. */
 $versie = '12-01-2024'; /* Keuze alleen lammeren of alleen volwassenen mogelijk gemaakt incl sortering op fase en werknr */
 $versie = '20-01-2024'; /* in nestquery 'uit' is 'and a1.aan = 1' uit WHERE gehaald. De hisId die voorkomt in tblBezet volstaat. Bovendien is bij Pieter hisId met actId 3 gekoppeld aan tblBezet en heeft het veld 'aan' in tblActie de waarde 0. De WHERE incl. 'and a1.aan = 1' geeft dus een fout resultaat. */
 $versie = "11-03-2024"; /* Bij geneste query uit 
 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 */
-$versie = '26-12-2024'; /* <TD width = 940 height = 400 valign = "top"> gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 940 height = 400 valign = "top"> gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 include login voor include header gezet */
  session_start(); ?>
 <!DOCTYPE html>
 <html>
@@ -29,7 +29,7 @@ $versie = '26-12-2024'; /* <TD width = 940 height = 400 valign = "top"> gewijzig
 <?php
 $titel = 'Overplaatsen';
 $file = "HokkenBezet.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 				<TD align = "center" valign = "top">
 <?php
@@ -255,7 +255,7 @@ else { $width = 200; } ?>
 </td>
 
  <?php if(!isset($sess_dag) && !isset($sess_bestm)) {
-  include"kalender.php"; ?>
+  include "kalender.php"; ?>
  	
  	<td width = 750 style = "font-size : 14px;"> 
  &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Optioneel een datum voor alle schapen
@@ -416,7 +416,7 @@ for ($i = 0; $i < $count; $i++){
 
 </TD>
 <?php	
-Include "menu1.php"; } ?>
+include "menu1.php"; } ?>
 </body>
 </html>
 <SCRIPT language="javascript">

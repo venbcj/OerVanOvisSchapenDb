@@ -5,7 +5,7 @@ $versie = '19-10-2016';
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '12-7-2020'; /* ë uit database gewijzigd in echo htmlentities($string, ENT_COMPAT,'ISO-8859-1', true); bron https://www.php.net/htmlspecialchars via https://www.phphulp.nl/php/forum/topic/speciale-tekens-in-code-omzetten/50786/ */
 $versie = '31-12-2023'; /* sql beveiligd met quotes */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align="center" valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align="center" valign = 'top'> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -18,7 +18,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 <?php
 $titel = 'Rubrieken';
 $file = "Rubrieken.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD align="center" valign = 'top'>
 <?php
@@ -210,6 +210,6 @@ ORDER BY r.rubriek
 
 	</TD>
 <?php } else { ?> <img src='rubrieken_php.jpg'  width='970' height='550'> <?php }
-Include "menuFinance.php"; } ?>
+include "menuFinance.php"; } ?>
 </body>
 </html>

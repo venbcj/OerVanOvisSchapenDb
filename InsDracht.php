@@ -9,8 +9,8 @@ $versie = '24-4-2020'; /* url Javascript libary aangepast */
 $versie = '18-12-2021'; /* Onderscheid gemaakt tussen reader Agrident en Biocontrol */
 $versie = '03-02-2023'; /* Werking javascript verbeterd */
 $versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */
-$versie = '23-11-2024'; /* In keuzelijst moeder- en vaderdieren  uitgeschaarde dieren wel tonen. $zoek_moeder aangevuld met or h.actId = 10 en include "vw_kzlOoien.php"; werd nergens toegepast en daarom verwijderd */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '23-11-2024'; /* In keuzelijst moeder- en vaderdieren  uitgeschaarde dieren wel tonen. $zoek_moeder aangevuld met or h.actId = 10 en include vw_kzlOoien werd nergens toegepast en daarom verwijderd */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -37,7 +37,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
 <?php
 $titel = 'Inlezen Dracht';
 $file = "InsDracht.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
       	<TD valign = "top">
 <?php
@@ -46,8 +46,7 @@ if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) 
 include "vw_kzlOoien.php";
 
 If (isset($_POST['knpInsert_']))  {
-	//Include "url.php";
-	Include "post_readerDracht.php"; #Deze include moet voor de vervversing in de functie header()
+	include "post_readerDracht.php"; #Deze include moet voor de vervversing in de functie header()
 	//header("Location: ".$url."InsDracht.php"); 
 	}
 
@@ -695,7 +694,7 @@ foreach ( $opties as $key => $waarde)
 
 </TD>
 <?php
-Include "menu1.php"; } ?>
+include "menu1.php"; } ?>
 </tr>
 
 </table>

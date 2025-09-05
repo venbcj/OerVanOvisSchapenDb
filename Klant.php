@@ -13,11 +13,11 @@ session_start(); ?>
 <?php
 $titel = 'Debiteur';
 $subtitel = '';
-Include "header.php"; ?>
+include "header.php"; ?>
 	<TD width = 960 height = 400 valign = "top">
 <?php
 $file = "Klanten.php";
-Include "login.php"; 
+include "login.php"; 
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { 
 
 if (empty($_GET['pstid']))
@@ -205,7 +205,7 @@ Aanhanger </td>
 
 </TD>
 <?php
-Include "menuBeheer.php"; } ?>
+include "menuBeheer.php"; } ?>
 </tr>
 </table>
 </center>

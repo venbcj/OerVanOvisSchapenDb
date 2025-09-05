@@ -7,7 +7,7 @@ $versie = '4-7-2020'; /* Omnummering toegevoegd */
 $versie = '20-12-2020'; /* Menu gewijzigd */
 $versie = '31-12-2023'; /* sql beveiligd met quotes */
 $versie = '19-01-2024'; /* Functie aantal_melden() gedeclareerd in basifuncties.php en hernoemt naar aantal_te_melden() */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 $versie = '10-08-2025'; /* veld ubn uit tblLeden verwijderd */
 
  session_start(); ?>
@@ -22,13 +22,13 @@ $versie = '10-08-2025'; /* veld ubn uit tblLeden verwijderd */
 $titel = 'Melden RVO';
 $subtitel = 'Maximaal 60 per melding';
 $file = "Melden.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = 'top'>	
 <?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modmeld == 1) {
 
-Include "responscheck.php"; 
+include "responscheck.php"; 
 // Controleren of inloggevens bestaan
 $queryInlog = mysqli_query($db,"
 SELECT relnr, urvo, prvo
@@ -89,7 +89,7 @@ melden omnummeren</a> </td><td style = "font-size : 12px;"><?php if (!empty($row
 
 	</TD>
 <?php } else { ?> <img src='Melden_php.jpg'  width='970' height='550'/> <?php }
-Include "menuMelden.php"; } ?>
+include "menuMelden.php"; } ?>
 </tr>
 </table>
 </form>

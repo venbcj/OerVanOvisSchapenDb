@@ -14,7 +14,7 @@ $versie = '26-12-2024'; /* <TD width = 1160 height = 400 valign = "top"> gewijzi
 <?php
 $titel = 'Welkompagina';
 $file = "";
-Include "header.php"; ?>
+include "header.php"; ?>
 
 		<TD valign = 'top'>
 

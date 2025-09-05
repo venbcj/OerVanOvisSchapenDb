@@ -4,7 +4,7 @@ $versie = '02-03-2023'; /* $zoek_vader_laatste_dekkingen toegevoegd */
 $versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */
 $versie = '07-09-2024'; /* Periode tussen werpen en dekken teruggebracht naar 60 i.p.v. 183 dagen */
 $versie = '23-11-2024'; /* In keuzelijst moeder- en vaderdieren  uitgeschaarde dieren wel tonen. $zoek_afvoerstatus_mdr aangevuld met h.actId != 10 */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -18,15 +18,15 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
 <?php
 $titel = 'Inlezen Dekken'; 
 $file = "InsDekken.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = "top">
 <?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
 If (isset($_POST['knpInsert_']))  {
-	//Include "url.php";
-	Include "post_readerDekken.php"; #Deze include moet voor de vervversing in de functie header()
+	//include url
+	include "post_readerDekken.php"; #Deze include moet voor de vervversing in de functie header()
 	}
 
 function numeriek($subject) {
@@ -478,7 +478,7 @@ for ($i = 0; $i < $count; $i++){
 
 </TD>
 <?php
-Include "menu1.php"; } ?>
+include "menu1.php"; } ?>
 </tr>
 
 </table>

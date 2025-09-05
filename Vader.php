@@ -5,7 +5,7 @@ $versie = '8-3-2015'; /*Login toegevoegd */
 $versie = '18-11-2015'; /* hok verandert in verblijf*/
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '30-12-2023'; /* Veld scan (tblStal) weggehaald en daarmee ook de knop Opslaan en het bestand save_vader.php. Ook sql beveiligd met quotes */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -18,7 +18,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 <?php
 $titel = 'Dekrammen';
 $file = "Vader.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = 'top'>
 <?php
@@ -110,6 +110,6 @@ ORDER BY right(levensnummer, $Karwerk)
 
 	</TD>
 <?php } 
-Include "menuBeheer.php"; } ?>
+include "menuBeheer.php"; } ?>
 </body>
 </html>

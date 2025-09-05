@@ -6,7 +6,7 @@ $versie = '30-5-2020'; /* Scannummer t.b.v. reader Agrident aangepast. Hidden ve
 $versie = '30-5-2020'; /* function db_null_input toegevoegd en pagina opgebouwd/ingedeeld als Hok.php */
 $versie = '13-6-2020'; /* Mogelijkheid eigen rassen toevoegen */
 $versie = '20-4-2024'; /* Sortering rassen in gebruik */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -20,7 +20,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
 <?php
 $titel = 'Invoer rassen';
 $file = "Ras.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD valign = 'top'>
 <?php
@@ -254,6 +254,6 @@ ORDER BY actief desc, coalesce(sort,ras) asc ") or die (mysqli_error($db));
 
 	</TD>
 <?php
-Include "menuBeheer.php"; } ?>
+include "menuBeheer.php"; } ?>
 </body>
 </html>

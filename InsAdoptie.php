@@ -6,7 +6,7 @@ $versie = "11-03-2024"; /* Bij geneste query uit
 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -20,15 +20,14 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
 <?php
 $titel = 'Inlezen Adoptie';
 $file = "InsAdoptie.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 				<TD valign = "top">
 <?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { 
 
 If (isset ($_POST['knpInsert_'])) {
-	// 	Include "url.php"; Zit al in header.php
-	Include "post_readerAdop.php"; #Deze include moet voor de vervversing in de functie header()
+	include "post_readerAdop.php"; #Deze include moet voor de vervversing in de functie header()
 	//header("Location: ".$url."InsOverplaats.php");
 	}
 
@@ -274,7 +273,7 @@ if($dmdag < $dmmax) { echo "Datum ligt voor $maxdm ."; } ?>
 
 </TD>
 <?php
-Include "menu1.php"; } ?>
+include "menu1.php"; } ?>
 </tr>
 
 </table>

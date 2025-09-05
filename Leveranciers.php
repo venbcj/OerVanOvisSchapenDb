@@ -12,15 +12,15 @@ session_start(); ?>
 
 <center>
 <?php
-if (isset ($_POST['knpUpdate'])) { Include "url.php"; header("Location: ".$url."Leveranciers.php"); }
+if (isset ($_POST['knpUpdate'])) { include "url.php"; header("Location: ".$url."Leveranciers.php"); }
 $titel = 'Crediteuren';
 $subtitel = '';
-Include "header.php"; ?>
+include "header.php"; ?>
 
 		<TD width = 960 height = 400 valign = "top">
 <?php
 $file = "Leveranciers.php";
-Include "login.php"; 
+include "login.php"; 
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { 
 
 if (isset ($_POST['knpInsert']))
@@ -244,6 +244,6 @@ order by naam
 
 </TD>
 <?php
-Include "menuBeheer.php"; } ?>
+include "menuBeheer.php"; } ?>
 </body>
 </html>

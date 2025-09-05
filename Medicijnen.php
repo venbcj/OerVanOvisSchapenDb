@@ -9,7 +9,7 @@ $versie = '5-7-2020'; /* Veld Per gewicht toegevoegd en wachtdagen gesplitst in 
 $versie = '9-8-2020'; /* Veld naamreader toegevoegd */
 $versie = '14-11-2020'; /* De knop activeren van per medicijn vervangen door checkbox. Met de knop werden alle medicijnen geactiveerd. 15-11 : Eenheid niet meer te wijzigen na eerste inkoop */
 $versie = '17-1-2022'; /* Btw 0% en javascript verplicht() toegevoegd. SQL beveiligd met quotes */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '23-04-2025'; /* De letters kg achter het veld geplaaats i.p.v. er onder */
 
  session_start(); ?>
@@ -23,7 +23,7 @@ $versie = '23-04-2025'; /* De letters kg achter het veld geplaaats i.p.v. er ond
 <?php
 $titel = 'Medicijnen';
 $file = "Medicijnen.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 				<TD valign = "top">
 <?php
@@ -701,7 +701,7 @@ echo $pil;
 
 	</TD>
 <?php } else { ?> <img src='medicijnen_php.jpg' width='900' height='500'/> <?php }
-Include "menuInkoop.php"; } ?>
+include "menuInkoop.php"; } ?>
 
 </body>
 </html>

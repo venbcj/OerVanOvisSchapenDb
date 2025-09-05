@@ -4,7 +4,7 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $versie = '30-12-2023'; /* sql beveiligd */
 $versie = '10-03-2024'; /* Filter op worp periode toegevoegd en filter meenemen naar Excel gemaakt */
 $versie = '29-09-2024'; /* Hernoemd van Groeiresultaat.php naar GroeiresultaatSchaap.php*/
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -22,7 +22,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 <?php
 $titel = 'Groeiresultaten per schaap';
 $file = "GroeiresultaatSchaap.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD align = "center" valign = "top">
 <?php
@@ -325,6 +325,6 @@ if(isset($levnr_record) && $levnr_nu != '') { ?>
 </script>
 
 <?php } else { ?> <img src='resultHok_php.jpg'  width='970' height='550'/> <?php }
-Include "menuRapport.php"; } ?>
+include "menuRapport.php"; } ?>
 </body>
 </html>

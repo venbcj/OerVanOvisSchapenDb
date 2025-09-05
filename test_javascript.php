@@ -39,12 +39,12 @@ session_start();
 <?php
 $titel = 'Inkopen';
 $subtitel = '';
-Include "header.php"; ?>
+include "header.php"; ?>
 
 			<TD width = 960 height = 400 valign = "top">
 <?php
 $file = "test_javascript.php";
-Include "login.php"; 
+include "login.php"; 
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { 
 
 $newvoer = "
@@ -314,7 +314,7 @@ toon_jaar(str);
 
 	</TD>
 <?php 
-Include "menuInkoop.php"; } ?>
+include "menuInkoop.php"; } ?>
 
 
 

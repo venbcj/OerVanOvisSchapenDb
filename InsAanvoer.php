@@ -20,7 +20,7 @@ $versie = '4-7-2020'; /* 1 tabel impAgrident gemaakt */
 $versie = '28-2-2020'; /* $fase gebaseerd om omschrijving geslacht */
 $versie = '26-11-2022'; /* geboortedatum toegevoegd en sql beveiligd met enkele quotes */
 $versie = '10-11-2024'; /* ubn toegevoegd aan keuzelijst herkomst */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '17-04-2025'; /* Controle of levensnummer al bestaat in database vervangen door controle op aan- of afwezigheid op de stallijst. Zie ($levnr_stal > 0 && !isset($afgevoerd)) */
 $versie = '11-07-2025'; /* Veld Ubn toegevoegd. Betreft eigen ubn van gebruiker. Per deze versie kan een gebruiker meerdere ubn's hebben */
 
@@ -36,7 +36,7 @@ $versie = '11-07-2025'; /* Veld Ubn toegevoegd. Betreft eigen ubn van gebruiker.
 <?php
 $titel = 'Inlezen Aanvoer';
 $file = "InsAanvoer.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD valign = "top">
 <?php 
@@ -45,8 +45,7 @@ if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) 
 if ($modmeld == 1 ) { include "maak_request_func.php"; }
 
 If (isset($_POST['knpInsert_']))  {
-	//Include "url.php";
-	Include "post_readerAanv.php"; #Deze include moet voor de vervversing in de functie header()
+	include "post_readerAanv.php"; #Deze include moet voor de vervversing in de functie header()
 	//header("Location: ".$url."InsAanvoer.php"); 
 	}
 
@@ -600,7 +599,7 @@ else if (numeriek($levnr_rd) == 1) 				{ $color = 'red'; $bericht = "Levensnumme
 
 </TD>
 <?php
-Include "menu1.php"; } ?>
+include "menu1.php"; } ?>
 </tr>
 
 </table>

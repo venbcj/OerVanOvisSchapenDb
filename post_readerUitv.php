@@ -1,5 +1,5 @@
 <!--  10-5-2014 : Bijwerken tblBezetting toegevoegd 
-16-11-2014 include "Maak_Request.php"; toegevoegd 
+16-11-2014 include Maak_Request toegevoegd 
 2-3-2017 : het kunnen verwijderen toegevoegd en $recId zodat hidden velden in insUitval.php weg kunnen 
 13-7-2020 : Onderscheid gemaakt tussen reader Biocontrol en Agrident gemaakt 
 23-1-2021 : In UPDATE impAgrident readId gewijzigd in Id. Sql beveiligd met quotes verschil tussen kiezen of verwijderen herschreven 
@@ -9,11 +9,6 @@
 /* post_readerGeb.php toegepast in :
 	- InsUitval.php */
 	
-//include "url.php";
-
-//include "passw.php";
-//Include "connect_db.php"; //Deze include zit ook in login.php maar binnen InsUitval.php is include"login.php"; nog niet gepasseerd. Hier laten staan dus.
-
 function getNameFromKey($key) {
     $array = explode('_', $key);
     return $array[0];

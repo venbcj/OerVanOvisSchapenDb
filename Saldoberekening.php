@@ -6,7 +6,7 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $versie = '11-7-2020'; /* € gewijzigd in &euro; 12-7-2020 ë uit database gewijzigd in echo htmlentities($string, ENT_COMPAT,'ISO-8859-1', true); bron https://www.php.net/htmlspecialchars via https://www.phphulp.nl/php/forum/topic/speciale-tekens-in-code-omzetten/50786/ */
 $versie = '17-01-2021'; /* Enkele quotes om variabele gezet*/
 $versie = '31-12-2023'; /* and h.skip = 0 aangevuld aan tblHistorie */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 
  session_start();  ?>  
 <!DOCTYPE html>
@@ -19,7 +19,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 <?php
 $titel = 'Saldoberekening';
 $file = "";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD valign = 'top'>
 <?php
@@ -669,7 +669,7 @@ else if (isset($subreal_dc) && $credeb == 'd') { $subreal_dc = $subreal_dc+$rubr
 </form>
 	</TD>
 <?php } else { ?> <img src='saldoberekening_php.jpg'  width='970' height='2850'> <?php }
-Include "menuFinance.php"; } ?>
+include "menuFinance.php"; } ?>
 </tr>
 
 </table>

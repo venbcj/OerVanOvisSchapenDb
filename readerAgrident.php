@@ -5,7 +5,7 @@
 18-12-2021 : Dekken en Dracht toegevoegd 
 26-11-2022 : Taak Aanvoer, Afvoer, Spenen en Dracht anders ingericht (andere loop in reader) */
 
-include"connect_db.php";
+include "connect_db.php";
 $string = '';
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
@@ -77,12 +77,12 @@ if($i == 3) { $inhoud = $item -> {$taken[$i]} ; include "impVerplaatsing.php"; }
 
 if($i == 4) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum', 'HokId', 'Levensnummer', 'Gewicht');
 												/*$velden_dieren = array('Levensnummer', 'Gewicht');
-												include "impAgrident_dieren.php";*/ 
+												include impAgrident_dieren*/ 
 												include "impAgrident.php"; }
 
 if($i == 5) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum', 'Ubn', 'Reden', 'Transponder', 'Levensnummer', 'Gewicht');
 												/*$velden_dieren = array('Transponder', 'Levensnummer', 'Gewicht');
-												include "impAgrident_dieren.php";*/ 
+												include impAgrident_dieren*/ 
 												include "impAgrident.php"; }
 
 if($i == 6) { $inhoud = $item -> {$taken[$i]} ; $velden = array('Datum', 'Ubn', 'RasId', 'HokId', 'Transponder', 'Levensnummer','Datumdier', 'Geslacht', 'ActId', 'Gewicht');
@@ -109,7 +109,7 @@ if($i == 12) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum
 
 if($i == 13) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum', 'MoederTransponder', 'Moeder', 'Drachtig', 'Grootte');
 												/* $velden_dieren = array('MoederTransponder', 'Moeder', 'Drachtig', 'Grootte');
-												include "impAgrident_dieren.php";*/ 
+												include impAgrident_dieren*/ 
 												include "impAgrident.php"; }
 echo $i.'<br>';
 			 } 

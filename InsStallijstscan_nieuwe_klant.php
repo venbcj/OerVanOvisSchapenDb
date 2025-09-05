@@ -2,7 +2,7 @@
 $versie = '05-08-2023'; /* kopie gemaaky van InsAanvoer */
 $versie = '26-12-2023'; /* Een schaap mag alleen in een verblijf worden geplaatst als in de database een speendatum bestaat of kan worden bepaald aan de hand van de geboortedatum */
 $versie = '13-12-2024'; /* Controle en foutmeldingen samengevoegd, zie $onjuist */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '15-07-2025'; /* Veld ubn toegevoegd. Per deze versie kan een gebruiker meerdere ubn's hebben */
 
  session_start(); ?>
@@ -17,7 +17,7 @@ $versie = '15-07-2025'; /* Veld ubn toegevoegd. Per deze versie kan een gebruike
 <?php
 $titel = 'Eenmalig inlezen stallijst nieuwe klanten';
 $file = "InsStallijstscan_nieuwe_klant.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = "top">
 <?php
@@ -26,8 +26,7 @@ if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) 
 if ($modmeld == 1 ) { include "maak_request_func.php"; }
 
 If (isset($_POST['knpInsert_']))  {
-	//Include "url.php";
-	Include "post_readerStalscan.php";
+	include "post_readerStalscan.php";
 	}
 
 function numeriek($subject) {
@@ -542,7 +541,7 @@ for ($i = 0; $i < $count; $i++){
 
 </TD>
 <?php
-Include "menu1.php"; } ?>
+include "menu1.php"; } ?>
 </tr>
 
 </table>

@@ -5,7 +5,7 @@ $versie = '15-3-2020'; /* veld reader toegevoegd */
 $versie = '20-6-2020'; /* knop bewerken toegevoegd als reader = Agrident en bepaalde redenen en Lambar bestaan niet of redenen niet actief */
 $versie = '12-2-2021'; /* Redenen afvoer toegevoegd. Controle lambar verwijderd */
 $versie = '11-8-2023'; /* Veld ingescand toegevoed. Dit is de laatste dag dat een stallijst kan worden ingelezen bij een nieuwe klant. functie db_null_input() gebruikt. Sql beveiligd met quotes */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
  session_start(); 
  ?>
 <!DOCTYPE html>
@@ -18,7 +18,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 <?php
 $titel = 'Gebruiker';
 $file = "Systeem.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD valign = "top">
 <?php
@@ -323,7 +323,7 @@ Laatste dag stallijst inlezen
 
 </TD>
 <?php
-Include "menuBeheer.php"; } ?>
+include "menuBeheer.php"; } ?>
 </tr>
 
 </table>

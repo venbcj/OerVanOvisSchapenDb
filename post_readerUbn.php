@@ -4,7 +4,7 @@
 include "url.php";
 
 include "passw.php";
-Include "connect_db.php";*/ //Deze include zit ook in login.php maar binnen InsAfvoeren.php is include"login.php"; nog niet gepasseerd. Hier laten staan dus.
+include "connect_db.php";*/ //Deze include zit ook in login.php maar binnen InsAfvoeren.php is include login nog niet gepasseerd. Hier laten staan dus.
 
 function getNameFromKey($key) {
     $array = explode('_', $key);

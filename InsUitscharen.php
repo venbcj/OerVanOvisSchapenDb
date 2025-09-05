@@ -1,6 +1,6 @@
 <?php 
 $versie = '03-11-2024'; /* kopie gemaakt van InsAfvoer.php */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -14,7 +14,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
 <?php
 $titel = 'Inlezen Uitscharen';
 $file = "InsUitscharen.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD valign = "top">
 <?php
@@ -26,7 +26,7 @@ if ($modmeld == 1 ) { include "maak_request_func.php"; }
 
 If (isset($_POST['knpInsert_'])) {
 
-	Include "post_readerUitsch.php";#Deze include moet voor de verversing in de functie header()
+	include "post_readerUitsch.php";#Deze include moet voor de verversing in de functie header()
 	}
 	
 $velden = "rd.Id readId, rd.datum, right(rd.levensnummer,".mysqli_real_escape_string($db,$Karwerk).") werknr, rd.levensnummer levnr, rd.ubn ubn_afv, r.ubn ctrubn, rd.reden redId_rd, s.schaapId, s.geslacht, ouder.datum dmaanw, lower(haf.actie) actie, haf.af, ak.datum dmaankoop, date_format(max.datummax_afv,'%d-%m-%Y') maxdatum_afv, max.datummax_afv, b.bezId ";
@@ -400,7 +400,7 @@ $vandaag = date('Y-m-d');
 
 	</TD>
 <?php
-Include "menu1.php"; } ?>
+include "menu1.php"; } ?>
 </tr>
 </table>
 

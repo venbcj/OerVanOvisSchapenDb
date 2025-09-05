@@ -11,7 +11,7 @@ $versie = '19-08-2023'; /* Laatste scan- / controledatum toegevoegd */
 $versie = '04-09-2023'; /* Export-xlsx toegevoegd */
 $versie = '01-01-2024'; /* and h.skip = 0 aangevuld aan tblHistorie */
 $versie = '30-11-2024'; /* Uitgeschaarde dieren toegevoegd */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 $versie = '19-01-2025'; /* Kolomkop vastgezet tegen de header */
 $versie = '11-04-2025'; /* in query $toon_aanwezigen en $toon_aanwezigen aan subquery haf in where-clause and h.skip = 0 toegevoegd */
 
@@ -68,7 +68,7 @@ tr.StickyHeader th { /* Binnen de table row met class StickyHeader wordt deze op
 <?php 
 $titel = 'Stallijst';
 $file = "Stallijst.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = 'top'>
 <?php
@@ -440,7 +440,7 @@ if(isset($aanw)) {if($geslacht == 'ooi') { $fase = 'moeder'; } else if($geslacht
 
 		</TD>
 <?php
-Include "menuRapport.php"; } ?>
+include "menuRapport.php"; } ?>
 
 		</TR>
 	</tbody>

@@ -5,7 +5,7 @@ $versie = '1-8-2017'; /* save_artikel.php toegevoegd */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '7-4-2019'; /* Btw gewijzigd van 6 naar 9% */
 $versie = '17-1-2022'; /* Btw 0% en javascript verplicht() toegevoegd. SQL beveiligd met quotes */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -18,7 +18,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 <?php
 $titel = 'Voer';
 $file = "Voer.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD valign = 'top'>
 <?php
@@ -612,7 +612,7 @@ echo $activeer.'<br>';	mysqli_query($db,$activeer) or die (mysqli_error($db));
 
 	</TD>
 <?php } else { ?> <img src='voer_php.jpg'  width='970' height='550'/> <?php }
-Include "menuInkoop.php"; } ?>
+include "menuInkoop.php"; } ?>
 
 </body>
 </html>

@@ -32,7 +32,7 @@ join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd 
 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 */
 $versie = '30-11-2024'; /* In keuzelijst levensnummer en werknr uitgeschaarde dieren wel tonen. query's m.b.t. afvoer aangevuld met h.actId != 10 */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = top > gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = top > gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '15-01-2025'; /*h1.actId != 2 verwijderd in de geneste query 'uit' in de query $kzl_verblijven */
 
  session_start();  ?>
@@ -46,7 +46,7 @@ $versie = '15-01-2025'; /*h1.actId != 2 verwijderd in de geneste query 'uit' in 
 <?php
 $titel = 'Medicijn toediening';
 $file = "Med_registratie.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = "top">
 <?php
@@ -950,7 +950,7 @@ GROUP BY s.levensnummer
 	</TD>
 
 <?php } else { ?> <img src='med_registratie_php.jpg'  width='970' height='550'/> <?php }
-Include "menu1.php"; }
+include "menu1.php"; }
 ?>
 </body>
 </html>

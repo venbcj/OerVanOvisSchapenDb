@@ -1,6 +1,6 @@
 <?php 
 $versie = '29-09-2024'; /* Gekopieerd van GroeiresultaatSchaap.php */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -19,7 +19,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 
 $titel = 'Groeiresultaten per weging';
 $file = "GroeiresultaatWeging.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD align = "center" valign = "top">
 <?php
@@ -300,6 +300,6 @@ if(isset($datum_record) && $datum_toon != '') { ?>
 </script>
 
 <?php } else { ?> <img src='resultHok_php.jpg'  width='970' height='550'/> <?php }
-Include "menuRapport.php"; } ?>
+include "menuRapport.php"; } ?>
 </body>
 </html>

@@ -2,7 +2,7 @@
 $versie = '20-6-2021'; /* Gekopieerd van insOmnummeren.php */
 $versie = '5-9-2021'; /* func_artikelnuttigen.php toegevoegd en eenheid toegevoegd */
 $versie = '24-6-2023'; /* Registraties samengevoegd tot 1 regeistratie per verblijf, Voer en doelgroep */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -26,13 +26,13 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
 <?php
 $titel = 'Inlezen Voerregistratie';
 $file = "InsVoerregistratie.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD valign = "top">
 <?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { 
 
-include"kalender.php";
+include "kalender.php";
 include "func_artikelnuttigen.php"; 
 
 ?>
@@ -43,14 +43,12 @@ if (isset($_POST['knpVervers_']) || isset($_POST['knpSaveVoer_'])) {
 }
 
 if (isset ($_POST['knpInsert_'])) {
-	// 	Include "url.php"; Zit al in header.php
-	Include "post_readerVoer.php"; #Deze include moet voor de vervversing in de functie header()
+	include "post_readerVoer.php"; #Deze include moet voor de vervversing in de functie header()
 	//header("Location: ".$url."InsOverplaats.php");
 	}
 
 if (isset ($_POST['knpSaveVoer_'])) {
-	// 	Include "url.php"; Zit al in header.php
-	Include "save_readerVoer.php"; #Deze include moet voor de vervversing in de functie header()
+	include "save_readerVoer.php"; #Deze include moet voor de vervversing in de functie header()
 	//header("Location: ".$url."InsOverplaats.php");
 	}
 
@@ -430,7 +428,7 @@ if($toon1 == 1 || $toon2 == 1 || $toon3 == 1) { ?>
 
 </TD>
 <?php
-Include "menu1.php"; } ?>
+include "menu1.php"; } ?>
 </tr>
 
 </table>

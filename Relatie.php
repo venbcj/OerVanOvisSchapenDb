@@ -1,6 +1,6 @@
 <?php $versie = '28-12-2016'; /* Banknr gewijzigd naar IBAN, veld langer gemaakt en tonen van spaties mogelijk gemaakt */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -13,7 +13,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 <?php
 $titel = 'Relatie';
 $file = "Relaties.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 				<TD valign = 'top'>
 <?php
@@ -220,7 +220,7 @@ order by actief desc, relatie desc
 <!-- Thomas bij de Belvederre station-->
 </TD>
 <?php
-Include "menuBeheer.php"; } ?>
+include "menuBeheer.php"; } ?>
 </tr>
 </table>
 

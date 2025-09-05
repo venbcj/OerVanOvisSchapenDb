@@ -11,7 +11,7 @@
 13-05-2018 : $_SESSION["ID"]  $_SESSION["DT1"]  $_SESSION["BST"] toegevoegd
 15-03-2020 : gebruik van welke reader toegevoegd
 16-01-2021 : function db_quote toegevoegd
-12-08-2023 : include "basisfuncties.php"; toegevoegd en alle functions daar naar verplaatst
+12-08-2023 : include basisfuncties toegevoegd en alle functions daar naar verplaatst
 24-10-2023 : $zoek_laatste_versie toegevoegd 26-10-2023 $update_tblLeden toegevoegd
 12-01-2024 : $_SESSION["KZ"]; toegevoegd. 14-01-2024 controle toegevoegd op juiste connectie met de database
 09-11-2024 : $w_hok = 12+(8*$lengte); gewijzigd naar $w_hok = 15+(9*$lengte);
@@ -21,7 +21,7 @@
  */
 
 include "url.php";
-include "connect_db.php";  //inclusief include "passw.php" => "url.php"
+include "connect_db.php";
 require_once("basisfuncties.php");
 
 # if($_SERVER["REQUEST_URI"] == '/Stallijst.php') {
@@ -130,7 +130,7 @@ HTML;
                 $modmeld = $mod['meld'];
             }
             if (isset($menu)) {
-                /*Include "connect_db.php";*/
+                /*include connect_db*/
                 include $menu;
             } // $menu is gedeclareerd in index.php. Als $menu bestaat en index.php dus actief moet het menu woden getoond na inloggen
 

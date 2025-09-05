@@ -8,7 +8,7 @@ $versie = '8-4-2023'; /* Standraad relatie Vermist niet tonen en SQL beveiligd m
 $versie = '22-7-2023'; /* empty($_POST['insPartij_']))	{	$insPartij = "NULL"; vervangen in empty($_POST['insPartij_']))	{	$insPartij = '';	} De quotes werden op verschillende plekken niet goed gebruikt waardoor er quotes voor en achter de tekst in de database kwam te staan 
 
 26-10-2024 : INSERT query werd getoond en is niet meer zichtbaar gemaakt */ 
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 $versie = '27-02-2025'; /* <input type= "hidden" name= echo "txtcreId_$Id"; en <input type= "hidden" name= <?php echo "txtId_$Id" verwijderd 
 08-07-2025 : naam txtcredPres_ gewijzigd naar insPres_ */
 
@@ -23,7 +23,7 @@ $versie = '27-02-2025'; /* <input type= "hidden" name= echo "txtcreId_$Id"; en <
 <?php
 $titel = 'Relaties';
 $file = "Relaties.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD valign = 'top'>
 <?php
@@ -443,6 +443,6 @@ foreach ( $opties as $key => $waarde)
 
 </TD>
 <?php
-Include "menuBeheer.php"; } ?>
+include "menuBeheer.php"; } ?>
 </body>
 </html>

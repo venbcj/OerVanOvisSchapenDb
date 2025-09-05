@@ -3,7 +3,7 @@ $versie = '3-4-2018'; /* : Tussenweging toegevoegd bij UpdatSchaap.php */
 $versie = '16-6-2018'; /* : Kalender toegevoegd */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '01-01-2024'; /* h.skip = 0 aangevuld bij tblHistorie en sql beveiligd met quotes */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -16,7 +16,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
 <?php
 $titel = 'Tussenwegingen';
 $file = "Wegen.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = 'top'>
 <?php
@@ -24,7 +24,7 @@ if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) 
 
 If(empty($_GET['pstId']))  { $schaapId = $_POST['txtlevnr']; } else { $schaapId = "$_GET[pstId]"; }
 
-include"kalender.php";
+include "kalender.php";
 
 if (isset($_POST['knpSave']))
 {
@@ -195,7 +195,7 @@ ORDER BY datum desc
 
 		</TD>
 <?php
-Include "menu1.php"; } ?>
+include "menu1.php"; } ?>
 
 </body>
 </html>

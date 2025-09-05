@@ -14,12 +14,12 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $titel = 'Groei resultaten per schaap';
 $subtitel = ''; 
  
-Include "header.php"; ?>
+include "header.php"; ?>
 
 		<TD width = 960 height = 400 valign = "top" >
 <?php
 $file = "Groeiresultaat.php";
-Include "login.php";
+include "login.php";
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech ==1) { ?>
 
 <table border = 0 >
@@ -238,6 +238,6 @@ order by werknr
 
 		</TD>
 <?php } else { ?> <img src='resultHok_php.jpg'  width='970' height='550'/> <?php }
-Include "menuRapport.php"; } ?>
+include "menuRapport.php"; } ?>
 </body>
 </html>

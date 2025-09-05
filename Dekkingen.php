@@ -11,7 +11,7 @@ I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkend
 $versie = '07-09-2024'; /* Periode tussen werpen en dekken teruggebracht naar 60 i.p.v. 183 dagen */
 $versie = '16-12-2024'; /* Wijzigen van drachtdaatum met dekdatum ouder dan 1 jaar niet meer mogelijk gemaakt. Voorgaande jaren kan niet ouder zijn dan het jaar dat de gebruiker is gestart met het managementprogramma */
 $versie = '18-12-2024'; /* query Declaratie vaderdier aangepast. Aanwas hoeft niet meer zijn aangemaakt bij de ingelogde gebruiker. */
-$versie = '31-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '31-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '21-01-2025'; /* In subquery vmax_mdr_met_vdr h.skip = 0 toegevoegd */
 $versie = '12-03-2025'; /* In query $zoek_dekkingen tabel 'join tblHistorie h on (stm.stalId = h.stalId and v.hisId = h.hisId)' toegevoegd om de relaties met andere stalId's uit tblStal (bijv. uitgeschaarden) uit te sluiten. Dit veroorzaakte nl. dubbel aantal worpen */
 $versie = '26-03-2025'; /* Verblijf tijdens dekking toegevoegd aan historie */
@@ -34,14 +34,14 @@ session_start(); ?>
         }
     </style>
 
-<?php include"kalender.php"; ?>
+<?php include "kalender.php"; ?>
 </head>
 <body>
 
 <?php
 $titel = 'Dekkingen / Dracht';
 $file = "Dekkingen.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = "top">
 <?php
@@ -537,7 +537,7 @@ insert_dekking_mdr($hisId,$mdrId,$kzlVdr);
 		EINDE NIEUWE INVOER O.B.V. VERBLIJF
 	*****************************************/
 
-if(isset($_POST['knpSave_'])) { include"save_dekkingen.php"; }
+if(isset($_POST['knpSave_'])) { include "save_dekkingen.php"; }
 ?>	
 <form action = "Dekkingen.php" method = "post" >
 
@@ -1102,7 +1102,7 @@ foreach ( $opties as $key => $waarde)
 </TD>
 
 <?php
-Include "menu1.php"; } 
+include "menu1.php"; } 
 } // Einde if($modtech == 1) ?>
 
 

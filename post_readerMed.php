@@ -8,7 +8,7 @@ Toegepast in : InsMedicijn.php
 22-9-2021 : Functie inlezen_pil toegevoegd -->
 
 <?php
-// include "url.php"; Zit al in InsMedicijn.php
+// include url Zit al in InsMedicijn.php
 
 function getNameFromKey($key) {
     $array = explode('_', $key);

@@ -3,7 +3,7 @@
 /*
 $new_jaar = 2015;
 $lidId = 4;
-include "connect_db.php";*/
+include connect_db*/
 
 /* Toegepast in :  
 	-	Deklijst.php

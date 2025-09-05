@@ -43,7 +43,7 @@ for ($i = 1 ; $i <= $weken_jaar ; $i++){
 $zoek_jaar = mysqli_query($db,"SELECT year(datum) jaar FROM tblLiquiditeit li join tblRubriekuser ru on (li.rubuId = ru.rubuId)WHERE ru.lidId  = ".mysqli_real_escape_string($db,$lidId)." and year(datum) = '$year' GROUP BY year(datum) ") or die (mysqli_error($db));
 	while ( $zjr = mysqli_fetch_assoc($zoek_jaar)) { $liq_jaar = $zjr['jaar']; }
 	
-	if(!isset($liq_jaar)) { $new_jaar = $year; include"create_liquiditeit.php"; }
+	if(!isset($liq_jaar)) { $new_jaar = $year; include "create_liquiditeit.php"; }
 
 // EINDE Kijken of het jaar ook binnen de liquiditeit moet worden aangemaakt.
 

@@ -3,7 +3,7 @@
 $versie = '29-10-2016';/* : in tblElement veldnaam 'kenmerk' gewijzigd naar 'eenheid'*/
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '11-7-2020'; /* € gewijzigd in &euro; */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '07-03-2025'; /* <input type= "hidden" name= <?php echo "txtId_$Id"; ?> size = 1 value = <?php echo "$Id";?> > verwijderd */
  session_start(); ?>
 <!DOCTYPE html>
@@ -16,7 +16,7 @@ $versie = '07-03-2025'; /* <input type= "hidden" name= <?php echo "txtId_$Id"; ?
 <?php
 $titel = 'Componenten';
 $file = "Componenten.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD align = "center" valign = "top">
 <?php
@@ -242,6 +242,6 @@ echo $compo;
 
 	</TD>
 <?php } else { ?> <img src='componenten_php.jpg'  width='970' height='550'/> <?php }
-Include "menuFinance.php"; } ?>
+include "menuFinance.php"; } ?>
 </body>
 </html>

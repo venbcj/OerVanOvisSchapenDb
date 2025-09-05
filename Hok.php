@@ -6,7 +6,7 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $versie = '30-5-2020'; /* Scannummer t.b.v. reader Agrident aangepast. Dubbele loop Hokken en  hidden velden scan en actief verwijderd */
 $versie = '02-08-2020'; /* veld sort toegevoegd */
 $versie = '20-04-2024'; /* Niet actieve verblijven weggefilterd met optie om te tonen. Verblijven die niet zijn gekoppeld aan andere tabellen kunnen worden verwijderd */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '10-03-2025'; /* hidden veld chbActief_$Id verwijderd. <input type = hidden name = <?php echo "chbActief_$Id"; ?> value= 0 > <!-- hiddden --> */
 
 session_start(); ?>
@@ -20,7 +20,7 @@ session_start(); ?>
 <?php
 $titel = 'Verblijven';
 $file = "Hok.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 				<TD align = "center" valign = "top">
 <?php 
@@ -213,6 +213,6 @@ WHERE h.hokId = '".mysqli_real_escape_string($db,$Id)."' and isnull(b.hokId) and
 
 	</TD>
 <?php } else { ?> <img src='hok_php.jpg'  width='970' height='550'/> <?php }
-Include "menuBeheer.php"; } ?>
+include "menuBeheer.php"; } ?>
 </body>
 </html>

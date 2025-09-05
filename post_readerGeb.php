@@ -1,5 +1,5 @@
 <!-- 11-8-2014 : veld type gewijzigd in fase
- 16-11-2014 include "maak_request.php"; toegevoegd 
+ 16-11-2014 include maak_request toegevoegd 
  17-09-2016 : modules gesplitst 
  18-1-2017 : Query's aangepast n.a.v. nieuwe tblDoel  22-1-2017 : tblBezetting gewijzigd naar tblBezet 
  18-2-2017 : Controle op startdatum moeder toegevoegd 

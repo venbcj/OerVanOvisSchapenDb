@@ -1,5 +1,5 @@
 <!-- 11-8-2014 : veld type gewijzigd in fase 
- 23-11-2014 include "Maak_Request.php"; toegevoegd 
+ 23-11-2014 include Maak_Request toegevoegd 
  9-11-2016 controle op bestaand levensnummer toegevoegd ( isset($schaapId) ) 
  18-1-2017 : Query's aangepast n.a.v. nieuwe tblDoel	22-1-2017 : tblBezetting gewijzigd naar tblBezet 
  1-2-2017 : Halsnummer toegevoegd
@@ -22,10 +22,12 @@
 /* post_readerGeb.php toegepast in :
 	- InsUitval.php */
 	
-/*include "url.php";
+/*
+include url
 
-include "passw.php";*/
-//Include "connect_db.php"; //Deze include zit ook in login.php maar binnen InsAanvoer.php is include"login.php"; nog niet gepasseerd. Hier laten staan dus.
+include passw
+ */
+//include connect_db //Deze include zit ook in login.php maar binnen InsAanvoer.php is include login nog niet gepasseerd. Hier laten staan dus.
 
 function getNameFromKey($key) {
     $array = explode('_', $key);

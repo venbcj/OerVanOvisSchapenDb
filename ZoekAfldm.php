@@ -3,7 +3,7 @@ $versie = '20-2-2015'; /* login toegevoegd */
 $versie = '19-12-2015'; /* Uitval toegevoegd */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '30-12-2023'; /* h.skip = 0 toegevoegd bij tblHistorie en sql beveiligd  */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -16,7 +16,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
 <?php 
 $titel = 'Keuze afleverdatum t.b.v. VKI';
 $file = "ZoekAfldm.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD align = "center" valign = "top">
 <?php
@@ -74,7 +74,7 @@ ORDER BY r.uitval, h.datum desc
 
 	</TD>
 <?php
-Include "menuRapport.php"; }?>
+include "menuRapport.php"; }?>
 
 	</body>
 	</html>

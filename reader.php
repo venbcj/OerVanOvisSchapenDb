@@ -23,7 +23,7 @@ CHANGE `reduId_pil` `reden_pil` INT( 3 ) NULL DEFAULT NULL ;
 
 */
 
-include"connect_db.php";
+include "connect_db.php";
 $string = '';
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 

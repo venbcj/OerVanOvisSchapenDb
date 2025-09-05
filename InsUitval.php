@@ -17,7 +17,7 @@ $versie = '13-6-2020'; /* Onderschied gemaakt tussen reader Agrident en Biocontr
 $versie = '4-7-2020'; /* 1 tabel impAgrident gemaakt */
 $versie = '23-1-2021'; /* Alias readId bestond niet in query Agrident. Sql beveiligd met quotes */
 $versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -31,7 +31,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
 <?php
 $titel = 'Inlezen Uitval';
 $file = "InsUitval.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 				<TD valign = "top">
 <?php
@@ -40,8 +40,7 @@ if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) 
 if ($modmeld == 1 ) { include "maak_request_func.php"; }
 
 If (isset($_POST['knpInsert_'])) {
-	//Include "url.php"; Zit al in header.php
-	Include "post_readerUitv.php"; #Deze include moet voor de vervversing in de functie header()
+	include "post_readerUitv.php"; #Deze include moet voor de vervversing in de functie header()
 	//header("Location: ".$url."insUitval.php"); 
 	}
 if($reader == 'Agrident') {
@@ -361,7 +360,7 @@ for ($i = 0; $i < $count; $i++){
 
 	</TD>
 <?php
-Include "menu1.php"; } ?>
+include "menu1.php"; } ?>
 </tr>
 
 </table>

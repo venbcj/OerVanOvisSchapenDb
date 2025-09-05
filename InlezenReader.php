@@ -17,7 +17,7 @@ $versie = '05-08-2023'; /* Stallijstscan toegevoegd */
 $versie = '02-12-2023'; /* Tussenweging toegevoegd */
 $versie = '03-11-2024'; /* Uitscharen en terug van uitscharen toegevoegd */
 $versie = '21-12-2024'; /* Bestanden uploaden van raeder Biocontrol verwijderd */
-$versie = '31-12-2024'; /* Include "login.php"; voor Include "header.php" gezet */
+$versie = '31-12-2024'; /* include login voor include header gezet */
 $versie = '28-02-2025'; /* Als de stallijst leeg is wordt de link inlezen stallijst nieuwe klant ook getoond */
 
  session_start(); ?>
@@ -31,7 +31,7 @@ $versie = '28-02-2025'; /* Als de stallijst leeg is wordt de link inlezen stalli
 <?php 
 $titel = 'Inlezen reader';
 $file = "InlezenReader.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
          <TD>
 <?php
@@ -40,11 +40,11 @@ if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) 
 $_SESSION["RPP"] = 30; $RPP = $_SESSION["RPP"];
 $_SESSION["PA"] = 1; $pag = $_SESSION["PA"];
 
-Include "responscheck.php"; ?>
+include "responscheck.php"; ?>
 
  <form action="#" method="post" enctype="multipart/form-data">
 
-<?php Include "inlezenAgrident.php"; 
+<?php include "inlezenAgrident.php"; 
 $zoek_lege_stallijst = mysqli_query($db,"
 SELECT count(stalId) aant
 FROM tblStal
@@ -286,7 +286,7 @@ inlezen stallijstscan </a>
 
 	</TD>
 <?php
-Include "menu1.php"; } ?>
+include "menu1.php"; } ?>
 </tr>
 </table>
 

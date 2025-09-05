@@ -30,7 +30,7 @@ $versie = '05-02-2022'; /* Drachtig (ja/nee) wordt niet meer vastgelegd in tblVo
 $versie = '09-09-2023'; /* if(isset($lst_dmworp)) { toegevoegd anders bestaat $verschil_worp onterecht */
 $versie = '31-12-2023'; /* and h.skip = 0 aangevuld bij tblHistorie */
 $versie = '23-10-2024'; /* Paginanaam gewijzigd van Invoeren schaap naar Aanvoer schaap */
-$versie = '26-12-2024'; /* <TD width = "960" height = "400" valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = "960" height = "400" valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '17-02-2025'; /* Terug van uitscharen mogelijk gemaakt 22-02-2025 velden m.b.t. index verwijderd */
 $versie = '10-07-2025'; /* Keuzelijst ubn toegevoegd voor gebruikers met meerdere ubn's */
 
@@ -41,7 +41,7 @@ $versie = '10-07-2025'; /* Keuzelijst ubn toegevoegd voor gebruikers met meerder
 <title>Registratie</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
-<?php include"kalender.php"; ?>
+<?php include "kalender.php"; ?>
 
 </head>
 <body>
@@ -148,7 +148,7 @@ function toon_werpdatum(m) {
 <?php
 $titel = 'Aanvoer schaap';
 $file = "InvSchaap.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD valign = "top">
 <?php
@@ -1043,8 +1043,6 @@ if ($modmeld == 1 && $scenario == 'Geboren_lam') {
 
 $reqst_file = 'InvSchaap.php_geboren';
 $Melding = 'GER';
-/*##*/include "maak_request_func.php";
-/*##*/include "maak_request.php";
 }
 
 if ($modmeld == 1 && ($scenario == 'Inscharen' || $scenario == 'Aanvoer_ouder')) {
@@ -1058,8 +1056,6 @@ WHERE skip = 0 and stalId = '".mysqli_real_escape_string($db,$stalId)."' and act
 			
 $reqst_file = 'InvSchaap.php_aanwas';
 $Melding = 'AAN';
-/*##*/include "maak_request_func.php";
-/*##*/include "maak_request.php";
 }
 
 if ($modmeld == 1 && $scenario == 'Dood_lam_met_levensnummer') {
@@ -1073,8 +1069,6 @@ WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."' and actId = 14 and s
 
 $reqst_file = 'InvSchaap.php_uitval';
 $Melding = 'DOO';
-/*##*/include "maak_request_func.php";
-/*##*/include "maak_request.php";
 }
 
 }// Einde if(!isset($fout) && isset($scenario))			
@@ -1748,7 +1742,7 @@ while ($zu = mysqli_fetch_assoc($zoek_ubn))
 		</TD>	
 	
 <?php	
-Include "menu1.php"; } # deze haak hoor bij Include "login.php";  ?>
+include "menu1.php"; } # deze haak hoor bij include login  ?>
 </tr>
 
 </table>

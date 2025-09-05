@@ -12,18 +12,18 @@ session_start(); ?>
 <?php
 $titel = 'Worpindex';
 $subtitel = '';
-Include "header.php"; ?>
+include "header.php"; ?>
 	<TD width = 960 height = 400 valign = "top" align = "center">
 <?php
 $file = "Worpindex.php";
-Include "login.php"; 
+include "login.php"; 
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { ?>
 
 Deze pagina is nog in ontwikkeling
 
 </TD>
 <?php
-Include "menuRapport.php"; } ?>
+include "menuRapport.php"; } ?>
 
 </tr>
 </table>

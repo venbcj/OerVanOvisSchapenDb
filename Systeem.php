@@ -6,7 +6,7 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $versie = '1-6-2020'; /* Reader keuze toegevoegd */
 $versie = '12-02-2021'; /* Systeemgegevens gewijzigd naar Instellingen */
 $versie = '06-10-2024'; /* Standaard tonen van groei toegevoegd en sql beveiligd met enkele quotes */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 $versie = '10-04-2025'; /* Veld root_reader uit tblLeden verwijderd. Daarmee ook variabele $updlokatie en html veld txtLokatie */
 
  session_start(); ?>
@@ -20,7 +20,7 @@ $versie = '10-04-2025'; /* Veld root_reader uit tblLeden verwijderd. Daarmee ook
 <?php
 $titel = 'Instellingen';
 $file = "Systeem.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD valign = 'top'>
 <?php
@@ -225,7 +225,7 @@ if($host == 'demo.oervanovis.nl' && $lidId == 1) { ?>
 
 </TD>
 <?php
-Include "menuBeheer.php"; } ?>
+include "menuBeheer.php"; } ?>
 </tr>
 
 </table>

@@ -12,7 +12,7 @@ $versie = '22-1-2017';  /* 20-1-2017 ; $hok_uitgez = 'Geboren' gewijzigd in $hok
 $versie = '18-6-2020';  /* Kopie gemaakt van insSpenen.php */
 $versie = '4-7-2020'; /* 1 tabel impAgrident gemaakt */
 $versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie en sql beveiligd met quotes */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>  
 <!DOCTYPE html>
@@ -26,15 +26,15 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
 <?php
 $titel = 'Inlezen Lambar';
 $file = "InsLambar.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 			<TD valign = "top">
 <?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
 If (isset($_POST['knpInsert_']))  {
-	Include "url.php";
-	Include "post_readerLbar.php"; #Deze include moet voor de vervversing in de functie header()
+	include "url.php";
+	include "post_readerLbar.php"; #Deze include moet voor de vervversing in de functie header()
 }
 
 $velden = "str_to_date(rd.datum,'%Y-%m-%d') sort , rd.datum, rd.Id, rd.levensnummer levnr, rd.gewicht kg,
@@ -234,7 +234,7 @@ else if(isset($dmspeen)) 			{ $color = 'red';  $bericht =  "Dit schaap is al ges
 
 	</TD>
 <?php
-Include "menu1.php"; } ?>
+include "menu1.php"; } ?>
 </tr>
 
 </table>

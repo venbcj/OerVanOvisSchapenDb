@@ -20,7 +20,7 @@ echo <<<HTML
 <body>
 
 HTML;
-//Include "titel.php";
+//include titel
 echo <<<HTML
 <!-- <table><tr align = center style = "font-size : 30px ";><td>OER van OVIS</td> </tr>
 <tr align = center><td><sup style = "font-size : 18px "; >Optimalisering En Rendementverbetering van het Schaap</sup></td></tr></table>-->

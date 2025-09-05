@@ -5,7 +5,7 @@ $versie = '15-9-2017'/* Som van aanwasdatum gescheiden van aanvoerdatum. Kolomko
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '16-5-2021'; /* s.geslacht = 'ooi' toegevoegd in query $result_permaand, subquery aanw_m. Sql beveiligd met quotes */
 $versie = '22-1-2023'; /* query $result_permaand uitgebreid met vaderdieren. Verticale lijnen toegevoegd */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
  session_start(); ?>
 <!DOCTYPE html>
 <html>
@@ -17,7 +17,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 <?php
 $titel = 'Maandtotalen';
 $file = "MaandTotalen.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = "top">
 <?php
@@ -494,6 +494,6 @@ $aanw_v = $row['oudrs_v']; 		if(isset($totAanw_v)  && $m != 12) { $totAanw_v = $
 </table>
 		</TD>
 <?php } else { ?> <img src='maandTotalen_php.jpg'  width='970' height='550'/> <?php }
-Include "menuRapport.php"; } ?>
+include "menuRapport.php"; } ?>
 </body>
 </html>

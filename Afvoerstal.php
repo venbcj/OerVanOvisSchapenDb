@@ -3,7 +3,7 @@ $versie = '22-11-2016'; /* actId = 3 uit on clause gehaald en als sub query gene
 $versie = '4-2-2017'; /* kalender toegevoegd*/
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '28-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */
-$versie = '31-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '31-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -16,13 +16,13 @@ $versie = '31-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 <?php
 $titel = 'Afvoerlijst';
 $file = "Afvoerstal.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 				<TD valign = "top">
 <?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
-include"kalender.php";
+include "kalender.php";
 if ($modmeld == 1 ) { include "maak_request_func.php"; }
 
 if(isset($_POST['knpAfvoer_'])) { include "save_afvoerstal.php"; } 
@@ -192,7 +192,7 @@ for ($i = 0; $i < $count; $i++){
 </form>
 		</TD>
 <?php
-Include "menu1.php"; } ?>
+include "menu1.php"; } ?>
 
 </body>
 </html>

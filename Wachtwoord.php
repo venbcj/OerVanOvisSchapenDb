@@ -1,7 +1,7 @@
 <?php 
 $versie = '19-3-2015'; /* bestand gemaakt*/
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
-$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "center" align = "center" > gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "center" align = "center" > gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>
 <!DOCTYPE html>
@@ -14,7 +14,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "center" align 
 <?php
 $titel = 'Wijzigen inloggegevens';
 $file = "Wachtwoord.php";
-Include "login.php"; ?>
+include "login.php"; ?>
 
 		<TD valign = 'top' align = 'center'>
 <?php
@@ -46,7 +46,7 @@ $name = $_SESSION["U1"];  ?>
  
 	</TD>
 <?php
-Include "menuBeheer.php"; } ?>
+include "menuBeheer.php"; } ?>
 </tr>
 
 </table>
