@@ -1,4 +1,6 @@
 <?php 
+require_once('url_functions.php');
+
 $versie = '14-8-2014'; /*Menu (rechts) veranderd van menuInkoop naar menuBeheer en html buiten php geprogrammeerd */
 $versie = '8-3-2015'; /*Login toegevoegd*/
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
@@ -13,7 +15,7 @@ session_start(); ?>
 <?php
 $titel = 'Crediteur';
 $subtitel = '';
-include "header.php"; ?>
+include "header.tpl.php"; ?>
 <TD width = 960 height = 400 valign = "top">
 <?php
 $file = "Leveranciers.php";

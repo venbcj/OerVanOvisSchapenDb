@@ -1,4 +1,6 @@
 <?php 
+require_once('url_functions.php');
+
 $versie = '27-4-2023'; /* Rina de mogelijkheid gegeven zelf de demo omgeving te ledigen*/
 $versie = '02-07-2025'; /* DELETE FROM tblUbn toegevoegd */
 
@@ -13,7 +15,7 @@ session_start(); ?>
 <?php
 $titel = 'Database legen';
 $subtitel = '';
-include "header.php"; ?>
+include "header.tpl.php"; ?>
 
 <TD width = 960 height = 400 valign = "center" align = "center" >
 <?php 

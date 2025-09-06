@@ -23,6 +23,8 @@
 include "url.php";
 include "connect_db.php";
 require_once("basisfuncties.php");
+require_once("demo_functions.php");
+require_once('url_functions.php');
 
 //$host = "localhost"; $user = "bvdvschaapovis"; $pw = "MSenWL44"; $dtb = $db_p;
 if (($url == 'https://test.oervanovis.nl/' || $url == 'https://demo.oervanovis.nl/') && $dtb == 'k36098_bvdvSchapenDb') {
@@ -60,20 +62,10 @@ if (!isset($_SESSION["U1"]) || !isset($_SESSION["W1"]) || !isset($_SESSION["I1"]
         }
             
         if (mysqli_num_rows($qrylidId) == 0) {
-            include "header_logout.php";
-            echo <<<HTML
-<br>
-<br>
-<br>
-<br>
-<br>
-<form method="POST" action="$file">
-<p><input type="text" name="txtUser" size="20"><br>
-<input type="password" name="txtPassw" size="20"><br>
-<input type="submit" value="Inloggen" name="knpLogin"></p>
-</form>
-Gebruikersnaam of wachtwoord onjuist !
-HTML;
+            include "header_logout.tpl.php";
+            $message = ' Gebruikersnaam of wachtwoord onjuist !';
+            // NOTE: $file moet gezet zijn voor login_form
+            include "login_form.tpl.php";
         } else {
             session_start();
             $_SESSION["U1"] = "$_POST[txtUser]";
@@ -88,7 +80,6 @@ HTML;
             $_SESSION["Fase"] = null; // Als (records per) pagina wordt ververst wordt fase onthouden. Zo kan pagin worden doorlopen zonder steeds opnieuw bestemming te kiezen. Zie HokUitscharen.php (HokAfleveren.php)
             $_SESSION['KZ'] = null; // Als pagina wordt ververst wordt de keuze (filter) onthouden. Zie HokOverpl.php
             $_SESSION["CNT"] = null; // Gebruikt in Contact.php
-            //echo "Session variables are set.";
             $login = $_SESSION["U1"];
             $lidId = $_SESSION["I1"];
             $alias = $_SESSION["A1"];
@@ -106,9 +97,9 @@ HTML;
                 }
                 $huidige_maand = date('Ym');
                 if ($controle_maand < $huidige_maand && $lidId <> 1) {
-                    include "demo_functions.php";
+                    // TODO: waarom worden de deletes in de ene database gedaan, en de inserts in de andere?
                     demo_table_delete($db, $dtb, $lidId);
-                    include "demo_table_insert.php";
+                    demo_table_insert($db, $lidId);
                 }
             }
             // Einde In de demo omgeving worden de basis gegevens elke maand opnieuw vervangen.
@@ -134,52 +125,11 @@ HTML;
             // $today is gedeclareerd in basisfuncties.php
             $update_tblLeden = " UPDATE tblLeden set laatste_inlog = '".mysqli_real_escape_string($db, $nu)."' WHERE lidId = '".mysqli_real_escape_string($db, $lidId)."' ";
             mysqli_query($db, $update_tblLeden) or die(mysqli_error($db));
-            include "header.php";
+            include "header.tpl.php";
         }
     } else {
-        include "header_logout.php";
-        echo <<<HTML
-<br>
-<form method="POST" action="$file">
-<table border = 0 align = center>
-<tr align = center>
-<td colspan = 3> Je bent niet ingelogd </td>
-</tr>
-HTML;
-        $pagina_naam = strtok($_SERVER["REQUEST_URI"], '?');
-        if ($pagina_naam == '/index.php') {
-            echo <<<HTML
-<tr align = center>
- <td colspan = 3>
-    <input type="text" name="txtUser" size="20"><br>
- </td>
-</tr>
-<tr align = center>
- <td colspan = 3>
-    <input type="password" name="txtPassw" size="20"><br>
- </td>
-</tr>
-<tr align = center>
-<td width = 300></td>
- <td>
-    <input type="submit" value="Inloggen" name="knpLogin">
- </td>
- <td width = 300>
-HTML;
-            if ($url == 'https://test.oervanovis.nl/' || $url == 'http://localhost:8080/Schapendb/') {
-                echo <<<HTML
-    <input type="submit" value="Basisgegevens" name="knpBasis">
-HTML;
-            }
-            echo <<<HTML
- </td>
-</tr>
-HTML;
-        }
-        echo <<<HTML
-</table>
- </form>
-HTML;
+        include "header_logout.tpl.php";
+        include "uitgelogd.tpl.php";
     }
 // *** EINDE ALS NIET IS INGELOGD ***
 } elseif (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
@@ -201,7 +151,7 @@ HTML;
         $modmeld = $mod['meld'];
     }
 
-    include "header.php";
+    include "header.tpl.php";
 
     // Bepalen aantal karakters werknr
     $result = mysqli_query($db, "SELECT kar_werknr FROM tblLeden WHERE lidId = '".mysqli_real_escape_string($db, $lidId)."';") or die(mysqli_error($db));
@@ -307,7 +257,5 @@ WHERE app = 'Reader' and (Id = '".mysqli_real_escape_string($db, $last_versieId)
         $actuele_versie = 'Ja';
     }
 
- #echo "gebruikersnaam " . $_SESSION["U1"] . " wachtwoord " . $_SESSION["W1"] . " lidId " . $_SESSION["I1"] . " alias " . $_SESSION["A1"] ."<br>";
- //echo phpversion();
 }
 // ***     EINDE ALS WEL IS INGELOGD     ***

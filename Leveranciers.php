@@ -1,4 +1,6 @@
 <?php
+require_once('url_functions.php');
+
  $versie = '14-8-2014'; /*Menu (rechts) veranderd van menuInkoop naar menuBeheer en html buiten php geprogrammeerd */
 $versie = '11-11-2014'; /*header("Location: http://localhost:8080/schapendb/....php");   toegevoegd. Dit ververst de pagina zodat een wijziging op het eerste record direct zichtbaar is*/
 $versie = '8-3-2015'; /*Login toegevoegd*/
@@ -15,7 +17,7 @@ session_start(); ?>
 if (isset ($_POST['knpUpdate'])) { include "url.php"; header("Location: ".$url."Leveranciers.php"); }
 $titel = 'Crediteuren';
 $subtitel = '';
-include "header.php"; ?>
+include "header.tpl.php"; ?>
 
 		<TD width = 960 height = 400 valign = "top">
 <?php

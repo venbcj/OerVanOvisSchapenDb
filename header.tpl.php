@@ -48,23 +48,6 @@ echo '$modbeheer = '.$modbeheer.'<br>';
 echo '$actuele_versie = '.$actuele_versie.'<br>';
   */
 
-$host = $_SERVER['HTTP_HOST'];
-if ($host == 'localhost:8080') {
-    $tagid = 'balkOntw';
-}
-if ($host == 'test.oervanovis.nl') {
-    $tagid = 'balkTest';
-}
-if ($host == 'demo.oervanovis.nl') {
-    $tagid = 'balkDemo';
-}
-if ($host == 'ovis.oervanovis.nl') {
-    $tagid = 'balkProd';
-}
-if (php_uname('n') == 'basq') {
-    $tagid = 'balkCoach';
-}
-
 if ($modtech == 1) {
     $colorTech = 'black';
 } else {
@@ -99,7 +82,7 @@ WHERE st.lidId = ".mysqli_real_escape_string($db, $lidId)." and h.skip = 0 and i
 
 <div id = "rechts_uitlijnen" class = 'header_breed'><section style = "text-align : center"; > <?php echo $titel; ?>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp </section><img src='OER_van_OVIS.jpg' /></div>
 
-<ul class="header_smal" id = <?php echo $tagid; ?> >
+<ul class="header_smal" id = <?php echo getTagId(); ?> >
     <li class="dropdown"><a href= '<?php echo $url;?>Home.php' style = 'color : black'>Home</a></li>
     <li class="dropdown"><span>Registratie</span>
         <div class="dropdown-content">

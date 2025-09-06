@@ -1,4 +1,6 @@
 <?php 
+require_once('url_functions.php');
+
 $versie = "16-12-2017"; /* Rapport gemaakt */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
  session_start(); ?>
@@ -14,7 +16,7 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $titel = 'Groei resultaten per schaap';
 $subtitel = ''; 
  
-include "header.php"; ?>
+include "header.tpl.php"; ?>
 
 		<TD width = 960 height = 400 valign = "top" >
 <?php

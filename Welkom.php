@@ -1,4 +1,6 @@
 <?php 
+require_once('url_functions.php');
+
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '9-1-2020'; /* schapencentrum.. vervangen door Oer van Ovis */
 $versie = '26-12-2024'; /* <TD width = 1160 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'>  */
@@ -14,7 +16,7 @@ $versie = '26-12-2024'; /* <TD width = 1160 height = 400 valign = "top"> gewijzi
 <?php
 $titel = 'Welkompagina';
 $file = "";
-include "header.php"; ?>
+include "header.tpl.php"; ?>
 
 		<TD valign = 'top'>
 

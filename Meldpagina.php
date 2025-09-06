@@ -1,4 +1,6 @@
 <?php 
+require_once('url_functions.php');
+
 $versie = '20-12-2020'; /* Pagina gemaakt */
 
 session_start(); ?>
@@ -12,7 +14,7 @@ session_start(); ?>
 <?php
 $titel = 'Meldingen RVO';
 $subtitel = '';
-include "header.php"; ?>
+include "header.tpl.php"; ?>
 
 <td width = 960 height = 400 align = "center">
 <?php 

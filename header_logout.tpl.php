@@ -32,21 +32,7 @@ $(document).ready(function(){
 
 <!-- Einde BackToTop button javascript  -->
 
-<?php /*
-
-echo '<br>';
-echo '<br>';
-echo '<br>';
-echo '<br>';
-echo '<br>';
-echo '$_SESSION["U1"] = '.$_SESSION["U1"].'<br>';
-echo '$_SESSION["W1"] = '.$_SESSION["W1"].'<br>';
-echo '$_SESSION["I1"] = '.$_SESSION["I1"].'<br>';
-
-echo '$modtech = '.$modtech.'<br>';
-echo '$modmeld = '.$modmeld.'<br>';
-echo '$modbeheer = '.$modbeheer.'<br>';
-echo '$actuele_versie = '.$actuele_versie.'<br>';*/
+<?php
 
 $host = $_SERVER['HTTP_HOST'];
 if ($host == 'localhost:8080') {
@@ -67,7 +53,7 @@ if ($host == 'ovis.oervanovis.nl') {
 ?>
 <div id = "rechts_uitlijnen" class = 'header_breed'><section> </section><img src='OER_van_OVIS.jpg' /></div>
 
-<ul class="header_smal" id = <?php echo $tagid; ?> >
+<ul class="header_smal" id = <?php echo getTagId(); ?> >
     <li id = "rechts_uitlijnen"><a href='<?php echo $url ?? '';?>index.php' style = 'color : black'>Inloggen</a></li>
 </ul>
 

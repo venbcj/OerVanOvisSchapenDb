@@ -26,35 +26,40 @@ if (php_uname('n') == 'basq') {
     $url = 'http://oer-dev/';
 }
 
-// include bestanden
-$curr_url = 'https://'.$_SERVER['HTTP_HOST'].strtok($_SERVER["REQUEST_URI"], '?'); // strtok zorgt ervoor dat alles na de paginanaam wordt verwijderd. bron : http://stackoverflow.com/questions/6969645/how-to-remove-the-querystring-and-get-only-the-url
-if ($curr_url == $url."connect_db.php"
-    || $curr_url == $url."header.php" // Dit bestand komt in de meeste scripts voor en zorgt ervoor dat variabele $url is gedeclareerd. Mn. in hyperlinks
-    || $curr_url == $url."importReader.php"
-    || $curr_url == $url."importRespons.php"
-    || $curr_url == $url."kzl.php"
-    || $curr_url == $url."login.php"
-    || $curr_url == $url."maak_Request.php"
-    || $curr_url == $url."menu1.php"
-    || $curr_url == $url."menuBeheer.php"
-    || $curr_url == $url."menuFinance.php"
-    || $curr_url == $url."menuInkoop.php"
-    || $curr_url == $url."menuRapport.php"
-    || $curr_url == $url."msg.php"
-    || $curr_url == $url."passw.php"
-    || $curr_url == $url."post_readerAanw.php"
-    || $curr_url == $url."post_readerAflev.php"
-    || $curr_url == $url."post_readerGeb.php"
-    || $curr_url == $url."post_readerMed.php"
-    || $curr_url == $url."post_readerOvp.php"
-    || $curr_url == $url."post_readerSpn.php"
-    || $curr_url == $url."post_readerUitv.php"
-    || $curr_url == $url."responscheck.php"
-    || $curr_url == $url."titel.php"
-    || $curr_url == $url."uploadReader.php"
-    || $curr_url == $url."url.php"
-    || $curr_url == $url."vw_Reader.php"
-) {
-    header("Location: ".$url."index.php");
-    // TODO: ik vermoed dat hier nog een exit() bij moet. Na redirect wil je niet doorlopen in de pagina waar je url.php had ge-include --BCB
+$curr_url = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].strtok($_SERVER["REQUEST_URI"], '?'); // strtok zorgt ervoor dat alles na de paginanaam wordt verwijderd. bron : http://stackoverflow.com/questions/6969645/how-to-remove-the-querystring-and-get-only-the-url
+// TODO: whitelisten is veiliger dan dit blacklisten
+// TODO: dit wordt sowieso nog anders als je eenmaal een front controller hebt. --BCB
+$forbidden_files = [
+    "connect_db.php",
+    "header.php",
+    "importReader.php",
+    "importRespons.php",
+    "kzl.php",
+    "login.php",
+    "maak_Request.php",
+    "menu1.php",
+    "menuBeheer.php",
+    "menuFinance.php",
+    "menuInkoop.php",
+    "menuRapport.php",
+    "msg.php",
+    "passw.php",
+    "post_readerAanw.php",
+    "post_readerAflev.php",
+    "post_readerGeb.php",
+    "post_readerMed.php",
+    "post_readerOvp.php",
+    "post_readerSpn.php",
+    "post_readerUitv.php",
+    "responscheck.php",
+    "titel.php",
+    "uploadReader.php",
+    "url.php",
+    "vw_Reader.php",
+];
+foreach ($forbidden_files as $file) {
+    if ($curr_url == $url.$file) {
+        header("Location: ".$url."index.php");
+        exit();
+    }
 }

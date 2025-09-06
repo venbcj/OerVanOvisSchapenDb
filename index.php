@@ -4,6 +4,9 @@
 23-5-2020 logo aangepast
 11-7-2020  $file = "index.php"; gewijzigd naar $file = "Home.php";
  */
+
+require_once('url_functions.php');
+
 $versie = '26-12-2024';
 /* <TD width = 1390 height = 400 align = "center"> gewijzigd naar <TD align = "center">  */
 if (session_status() == PHP_SESSION_NONE) {
@@ -20,13 +23,12 @@ echo <<<HTML
 <body>
 
 HTML;
-//include titel
 echo <<<HTML
 <!-- <table><tr align = center style = "font-size : 30px ";><td>OER van OVIS</td> </tr>
 <tr align = center><td><sup style = "font-size : 18px "; >Optimalisering En Rendementverbetering van het Schaap</sup></td></tr></table>-->
 HTML;
     $titel = '';
-include "header_logout.php";
+include "header_logout.tpl.php";
 echo <<<HTML
 <TD align = "center">
     <br>
