@@ -24,11 +24,6 @@ include "url.php";
 include "connect_db.php";
 require_once("basisfuncties.php");
 
-# if($_SERVER["REQUEST_URI"] == '/Stallijst.php') {
-#   $Header = "header_search.php";
-# } else {
-$Header = "header.php";
-#}
 //$host = "localhost"; $user = "bvdvschaapovis"; $pw = "MSenWL44"; $dtb = $db_p;
 if (($url == 'https://test.oervanovis.nl/' || $url == 'https://demo.oervanovis.nl/') && $dtb == 'k36098_bvdvSchapenDb') {
      echo <<<HTML
@@ -138,7 +133,7 @@ HTML;
             // $today is gedeclareerd in basisfuncties.php
             $update_tblLeden = " UPDATE tblLeden set laatste_inlog = '".mysqli_real_escape_string($db, $nu)."' WHERE lidId = '".mysqli_real_escape_string($db, $lidId)."' ";
             mysqli_query($db, $update_tblLeden) or die(mysqli_error($db));
-            include "$Header";
+            include "header.php";
         }
     } else {
         include "header_logout.php";
@@ -205,7 +200,7 @@ HTML;
         $modmeld = $mod['meld'];
     }
 
-    include "$Header";
+    include "header.php";
 
     // Bepalen aantal karakters werknr
     $result = mysqli_query($db, "SELECT kar_werknr FROM tblLeden WHERE lidId = '".mysqli_real_escape_string($db, $lidId)."';") or die(mysqli_error($db));
