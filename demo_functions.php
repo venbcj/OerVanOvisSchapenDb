@@ -4,8 +4,6 @@
 22-1-2017 : tblBezetting gewijzigd naar tblBezet
 */
 
-demo_table_delete($db, $dtb, $lidId);
-
 function demo_table_delete($db, $dtb, $lidId) {
     $lidId = mysqli_real_escape_string($db, $lidId);
 // VERWIJDEREN RECORDS

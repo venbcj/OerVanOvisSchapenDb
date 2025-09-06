@@ -106,7 +106,8 @@ HTML;
                 }
                 $huidige_maand = date('Ym');
                 if ($controle_maand < $huidige_maand && $lidId <> 1) {
-                    include "demo_table_delete.php";
+                    include "demo_functions.php";
+                    demo_table_delete($db, $dtb, $lidId);
                     include "demo_table_insert.php";
                 }
             }
