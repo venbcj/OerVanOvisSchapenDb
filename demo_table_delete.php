@@ -4,127 +4,133 @@
 22-1-2017 : tblBezetting gewijzigd naar tblBezet
 */
 
+demo_table_delete($db, $dtb, $lidId);
+
+function demo_table_delete($db, $dtb, $lidId) {
+    $lidId = mysqli_real_escape_string($db, $lidId);
 // VERWIJDEREN RECORDS
 /********************    Voorraadbeheer    *******************************************************************/
 
 //tblNuttig
-$zoek_NutId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT n.nutId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblNuttig n
-     join ".mysqli_real_escape_string($db, $dtb).".tblHistorie h on (h.hisId = n.hisId)
-     join ".mysqli_real_escape_string($db, $dtb).".tblStal st on (st.stalId = h.stalId)
-    WHERE st.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblNuttig n
+     join $dtb.tblHistorie h on (h.hisId = n.hisId)
+     join $dtb.tblStal st on (st.stalId = h.stalId)
+    WHERE st.lidId = $lidId
     ORDER BY n.nutId
-    ") or die(mysqli_error($db));
-$nutId = array();
-while ($nut = mysqli_fetch_assoc($zoek_NutId)) {
-    $nutId[] = $nut['nutId'];
-    $nutIds = implode(',', $nutId);
+    ");
+$ids = array();
+while ($nut = mysqli_fetch_assoc($view)) {
+    $ids[] = $nut['nutId'];
 }
-if (isset($nutIds)) {
-    $del_tblNuttig = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblNuttig` WHERE nutId IN (".mysqli_real_escape_string($db, $nutIds).") ; ";
-    mysqli_query($db, $del_tblNuttig);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblNuttig` WHERE nutId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
+// Na de stap "noem hetzelfde wat hetzelfde doet" zie ik,
+// dit kan ook in 1x:
+// DELETE n FROM $dtb.tblNuttig n
+// INNER JOIN $dtb.tblHistorie h USING(hisId)
+// INNER JOIN $dtb.tblStal st USING(stalId)
+// WHERE st.lidId = $lidId
+//
 //Einde tblNuttig
 
 //tblInkoop
-$zoek_inkId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT i.inkId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblInkoop i
-     join ".mysqli_real_escape_string($db, $dtb).".tblArtikel a on (a.artId = i.artId)
-     join ".mysqli_real_escape_string($db, $dtb).".tblEenheiduser eu on (eu.enhuId = a.enhuId)
-    WHERE eu.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblInkoop i
+     join $dtb.tblArtikel a on (a.artId = i.artId)
+     join $dtb.tblEenheiduser eu on (eu.enhuId = a.enhuId)
+    WHERE eu.lidId = $lidId
     ORDER BY i.inkId
-    ") or die(mysqli_error($db));
-$inkId = array();
-while ($ink = mysqli_fetch_assoc($zoek_inkId)) {
-    $inkId[] = $ink['inkId'];
-    $inkIds = implode(',', $inkId);
+    ");
+$ids = array();
+while ($ink = mysqli_fetch_assoc($view)) {
+    $ids[] = $ink['inkId'];
 }
-if (isset($inkIds)) {
-    $del_tblInkoop = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblInkoop` WHERE inkId IN (".mysqli_real_escape_string($db, $inkIds).") ; ";
-    mysqli_query($db, $del_tblInkoop);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblInkoop` WHERE inkId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblInkoop
 
 //tblArtikel
-$zoek_artId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT a.artId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblArtikel a
-     join ".mysqli_real_escape_string($db, $dtb).".tblEenheiduser eu on (eu.enhuId = a.enhuId)
-    WHERE eu.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblArtikel a
+     join $dtb.tblEenheiduser eu on (eu.enhuId = a.enhuId)
+    WHERE eu.lidId = $lidId
     ORDER BY a.artId
-    ") or die(mysqli_error($db));
-$artId = array();
-while ($art = mysqli_fetch_assoc($zoek_artId)) {
-    $artId[] = $art['artId'];
-    $artIds = implode(',', $artId);
+    ");
+$ids = array();
+while ($art = mysqli_fetch_assoc($view)) {
+    $ids[] = $art['artId'];
 }
-if (isset($artIds)) {
-    $del_tblArtikel = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblArtikel` WHERE artId IN (".mysqli_real_escape_string($db, $artIds).") ; ";
-    mysqli_query($db, $del_tblArtikel);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblArtikel` WHERE artId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblArtikel
 
 //tblEenheiduser
-$zoek_enhuId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT eu.enhuId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblEenheiduser eu
-    WHERE eu.lidId = ".mysqli_real_escape_string($db, $lidId)."
-    ") or die(mysqli_error($db));
-$enhuId = array();
-while ($enhu = mysqli_fetch_assoc($zoek_enhuId)) {
-    $enhuId[] = $enhu['enhuId'];
-    $enhuIds = implode(',', $enhuId);
+    FROM $dtb.tblEenheiduser eu
+    WHERE eu.lidId = $lidId
+    ");
+$ids = array();
+while ($enhu = mysqli_fetch_assoc($view)) {
+    $ids[] = $enhu['enhuId'];
 }
-if (isset($enhuIds)) {
-    $del_tblEenheiduser = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblEenheiduser` WHERE enhuId IN (".mysqli_real_escape_string($db, $enhuIds).") ; ";
-    mysqli_query($db, $del_tblEenheiduser);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblEenheiduser` WHERE enhuId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblEenheiduser
 
 /********************    Einde Voorraadbeheer    *******************************************************************/
+
 /********************    Melden    *******************************************************************/
 
 //tblRequest
-$zoek_reqId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT r.reqId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblRequest r
-     join ".mysqli_real_escape_string($db, $dtb).".tblMelding m on (r.reqId = m.reqId)
-     join ".mysqli_real_escape_string($db, $dtb).".tblHistorie h on (h.hisId = m.hisId)
-     join ".mysqli_real_escape_string($db, $dtb).".tblStal st on (st.stalId = h.stalId)
-    WHERE st.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblRequest r
+     join $dtb.tblMelding m on (r.reqId = m.reqId)
+     join $dtb.tblHistorie h on (h.hisId = m.hisId)
+     join $dtb.tblStal st on (st.stalId = h.stalId)
+    WHERE st.lidId = $lidId
     GROUP BY r.reqId
     ORDER BY r.reqId
-    ") or die(mysqli_error($db));
-$reqId = array();
-while ($req = mysqli_fetch_assoc($zoek_reqId)) {
-    $reqId[] = $req['reqId'];
-    $reqIds = implode(',', $reqId);
+    ");
+$ids = array();
+while ($req = mysqli_fetch_assoc($view)) {
+    $ids[] = $req['reqId'];
 }
-if (isset($reqIds)) {
-    $del_tblRequest = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblRequest` WHERE reqId IN (".mysqli_real_escape_string($db, $reqIds).") ; ";
-    mysqli_query($db, $del_tblRequest);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblRequest` WHERE reqId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblRequest
 
 //tblMelding
-$zoek_meldId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT m.meldId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblMelding m
-     join ".mysqli_real_escape_string($db, $dtb).".tblHistorie h on (h.hisId = m.hisId)
-     join ".mysqli_real_escape_string($db, $dtb).".tblStal st on (st.stalId = h.stalId)
-    WHERE st.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblMelding m
+     join $dtb.tblHistorie h on (h.hisId = m.hisId)
+     join $dtb.tblStal st on (st.stalId = h.stalId)
+    WHERE st.lidId = $lidId
     ORDER BY m.meldId
-    ") or die(mysqli_error($db));
-$meldId = array();
-while ($meld = mysqli_fetch_assoc($zoek_meldId)) {
-    $meldId[] = $meld['meldId'];
-    $meldIds = implode(',', $meldId);
+    ");
+$ids = array();
+while ($meld = mysqli_fetch_assoc($view)) {
+    $ids[] = $meld['meldId'];
 }
-if (isset($meldIds)) {
-    $del_tblMelding = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblMelding` WHERE meldId IN (".mysqli_real_escape_string($db, $meldIds).") ; ";
-    mysqli_query($db, $del_tblMelding);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblMelding` WHERE meldId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblMelding
 
@@ -133,78 +139,74 @@ if (isset($meldIds)) {
 /********************    Het schaap        *******************************************************************/
 
 //tblVolwas
-$zoek_volwId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT v.volwId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblVolwas v
-     join ".mysqli_real_escape_string($db, $dtb).".tblSchaap s on (v.volwId = s.volwId)
-     join ".mysqli_real_escape_string($db, $dtb).".tblStal st on (s.schaapId = st.schaapId)
-    WHERE st.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblVolwas v
+     join $dtb.tblSchaap s on (v.volwId = s.volwId)
+     join $dtb.tblStal st on (s.schaapId = st.schaapId)
+    WHERE st.lidId = $lidId
     ORDER BY v.volwId
-    ") or die(mysqli_error($db));
-$volwId = array();
-while ($volwas = mysqli_fetch_assoc($zoek_volwId)) {
-    $volwId[] = $volwas['volwId'];
-    $volwIds = implode(',', $volwId);
+    ");
+$ids = array();
+while ($volwas = mysqli_fetch_assoc($view)) {
+    $ids[] = $volwas['volwId'];
 }
-if (isset($volwIds)) {
-    $del_tblVolwas = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblVolwas` WHERE volwId IN (".mysqli_real_escape_string($db, $volwIds).") ; ";
-    mysqli_query($db, $del_tblVolwas);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblVolwas` WHERE volwId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblVolwas
 
 //tblSchaap
-$zoek_schaapId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT s.schaapId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblSchaap s
-     join ".mysqli_real_escape_string($db, $dtb).".tblStal st on (s.schaapId = st.schaapId)
-    WHERE st.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblSchaap s
+     join $dtb.tblStal st on (s.schaapId = st.schaapId)
+    WHERE st.lidId = $lidId
     ORDER BY s.schaapId
-    ") or die(mysqli_error($db));
-$schaapId = array();
-while ($schaap = mysqli_fetch_assoc($zoek_schaapId)) {
-    $schaapId[] = $schaap['schaapId'];
-    $schaapIds = implode(',', $schaapId);
+    ");
+$ids = array();
+while ($schaap = mysqli_fetch_assoc($view)) {
+    $ids[] = $schaap['schaapId'];
 }
-if (isset($schaapIds)) {
-    $del_tblSchaap = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblSchaap` WHERE schaapId IN (".mysqli_real_escape_string($db, $schaapIds).") ; ";
-    mysqli_query($db, $del_tblSchaap);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblSchaap` WHERE schaapId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblSchaap
 
 //tblHistorie
-$zoek_hisId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT h.hisId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblHistorie h
-     join ".mysqli_real_escape_string($db, $dtb).".tblStal st on (st.stalId = h.stalId)
-    WHERE st.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblHistorie h
+     join $dtb.tblStal st on (st.stalId = h.stalId)
+    WHERE st.lidId = $lidId
     ORDER BY h.hisId
-    ") or die(mysqli_error($db));
-$hisId = array();
-while ($his = mysqli_fetch_assoc($zoek_hisId)) {
-    $hisId[] = $his['hisId'];
-    $hisIds = implode(',', $hisId);
+    ");
+$ids = array();
+while ($his = mysqli_fetch_assoc($view)) {
+    $ids[] = $his['hisId'];
 }
-if (isset($hisIds)) {
-    $del_tblHistorie = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblHistorie` WHERE hisId IN (".mysqli_real_escape_string($db, $hisIds).") ; ";
-    mysqli_query($db, $del_tblHistorie);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblHistorie` WHERE hisId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblHistorie
 
 //tblStal
-$zoek_stalId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT st.stalId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblStal st
-    WHERE st.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblStal st
+    WHERE st.lidId = $lidId
     ORDER BY st.stalId
-    ") or die(mysqli_error($db));
-$stalId = array();
-while ($stal = mysqli_fetch_assoc($zoek_stalId)) {
-    $stalId[] = $stal['stalId'];
-    $stalIds = implode(',', $stalId);
+    ");
+$ids = array();
+while ($stal = mysqli_fetch_assoc($view)) {
+    $ids[] = $stal['stalId'];
 }
-if (isset($stalIds)) {
-    $del_tblStal = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblStal` WHERE stalId IN (".mysqli_real_escape_string($db, $stalIds).") ; ";
-    mysqli_query($db, $del_tblStal);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblStal` WHERE stalId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblStal
 
@@ -212,28 +214,27 @@ if (isset($stalIds)) {
 // Wordt niet verwijderd als dit dier bij anderen ook voorkomt in impReader => dracht. Zie not exists
 
 //tblSchaap
-$zoek_schaapId_dracht = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT s.schaapId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblSchaap s
-     join ".mysqli_real_escape_string($db, $dtb).".impReader r on (r.levnr_ovpl = s.levensnummer)
-     left join ".mysqli_real_escape_string($db, $dtb).".tblStal st on (s.schaapId = st.schaapId)
-    WHERE r.lidId = ".mysqli_real_escape_string($db, $lidId)." and isnull(st.stalId) and isnull(teller_ovpl)
+    FROM $dtb.tblSchaap s
+     join $dtb.impReader r on (r.levnr_ovpl = s.levensnummer)
+     left join $dtb.tblStal st on (s.schaapId = st.schaapId)
+    WHERE r.lidId = $lidId and isnull(st.stalId) and isnull(teller_ovpl)
      and not exists (
         SELECT rd.levnr_ovpl
-        FROM ".mysqli_real_escape_string($db, $dtb).".impReader rd
-        WHERE s.levensnummer = rd.levnr_ovpl and isnull(rd.teller_ovpl) and rd.lidId <> ".mysqli_real_escape_string($db, $lidId)."
+        FROM $dtb.impReader rd
+        WHERE s.levensnummer = rd.levnr_ovpl and isnull(rd.teller_ovpl) and rd.lidId <> $lidId
         )
     GROUP BY s.schaapId
     ORDER BY s.schaapId
-    ") or die(mysqli_error($db));
-$schaapId_dracht = array();
-while ($sch = mysqli_fetch_assoc($zoek_schaapId_dracht)) {
-    $schaapId_dracht[] = $sch['schaapId'];
-    $schaapIds_dracht = implode(',', $schaapId_dracht);
+    ");
+$ids = array();
+while ($sch = mysqli_fetch_assoc($view)) {
+    $ids[] = $sch['schaapId'];
 }
-if (isset($schaapIds_dracht)) {
-    $del_tblSchaap = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblSchaap` WHERE schaapId IN (".mysqli_real_escape_string($db, $schaapIds_dracht).") ; ";
-    mysqli_query($db, $del_tblSchaap);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblSchaap` WHERE schaapId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblSchaap
 
@@ -244,26 +245,25 @@ if (isset($schaapIds_dracht)) {
 // Dracht uit tabel tblVolwas halen. Dit is het restant uit tabel tblVolwas nadat de schapen zijn verwijderd hierboven.
 
 //tblVolwas
-$zoek_volwId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT v.volwId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblVolwas v
+    FROM $dtb.tblVolwas v
      join impReader r on (v.readId = r.readId)
-    WHERE r.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    WHERE r.lidId = $lidId
     ORDER BY v.volwId
-    ") or die(mysqli_error($db));
+    ");
 $volwId = array();
-while ($volw = mysqli_fetch_assoc($zoek_volwId)) {
-    $volwId[] = $volw['volwId'];
-    $volwIds = implode(',', $volwId);
+while ($volw = mysqli_fetch_assoc($view)) {
+    $ids[] = $volw['volwId'];
 }
-if (isset($volwIds)) {
-    $del_tblVolwas = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblVolwas` WHERE volwId IN (".mysqli_real_escape_string($db, $volwIds).") ; ";
-    mysqli_query($db, $del_tblVolwas);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblVolwas` WHERE volwId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblVolwas
 
 //impReader
-$del_impReader = "DELETE FROM ".$dtb.".`impReader` WHERE lidId = ".mysqli_real_escape_string($db, $lidId)." ; ";
+$del_impReader = "DELETE FROM ".$dtb.".`impReader` WHERE lidId = $lidId ; ";
 mysqli_query($db, $del_impReader);
 
 /********************    Einde Reader    *******************************************************************/
@@ -271,97 +271,92 @@ mysqli_query($db, $del_impReader);
 /********************    Relaties        *******************************************************************/
 
 //tblPersoon
-$zoek_persId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT ps.persId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblPersoon ps
-     join ".mysqli_real_escape_string($db, $dtb).".tblPartij p on (p.partId = ps.partId)
-    WHERE p.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblPersoon ps
+     join $dtb.tblPartij p on (p.partId = ps.partId)
+    WHERE p.lidId = $lidId
     ORDER BY ps.persId 
-    ") or die(mysqli_error($db));
-$persId = array();
-while ($pers = mysqli_fetch_assoc($zoek_persId)) {
-    $persId[] = $pers['persId'];
-    $persIds = implode(',', $persId);
+    ");
+$ids = array();
+while ($pers = mysqli_fetch_assoc($view)) {
+    $ids[] = $pers['persId'];
 }
-if (isset($persIds)) {
-    $del_tblPersoon = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblPersoon` WHERE persId IN (".mysqli_real_escape_string($db, $persIds).") ; ";
-    mysqli_query($db, $del_tblPersoon);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblPersoon` WHERE persId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblPersoon
 
 //tblVervoer
-$zoek_vervId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT v.vervId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblVervoer v
-     join ".mysqli_real_escape_string($db, $dtb).".tblPartij p on (p.partId = v.partId)
-    WHERE p.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblVervoer v
+     join $dtb.tblPartij p on (p.partId = v.partId)
+    WHERE p.lidId = $lidId
     ORDER BY v.vervId
-    ") or die(mysqli_error($db));
-$vervId = array();
-while ($verv = mysqli_fetch_assoc($zoek_vervId)) {
-    $vervId[] = $verv['vervId'];
-    $vervIds = implode(',', $vervId);
+    ");
+$ids = array();
+while ($verv = mysqli_fetch_assoc($view)) {
+    $ids[] = $verv['vervId'];
 }
-if (isset($vervIds)) {
-    $del_tblVervoer = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblVervoer` WHERE vervId IN (".mysqli_real_escape_string($db, $vervIds).") ; ";
-    mysqli_query($db, $del_tblVervoer);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblVervoer` WHERE vervId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblVervoer
 
 //tblAdres
-$zoek_adrId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT a.adrId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblAdres a
-     join ".mysqli_real_escape_string($db, $dtb).".tblRelatie r on (a.relId = r.relId)
-     join ".mysqli_real_escape_string($db, $dtb).".tblPartij p on (p.partId = r.partId)
-    WHERE p.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblAdres a
+     join $dtb.tblRelatie r on (a.relId = r.relId)
+     join $dtb.tblPartij p on (p.partId = r.partId)
+    WHERE p.lidId = $lidId
     ORDER BY a.adrId
-    ") or die(mysqli_error($db));
-$adrId = array();
-while ($adr = mysqli_fetch_assoc($zoek_adrId)) {
-    $adrId[] = $adr['adrId'];
-    $adrIds = implode(',', $adrId);
+    ");
+$ids = array();
+while ($adr = mysqli_fetch_assoc($view)) {
+    $ids[] = $adr['adrId'];
 }
-if (isset($adrIds)) {
-    $del_tblAdres = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblAdres` WHERE adrId IN (".mysqli_real_escape_string($db, $adrIds).") ; ";
-    mysqli_query($db, $del_tblAdres);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblAdres` WHERE adrId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblAdres
 
 //tblRelatie
-$zoek_relId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT r.relId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblRelatie r
-     join ".mysqli_real_escape_string($db, $dtb).".tblPartij p on (p.partId = r.partId)
-    WHERE p.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblRelatie r
+     join $dtb.tblPartij p on (p.partId = r.partId)
+    WHERE p.lidId = $lidId
     ORDER BY r.relId
-    ") or die(mysqli_error($db));
-$relId = array();
-while ($rel = mysqli_fetch_assoc($zoek_relId)) {
-    $relId[] = $rel['relId'];
-    $relIds = implode(',', $relId);
+    ");
+$ids = array();
+while ($rel = mysqli_fetch_assoc($view)) {
+    $ids[] = $rel['relId'];
 }
-if (isset($relIds)) {
-    $del_tblRelatie = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblRelatie` WHERE relId IN (".mysqli_real_escape_string($db, $relIds).") ; ";
-    mysqli_query($db, $del_tblRelatie);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblRelatie` WHERE relId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblRelatie
 
 //tblPartij
-$zoek_partId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT p.partId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblPartij p
-    WHERE p.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblPartij p
+    WHERE p.lidId = $lidId
     ORDER BY p.partId
-    ") or die(mysqli_error($db));
-$partId = array();
-while ($part = mysqli_fetch_assoc($zoek_partId)) {
-    $partId[] = $part['partId'];
-    $partIds = implode(',', $partId);
+    ");
+$ids = array();
+while ($part = mysqli_fetch_assoc($view)) {
+    $ids[] = $part['partId'];
 }
-if (isset($partIds)) {
-    $del_tblPartij = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblPartij` WHERE partId IN (".mysqli_real_escape_string($db, $partIds).") ; ";
-    mysqli_query($db, $del_tblPartij);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblPartij` WHERE partId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblPartij
 
@@ -370,79 +365,75 @@ if (isset($partIds)) {
 /********************    Hokken        *******************************************************************/
 
 //tblBezet
-$zoek_bezId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT b.bezId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblBezet b
-     join ".mysqli_real_escape_string($db, $dtb).".tblPeriode p on (b.periId = p.periId)
-     join ".mysqli_real_escape_string($db, $dtb).".tblHok h on (p.hokId = h.hokId)
-    WHERE h.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblBezet b
+     join $dtb.tblPeriode p on (b.periId = p.periId)
+     join $dtb.tblHok h on (p.hokId = h.hokId)
+    WHERE h.lidId = $lidId
     ORDER BY b.bezId
-    ") or die(mysqli_error($db));
-$bezId = array();
-while ($bez = mysqli_fetch_assoc($zoek_bezId)) {
-    $bezId[] = $bez['bezId'];
-    $bezIds = implode(',', $bezId);
+    ");
+$ids = array();
+while ($bez = mysqli_fetch_assoc($view)) {
+    $ids[] = $bez['bezId'];
 }
-if (isset($bezIds)) {
-    $del_tblBezet = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblBezet` WHERE bezId IN (".mysqli_real_escape_string($db, $bezIds).") ; ";
-    mysqli_query($db, $del_tblBezet);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblBezet` WHERE bezId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblBezet
 
 //tblVoeding
-$zoek_voedId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT v.voedId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblVoeding v
-     join ".mysqli_real_escape_string($db, $dtb).".tblPeriode p on (v.periId = p.periId)
-     join ".mysqli_real_escape_string($db, $dtb).".tblHok h on (p.hokId = h.hokId)
-    WHERE h.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblVoeding v
+     join $dtb.tblPeriode p on (v.periId = p.periId)
+     join $dtb.tblHok h on (p.hokId = h.hokId)
+    WHERE h.lidId = $lidId
     ORDER BY v.voedId
-    ") or die(mysqli_error($db));
-$voedId = array();
-while ($voed = mysqli_fetch_assoc($zoek_voedId)) {
-    $voedId[] = $voed['voedId'];
-    $voedIds = implode(',', $voedId);
+    ");
+$ids = array();
+while ($voed = mysqli_fetch_assoc($view)) {
+    $ids[] = $voed['voedId'];
 }
-if (isset($voedIds)) {
-    $del_tblVoeding = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblVoeding` WHERE voedId IN (".mysqli_real_escape_string($db, $voedIds).") ; ";
-    mysqli_query($db, $del_tblVoeding);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblVoeding` WHERE voedId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblVoeding
 
 //tblPeriode
-$zoek_periId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT p.periId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblPeriode p
-     join ".mysqli_real_escape_string($db, $dtb).".tblHok h on (p.hokId = h.hokId)
-    WHERE h.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblPeriode p
+     join $dtb.tblHok h on (p.hokId = h.hokId)
+    WHERE h.lidId = $lidId
     ORDER BY p.periId
-    ") or die(mysqli_error($db));
-$periId = array();
-while ($peri = mysqli_fetch_assoc($zoek_periId)) {
-    $periId[] = $peri['periId'];
-    $periIds = implode(',', $periId);
+    ");
+$ids = array();
+while ($peri = mysqli_fetch_assoc($view)) {
+    $ids[] = $peri['periId'];
 }
-if (isset($periIds)) {
-    $del_tblPeriode = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblPeriode` WHERE periId IN (".mysqli_real_escape_string($db, $periIds).") ; ";
-    mysqli_query($db, $del_tblPeriode);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblPeriode` WHERE periId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblPeriode
 
 //tblHok
-$zoek_hokId = mysqli_query($db, "
+$view = mysqli_query($db, "
 SELECT h.hokId
-FROM ".mysqli_real_escape_string($db, $dtb).".tblHok h
-WHERE h.lidId = ".mysqli_real_escape_string($db, $lidId)."
+FROM $dtb.tblHok h
+WHERE h.lidId = $lidId
 ORDER BY h.hokId
-") or die(mysqli_error($db));
-$hokId = array();
-while ($hok = mysqli_fetch_assoc($zoek_hokId)) {
-    $hokId[] = $hok['hokId'];
-    $hokIds = implode(',', $hokId);
+");
+$ids = array();
+while ($hok = mysqli_fetch_assoc($view)) {
+    $ids[] = $hok['hokId'];
 }
-if (isset($hokIds)) {
-    $del_tblHok = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblHok` WHERE hokId IN (".mysqli_real_escape_string($db, $hokIds).") ; ";
-    mysqli_query($db, $del_tblHok);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblHok` WHERE hokId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblHok
 
@@ -451,118 +442,112 @@ if (isset($hokIds)) {
 /********************    Financieel        *******************************************************************/
 
 //tblLiquiditeit
-$zoek_liqId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT l.liqId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblLiquiditeit l
-     join ".mysqli_real_escape_string($db, $dtb).".tblRubriekuser ru on (ru.rubuId = l.rubuId)
-    WHERE ru.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblLiquiditeit l
+     join $dtb.tblRubriekuser ru on (ru.rubuId = l.rubuId)
+    WHERE ru.lidId = $lidId
     ORDER BY l.liqId
-    ") or die(mysqli_error($db));
-$liqId = array();
-while ($liq = mysqli_fetch_assoc($zoek_liqId)) {
-    $liqId[] = $liq['liqId'];
-    $liqIds = implode(',', $liqId);
+    ");
+$ids = array();
+while ($liq = mysqli_fetch_assoc($view)) {
+    $ids[] = $liq['liqId'];
 }
-if (isset($liqIds)) {
-    $del_tblLiquiditeit = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblLiquiditeit` WHERE liqId IN (".mysqli_real_escape_string($db, $liqIds).") ; ";
-    mysqli_query($db, $del_tblLiquiditeit);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblLiquiditeit` WHERE liqId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblLiquiditeit
 
 //tblOpgaaf
-$zoek_opgId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT o.opgId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblOpgaaf o
-     join ".mysqli_real_escape_string($db, $dtb).".tblRubriekuser ru on (ru.rubuId = o.rubuId)
-    WHERE ru.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblOpgaaf o
+     join $dtb.tblRubriekuser ru on (ru.rubuId = o.rubuId)
+    WHERE ru.lidId = $lidId
     ORDER BY o.opgId
-    ") or die(mysqli_error($db));
-$opgId = array();
-while ($opg = mysqli_fetch_assoc($zoek_opgId)) {
-    $opgId[] = $opg['opgId'];
-    $opgIds = implode(',', $opgId);
+    ");
+$ids = array();
+while ($opg = mysqli_fetch_assoc($view)) {
+    $ids[] = $opg['opgId'];
 }
-if (isset($opgIds)) {
-    $del_tblOpgaaf = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblOpgaaf` WHERE opgId IN (".mysqli_real_escape_string($db, $opgIds).") ; ";
-    mysqli_query($db, $del_tblOpgaaf);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblOpgaaf` WHERE opgId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblOpgaaf
 
 //tblSalber
-$zoek_salbId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT sb.salbId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblSalber sb
-     join ".mysqli_real_escape_string($db, $dtb).".tblRubriekuser ru on (ru.rubuId = sb.tblId)
-    WHERE ru.lidId = ".mysqli_real_escape_string($db, $lidId)." and tbl = 'ru'
+    FROM $dtb.tblSalber sb
+     join $dtb.tblRubriekuser ru on (ru.rubuId = sb.tblId)
+    WHERE ru.lidId = $lidId and tbl = 'ru'
     UNION
     SELECT sb.salbId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblSalber sb
-     join ".mysqli_real_escape_string($db, $dtb).".tblElementuser eu on (eu.elemuId = sb.tblId)
-    WHERE eu.lidId = ".mysqli_real_escape_string($db, $lidId)." and tbl = 'eu'
+    FROM $dtb.tblSalber sb
+     join $dtb.tblElementuser eu on (eu.elemuId = sb.tblId)
+    WHERE eu.lidId = $lidId and tbl = 'eu'
     ORDER BY salbId
-    ") or die(mysqli_error($db));
-$salbId = array();
-while ($opg = mysqli_fetch_assoc($zoek_salbId)) {
-    $salbId[] = $opg['salbId'];
-    $salbIds = implode(',', $salbId);
+    ");
+$ids = array();
+while ($opg = mysqli_fetch_assoc($view)) {
+    $ids[] = $opg['salbId'];
 }
-if (isset($salbIds)) {
-    $del_tblSalber = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblSalber` WHERE salbId IN (".mysqli_real_escape_string($db, $salbIds).") ; ";
-    mysqli_query($db, $del_tblSalber);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblSalber` WHERE salbId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblSalber
 
 //tblDeklijst
-$zoek_dekId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT d.dekId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblDeklijst d
-    WHERE d.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblDeklijst d
+    WHERE d.lidId = $lidId
     ORDER BY d.dekId
-    ") or die(mysqli_error($db));
-$dekId = array();
-while ($dek = mysqli_fetch_assoc($zoek_dekId)) {
-    $dekId[] = $dek['dekId'];
-    $dekIds = implode(',', $dekId);
+    ");
+$ids = array();
+while ($dek = mysqli_fetch_assoc($view)) {
+    $ids[] = $dek['dekId'];
 }
-if (isset($dekIds)) {
-    $del_tblDeklijst = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblDeklijst` WHERE dekId IN (".mysqli_real_escape_string($db, $dekIds).") ; ";
-    mysqli_query($db, $del_tblDeklijst);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblDeklijst` WHERE dekId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblDeklijst
 
 //tblRubriekuser
-$zoek_rubuId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT ru.rubuId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblRubriekuser ru
-    WHERE ru.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblRubriekuser ru
+    WHERE ru.lidId = $lidId
     ORDER BY ru.rubuId
-    ") or die(mysqli_error($db));
-$rubuId = array();
-while ($rubu = mysqli_fetch_assoc($zoek_rubuId)) {
-    $rubuId[] = $rubu['rubuId'];
-    $rubuIds = implode(',', $rubuId);
+    ");
+$ids = array();
+while ($rubu = mysqli_fetch_assoc($view)) {
+    $ids[] = $rubu['rubuId'];
 }
-if (isset($rubuIds)) {
-    $del_tblRubriekuser = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblRubriekuser` WHERE rubuId IN (".mysqli_real_escape_string($db, $rubuIds).") ; ";
-    mysqli_query($db, $del_tblRubriekuser);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblRubriekuser` WHERE rubuId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblRubriekuser
 
 //tblElementuser
-$zoek_elemuId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT eu.elemuId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblElementuser eu
-    WHERE eu.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblElementuser eu
+    WHERE eu.lidId = $lidId
     ORDER BY eu.elemuId
-    ") or die(mysqli_error($db));
-$elemuId = array();
-while ($elemu = mysqli_fetch_assoc($zoek_elemuId)) {
-    $elemuId[] = $elemu['elemuId'];
-    $elemuIds = implode(',', $elemuId);
+    ");
+$ids = array();
+while ($elemu = mysqli_fetch_assoc($view)) {
+    $ids[] = $elemu['elemuId'];
 }
-if (isset($elemuIds)) {
-    $del_tblElementuser = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblElementuser` WHERE elemuId IN (".mysqli_real_escape_string($db, $elemuIds).") ; ";
-    mysqli_query($db, $del_tblElementuser);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblElementuser` WHERE elemuId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblElementuser
 
@@ -571,58 +556,56 @@ if (isset($elemuIds)) {
 /********************    Stamtabellen    *******************************************************************/
 
 //tblMomentuser
-$zoek_momuId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT mu.momuId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblMomentuser mu
-    WHERE mu.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblMomentuser mu
+    WHERE mu.lidId = $lidId
     ORDER BY mu.momuId
-    ") or die(mysqli_error($db));
-$momuId = array();
-while ($momu = mysqli_fetch_assoc($zoek_momuId)) {
-    $momuId[] = $momu['momuId'];
-    $momuIds = implode(',', $momuId);
+    ");
+$ids = array();
+while ($momu = mysqli_fetch_assoc($view)) {
+    $ids[] = $momu['momuId'];
 }
-if (isset($momuIds)) {
-    $del_tblMomentuser = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblMomentuser` WHERE momuId IN (".mysqli_real_escape_string($db, $momuIds).") ; ";
-    mysqli_query($db, $del_tblMomentuser);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblMomentuser` WHERE momuId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblMomentuser
 
 //tblRasuser
-$zoek_rasuId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT ru.rasuId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblRasuser ru
-    WHERE ru.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblRasuser ru
+    WHERE ru.lidId = $lidId
     ORDER BY ru.rasuId
-    ") or die(mysqli_error($db));
-$rasuId = array();
-while ($rasu = mysqli_fetch_assoc($zoek_rasuId)) {
-    $rasuId[] = $rasu['rasuId'];
-    $rasuIds = implode(',', $rasuId);
+    ");
+$ids = array();
+while ($rasu = mysqli_fetch_assoc($view)) {
+    $ids[] = $rasu['rasuId'];
 }
-if (isset($rasuIds)) {
-    $del_tblRasuser = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblRasuser` WHERE rasuId IN (".mysqli_real_escape_string($db, $rasuIds).") ; ";
-    mysqli_query($db, $del_tblRasuser);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblRasuser` WHERE rasuId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 //Einde tblRasuser
 
 //tblRedenuser
-$zoek_reduId = mysqli_query($db, "
+$view = mysqli_query($db, "
     SELECT ru.reduId
-    FROM ".mysqli_real_escape_string($db, $dtb).".tblRedenuser ru
-    WHERE ru.lidId = ".mysqli_real_escape_string($db, $lidId)."
+    FROM $dtb.tblRedenuser ru
+    WHERE ru.lidId = $lidId
     ORDER BY ru.reduId
-    ") or die(mysqli_error($db));
-$reduId = array();
-while ($redu = mysqli_fetch_assoc($zoek_reduId)) {
-    $reduId[] = $redu['reduId'];
-    $reduIds = implode(',', $reduId);
+    ");
+$ids = array();
+while ($redu = mysqli_fetch_assoc($view)) {
+    $ids[] = $redu['reduId'];
 }
-if (isset($reduIds)) {
-    $del_tblRedenuser = "DELETE FROM ".mysqli_real_escape_string($db, $dtb).".`tblRedenuser` WHERE reduId IN (".mysqli_real_escape_string($db, $reduIds).") ; ";
-    mysqli_query($db, $del_tblRedenuser);
+if (count($ids)) {
+    $SQL = "DELETE FROM $dtb.`tblRedenuser` WHERE reduId IN (".implode(',', $ids).") ; ";
+    mysqli_query($db, $SQL);
 }
 
 //Einde tblRedenuser
 
 /********************    Einde Stamtabellen    *******************************************************************/
+}
