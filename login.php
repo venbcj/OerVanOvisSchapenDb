@@ -105,8 +105,8 @@ if (!isset($_SESSION["U1"]) || !isset($_SESSION["W1"]) || !isset($_SESSION["I1"]
             // Einde In de demo omgeving worden de basis gegevens elke maand opnieuw vervangen.
 
             if (isset($_POST['knpBasis'])) {
-                include "demo_userdelete.php";
-                include "demo_table_insert.php";
+                demo_userdelete();
+                demo_table_insert($db, $lidId);
             }
             // Bepalen modules ja of nee t.b.v. menu1.php bij inloggen
             $module = mysqli_query($db, "SELECT beheer, tech, fin, meld FROM tblLeden WHERE lidId = '".mysqli_real_escape_string($db, $lidId)."'; ") or die(mysqli_error($db));

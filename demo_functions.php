@@ -1163,3 +1163,684 @@ INSERT INTO tblOpgaaf (rubuId, datum, bedrag, toel, liq, his, dmcreate)
 
 /************* Einde verwijderd ****************************************************/
 }
+
+function demo_userdelete($db, $dtb, $lidId) {
+/* Aangemaakt : 14-5-2016  Onderstaande statements moeten worden uitgevoerd om maandelijks demo gegevens te verwijderen.
+    Wordt ook gebruikt om handmatig de (basis)gegevens te verwijderen in de test omgevng
+22-1-2017 : tblBezetting gewijzigd naar tblBezet
+*/
+    $lidId = mysqli_real_escape_string($db, $lidId);
+
+// VERWIJDEREN RECORDS
+/********************   Voorraadbeheer  *******************************************************************/
+
+//tblNuttig
+$zoek_NutId = mysqli_query($db, "select n.nutId
+from $dtb.tblNuttig n
+ join $dtb.tblHistorie h on (h.hisId = n.hisId)
+ join $dtb.tblStal st on (st.stalId = h.stalId)
+where st.lidId = $lidId
+order by n.nutId
+");
+
+
+$nutId = array();
+while ($nut = mysqli_fetch_assoc($zoek_NutId)) {
+$nutId[] = $nut['nutId'];
+    
+$nutIds = implode(',', $nutId);
+}
+    if (isset($nutIds)) {
+    $del_tblNuttig = "delete from $dtb.`tblNuttig` where nutId IN (".mysqli_real_escape_string($db, $nutIds).") ; ";
+    mysqli_query($db, $del_tblNuttig);
+    }
+
+//Einde tblNuttig
+
+
+//tblInkoop
+$zoek_inkId = mysqli_query($db, "select i.inkId
+from $dtb.tblInkoop i
+ join $dtb.tblArtikel a on (a.artId = i.artId)
+ join $dtb.tblEenheiduser eu on (eu.enhuId = a.enhuId)
+where eu.lidId = $lidId
+order by i.inkId
+");
+
+
+$inkId = array();
+while ($ink = mysqli_fetch_assoc($zoek_inkId)) {
+$inkId[] = $ink['inkId'];
+    
+$inkIds = implode(',', $inkId);
+}
+    if (isset($inkIds)) {
+    $del_tblInkoop = "delete from $dtb.`tblInkoop` where inkId IN (".mysqli_real_escape_string($db, $inkIds).") ; ";
+    mysqli_query($db, $del_tblInkoop);
+    }
+//Einde tblInkoop
+//tblArtikel
+$zoek_artId = mysqli_query($db, "select a.artId
+from $dtb.tblArtikel a
+ join $dtb.tblEenheiduser eu on (eu.enhuId = a.enhuId)
+where eu.lidId = $lidId
+order by a.artId
+");
+
+
+$artId = array();
+while ($art = mysqli_fetch_assoc($zoek_artId)) {
+$artId[] = $art['artId'];
+    
+$artIds = implode(',', $artId);
+}
+    if (isset($artIds)) {
+    $del_tblArtikel = "delete from $dtb.`tblArtikel` where artId IN (".mysqli_real_escape_string($db, $artIds).") ; ";
+    mysqli_query($db, $del_tblArtikel);
+    }
+//Einde tblArtikel
+//tblEenheiduser
+$zoek_enhuId = mysqli_query($db, "select eu.enhuId
+from $dtb.tblEenheiduser eu
+where eu.lidId = $lidId
+");
+
+
+$enhuId = array();
+while ($enhu = mysqli_fetch_assoc($zoek_enhuId)) {
+$enhuId[] = $enhu['enhuId'];
+    
+$enhuIds = implode(',', $enhuId);
+}
+    if (isset($enhuIds)) {
+    $del_tblEenheiduser = "delete from $dtb.`tblEenheiduser` where enhuId IN (".mysqli_real_escape_string($db, $enhuIds).") ; ";
+    mysqli_query($db, $del_tblEenheiduser);
+    }
+//Einde tblEenheiduser
+/********************   Einde Voorraadbeheer    *******************************************************************/
+/********************   Melden  *******************************************************************/
+
+//tblRequest
+$zoek_reqId = mysqli_query($db, "select r.reqId
+from $dtb.tblRequest r
+ join $dtb.tblMelding m on (r.reqId = m.reqId)
+ join $dtb.tblHistorie h on (h.hisId = m.hisId)
+ join $dtb.tblStal st on (st.stalId = h.stalId)
+where st.lidId = $lidId
+group by r.reqId
+order by r.reqId
+");
+//group by r.reqId
+
+
+$reqId = array();
+while ($req = mysqli_fetch_assoc($zoek_reqId)) {
+$reqId[] = $req['reqId'];
+
+$reqIds = implode(',', $reqId);
+}
+    if (isset($reqIds)) {
+    $del_tblRequest = "delete from $dtb.`tblRequest` where reqId IN (".mysqli_real_escape_string($db, $reqIds).") ; ";
+    mysqli_query($db, $del_tblRequest);
+    }
+//Einde tblRequest
+
+//tblMelding
+$zoek_meldId = mysqli_query($db, "select m.meldId
+from $dtb.tblMelding m
+ join $dtb.tblHistorie h on (h.hisId = m.hisId)
+ join $dtb.tblStal st on (st.stalId = h.stalId)
+where st.lidId = $lidId
+order by m.meldId
+");
+
+
+$meldId = array();
+while ($meld = mysqli_fetch_assoc($zoek_meldId)) {
+$meldId[] = $meld['meldId'];
+
+$meldIds = implode(',', $meldId);
+}
+    if (isset($meldIds)) {
+    $del_tblMelding = "delete from $dtb.`tblMelding` where meldId IN (".mysqli_real_escape_string($db, $meldIds).") ; ";
+    mysqli_query($db, $del_tblMelding);
+    }
+
+//Einde tblMelding
+/********************   Einde Melden    *******************************************************************/
+/********************   Het schaap      *******************************************************************/
+
+//tblVolwas
+
+$zoek_volwId = mysqli_query($db, "select v.volwId
+from $dtb.tblVolwas v
+ join $dtb.tblSchaap s on (v.volwId = s.volwId)
+ join $dtb.tblStal st on (s.schaapId = st.schaapId)
+where st.lidId = $lidId
+order by v.volwId
+");
+
+
+
+$volwId = array();
+while ($volwas = mysqli_fetch_assoc($zoek_volwId)) {
+$volwId[] = $volwas['volwId'];
+
+$volwIds = implode(',', $volwId);
+}
+    if (isset($volwIds)) {
+    $del_tblVolwas = "delete from $dtb.`tblVolwas` where volwId IN (".mysqli_real_escape_string($db, $volwIds).") ; ";
+    mysqli_query($db, $del_tblVolwas);
+    }
+//Einde tblVolwas
+
+
+//tblSchaap
+$zoek_schaapId = mysqli_query($db, "select s.schaapId
+from $dtb.tblSchaap s
+ join $dtb.tblStal st on (s.schaapId = st.schaapId)
+where st.lidId = $lidId
+order by s.schaapId
+");
+
+
+$schaapId = array();
+while ($schaap = mysqli_fetch_assoc($zoek_schaapId)) {
+$schaapId[] = $schaap['schaapId'];
+    
+$schaapIds = implode(',', $schaapId);
+}
+    if (isset($schaapIds)) {
+    $del_tblSchaap = "delete from $dtb.`tblSchaap` where schaapId IN (".mysqli_real_escape_string($db, $schaapIds).") ; ";
+    mysqli_query($db, $del_tblSchaap);
+    }
+//Einde tblSchaap
+
+//tblHistorie
+$zoek_hisId = mysqli_query($db, "select h.hisId
+from $dtb.tblHistorie h
+ join $dtb.tblStal st on (st.stalId = h.stalId)
+where st.lidId = $lidId
+order by h.hisId
+");
+
+
+
+$hisId = array();
+while ($his = mysqli_fetch_assoc($zoek_hisId)) {
+$hisId[] = $his['hisId'];
+    
+$hisIds = implode(',', $hisId);
+}
+    if (isset($hisIds)) {
+    $del_tblHistorie = "delete from $dtb.`tblHistorie` where hisId IN (".mysqli_real_escape_string($db, $hisIds).") ; ";
+    mysqli_query($db, $del_tblHistorie);
+    }
+//Einde tblHistorie
+
+//tblStal
+$zoek_stalId = mysqli_query($db, "select st.stalId
+from $dtb.tblStal st
+where st.lidId = $lidId
+order by st.stalId
+");
+
+
+$stalId = array();
+while ($stal = mysqli_fetch_assoc($zoek_stalId)) {
+$stalId[] = $stal['stalId'];
+    
+$stalIds = implode(',', $stalId);
+}
+    if (isset($stalIds)) {
+    $del_tblStal = "delete from $dtb.`tblStal` where stalId IN (".mysqli_real_escape_string($db, $stalIds).") ; ";
+    mysqli_query($db, $del_tblStal);
+    }
+//Einde tblStal
+
+// Dieren die niet zijn gekoppeld aan een stalId verwijderen. Dit kan bij inlezen dracht vaderdieren zijn. Wordt niet verwijderd als dit dier bij anderen ook voorkomt in impReader => dracht. Zie not exists
+//tblSchaap
+$zoek_schaapId_dracht = mysqli_query($db, "
+select s.schaapId
+from $dtb.tblSchaap s
+ join $dtb.impReader r on (r.levnr_ovpl = s.levensnummer)
+ left join $dtb.tblStal st on (s.schaapId = st.schaapId)
+where r.lidId = $lidId and isnull(st.stalId) and isnull(teller_ovpl)
+ and not exists (
+	select rd.levnr_ovpl
+	from $dtb.impReader rd
+	where s.levensnummer = rd.levnr_ovpl and isnull(rd.teller_ovpl) and rd.lidId <> $lidId
+	)
+group by s.schaapId
+order by s.schaapId
+");
+
+
+$schaapId_dracht = array();
+while ($sch = mysqli_fetch_assoc($zoek_schaapId_dracht)) {
+$schaapId_dracht[] = $sch['schaapId'];
+
+$schaapIds_dracht = implode(',', $schaapId_dracht);
+}
+    if (isset($schaapIds_dracht)) {
+    $del_tblSchaap = "delete from $dtb.`tblSchaap` where schaapId IN (".mysqli_real_escape_string($db, $schaapIds_dracht).") ; ";
+    mysqli_query($db, $del_tblSchaap);
+    }
+//Einde tblSchaap
+/********************   Einde Het schaap    *******************************************************************/
+/********************   Reader      *******************************************************************/
+// Dracht uit tabel tblVolwas halen. Dit is het restant uit tabel tblVolwas nadat de schapen zijn verwijderd hierboven.
+//tblVolwas
+$zoek_volwId = mysqli_query($db, "select v.volwId
+from $dtb.tblVolwas v
+ join impReader r on (v.readId = r.readId)
+where r.lidId = $lidId
+order by v.volwId
+");
+
+
+$volwId = array();
+while ($volw = mysqli_fetch_assoc($zoek_volwId)) {
+$volwId[] = $volw['volwId'];
+    
+$volwIds = implode(',', $volwId);
+}
+    if (isset($volwIds)) {
+    $del_tblVolwas = "delete from $dtb.`tblVolwas` where volwId IN (".mysqli_real_escape_string($db, $volwIds).") ; ";
+    mysqli_query($db, $del_tblVolwas);
+    }
+//Einde tblVolwas
+
+//impReader
+$del_impReader = "delete from ".$dtb.".`impReader` where lidId = $lidId ; ";
+    mysqli_query($db, $del_impReader);
+/********************   Einde Reader    *******************************************************************/
+/********************   Relaties        *******************************************************************/
+//tblPersoon
+$zoek_persId = mysqli_query($db, "select ps.persId
+from $dtb.tblPersoon ps
+ join $dtb.tblPartij p on (p.partId = ps.partId)
+where p.lidId = $lidId
+order by ps.persId 
+");
+
+
+$persId = array();
+while ($pers = mysqli_fetch_assoc($zoek_persId)) {
+$persId[] = $pers['persId'];
+    
+$persIds = implode(',', $persId);
+}
+    if (isset($persIds)) {
+    $del_tblPersoon = "delete from $dtb.`tblPersoon` where persId IN (".mysqli_real_escape_string($db, $persIds).") ; ";
+    mysqli_query($db, $del_tblPersoon);
+    }
+//Einde tblPersoon
+//tblVervoer
+$zoek_vervId = mysqli_query($db, "select v.vervId
+from $dtb.tblVervoer v
+ join $dtb.tblPartij p on (p.partId = v.partId)
+where p.lidId = $lidId
+order by v.vervId
+");
+
+
+
+$vervId = array();
+while ($verv = mysqli_fetch_assoc($zoek_vervId)) {
+$vervId[] = $verv['vervId'];
+    
+$vervIds = implode(',', $vervId);
+}
+    if (isset($vervIds)) {
+    $del_tblVervoer = "delete from $dtb.`tblVervoer` where vervId IN (".mysqli_real_escape_string($db, $vervIds).") ; ";
+    mysqli_query($db, $del_tblVervoer);
+    }
+//Einde tblVervoer
+//tblAdres
+$zoek_adrId = mysqli_query($db, "select a.adrId
+from $dtb.tblAdres a
+ join $dtb.tblRelatie r on (a.relId = r.relId)
+ join $dtb.tblPartij p on (p.partId = r.partId)
+where p.lidId = $lidId
+order by a.adrId
+");
+
+
+$adrId = array();
+while ($adr = mysqli_fetch_assoc($zoek_adrId)) {
+$adrId[] = $adr['adrId'];
+
+$adrIds = implode(',', $adrId);
+}
+    if (isset($adrIds)) {
+    $del_tblAdres = "delete from $dtb.`tblAdres` where adrId IN (".mysqli_real_escape_string($db, $adrIds).") ; ";
+    mysqli_query($db, $del_tblAdres);
+    }
+//Einde tblAdres
+//tblRelatie
+$zoek_relId = mysqli_query($db, "select r.relId
+from $dtb.tblRelatie r
+ join $dtb.tblPartij p on (p.partId = r.partId)
+where p.lidId = $lidId
+order by r.relId
+");
+
+
+$relId = array();
+while ($rel = mysqli_fetch_assoc($zoek_relId)) {
+$relId[] = $rel['relId'];
+    
+$relIds = implode(',', $relId);
+}
+    if (isset($relIds)) {
+    $del_tblRelatie = "delete from $dtb.`tblRelatie` where relId IN (".mysqli_real_escape_string($db, $relIds).") ; ";
+    mysqli_query($db, $del_tblRelatie);
+    }
+//Einde tblRelatie
+//tblPartij
+$zoek_partId = mysqli_query($db, "select p.partId
+from $dtb.tblPartij p
+where p.lidId = $lidId
+order by p.partId
+");
+
+
+$partId = array();
+while ($part = mysqli_fetch_assoc($zoek_partId)) {
+$partId[] = $part['partId'];
+    
+$partIds = implode(',', $partId);
+}
+    if (isset($partIds)) {
+    $del_tblPartij = "delete from $dtb.`tblPartij` where partId IN (".mysqli_real_escape_string($db, $partIds).") ; ";
+    mysqli_query($db, $del_tblPartij);
+    }
+//Einde tblPartij
+/********************   Einde Relaties  *******************************************************************/
+/********************   Hokken      *******************************************************************/
+
+
+//tblBezet
+$zoek_bezId = mysqli_query($db, "select b.bezId
+from $dtb.tblBezet b
+ join $dtb.tblPeriode p on (b.periId = p.periId)
+ join $dtb.tblHok h on (p.hokId = h.hokId)
+where h.lidId = $lidId
+order by b.bezId
+");
+
+
+$bezId = array();
+while ($bez = mysqli_fetch_assoc($zoek_bezId)) {
+$bezId[] = $bez['bezId'];
+    
+$bezIds = implode(',', $bezId);
+}
+    if (isset($bezIds)) {
+    $del_tblBezet = "delete from $dtb.`tblBezet` where bezId IN (".mysqli_real_escape_string($db, $bezIds).") ; ";
+    mysqli_query($db, $del_tblBezet);
+    }
+//Einde tblBezet
+//tblVoeding
+$zoek_voedId = mysqli_query($db, "select v.voedId
+from $dtb.tblVoeding v
+ join $dtb.tblPeriode p on (v.periId = p.periId)
+ join $dtb.tblHok h on (p.hokId = h.hokId)
+where h.lidId = $lidId
+order by v.voedId
+");
+
+
+$voedId = array();
+while ($voed = mysqli_fetch_assoc($zoek_voedId)) {
+$voedId[] = $voed['voedId'];
+    
+$voedIds = implode(',', $voedId);
+}
+    if (isset($voedIds)) {
+    $del_tblVoeding = "delete from $dtb.`tblVoeding` where voedId IN (".mysqli_real_escape_string($db, $voedIds).") ; ";
+    mysqli_query($db, $del_tblVoeding);
+    }
+//Einde tblVoeding
+//tblPeriode
+$zoek_periId = mysqli_query($db, "select p.periId
+from $dtb.tblPeriode p
+ join $dtb.tblHok h on (p.hokId = h.hokId)
+where h.lidId = $lidId
+order by p.periId
+");
+
+
+$periId = array();
+while ($peri = mysqli_fetch_assoc($zoek_periId)) {
+$periId[] = $peri['periId'];
+    
+$periIds = implode(',', $periId);
+}
+    if (isset($periIds)) {
+    $del_tblPeriode = "delete from $dtb.`tblPeriode` where periId IN (".mysqli_real_escape_string($db, $periIds).") ; ";
+    mysqli_query($db, $del_tblPeriode);
+    }
+//Einde tblPeriode
+//tblHok
+$zoek_hokId = mysqli_query($db, "select h.hokId
+from $dtb.tblHok h
+where h.lidId = $lidId
+order by h.hokId
+");
+
+
+$hokId = array();
+while ($hok = mysqli_fetch_assoc($zoek_hokId)) {
+$hokId[] = $hok['hokId'];
+    
+$hokIds = implode(',', $hokId);
+}
+    if (isset($hokIds)) {
+    $del_tblHok = "delete from $dtb.`tblHok` where hokId IN (".mysqli_real_escape_string($db, $hokIds).") ; ";
+    mysqli_query($db, $del_tblHok);
+    }
+//Einde tblHok
+/********************   Einde Hokken    *******************************************************************/
+/********************   Financieel      *******************************************************************/
+
+//tblLiquiditeit
+$zoek_liqId = mysqli_query($db, "select l.liqId
+from $dtb.tblLiquiditeit l
+ join $dtb.tblRubriekuser ru on (ru.rubuId = l.rubuId)
+where ru.lidId = $lidId
+order by l.liqId
+");
+//order by liqId
+
+
+$liqId = array();
+while ($liq = mysqli_fetch_assoc($zoek_liqId)) {
+$liqId[] = $liq['liqId'];
+    
+$liqIds = implode(',', $liqId);
+}
+    if (isset($liqIds)) {
+    $del_tblLiquiditeit = "delete from $dtb.`tblLiquiditeit` where liqId IN (".mysqli_real_escape_string($db, $liqIds).") ; ";
+    mysqli_query($db, $del_tblLiquiditeit);
+    }
+    //Einde tblLiquiditeit
+//tblOpgaaf
+$zoek_opgId = mysqli_query($db, "select o.opgId
+from $dtb.tblOpgaaf o
+ join $dtb.tblRubriekuser ru on (ru.rubuId = o.rubuId)
+where ru.lidId = $lidId
+order by o.opgId
+");
+//order by opgId
+
+
+$opgId = array();
+while ($opg = mysqli_fetch_assoc($zoek_opgId)) {
+$opgId[] = $opg['opgId'];
+
+$opgIds = implode(',', $opgId);
+}
+    if (isset($opgIds)) {
+    $del_tblOpgaaf = "delete from $dtb.`tblOpgaaf` where opgId IN (".mysqli_real_escape_string($db, $opgIds).") ; ";
+    mysqli_query($db, $del_tblOpgaaf);
+    }
+//Einde tblOpgaaf
+//tblSalber
+$zoek_salbId = mysqli_query($db, "
+select sb.salbId
+from $dtb.tblSalber sb
+ join $dtb.tblRubriekuser ru on (ru.rubuId = sb.tblId)
+where ru.lidId = $lidId and tbl = 'ru'
+
+Union
+
+select sb.salbId
+from $dtb.tblSalber sb
+ join $dtb.tblElementuser eu on (eu.elemuId = sb.tblId)
+where eu.lidId = $lidId and tbl = 'eu'
+order by salbId
+");
+
+
+$salbId = array();
+while ($opg = mysqli_fetch_assoc($zoek_salbId)) {
+$salbId[] = $opg['salbId'];
+
+$salbIds = implode(',', $salbId);
+}
+    if (isset($salbIds)) {
+    $del_tblSalber = "delete from $dtb.`tblSalber` where salbId IN (".mysqli_real_escape_string($db, $salbIds).") ; ";
+    mysqli_query($db, $del_tblSalber);
+    }
+//Einde tblSalber
+
+//tblDeklijst
+$zoek_dekId = mysqli_query($db, "select d.dekId
+from $dtb.tblDeklijst d
+where d.lidId = $lidId
+order by d.dekId
+");
+
+
+$dekId = array();
+while ($dek = mysqli_fetch_assoc($zoek_dekId)) {
+$dekId[] = $dek['dekId'];
+
+$dekIds = implode(',', $dekId);
+}
+    if (isset($dekIds)) {
+    $del_tblDeklijst = "delete from $dtb.`tblDeklijst` where dekId IN (".mysqli_real_escape_string($db, $dekIds).") ; ";
+    mysqli_query($db, $del_tblDeklijst);
+    }
+//Einde tblDeklijst
+
+//tblRubriekuser
+$zoek_rubuId = mysqli_query($db, "select ru.rubuId
+from $dtb.tblRubriekuser ru
+where ru.lidId = $lidId
+order by ru.rubuId
+");
+
+
+$rubuId = array();
+while ($rubu = mysqli_fetch_assoc($zoek_rubuId)) {
+$rubuId[] = $rubu['rubuId'];
+
+$rubuIds = implode(',', $rubuId);
+}
+    if (isset($rubuIds)) {
+    $del_tblRubriekuser = "delete from $dtb.`tblRubriekuser` where rubuId IN (".mysqli_real_escape_string($db, $rubuIds).") ; ";
+    mysqli_query($db, $del_tblRubriekuser);
+    }
+//Einde tblRubriekuser
+
+//tblElementuser
+$zoek_elemuId = mysqli_query($db, "select eu.elemuId
+from $dtb.tblElementuser eu
+where eu.lidId = $lidId
+order by eu.elemuId
+");
+
+
+$elemuId = array();
+while ($elemu = mysqli_fetch_assoc($zoek_elemuId)) {
+$elemuId[] = $elemu['elemuId'];
+    
+$elemuIds = implode(',', $elemuId);
+}
+    if (isset($elemuIds)) {
+    $del_tblElementuser = "delete from $dtb.`tblElementuser` where elemuId IN (".mysqli_real_escape_string($db, $elemuIds).") ; ";
+    mysqli_query($db, $del_tblElementuser);
+    }
+//Einde tblElementuser
+/********************   Einde Financieel    *******************************************************************/
+/********************   Stamtabellen    *******************************************************************/
+
+//tblMomentuser
+$zoek_momuId = mysqli_query($db, "select mu.momuId
+from $dtb.tblMomentuser mu
+where mu.lidId = $lidId
+order by mu.momuId
+");
+
+$momuId = array();
+while ($momu = mysqli_fetch_assoc($zoek_momuId)) {
+$momuId[] = $momu['momuId'];
+
+$momuIds = implode(',', $momuId);
+}
+    if (isset($momuIds)) {
+    $del_tblMomentuser = "delete from $dtb.`tblMomentuser` where momuId IN (".mysqli_real_escape_string($db, $momuIds).") ; ";
+    mysqli_query($db, $del_tblMomentuser);
+    }
+//Einde tblMomentuser
+
+
+
+//tblRasuser
+$zoek_rasuId = mysqli_query($db, "select ru.rasuId
+from $dtb.tblRasuser ru
+where ru.lidId = $lidId
+order by ru.rasuId
+");
+
+
+$rasuId = array();
+while ($rasu = mysqli_fetch_assoc($zoek_rasuId)) {
+$rasuId[] = $rasu['rasuId'];
+
+$rasuIds = implode(',', $rasuId);
+}
+    if (isset($rasuIds)) {
+    $del_tblRasuser = "delete from $dtb.`tblRasuser` where rasuId IN (".mysqli_real_escape_string($db, $rasuIds).") ; ";
+    mysqli_query($db, $del_tblRasuser);
+    }
+//Einde tblRasuser
+
+
+
+//tblRedenuser
+$zoek_reduId = mysqli_query($db, "select ru.reduId
+from $dtb.tblRedenuser ru
+where ru.lidId = $lidId
+order by ru.reduId
+");
+
+
+$reduId = array();
+while ($redu = mysqli_fetch_assoc($zoek_reduId)) {
+$reduId[] = $redu['reduId']; /*$reuId = $redu['reduId'];*/
+
+$reduIds = implode(',', $reduId);
+}
+    if (isset($reduIds)) {
+    $del_tblRedenuser = "delete from $dtb.`tblRedenuser` where reduId IN (".mysqli_real_escape_string($db, $reduIds).") ; ";
+    mysqli_query($db, $del_tblRedenuser);
+    }
+    
+
+//Einde tblRedenuser
+/********************   Einde Stamtabellen  *******************************************************************/
+}
