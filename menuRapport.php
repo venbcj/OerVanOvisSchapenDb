@@ -1,67 +1,65 @@
 <?php
-/* 25-11-206 : versie weergave toegevoegd 
-29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.php 
+/* 25-11-206 : versie weergave toegevoegd
+29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.tpl.php
 07-10-2024 Groeiresultaten per weging toegevoegd */
 
- include "javascriptsAfhandeling.php";
-include "url.php"; ?>
+include "url.php";
+
+$tech_color = 'grey';
+if ($modtech != 0) {
+    $tech_color = 'blue';
+}
+
+include "javascriptsAfhandeling.tpl.php";
+?>
+
+<link rel="stylesheet" href="menu.css">
 <td width = '150' height = '100' valign='top'>
-Menu : <br>
-<hr style ='color : #A6C6EB'>
-<a href='<?php echo $url; ?>Home.php' style = 'color : blue'>
-Home</a> <br/>
-<hr style ='color : #E2E2E2'>
-<a href='<?php echo $url; ?>Stallijst.php' style = 'color : blue'>
-Stallijst</a>
-<hr style ='color : #E2E2E2'>
-<a href='<?php echo $url;?>ZoekAfldm.php' style = 'color : blue'>
-Afleverlijst</a>
-<hr style ='color : #E2E2E2'>
-<?php  if($modtech == 1) { ?> <a href='<?php echo $url;?>Mndoverz_fok.php' style = 'color : blue'> <?php }
-					else { ?> <a href='<?php echo $url;?>Mndoverz_fok.php' style = 'color : grey'> <?php } ?>
-Maandoverz. fokkerij</a>
-<hr style ='color : #E2E2E2'>
-<?php  if($modtech == 1) { ?> <a href='<?php echo $url;?>Mndoverz_vlees.php' style = 'color : blue'> <?php }
-					else { ?> <a href='<?php echo $url;?>Mndoverz_vlees.php' style = 'color : grey'> <?php } ?>
-Maandoverz. vleeslam.</a>
-<hr style ='color : #E2E2E2'>
-<?php  if($modtech == 1) { ?> <a href='<?php echo $url;?>Med_rapportage.php' style = 'color : blue'> <?php }
-					else { ?> <a href='<?php echo $url;?>Med_rapportage.php' style = 'color : grey'> <?php } ?>
-Medicijn rapportage</a>
-<hr style ='color : #E2E2E2'>
-<?php  if($modtech == 1) { ?> <a href='<?php echo $url;?>Voer_rapportage.php' style = 'color : blue'> <?php }
-					else { ?> <a href='<?php echo $url;?>Voer_rapportage.php' style = 'color : grey'> <?php } ?>
-Voer rapportage</a>
-<hr style ='color : #E2E2E2'>
-<?php  if($modtech == 1) { ?> <a href='<?php echo $url;?>Rapport1.php' style = 'color : blue'> <?php }
-					else { ?> <a href='<?php echo $url;?>Rapport1.php' style = 'color : grey'> <?php } ?>
-Ooi rapporten</a>
-<hr style ='color : #E2E2E2'>
-<?php  if($modtech == 1) { ?> <a href='<?php echo $url;?>MaandTotalen.php' style = 'color : blue'> <?php }
-					else { ?> <a href='<?php echo $url;?>MaandTotalen.php' style = 'color : grey'> <?php } ?>
-Maandtotalen</a>
-<hr style ='color : #E2E2E2'>
-<?php  if($modtech == 1) { ?> <a href='<?php echo $url;?>GroeiresultaatSchaap.php' style = 'color : blue'> <?php }
-					else { ?> <a href='<?php echo $url;?>GroeiresultaatSchaap.php' style = 'color : grey'> <?php } ?>
-Groeiresultaten per schaap</a>
-<hr style ='color : #E2E2E2'>
-<?php  if($modtech == 1) { ?> <a href='<?php echo $url;?>GroeiresultaatWeging.php' style = 'color : blue'> <?php }
-					else { ?> <a href='<?php echo $url;?>GroeiresultaatWeging.php' style = 'color : grey'> <?php } ?>
-Groeiresultaten per weging</a>
-<hr style ='color : #E2E2E2'>
-<?php  if($modtech == 1) { ?> <a href='<?php echo $url;?>ResultHok.php' style = 'color : blue'> <?php }
-					else { ?> <a href='<?php echo $url;?>ResultHok.php' style = 'color : grey'> <?php } ?>
-Resultaten</a>
-<hr style ='color : #E2E2E2'> <br/>
-<hr style ='color : #E2E2E2'> <br/>
-<hr style ='color : #E2E2E2'>
+Menu :
+<br>
+<hr class="blue">
 
-<?php if(isset($versie)) { ?>
-<i style = "color : #E2E2E2;"><?php echo "versie : ".$versie; ?> </i> <br/> <?php } ?>
-<i style = "color : #E2E2E2;"><?php echo "ingelogd : ".$_SESSION["U1"]; ?></i>
+<?php echo link_to('Home', 'Home.php', ['class' => 'blue']); ?>
+<hr class="grey">
+
+<?php echo link_to('Stallijst', 'Stallijst.php', ['class' => 'blue']); ?>
+<hr class="grey">
+
+<?php echo link_to('Afleverlijst', 'ZoekAfldm.php', ['class' => 'blue']); ?>
+<hr class="grey">
+
+<?php echo link_to('Maandoverz. fokkerij', 'Mndoverz_fok.php', ['color' => $tech_color]); ?>
+<hr class="grey">
+
+<?php echo link_to('Maandoverz. vleeslam.', 'Mndoverz_vlees.php', ['color' => $tech_color]); ?>
+<hr class="grey">
+
+<?php echo link_to('Medicijn rapportage', 'Med_rapportage.php', ['color' => $tech_color]); ?>
+<hr class="grey">
+
+<?php echo link_to('Voer rapportage', 'Voer_rapportage.php', ['color' => $tech_color]); ?>
+<hr class="grey">
+
+<?php echo link_to('Ooi rapporten', 'Rapport1.php', ['color' => $tech_color]); ?>
+<hr class="grey">
+
+<?php echo link_to('Maandtotalen', 'MaandTotalen.php', ['color' => $tech_color]); ?>
+<hr class="grey">
+
+<?php echo link_to('Groeiresultaten per schaap', 'GroeiresultaatSchaap.php', ['color' => $tech_color]); ?>
+<hr class="grey">
+
+<?php echo link_to('Groeiresultaten per weging', 'GroeiresultaatWeging.php', ['color' => $tech_color]); ?>
+<hr class="grey">
+
+<?php echo link_to('Resultaten', 'ResultHok.php', ['color' => $tech_color]); ?>
+<hr class="grey">
+
+<br/>
+<hr class="grey">
+
+<br/>
+<hr class="grey">
+
+<?php include "versie.tpl.php"; ?>
 </td>
-
-
-
-
-

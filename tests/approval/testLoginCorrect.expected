@@ -73,49 +73,53 @@ $('#datepicker5').attr('autocomplete','off');
 <td width = '150' height = '100' valign='top'>
 Menu : <br>
 <hr style ='color : #A6C6EB'>
-<a href= 'http://oer-dev/Home.php' style = 'color : blue'>
-Home</a> <br>
-<hr style ='color : #E2E2E2'>
-<a href='http://oer-dev/InvSchaap.php' style = 'color : blue'>
-Aanvoer schaap</a>
-<hr style ='color : #E2E2E2'>
-<a href='http://oer-dev/InlezenReader.php' style = 'color : blue'>
-Inlezen reader</a> <br>
-<hr style ='color : #E2E2E2'>
-<a href='http://oer-dev/Melden.php' style = 'color : blue'> RVO</a> <br>
-<hr style ='color : #E2E2E2'>
+
+<a href= 'http://oer-dev/Home.php' style = 'color : blue'>Home</a> <br>
+<hr class="grey">
+
+<a href='http://oer-dev/InvSchaap.php' style = 'color : blue'>Aanvoer schaap</a>
+<hr class="grey">
+
+<a href='http://oer-dev/InlezenReader.php' style = 'color : blue'>Inlezen reader</a>
+<br>
+<hr class="grey">
+
+<a href='http://oer-dev/Melden.php' style = 'color : blue'>RVO</a>
+<br>
+<hr class="grey">
 
     <a href='http://oer-dev/Bezet.php' style = 'color : blue'>
 Verblijven in gebruik</a>
         
-<hr style ='color : #E2E2E2'>
+<hr class="grey">
 <a href='http://oer-dev/Zoeken.php' style = 'color : blue'>
 Schaap opzoeken</a>
-<hr style ='color : #E2E2E2'>
+<hr class="grey">
 <a href='http://oer-dev/Med_registratie.php' style = "color : blue ;" > 
 Medicijn toediening</a>
-<hr style ='color : #E2E2E2'>
+<hr class="grey">
 <a href='http://oer-dev/Dekkingen.php' style = 'color : blue'>
 Dekkingen / Dracht</a>
-<hr style ='color : #E2E2E2'>
+<hr class="grey">
 <a href='http://oer-dev/Alerts.php' style = "color : blue ;">
 Raederalerts</a>
-<hr style ='color : #E2E2E2'>
+<hr class="grey">
 
 <a href='http://oer-dev/Rapport.php' style = 'color : blue'>
 Rapporten</a>
-<hr style ='color : #E2E2E2'>
+<hr class="grey">
  <a href='http://oer-dev/Beheer.php' style = 'color : blue'> Beheer</a>
-<hr style ='color : #E2E2E2'>
+<hr class="grey">
 <a href='http://oer-dev/Inkoop.php' style = "color : blue ;">
 Voorraadbeheer</a>
-<hr style ='color : #E2E2E2'>
+<hr class="grey">
 <a href='http://oer-dev/Finance.php' style = "color : blue ;">
 Financieel</a>
-<hr style ='color : #E2E2E2'>
+<hr class="grey">
 
 
-<i style = "color : #E2E2E2;">versie : 26-12-2024 </i> <br> <i style = "color : #E2E2E2;">ingelogd : harm</i>
+<i style = "color : #E2E2E2;">versie : 26-12-2024 </i> <br>
+<i style = "color : #E2E2E2;">ingelogd : harm</i>
 </td>
 
 <link rel="stylesheet" type="text/css" href="style.css">

@@ -70,6 +70,7 @@ ORDER BY year(datum)
 ") or die (mysqli_error($db));  
 
 $index = 0; 
+$jaar = [];
 while ($jr = mysqli_fetch_assoc($qryJaar)) 
 { 
    $jaar[$index] = $jr['jaar'];

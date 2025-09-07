@@ -1,37 +1,49 @@
-<!-- 20-12-2020 : Pagina gemaakt 
-29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.php -->
-<html>
+<?php
+/*
+ <!-- 20-12-2020 : Pagina gemaakt 
+29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.tpl.php -->
+ */
+include "javascriptsAfhandeling.tpl.php";
+ 
+$tech_color = 'grey';
+if ($modtech != 0) {
+    $tech_color = 'blue';
+}
 
-<body>
-<?php include "javascriptsAfhandeling.php"; ?>
+?>
 <td width = '150' height = '100' valign='top'>
 Menu : </br>
-<hr/style ='color : #A6C6EB'>
-<a href='<?php echo $url; ?>Home.php' style = 'color : blue'>
-Home</a> <br/>
-<hr/style ='color : #E2E2E2'> <br/>
-<hr/style ='color : #E2E2E2'>
-<?php  if($modtech == 1) { ?> <a href='<?php echo $url;?>OoilamSelectie.php' style = 'color : blue'> <?php }
-					else { ?> <a href='<?php echo $url;?>OoilamSelectie.php' style = 'color : grey'> <?php } ?>
-Ooitjes uit meerlingen</a>
-<hr/style ='color : #E2E2E2'> <br/>
-<hr/style ='color : #E2E2E2'> <br/>
-<hr/style ='color : #E2E2E2'> <br/>
-<hr/style ='color : #E2E2E2'> <br/>
-<hr/style ='color : #E2E2E2'> <br/>
-<hr/style ='color : #E2E2E2'> <br/>
-<hr/style ='color : #E2E2E2'> <br/>
-<hr/style ='color : #E2E2E2'> <br/>
-<hr/style ='color : #E2E2E2'> <br/>
-<hr/style ='color : #E2E2E2'> <br/>
-<hr/style ='color : #E2E2E2'>
+<hr class="blue">
 
-<?php if(isset($versie)) { ?>
-<i style = "color : #E2E2E2;"><?php echo "versie : ".$versie; ?> </i> <br/> <?php } ?>
-<i style = "color : #E2E2E2;"><?php echo "ingelogd : ".$_SESSION["U1"]; ?></i>
+<?php echo link_to('Home', 'Home.php', ['class' => 'blue']); ?>
+<hr class="grey">
+
+<br/>
+<hr class="grey">
+
+<?php echo link_to('Ooitjes uit meerlingen', 'OoilamSelectie.php', ['class' => $tech_color]); ?>
+<hr class="grey">
+
+<br/>
+<hr class="grey">
+<br/>
+<hr class="grey">
+<br/>
+<hr class="grey">
+<br/>
+<hr class="grey">
+<br/>
+<hr class="grey">
+<br/>
+<hr class="grey">
+<br/>
+<hr class="grey">
+<br/>
+<hr class="grey">
+<br/>
+<hr class="grey">
+<br/>
+<hr class="grey">
+
+<?php include "versie.tpl.php"; ?>
 </td>
-
-
-
-</body>
-</html>

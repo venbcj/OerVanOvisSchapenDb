@@ -308,6 +308,7 @@ ORDER BY  year(dmdek)
 ") or die (mysqli_error($db));
 
 $index = 0;
+$jaarNr = [];
 	while ( $kzljr = mysqli_fetch_assoc($kzl_jaar)) 
 	{
 	   $jaarNr[$index] = $kzljr['jaar'];

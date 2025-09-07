@@ -15,6 +15,41 @@
 
  */
 
+// beveiligt tegen meermaals includen. Dit hoeft straks niet meer --BCB
+if (!function_exists('url_for')) {
+
+# Dit gaat alle 'echo $url' vervangen --BCB
+function url_for($path) {
+    global $url;
+    return "$url$path";
+}
+
+# hiermee maak je een complete menu-link
+function link_to($caption, $path, $attributes = []) {
+    $modern = true;
+    if ($modern) {
+        $attribute_clause = implode(
+            ' ',
+            array_map(
+                function ($attr, $val) {
+                    return " $attr=\"$val\"";
+                },
+                array_keys($attributes),
+                array_values($attributes)
+            )
+        );
+    } else {
+        $attribute_clause = '';
+        if ($attributes) {
+            $attribute_clause = " style = 'color : ".current($attributes)."'";
+        }
+    }
+    return "<a href=\"{$GLOBALS['url']}$path\"$attribute_clause>$caption</a>";
+}
+
+} // function_exists
+
+global $url;
 #$url = "http://localhost:8080/Schapendb/";
 if ($_SERVER['HTTP_HOST'] == 'localhost:8080') {
     $url = 'http://'.$_SERVER['HTTP_HOST'].'/Schapendb/';
@@ -26,7 +61,8 @@ if (php_uname('n') == 'basq') {
     $url = 'http://oer-dev/';
 }
 
-$curr_url = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].strtok($_SERVER["REQUEST_URI"], '?'); // strtok zorgt ervoor dat alles na de paginanaam wordt verwijderd. bron : http://stackoverflow.com/questions/6969645/how-to-remove-the-querystring-and-get-only-the-url
+// strtok zorgt ervoor dat alles na de paginanaam wordt verwijderd. bron : http://stackoverflow.com/questions/6969645/how-to-remove-the-querystring-and-get-only-the-url
+$curr_url = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].strtok($_SERVER["REQUEST_URI"], '?');
 // TODO: whitelisten is veiliger dan dit blacklisten
 // TODO: dit wordt sowieso nog anders als je eenmaal een front controller hebt. --BCB
 $forbidden_files = [

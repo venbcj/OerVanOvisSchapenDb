@@ -216,7 +216,7 @@ inlezen adoptie </a>
 </tr>
 
 <tr>
- <td> <?php if (!empty($aantpil)){ ?> <a  href='<?php echo $url;?>InsMedicijn.php' style = 'color : blue' > <?php }
+ <td> <?php if (!empty($aantpil)){ ?> <a href='<?php echo $url;?>InsMedicijn.php' style = 'color : blue' > <?php }
             else { echo "$leeg"; } ?>
 inlezen medicatie </a>
  </td>

@@ -1,7 +1,7 @@
 <?php
-/* 29-8-2021 Dit bestand heeft msg.php vervangen en autocomplete off is toegevoegd 
+/* 29-8-2021 Dit bestand heeft msg.php vervangen en autocomplete off is toegevoegd
 
-Toegepast in : 
+Toegepast in :
 - menu1.php
 - menuAlerts.php
 - menuBeheer.php
@@ -12,24 +12,18 @@ Toegepast in :
 - menuRapport1.php
 */
 
-
-if (isset($info_beheer)) {$msg = $info_beheer;}
-
-if (isset($goed)) {$msg = $goed;}
-
-If (isset($fout))  {$msg = $fout;}
-
-If (isset($msg))
-{ 
-?>	
-<script language = 'javascript'> 
- var fout = '<?php echo "$msg"; ?>' ;
- alert(fout); 
- </script>
-<?php
+if (isset($info_beheer)) {
+    $msg = $info_beheer;
 }
-
-
+if (isset($goed)) {
+    $msg = $goed;
+}
+if (isset($fout)) {
+    $msg = $fout;
+}
+if (isset($msg)) {
+    include "message.tpl.php";
+}
 ?>
 
 <script>

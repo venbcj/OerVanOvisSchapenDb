@@ -115,6 +115,8 @@ ORDER BY right(s.levensnummer,$Karwerk)
 ") or die (mysqli_error($db)); 
 
 $index = 0; 
+$vawerknr = [];
+$vaRaak = [];
 while ($va = mysqli_fetch_array($resultvader)) 
 { 
    //$vaId[$index] = $va['schaapId']; 

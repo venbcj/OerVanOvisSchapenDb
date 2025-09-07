@@ -62,6 +62,7 @@ ORDER BY date_format(rq.dmmeld,'%Y') desc
 ") or die (mysqli_error($db));
 
 $index = 0;
+$jaarArray = [];
 	while($zj = mysqli_fetch_array($zoek_jaartallen))
 		{
 

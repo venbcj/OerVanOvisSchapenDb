@@ -1,56 +1,78 @@
-<!-- 20-12-2020 : Pagina gemaakt 
-29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.php -->
-<html>
+<?php
+/*
+ <!-- 20-12-2020 : Pagina gemaakt 
+ 29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.tpl.php -->
+ */
 
-<body>
-<?php include "javascriptsAfhandeling.php"; ?>
-<td width = '150' height = '100' valign='top'>
-Menu : </br>
-<hr/style ='color : #A6C6EB'>
-<a href='<?php echo $url; ?>Home.php' style = 'color : blue'>
-Home</a> <br/>
-<hr/style ='color : #E2E2E2'> <br/>
-<hr/style ='color : #E2E2E2'>
-<?php if($modmeld == 0) { ?> <a href='<?php echo $url;?>Melden.php' style = 'color : grey'> <?php }
-else {
-// Kijken of er nog meldingen openstaan
-$req_open = mysqli_query($db,"
+// TODO: dit is een kopie uit menu1. Moet een functie worden. --BCB
+$meld_color = 'grey';
+if ($modmeld != 0) {
+    $meld_color = 'blue';
+    // Kijken of er nog meldingen openstaan
+    $req_open = mysqli_query($db, "
 SELECT count(*) aant
 FROM tblRequest r
  join tblMelding m on (r.reqId = m.reqId)
  join tblHistorie h on (h.hisId = m.hisId)
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and h.skip = 0 and isnull(r.dmmeld) and m.skip <> 1 ") or die (mysqli_error($db));
-		$row = mysqli_fetch_assoc($req_open);
-			$num_rows = $row['aant'];
-		if($num_rows == 0){  ?>
-<a href='<?php echo $url;?>Melden.php' style = 'color : blue'> <?php } else { ?>
-<a href='<?php echo $url;?>Melden.php' style = 'color : red'> <?php }  
-} ?>
-Melden RVO</a> <br/>
-<hr/style ='color : #E2E2E2'>
+WHERE st.lidId = ".mysqli_real_escape_string($db, $lidId)." and h.skip = 0 and isnull(r.dmmeld) and m.skip <> 1 ");
+    $row = mysqli_fetch_assoc($req_open);
+    if ($row['aant'] > 0) {
+        $meld_color = 'red';
+    }
+}
 
-<?php if($modmeld == 0) { ?> <a href='<?php echo $url;?>Meldingen.php' style = 'color : grey'> <?php }
-else { ?>
-<a href='<?php echo $url; ?>Meldingen.php' style = 'color : blue'> <?php } ?>
-Meldingen</a>
-<hr/style ='color : #E2E2E2'> <br/>
-<hr/style ='color : #E2E2E2'> <br/>
-<hr/style ='color : #E2E2E2'> <br/>
-<hr/style ='color : #E2E2E2'> <br/>
-<hr/style ='color : #E2E2E2'> <br/>
-<hr/style ='color : #E2E2E2'> <br/>
-<hr/style ='color : #E2E2E2'> <br/>
-<hr/style ='color : #E2E2E2'> <br/>
-<hr/style ='color : #E2E2E2'> <br/>
-<hr/style ='color : #E2E2E2'>
+$melding_color = 'grey';
+if ($modmeld != 0) {
+    $melding_color = 'blue';
+}
 
-<?php if(isset($versie)) { ?>
-<i style = "color : #E2E2E2;"><?php echo "versie : ".$versie; ?> </i> <br/> <?php } ?>
-<i style = "color : #E2E2E2;"><?php echo "ingelogd : ".$_SESSION["U1"]; ?></i>
+include "javascriptsAfhandeling.tpl.php";
+?>
+
+<link rel="stylesheet" href="menu.css">
+<td width = '150' height = '100' valign='top'>
+Menu : </br>
+<hr class="blue">
+
+<?php echo link_to('Home', 'Home.php', ['class' => 'blue']); ?>
+<hr class="grey">
+
+<br/>
+<hr class="grey">
+
+<?php echo link_to('Melden RVO', 'Melden.php', ['class' => $meld_color]) ?>
+<hr class="grey">
+
+<?php echo link_to('Meldingen', 'Meldingen.php', ['class' => $melding_color]); ?>
+<hr class="grey">
+
+<br/>
+<hr class="grey">
+
+<br/>
+<hr class="grey">
+
+<br/>
+<hr class="grey">
+
+<br/>
+<hr class="grey">
+
+<br/>
+<hr class="grey">
+
+<br/>
+<hr class="grey">
+
+<br/>
+<hr class="grey">
+
+<br/>
+<hr class="grey">
+
+<br/>
+<hr class="grey">
+
+<?php include "versie.tpl.php"; ?>
 </td>
-
-
-
-</body>
-</html>

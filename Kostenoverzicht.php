@@ -51,6 +51,8 @@ ORDER BY year(datum) desc
 ") or die (mysqli_error($db));
 
 $index = 0;
+$jaarnr = [];
+$jaarRaak = [];
 	while($kzljr = mysqli_fetch_array($kzlJaar))
 		{
 	   $jaarnr[$index] = $kzljr['jaar'];

@@ -1,0 +1,3 @@
+#!/bin/bash
+cat db/schema.sql | scripts/console
+cat tests/fixtures/user-harm.sql | scripts/console

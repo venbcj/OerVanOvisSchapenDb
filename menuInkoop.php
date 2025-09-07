@@ -1,49 +1,64 @@
-<!-- 14-11-2015 naamwijziging van Medicijnen naar Medicijnenbestand en Voersoorten naar Voerbestand
-12-12-2015 :  $versie toegveoged 
-29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.php -->
-<html>
+<?php
+/*
+ <!-- 14-11-2015 naamwijziging van Medicijnen naar Medicijnenbestand en Voersoorten naar Voerbestand
+12-12-2015 :  $versie toegveoged
+29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.tpl.php -->
+ */
 
-<body>
-<?php include "javascriptsAfhandeling.php";
-include "url.php"; ?>
+include "url.php";
 
+$tech_color = 'grey';
+if ($modtech != 0) {
+    $tech_color = 'blue';
+}
+
+include "javascriptsAfhandeling.tpl.php";
+?>
+
+<link rel="stylesheet" href="menu.css">
 <td width = '150' height = '100' valign='top'>
-Menu : </br>
-<hr/style ='color : #A6C6EB'>
-<a href='<?php echo $url;?>Home.php' style = 'color : blue'>
-Home</a> </hr><br/>
-<hr/style ='color : #E2E2E2'> </hr><br/>
-<hr/style ='color : #E2E2E2'>
-<?php  if($modtech == 1) { ?> <a href='<?php echo $url;?>Medicijnen.php' style = 'color : blue'> <?php }
-					else { ?> <a href='<?php echo $url;?>Medicijnen.php' style = 'color : grey'> <?php } ?>
-Medicijnenbestand</a></hr>
-<hr/style ='color : #E2E2E2'>
-<?php  if($modtech == 1) { ?> <a href='<?php echo $url;?>Voer.php' style = 'color : blue'> <?php }
-					else { ?> <a href='<?php echo $url;?>Voer.php' style = 'color : grey'> <?php } ?>
-Voerbestand</a></hr>
-<hr/style ='color : #E2E2E2	'>
-<?php  if($modtech == 1) { ?> <a href='<?php echo $url;?>Inkopen.php' style = 'color : blue'> <?php }
-					else { ?> <a href='<?php echo $url;?>Inkopen.php' style = 'color : grey'> <?php } ?>
-Inkopen</a></hr>
-<hr/style ='color : #E2E2E2'>
-<?php  if($modtech == 1) { ?> <a href='<?php echo $url;?>Voorraad.php' style = 'color : blue'> <?php }
-					else { ?> <a href='<?php echo $url;?>Voorraad.php' style = 'color : grey'> <?php } ?>
-Voorraad</a></hr>
-<hr/style ='color : #E2E2E2'> </hr><br/>
-<hr/style ='color : #E2E2E2'> </hr><br/>
-<hr/style ='color : #E2E2E2'> </hr><br/>
-<hr/style ='color : #E2E2E2'> </hr><br/>
-<hr/style ='color : #E2E2E2'> </hr><br/>
-<hr/style ='color : #E2E2E2'> </hr><br/>
-<hr/style ='color : #E2E2E2'> </hr><br/>
-<hr/style ='color : #E2E2E2'> </hr>
+Menu :
+<br>
+<hr class="blue">
 
-<?php if(isset($versie)) { ?>
-<i style = "color : #E2E2E2;"><?php echo "versie : ".$versie; ?> </i> <br/> <?php } ?>
-<i style = "color : #E2E2E2;"><?php echo "ingelogd : ".$_SESSION["U1"]; ?></i>
+<?php echo link_to('Home', 'Home.php', ['class' => 'blue']); ?>
+<hr class="grey">
+
+<br/>
+<hr class="grey">
+
+<?php echo link_to('Medicijnenbestand', 'Medicijnen.php', ['color' => $tech_color]); ?>
+<hr class="grey">
+
+<?php echo link_to('Voerbestand', 'Voer.php', ['color' => $tech_color]); ?>
+<hr class="grey">
+
+<?php echo link_to('Inkopen', 'Inkopen.php', ['color' => $tech_color]); ?>
+<hr class="grey">
+
+<?php echo link_to('Voorraad', 'Voorraad.php', ['color' => $tech_color]); ?>
+<hr class="grey">
+
+<br/>
+<hr class="grey">
+
+<br/>
+<hr class="grey">
+
+<br/>
+<hr class="grey">
+
+<br/>
+<hr class="grey">
+
+<br/>
+<hr class="grey">
+
+<br/>
+<hr class="grey">
+
+<br/>
+<hr class="grey">
+
+<?php include "versie.tpl.php"; ?>
 </td>
-
-
-
-</body>
-</html>
