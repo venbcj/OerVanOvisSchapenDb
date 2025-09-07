@@ -19,3 +19,26 @@ function getTagId() {
     }
     return $tagid;
 }
+
+# hiermee maak je een complete menu-link
+function link_to($caption, $path, $attributes = []) {
+    $modern = true;
+    if ($modern) {
+        $attribute_clause = implode(
+            ' ',
+            array_map(
+                function ($attr, $val) {
+                    return " $attr=\"$val\"";
+                },
+                array_keys($attributes),
+                array_values($attributes)
+            )
+        );
+    } else {
+        $attribute_clause = '';
+        if ($attributes) {
+            $attribute_clause = " style = 'color : ".current($attributes)."'";
+        }
+    }
+    return "<a href=\"{$GLOBALS['url']}$path\"$attribute_clause>$caption</a>";
+}

@@ -20,14 +20,15 @@ include "url.php";
 
 /*** Script ter controle van het bestaan van Response.txt bestanden afkomstig van RVO ***/
 // Lokatie en klant gegegevens Responsbestand ophalen
-$result = mysqli_query($db,"SELECT alias FROM tblLeden WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' ") or die (mysqli_error($db)); 
-	while ($row = mysqli_fetch_assoc($result))
-		{ $alias = $row['alias']; }
+$result = mysqli_query($db, "SELECT alias FROM tblLeden WHERE lidId = '".mysqli_real_escape_string($db, $lidId)."' ") or die(mysqli_error($db));
+while ($row = mysqli_fetch_assoc($result)) {
+    $alias = $row['alias'];
+}
 
 $dir = dirname(__FILE__); // Locatie bestanden op FTP server
 
 // De gegevens van het request uit impResponse waarvan de laatste import een controle melding is
-$zoek_laatste_response = mysqli_query ($db,"
+$zoek_laatste_response = mysqli_query($db, "
 SELECT r.reqId, r.code
 FROM tblRequest r
  join tblMelding m on (r.reqId = m.reqId)
@@ -39,31 +40,21 @@ FROM tblRequest r
 	GROUP BY reqId
 	) lr on (r.reqId = lr.reqId)
  left join impRespons rp on (rp.respId = lr.respId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (rp.def != 'J' or isnull(rp.def)) and h.skip = 0
+WHERE st.lidId = '".mysqli_real_escape_string($db, $lidId)."' and (rp.def != 'J' or isnull(rp.def)) and h.skip = 0
 GROUP BY r.reqId
 ORDER BY r.reqId
-") or die (mysqli_error($db));
-	While ($req = mysqli_fetch_assoc($zoek_laatste_response))
-	{	$reqId = $req['reqId'];
-		$code = $req['code'];	// t.b.v. importRespons.php
-// Einde De gegevens van het request
-
-$requestfile = $alias."_".$reqId."_request.txt"; #echo $requestfile.' moet worden gezocht <br>'; // T.b.v. verplaatsen in importRespons.php
-$responsfile = $alias."_".$reqId."_response.txt"; #echo $responsfile.' moet worden gezocht <br>';
-
-$request_aanwezig = file_exists($dir.'/BRIGHT/'.$requestfile);
-$respons_aanwezig = file_exists($dir.'/BRIGHT/'.$responsfile);
-
-if ($respons_aanwezig == 1 && $request_aanwezig == 1) {
-
-	#echo '<br>'.$responsfile.'<br> zit WEL in map Bright';
-include "importRespons.php";
-
-} else {	/*echo '<br>'.$responsfile.'<br> zit NIET in map Bright'; */	}   
- 
+") or die(mysqli_error($db));
+while ($req = mysqli_fetch_assoc($zoek_laatste_response)) {
+    $reqId = $req['reqId'];
+    $code = $req['code'];   // t.b.v. importRespons.php
+    // Einde De gegevens van het request
+    $requestfile = $alias."_".$reqId."_request.txt"; #echo $requestfile.' moet worden gezocht <br>'; // T.b.v. verplaatsen in importRespons.php
+    $responsfile = $alias."_".$reqId."_response.txt"; #echo $responsfile.' moet worden gezocht <br>';
+    $request_aanwezig = file_exists($dir.'/BRIGHT/'.$requestfile);
+    $respons_aanwezig = file_exists($dir.'/BRIGHT/'.$responsfile);
+    if ($respons_aanwezig == 1 && $request_aanwezig == 1) {
+        include "importRespons.php";
+    }
 }
 
 /*** EINDE  *** Script ter controle van het bestaan van Response.txt bestanden afkomstig van RVO *** EINDE ***/
-?>
-
-

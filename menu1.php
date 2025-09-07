@@ -1,3 +1,4 @@
+<!-- menu1 -->
 <?php
  /*
   6-11-2014 Melden RVO toegevoegd
@@ -95,3 +96,4 @@ Menu : <br>
 
 <?php include "versie.tpl.php"; ?>
 </td>
+<!-- einde -->

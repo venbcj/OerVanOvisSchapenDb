@@ -14,6 +14,10 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 // destroy the session
 session_destroy();
+
+// NOTE: $titel wordt gebruikt in header.tpl. Die is onderdeel van de uitvoer van login.php
+    $titel = '';
+
 echo <<<HTML
 <!DOCTYPE html>
 <html>
@@ -22,12 +26,11 @@ echo <<<HTML
 </head>
 <body>
 
+<!--
+<table><tr align = center style = "font-size : 30px ";><td>OER van OVIS</td> </tr>
+<tr align = center><td><sup style = "font-size : 18px "; >Optimalisering En Rendementverbetering van het Schaap</sup></td></tr></table>
+-->
 HTML;
-echo <<<HTML
-<!-- <table><tr align = center style = "font-size : 30px ";><td>OER van OVIS</td> </tr>
-<tr align = center><td><sup style = "font-size : 18px "; >Optimalisering En Rendementverbetering van het Schaap</sup></td></tr></table>-->
-HTML;
-    $titel = '';
 include "header_logout.tpl.php";
 echo <<<HTML
 <TD align = "center">

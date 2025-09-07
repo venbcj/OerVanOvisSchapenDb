@@ -15,40 +15,6 @@
 
  */
 
-// beveiligt tegen meermaals includen. Dit hoeft straks niet meer --BCB
-if (!function_exists('url_for')) {
-
-# Dit gaat alle 'echo $url' vervangen --BCB
-function url_for($path) {
-    global $url;
-    return "$url$path";
-}
-
-# hiermee maak je een complete menu-link
-function link_to($caption, $path, $attributes = []) {
-    $modern = true;
-    if ($modern) {
-        $attribute_clause = implode(
-            ' ',
-            array_map(
-                function ($attr, $val) {
-                    return " $attr=\"$val\"";
-                },
-                array_keys($attributes),
-                array_values($attributes)
-            )
-        );
-    } else {
-        $attribute_clause = '';
-        if ($attributes) {
-            $attribute_clause = " style = 'color : ".current($attributes)."'";
-        }
-    }
-    return "<a href=\"{$GLOBALS['url']}$path\"$attribute_clause>$caption</a>";
-}
-
-} // function_exists
-
 global $url;
 #$url = "http://localhost:8080/Schapendb/";
 if ($_SERVER['HTTP_HOST'] == 'localhost:8080') {

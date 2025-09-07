@@ -26,11 +26,12 @@ require_once("basisfuncties.php");
 require_once("demo_functions.php");
 require_once('url_functions.php');
 
+// BCB: kunstgreep om uitvoer te scheiden van berekening
+$output = [];
+
 //$host = "localhost"; $user = "bvdvschaapovis"; $pw = "MSenWL44"; $dtb = $db_p;
 if (($url == 'https://test.oervanovis.nl/' || $url == 'https://demo.oervanovis.nl/') && $dtb == 'k36098_bvdvSchapenDb') {
-     echo <<<HTML
-<h3 style="color : red ;"> PAS OP : Er is connectie met de productiedatabase ! </h3>
-HTML;
+    $output[] = 'pasop.tpl.php';
 }
 if (php_uname('n') == 'basq' && isset($_GET['ingelogd'])) {
      // met deze hack kan ik op mijn computer het ingelogd-zijn simuleren vanuit een unit test --BCB
@@ -62,10 +63,11 @@ if (!isset($_SESSION["U1"]) || !isset($_SESSION["W1"]) || !isset($_SESSION["I1"]
         }
             
         if (mysqli_num_rows($qrylidId) == 0) {
-            include "header_logout.tpl.php";
+            $output[] = "header_logout.tpl.php";
             $message = ' Gebruikersnaam of wachtwoord onjuist !';
             // NOTE: $file moet gezet zijn voor login_form
-            include "login_form.tpl.php";
+            // TODO: $destination of $target zouden betere namen zijn voor deze variabele --BCB
+            $output[] = "login_form.tpl.php";
         } else {
             session_start();
             $_SESSION["U1"] = "$_POST[txtUser]";
@@ -116,20 +118,24 @@ if (!isset($_SESSION["U1"]) || !isset($_SESSION["W1"]) || !isset($_SESSION["I1"]
                 $modfin = $mod['fin'];
                 $modmeld = $mod['meld'];
             }
+            // $menu is gedeclareerd in index.php.
+            // Als $menu bestaat en index.php dus actief moet het menu woden getoond na inloggen
+            // BCB: $menu staat op menu1. Andere page-scripts doen zelf een include() van "hun menu".
+            // Home.php bijvoorbeeld includet zelf menu1.
+            // TODO: hier kan iets worden samengevoegd.
             if (isset($menu)) {
-                /*include connect_db*/
-                include $menu;
-            } // $menu is gedeclareerd in index.php. Als $menu bestaat en index.php dus actief moet het menu woden getoond na inloggen
+                $output[] = $menu;
+            }
 
             // Laatste inlog vastleggen
             // $today is gedeclareerd in basisfuncties.php
             $update_tblLeden = " UPDATE tblLeden set laatste_inlog = '".mysqli_real_escape_string($db, $nu)."' WHERE lidId = '".mysqli_real_escape_string($db, $lidId)."' ";
             mysqli_query($db, $update_tblLeden) or die(mysqli_error($db));
-            include "header.tpl.php";
+            $output[] = "header.tpl.php";
         }
     } else {
-        include "header_logout.tpl.php";
-        include "uitgelogd.tpl.php";
+        $output[] = "header_logout.tpl.php";
+        $output[] = "uitgelogd.tpl.php";
     }
 // *** EINDE ALS NIET IS INGELOGD ***
 } elseif (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
@@ -150,8 +156,6 @@ if (!isset($_SESSION["U1"]) || !isset($_SESSION["W1"]) || !isset($_SESSION["I1"]
         $modfin = $mod['fin'];
         $modmeld = $mod['meld'];
     }
-
-    include "header.tpl.php";
 
     // Bepalen aantal karakters werknr
     $result = mysqli_query($db, "SELECT kar_werknr FROM tblLeden WHERE lidId = '".mysqli_real_escape_string($db, $lidId)."';") or die(mysqli_error($db));
@@ -256,6 +260,9 @@ WHERE app = 'Reader' and (Id = '".mysqli_real_escape_string($db, $last_versieId)
     if ($appfile_exists == 1 && $takenfile_exists == 1) {
         $actuele_versie = 'Ja';
     }
-
-}
+    $output[] = "header.tpl.php";
 // ***     EINDE ALS WEL IS INGELOGD     ***
+}
+foreach ($output as $view) {
+    include $view;
+}

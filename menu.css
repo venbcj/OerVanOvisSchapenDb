@@ -1,3 +1,7 @@
+a.black {
+    color: black;
+}
+
 a.blue {
     color: blue;
 }
@@ -8,7 +12,7 @@ hr.grey {
     color: #e2e2e2;
 }
 hr.blue {
-    color: #a6c6eb';
+    color: #a6c6eb;
 }
 
 a.red {
