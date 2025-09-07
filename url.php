@@ -57,8 +57,8 @@ $forbidden_files = [
     "url.php",
     "vw_Reader.php",
 ];
-foreach ($forbidden_files as $file) {
-    if ($curr_url == $url.$file) {
+foreach ($forbidden_files as $controller_name) {
+    if ($curr_url == $url.$controller_name) {
         header("Location: ".$url."index.php");
         exit();
     }

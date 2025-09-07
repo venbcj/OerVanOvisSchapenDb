@@ -18,6 +18,7 @@ class EndToEndCase extends TestCase {
 
     private function simulateGetRequest($path, $data) {
         $_SERVER['HTTP_HOST'] = 'basq';
+        $_SERVER['REQUEST_SCHEME'] = 'http';
         $_SERVER['REQUEST_URI'] = $path;
         foreach ($data as $key => $value) {
             $_GET[$key] = $value;
@@ -26,6 +27,7 @@ class EndToEndCase extends TestCase {
 
     private function simulatePostRequest($path, $data) {
         $_SERVER['HTTP_HOST'] = 'basq';
+        $_SERVER['REQUEST_SCHEME'] = 'http';
         $_SERVER['REQUEST_URI'] = $path;
         $_SERVER['REQUEST_METHOD'] = 'POST';
         foreach ($data as $key => $value) {
@@ -59,8 +61,10 @@ class EndToEndCase extends TestCase {
         file_put_contents($actual_file, $this->output);
         $expected = file_get_contents($expected_file);
         if ($expected != $this->output) {
-            if (preg_replace('/\s/', '', $expected) != preg_replace('/\s/', '', $this->output)) {
-                $diff = StringDiff::create(5, $expected, $this->output);
+            $expected_nowhitespace = preg_replace('/\s/', '', $expected);
+            $actual_nowhitespace = preg_replace('/\s/', '', $this->output);
+            if ($expected_nowhitespace != $actual_nowhitespace) {
+                $diff = StringDiff::create(5, $expected_nowhitespace, $actual_nowhitespace);
                 $this->fail($diff->diff());
             }
         }
