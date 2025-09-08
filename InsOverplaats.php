@@ -36,7 +36,7 @@ include "login.php"; ?>
 
 			<TD valign = "top">
 <?php
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { 
+if (is_logged_in()) { 
 
 If (isset ($_POST['knpInsert_'])) {
 	include "post_readerOvp.php"; #Deze include moet voor de vervversing in de functie header()

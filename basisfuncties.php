@@ -330,7 +330,10 @@ FROM tblRequest r
  join tblMelding m on (r.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($datb, $lidid)."' and h.skip = 0 and isnull(r.dmmeld) and code = '".mysqli_real_escape_string($datb, $fldCode)."'
+WHERE st.lidId = '".mysqli_real_escape_string($datb, $lidid)."'
+ and h.skip = 0
+ and isnull(r.dmmeld)
+ and code = '".mysqli_real_escape_string($datb, $fldCode)."'
 "); // Foutafhandeling zit in return FALSE
     if ($aantalmelden) {
 $row = mysqli_fetch_assoc($aantalmelden);

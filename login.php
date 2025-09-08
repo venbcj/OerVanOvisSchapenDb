@@ -28,6 +28,10 @@ require_once('url_functions.php');
 
 // BCB: kunstgreep om uitvoer te scheiden van berekening
 $output = [];
+// TODO: verder scheiden. Dit doet nu:
+// - globale variabelen zetten
+// - redirecten
+// - uitvoer genereren
 
 //$host = "localhost"; $user = "bvdvschaapovis"; $pw = "MSenWL44"; $dtb = $db_p;
 if (($url == 'https://test.oervanovis.nl/' || $url == 'https://demo.oervanovis.nl/') && $dtb == 'k36098_bvdvSchapenDb') {
@@ -44,7 +48,7 @@ if (php_uname('n') == 'basq' && isset($_GET['ingelogd'])) {
 }
 
 // *** ALS NIET IS INGELOGD ***
-if (!isset($_SESSION["U1"]) || !isset($_SESSION["W1"]) || !isset($_SESSION["I1"])) {
+if (!is_logged_in()) {
     session_destroy();
 
     if (isset($_POST['knpLogin']) || isset($_POST['knpBasis'])) {
@@ -82,6 +86,7 @@ if (!isset($_SESSION["U1"]) || !isset($_SESSION["W1"]) || !isset($_SESSION["I1"]
             $_SESSION["Fase"] = null; // Als (records per) pagina wordt ververst wordt fase onthouden. Zo kan pagin worden doorlopen zonder steeds opnieuw bestemming te kiezen. Zie HokUitscharen.php (HokAfleveren.php)
             $_SESSION['KZ'] = null; // Als pagina wordt ververst wordt de keuze (filter) onthouden. Zie HokOverpl.php
             $_SESSION["CNT"] = null; // Gebruikt in Contact.php
+            // TODO: variabele login wordt nergens gebruikt --BCB
             $login = $_SESSION["U1"];
             $lidId = $_SESSION["I1"];
             $alias = $_SESSION["A1"];
@@ -110,36 +115,22 @@ if (!isset($_SESSION["U1"]) || !isset($_SESSION["W1"]) || !isset($_SESSION["I1"]
                 demo_userdelete();
                 demo_table_insert($db, $lidId);
             }
-            // Bepalen modules ja of nee t.b.v. menu1.php bij inloggen
-            $module = mysqli_query($db, "SELECT beheer, tech, fin, meld FROM tblLeden WHERE lidId = '".mysqli_real_escape_string($db, $lidId)."'; ") or die(mysqli_error($db));
-            while ($mod = mysqli_fetch_assoc($module)) {
-                $modbeheer = $mod['beheer'];
-                $modtech = $mod['tech'];
-                $modfin = $mod['fin'];
-                $modmeld = $mod['meld'];
-            }
-            // $menu is gedeclareerd in index.php.
-            // Als $menu bestaat en index.php dus actief moet het menu woden getoond na inloggen
-            // BCB: $menu staat op menu1. Andere page-scripts doen zelf een include() van "hun menu".
-            // Home.php bijvoorbeeld includet zelf menu1.
-            // TODO: hier kan iets worden samengevoegd.
-            if (isset($menu)) {
-                $output[] = $menu;
-            }
-
             // Laatste inlog vastleggen
             // $today is gedeclareerd in basisfuncties.php
             $update_tblLeden = " UPDATE tblLeden set laatste_inlog = '".mysqli_real_escape_string($db, $nu)."' WHERE lidId = '".mysqli_real_escape_string($db, $lidId)."' ";
             mysqli_query($db, $update_tblLeden) or die(mysqli_error($db));
-            $output[] = "header.tpl.php";
+            # BCB: ingevoegd.
+            header("Location: $file");
+            exit;
         }
     } else {
         $output[] = "header_logout.tpl.php";
         $output[] = "uitgelogd.tpl.php";
     }
 // *** EINDE ALS NIET IS INGELOGD ***
-} elseif (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
+} elseif (is_logged_in()) {
     // ***     ALS WEL IS INGELOGD    ***
+    // TODO: variabele login wordt nergens gebruikt --BCB
     $login = $_SESSION["U1"];
     $lidId = $_SESSION["I1"];
     //$alias = $_SESSION["A1"];

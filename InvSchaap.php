@@ -152,7 +152,7 @@ include "login.php"; ?>
 
 			<TD valign = "top">
 <?php
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { 
+if (is_logged_in()) { 
 
 // Array tbv javascript om fase automatisch te tonen bij bestaande dieren
 $zoek_fase = mysqli_query($db,"

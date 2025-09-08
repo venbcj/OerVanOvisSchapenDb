@@ -1,5 +1,14 @@
 <?php
 
+function redirect($path) {
+    header("Location: ".getWebroot().$path);
+    exit();
+}
+
+function is_logged_in() {
+    return isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"]);
+}
+
 function getTagId() {
     $host = $_SERVER['HTTP_HOST'];
     if ($host == 'localhost:8080') {
@@ -40,5 +49,19 @@ function link_to($caption, $path, $attributes = []) {
             $attribute_clause = " style = 'color : ".current($attributes)."'";
         }
     }
-    return "<a href=\"{$GLOBALS['url']}$path\"$attribute_clause>$caption</a>";
+    return "<a href=\"".getWebroot()."$path\"$attribute_clause>$caption</a>";
+}
+
+function getWebroot() {
+    #$root = "http://localhost:8080/Schapendb/";
+    if ($_SERVER['HTTP_HOST'] == 'localhost:8080') {
+        $root = 'http://'.$_SERVER['HTTP_HOST'].'/Schapendb/';
+    } else {
+        $root = 'https://'.$_SERVER['HTTP_HOST'].'/';
+    }
+    #$root = "http://testapp.masterwebsite.nl/";
+    if (php_uname('n') == 'basq') {
+        $root = 'http://oer-dev/';
+    }
+    return $root;
 }

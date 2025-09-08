@@ -32,7 +32,7 @@ include "login.php"; ?>
 
 				<TD valign = "top">
 <?php 
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
+if (is_logged_in()) {
 
 if(isset($_GET['pstId']))	{ $_SESSION["ID"] = $_GET['pstId']; } $ID = $_SESSION["ID"]; /* zorgt het Id wordt onthouden bij het opnieuw laden van de pagina */
 if(isset($_POST['knpVerder_']) && isset($_POST['kzlHokall_']))	{ 

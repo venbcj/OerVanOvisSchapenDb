@@ -17,18 +17,25 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 
 <?php
 if (isset ($_POST['knpNieuw'])) {
-	include "url.php";
-	header("Location: ".$url."Newuser.php"); }
-	
+    include "url.php";
+    redirect('Newuser.php');
+}
+    
 $titel = 'Gebruikers';
 $file = "Eenheden.php";
-include "login.php"; ?>
-
-		<TD valign = "top">
+include "login.php";
+?>
+        <TD valign = "top">
 <?php
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech ==1) { 
-
-if(isset($_POST['knpNieuw'])) { $form = "Newuser.php"; header("Location: ".$url."Newuser.php"); } else { $form = "Gebruikers.php"; } ?>
+if (is_logged_in()) {
+    if($modtech ==1) { 
+    if(isset($_POST['knpNieuw'])) {
+        $form = "Newuser.php";
+        header("Location: ".$url."Newuser.php");
+    } else {
+        $form = "Gebruikers.php";
+    }
+?>
 
 <form action= <?php echo $form; ?> method="post">
 <table border = 0 >
@@ -67,8 +74,8 @@ FROM tblLeden l
 ORDER BY l.lidId
 ") or die (mysqli_error($db));
 
-	while($row = mysqli_fetch_assoc($loop))
-	{
+    while($row = mysqli_fetch_assoc($loop))
+    {
         $lid = $row['lidId'];
         $alias = $row['alias'];
         $login = $row['login'];
@@ -87,17 +94,16 @@ ORDER BY l.lidId
 if (isset ($_POST['knpResetww_'.$lid])) {
 
 $wwnew = md5($login.'zfO3puW?Wod/UT<-|=)1VT]+{hgABEK(Yh^!Wv;5{ja{P~wX4t');
-	
+    
 $updateWW = "UPDATE tblLeden SET passw = '".mysqli_real_escape_string($db,$wwnew)."' 
-						 WHERE lidId = '".mysqli_real_escape_string($db,$lid)."' ";
-			/*echo $updateWW.'<br>';*/ mysqli_query($db, $updateWW) or die (mysqli_error($db));
-
+                         WHERE lidId = '".mysqli_real_escape_string($db,$lid)."' ";
+             mysqli_query($db, $updateWW) or die (mysqli_error($db));
 $goed = 'Het wachtwoord is gelijk gemaakt aan de inlognaam.';
 } ?>
 
 <tr style ="font-size:14px;" height = 25>
  <td> <?php echo $lid; ?> </td>
- 	<?php $_SESSION["DT1"] = NULL; ?>
+     <?php $_SESSION["DT1"] = NULL; ?>
  <td> <a href='<?php echo $url; ?>Gebruiker.php?pstId=<?php echo $lid; ?>' style = 'color : blue'> <?php echo $alias; ?> </a> </td>
  <td> <?php echo $login; ?> </td>
  <td> <?php echo $naam; ?> </td>
@@ -111,15 +117,11 @@ $goed = 'Het wachtwoord is gelijk gemaakt aan de inlognaam.';
  <td align = center style ="font-size:12px;" > <?php echo $lstInlog; ?> </td>
  <td align="center"><input type="submit" name = <?php echo "knpResetww_".$lid; ?> value = "Reset" style = "font-size:10px;" > </td>
 </tr>
-		
+        
 <?php } ?>
 </form>
-		
-
 </table>
-
-
-	</TD>
+    </TD>
 <?php } else { ?> <img src='eenheden_php.jpg'  width='970' height='550'/> <?php }
 include "menuBeheer.php"; } ?>
 

@@ -12,7 +12,7 @@ if (isset($_POST['knpLogin']) || isset($_POST['knpBasis']) || isset($_POST['knpB
     $passw = md5($_POST['txtPassw'].'zfO3puW?Wod/UT<-|=)1VT]+{hgABEK(Yh^!Wv;5{ja{P~wX4t');
 } // wordt gebruikt bij login
 
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"]) && isset($_SESSION["A1"])) {
+if (is_logged_in() && isset($_SESSION["A1"])) {
     $lid = $_SESSION["I1"];
     $login = $_SESSION["U1"];
     $passw = md5($_SESSION["W1"].'zfO3puW?Wod/UT<-|=)1VT]+{hgABEK(Yh^!Wv;5{ja{P~wX4t'); // wordt gebruikt bij wachtwoordgegevens en is het wachtwoord van de klant
@@ -27,7 +27,7 @@ if (isset($_POST['knpLogin'])) {
 } else if (isset($_SESSION["U1"])) {
     $username = $_SESSION["U1"];
 }
-if (isset($_POST['knpLogin'])  || (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"]))  ) {
+if (isset($_POST['knpLogin']) || is_logged_in()) ) {
     if ($db == false ) {
         echo 'Connectie database mislukt';
     }
@@ -91,6 +91,7 @@ WHERE lidId = '".mysqli_real_escape_string($db, $lid)."'
             } else {
             // EINDE controle of combinatie tussen user en passw al bestaat
                 // username en wachtwoord wijzigen
+                // BCB: code uitgeschakeld door "false", ipv commentaar
                 if (false && $txtuser <> $_POST['txtUserOld'] && !empty($_POST['txtOld']) && !empty($txtpassw) && !empty($_POST['txtBevest'])) {
                     $updateUW = "UPDATE tblLeden SET login = '".mysqli_real_escape_string($db, $txtuser)."',
                         passw = '".mysqli_real_escape_string($db, $wwnew)."'

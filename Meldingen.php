@@ -28,7 +28,7 @@ include "login.php"; ?>
 
 			<TD valign = 'top' align = 'center'>
 <?php
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modmeld == 1) {
+if (is_logged_in()) { if($modmeld == 1) {
 
 include "responscheck.php";
 

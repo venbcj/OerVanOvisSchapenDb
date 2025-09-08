@@ -1,3 +1,5 @@
+<?php
+/*
 <!-- 29-4-2015 : bestand gemaakt 
 4-12-2016 : Response bestand in de map BRIGHT wordt gezocht o.b.v. requestId zonder melddatum (dmmeld) niet meer o.b.v. requestId zonder meldnummer 
 12-2-2017 : Response bestand in de map BRIGHT wordt gezocht o.b.v. def = N uit de tabel impRespons niet meer o.b.v. requestId zonder melddatum (dmmeld). Als een melding wordt vastgelegd wordt het response-bestand anders niet ingelezen 
@@ -7,7 +9,7 @@
 10-05-2023 : Als er definitieve melding om redenen opnieuw moet worden aangeboden aan RVO mag het veld impRespons.def niet de waarde J hebben bij het betreffende reqId. Anders wordt het response bestand van Bright niet meer verwerkt. De waarde J heb ik gewijzigd naar Y en de query $zoek_laatste_response hierop aangepast. rp.def = 'N' gewijzigd naar rp.def != 'J'  
 28-12-2023 : and h.skip = 0 toegevoegd bij tblHistorie 
 15-07-2025 : ubn uit bestandsnaam $requestfile en $responsfile (richting RVO) gehaald --> 
-<?php
+ */
 /* Toegepast in :
 - Home.php
 - MeldAanwas.php
@@ -15,6 +17,8 @@
 - MedGeboortes.php
 - Melden.php
 - MeldUitval.php */
+
+# TODO: ik denk dat dit bestand, en importRespons, functies kunnen worden
 
 include "url.php";
 
@@ -48,6 +52,7 @@ while ($req = mysqli_fetch_assoc($zoek_laatste_response)) {
     $reqId = $req['reqId'];
     $code = $req['code'];   // t.b.v. importRespons.php
     // Einde De gegevens van het request
+    // requestfile, responsefile: parameters voor importRespons
     $requestfile = $alias."_".$reqId."_request.txt"; #echo $requestfile.' moet worden gezocht <br>'; // T.b.v. verplaatsen in importRespons.php
     $responsfile = $alias."_".$reqId."_response.txt"; #echo $responsfile.' moet worden gezocht <br>';
     $request_aanwezig = file_exists($dir.'/BRIGHT/'.$requestfile);

@@ -21,7 +21,7 @@ include "login.php"; ?>
 
 		<TD valign = "top">
 <?php
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech ==1) { ?>
+if (is_logged_in()) { if($modtech ==1) { ?>
 
 <?php
 // Omdat jaartal en maanden aflopend zijn moet de cumulatieven aantal ooien aflopend zijn i.p.v. oplopend. Het aantal cumulatief begint dus niet bij 0 maar bij het huidig aantal ooien en rammen.

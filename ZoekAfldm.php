@@ -20,7 +20,7 @@ include "login.php"; ?>
 
 		<TD align = "center" valign = "top">
 <?php
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { ?>
+if (is_logged_in()) { ?>
 
 <table border = 0 width= 200 height = 200 align = "left" >
 <tr> <td> </td> </tr> </table>

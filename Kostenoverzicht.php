@@ -22,7 +22,7 @@ include "login.php"; ?>
 
 			<TD valign = "top" align = "center">
 <?php
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modfin == 1) { 
+if (is_logged_in()) { if($modfin == 1) { 
 
 if(isset($_POST["knpSave_"])) { include "save_kostenoverzicht.php"; }
 

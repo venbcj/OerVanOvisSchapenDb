@@ -32,7 +32,7 @@ include "login.php"; ?>
 
 				<TD valign = 'top'>	
 <?php
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($reader == 'Agrident') {
+if (is_logged_in()) { if($reader == 'Agrident') {
 include "kalender.php"; ?>
 
 <script type="text/javascript">

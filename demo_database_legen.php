@@ -21,7 +21,7 @@ include "header.tpl.php"; ?>
 <?php 
 $file = "demo_database_legen.php";
 include "login.php";
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
+if (is_logged_in()) {
 
 $name = $_SESSION["U1"];  
 

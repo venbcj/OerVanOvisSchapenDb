@@ -48,7 +48,7 @@ include "header.tpl.php"; ?>
 <?php
 $file = "test_javascript.php";
 include "login.php"; 
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { 
+if (is_logged_in()) { 
 
 $newvoer = "
 SELECT artId, stdat, naam, concat(' ', eenheid) heid, soort, eenheid

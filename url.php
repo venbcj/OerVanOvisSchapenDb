@@ -12,20 +12,12 @@
     - Leveranciers.php
     - Uitval.php
     - Voer.php
-
  */
 
+require_once('url_functions.php');
+
 global $url;
-#$url = "http://localhost:8080/Schapendb/";
-if ($_SERVER['HTTP_HOST'] == 'localhost:8080') {
-    $url = 'http://'.$_SERVER['HTTP_HOST'].'/Schapendb/';
-} else {
-    $url = 'https://'.$_SERVER['HTTP_HOST'].'/';
-}
-#$url = "http://testapp.masterwebsite.nl/";
-if (php_uname('n') == 'basq') {
-    $url = 'http://oer-dev/';
-}
+$url = getWebroot();
 
 // strtok zorgt ervoor dat alles na de paginanaam wordt verwijderd. bron : http://stackoverflow.com/questions/6969645/how-to-remove-the-querystring-and-get-only-the-url
 $curr_url = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].strtok($_SERVER["REQUEST_URI"], '?');
@@ -61,7 +53,6 @@ $forbidden_files = [
 ];
 foreach ($forbidden_files as $controller_name) {
     if ($curr_url == $url.$controller_name) {
-        header("Location: ".$url."index.php");
-        exit();
+        redirect('index.php');
     }
 }

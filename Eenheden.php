@@ -22,7 +22,7 @@ include "login.php"; ?>
 
 			<TD align = "center" valign = "top">
 <?php
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech ==1) { ?>
+if (is_logged_in()) { if($modtech ==1) { ?>
 
 <table border = 0 ><tr><td>
 

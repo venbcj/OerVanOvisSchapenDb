@@ -35,12 +35,17 @@ include "login.php"; ?>
 
 		<TD valign = 'top'>
 <?php
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
+if (is_logged_in()) {
 
 include "vw_HistorieDm.php";
 include "responscheck.php";
 
-if (isset($_POST['knpSave_'])) { /* $code bestaat ook in responscheck.php */ $code = 'AFV';	include "save_melding.php";	 header("Location: ".$curr_url); } 
+if (isset($_POST['knpSave_'])) {
+    /* $code bestaat ook in responscheck.php */
+    $code = 'AFV';
+    include "save_melding.php";
+    header("Location: ".$curr_url);
+} 
 // include kan niet binnen de loop van $zoek_meldregels om dat de functies binnen 'save_melding' dan vaker wordt aangemaakt en dat kan niet. Via phphulp ben ik hier achter gekomen. bron : http://www.phphulp.nl/php/forum/topic/cannot-redeclare-makequote-previously/67477/
 
 $knptype = "submit";

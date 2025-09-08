@@ -33,7 +33,7 @@ include "login.php"; ?>
 
 		<TD valign = 'top' align = 'center'>
 <?php
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech ==1) { ?>
+if (is_logged_in()) { if($modtech ==1) { ?>
 
 <form action= "OoikaartAll.php" method="post">
 

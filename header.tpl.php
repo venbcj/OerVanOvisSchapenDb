@@ -41,7 +41,7 @@ if (isset($actuele_versie)) {
 <?php include "back_to_top.tpl.php" ?>
 
 <div id = "rechts_uitlijnen" class = 'header_breed'>
-    <section style = "text-align : center"; >
+    <section style="text-align : center">
 <?php # TODO: waarom de spaties? # ?>
         <?php echo $titel . str_repeat('&nbsp;', 28); ?>
         </section>

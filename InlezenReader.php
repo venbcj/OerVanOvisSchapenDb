@@ -35,7 +35,7 @@ include "login.php"; ?>
 
          <TD>
 <?php
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
+if (is_logged_in()) {
 
 $_SESSION["RPP"] = 30; $RPP = $_SESSION["RPP"];
 $_SESSION["PA"] = 1; $pag = $_SESSION["PA"];

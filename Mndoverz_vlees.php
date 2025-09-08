@@ -28,7 +28,7 @@ include "login.php"; ?>
 
 		<TD valign = 'top'>
 <?php
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech ==1) { 
+if (is_logged_in()) { if($modtech ==1) { 
 
 if (isset($_GET['jaar'])) { $kzlJaar = $_GET['jaar']; }	elseif (isset($_POST['kzlJaar'])) { $kzlJaar = $_POST['kzlJaar']; }
 if (isset($_GET['maand'])) { $keuze_mnd = $_GET['maand']; } 

@@ -1,4 +1,5 @@
 <br>
+<td>
 <form method="POST" action="<?php echo $file ?>">
 <table border = 0 align = center>
 <tr align = center>
@@ -31,3 +32,4 @@ if ($pagina_naam == '/index.php') : ?>
 <?php endif; ?>
 </table>
 </form>
+</td>

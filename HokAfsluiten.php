@@ -32,7 +32,7 @@ include "login.php"; ?>
 
 			<TD align = "center" valign = "top">
 <?php
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
+if (is_logged_in()) {
 //include vw_Voorraad // incl. $vw_Voorraden t.b.v. save_voer.php
 include "kalender.php";
 
