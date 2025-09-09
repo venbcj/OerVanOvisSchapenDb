@@ -2,10 +2,10 @@
 /*
 <!-- 10-11-2014 gemaakt 
 5-12-2016 : kzlPartij gesplitst in kzlHerk en kzlBest   9-2-2017 ctr-velden verwijderd 
-5-5-2017 : Controle bij wijzigen datum aangepast van $fldDay < $last_day naar $fldDay > $last_day
+5-5-2017 : Controle bij wijzigen datum aangepast van fldDay < last_day naar fldDay > last_day
 26-1-2018 : Bij verwijderen melding wordt kzlBest niet meer leeggemaakt 
 19-2-2022 : SQL beveiligd met quotes 
-4-4-2022 : Controle $zoek_laatste_datum_stalaf uitgezet want reden van deze controle onbekend 
+4-4-2022 : Controle zoek_laatste_datum_stalaf uitgezet want reden van deze controle onbekend 
 10-5-2023 : $eerste_dag keek niet naar een actie op stallijst (tblActie.op = 1). Dit is aangepast 
 19-01-2024 : Controle melding verplicht gemaakt 
 30-01-2024 : Controle of het veld kzlDef bestaat verplaatst. Zie isset($fldDef)
