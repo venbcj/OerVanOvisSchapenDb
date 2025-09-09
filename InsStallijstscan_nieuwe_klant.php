@@ -1,4 +1,5 @@
 <?php 
+require_once('validation_functions.php');
 $versie = '05-08-2023'; /* kopie gemaaky van InsAanvoer */
 $versie = '26-12-2023'; /* Een schaap mag alleen in een verblijf worden geplaatst als in de database een speendatum bestaat of kan worden bepaald aan de hand van de geboortedatum */
 $versie = '13-12-2024'; /* Controle en foutmeldingen samengevoegd, zie $onjuist */
@@ -28,10 +29,6 @@ if ($modmeld == 1 ) { include "maak_request_func.php"; }
 If (isset($_POST['knpInsert_']))  {
 	include "post_readerStalscan.php";
 	}
-
-function numeriek($subject) {
-	if (preg_match('/([[a-zA-Z])/', $subject, $matches)) {  /*var_dump($matches[1]); */ return 1; }
-}
 
 $zoek_laatste_scandag = mysqli_query($db,"
 SELECT ingescand

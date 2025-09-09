@@ -1,8 +1,11 @@
-<?php /* 8-8-2014 Aantal karakters werknr variabel gemaakt en quotes bij "$kg" weggehaald 
+<?php
+require_once('validation_functions.php');
+/* 8-8-2014 Aantal karakters werknr variabel gemaakt en quotes bij "$kg" weggehaald 
 23-11-2014 : functie header() toegevoegd. In de header wordt het vervevrsen van de pagina verstuurd (request =. response) naar de server
 8-3-2015 : Login toegevoegd 
 18-11-2015 Aanwas gewijzigd naar Aanvoer
-21-12-2015 : maak_request_func.php ge-include i.p.v. in maak_request.php */
+21-12-2015 : maak_request_func.php ge-include i.p.v. in maak_request.php
+ */
 $versie = '9-11-2016'; /* Controle moederdier aangepast */
 $versie = '11-11-2016'; /* Controle of dier elders nog op stal staat verwijderd. Dit werkt ave rechts op het programma. Alleen i.v.m. andere gebruikers heeft dit een blokkerende werking. */
 $versie = '20-1-2017'; /* $hok_uitgez = 'Gespeend' gewijzigd in $hok_uitgez = 2. */
@@ -48,10 +51,6 @@ If (isset($_POST['knpInsert_']))  {
 	include "post_readerAanv.php"; #Deze include moet voor de vervversing in de functie header()
 	//header("Location: ".$url."InsAanvoer.php"); 
 	}
-
-function numeriek($subject) {
-	if (preg_match('/([[a-zA-Z])/', $subject, $matches)) {  /*var_dump($matches[1]); */ return 1; }
-}
 
 // Aantal nog in te lezen AANVOER
 /*$aanvoer = mysqli_query($db,"SELECT count(*) aant 

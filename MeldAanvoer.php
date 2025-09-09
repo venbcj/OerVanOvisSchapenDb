@@ -1,4 +1,6 @@
-<?php /*	  23-11-2014 gemaakt 
+<?php
+require_once('validation_functions.php');
+/*	  23-11-2014 gemaakt 
 26-3-2015 login toegevoegd
 mail 13-04-2015 Arjen Dijkstra : Andere meldingen dan een geboorte doet u binnen zeven kalenderdagen na de gebeurtenis
 					  m.b.t. ‘datum in de toekomst’: dit is inderdaad 3 dagen en dat mag alleen bij Afvoermelding en Exportmelding */
@@ -35,10 +37,6 @@ include "login.php"; ?>
 if (is_logged_in()) {
 
 include "responscheck.php";
-
-function numeriek($subject) {
-	if (preg_match('/([[a-zA-Z])/', $subject, $matches)) {  /*var_dump($matches[1]); */ return 1; }
-}
 
 if (isset($_POST['knpSave_'])) { /* $code bestaat ook in responscheck.php */ $code = 'AAN';	include "save_melding.php";  header("Location: ".$curr_url); }
 

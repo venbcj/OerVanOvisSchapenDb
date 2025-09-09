@@ -1,4 +1,5 @@
 <?php 
+require_once('validation_functions.php');
 $versie = '03-11-2024'; /* Kopie gemaakt van InsAanvoer.php */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '09-08-2025'; /* Veld Ubn toegevoegd. Betreft eigen ubn van gebruiker. Per deze versie kan een gebruiker meerdere ubn's hebben */
@@ -28,10 +29,6 @@ If (isset($_POST['knpInsert_']))  {
 	include "post_readerTvUitsch.php"; #Deze include moet voor de vervversing in de functie header()
 	//header("Location: ".$url."InsTvUitscharen.php"); 
 	}
-
-function numeriek($subject) {
-	if (preg_match('/([[a-zA-Z])/', $subject, $matches)) {  /*var_dump($matches[1]); */ return 1; }
-}
 
 // Aantal nog in te lezen AANVOER
 /*$aanvoer = mysqli_query($db,"SELECT count(*) aant 

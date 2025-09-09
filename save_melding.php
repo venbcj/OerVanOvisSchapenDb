@@ -1,3 +1,5 @@
+<?php
+/*
 <!-- 10-11-2014 gemaakt 
 5-12-2016 : kzlPartij gesplitst in kzlHerk en kzlBest   9-2-2017 ctr-velden verwijderd 
 5-5-2017 : Controle bij wijzigen datum aangepast van $fldDay < $last_day naar $fldDay > $last_day
@@ -8,74 +10,14 @@
 19-01-2024 : Controle melding verplicht gemaakt 
 30-01-2024 : Controle of het veld kzlDef bestaat verplaatst. Zie isset($fldDef)
 27-03-2025 : else if ($key == 'kzlHerk' && empty($value))  { $fldHerk = 'leegkeuzelijst'; } verwijderd -->
-<?php
-/*Save_Melding.php toegpast in :
+*Save_Melding.php toegpast in :
     - MeldAanvoer.php
     - MeldAfvoer.php
     - MeldGeboortes.php
-- MeldUitval.php    */
+- MeldUitval.php
+ */
 
-function getNameFromKey($key) {
-    $array = explode('_', $key);
-    return $array[0];
-}
-
-function getIdFromKey($key) {
-    $array = explode('_', $key);
-    return $array[1];
-}
-
-function zoek_eerste_datum_stalop($db, $recId) {
-    return mysqli_query($db, "
-SELECT min(datum) date, date_format(min(datum),'%d-%m-%Y') datum
-FROM tblHistorie h
- join tblActie a on (a.actId = h.actId)
- join (
-    SELECT st.stalId, h.hisId
-    FROM tblStal st
-     join tblHistorie h on (h.stalId = st.stalId)
-     join tblMelding m on (m.hisId = h.hisId)
-    WHERE m.meldId = '$recId'
- ) st on (st.stalId = h.stalId and st.hisId <> h.hisId)
- WHERE a.op = 1
-")
-}
-
-function zoek_schaapid($db, $fldLevnr) {
-    return mysqli_query($db, "
-SELECT schaapId
-FROM tblSchaap 
-WHERE levensnummer = '".mysqli_real_escape_string($db, $fldLevnr)."'");
-}
-
-function count_levnr($db, $fldLevnr, $schaapId) {
-    return mysqli_query($db, "
-SELECT count(*) aant
-FROM tblSchaap 
-WHERE levensnummer = '".mysqli_real_escape_string($db, $fldLevnr)."' and schaapId <> '".mysqli_real_escape_string($db, $schaapId)."'");
-}
-
-function zoek_in_database($db, $recId) {
-    return mysqli_query($db, "
-SELECT r.reqId, r.code, r.def, m.skip, m.fout, h.datum, s.levensnummer, s.geslacht, st.rel_herk, st.rel_best
-FROM tblRequest r
- join tblMelding m on (r.reqId = m.reqId)
- join tblHistorie h on (m.hisId = h.hisId)
- join tblStal st on (h.stalId = st.stalId)
- join tblSchaap s on (s.schaapId = st.schaapId)
-WHERE m.meldId = '$recId'
-");
-}
-
-function zoek_bestemming_in_db($db, $recId) {
-    return mysqli_query($db, "
-SELECT st.rel_best
-FROM tblMelding m
- join tblHistorie h on (m.hisId = h.hisId)
- join tblStal st on (h.stalId = st.stalId)
-WHERE m.meldId = '$recId'
-");
-}
+require_once('save_melding_functions.php');
 
 $array = array();
 
@@ -168,11 +110,14 @@ foreach ($multip_array as $recId => $id) {
 
         /****** CONTROLE LEVENSNUMMER *******/
         // Bestaat alleen bij Geboortes en Aanvoer
+        // BCB: en bij omnummeren. Commentaar loopt zo snel achter...
         if (isset($fldLevnr)) {
             // Controle op duplicaten
             $zoek_schaapId = zoek_schaapid($db, $fldLevnr);
             $zs = mysqli_fetch_assoc($zoek_schaapId);
-            $schaapId = $zs['schaapId'];
+            # TODO: nullcheck. Als fldLevnr niet voorkomt, is zs geen array, en dat geeft een warning.
+        # Dit wijst erop dat de code dingen doet die niet bij elkaar horen.
+            $schaapId = $zs['schaapId'] ?? 0;
 
             $count_levnr = count_levnr($db, $fldLevnr, $schaapId);
             $row = mysqli_fetch_assoc($count_levnr);
@@ -251,17 +196,22 @@ foreach ($multip_array as $recId => $id) {
         }
 
         // Wijzigen levensnummer
+        // TODO: wanneer kan dit waar zijn? Je zoekt een schaap op basis van fldLevnr, en db_levnr is het levensnummer van het schaap --BCB
         if (isset($fldLevnr) && $fldLevnr <> $Levnr_db && !isset($wrong_levnr)) {
-            $upd_tblSchaap = "UPDATE tblSchaap SET levensnummer = '".mysqli_real_escape_string($db, $fldLevnr)."' WHERE levensnummer = '".mysqli_real_escape_string($db, $Levnr_db)."' ";
+            $upd_tblSchaap = "UPDATE tblSchaap SET levensnummer = '".mysqli_real_escape_string($db, $fldLevnr)."'
+                WHERE levensnummer = '".mysqli_real_escape_string($db, $Levnr_db)."' ";
             mysqli_query($db, $upd_tblSchaap) or die(mysqli_error($db));
         }
 
         // Wijzigen geslacht
         if (isset($fldSekse) && ($fldSekse <> $sekse_db || !isset($sekse_db))) {
-            $upd_tblSchaap = "UPDATE tblSchaap SET geslacht = '".mysqli_real_escape_string($db, $fldSekse)."' WHERE levensnummer = '".mysqli_real_escape_string($db, $Levnr_db)."' ";
+            $upd_tblSchaap = "UPDATE tblSchaap SET geslacht = '".mysqli_real_escape_string($db, $fldSekse)."'
+                WHERE levensnummer = '".mysqli_real_escape_string($db, $Levnr_db)."' ";
             mysqli_query($db, $upd_tblSchaap) or die(mysqli_error($db));
         }
 
+        // TODO: Op dit punt is $code niet langer de waarde uit de includer, maar een veld uit een databaseregel. Is dat de bedoeling? --BCB
+        //
         // Wijzigen herkomst
         if (isset($fldHerk) && (!isset($herk_db) || $fldHerk <> $herk_db)) {
             $upd_tblStal = "
@@ -318,7 +268,8 @@ foreach ($multip_array as $recId => $id) {
             $wrong = $wrong_dag;
         }
         if ((isset($wrong) && (!isset($fout_db) || ($wrong <> $fout_db) )) || (!isset($wrong) && isset($fout_db))) {
-            $upd_tblMelding = "UPDATE tblMelding SET fout = " . db_null_input($wrong) . " WHERE meldId = '$recId' and skip <> 1";
+            // TODO: $wrong niet zomaar gebruiken, is soms niet gezet --BCB
+            $upd_tblMelding = "UPDATE tblMelding SET fout = " . db_null_input($wrong ?? null) . " WHERE meldId = '$recId' and skip <> 1";
             mysqli_query($db, $upd_tblMelding) or die(mysqli_error($db));
         }
         unset($wrong);

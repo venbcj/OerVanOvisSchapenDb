@@ -1,4 +1,5 @@
 <?php 
+require_once('validation_functions.php');
 $versie = '18-12-2021'; /* Gekopieerd van insDracht.php */
 $versie = '02-03-2023'; /* $zoek_vader_laatste_dekkingen toegevoegd */
 $versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */
@@ -28,10 +29,6 @@ If (isset($_POST['knpInsert_']))  {
 	//include url
 	include "post_readerDekken.php"; #Deze include moet voor de vervversing in de functie header()
 	}
-
-function numeriek($subject) {
-	if (preg_match('/([[a-zA-Z])/', $subject, $matches)) {  /*var_dump($matches[1]); */ return 1; }
-}
 
 unset($vdrId_rd);
 //if($reader == 'Agrident') {

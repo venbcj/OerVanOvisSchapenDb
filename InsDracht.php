@@ -1,4 +1,5 @@
 <?php 
+require_once('validation_functions.php');
 $versie = '13-11-2016'; /* Aangemaakt als kopie van insAanvoer. 
 schaap 100214520769 gewijzigd in */
 $versie = '20-3-2018';  /* Meerdere pagina's gemaakt 12-5-2018 : if(isset($data)) toegevoegd. Als alle records zijn verwerkt bestaat $data nl. niet meer !! */
@@ -49,10 +50,6 @@ If (isset($_POST['knpInsert_']))  {
 	include "post_readerDracht.php"; #Deze include moet voor de vervversing in de functie header()
 	//header("Location: ".$url."InsDracht.php"); 
 	}
-
-function numeriek($subject) {
-	if (preg_match('/([[a-zA-Z])/', $subject, $matches)) {  /*var_dump($matches[1]); */ return 1; }
-}
 
 // Array tbv javascript om vader automatisch te tonen
 	// Zoek de laatste dekkingen. Deze laatste dekking moet een vader hebben geregistreerd

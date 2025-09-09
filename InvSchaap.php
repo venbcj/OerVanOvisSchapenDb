@@ -1,4 +1,6 @@
-<?php /* 8-8-2014 Aantal karakters werknr variabel gemaakt en quotes bij "$met" en "$zonder" weggehaald 
+<?php
+require_once('validation_functions.php');
+/* 8-8-2014 Aantal karakters werknr variabel gemaakt en quotes bij "$met" en "$zonder" weggehaald 
 11-8-2014 : veld type gewijzigd in fase 
 5-11-2014 : Bijwerken database aangevuld met inserten tblRequest en tblMeldingen 
 20-2-2015 : login toegevoegd 
@@ -308,11 +310,6 @@ while ( $zwld = mysqli_fetch_assoc($zoek_werpdatum_laatste_dekking)) { $array_wo
 // Einde Array tbv javascript om werpdatum automatisch te tonen
 
 include "vw_kzlOoien.php";
-
-function numeriek($subject) {
-	if (preg_match('/([[a-zA-Z])/', $subject, $matches)) {  /*var_dump($matches[1]); */ return 1; }
-}
-
 
 if (!empty($_POST['txtLevnr'])) { $levnr = $_POST['txtLevnr'];  }
 

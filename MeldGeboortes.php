@@ -1,4 +1,5 @@
 <?php
+require_once('validation_functions.php');
 $versie = '7-11-2014'; /*gemaakt */
 $versie = '24-3-2015'; /*login toegevoegd 
 mail 13-04-2015 Arjen Dijkstra : U meldt een geboorte binnen zes maanden in I&R
@@ -35,10 +36,6 @@ include "login.php"; ?>
 if (is_logged_in()) {
 
 include "responscheck.php";
-
-function numeriek($subject) {
-	if (preg_match('/([[a-zA-Z])/', $subject, $matches)) {  /*var_dump($matches[1]); */ return 1; }
-} // toegepast in save_melding.php
 
 if (isset($_POST['knpSave_'])) { /* $code bestaat ook in responscheck.php */ $code = 'GER';	include "save_melding.php";  header("Location: ".$curr_url); } 
 

@@ -1,13 +1,8 @@
 <?php
+require_once('validation_functions.php');
 require_once('demo_functions.php');
 
 include "connect_db.php";
-
-function numeriek($subject) {
-    if (preg_match('/([[a-zA-Z])/', $subject, $matches)) {
-        return 1;
-    }
-}
 
 if (empty($ubn)) {
     $fout = "Gebruikersnaam (ubn) is niet ingevuld.";

@@ -1,4 +1,5 @@
 <?php 
+require_once('validation_functions.php');
 $versie = '05-08-2023'; /* kopie gemaaky van InsAanvoer 
 op 21-8-2023 heeft Rina het volgende verzocht
 - Geboren niet verplicht, alleen als er een melding naar RVO moet.
@@ -38,11 +39,6 @@ if ($modmeld == 1 ) { include "maak_request_func.php"; }
 If (isset($_POST['knpInsert_']))  {
 	include "post_readerStalscan.php";
 	}
-
-function numeriek($subject) {
-	if (preg_match('/([[a-zA-Z])/', $subject, $matches)) {  /*var_dump($matches[1]); */ return 1; }
-}
-
 
 $velden = "rd.actId, rd.Id readId, rd.datum, rd.levensnummer levnr_rd, coalesce(r.ras,'onbekend') ras, stal.lidId, stal.ubn, stal.geslacht,  
  ouder.ouder,

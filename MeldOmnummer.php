@@ -1,4 +1,5 @@
 <?php 
+require_once('validation_functions.php');
 $versie = '4-7-2020'; /* gekopieerd van MeldAanvoer.php */
 $versie = '26-9-2020'; /* Aangepast op 14-8 na.v. contact met Bright */
 $versie = '30-1-2022'; /* Keuze controle en knop melden bij elkaar gezet. Sql beveiligd met quotes */
@@ -28,10 +29,6 @@ include "login.php"; ?>
 if (is_logged_in()) {
 
 include "responscheck.php";
-
-function numeriek($subject) {
-	if (preg_match('/([[a-zA-Z])/', $subject, $matches)) {  /*var_dump($matches[1]); */ return 1; }
-} // toegepast in save_melding.php
 
 if (isset($_POST['knpSave_'])) { /* $code bestaat ook in responscheck.php */ $code = 'VMD';	include "save_melding.php";  header("Location: ".$curr_url); }
 
