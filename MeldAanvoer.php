@@ -66,16 +66,23 @@ if (is_logged_in()) {
         $oke = aantal_oke_aanv($db, $reqId);
         if ($aantMeld > 0 && $oke > 0) {
             // Bestand maken
+            // TODO: (BV) soms voegen variabelen iets toe. Hier vind ik van niet. Het kan in 1 regel, zie hieronder:
             $alias = alias_voor_lid($db, $lidId);
             $file_r = dirname(__FILE__); // Het pad naar alle php bestanden
             $input_file = $alias."_".$reqId."_request.txt"; // Bestandsnaam
             $end_dir_reader = $file_r ."/". "BRIGHT/";
             $root = $end_dir_reader.$input_file;
+            // dus
+            // (invullen) $root = $file_r . '/BRIGHT/' . $input_file;
+            // (invullen) $root = dirname(__FILE__) . '/BRIGHT/' . $alias . '_' . $reqId . '_request.txt';
+            // Dit is in 1 regel:
+            // $fh = fopen(dirname(__FILE__) . '/BRIGHT/' . alias_voor_lid($db, $lidId) . '_' . $reqId . '_request.txt', 'w');
             $fh = fopen($root, 'w');
             /* insert field values into data.txt */
             $qry_txtRequest_RVO = aanvoer_request_rvo_query($db, $reqId);
             /* Herkomst (ubn_herk) is niet verplicht te melden */
             while ($row = mysqli_fetch_array($qry_txtRequest_RVO)) {
+                // TODO: (BV) volgens mij is dit hele stuk ...
                 $num = mysqli_num_fields($qry_txtRequest_RVO) ;
                 $last = $num - 1;
                 for ($i = 0; $i < $num; $i++) {
@@ -85,20 +92,18 @@ if (is_logged_in()) {
                     }
                 }
                 fwrite($fh, PHP_EOL);
+                // ... exact hetzelfde als
+                // fwrite($fh, implode(';', $row);
             }
             fclose($fh);
 
-            // Melddatum registreren in tblRequest bij > 0 te melden en definitieve melding
-            $upd_tblRequest = "UPDATE tblRequest SET dmmeld = now() WHERE reqId = '".mysqli_real_escape_string($db, $reqId)."' and def = 'J' ";
-            mysqli_query($db, $upd_tblRequest) or die(mysqli_error($db));
+            registreer_melddatum($db, $reqId);
             if ($_POST['kzlDef_'] == 'J') {
                 $knptype = "hidden";
             }
             $goed = "De melding is verstuurd.";
         } elseif ($aantMeld == 0 || $oke == 0) {
-            // Melddatum registreren in tblRequest bij 0 te melden
-             $upd_tblRequest = "UPDATE tblRequest SET dmmeld = now(), def = 'J' WHERE reqId = '".mysqli_real_escape_string($db, $reqId)."' ";
-             mysqli_query($db, $upd_tblRequest) or die(mysqli_error($db));
+            registreer_melddatum_definitief($db, $reqId);
              if ($_POST['kzlDef_'] == 'J' || $aantMeld == 0) {
                  $knptype = "hidden";
                  $goed = "De schapen kunnen handmatig worden gemeld.";
@@ -110,14 +115,7 @@ if (is_logged_in()) {
     } // EINDE MELDEN
 
     // Ophalen 'vaststellen' cq 'controle'
-    $definitief = mysqli_query($db, "
-    SELECT r.def 
-    FROM tblRequest r 
-    WHERE r.reqId = '".mysqli_real_escape_string($db, $reqId)."' 
-    ") or die(mysqli_error($db));
-    while ($defi = mysqli_fetch_assoc($definitief)) {
-        $def = $defi['def'];
-    }
+    $def = zoek_request_definitief($db, $reqId);
 ?>
 <form action="MeldAanvoer.php" method = "post">
 <table border = 0>
@@ -134,17 +132,18 @@ if (is_logged_in()) {
     $zoekControle = zoek_controle_melding($db, $reqId);
     if (isset($zoekControle) && $zoekControle > 0 && $aantMeld > 0) {
         /* Als er een controlemelding is gedaan en er zijn schapen te melden */
+        // TODO: (BCB) dit uitvoeren met collection_select
 ?>
     <!-- KZLDefinitief --> 
     <select <?php echo "name=\"kzlDef_\" "; ?> style = "width:100; font-size:13px;">
 <?php
         $opties = array('N'=>'Controle', 'J'=>'Vastleggen');
         foreach ($opties as $key => $waarde) {
+            $selected = '';
             if ((!isset($_POST['knpSave_']) && $def == $key) || (isset($_POST["kzlDef_"]) && $_POST["kzlDef_"] == $key)) {
-                echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
-            } else {
-                echo '<option value="' . $key . '">' . $waarde . '</option>';
+                $selected = ' selected="selected"';
             }
+            echo '<option value="' . $key . '"' . $selected . '>' . $waarde . '</option>';
         }
 ?> 
     </select> <!-- EINDE KZLDefinitief -->

@@ -572,3 +572,28 @@ function zoek_naam_partij($db, $rel_hrk) {
     }
     return $naam ?? '';
 }
+
+function registreer_melddatum($db, $reqId) {
+    // Melddatum registreren in tblRequest bij > 0 te melden en definitieve melding
+    $upd_tblRequest = "UPDATE tblRequest SET dmmeld = now() WHERE reqId = '".mysqli_real_escape_string($db, $reqId)."' and def = 'J' ";
+    mysqli_query($db, $upd_tblRequest) or die(mysqli_error($db));
+}
+
+function registreer_melddatum_definitief($db, $reqId) {
+    // Melddatum registreren in tblRequest bij 0 te melden
+    $upd_tblRequest = "UPDATE tblRequest SET dmmeld = now(), def = 'J' WHERE reqId = '".mysqli_real_escape_string($db, $reqId)."' ";
+    mysqli_query($db, $upd_tblRequest) or die(mysqli_error($db));
+}
+
+function zoek_request_definitief($db, $reqId) {
+    $definitief = mysqli_query($db, "
+    SELECT r.def 
+    FROM tblRequest r 
+    WHERE r.reqId = '".mysqli_real_escape_string($db, $reqId)."' 
+    ") or die(mysqli_error($db));
+    $def = '';
+    while ($defi = mysqli_fetch_assoc($definitief)) {
+        $def = $defi['def'];
+    }
+    return $def;
+}
