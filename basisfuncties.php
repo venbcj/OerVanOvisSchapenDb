@@ -408,16 +408,15 @@ Toegepast in :
 
 // Zoek controle melding
 function zoek_controle_melding($datb, $fldReqId) {
-
-$aantalcontrole = mysqli_query($datb, "
+    $aantalcontrole = mysqli_query($datb, "
 SELECT count(*) aant
 FROM impRespons
 WHERE def = 'N' and reqId = '".mysqli_real_escape_string($datb, $fldReqId)."'
 ");//Foutafhandeling zit in return FALSE
 
     if ($aantalcontrole) {
-$row = mysqli_fetch_assoc($aantalcontrole);
-            return $row['aant'];
+        $row = mysqli_fetch_assoc($aantalcontrole);
+        return $row['aant'];
     }
     return false;
 }

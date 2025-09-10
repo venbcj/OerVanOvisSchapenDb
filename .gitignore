@@ -4,3 +4,4 @@ coverage-html/*
 db
 tags
 *.actual
+*.sublime-*
