@@ -368,14 +368,12 @@ $row = mysqli_fetch_assoc($aantalmelden);
     return false;
 }
 
-
 /*
 Toegepast in :
 - MeldGeboortes.php */
 
 // Aantal dieren goed geregistreerd om automatisch te kunnen melden.
 function aantal_oke($datb, $fldReqId) {
-
 $juistaantal = mysqli_query($datb, "
 SELECT count(*) aant
 FROM tblMelding m
@@ -397,6 +395,36 @@ $row = mysqli_fetch_assoc($juistaantal);
     return false;
 }
 
+// Aantal dieren goed geregistreerd om automatisch te kunnen melden.
+// De datum mag hier niet liggen voor de geboorte datum en speendatum verder zal er geen historie zijn.
+function aantal_oke_aanv($datb, $fldReqId) {
+    $juistaantal = mysqli_query($datb, "
+SELECT count(*) aant
+FROM tblMelding m
+ join tblHistorie h on (h.hisId = m.hisId)
+ join tblStal st on (st.stalId = h.stalId)
+ join tblSchaap s on (st.schaapId = s.schaapId) 
+ left join (
+    SELECT schaapId, max(datum) datum 
+    FROM tblHistorie h 
+     join tblStal st on (h.stalId = st.stalId)
+    WHERE h.actId <= 4 and h.actId != 2 and h.skip = 0
+    GROUP BY schaapId
+ ) mhd on (st.schaapId = mhd.schaapId)
+WHERE m.reqId = '".mysqli_real_escape_string($datb, $fldReqId)."'
+ and h.datum is not null
+ and (h.datum >= mhd.datum or isnull(mhd.datum))
+ and h.datum <= (curdate() + interval 3 day)
+ and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12
+ and m.skip <> 1
+");
+    /* Herkomst (ubn_herk) is niet verplicht te melden */
+    if ($juistaantal) {
+        $row = mysqli_fetch_assoc($juistaantal);
+        return $row['aant'];
+    }
+    return false;
+}
 
 /*
 Toegepast in :
@@ -419,4 +447,128 @@ WHERE def = 'N' and reqId = '".mysqli_real_escape_string($datb, $fldReqId)."'
         return $row['aant'];
     }
     return false;
+}
+
+function zoek_oudste_request_niet_definitief_gemeld($db, $lidId) {
+    $zoek_oudste_request_niet_definitief_gemeld = mysqli_query($db, "
+    SELECT min(rq.reqId) reqId, l.relnr
+    FROM tblRequest rq
+     join tblMelding m on (rq.reqId = m.reqId)
+     join tblHistorie h on (h.hisId = m.hisId)
+     join tblStal st on (st.stalId = h.stalId)
+     join tblLeden l on (l.lidId = st.lidId)
+    WHERE h.skip = 0 and l.lidId = '".mysqli_real_escape_string($db, $lidId)."' and isnull(rq.dmmeld) and rq.code = 'AAN' 
+    GROUP BY l.relnr
+    ") or die(mysqli_error($db));
+    while ($req = mysqli_fetch_assoc($zoek_oudste_request_niet_definitief_gemeld)) {
+        $reqId = $req['reqId'];
+    }
+    return $reqId;
+}
+
+function alias_voor_lid($db, $lidId) {
+    $qry_Leden = mysqli_query($db, "
+    SELECT alias
+    FROM tblLeden
+    WHERE lidId = '".mysqli_real_escape_string($db, $lidId)."'
+    ") or die(mysqli_error($db));
+    while ($row = mysqli_fetch_assoc($qry_Leden)) {
+        $alias = $row['alias'];
+    }
+    return $alias;
+}
+
+function aanvoer_request_rvo_query($db, $reqId) {
+    return mysqli_query($db, "
+    SELECT rq.reqId, l.prod, rq.def, l.urvo, l.prvo, rq.code melding, l.relnr, u.ubn, date_format(h.datum,'%d-%m-%Y'), 'NL' land, s.levensnummer, 3 soort, p.ubn ubn_herk, NULL ubn_best, NULL land_herk, date_format(hg.datum,'%d-%m-%Y'), NULL sucind, NULL foutind, NULL foutcode, NULL bericht, NULL meldnr
+    FROM tblRequest rq
+     join tblMelding m on (rq.reqId = m.reqId)
+     join tblHistorie h on (m.hisId = h.hisId)
+     join tblStal st on (h.stalId = st.stalId)
+     join tblUbn u on (u.ubnId = st.ubnId)
+     join tblLeden l on (st.lidId = l.lidId)
+     join tblSchaap s on (st.schaapId = s.schaapId)
+     join tblStal st_all on (s.schaapId = st_all.schaapId)
+     left join tblHistorie hg on (hg.stalId = st_all.stalId)
+     left join tblRelatie rl on (rl.relId = st.rel_herk)
+     left join tblPartij p on (p.partId = rl.partId)
+    WHERE rq.reqId = '".mysqli_real_escape_string($db, $reqId)."'
+        and (isnull(hg.actId) or hg.actId = 1)
+        and h.datum is not null
+        and (h.datum >= hg.datum or isnull(hg.datum))
+        and h.datum <= (curdate() + interval 3 day)
+        and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12 
+        and m.skip <> 1
+        and isnull(m.fout) 
+        and h.skip = 0
+        ");
+}
+
+function aanvoer_zoek_meldregels_query($db, $reqId, $lidId) {
+    return mysqli_query($db, "
+SELECT m.meldId, u.ubn ubn_gebruiker, date_format(h.datum,'%d-%m-%Y') schaapdm, h.datum dmschaap, s.levensnummer, s.geslacht,
+  ouder.datum dmaanw, st.stalId, st.rel_herk, p.naam, p.ubn ubn_herk, m.skip, m.fout, rs.respId, rs.sucind, rs.foutmeld,
+ lastdm.datum dmlst, date_format(lastdm.datum,'%d-%m-%Y') lstdm
+FROM tblMelding m
+ join tblHistorie h on (m.hisId = h.hisId)
+ join tblStal st on (h.stalId = st.stalId)
+ join tblUbn u on (u.ubnId = st.ubnId)
+ join tblSchaap s on (s.schaapId = st.schaapId)
+ left join (
+     SELECT m.meldId, NULL BijDefinitiefMeldenVerwijderdenNietTonen
+     FROM tblMelding m
+     join tblRequest r on (r.reqId = m.reqId)
+     WHERE m.reqId = '".mysqli_real_escape_string($db, $reqId)."' and m.skip = 1 and r.def = 'J' and dmmeld is not null
+ ) hide on (hide.meldId = m.meldId)
+ left join (
+    SELECT st.schaapId, h.datum
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
+ ) ouder on (s.schaapId = ouder.schaapId)
+ left join tblRelatie r on (r.relId = st.rel_herk)
+ left join tblPartij p on (r.partId = p.partId)
+ left join (
+    SELECT max(respId) respId, levensnummer
+    FROM impRespons
+    WHERE reqId = '".mysqli_real_escape_string($db, $reqId)."'
+    GROUP BY levensnummer
+ ) mresp on (mresp.levensnummer = s.levensnummer)
+ left join impRespons rs on (rs.respId = mresp.respId)
+ left join (
+    SELECT st.schaapId, max(datum) datum 
+    FROM tblHistorie h
+     join tblStal st on (st.stalId = h.stalId)
+    WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db, $lidId)."' and 
+     not exists (SELECT max(stl.stalId) stalId FROM tblStal stl WHERE stl.lidId = '".mysqli_real_escape_string($db, $lidId)."' and stl.stalId = st.stalId)
+    GROUP BY st.schaapId
+ ) lastdm on (lastdm.schaapId = s.schaapId)
+WHERE h.skip = 0 and m.reqId = '".mysqli_real_escape_string($db, $reqId)."' and isnull(hide.meldId)
+ORDER BY u.ubn, m.skip, s.levensnummer 
+");
+}
+
+function zoek_eerder_stalId($db, $levnr, $stalId) {
+    $eerder_stalId = mysqli_query($db, "
+SELECT max(stalId) stalId 
+FROM tblStal st
+ join tblSchaap s on (st.schaapId = s.schaapId)
+WHERE s.levensnummer = '".mysqli_real_escape_string($db, $levnr)."' and st.stalId != ".mysqli_real_escape_string($db, $stalId)."
+") or die(mysqli_error($db));
+    while ($vor = mysqli_fetch_assoc($eerder_stalId)) {
+        $vorigStalId = $vor['stalId'];
+    }
+    return $vorigStalId;
+}
+
+function zoek_naam_partij($db, $rel_hrk) {
+    $NaamPartij = mysqli_query($db, "
+    SELECT naam
+    FROM tblPartij p
+     join tblRelatie r on (p.partId = r.partId)
+    WHERE r.relId = ".db_null_input($rel_hrk));
+    while ($p = mysqli_fetch_assoc($NaamPartij)) {
+        $naam = $p['naam'];
+    }
+    return $naam ?? '';
 }
