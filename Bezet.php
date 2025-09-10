@@ -13,15 +13,15 @@ $versie = '28-09-2018'; /* titel.php verwijderd. Zit in header.php samen met Sty
 $versie = '18-05-2019'; /* Afleveren, spenen en Overplaatsen mogelijk gemaakt via Hoklijsten.php */
 $versie = '20-12-2019'; /* tabelnaam gewijzigd van UIT naar uit tabelnaam */
 $versie = '28-6-2020'; /* datum in verblijf van volwassen dieren toegevoegd zodat link 'periode sluiten' zichtbaar wordt bij verblijven met enkel volwassen dieren */
-$versie = '8-2-2021'; /* $zoek_nu_in_verblijf_prnt herschreven i.v.m. dubbele records. Sql beveiligd met quotes */
+$versie = '8-2-2021'; /* zoek_nu_in_verblijf_prnt herschreven i.v.m. dubbele records. Sql beveiligd met quotes */
 $versie = '4-6-2021'; /* Verblijf ook zichtbaar als enkel volwassen dieren in het verblijf hebben gezeten */
 $versie = '9-7-2021'; /* Schapen uit verblijf herzien. Join gewijzigd van h.hisId = uit.hisv naar b.bezId = uit.bezId */
 $versie = '4-8-2021'; /* Schapen die 0 dagen in verblijf zitten ook meegeteld. Zie bijv (h.datum = spn.datum && h.hisId >= spn.hisId) */
-$versie = '23-12-2023'; /* In query $zoek_nu_in_verblijf_prnt skip = 0 toegevoegd. Vandaag is bij Folkert een herstel actie uitgevoerd n.a.v. toevoegen speendatum op 17-12 jl. Alle 116 overplaatsingen zijn verwijderd (skip = 1) 27-12-2023 and skip = 0 toegevoegd bij tblHistorie */
+$versie = '23-12-2023'; /* In query zoek_nu_in_verblijf_prnt skip = 0 toegevoegd. Vandaag is bij Folkert een herstel actie uitgevoerd n.a.v. toevoegen speendatum op 17-12 jl. Alle 116 overplaatsingen zijn verwijderd (skip = 1) 27-12-2023 and skip = 0 toegevoegd bij tblHistorie */
 $versie = '05-01-2024'; /* Schapen die in het verblijf spenen de status aanwas kregen werden niet getoond. Dit is aangepast 
 7-1-2024 : Aanwas werd onterecht aan een verblijf gekoppeld waardoor volwassendieren dubbel werden geteld in de kolom Volwassen aanwezig. 
-Dit is voor de toekomst aangepast in save_aanwas.php. Met distinct in $zoek_nu_in_verblijf_prnt is dit ook met bestaande registraties hersteld 
-14-01-2024 Doelgroep verlaten telden ook volwassen dieren die niet in het verblijf hadden gezeten. Dit is aangepast door bij $zoek_verlaten_spn_excl_overpl_en_uitval or (isnull(uit.bezId) and prnt.schaapId is not null)) uit te breiden naar or (isnull(uit.bezId) and prnt.schaapId is not null and h.datum < spn.datum)) */
+Dit is voor de toekomst aangepast in save_aanwas.php. Met distinct in zoek_nu_in_verblijf_prnt is dit ook met bestaande registraties hersteld 
+14-01-2024 Doelgroep verlaten telden ook volwassen dieren die niet in het verblijf hadden gezeten. Dit is aangepast door bij zoek_verlaten_spn_excl_overpl_en_uitval or (isnull(uit.bezId) and prnt.schaapId is not null)) uit te breiden naar or (isnull(uit.bezId) and prnt.schaapId is not null and h.datum < spn.datum)) */
 $versie = '19-01-2024'; /* in nestquery 'uit' is 'and a1.aan = 1' uit WHERE gehaald. De hisId die voorkomt in tblBezet volstaat. Bovendien is bij Pieter hisId met actId 3 gekoppeld aan tblBezet en heeft het veld 'aan' in tblActie de waarde 0. De WHERE incl. 'and a1.aan = 1' geeft dus een fout resultaat. */
 $versie = "10-03-2024"; /* De aantallen in kolom aanwezigen blauw gemaakt */
 $versie = "11-03-2024"; /* Bij geneste query uit 

@@ -1,6 +1,6 @@
 <?php
 require_once('validation_functions.php');
-/* 8-8-2014 Aantal karakters werknr variabel gemaakt en quotes bij "$met" en "$zonder" weggehaald 
+/* 8-8-2014 Aantal karakters werknr variabel gemaakt en quotes bij "met" en "zonder" weggehaald 
 11-8-2014 : veld type gewijzigd in fase 
 5-11-2014 : Bijwerken database aangevuld met inserten tblRequest en tblMeldingen 
 20-2-2015 : login toegevoegd 
@@ -15,8 +15,8 @@ require_once('validation_functions.php');
 20-10-2016 : mdrId en vdrId gewijzigd in volwId 
 28-10-2016 : Geboortedatum bij aanvoer vader- moederdieren niet verplicht gemaakt */
 $versie = "18-11-2016"; /* Controle 'levnr bestaat al' gewijzigd. Geldt nl. alleen indien op stallijst. Controle op dood dier toegevoegd t.b.v. aanvoer */
-$versie = "19-11-2016"; /* Variabele $levnr bestaat alleen als er een levensnummer is ingevuld    21771 */
-$versie = "22-1-2017"; /* 18-1-2017 Query's aangepast n.a.v. nieuwe tblDoel en $hok_uitgez = 'Gespeend' gewijzigd in $hok_uitgez = 2		22-1-2017 tblBezetting gewijzigd naar tblBezet */
+$versie = "19-11-2016"; /* Variabele levnr bestaat alleen als er een levensnummer is ingevuld    21771 */
+$versie = "22-1-2017"; /* 18-1-2017 Query's aangepast n.a.v. nieuwe tblDoel en hok_uitgez = 'Gespeend' gewijzigd in hok_uitgez = 2		22-1-2017 tblBezetting gewijzigd naar tblBezet */
 $versie = "12-2-2017"; /* Halsnummer toegvoegd en komma bij geboorte gewicht omgezet naar een punt 	19-2-2017 aantal handmatig ingevoerde schapen gebaseerd op tblStal zodat opnieuw aanvoer ook wordt geteld.		4-4-2017 : kleuren halsnummer uitgebreid */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '10-11-2018'; /* invoer vader- en moederdier aangepast. Worp kan 1 x per 183 dagen en gebeurt op 1 dag 
@@ -29,7 +29,7 @@ $versie = '6-2-2019'; /* Vaderdier is tot een jaar terug te kiezen */
 $versie = '2-2-2020'; /* keuzelijst geslacht uitgebreid met kween */
 $versie = '11-1-2022'; /* Script verbeterd/herschreven. SQL beveiligd d.m.v. quotes. Code aangepast n.a.v. registratie dekkingen en dracht */
 $versie = '05-02-2022'; /* Drachtig (ja/nee) wordt niet meer vastgelegd in tblVolwas */
-$versie = '09-09-2023'; /* if(isset($lst_dmworp)) { toegevoegd anders bestaat $verschil_worp onterecht */
+$versie = '09-09-2023'; /* if(isset(lst_dmworp)) { toegevoegd anders bestaat verschil_worp onterecht */
 $versie = '31-12-2023'; /* and h.skip = 0 aangevuld bij tblHistorie */
 $versie = '23-10-2024'; /* Paginanaam gewijzigd van Invoeren schaap naar Aanvoer schaap */
 $versie = '26-12-2024'; /* <TD width = "960" height = "400" valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */

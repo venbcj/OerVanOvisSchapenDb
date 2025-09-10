@@ -1,8 +1,8 @@
 <!-- 23-5-2020 : Gekopieerd van post_readerOvp.php
 13-7-2020 : impVerplaatsing gewijzigd in impAgrident 
 11-4-2021 : Adoptie losgekoppeld van verblijf 
-5-5-2021 : isset($verwerkt) toegevoegd om dubbele invoer te voorkomen. Verschil tussen kiezen of verwijderen herschreven 
-31-12-2023 :  and h.skip = 0 toegevoegd aan $zoek_laatste_hisId -->
+5-5-2021 : isset(verwerkt) toegevoegd om dubbele invoer te voorkomen. Verschil tussen kiezen of verwijderen herschreven 
+31-12-2023 :  and h.skip = 0 toegevoegd aan zoek_laatste_hisId -->
 
 <?php
 include "url.php";

@@ -5,10 +5,10 @@ Reden : na spenen van verschillende hokken worden de schapen herverdeeld o.b.v. 
 5-3-2015 : Login toegevoegd 
 6-3-2015 : sql beveiligd 
 18-11-2015 : Hok gewijzigd naar verblijf */
-$versie = '7-11-2016';  /* $vw_Reader_sp aangepast tblSchaap is gerelateerd aan impReader via levensnummer. i.v.m. left join moet al zijn bepaald dat enkel schapen van lidId mogen worden getoond. Vandaar is tblSchaap eerst genest met tblStal */
+$versie = '7-11-2016';  /* vw_Reader_sp aangepast tblSchaap is gerelateerd aan impReader via levensnummer. i.v.m. left join moet al zijn bepaald dat enkel schapen van lidId mogen worden getoond. Vandaar is tblSchaap eerst genest met tblStal */
 $versie = '9-11-2016';  /* vw_StatusSchaap verwijderd en gebaseerd op laatste hisId */
 $versie = '23-11-2016';  /* actId = 3 uit on clause gehaald en als sub query genest */
-$versie = '22-1-2017';  /* 20-1-2017 ; $hok_uitgez = 'Geboren' gewijzigd in $hok_uitgez = 1  21-1-2017 Overbodige hidden velden verwijderd (txtId, txtLevspn en txtOvplId)   22-1-2017 tblBezetting gewijzigd naar tblBezet */
+$versie = '22-1-2017';  /* 20-1-2017 ; hok_uitgez = 'Geboren' gewijzigd in hok_uitgez = 1  21-1-2017 Overbodige hidden velden verwijderd (txtId, txtLevspn en txtOvplId)   22-1-2017 tblBezetting gewijzigd naar tblBezet */
 $versie = '18-6-2020';  /* Kopie gemaakt van insSpenen.php */
 $versie = '4-7-2020'; /* 1 tabel impAgrident gemaakt */
 $versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie en sql beveiligd met quotes */

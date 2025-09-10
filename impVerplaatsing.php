@@ -4,14 +4,6 @@
 26-1-2021 : Transponder toegevoegd 
 12-02-2021 : Controle Lambar in Newreader_keuzelijsten.php weggehaald en hier toegevoegd. SQL beveiligd met quotes */
 
-		//$input = $inhoud; // php://input is de rauwe data. nl. het json bestand.
-
-		/*$input = '';*/
-		//$data = $input; 
-		//var_dump($data) ;
-		//var_dump( $data ->glossary->GlossDiv->title) ;
-		
-		//if(!empty($data)) { echo '$DATA = '; // als $data bestaat
 
 $velden = array('ActId', 'Datum', 'Transponder', 'Levensnummer', 'Reden', 'MoederTransponder', 'Moeder', 'Gewicht', 'HokId' );
 

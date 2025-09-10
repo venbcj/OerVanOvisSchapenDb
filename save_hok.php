@@ -3,7 +3,7 @@
 30-5-2020 : hidden velden ctrScan en ctrActief verwijderd en aangepast op Agrident reader
 02-08-2020 : veld sort toegevoegd 
 20-04-2024 : Verblijven kunnen worden verwijderd zolang er geen relatie ligt met andere tabellen 
-10-03-2025 : Hidden veld chbActief_$Id in Hok.php verwijderd en hier lege checkbox gedefinieerd */
+10-03-2025 : Hidden veld chbActief_Id in Hok.php verwijderd en hier lege checkbox gedefinieerd */
 
 function getNaamFromKey($string) {
     $split_naam = explode('_', $string);

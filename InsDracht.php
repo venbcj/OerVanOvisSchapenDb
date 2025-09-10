@@ -2,7 +2,7 @@
 require_once('validation_functions.php');
 $versie = '13-11-2016'; /* Aangemaakt als kopie van insAanvoer. 
 schaap 100214520769 gewijzigd in */
-$versie = '20-3-2018';  /* Meerdere pagina's gemaakt 12-5-2018 : if(isset($data)) toegevoegd. Als alle records zijn verwerkt bestaat $data nl. niet meer !! */
+$versie = '20-3-2018';  /* Meerdere pagina's gemaakt 12-5-2018 : if(isset(data)) toegevoegd. Als alle records zijn verwerkt bestaat data nl. niet meer !! */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '10-11-2018'; /* Inlezen darcht herzien. Rekening gehouden met worp laatste 183 en alleen ooien en rammen op stallijst !! */
 $versie = '20-1-2019'; /* alles aan- en uitzetten met javascript */
@@ -10,7 +10,7 @@ $versie = '24-4-2020'; /* url Javascript libary aangepast */
 $versie = '18-12-2021'; /* Onderscheid gemaakt tussen reader Agrident en Biocontrol */
 $versie = '03-02-2023'; /* Werking javascript verbeterd */
 $versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */
-$versie = '23-11-2024'; /* In keuzelijst moeder- en vaderdieren  uitgeschaarde dieren wel tonen. $zoek_moeder aangevuld met or h.actId = 10 en include vw_kzlOoien werd nergens toegepast en daarom verwijderd */
+$versie = '23-11-2024'; /* In keuzelijst moeder- en vaderdieren  uitgeschaarde dieren wel tonen. zoek_moeder aangevuld met or h.actId = 10 en include vw_kzlOoien werd nergens toegepast en daarom verwijderd */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>

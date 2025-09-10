@@ -2,7 +2,7 @@
 require_once('validation_functions.php');
 $versie = '05-08-2023'; /* kopie gemaaky van InsAanvoer */
 $versie = '26-12-2023'; /* Een schaap mag alleen in een verblijf worden geplaatst als in de database een speendatum bestaat of kan worden bepaald aan de hand van de geboortedatum */
-$versie = '13-12-2024'; /* Controle en foutmeldingen samengevoegd, zie $onjuist */
+$versie = '13-12-2024'; /* Controle en foutmeldingen samengevoegd, zie onjuist */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '15-07-2025'; /* Veld ubn toegevoegd. Per deze versie kan een gebruiker meerdere ubn's hebben */
 
@@ -201,21 +201,6 @@ $datum = date('d-m-Y', strtotime($date));
 	$doelId_rd = $array['doelId']; if($doelId_rd == 1) { $fase_rd = 'lam'; } else { if($sekse_rd == 'ooi') {$fase_rd = 'moeder';} else { $fase_rd = 'vader';} }
 	$rasId_rd = $array['rasId_rd'];
 
-	/*$levnr_stal = $array['levnr_stal']; ###
-	$ras_stal = $array['ras'];  ###
-	$geslacht_stal = $array['geslacht']; ###
-	$ouder = $array['ouder']; ###
-	if(isset($ouder) && $geslacht_stal == 'ooi') { $fase = 'moeder'; } else if(isset($ouder) && $geslacht_stal == 'ram') { $fase = 'vader'; } else { $fase = 'lam'; }*/
-
-
- 
-
-/*$levnr_db = $array['levnr_db']; // Levensnummer uit tblSchaap niet uit stallijst 
-$rasId_db = $array['rasId_db'];
-$ras_db = $array['ras_db'];
-$sekse_db = $array['geslacht_db'];
-$ouder = $array['ouder']; if(isset($ouder) && $sekse_db == 'ooi') { $fase_db = 'moeder'; } else if(isset($ouder) && $sekse_db == 'ram') { $fase_db = 'vader'; } else { $fase_db = 'lam'; }*/
-
 unset($schaapId);
 
 $schaapId_st = zoek_schaapId_in_stallijst($lidId,$levnr_rd);
@@ -267,7 +252,7 @@ FROM tblSchaap s
 WHERE s.schaapId = '" . mysqli_real_escape_string($db,$schaapId) . "'
 ";
 
-/*echo $zoek_levnr_db.'<br>';*/ $zoek_levnr_db = mysqli_query($db,$zoek_levnr_db) or die (mysqli_error($db));
+ $zoek_levnr_db = mysqli_query($db,$zoek_levnr_db) or die (mysqli_error($db));
 
 while ($zld = mysqli_fetch_assoc($zoek_levnr_db)) 
 { 
@@ -337,7 +322,8 @@ else if (!isset($schaapId_db) && empty($fase_rd)) { $color = 'red'; $onjuist = "
 if(isset($onjuist)) {	$oke = 0; } else { $oke = 1; } // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
 // EINDE Controleren of ingelezen waardes worden gevonden .  
 
-	 if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1) /* Als onvolledig is gewijzigd naar volledig juist */ {$cbKies = 1; $cbDel = $_POST["chbDel_$Id"]; }
+/* Als onvolledig is gewijzigd naar volledig juist */
+	 if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1)  {$cbKies = 1; $cbDel = $_POST["chbDel_$Id"]; }
 else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDel = $_POST["chbDel_$Id"]; } 
    else { $cbKies = $oke; } // $cbKies is tbv het vasthouden van de keuze inlezen of niet 
 
@@ -482,7 +468,7 @@ foreach ( $opties as $key => $waarde)
  </td>
  <?php 
  unset($cbSpeen);
-	 if (($fase_rd == 'moeder' || $fase_rd == 'vader' || isset($spndag)) /*isset($_POST['knpVervers_'])*/)  { $cbSpeen = 1; }
+	 if (($fase_rd == 'moeder' || $fase_rd == 'vader' || isset($spndag)) )  { $cbSpeen = 1; }
 else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDel = $_POST["chbDel_$Id"]; } 
    //else { $cbKies = $oke; }
  ?>

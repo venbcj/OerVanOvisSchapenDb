@@ -6,10 +6,10 @@
 26-1-2018 : Bij verwijderen melding wordt kzlBest niet meer leeggemaakt 
 19-2-2022 : SQL beveiligd met quotes 
 4-4-2022 : Controle zoek_laatste_datum_stalaf uitgezet want reden van deze controle onbekend 
-10-5-2023 : $eerste_dag keek niet naar een actie op stallijst (tblActie.op = 1). Dit is aangepast 
+10-5-2023 : eerste_dag keek niet naar een actie op stallijst (tblActie.op = 1). Dit is aangepast 
 19-01-2024 : Controle melding verplicht gemaakt 
-30-01-2024 : Controle of het veld kzlDef bestaat verplaatst. Zie isset($fldDef)
-27-03-2025 : else if ($key == 'kzlHerk' && empty($value))  { $fldHerk = 'leegkeuzelijst'; } verwijderd -->
+30-01-2024 : Controle of het veld kzlDef bestaat verplaatst. Zie isset(fldDef)
+27-03-2025 : else if (key == 'kzlHerk' && empty(value))  { fldHerk = 'leegkeuzelijst'; } verwijderd -->
 *Save_Melding.php toegpast in :
     - MeldAanvoer.php
     - MeldAfvoer.php

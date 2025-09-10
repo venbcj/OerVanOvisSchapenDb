@@ -3,7 +3,7 @@ require_once('validation_functions.php');
 $versie = '4-7-2020'; /* gekopieerd van MeldAanvoer.php */
 $versie = '26-9-2020'; /* Aangepast op 14-8 na.v. contact met Bright */
 $versie = '30-1-2022'; /* Keuze controle en knop melden bij elkaar gezet. Sql beveiligd met quotes */
-$versie = '1-4-2022'; /* $code binnen save_melding.php werd opgehaald uit responscheck.php */
+$versie = '1-4-2022'; /* code binnen save_melding.php werd opgehaald uit responscheck.php */
 $versie = '31-12-2023'; /* and h.skip = 0 aangevuld aan tblHistorie */
 $versie = '20-01-2024'; /* Controle melding verplicht gemaakt  */
 $versie = '10-03-2024'; /* Als alle regels moeten worden verwijderd kan dit vanaf nu worden verwerkt zonder eerst 1 melding als controle melding te versturen. Verwijderde regels worden bij definitief melden meteen onzichtbaar. De url t.b.v. javascript geactualisserd van http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js naar https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js */

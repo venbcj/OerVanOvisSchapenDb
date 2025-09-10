@@ -85,7 +85,7 @@ if ($modfin == 1  && !empty($_POST['insRubriek_']))	{	$insRubriek = $_POST['insR
 
 $insert_tblArtikel = "INSERT INTO tblArtikel SET soort = 'voer', naam = '".mysqli_real_escape_string($db,$insNaam)."', stdat = '".mysqli_real_escape_string($db,$insStdat)."', enhuId = '".mysqli_real_escape_string($db,$insNhd)."', btw = '".mysqli_real_escape_string($db,$insBtw)."', relId=  " . db_null_input($insRelatie) . ", rubuId=  " . db_null_input($insRubriek);
 		
-/*echo $insert_tblArtikel.'<br>';*/				mysqli_query($db,$insert_tblArtikel) or die (mysqli_error($db));
+				mysqli_query($db,$insert_tblArtikel) or die (mysqli_error($db));
 	}
 }
 

@@ -5,14 +5,14 @@ $versie = '24-2-2017'; /* Aangpast na.v. Release 2 of wel nieuwe databasestructu
 $versie = '12-3-2017'; /* Verwijderen mogelijk gemaakt */
 $versie = '29-7-2017'; /* toedienen bij afgevoerden mogelijk gemaakt */
 $versie = '25-2-2018'; /* standaard hoeveelheid gebasserd op combireden */
-$versie = '20-3-2018';  /* Meerdere pagina's gemaakt 12-5-2018 : if(isset($data)) toegevoegd. Als alle records zijn verwerkt bestaat $data nl. niet meer !! */
+$versie = '20-3-2018';  /* Meerdere pagina's gemaakt 12-5-2018 : if(isset(data)) toegevoegd. Als alle records zijn verwerkt bestaat data nl. niet meer !! */
 $versie = '22-6-2018';  /* Velden in impReader aangepast */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '20-1-2019'; /* alles aan- en uitzetten met javascript */
 $versie = '24-4-2020'; /* url Javascript libary aangepast */
 $versie = '14-11-2020'; /* Onderschied gemaakt tussen reader Agrident en Biocontrol */
 $versie = '15-01-2021'; /* Toedien aantal uit tabel impAgrident gehaald */
-$versie = '07-09-2021'; /* In query's $zoek_afvoerdatum en $zoek_fase h.skip = 0 in where clause toegevoegd */
+$versie = '07-09-2021'; /* In query's zoek_afvoerdatum en zoek_fase h.skip = 0 in where clause toegevoegd */
 $versie = '22-09-2021'; /* func_artikelnuttigen.php toegevoegd */
 $versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */

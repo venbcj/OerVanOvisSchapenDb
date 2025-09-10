@@ -6,7 +6,7 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $versie = '28-12-2018'; /* Controle toegevoegd. Definitieve melding mag niet als controlemelding terugkomen. Leeg maanden (indien alleen verwijderen bevat) niet tonen */
 $versie = '26-9-2020'; /* Omnummeren toegevoegd */
 $versie = '20-12-2020'; /* Menu gewijzigd */
-$versie = '21-8-2021'; /* and rs.melding = '$code' toegevoegd aan subquery lresp. Wanneer een definitieve melding als controle melding terugkomt nu de tekst : Definitieve melding is teruggekomen als een controle melding ! Kijk op de portal van RVO wat te doen. */
+$versie = '21-8-2021'; /* and rs.melding = 'code' toegevoegd aan subquery lresp. Wanneer een definitieve melding als controle melding terugkomt nu de tekst : Definitieve melding is teruggekomen als een controle melding ! Kijk op de portal van RVO wat te doen. */
 $versie = '31-12-2023'; /* and h.skip = 0 aangevuld aan tblHistorie en sql beveiligd met quotes */
 $versie = '10-06-2024'; /* Sortering kzlJaar aangepast. Het recentste jaar staat nu bovenaan */
 $versie = '12-12-2024'; /* kzlFouteMeld toegevoegd een aantallen getoond bij meldingen. Als een definitieve melding retour komt als controle melding kan binnen 30 dagen de melding weer worden 'open' gezet met kzlFouteMeld en knpOpenReq */

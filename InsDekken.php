@@ -1,10 +1,10 @@
 <?php 
 require_once('validation_functions.php');
 $versie = '18-12-2021'; /* Gekopieerd van insDracht.php */
-$versie = '02-03-2023'; /* $zoek_vader_laatste_dekkingen toegevoegd */
+$versie = '02-03-2023'; /* zoek_vader_laatste_dekkingen toegevoegd */
 $versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */
 $versie = '07-09-2024'; /* Periode tussen werpen en dekken teruggebracht naar 60 i.p.v. 183 dagen */
-$versie = '23-11-2024'; /* In keuzelijst moeder- en vaderdieren  uitgeschaarde dieren wel tonen. $zoek_afvoerstatus_mdr aangevuld met h.actId != 10 */
+$versie = '23-11-2024'; /* In keuzelijst moeder- en vaderdieren  uitgeschaarde dieren wel tonen. zoek_afvoerstatus_mdr aangevuld met h.actId != 10 */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 
  session_start(); ?>

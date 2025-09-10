@@ -6,11 +6,11 @@
 21-2-2020 : LOAD DATA LOCAL INFILE vervangen door file()
 28-8-2020 : Omnummering toegevoegd in array
 26-9-2020 : in te lezen velden in impRespons aangepast ivm Omnummeren
-4-11-2020 : een quute in een response melding veroorzaakt geen foute query stateent meer door str_replace("'", "''", $regel[$ii]);
+4-11-2020 : een quute in een response melding veroorzaakt geen foute query stateent meer door str_replace("'", "''", regel[ii]);
 12-12-2020 : Gearchiveerde bestanden RVO aangevuld met tijdstip van melden versus ontvangen response
 01-04-2022 sql beveiligd met quotes
 10-02-2025 : Bericht als definitieve melding terugkomt als controle melding aangepast
-23-08-2025 : ubn uit bestandsnaam $responsfile_rename en $requestfile_rename gehaald -->
+23-08-2025 : ubn uit bestandsnaam responsfile_rename en requestfile_rename gehaald -->
  */
 
 include "url.php";

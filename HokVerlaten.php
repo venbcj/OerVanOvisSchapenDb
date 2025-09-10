@@ -1,6 +1,6 @@
 <?php 
 $versie = '27-12-2019'; /* gekopieerd van HokOverpl.php */
-$versie = '16-2-2020'; /* in variabele $tabel 'and h2.actId != 3' toegevoegd zodat moederdier wordt getoond */
+$versie = '16-2-2020'; /* in variabele tabel 'and h2.actId != 3' toegevoegd zodat moederdier wordt getoond */
 $versie = '27-4-2021'; /* Datum aanwas hoeft niet meer kleiner of gelijk te zijn aan datum in verblijf. sql beveiligd met quotes */
 $versie = '31-12-2023'; /* and h.skip = 0 toegevoegd aan tblHistorie */
 $versie = '07-01-2024'; /* Select_all toegevoegd en include kalender op een andere plek gezet omdat dit elkaar anders bijt. */
@@ -203,7 +203,7 @@ if(isset($data)) {
 if( (isset($_POST['knpVervers_']) || isset($_POST['knpSave_']) ) && !isset($_POST['txtDatumall_']) ) { $cbKies = $_POST["chbkies_$schaapId"]; $datum = $_POST["txtDatum_$schaapId"]; }
 // Bij de eerste keer openen van deze pagina bestaat als enigste keer het veld txtDatumall_ . knpVervers_ bestaat als hidden veld. txtDatum_$schaapId en txtGewicht_$schaapId bestaan dan nog niet. Variabalen $datum en $kg kunnen enkel worden gevuld als wordt voldaan aan (isset($_POST['knpVervers_']) && !isset($_POST['txtDatumall_']))  !!!
 	if(!isset($datum) && isset($sess_dag)) { $datum = $sess_dag; }
-	if(isset($datum)) /*$datum kan al bestaan voor isset($_POST['knpVervers_']) */ { $makeday = date_create($datum); $day = date_format($makeday,'Y-m-d'); }
+	if(isset($datum))  { $makeday = date_create($datum); $day = date_format($makeday,'Y-m-d'); }
 	
 // Controleren of ingelezen waardes correct zijn.
 	if( empty($datum)													|| # Overplaatsdatum is leeg
@@ -222,7 +222,9 @@ if (isset($_POST['knpVervers_']) && !isset($_POST['txtDatumall_'])) { $cbKies = 
  <td align = center> 
 <!--	<input type = hidden size = 1 name = <?php #echo "txtOke_$schaapId"; ?>  value = <?php #echo $oke; ?> >--><!--hiddden Dit veld zorgt ervoor dat chbkies wordt aangevinkt als het ingebruk wordt gesteld -->
 	<input type = hidden size = 1 name = <?php echo "chbkies_$schaapId"; ?> value = 0 > <!-- hiddden -->
-	<input type = checkbox 		  name = <?php echo "chbkies_$schaapId"; ?> value = 1 <?php echo $cbKies == 1 ? 'checked' : ''; if ($oke <> 1) { ?> disabled <?php }  else {	?> class="checkall" <?php } /* else if ($txtOke == 0) wordt maar 1x gepasseerd nl. als onvolledige gegevens voor het eerst volledig zijn ingevuld. Anders is óf het eerst gedeeldte van het if-statement van toepassing of $txtOke == 1.  */ ?> >
+    <input type = checkbox 		  name = <?php echo "chbkies_$schaapId"; ?> value = 1 <?php echo $cbKies == 1 ? 'checked' : ''; if ($oke <> 1) { ?> disabled <?php }  else {	?> class="checkall" <?php } 
+    /* else if (txtOke == 0) wordt maar 1x gepasseerd nl. als onvolledige gegevens voor het eerst volledig zijn ingevuld. Anders is óf het eerst gedeeldte van het if-statement van toepassing of txtOke == 1.  */
+ ?> >
  </td>
 <!-- Overplaatsdatum -->
  <td align = center>

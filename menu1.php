@@ -5,8 +5,8 @@
 26-2-2015 url aangepast
 14-11-2015 naamwijziging van Inkoop naar Voorraadbeheer en Medicijn registratie naar Medicijn toediening
 18-11-2015 Hok gewijzigd naar verblijf
-6-12-2015 :  $versie toegveoged
-19-12-2015 : query $moduleFinancieel verplaatst naar login.php
+6-12-2015 :  versie toegveoged
+19-12-2015 : query moduleFinancieel verplaatst naar login.php
 20-12-2020 : Alerts toegevoegd
 29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.tpl.php
 25-12-2021 : Dracht.php hernoemd naar Dekkingen.php 11-1-2022 kleur link variabel gemaakt

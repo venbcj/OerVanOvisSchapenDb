@@ -1,17 +1,17 @@
 <?php 
-$versie = '7-5-2014'; /*voorwaarde levensnummer moet bestaan mag ook geen moeder zijn daardoor 'empty($status) || $status == 'Overleden' ' gewijzigd in*/
-$versie = '9-5-2014'; /*voorwaarde "Overplaatsing niet mogelijk. Zie status." uitgebreid met !empty($status). Empty is nl al "levensnummer onbekend"
-	        voorwaarde "Datum ligt voor $maxdm ." uitgebreid met $status == 'lam'. Deze voorwaarde geldt immers enkel bij een lam en bijv. niet bij een moederdier.*/
-$versie = '30-5-2014'; /*Bij $cntr_hok is de doelgroep varaibel gemaakt.*/
-$versie = '8-8-2014'; /*quoutes bij "$status" weggehaald*/
+$versie = '7-5-2014'; /*voorwaarde levensnummer moet bestaan mag ook geen moeder zijn daardoor 'empty(status) || status == 'Overleden' ' gewijzigd in*/
+$versie = '9-5-2014'; /*voorwaarde "Overplaatsing niet mogelijk. Zie status." uitgebreid met !empty(status). Empty is nl al "levensnummer onbekend"
+	        voorwaarde "Datum ligt voor maxdm ." uitgebreid met status == 'lam'. Deze voorwaarde geldt immers enkel bij een lam en bijv. niet bij een moederdier.*/
+$versie = '30-5-2014'; /*Bij cntr_hok is de doelgroep varaibel gemaakt.*/
+$versie = '8-8-2014'; /*quoutes bij "status" weggehaald*/
 $versie = '23-11-2014'; /*functie header() toegevoegd. In de header wordt het vervevrsen van de pagina verstuurd (request =. response) naar de server 
 8-3-2015 : Login toegevoegd */
 $versie = '23-11-2016'; /* actId = 3 uit on clause gehaald en als sub query genest.   vw_StatusSchaap verwijderd en gebaseerd op laatste hisId */
-$versie = '20-1-2017'; /* $hok_uitgez gewijzigd van Geboren naar 1 en Gespeend naar 2 */
+$versie = '20-1-2017'; /* hok_uitgez gewijzigd van Geboren naar 1 en Gespeend naar 2 */
 $versie = "22-1-2017"; /* tblBezetting gewijzigd naar tblBezet */
 $versie = "12-2-2017"; /* Overplaatsen naar alle actieve hokken mogelijk gemaakt */
-$versie = "7-3-2017"; /* subquery hokbezetting (alias hb) verwijderd in query $result */
-$versie = '20-3-2018';  /* Meerdere pagina's gemaakt 12-5-2018 : if(isset($data)) toegevoegd. Als alle records zijn verwerkt bestaat $data nl. niet meer !! */
+$versie = "7-3-2017"; /* subquery hokbezetting (alias hb) verwijderd in query result */
+$versie = '20-3-2018';  /* Meerdere pagina's gemaakt 12-5-2018 : if(isset(data)) toegevoegd. Als alle records zijn verwerkt bestaat data nl. niet meer !! */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '20-1-2019'; /* alles aan- en uitzetten met javascript */
 $versie = '24-4-2020'; /* url Javascript libary aangepast */

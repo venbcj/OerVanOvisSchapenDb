@@ -1,7 +1,7 @@
 <!-- 15-6-2016 : gemaakt 
 22-01-2021 : Dubbele invoer ubn niet mogelijk gemaakt. sql met quotes beveiligd 
-23-04-2023 $key == 'txtdebPres' bestond niet en in query $wijzigNaamreader werd het veld naam gewijzigd i.p.v. naamreader
-07-03-2025 : In Relaties.php <input type= "hidden" name= echo "txtId_$Id"; verwijderd en hier lege checkboxen gedefinieerd en wijzigingen vergeleken met data uit database -->
+23-04-2023 key == 'txtdebPres' bestond niet en in query wijzigNaamreader werd het veld naam gewijzigd i.p.v. naamreader
+07-03-2025 : In Relaties.php <input type= "hidden" name= echo "txtId_Id"; verwijderd en hier lege checkboxen gedefinieerd en wijzigingen vergeleken met data uit database -->
 
 <?php
 /* toegepast in :

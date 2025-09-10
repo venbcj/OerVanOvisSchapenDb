@@ -31,7 +31,6 @@ unset($fldSalber);
 foreach($id as $key => $value) {  
 
     if ($key == 'txtWaarde' && !empty($value)) {  $fldWaarde = $value; }    
-     /*else if ($key == 'txtWaarde' && empty($value)) {  $fldWaarde= 'NULL' ; }*/
     
     if ($key == 'chkActief') {  $fldActief = $value; }
 	
@@ -53,7 +52,7 @@ $Update_Element = "
 UPDATE tblElementuser
 SET waarde = ".db_null_input($fldWaarde).", actief = '".mysqli_real_escape_string($db,$fldActief)."', sal = '".mysqli_real_escape_string($db,$fldSalber)."'
 WHERE elemuId = '".mysqli_real_escape_string($db,$recId)."' ";
-/*echo $Update_Element.'<br>';*/		mysqli_query($db,$Update_Element) or die (mysqli_error($db));
+		mysqli_query($db,$Update_Element) or die (mysqli_error($db));
 
 
 } 

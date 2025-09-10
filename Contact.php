@@ -3,7 +3,7 @@ $versie = '14-8-2014'; /*Menu (rechts) veranderd van menuInkoop naar menuBeheer 
 $versie = '8-3-2015'; /*Login toegevoegd*/
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
-$versie = '23-02-2025'; /* <input type= "hidden" name = <?php echo "txtPersId_$Id"; ?> verwijderd en <input  type= "hidden" name= "txtId_" vervangen door $_SESSION["CNT"] en alleen aanhef verplicht gemaakt */
+$versie = '23-02-2025'; /* <input type= "hidden" name = <?php echo "txtPersId_Id"; ?> verwijderd en <input  type= "hidden" name= "txtId_" vervangen door $_SESSION["CNT"] en alleen aanhef verplicht gemaakt */
 
 session_start(); ?>
 <html>

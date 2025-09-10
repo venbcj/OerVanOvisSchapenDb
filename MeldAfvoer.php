@@ -8,9 +8,9 @@ $versie = '5-12-2016'; /* kzlPartij gewijzigd in kzlBest */
 $versie = '26-1-2018'; /* Bij toch niet verwijderen wordt kzlBest weer gevuld */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '20-1-2019'; /* alles aan- en uitzetten met javascript */
-$versie = '3-1-2020'; /* het pad ($file_r) naar FTP variabel gemaakt ipv uit tblLeden gehaald */
+$versie = '3-1-2020'; /* het pad (file_r) naar FTP variabel gemaakt ipv uit tblLeden gehaald */
 $versie = '30-1-2022'; /* Keuze controle en knop melden bij elkaar gezet. Sql beveiligd met quotes */
-$versie = '1-4-2022'; /* $code binnen save_melding.php werd opgehaald uit responscheck.php */
+$versie = '1-4-2022'; /* code binnen save_melding.php werd opgehaald uit responscheck.php */
 $versie = '31-12-2023'; /* and h.skip = 0 aangevuld aan tblHistorie */
 $versie = '01-01-2024'; /* hd.skip = 0 verwijderd i.v.m. vw_HistorieDm.php aangepast */
 $versie = '20-01-2024'; /* Controle melding verplicht gemaakt  */

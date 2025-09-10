@@ -1,7 +1,7 @@
 <!-- 4-7-2020 : Gekopieerd van post_readerAdop.php 
 	21-9-2020 OMN moet VMD zijn 
 1-02-2021 Transponder toegevoegd 
-8-5-2021 : isset($verwerkt) toegevoegd om dubbele invoer te voorkomen. Verschil tussen kiezen of verwijderen herschreven -->
+8-5-2021 : isset(verwerkt) toegevoegd om dubbele invoer te voorkomen. Verschil tussen kiezen of verwijderen herschreven -->
 
 <?php
 include "url.php";

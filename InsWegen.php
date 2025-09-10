@@ -1,6 +1,6 @@
 <?php 
 $versie = '03-09-2017';  /* aangemaakt */
-$versie = '20-03-2018';  /* Meerdere pagina's gemaakt 12-5-2018 : if(isset($data)) toegevoegd. Als alle records zijn verwerkt bestaat $data nl. niet meer !! */
+$versie = '20-03-2018';  /* Meerdere pagina's gemaakt 12-5-2018 : if(isset(data)) toegevoegd. Als alle records zijn verwerkt bestaat data nl. niet meer !! */
 $versie = '28-09-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '20-01-2019'; /* alles aan- en uitzetten met javascript */
 $versie = '07-03-2019'; /* gewicht gedeeld door 100 ipv 10 */

@@ -25,7 +25,7 @@ foreach($_POST as $key => $value) {
 foreach($array as $recId => $id) { //recId is hier schaapId
    
  foreach($id as $key => $value) {
- if ($key == 'chbkies' && $value == 1 ) 	{ /* Alleen als checkbox chbkies de waarde 1 heeft  /*echo $key.'='.$value.' ';*/  $box = $value ;
+ if ($key == 'chbkies' && $value == 1 ) 	{   $box = $value ;
 
 	
   foreach($id as $key => $value) {
@@ -81,32 +81,7 @@ WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 5
 
 if(!isset($newHok) || $kzlHok <> $newHok) { // Als het gekozen verblijf is ongelijk aan verblijf van de vorige regel (record)
 
-$newHok = $kzlHok; /*unset($ovp_periId); // Periode van voorgaande overplaats-record mag niet meer bestaan.
-
-$zoek_periId = mysqli_query($db,"
-SELECT periId
-FROM tblPeriode
-WHERE isnull(dmafsluit) and hokId = ".mysqli_real_escape_string($db,$newHok)."
-") or die(mysqli_error($db));
-
-	while ($pe = mysqli_fetch_assoc($zoek_periId)) { $ovp_periId = $pe['periId']; }
-	
-if(!isset($ovp_periId)) {
-
-$insert_tblPeriode = "
-INSERT INTO tblPeriode
-SET hokId = ".mysqli_real_escape_string($db,$newHok).", doelId = '".mysqli_real_escape_string($db,$doelId)."'
-";
-	mysqli_query($db,$insert_tblPeriode) or die (mysqli_error($db));
-
-$zoek_periId = mysqli_query($db,"
-SELECT periId
-FROM tblPeriode
-WHERE isnull(dmafsluit) and hokId = ".mysqli_real_escape_string($db,$newHok)."
-") or die(mysqli_error($db));
-
-	while ($pe = mysqli_fetch_assoc($zoek_periId)) { $ovp_periId = $pe['periId']; }
-}*/
+$newHok = $kzlHok;  // Periode van voorgaande overplaats-record mag niet meer bestaan.
 }
 
 $insert_tblBezet = "

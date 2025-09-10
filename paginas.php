@@ -51,8 +51,6 @@ class Page_numbers
     ********/
     function count_records()
     {
-        /*$ff = "SELECT count(*) tot FROM ".$this->table." ".$this->condition;
-        echo $ff;*/
         $res = @mysqli_query($this->link_id,"SELECT count(*) tot FROM ".$this->table." ".$this->condition);
         while($row = mysqli_fetch_assoc($res))
         {
@@ -68,10 +66,6 @@ class Page_numbers
     ********/
     function fetch_data($fields="*", $order="")
     {
-        /*echo $fields.'<br>';
-        echo 'FROM '.$this->table.'<br>';
-        echo $this->condition.'<br>';
-        echo $order.'<br>';*/
         $res = @mysqli_query($this->link_id,"SELECT ".$fields." FROM ".$this->table." ".$this->condition." ".$order." LIMIT ".$this->offset.",".$this->rpp);
         while($row = mysqli_fetch_assoc($res))
         {

@@ -28,16 +28,13 @@ if(!empty($recId)) {
 
 foreach($id as $key => $value) {
 
-    if ($key == 'chkActief' ) {  $fldActief = $value; /*echo '$fldActief = '.$value.'<br>';*/ }
+    if ($key == 'chkActief' ) {  $fldActief = $value;  }
 	 
-	if ($key == 'chkSalber' /*&& !empty($value)*/) {  $fldSalber = $value; }
+	if ($key == 'chkSalber' ) {  $fldSalber = $value; }
 	else { $fldSalber = 0; }
 
 	
 }
-
-/*echo $recId."<br/>";
-echo $fldActief."<br/>";*/
 
 $Update_Rubriek = "
 UPDATE tblRubriekuser

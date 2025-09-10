@@ -3,7 +3,7 @@ $versie = '25-10-2015'; /*Gemaakt*/
 $versie = '21-12-2015'; /*hoofdrubrieken gesorteerd*/
 $versie = '19-10-2016';
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
-$versie = '12-7-2020'; /* ë uit database gewijzigd in echo htmlentities($string, ENT_COMPAT,'ISO-8859-1', true); bron https://www.php.net/htmlspecialchars via https://www.phphulp.nl/php/forum/topic/speciale-tekens-in-code-omzetten/50786/ */
+$versie = '12-7-2020'; /* ë uit database gewijzigd in echo htmlentities(string, ENT_COMPAT,'ISO-8859-1', true); bron https://www.php.net/htmlspecialchars via https://www.phphulp.nl/php/forum/topic/speciale-tekens-in-code-omzetten/50786/ */
 $versie = '31-12-2023'; /* sql beveiligd met quotes */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align="center" valign = 'top'> 31-12-24 include login voor include header gezet */
 

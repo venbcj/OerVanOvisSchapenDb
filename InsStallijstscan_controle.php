@@ -12,7 +12,7 @@ $versie = "11-03-2024"; /* Bij geneste query uit
 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 */
-$versie = "13-12-2024"; /* Niet gescande dieren onderaan gezet en link naar deze dieren toegevoegd. Ook controle en foutmeldingen samengevoegd, zie $onjuist */
+$versie = "13-12-2024"; /* Niet gescande dieren onderaan gezet en link naar deze dieren toegevoegd. Ook controle en foutmeldingen samengevoegd, zie onjuist */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '15-07-2025'; /* Veld/keuzelijst ubn toegevoegd */
 

@@ -1,9 +1,5 @@
 <?php
-/* 30-10-2016 : $year vervangen door $new_jaar */
-/*
-$new_jaar = 2015;
-$lidId = 4;
-include connect_db*/
+/* 30-10-2016 : year vervangen door new_jaar */
 
 /* Toegepast in :  
 	-	Deklijst.php

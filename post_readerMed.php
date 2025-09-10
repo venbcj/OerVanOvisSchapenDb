@@ -2,9 +2,9 @@
  12-03-2017 : Aangpast na.v. Release 2 of wel nieuwe databasestructuur, verwijderen mogelijk gemaakt en mysql verandert in mysqli 
 Toegepast in : InsMedicijn.php 
 15-11-2020 : onderscheid gemaakt tussen reader Agrident en Biocontrol 
-24-1-2021 : Sql beveiligd met quotes. Transponder nummer opslaan in tblSchaap als deze nog niet bestaat Verschil tussen kiezen of verwijderen herschreven 31-1 $schaapId gewijzigd naar $schaapId_db 
-8-5-2021 : isset($verwerkt) toegevoegd om dubbele invoer te voorkomen 
-25-6-20221 Bij $zoek_totale_voorraad GROUP BY inkId toegevoegd 
+24-1-2021 : Sql beveiligd met quotes. Transponder nummer opslaan in tblSchaap als deze nog niet bestaat Verschil tussen kiezen of verwijderen herschreven 31-1 schaapId gewijzigd naar schaapId_db 
+8-5-2021 : isset(verwerkt) toegevoegd om dubbele invoer te voorkomen 
+25-6-20221 Bij zoek_totale_voorraad GROUP BY inkId toegevoegd 
 22-9-2021 : Functie inlezen_pil toegevoegd -->
 
 <?php

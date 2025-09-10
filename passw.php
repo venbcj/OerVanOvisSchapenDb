@@ -2,7 +2,7 @@
 /* 27-3-2015 :  Code om connectie te maken met de database van de klant verplaatst van Login.php naar passw.php. Dit ivm post_readerGeb.php. Zie daar de reden achter Inckude "connect_db.php";
 6-4-2015 : Toelichtin op het veld alias in tblLeden : alias wordt gebruikt om op plekken de sepcifieke klant te benoemen. Bijv. de mapnaam voor reader.txt
 8-4-2015 : sql beveiligd
-18-12-2015 : $goed gewijzigd van $goed = "De inloggegevens zijn gewijzigd naar ".$wwnew ; naar $goed = "De inloggegevens zijn gewijzigd." ;
+18-12-2015 : goed gewijzigd van goed = "De inloggegevens zijn gewijzigd naar ".wwnew ; naar goed = "De inloggegevens zijn gewijzigd." ;
 22-2-2017 : wachtwoord voor versleuteling aangevuld met 50 karakters
  */
 // Toegepast in connect_db.php

@@ -1,7 +1,7 @@
 <?php /* 15-3-2020 : Aantal nog in te lezen gesplitst i.v.m. 2 verschillende readers
 2-6-2020 : ovleg gewijzigd in adop
 4-7-2020 : 1 tabel impAgrident gemaakt 
-14-11-2020 $aantpil aangepast naar impAgrident 
+14-11-2020 aantpil aangepast naar impAgrident 
 20-06-2021 Voerregistratie toegevoegd 
 $versie = '18-12-2021'; /* Dekken en Dracht toegevoegd 
 05-08-2023 Stallijstscan toegevoegd 

@@ -5,8 +5,8 @@
 23-11-2015 : Berekening breedte kzlWerknr verplaatst naar login.php */
 $versie = '2-12-2016'; /* Dubbele records verwijderd als schaap opnieuw wordt aangevoerd */
 $versie = '5-12-2016'; /* In historie alleen meldingen die niet zijn verwijderd.  and m.skip = 0 toegvoegd dus */
-$versie = '14-1-2017'; /* In query $geschiedenis $levnr vervangen door $schaapId. Bij Overplaatsing = aanwas is schaap t.t.v. overplaatsing lam en geen moeder zoals tot voor 14-1-2017 */
-$versie = '15-1-2017'; /* In query $geschiedenis hisId toegevoegd bij eerste en laatste worp */
+$versie = '14-1-2017'; /* In query geschiedenis levnr vervangen door schaapId. Bij Overplaatsing = aanwas is schaap t.t.v. overplaatsing lam en geen moeder zoals tot voor 14-1-2017 */
+$versie = '15-1-2017'; /* In query geschiedenis hisId toegevoegd bij eerste en laatste worp */
 $versie = "22-1-2017"; /* tblBezetting gewijzigd naar tblBezet */
 $versie = '30-1-2017'; /* : Halsnummer toegevoegd  */
 $versie = '16-2-2017'; /* hokken van volwassen dieren tonen (incl opnieuw lam ivm niet meer via tblPeriode)  LET OP : bij lam moet h1.actId = 2 worden uitgesloten en bij mdrs en vdrs h2.actId = 3 uitsluiten !!! */
@@ -15,7 +15,7 @@ $versie = '5-8-2017';  /* Gem groei bij spenen toegevoegd */
 $versie = '28-12-2017';  /* In uit verblijf halen van moeder- en vaderdieren in Historie opgenomen */
 $versie = '20-07-2018';  /* Index kzlRam_ gewijzigd van werknr_ram naar schaapId */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
-$versie = '12-12-2018'; /* Eerste en laatste worp mag alleen eigen lammeren zijn => sl.lidId = ...$lidId toegevoegd */
+$versie = '12-12-2018'; /* Eerste en laatste worp mag alleen eigen lammeren zijn => sl.lidId = ...lidId toegevoegd */
 $versie = '15-2-2020'; /* tabelnaam gewijzigd van HIS naar his en van TOEL naar toel */
 $versie = '23-5-2020'; /* unset gem groei spenen en afvoer en stamboeknummer. Geadopteerd aan historie toegevoegd */
 $versie = '27-9-2020'; /* Handmatig omnummeren toegevoegd */
@@ -24,13 +24,13 @@ $versie = '11-4-2021'; /* Adoptie losgekoppeld van verblijf */
 $versie = '11-4-2021'; /* Union SELECT uit.hist hisId, concat(ho.hoknr,' verlaten ') toel   aangepast. ht.actId = 7 toegevoegd en niet alleen volwassen dieren kunnen nu de status 'verlaten' hebben. */
 $versie = '16-4-2023'; /* Bij omnummeren oud nummmer getoond incl. de melding van omnunummeren. Na omnummeren werden eerdere meldingen aan RVO niet meer getoond. Dit was nl. gekoppeld aan het oude levensnummer. Dit is hersteld door het oude levensnummer te koppelen. Zie veld 'wanneer wel omgenummerd' */
 $versie = '14-5-2023'; /* Voorouders toegevoegd */
-$versie = '23-6-2023'; /* $schaapId werd te laat gezet. Na de link Wijzigen. $schaapId wordt nu eerder gezet. */
+$versie = '23-6-2023'; /* schaapId werd te laat gezet. Na de link Wijzigen. schaapId wordt nu eerder gezet. */
 $versie = '01-01-2024'; /* h.skip = 0 aangevuld bij tblHistorie */
 $versie = "11-03-2024"; /* Bij geneste query uit 
 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 */
-$versie = '30-11-2024'; /* In keuzelijst moeder- en vaderdieren  uitgeschaarde dieren wel tonen. $zoek_afvoerstatus_mdr aangevuld met h.actId != 10 */
+$versie = '30-11-2024'; /* In keuzelijst moeder- en vaderdieren  uitgeschaarde dieren wel tonen. zoek_afvoerstatus_mdr aangevuld met h.actId != 10 */
 $versie = '14-12-2024'; /* 4 links t.b.v. jquery en ajax verplaatst naar header.php */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '16-08-2025'; /* ubn van gebruiker toegevoegd. Per deze versie kan een gebruiker meerdere ubn's hebben */

@@ -4,15 +4,15 @@
  18-1-2017 : Query's aangepast n.a.v. nieuwe tblDoel  22-1-2017 : tblBezetting gewijzigd naar tblBezet 
  18-2-2017 : Controle op startdatum moeder toegevoegd 
  28-2-2017 : Ras en gewicht niet veplicht gemaakt
- 28-4-2017 : $dmafv_mdr bij elke regel leeg gemaakt. Dit veroorzaakte het afbreken van 30 regels bij ± 7 regels. 
+ 28-4-2017 : dmafv_mdr bij elke regel leeg gemaakt. Dit veroorzaakte het afbreken van 30 regels bij ± 7 regels. 
  28-2-2018 : Opslaan dood geboren toegevoegd 
  24-6-2018 : uitvaldatum verwijderd 
  16-3-2020 : onderscheid gemaakt tussen reader Agrident en Biocontrol
   9-5-2020 : Worpverloop toegevoegd aan tblVolwas
  30-5-2020 : Veld moment opslaan ook bij reader Agrident t.b.v. taak Dood geboren
  13-7-2020 : impGeboortes vervangen door impAgrident 18-7 juiste uitvaldatum vastgelegd nl. txtUitvaldm anders txtDatum
- 23-1-2021 : transponder toegevoegd. Sql beveiligd met quotes. Verschil tussen kiezen of verwijderen herschreven 30-1 $mdrId gewijzigd naar $moederId
- 07-02-2021 : isset($verwerkt) toegevoegd om dubbele invoer te voorkomen
+ 23-1-2021 : transponder toegevoegd. Sql beveiligd met quotes. Verschil tussen kiezen of verwijderen herschreven 30-1 mdrId gewijzigd naar moederId
+ 07-02-2021 : isset(verwerkt) toegevoegd om dubbele invoer te voorkomen
  10-01-2022 : Code aangepast n.a.v. registratie dekkingen en dracht
  20-05-2023 : De datum van dekken (datum in tblVolwas) wordt vanaf nu vastgelegd in tblHistorie met actId 18
  11-07-2025 : Opslaan van ubn in tblStal toegevoegd. 29-8-2025 : Bij gebruikers zonder module technisch wordt ubn niet o.b.v. moederdier bepaald.

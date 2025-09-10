@@ -6,9 +6,9 @@ $versie = "23-1-2017"; /* 22-1-2017 tblBezetting gewijzigd naar tblBezet 23-1-20
 $versie = "5-2-2017"; /* Aanpassing n.a.v. verblijven met verschillende doelgroepen */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '20-12-2019'; /* tabelnaam gewijzigd van UIT naar uit tabelnaam */
-$versie = '29-2-2020'; /* Datum laatste schaap uit verblijf toegevoegd 7-3-2020 fouten uit code gehaald $dmstop_geb moest $dmstop_spn of $dmstop_prnt zijn. Er waren onterecht volwassendieren waarvan de periode kon worden afgesloten */
+$versie = '29-2-2020'; /* Datum laatste schaap uit verblijf toegevoegd 7-3-2020 fouten uit code gehaald dmstop_geb moest dmstop_spn of dmstop_prnt zijn. Er waren onterecht volwassendieren waarvan de periode kon worden afgesloten */
 $versie = '9-7-2021'; /* Schapen uit verblijf herzien. Join gewijzigd van h.hisId = uit.hisv naar b.bezId = uit.bezId */
-$versie = '23-4-2023'; /* $ht['laatste_uit']; gewijzigd naar $hk['laatste_uit']; Resterende SQL beveiligd met quotes */
+$versie = '23-4-2023'; /* ht['laatste_uit']; gewijzigd naar hk['laatste_uit']; Resterende SQL beveiligd met quotes */
 $versie = '28-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */
 $versie = '20-01-2024'; /* in nestquery 'uit' is 'and a1.aan = 1' uit WHERE gehaald. De hisId die voorkomt in tblBezet volstaat. Bovendien is bij Pieter hisId met actId 3 gekoppeld aan tblBezet en heeft het veld 'aan' in tblActie de waarde 0. De WHERE incl. 'and a1.aan = 1' geeft dus een fout resultaat. */
 $versie = "11-03-2024"; /* Bij geneste query uit 
@@ -33,7 +33,7 @@ include "login.php"; ?>
 			<TD align = "center" valign = "top">
 <?php
 if (is_logged_in()) {
-//include vw_Voorraad // incl. $vw_Voorraden t.b.v. save_voer.php
+//include vw_Voorraad // incl. vw_Voorraden t.b.v. save_voer.php
 include "kalender.php";
 
 $qryKeuzelijstVoer = "

@@ -1,6 +1,6 @@
 <?php
 require_once('validation_functions.php');
-/* 8-8-2014 Aantal karakters werknr variabel gemaakt en quotes bij "$kg" weggehaald 
+/* 8-8-2014 Aantal karakters werknr variabel gemaakt en quotes bij "kg" weggehaald 
 23-11-2014 : functie header() toegevoegd. In de header wordt het vervevrsen van de pagina verstuurd (request =. response) naar de server
 8-3-2015 : Login toegevoegd 
 18-11-2015 Aanwas gewijzigd naar Aanvoer
@@ -8,11 +8,11 @@ require_once('validation_functions.php');
  */
 $versie = '9-11-2016'; /* Controle moederdier aangepast */
 $versie = '11-11-2016'; /* Controle of dier elders nog op stal staat verwijderd. Dit werkt ave rechts op het programma. Alleen i.v.m. andere gebruikers heeft dit een blokkerende werking. */
-$versie = '20-1-2017'; /* $hok_uitgez = 'Gespeend' gewijzigd in $hok_uitgez = 2. */
+$versie = '20-1-2017'; /* hok_uitgez = 'Gespeend' gewijzigd in hok_uitgez = 2. */
 $versie = '1-2-2017'; /* Halsnummer toegevoegd  */
 $versie = '28-2-2017'; /* Ras en gewicht niet veplicht gemaakt		4-4-2017 : kleuren halsnummer uitgebreid */
 $versie = '17-2-2018'; /* keuzelijst moederdier verwijderd */
-$versie = '20-3-2018';  /* Meerdere pagina's gemaakt 12-5-2018 : if(isset($data)) toegevoegd. Als alle records zijn verwerkt bestaat $data nl. niet meer !! */
+$versie = '20-3-2018';  /* Meerdere pagina's gemaakt 12-5-2018 : if(isset(data)) toegevoegd. Als alle records zijn verwerkt bestaat data nl. niet meer !! */
 $versie = '22-6-2018';  /* Velden in impReader aangepast */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '20-1-2019'; /* alles aan- en uitzetten met javascript */
@@ -20,11 +20,11 @@ $versie = '7-3-2019'; /* gewicht gedeeld door 100 ipv 10 */
 $versie = '24-4-2020'; /* url Javascript libary aangepast */
 $versie = '24-6-2020'; /* onderscheid gemaakt tussen reader Agrident en Biocontrol */
 $versie = '4-7-2020'; /* 1 tabel impAgrident gemaakt */
-$versie = '28-2-2020'; /* $fase gebaseerd om omschrijving geslacht */
+$versie = '28-2-2020'; /* fase gebaseerd om omschrijving geslacht */
 $versie = '26-11-2022'; /* geboortedatum toegevoegd en sql beveiligd met enkele quotes */
 $versie = '10-11-2024'; /* ubn toegevoegd aan keuzelijst herkomst */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
-$versie = '17-04-2025'; /* Controle of levensnummer al bestaat in database vervangen door controle op aan- of afwezigheid op de stallijst. Zie ($levnr_stal > 0 && !isset($afgevoerd)) */
+$versie = '17-04-2025'; /* Controle of levensnummer al bestaat in database vervangen door controle op aan- of afwezigheid op de stallijst. Zie (levnr_stal > 0 && !isset(afgevoerd)) */
 $versie = '11-07-2025'; /* Veld Ubn toegevoegd. Betreft eigen ubn van gebruiker. Per deze versie kan een gebruiker meerdere ubn's hebben */
 
  session_start(); ?>

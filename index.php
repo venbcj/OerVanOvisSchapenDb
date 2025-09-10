@@ -2,7 +2,7 @@
 
 /* 29-8-2018 titel.php verwijderd. Zit in header.php samen met Style.css
 23-5-2020 logo aangepast
-11-7-2020  $file = "index.php"; gewijzigd naar $file = "Home.php";
+11-7-2020  file = "index.php"; gewijzigd naar file = "Home.php";
  */
 
 require_once('url_functions.php');

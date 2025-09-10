@@ -1,7 +1,7 @@
 <?php
 /*
 18-11-2015 : hok verandert in verblijf
-12-12-2015 :  $versie toegveoged
+12-12-2015 :  versie toegveoged
 1-6-2020 : Uitval en redenen gewijzigd naar Redenen en momenten
 12-02-2021 : Systeemgegevens gewijzigd naar Instellingen
 29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.tpl.php

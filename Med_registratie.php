@@ -1,9 +1,9 @@
-<?php /* 17-2-14 : $schaapgegevens aangepast. vw_Schapen is aangevuld met max bezetId (laatste hoknr). Op deze manier wordt maar 1 regel uit vw_Bezetting gekoppeld met vw_Schapen. Het hok wordt alleen getoond als het dier een lam is. 
+<?php /* 17-2-14 : schaapgegevens aangepast. vw_Schapen is aangevuld met max bezetId (laatste hoknr). Op deze manier wordt maar 1 regel uit vw_Bezetting gekoppeld met vw_Schapen. Het hok wordt alleen getoond als het dier een lam is. 
 		Bij keuze moederdier moet per schaap het selectieveld uit staan 
-  18-2-2014 : $reslevnr aangepast. $levnr vervangen door $_POST['kzlLevnr'] 
+  18-2-2014 : reslevnr aangepast. levnr vervangen door _POST['kzlLevnr'] 
   
   19-2-14 : Kolom 'ander medicijn' uitgezet omdat weergave niet juist is.
-  19-2-14 : Uit $kzl type = 'lam' verwijderd. Gevolg is uit $reswerknr 'and isnull(tot) and isnull(afsluitdm)' verwijderd. Ook is kolom 'Generatie' toegevoegd
+  19-2-14 : Uit kzl type = 'lam' verwijderd. Gevolg is uit reswerknr 'and isnull(tot) and isnull(afsluitdm)' verwijderd. Ook is kolom 'Generatie' toegevoegd
 		Post levensnummer via link naar MedOverzSchaap.php
   8-8-2014 : Aantal karakters werknr variabel gemaakt, quotes bij variabelen weggehaald
   11-8-2014 : veld type gewijzigd in fase 
@@ -25,7 +25,7 @@ $versie = '6-1-2019'; /* javascript toegevoegd tbv stadat en eenheid wijzigen pe
 $versie = '10-2-2019'; /* zoeken op Halsnr mogelijk gemaakt */
 $versie = '20-12-2019'; /* tabelnaam gewijzigd van UIT naar uit tabelnaam */
 $versie = '23-09-2021'; /* func_artikelnuttigen.php toegevoegd. Sql beveiligd met quotes.*/
-$versie = '06-11-2023'; /* Bij $zoek_einddatum 'and h.skip = 0' toegevoegd */
+$versie = '06-11-2023'; /* Bij zoek_einddatum 'and h.skip = 0' toegevoegd */
 $versie = '31-12-2023'; /* and h.skip = 0 in een enkele query aangevuld aan tblHistorie */
 $versie = "11-03-2024"; /* Bij geneste query uit 
 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
@@ -33,7 +33,7 @@ join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.
 I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 */
 $versie = '30-11-2024'; /* In keuzelijst levensnummer en werknr uitgeschaarde dieren wel tonen. query's m.b.t. afvoer aangevuld met h.actId != 10 */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = top > gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
-$versie = '15-01-2025'; /*h1.actId != 2 verwijderd in de geneste query 'uit' in de query $kzl_verblijven */
+$versie = '15-01-2025'; /*h1.actId != 2 verwijderd in de geneste query 'uit' in de query kzl_verblijven */
 
  session_start();  ?>
 <!DOCTYPE html>

@@ -272,18 +272,9 @@ while($row = mysqli_fetch_array($result))
 			$opties[] = array('recordid' => $row['Id'], 'name' => str_replace( "/’/", "_", $row['name']), 'rownum' => $n);
 
 			$n++;
-
-
-			/*$vb = json_encode($opties);
-echo $vb;*/
-			
-//var_dump($vb);
-			
 			}
 
 $listnaam[$listname[$i]] = $opties;
-//$listnaam[] = array($listname[$i] => $opties);
-//unset($opties); 
 }
 else {
 	$listnaam[$listname[$i]] = array();

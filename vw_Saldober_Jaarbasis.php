@@ -7,11 +7,11 @@ Eerst worden de Opbrengsten gesommeerd en vervolgens de Kosten
 Binnen de Opbrengsten en de Kosten is onderscheid gemaakt in 7 mogelijkheden
  - 1 De sommatie, zonder veld 'aantal', houdt geen rekening met het aantal ooien, het aantal af te leveren lammeren en het aantal te vervangen ooien 
  - 2 De sommatie,   met   veld 'aantal', houdt geen rekening met het aantal ooien, het aantal af te leveren lammeren en het aantal te vervangen ooien 			=> N.v.t. bij opbrengsten
- - 3 De sommatie, zonder veld 'aantal', houdt rekening met het aantal ooien. 				Het aantal ooien is variable $p_ooital in Saldoberekening.php
- - 4 De sommatie,   met   veld 'aantal', houdt rekening met het aantal ooien. 				Het aantal ooien is variable $p_ooital in Saldoberekening.php 	=> N.v.t. bij opbrengsten
- - 5 De sommatie, zonder veld 'aantal', houdt rekening met het aantal af te leveren lammeren.	Het aantal lammeren is variable $p_afv in Saldoberekening.php
- - 6 De sommatie,   met   veld 'aantal', houdt rekening met het aantal af te leveren lammeren.	Het aantal lammeren is variable $p_afv in Saldoberekening.php 	=> N.v.t. bij opbrengsten
- - 7 De sommatie, zonder veld 'aantal', houdt rekening met het aantal te vervangen ooien 		Het aantal te vervangen ooien is variable $verv_ooi*$p_ooital/100 in Saldoberekening.php 
+ - 3 De sommatie, zonder veld 'aantal', houdt rekening met het aantal ooien. 				Het aantal ooien is variable p_ooital in Saldoberekening.php
+ - 4 De sommatie,   met   veld 'aantal', houdt rekening met het aantal ooien. 				Het aantal ooien is variable p_ooital in Saldoberekening.php 	=> N.v.t. bij opbrengsten
+ - 5 De sommatie, zonder veld 'aantal', houdt rekening met het aantal af te leveren lammeren.	Het aantal lammeren is variable p_afv in Saldoberekening.php
+ - 6 De sommatie,   met   veld 'aantal', houdt rekening met het aantal af te leveren lammeren.	Het aantal lammeren is variable p_afv in Saldoberekening.php 	=> N.v.t. bij opbrengsten
+ - 7 De sommatie, zonder veld 'aantal', houdt rekening met het aantal te vervangen ooien 		Het aantal te vervangen ooien is variable verv_ooi*p_ooital/100 in Saldoberekening.php 
 
  17-1-2021 : enkele quotes om variabele gezet */
 

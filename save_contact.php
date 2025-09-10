@@ -67,7 +67,7 @@ $wijzigvoorletters = "
 	SET letter = ".db_null_input($fldLetter)." 
 	WHERE persId = '".mysqli_real_escape_string($db,$recId)."'
 ";
-/*echo '$wijzigvoorletters = '. $wijzigvoorletters.'<br>';*/	mysqli_query($db,$wijzigvoorletters) or die (mysqli_error($db));
+	mysqli_query($db,$wijzigvoorletters) or die (mysqli_error($db));
 
 
  }
@@ -81,7 +81,7 @@ $wijzigroepnaam = "
 	SET roep = ".db_null_input($fldRoep)."
 	WHERE persId = '".mysqli_real_escape_string($db,$recId)."'
 ";
-/*echo $wijzigroepnaam.'<br>';*/	mysqli_query($db,$wijzigroepnaam) or die (mysqli_error($db));
+	mysqli_query($db,$wijzigroepnaam) or die (mysqli_error($db));
  }
 //unset($roep);
 // Einde Wijzigen roepnaam
@@ -94,7 +94,7 @@ $wijzigtussenvoegsel = "
 	SET voeg = ".db_null_input($fldVgsl)."
 	WHERE persId = '".mysqli_real_escape_string($db,$recId)."'
 ";
-/*echo $wijzigtussenvoegsel.'<br>';*/	mysqli_query($db,$wijzigtussenvoegsel) or die (mysqli_error($db));
+	mysqli_query($db,$wijzigtussenvoegsel) or die (mysqli_error($db));
 
  }
 //unset($voeg);
@@ -108,7 +108,7 @@ $wijzignaam = "
 	SET naam = ".db_null_input($fldNaam)."
 	WHERE persId = '".mysqli_real_escape_string($db,$recId)."'
 ";
-/*echo $wijzignaam.'<br>';*/	mysqli_query($db,$wijzignaam) or die (mysqli_error($db));
+	mysqli_query($db,$wijzignaam) or die (mysqli_error($db));
 
  }
 //unset($naam);
@@ -122,7 +122,7 @@ $wijzigtelefoon = "
 	SET tel = ".db_null_input($fldTel)."
 	WHERE persId = '".mysqli_real_escape_string($db,$recId)."'
 ";
-/*echo $wijzigtelefoon.'<br>';*/	mysqli_query($db,$wijzigtelefoon) or die (mysqli_error($db));
+	mysqli_query($db,$wijzigtelefoon) or die (mysqli_error($db));
 
  }
 //unset($tel);
@@ -137,7 +137,7 @@ $wijzigmobiel = "
 	SET gsm = ".db_null_input($fldGsm)."
 	WHERE persId = '".mysqli_real_escape_string($db,$recId)."'
 ";
-/*echo $wijzigmobiel.'<br>';*/	mysqli_query($db,$wijzigmobiel) or die (mysqli_error($db));
+	mysqli_query($db,$wijzigmobiel) or die (mysqli_error($db));
 
  }
 //unset($gsm);
@@ -152,7 +152,7 @@ $wijzigemail = "
 	SET mail = ".db_null_input($fldMail)."
 	WHERE persId = '".mysqli_real_escape_string($db,$recId)."'
 ";
-/*echo $wijzigemail.'<br>';*/	mysqli_query($db,$wijzigemail) or die (mysqli_error($db));
+	mysqli_query($db,$wijzigemail) or die (mysqli_error($db));
 
  }
 //unset($mail);
@@ -167,7 +167,7 @@ $wijzigfunctie = "
 	SET functie = ".db_null_input($fldFunctie)."
 	WHERE persId = '".mysqli_real_escape_string($db,$recId)."'
 ";
-/*echo $wijzigfunctie.'<br>';*/	mysqli_query($db,$wijzigfunctie) or die (mysqli_error($db));
+	mysqli_query($db,$wijzigfunctie) or die (mysqli_error($db));
 
  }
 //unset($func);
@@ -181,7 +181,7 @@ $wijzigactief = "
 	SET actief = '".$fldActief."'
 	WHERE persId = '".mysqli_real_escape_string($db,$recId)."'
 ";
-/*echo '$wijzigactief = '.$wijzigactief.'<br>';*/	mysqli_query($db,$wijzigactief) or die (mysqli_error($db));
+	mysqli_query($db,$wijzigactief) or die (mysqli_error($db));
 
  }
 // Einde Wijzigen actief

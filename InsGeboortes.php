@@ -3,42 +3,42 @@ require_once('validation_functions.php');
 $versie = '18-2-2014'; /*Keuzelijst uitval uitgebreid met uitvalId <= 3 en gesorteerd op uitvalId */
 $versie = '15-4-2014'; /*vw_Reader_geb toegevoegd query verplaatst naar vw_Reader.php*/
 $versie = '9-05-2014'; /*Toegevogd => Ras en geslacht mogen niet leeg zijn, dan is nl. het selectieveld niet aangevinkt*/
-$versie = '8-8-2014'; /*Aantal karakters werknr variabel gemaakt en quotes bij "$kg" en "$ooi_rd" weggehaald*/
+$versie = '8-8-2014'; /*Aantal karakters werknr variabel gemaakt en quotes bij "kg" en "ooi_rd" weggehaald*/
 $versie = '11-8-2014'; /*veld type gewijzigd in fase */
 $versie = '13-11-2014'; /*functie header() toegevoegd. In de header wordt het vervevrsen van de pagina verstuurd (request =. response) naar de server*/
 $versie = '21-2-2015'; /*login toegevoegd*/
 $versie = '5-3-2015'; /*sql beveiligd*/
-$versie = '3-12-2015'; /*$Karwerki gewijzigd in $Karwerk*/
+$versie = '3-12-2015'; /*Karwerki gewijzigd in Karwerk*/
 $versie = '21-12-2015'; /*maak_request_func.php ge-include i.p.v. in maak_request.php*/ 
 $versie = '17-09-2016'; /* modules gesplitst */
 $versie = '2-11-2016'; /* : controle of moment bij doelgroep geboren hoort verwijderd. Betreft voormalig veld 'geb' in tblMoment */
-$versie = '20-1-2017'; /* : $hok_uitgez = 'Gespeend' gewijzigd in $hok_uitgez = 2 */
+$versie = '20-1-2017'; /* : hok_uitgez = 'Gespeend' gewijzigd in hok_uitgez = 2 */
 $versie = '15-2-2017'; /* Alle actieve hokken laten zien 	 18-2-2017 : Controle op startdatum moeder toegevoegd */
 $versie = '28-2-2017'; /* Ras en gewicht niet veplicht gemaakt 		16-3 geslacht niet verplicht gemaakt */ 
 $versie = '28-4-2017'; /* Hidden velden txtId en txtLevnr verwijderd */ 
 $versie = '1-7-2017'; /* Controle dat moederdier niet kan lammeren 4 maanden voor en na laatste lam */ 
-$versie = '25-2-2018'; /* Bij controle verplichte velden 'dood zonder levensnummer' moet afvoerdatum wel bestaan. isset($dmafvmdr) toegevoegd */ 
-$versie = '11-3-2018'; /* $ooi_db uitgebreid zodat het dier wel een moeder is (actId = 3) en dat het dier op het bedrijf moet zijn. Anders wordt het dier onterecht gevonden in tblSchaap en 'bestaat' de moeder. */ 
-$versie = '19-3-2018';  /* Meerdere pagina's gemaakt 12-5-2018 : if(isset($data)) toegevoegd. Als alle records zijn verwerkt bestaat $data nl. niet meer !! */
-$versie = '22-6-2018';  /* Velden in impReader aangepast 6-7 query ($velden en $tabel) aangepast. dubbele 'inlees' als query genest */
+$versie = '25-2-2018'; /* Bij controle verplichte velden 'dood zonder levensnummer' moet afvoerdatum wel bestaan. isset(dmafvmdr) toegevoegd */ 
+$versie = '11-3-2018'; /* ooi_db uitgebreid zodat het dier wel een moeder is (actId = 3) en dat het dier op het bedrijf moet zijn. Anders wordt het dier onterecht gevonden in tblSchaap en 'bestaat' de moeder. */ 
+$versie = '19-3-2018';  /* Meerdere pagina's gemaakt 12-5-2018 : if(isset(data)) toegevoegd. Als alle records zijn verwerkt bestaat data nl. niet meer !! */
+$versie = '22-6-2018';  /* Velden in impReader aangepast 6-7 query (velden en tabel) aangepast. dubbele 'inlees' als query genest */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '20-1-2019'; /* alles aan- en uitzetten met javascript */
 $versie = '7-3-2019'; /* gewicht gedeeld door 100 ipv 10 */
 $versie = '2-2-2020'; /* keuzelijst geslacht uitgebreid met kween */
-$versie = '4-3-2020'; /* tabel $tabel gewijzgd. Aanwasmoment en of moeder aanwezig is uit elkaar gehaald */
+$versie = '4-3-2020'; /* tabel tabel gewijzgd. Aanwasmoment en of moeder aanwezig is uit elkaar gehaald */
 $versie = '16-3-2020'; /* scr (bibliotheek) van java script gewijzigd. Onderscheid gemaakt tussen reader Agrident en Biocontrol */
 $versie = '1-6-2020'; /* Taak Dood geboren toegevoegd */
 $versie = '13-6-2020'; /* Einddatum moeder gebaseerd op juiste stalId */
 $versie = '4-7-2020'; /* 1 tabel impAgrident gemaakt */
-$versie = '17-7-2020'; /* De query $data aangepast met moeders die tot 2 maanden terug nog op de stallijst stonden */
-$versie = '6-9-2020'; /* De query $data toegevoegd (isnull(af.datum) or .... toegevoegd  */
+$versie = '17-7-2020'; /* De query data aangepast met moeders die tot 2 maanden terug nog op de stallijst stonden */
+$versie = '6-9-2020'; /* De query data toegevoegd (isnull(af.datum) or .... toegevoegd  */
 $versie = '24-1-2021'; /* Sql beveiligd met quotes. Reden uitval alleen bij reader Agrodent en indien dood geboren en uitval voor merken */
 $versie = '10-1-2022'; /* Code aangepast n.a.v. registratie dekkingen en dracht */
 $versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */
 $versie = '10-03-2024'; /* Keuzelijst verblijf breder gemaakt van width:68 naar width:84 Veld datum smaller van size = 9 naar size = 7 */
-$versie = '24-11-2024'; /* In keuzelijst moederdieren uitgeschaarde dieren wel tonen. $zoek_einde_moeder aangevuld met h.actId = 10 */
+$versie = '24-11-2024'; /* In keuzelijst moederdieren uitgeschaarde dieren wel tonen. zoek_einde_moeder aangevuld met h.actId = 10 */
 $versie = '26-12-2024'; /* <TD width = 1010 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
-$versie = '09-04-2025'; /* De subquery mdr binnen query $data aangepast. Uitgeschaarden worden niet getoond in sybquery mdr. Als ze inmiddels terug zijn van uitscharen wordem 2 records getoond. Het veld stalId is verwijderd en de velden s.schaapId, s.levensnummer, af.datum worden bij deze gegroepeerd */
+$versie = '09-04-2025'; /* De subquery mdr binnen query data aangepast. Uitgeschaarden worden niet getoond in sybquery mdr. Als ze inmiddels terug zijn van uitscharen wordem 2 records getoond. Het veld stalId is verwijderd en de velden s.schaapId, s.levensnummer, af.datum worden bij deze gegroepeerd */
 $versie = '10-07-2025'; /* De index van kzlOoi gewijzigd van schaapId naar stalId zodat het ubnId makkelijker kan worden opgehaald */
 $versie = '29-08-2025'; /* Controle of ubn kan worden gevonden bij gebruikers die geen module technisch hebben toegevoegd */
 

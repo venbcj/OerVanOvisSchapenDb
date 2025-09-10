@@ -31,7 +31,7 @@ foreach($array as $recId => $id) {
 // Einde recId ophalen
    
  foreach($id as $key => $value) {
- if ($key == 'chbkies' && $value == 1 ) 	{ /* Alleen als checkbox chbkies de waarde 1 heeft  /*echo $key.'='.$value.' ';*/  $box = $value ;
+ if ($key == 'chbkies' && $value == 1 ) 	{   $box = $value ;
 
 	
   foreach($id as $key => $value) {
@@ -91,7 +91,7 @@ $insert_tblHistorie = "
 INSERT INTO tblHistorie
 set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$updDag)."', kg = ".db_null_input($updKg).", actId = '".mysqli_real_escape_string($db,$actId)."'
 ";
-/*echo $insert_tblHistorie.'<br>';*/	mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
+	mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
 
 
 if(isset($kzlHok)) { // Als moet worden overgplaatst en dus niet volwassen dieren die verblijf alleen verlaten
@@ -113,7 +113,7 @@ $newHok = $kzlHok;
 if(isset($hisId)) { // $hisId bestaat niet bij verlaten volwassen dieren
 
 $insert_tblBezet = "INSERT INTO tblBezet set hisId = '".mysqli_real_escape_string($db,$hisId)."', hokId = '".mysqli_real_escape_string($db,$newHok)."' "; 
-/*echo $insert_tblBezet.'<br>';*/		mysqli_query($db,$insert_tblBezet) or die (mysqli_error($db)); 
+		mysqli_query($db,$insert_tblBezet) or die (mysqli_error($db)); 
 				}
 
 } // Einde if(isset($kzlHok))

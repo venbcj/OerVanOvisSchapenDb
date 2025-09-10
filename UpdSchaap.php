@@ -1,6 +1,6 @@
 <?php /* 5-8-2014 karakters werknr variabel gemaakt
 11-8-2014 : veld type gewijzigd in fase 
-13-11-2014 variabel $actie_afv toegevoegd bij foutmeldingen zodat melding verkoopdatum niet verschijnt bij uitgevallen dieren 
+13-11-2014 variabel actie_afv toegevoegd bij foutmeldingen zodat melding verkoopdatum niet verschijnt bij uitgevallen dieren 
 1-03-2015 : login toegevoegd 
 17-09-2016 : modules gesplitst */
 $versie = '12-11-2016'; /* Aanwas wordt niet getoond als aankoop en aanwas dezelfde datum heeft. Aanvoer moeder- en vaderdieren dus */
@@ -9,13 +9,13 @@ $versie = '15-01-2017'; /* Sortering kzlooi aangepast. Eerst werknr dan aantal l
 $versie = '22-01-2017'; /* 20-1-2017 Query's aangepast n.a.v. nieuwe tblDoel	22-1-2017 tblBezetting gewijzigd naar tblBezet */
 $versie = '01-02-2017'; /* : Halsnummer toegevoegd		11-2-2017 : bij aanwas verblijf invoer toegevoegd */
 $versie = '03-04-2017'; /* : Fokkersnummer toegevoegd		4-4-2017 : kleuren halsnummer uitgebreid */
-$versie = '05-05-2017'; /* : Wijzigen van levensnummers mogelijk gemaakt	 21-7 controle spndm leeg toegevoegd !empty($nietna) */
+$versie = '05-05-2017'; /* : Wijzigen van levensnummers mogelijk gemaakt	 21-7 controle spndm leeg toegevoegd !empty(nietna) */
 $versie = '28-12-2017'; /* : In en uit verblijf plaatsen van moeder- en vaderdieren mogelijk gemaakt */
 $versie = '16-02-2018'; /* : Afvoeren lam mogelijk gemaakt voor gebruikers die alleen melden. 4-3-2018 : Als afvoerdatum voor laatste historiedatum lag verscheen melding maar werd ook opgeslagen. Dit is aangepast en oorspronkelijke datum wordt teruggezet. Zie bij variabele $zetdatumterug */
 $versie = '03-04-2018'; /* : Tussenweging toegevoegd	 */
 $versie = '28-09-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '26-01-2019'; /* Ras wijzigbaar gemaakt */
-$versie = '31-08-2019'; /* In query $zoek_nietvoor_datum actId = 5 and actId = 6 uit WHERE gehaald. Nav mail Rina 23-8-19 isset($nietna) toegevoegd om niet met datum van vandaag te vergelijken */
+$versie = '31-08-2019'; /* In query zoek_nietvoor_datum actId = 5 and actId = 6 uit WHERE gehaald. Nav mail Rina 23-8-19 isset(nietna) toegevoegd om niet met datum van vandaag te vergelijken */
 $versie = '15-03-2020'; /* Geslacht kan worden gewijzigd als schaap nog niet voorkomt in tblVolwas en niet bij een ander op de stallijst heeft gestaan */
 $versie = '07-06-2020'; /* datepicker2 aan txtHokOoiDm toegevoegd */
 $versie = '17-2-2020'; /* SQL beveiligd met quotes en keuzelijst Reden uitval gebasseerd op type 'sterfte' */
@@ -23,7 +23,7 @@ $versie = '08-4-2023'; /* Optie vermist toegevoegd */
 $versie = '02-09-2023'; /* functie zoek_hisId_stal en andere bisisfuncties toegepast */
 $versie = '04-11-2023'; /* Toevoegen van geboortedatum mogelijk gemaakt */
 $versie = '01-01-2024'; /* and h.skip = 0 aangevuld bij tblHistorie */
-$versie = '19-01-2024'; /* $hoknr nergens gedeclareerd, daarom gewijzigd naar $hok */
+$versie = '19-01-2024'; /* hoknr nergens gedeclareerd, daarom gewijzigd naar hok */
 $versie = "11-03-2024"; /* Bij geneste query uit 
 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
@@ -32,7 +32,7 @@ $versie = "21-04-2024"; /* Lam uit verblijf halen niet meer mogelijk gemaakt */
 $versie = "08-06-2024"; /* Afleveren aanwezige lammeren mogelijk gemaakt */
 $versie = "26-10-2024"; /* Het zoeken naar afgevoerde dieren en dier wel of niet in een verblijf 2 aparte querys van gemaakt */
 $versie = "03-11-2024"; /* Terug van uitscharen mogelijk gemaakt incl. medling naar RVO */
-$versie = "09-11-2024"; /* $invoerdate <= $dmOoiHokNa gewijzigd naar $invoerdate < $dmOoiHokNa */
+$versie = "09-11-2024"; /* invoerdate <= dmOoiHokNa gewijzigd naar invoerdate < dmOoiHokNa */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 $versie = '18-02-2024'; /* De historie als 3e kolom getoond rechts naast de andere gegevens */
 

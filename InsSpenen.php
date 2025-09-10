@@ -5,13 +5,13 @@ Reden : na spenen van verschillende hokken worden de schapen herverdeeld o.b.v. 
 5-3-2015 : Login toegevoegd 
 6-3-2015 : sql beveiligd 
 18-11-2015 : Hok gewijzigd naar verblijf */
-$versie = '7-11-2016';  /* $vw_Reader_sp aangepast tblSchaap is gerelateerd aan impReader via levensnummer. i.v.m. left join moet al zijn bepaald dat enkel schapen van lidId mogen worden getoond. Vandaar is tblSchaap eerst genest met tblStal */
+$versie = '7-11-2016';  /* vw_Reader_sp aangepast tblSchaap is gerelateerd aan impReader via levensnummer. i.v.m. left join moet al zijn bepaald dat enkel schapen van lidId mogen worden getoond. Vandaar is tblSchaap eerst genest met tblStal */
 $versie = '9-11-2016';  /* vw_StatusSchaap verwijderd en gebaseerd op laatste hisId */
 $versie = '23-11-2016';  /* actId = 3 uit on clause gehaald en als sub query genest */
-$versie = '22-1-2017';  /* 20-1-2017 ; $hok_uitgez = 'Geboren' gewijzigd in $hok_uitgez = 1  21-1-2017 Overbodige hidden velden verwijderd (txtId, txtLevspn en txtOvplId)   22-1-2017 tblBezetting gewijzigd naar tblBezet */
-$versie = '20-2-2017';  /* lidId aan tblHok alias kh toegevoegd binnen de query $vw_Reader_sp */
+$versie = '22-1-2017';  /* 20-1-2017 ; hok_uitgez = 'Geboren' gewijzigd in hok_uitgez = 1  21-1-2017 Overbodige hidden velden verwijderd (txtId, txtLevspn en txtOvplId)   22-1-2017 tblBezetting gewijzigd naar tblBezet */
+$versie = '20-2-2017';  /* lidId aan tblHok alias kh toegevoegd binnen de query vw_Reader_sp */
 $versie = '3-9-2017';  /* Nav inlezen tussenwegingen query's uitgebreid met levnr_sp is not null */
-$versie = '19-3-2018';  /* Meerdere pagina's gemaakt 12-5-2018 : if(isset($data)) toegevoegd. Als alle records zijn verwerkt bestaat $data nl. niet meer !! */
+$versie = '19-3-2018';  /* Meerdere pagina's gemaakt 12-5-2018 : if(isset(data)) toegevoegd. Als alle records zijn verwerkt bestaat data nl. niet meer !! */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '20-1-2019'; /* alles aan- en uitzetten met javascript */
 $versie = '7-3-2019'; /* gewicht gedeeld door 100 ipv 10 */
@@ -200,13 +200,8 @@ $data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.readId");
  <td colspan = 3 style = "font-size : 13px;">
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
  <td colspan = 2 align = "center" style = "font-size : 14px;"><?php 
-/*echo '<br>'; 
-echo '$page_nums->total_pages : '.$page_nums->total_pages.'<br>'; 
-echo '$page_nums->total_records : '.$page_nums->total_records.'<br>'; 
-echo '$page_nums->rpp : '.$page_nums->rpp.'<br>'; */
-echo /*'$page_numbers : '.*/$page_numbers/*.'<br> '.$record_numbers.'<br>'*/; 
-/*echo '$page_nums->count_records() : '. $page_nums->count_records();*/ 
-//echo '$page_nums->pagina_string : '. $page_nums->pagina_string; ?></td>
+echo $page_numbers; 
+?></td>
  <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
  <td align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
  <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td></tr>
@@ -284,7 +279,8 @@ if (isset($_POST['knpVervers_'])) { $datum = $_POST["txtSpeendag_$Id"]; $kg = $_
 	 {	$oke = 0;	} else {	$oke = 1;	} // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
 // EINDE Controleren of ingelezen waardes correct zijn.
 
-	 if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1) /* Als onvolledig is gewijzigd naar volledig juist */ {$cbKies = 1; $cbDel = $_POST["chbDel_$Id"]; }
+/* Als onvolledig is gewijzigd naar volledig juist */
+	 if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1)  {$cbKies = 1; $cbDel = $_POST["chbDel_$Id"]; }
 else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDel = $_POST["chbDel_$Id"]; } 
    else { $cbKies = $oke; } // $cbKies is tbv het vasthouden van de keuze inlezen of niet ?>
 

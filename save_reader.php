@@ -28,7 +28,7 @@ foreach($multip_array as $id) {
 if($key == 'txtId') {
 foreach($id as $key => $value) {
 
-	     if ($key == 'txtId' ) { $updId = $value; /*echo $key.'='.$value."<br/>";*/}    
+	     if ($key == 'txtId' ) { $updId = $value; }    
 
     if ($key == 'txtDatum' ) { $dag = date_create($value); $flddag =  date_format($dag, 'Y-m-d'); 
                                       }

@@ -1,18 +1,18 @@
 <!-- 11-8-2014 : veld type gewijzigd in fase 
  23-11-2014 include Maak_Request toegevoegd 
- 9-11-2016 controle op bestaand levensnummer toegevoegd ( isset($schaapId) ) 
+ 9-11-2016 controle op bestaand levensnummer toegevoegd ( isset(schaapId) ) 
  18-1-2017 : Query's aangepast n.a.v. nieuwe tblDoel	22-1-2017 : tblBezetting gewijzigd naar tblBezet 
  1-2-2017 : Halsnummer toegevoegd
 11-2-2017 : Mogelijkheid moeders en vaders aan hokken toevoegen 
 28-2-2017 :  Ras en gewicht niet veplicht gemaakt 
 9-7-2020 : Onderscheid gemaakt tussen reader Agrident en Biocontrol 
-5-5-2021 : isset($verwerkt) toegevoegd om dubbele invoer te voorkomen. SQL beveiligd met quotes. Verschil tussen kiezen of verwijderen herschreven 
+5-5-2021 : isset(verwerkt) toegevoegd om dubbele invoer te voorkomen. SQL beveiligd met quotes. Verschil tussen kiezen of verwijderen herschreven 
 26-11-2022 Invoer geboortedatum toegevoegd 
-06-08-2023 : Fout gevonden in $update_tblSchaap . WHERE schaapId = '".mysqli_real_escape_string($db,$schaapId)."' toegevoegd
-25-09-2023 : Fout hersteld in  $zoek_stalId Van 
-	mysqli_query($db,"SELECT stalId FROM tblStal WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' , schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and isnull(rel_best) ") 
+06-08-2023 : Fout gevonden in update_tblSchaap . WHERE schaapId = '".mysqli_real_escape_string(db,schaapId)."' toegevoegd
+25-09-2023 : Fout hersteld in  zoek_stalId Van 
+	mysqli_query(db,"SELECT stalId FROM tblStal WHERE lidId = '".mysqli_real_escape_string(db,lidId)."' , schaapId = '".mysqli_real_escape_string(db,schaapId)."' and isnull(rel_best) ") 
 	naar
-	 mysqli_query($db,"SELECT stalId FROM tblStal WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and isnull(rel_best) ")
+	 mysqli_query(db,"SELECT stalId FROM tblStal WHERE lidId = '".mysqli_real_escape_string(db,lidId)."' and schaapId = '".mysqli_real_escape_string(db,schaapId)."' and isnull(rel_best) ")
 31-12-2023 : and h.skip = 0 bij een enkele query toegevoegd 
 17-04-2025 : conedring impReader (Biocontrol) verwijderd 
 13-07-2025 : Opslaan ubn in tblStal toegevoegd 

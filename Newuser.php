@@ -149,7 +149,7 @@ $insert_lid = "INSERT INTO tblLeden SET
 	reader = ". db_null_input($kzlReader) . ",
 	readerkey = '".mysqli_real_escape_string($db,$key)."'
 	;";
-/*echo $insert_lid;*/		mysqli_query($db,$insert_lid) or die (mysqli_error($db));
+		mysqli_query($db,$insert_lid) or die (mysqli_error($db));
 
 
 $zoek_gebruiker = mysqli_query($db,"
@@ -159,7 +159,7 @@ while ($zg = mysqli_fetch_assoc($zoek_gebruiker))
 		{ $newId = $zg['lidId'];  }
 
 $insert_tblUbn = "INSERT INTO tblUbn SET lidId = '".mysqli_real_escape_string($db,$newId)."', ubn = '".mysqli_real_escape_string($db,$txtUbn)."' ";
-/*echo '<br>'.$insert_tblUbn.'<br>'.'<br>';*/		mysqli_query($db,$insert_tblUbn) or die (mysqli_error($db));
+		mysqli_query($db,$insert_tblUbn) or die (mysqli_error($db));
 	
 include"Newuser_data.php";
 

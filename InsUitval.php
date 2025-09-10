@@ -8,7 +8,7 @@
 $versie = '9-11-2016';  /* vw_StatusSchaap verwijderd en gebaseerd op laatste hisId */
 $versie = '23-11-2016';  /* actId = 3 uit on clause gehaald en als sub query genest */
 $versie = '2-3-2017';  /* hidden veld txtId verwijderd 	10-3-2017 : view vw_HistorieDm vervangen door script */
-$versie = '20-3-2018';  /* Meerdere pagina's gemaakt 12-5-2018 : if(isset($data)) toegevoegd. Als alle records zijn verwerkt bestaat $data nl. niet meer !! */
+$versie = '20-3-2018';  /* Meerdere pagina's gemaakt 12-5-2018 : if(isset(data)) toegevoegd. Als alle records zijn verwerkt bestaat data nl. niet meer !! */
 $versie = '22-6-2018';  /* Velden in impReader aangepast */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '20-1-2019'; /* alles aan- en uitzetten met javascript */

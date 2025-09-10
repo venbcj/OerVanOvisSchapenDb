@@ -1,6 +1,6 @@
 <?php
 /*29-12-2023 : sql beveiligd 
-09-03-2025 : In Deklijst.php veld txtId_$Id verwijderd en hier $recId gedefinieerd*/
+09-03-2025 : In Deklijst.php veld txtId_Id verwijderd en hier recId gedefinieerd*/
 
 
 function getNaamFromKey($string) {

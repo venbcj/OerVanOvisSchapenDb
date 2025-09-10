@@ -1,5 +1,5 @@
 <!-- 30-9-2020 Gekopieerd van post_readerOmnum.php  
-7-5-2021 : isset($verwerkt) toegevoegd om dubbele invoer te voorkomen. Verschil tussen kiezen of verwijderen herschreven. SQL beveiligd met quotes. -->
+7-5-2021 : isset(verwerkt) toegevoegd om dubbele invoer te voorkomen. Verschil tussen kiezen of verwijderen herschreven. SQL beveiligd met quotes. -->
 
 <?php
 include "url.php";

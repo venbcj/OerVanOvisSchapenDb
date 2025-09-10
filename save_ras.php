@@ -34,7 +34,7 @@ if(!empty($recId)) {
 
     if ($key == 'txtSort' && !empty($value)) { $fldSort = $value; } 
 	
-    if ($key == 'chbActief') {  $fldActief = $value; /*echo $key.'='.$value."<br/>";*/  }  	 
+    if ($key == 'chbActief') {  $fldActief = $value;   }  	 
 
 								}	
 
@@ -50,9 +50,6 @@ while($row = mysqli_fetch_assoc($zoek_db_waardes))
 	{ $dbScan = $row['scan'];
 	  $dbSort = $row['sort'];
 	$dbActief = $row['actief']; }
-
-/*echo '$fldScan = '.$fldScan.'<br>';
-echo '$dbScan = '.$dbScan.'<br>'; */
 
 if($reader == 'Biocontrol' && $fldScan <> $dbScan) { //$fldScan bestaat niet bij Agrident reader
 // Zoeken naar dubbel scancode

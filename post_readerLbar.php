@@ -36,9 +36,9 @@ foreach($array as $recId => $id) {
   if ($key == 'chbDel')    { $fldDel = $value; }
 
 	if ($key == 'txtDag' ) { $dag = date_create($value); $valuedatum =  date_format($dag, 'Y-m-d'); 
-									/*echo $key.'='.$valuedatum.' ';*/ $fldDag = $valuedatum; }
+									 $fldDag = $valuedatum; }
 
-	if ($key == 'txtKg' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldKg = $value; }
+	if ($key == 'txtKg' && !empty($value)) {  $fldKg = $value; }
 
 									}
 // (extra) controle of readerregel reeds is verwerkt. Voor als de pagina 2x wordt verstuurd bij fouten op de pagina
@@ -104,7 +104,7 @@ WHERE st.stalId = '".mysqli_real_escape_string($db,$stalId)."' and actId = 16
 
 		
 	$insert_tblBezet = "INSERT INTO tblBezet set hisId = '".mysqli_real_escape_string($db,$hisId)."', hokId = '".mysqli_real_escape_string($db,$hokId)."' ";
-/*echo $insert_tblBezet.'<br>';*/		mysqli_query($db,$insert_tblBezet) or die (mysqli_error($db));
+		mysqli_query($db,$insert_tblBezet) or die (mysqli_error($db));
 
 
 	$updateReader = "UPDATE impAgrident SET verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' ";
@@ -126,26 +126,3 @@ WHERE st.stalId = '".mysqli_real_escape_string($db,$stalId)."' and actId = 16
 	
 	}
 ?>
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-	

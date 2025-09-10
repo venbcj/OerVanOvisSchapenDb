@@ -1,7 +1,7 @@
 <?php  
 require_once('url_functions.php');
 
-$versie = '17-2-14'; /*$insInkat = $ln['vrbat']*($_POST['txtBstat']); gewijzigd naar $insInkat = $_POST['txtBstat']; zodat de totale hoeveelheid kan worden ingevoerd bij inkoop ipv het totale aantal / verbruikeenheid in te voeren.*/
+$versie = '17-2-14'; /*insInkat = ln['vrbat']*(_POST['txtBstat']); gewijzigd naar insInkat = _POST['txtBstat']; zodat de totale hoeveelheid kan worden ingevoerd bij inkoop ipv het totale aantal / verbruikeenheid in te voeren.*/
 $versie = '27-11-2014'; /*chargenr toegevoegd.*/ 
 $versie = '8-3-2015'; /*Login toegevoegd */
 $versie = '20-12-2015'; /* Inkoop ook toegevoegd aan tblOpgaaf indien module financieel in gebruik */

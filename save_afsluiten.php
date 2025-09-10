@@ -32,7 +32,7 @@ if(isset($lst_periId)) { $fout = "Deze afsluitdatum bestaat al."; }
 else {
 
 $insert_tblPeriode = "INSERT INTO tblPeriode set hokId = '".mysqli_real_escape_string($db,$Id)."', doelId= '".mysqli_real_escape_string($db,$doelId)."', dmafsluit = '".mysqli_real_escape_string($db,$dmsluit)."' ";
-/*echo $insert_tblPeriode.'<br>';*/		mysqli_query($db,$insert_tblPeriode) or die (mysqli_error($db));
+		mysqli_query($db,$insert_tblPeriode) or die (mysqli_error($db));
 
 $zoek_periId = mysqli_query ($db,"
 SELECT periId

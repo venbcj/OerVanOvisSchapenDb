@@ -1,9 +1,9 @@
 <?php
-/* 8-8-2014 Aantal karakters werknr variabel gemaakt en quotes bij "$hok", "$groep", "$aantl", "$aant", "$ent1", "$ent2", "$startdm" en "$vanaf" verwijderd 
+/* 8-8-2014 Aantal karakters werknr variabel gemaakt en quotes bij "hok", "groep", "aantl", "aant", "ent1", "ent2", "startdm" en "vanaf" verwijderd 
 28-2-2015 : login toegevoegd 
 14-11-2015 : 1e en 2e inenting verwijderd
 22-11-2015 Link rsp. Spenen en Afleveren verwijderd en kolom geboortedatum toegevoegd bij doelgroep Gespeend o.v.v. Rina */
-$versie = '12-11-2016'; /* query $hok_inhoud aangepast. left join relatie met geboortedatum i.p.v. join. Bij aankoop hoeft geboortedatum nl. niet bekend te zijn. */
+$versie = '12-11-2016'; /* query hok_inhoud aangepast. left join relatie met geboortedatum i.p.v. join. Bij aankoop hoeft geboortedatum nl. niet bekend te zijn. */
 $versie = '15-1-2017'; /* Veld generatie toegevoegd. */
 $versie = "22-1-2017"; /* tblBezetting gewijzigd naar tblBezet */
 $versie = "6-2-2017"; /* Aanpassing n.a.v. verblijven met verschillende doelgroepen		13-2-2017 : tekst hok gewijzigd naar verblijf */
@@ -12,9 +12,9 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $versie = '18-05-2019'; /* Afleveren, spenen Overplaatsen en Aanwas hier mogelijk gemaakt */
 $versie = '25-07-2019'; /* Gesorteerd op werknr */
 $versie = '20-12-2019'; /* tabelnaam gewijzigd van UIT naar uit tabelnaam */
-$versie = '22-12-2019'; /* Dubbele querys $zoek_nu_in_verblijf_geb, $zoek_nu_in_verblijf_spn en $zoek_nu_in_verblijf_prnt verwijderd */
-$versie = '8-2-2021'; /* $zoek_nu_in_verblijf_prnt herschreven i.v.m. dubbele records. Sql beveiligd met quotes 
-h2.actId != 3 uit query $hok_inhoud_vanaf_aanwas gehaald zodat aanwas ook uit verblijf wordt gehaald. Dit leverde nl. een dubbele record op i.c.m. een overplaatsing bij schaapId 5856 */
+$versie = '22-12-2019'; /* Dubbele querys zoek_nu_in_verblijf_geb, zoek_nu_in_verblijf_spn en zoek_nu_in_verblijf_prnt verwijderd */
+$versie = '8-2-2021'; /* zoek_nu_in_verblijf_prnt herschreven i.v.m. dubbele records. Sql beveiligd met quotes 
+h2.actId != 3 uit query hok_inhoud_vanaf_aanwas gehaald zodat aanwas ook uit verblijf wordt gehaald. Dit leverde nl. een dubbele record op i.c.m. een overplaatsing bij schaapId 5856 */
 $versie = '11-7-2021'; /* Schapen uit verblijf herzien. Join gewijzigd van h.hisId = uit.hisv naar b.bezId = uit.bezId */
 $versie = '28-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie 14-01-2024 Gemiddelde groei en kg voer weggehaald. Dit is niet te berekenen */
 $versie = '19-01-2024'; /* in nestquery 'uit' is 'and a1.aan = 1' uit WHERE gehaald. De hisId die voorkomt in tblBezet volstaat. Bovendien is bij Pieter hisId met actId 3 gekoppeld aan tblBezet en heeft het veld 'aan' in tblActie de waarde 0. De WHERE incl. 'and a1.aan = 1' geeft dus een fout resultaat. */

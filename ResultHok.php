@@ -244,11 +244,6 @@ ORDER BY result.hokId, result.doelId, result.van
       for ($i = 0; $i<$n; $i++) { $sort_maxBezet .= '0'; }
            $sort_maxBezet .= $maxBezet; // echo '$sort_maxBezet = '.$sort_maxBezet.'<br>';
 
-           /*$Schaapdgn = $row['schaapdagen']; $n = 10-strlen($Schaapdgn);
-
-      $sort_Schaapdgn = '';
-      for ($i = 0; $i<$n; $i++) { $sort_Schaapdgn .= '0'; }
-           $sort_Schaapdgn .= $Schaapdgn;*/
             ?>
 
     <tr align = "center">

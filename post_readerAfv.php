@@ -1,12 +1,12 @@
 <!-- 17-11-2014 include Maak_Request toegevoegd 
 28-2-2017 :  Ras en gewicht niet veplicht gemaakt 
-20-4-2017 : gezorgd dat $fldKg bestaat als module technisch nvt is 
-29-6-2017 : unset($aanwas) toegevoegd nadat moeder is afgevoerd en het volgende dier is een lam 
-15-2-2019 : if(!isset($stalId)) { echo $fldLevnr.' staat niet meer op de stallijst !'; } toegevoegd
+20-4-2017 : gezorgd dat fldKg bestaat als module technisch nvt is 
+29-6-2017 : unset(aanwas) toegevoegd nadat moeder is afgevoerd en het volgende dier is een lam 
+15-2-2019 : if(!isset(stalId)) { echo fldLevnr.' staat niet meer op de stallijst !'; } toegevoegd
 27-6-2020 : reden afvoer toegevoegd 
-13-7-2020 : impVerplaatsing gewijzigd in impAgrident 16-7 : unset($hisId); toegevoegd omdat bij Marcel 29 van de 32 dezelfde hisId's zijn opgeslagen bij reqId 905 
-7-5-2021 : SQL beveiligd met quotes. isset($verwerkt) toegevoegd om dubbele invoer te voorkomen. 
-31-12-2023 : and skip = 0 toegevoegd aan $zoek_aanwas 
+13-7-2020 : impVerplaatsing gewijzigd in impAgrident 16-7 : unset(hisId); toegevoegd omdat bij Marcel 29 van de 32 dezelfde hisId's zijn opgeslagen bij reqId 905 
+7-5-2021 : SQL beveiligd met quotes. isset(verwerkt) toegevoegd om dubbele invoer te voorkomen. 
+31-12-2023 : and skip = 0 toegevoegd aan zoek_aanwas 
 23-03-2024 : Alleen gewicht registreren (tussenweging) mogelijk gemaakt -->
 
 <?php /*

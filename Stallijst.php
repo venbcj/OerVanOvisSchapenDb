@@ -5,7 +5,7 @@
 $versie = '11-12-2016'; /* actId = 3 genest */
 $versie = '27-03-2017'; /* geslacht niet verplicht gemaakt */
 $versie = '28-09-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
-$versie = '14-02-2020'; /* geneste query uit query $zoek_stapel gehaald. Was left join en deed verder niks */
+$versie = '14-02-2020'; /* geneste query uit query zoek_stapel gehaald. Was left join en deed verder niks */
 $versie = '27-02-2020'; /* SQL beveiligd met quotes en 'Transponder bekend' toegevoegd */
 $versie = '19-08-2023'; /* Laatste scan- / controledatum toegevoegd */
 $versie = '04-09-2023'; /* Export-xlsx toegevoegd */
@@ -13,7 +13,7 @@ $versie = '01-01-2024'; /* and h.skip = 0 aangevuld aan tblHistorie */
 $versie = '30-11-2024'; /* Uitgeschaarde dieren toegevoegd */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 $versie = '19-01-2025'; /* Kolomkop vastgezet tegen de header */
-$versie = '11-04-2025'; /* in query $toon_aanwezigen en $toon_aanwezigen aan subquery haf in where-clause and h.skip = 0 toegevoegd */
+$versie = '11-04-2025'; /* in query toon_aanwezigen en toon_aanwezigen aan subquery haf in where-clause and h.skip = 0 toegevoegd */
 
 
  session_start(); ?>

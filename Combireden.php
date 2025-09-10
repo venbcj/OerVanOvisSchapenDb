@@ -4,7 +4,7 @@
 $versie = '28-12-2016';/* toevoegen en wijzigen mogelijk gemaakt. Combi's t.b.v. medicijnen alleen mogelijk gemaakt bij technische module */
 $versie = '7-1-2016';/* pdf-printen toegevoegd */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
-$versie = '28-9-2018'; /* Standaard aantal ($stdat) tonen in 2 decimalen  */
+$versie = '28-9-2018'; /* Standaard aantal (stdat) tonen in 2 decimalen  */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 
  session_start(); ?> 
@@ -97,7 +97,7 @@ if(!empty($insArtId) && $fldTbl == 'd') 					{  $insStdat = 'NULL'; }
 		if(empty($insRed)) { $insRed = 'NULL'; }		if(empty($insScan)) { $insScan = 'NULL'; }
 		$query_insert_tblCombireden = "INSERT INTO tblCombireden SET tbl = '$fldTbl', artId = ".$insArtId.", stdat = ".$insStdat.", reduId = ".$insRed.", scan = ".$insScan." ";
 									
-		/*echo $query_insert_tblCombireden;*/	mysqli_query($db,$query_insert_tblCombireden) or die (mysqli_error($db));
+			mysqli_query($db,$query_insert_tblCombireden) or die (mysqli_error($db));
 		unset($insScan);
 	}
 
@@ -310,7 +310,7 @@ GROUP BY cr.scan
 
 		$query_bewerk_tblCombireden = "UPDATE tblCombireden set ".$fldScan.", ".$fldReden." WHERE comrId = ".$rowid_d." 	" ;
 			
-		/*echo $query_bewerk_tblCombireden;*/	mysqli_query($db,$query_bewerk_tblCombireden) or die (mysqli_error($db));	
+			mysqli_query($db,$query_bewerk_tblCombireden) or die (mysqli_error($db));	
 
 	}
 	//if (empty($fout)) { header("Location: ". $url ."Combireden.php"); }
@@ -725,7 +725,7 @@ GROUP BY cr.scan
 
 		$query_bewerk_tblCombireden = "UPDATE tblCombireden set ".$fldScan.", ".$fldArtId.", ".$fldStdat.", ".$fldReden." WHERE comrId = ".$rowid_p." 	" ;
 			
-	/*echo $query_bewerk_tblCombireden.'<br>';*/		mysqli_query($db,$query_bewerk_tblCombireden) or die (mysqli_error($db));	
+			mysqli_query($db,$query_bewerk_tblCombireden) or die (mysqli_error($db));	
 
 	}
 	//if (empty($fout)) { header("Location: ". $url ."Combireden.php"); }

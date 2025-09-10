@@ -2,9 +2,9 @@
 $versie = '5-11-2016'; /* include func_euro toegevoegd */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */ 
 $versie = '06-02-2022'; /* SQL beveiligd met quotes */ 
-$versie = '07-05-2023'; /* De beide variabele $dek_bedrag) <> euro_format($liq_bedrag in de controle $letop was niet altijd 2 decimale. Dit is aangepast met de functie  euro_format() */ 
+$versie = '07-05-2023'; /* De beide variabele dek_bedrag) <> euro_format(liq_bedrag in de controle letop was niet altijd 2 decimale. Dit is aangepast met de functie  euro_format() */ 
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 include login voor include header gezet */
-$versie = '09-03-2025'; /* veld txtId_$Id verwijderd <input type = hidden name = <?php echo "txtId_$Id"; ?> size = 1 value = <?php echo $Id; ?> >*/
+$versie = '09-03-2025'; /* veld txtId_Id verwijderd <input type = hidden name = <?php echo "txtId_Id"; ?> size = 1 value = <?php echo Id; ?> >*/
 
 session_start();  ?> 
 <!DOCTYPE html>
@@ -658,14 +658,8 @@ WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and year(dmdek) = '".m
 		$werpdate = new DateTime($zdw['dmwerp']);
 		$maandag_van_werpdatum = $werpdate->modify('last sunday +1 day')->format('d-m-Y'); // De maandag van de berekende werpdatum
 
-		/*echo $werp_jaarweek.'<br>';
-		echo '$maandag_van_werpdatum = '.$maandag_van_werpdatum.'<br>';
-		echo '<br>';*/
-
 		$afv_jaarweek = $zdw['afvjaarweek'];
 		$aweek_r = date_format(date_create($zdw['dmafvoer']),'W');
-//		$afvdate = new DateTime($zdw['dmafvoer']);
-//		$maandag_van_afvdatum = $afvdate->modify('last sunday +1 day')->format('d-m-Y'); // De maandag van de berekende afvoerdatum
 
 
 
@@ -699,9 +693,6 @@ WHERE h.actId = 12 and h.skip = 0 and date_format(h.datum,'%Y%u') = '".mysqli_re
 	while ( $zaaw = mysqli_fetch_assoc($zoek_aantal_afvoer_per_week)) { $afvat_r = $zaaw['aant']; if($afvat_r == 0) { unset($afvat_r); } }
 
 
-/*echo $dek_jaarweek.' dek aantal = '.$dekat_r.'<br>';
-echo $wweek_r.' werpaantal = '.$werpat_r.'<br>';
-echo '<br>'; */
 ?>
 
  <td align="center"><?php echo $dweek_r; ?></td>
@@ -803,11 +794,6 @@ $laatst_weeknr_dekmaand = date_format(date_create($laatste_dag_dekmaand),'W'); /
 $Dweekvan = $kzlJaar.$eerste_weeknr_dekmaand;
 $Dweektot = $kzlJaar.$laatst_weeknr_dekmaand;
 
-/*echo '$eerste_weeknr_dekmaand = '.$eerste_weeknr_dekmaand.'<br>';
-echo '$laatste_dag_dekmaand = '.$laatste_dag_dekmaand.'<br>';
-echo '$laatst_weeknr_dekmaand = '.$laatst_weeknr_dekmaand.'<br>';
-echo '$dekat_r_week0 = '.$dekat_r_week0.'<br>';
-echo '<br>';*/
 // Einde Eerste en laatste dekweek per maand bepalen
 
 
@@ -847,17 +833,6 @@ else {
 $Wweekvan = $jaar_eerste_weeknr_werpmaand.$eerste_weeknr_werpmaand;
 }
 $Wweektot = $jaar_laatst_weeknr_werpmaand.$laatst_weeknr_werpmaand;
-
-//echo '$werpdag_obv_dekdatum = '.$werpdag_obv_dekdatum.'<br>';
-/*echo '$eerste_maandag_werpmaand = '.$eerste_maandag_werpmaand.'<br>';
-echo '$eerste_weeknr_werpmaand = '.$eerste_weeknr_werpmaand.'<br>';*/
-/*echo '<br>';
-
-echo '$laatste_maandag_dekmaand = '.$laatste_maandag_dekmaand.'<br>';*/
-/*echo '$laatste_werpdag_obv_dekmaand = '.$laatste_werpdag_obv_dekmaand.'<br>';
-echo '$laatst_weeknr_werpmaand = '.$laatst_weeknr_werpmaand.'<br>';
-echo '<br>';
-echo '<br>';*/
 
 // Einde Eerste en laatste werpweek per maand bepalen
 
@@ -899,18 +874,6 @@ else {
 $Afweekvan = $jaar_eerste_weeknr_aflevermaand.$eerste_weeknr_aflevermaand;
 }
 $Afweektot = $jaar_laatst_weeknr_aflevermaand.$laatst_weeknr_aflevermaand;
-
-//echo '$afleverdag_obv_dekdatum = '.$afleverdag_obv_dekdatum.'<br>';
-/*echo '$eerste_maandag_aflevermaand = '.$eerste_maandag_aflevermaand.'<br>';
-echo '$eerste_weeknr_aflevermaand = '.$eerste_weeknr_aflevermaand.'<br>';*/
-/*echo '<br>';
-
-echo '$laatste_maandag_dekmaand = '.$laatste_maandag_dekmaand.'<br>';*/
-/*echo '$laatste_afleverdag_obv_dekmaand = '.$laatste_afleverdag_obv_dekmaand.'<br>';
-echo '$laatst_weeknr_aflevermaand = '.$laatst_weeknr_aflevermaand.'<br>';
-echo '<br>';
-echo '<br>';*/
-
 // Einde Eerste en laatste afleverweek per maand bepalen
 $zoek_aantal_afleveren_per_maand = "
 SELECT count(h.hisId) aant
@@ -930,8 +893,6 @@ WHERE rubuId = '".mysqli_real_escape_string($db,$rubuId)."' and date_format(datu
 ";
 
 $zoek_afleverbedrag_per_maand = mysqli_query($db,$zoek_afleverbedrag_per_maand) or die (mysqli_error($db));
-/*echo $zoek_afleverbedrag_per_maand.'<br><br>';
-$zoek_afleverbedrag_per_maand = mysqli_query($db,$zoek_afleverbedrag_per_maand) or die (mysqli_error($db));*/
 
 	while ( $zabm = mysqli_fetch_assoc($zoek_afleverbedrag_per_maand)) { $opbrengst = $zabm['bedrag']; }
 // EINDE AFLEVEREN

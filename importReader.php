@@ -1,7 +1,7 @@
 <!-- // http://php.net/manual/en/mysqli.set-local-infile-handler.php 
 4-11-2015 Bij de drie bewerkingen hieronder is de filter isnull(verwerkt) toegevoegd Online werd bij Rina per 16-8-2015 steeds opnieuw een regel ingelezen 
 16-9-2016 : overschrijven van reader.txt gewijzigd in aanvullen 
-13-11-2016 : $scancode verwijderd. Dit had betrekking op moment 'uitval voor merken'. Dit moment wordt bepaald a.d.h.v. uivaldatum en geboortedatum. 'uitval voor merken' is in tblMoment daarom niet meer actief 
+13-11-2016 : scancode verwijderd. Dit had betrekking op moment 'uitval voor merken'. Dit moment wordt bepaald a.d.h.v. uivaldatum en geboortedatum. 'uitval voor merken' is in tblMoment daarom niet meer actief 
 25-2-2018 : velden hernoemd en verplaatst zie C:\Users\Bas van de Ven\Documents\Development\SchapenM&W\NaarWebsite\Herinrichting2\New_tabellen\100_impReader.sql 
 22-6-2018 : Velden in impReader aangepast 
 7-3-2019 : uitvaldatum voor merken weer toegevoegd

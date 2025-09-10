@@ -1,7 +1,7 @@
 <?php
 /* 15-11-2015 : gemaakt 
-28-12-2016 : txtId verwijderd en $recId toegevoegd. In $update_reden veld `redId` gewijzigd in `reduId` binnen where clause
-11-3-2017 :  Naast $Id ook $it (item) toegevoegd aan naam van de velden om opslaan reden en moment te kunnen splitsen. Hidden velden verwijderd in Uitval.php.
+28-12-2016 : txtId verwijderd en recId toegevoegd. In update_reden veld `redId` gewijzigd in `reduId` binnen where clause
+11-3-2017 :  Naast Id ook it (item) toegevoegd aan naam van de velden om opslaan reden en moment te kunnen splitsen. Hidden velden verwijderd in Uitval.php.
 3-5-2020 : Aangepast voor Agrident reader 
 1-6-2020 : veld afvoer toegevoegd
 12-02-2021 : veld sterfte toegevoegd. SQL beveiligd met quotes */

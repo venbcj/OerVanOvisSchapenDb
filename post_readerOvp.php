@@ -4,7 +4,7 @@
 11-6-2020 : onderscheid gemaakt tussen reader Agrident en Biocontrol 
 13-7-2020 : impVerplaatsing gewijzigd in impAgrident 
 27-2-2021 : Opslaan transponder bij schaap als deze niet bestaat 
-8-5-2021 : isset($verwerkt) toegevoegd om dubbele invoer te voorkomen. Verschil tussen kiezen of verwijderen herschreven. SQL beveiligd met quotes 
+8-5-2021 : isset(verwerkt) toegevoegd om dubbele invoer te voorkomen. Verschil tussen kiezen of verwijderen herschreven. SQL beveiligd met quotes 
 11-03-2024 : Bij geneste query uit 
 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )

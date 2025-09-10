@@ -1,9 +1,9 @@
 <?php /* 21-11-2015 Individueel spenen gewijzigd naar heel hok spenen 
 23-11-2015 breedte kzlHok flexibel gemaakt via login.php
-20-1-2017 $hok_uitgez = 'Geboren' gewijzigd in $hok_uitgez = 1 Speengewicht niet verplicht gemaakt */
+20-1-2017 hok_uitgez = 'Geboren' gewijzigd in hok_uitgez = 1 Speengewicht niet verplicht gemaakt */
 $versie = "23-1-2017"; /* 22-1-2017 tblBezetting gewijzigd naar tblBezet 23-1-2017 kalender toegevoegd */
 $versie = "6-2-2017"; /* Aanpassing n.a.v. verblijven met verschillende doelgroepen */
-$versie = '21-05-2018';  /* Meerdere pagina's gemaakt	16-6 : $hokkeuze laten bestaan na spenen eerste pagina */
+$versie = '21-05-2018';  /* Meerdere pagina's gemaakt	16-6 : hokkeuze laten bestaan na spenen eerste pagina */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '13-4-2019'; /* Volwassendieren kunnen ook uit een verblijf worden gehaald 22-4 javascript alles-selecteren gaat noet samen met javascript kalender vandaar dat include kalender.php niet altijd plaats vindt */
 $versie = '20-12-2019'; /* tabelnaam gewijzigd van UIT naar uit tabelnaam */

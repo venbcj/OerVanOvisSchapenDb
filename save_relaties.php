@@ -1,7 +1,7 @@
 <!-- 15-6-2016 : gemaakt
 09-08-2020 : veld naamreader toegevoegd 
 29-12-2023 : veld actief bij Rendac niet wijigbaar gemaakt 
-27-02-2025 : In Relaties.php <input type= "hidden" name= echo "txtcreId_$Id"; verwijderd en hier lege checkboxen gedefinieerd-->
+27-02-2025 : In Relaties.php <input type= "hidden" name= echo "txtcreId_Id"; verwijderd en hier lege checkboxen gedefinieerd-->
 
 <?php
 /* toegepast in :

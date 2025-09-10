@@ -1,10 +1,10 @@
 <?php
 /* 6-3-2015 : sql beveiligd 
- 19-1-2017 Query's aangepast n.a.v. nieuwe tblDoel en	21-1-2017 hidden velden txtId, txtLevspn en txtOvplId verwijderd in insSpenen.php en codering hier aangepast => $recId nieuw	Ook speengewicht niet verplicht gemaakt 	22-1-2017 : tblBezetting gewijzigd naar tblBezet
+ 19-1-2017 Query's aangepast n.a.v. nieuwe tblDoel en	21-1-2017 hidden velden txtId, txtLevspn en txtOvplId verwijderd in insSpenen.php en codering hier aangepast => recId nieuw	Ook speengewicht niet verplicht gemaakt 	22-1-2017 : tblBezetting gewijzigd naar tblBezet
  12-2-2017 : insert tblPeriode verwijderd Priode wordt niet meer opgeslagen in tblBezet. 
  10-6-2020 : onderscheid gemaakt tussen reader Agrident en Biocontrol 
  13-7-2020 : impVerplaatsing gewijzigd in impAgrident 
- 8-5-2021 : isset($verwerkt) toegevoegd om dubbele invoer te voorkomen. Verschil tussen kiezen of verwijderen herschreven. SQL beveiligd met quotes 
+ 8-5-2021 : isset(verwerkt) toegevoegd om dubbele invoer te voorkomen. Verschil tussen kiezen of verwijderen herschreven. SQL beveiligd met quotes 
  */
 
 include "url.php";

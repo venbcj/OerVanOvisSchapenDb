@@ -32,7 +32,7 @@ unset($updKg);
 unset($updRelId);
 
 foreach($id as $key => $value) {
- 	if ($key == 'chbkies' && $value == 1) 	{ /*echo $key.'='.$value.' ';*/  $fldKies = $value; }
+ 	if ($key == 'chbkies' && $value == 1) 	{   $fldKies = $value; }
 
 	if ($key == 'txtDatum' ) { $dag = date_create($value); $updDag =  date_format($dag, 'Y-m-d');  }
 	
@@ -63,7 +63,7 @@ WHERE isnull(st.rel_best) and st.schaapId = '".mysqli_real_escape_string($db,$re
 while ($st = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $st['stalId']; }
 
 	$insert_tblHistorie = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$updDag)."', kg = ".db_null_input($updKg).", actId = '".mysqli_real_escape_string($db,$actId)."' ";
-/*echo $insert_tblHistorie.'<br>';*/	mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
+	mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
 
 if ($modmeld == 1 ) {
 $Melding = 'AFV';

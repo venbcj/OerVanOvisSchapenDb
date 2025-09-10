@@ -97,7 +97,7 @@ $update_lid = "UPDATE tblLeden SET
 
 	WHERE lidId = '".mysqli_real_escape_string($db,$ID)."'
 	;";
-/*echo $update_lid;*/		mysqli_query($db,$update_lid) or die (mysqli_error($db));
+		mysqli_query($db,$update_lid) or die (mysqli_error($db));
 
 }
 
@@ -224,7 +224,7 @@ while ($h = mysqli_fetch_assoc($zoek_Lambar)) {	$Lambar = $h['hokId'];	}*/
 
  ?>
  <td>
- 	<?php if($rd_db < 14 /*|| !isset($Lambar)*/) { ?>
+ 	<?php if($rd_db < 14 ) { ?>
  	<input type = "submit" name ="knpUpdate" value="Bijwerken">
  </td>
  <?php }

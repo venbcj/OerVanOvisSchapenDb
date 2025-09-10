@@ -2,7 +2,7 @@
 $versie = "23-1-2017"; /* 22-1-2017 tblBezetting gewijzigd naar tblBezet 23-1-2017 kalender toegevoegd */
 $versie = "6-2-2017"; /* Aanpassing n.a.v. verblijven met verschillende doelgroepen */
 $versie = "15-2-2017"; /* Gewicht niet verplicht gemaakt */
-$versie = '13-05-2018';  /* Meerdere pagina's gemaakt.	16-6 : $bestkeuze laten bestaan na afleveren eerste pagina */
+$versie = '13-05-2018';  /* Meerdere pagina's gemaakt.	16-6 : bestkeuze laten bestaan na afleveren eerste pagina */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '23-9-2019'; /* sortering op werknr 11-10-2019 kolom Werknr toegevoegd */
 $versie = '20-12-2019'; /* tabelnaam gewijzigd van UIT naar uit tabelnaam */
@@ -62,16 +62,6 @@ WHERE hokId = '".mysqli_real_escape_string($db,$ID)."'
 	while ($h = mysqli_fetch_assoc($zoek_hok)) { $hoknr = $h['hoknr']; }
 	
 
-// Als laatste schaap is gespeend en hoknr moet nog wel worden getoond. 	6-2-2017 uitgecommentariseerd
-/*if(!isset($hoknr)) { 
-$hokken = mysqli_query($db,"
-SELECT h.hoknr
-FROM tblHok h
- join tblPeriode p on (h.hokId = p.hokId)
-WHERE p.periId = '".mysqli_real_escape_string($db,$periId)."'
-") or die(mysqli_error($db)); 
-	while (	$hk = mysqli_fetch_assoc($hokken)) { $hoknr = $hk['hoknr']; }	}*/
-	// Einde Als laatste schaap is gespeend en hoknr moet nog wel worden getoond.			
 // Declaratie RELATIE KEUZE
 $qryRelatiekeuze = mysqli_query($db,"SELECT r.relId, concat(p.ubn, ' - ', p.naam) naam
 			FROM tblPartij p
@@ -267,15 +257,16 @@ if( (isset($_POST['knpVervers_']) || isset($_POST['knpSave_']) ) && !isset($_POS
 	$cbKies = $_POST["chbkies_$Id"];
 	$datum = $_POST["txtDatum_$Id"];
 	$kg = $_POST["txtKg_$Id"];
-	if(!empty($_POST["kzlRel_$Id"])) { $bestkeuze = $_POST["kzlRel_$Id"]; } /*Na afleveren en bij tonen van volgende hoeveelheid dieren is $_POST["kzlRel_$Id"] leeg maar $bestkeuze moet blijven bestaan */
+    if(!empty($_POST["kzlRel_$Id"])) { $bestkeuze = $_POST["kzlRel_$Id"]; } 
+    /*Na afleveren en bij tonen van volgende hoeveelheid dieren is $_POST["kzlRel_$Id"] leeg maar bestkeuze moet blijven bestaan */
 	}
 // Bij de eerste keer openen van deze pagina bestaat als enigste keer het veld kzlRelall_ . txtDatum_$levnr en txtGewicht_$levnr bestaan dan nog niet. Variabalen $datum en $kg kunnen enkel worden gevuld als wordt voldaan aan (isset($_POST['knpVervers_']) && !isset($_POST['kzlRelall_']))  !!!
 	if(!isset($datum) && isset($sess_dag)) { $datum = $sess_dag; }
-	if(isset($datum)) /*$datum kan al bestaan voor isset($_POST['knpVervers_']) */ { $makeday = date_create($datum); $day = date_format($makeday,'Y-m-d'); }
+	if(isset($datum))  { $makeday = date_create($datum); $day = date_format($makeday,'Y-m-d'); }
+/*datum kan al bestaan voor isset($_POST['knpVervers_']) */
 // Controleren of ingelezen waardes correct zijn.
 	if( empty($datum)				|| # Afleverdatum is leeg
 		$day < $dmmax				|| # afleverdag is kleiner dan laatste registratiedatum
-		/*empty($kg)				||*/ # Aflevergweicht is leeg
 		empty($bestkeuze) 			   # Relatie is leeg
 
 	)

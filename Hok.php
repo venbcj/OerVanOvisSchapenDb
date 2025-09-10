@@ -45,26 +45,11 @@ WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and hoknr = '".mysqli_
 				} 
 // Einde Zoek naar hok op duplicaten
 				
-// Zoek naar scannr op duplicaten	
-/*$zoek_scannr = mysqli_query($db,"
-SELECT count(scan) scan
-FROM tblHok
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and " . db_null_filter('scan',$_POST['insScan_']) . " and scan is not null 
-") or die(mysqli_error($db));
-	while ( $scannr = mysqli_fetch_assoc($zoek_scannr)) { $aantsc = $scannr['scan']; }*/ // Einde Zoek naar scannr op duplicaten
-	
 	if (empty($_POST['insHok_'])) 							{ $fout = "U heeft geen verblijf ingevoerd."; }	
 	else if(isset($hok_aanwezig))	 							{ $fout = "Deze omschrijving bestaat al.";	$hok = '';	}	
 	else if(!empty($hok) && strlen("$hok")> 10)	{ $fout = "Het verblijf mag uit max. 10 karakters bestaan."; }	
-	//else if ($aantsc > 0) 										{ $fout = "De scancode bestaat al."; }	
 	else 
 	{
-/*$query_hok_toevoegen= "
-  INSERT INTO tblHok 
-  SET lidId = '".mysqli_real_escape_string($db,$lidId)."', 
-	  hoknr = '".mysqli_real_escape_string($db,$hok)."', 
-	  scan = " . db_null_input($_POST['insScan_']) . ", 
-	  sort = ". db_null_input($_POST['insSort_']);*/
 
 $query_hok_toevoegen= "
   INSERT INTO tblHok 
@@ -72,7 +57,7 @@ $query_hok_toevoegen= "
 	  hoknr = '".mysqli_real_escape_string($db,$hok)."',
 	  sort = ". db_null_input($_POST['insSort_']);
 
-				/*echo $query_hok_toevoegen; */ mysqli_query($db,$query_hok_toevoegen) or die (mysqli_error($db));
+				 mysqli_query($db,$query_hok_toevoegen) or die (mysqli_error($db));
 	}
 }
 

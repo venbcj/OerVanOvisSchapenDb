@@ -29,8 +29,6 @@ $dir = dirname(__FILE__).'/user_'.$lidId.'/Readerbestanden/';
 // Sort in descending order
 $b = scandir($dir,1);
 
-/*print_r($a);
-print_r($b);*/
 foreach ($b as $bestandsnaam) {
 
 if (substr($bestandsnaam,7,4) >= $vorigjaar) { // $vorigjaar is gedeclareerd in basisfuncties.php
