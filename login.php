@@ -25,6 +25,7 @@ include "connect_db.php";
 require_once("basisfuncties.php");
 require_once("demo_functions.php");
 require_once('url_functions.php');
+require_once('login_functions.php');
 
 // BCB: kunstgreep om uitvoer te scheiden van berekening
 $output = [];
@@ -49,7 +50,7 @@ if (php_uname('n') == 'basq' && isset($_GET['ingelogd'])) {
 
 // *** ALS NIET IS INGELOGD ***
 if (!is_logged_in()) {
-    session_destroy();
+    logout();
 
     if (isset($_POST['knpLogin']) || isset($_POST['knpBasis'])) {
         $qrylidId = mysqli_query($db, "
@@ -57,15 +58,6 @@ if (!is_logged_in()) {
             FROM tblLeden 
             WHERE login = '".mysqli_real_escape_string($db, $_POST['txtUser'])."' and passw = '".mysqli_real_escape_string($db, $passw)."' ;
         ") or die(mysqli_error($db));
-        while ($row = mysqli_fetch_assoc($qrylidId)) {
-            $lId = $row['lidId'];
-            $ali = $row['alias'];
-            //$UBN = $row['ubn']; // Per 10-7-2025 kunnen er meerdere ubn's aan 1 gebruiker zijn gekoppeld
-            $modtech = $row['tech']; // Nodig bij demo_usercreate.php als wordt ingelogd. Dan bestaat $modtech hieronder nl. nog niet !!
-            $modfin = $row['fin']; // Nodig bij menu1.php als wordt ingelogd. Dan bestaat $modfin hieronder nl. nog niet !!
-            $modmeld = $row['meld']; // Nodig bij menu1.php als wordt ingelogd. Dan bestaat $modmeld hieronder nl. nog niet !!
-        }
-            
         if (mysqli_num_rows($qrylidId) == 0) {
             $output[] = "header_logout.tpl.php";
             $message = ' Gebruikersnaam of wachtwoord onjuist !';
@@ -73,53 +65,8 @@ if (!is_logged_in()) {
             // TODO: $destination of $target zouden betere namen zijn voor deze variabele --BCB
             $output[] = "login_form.tpl.php";
         } else {
-            session_start();
-            $_SESSION["U1"] = "$_POST[txtUser]";
-            $_SESSION["W1"] = "$_POST[txtPassw]";
-            $_SESSION["I1"] = $lId;
-            $_SESSION["A1"] = $ali;
-            $_SESSION["PA"] = 1;
-            $_SESSION["RPP"] = 30; // standaard aantal regels per pagina
-            $_SESSION["ID"] = 0; // het Id waarmee de pagina is geopend. Bijv. hokId 1559 bij HokAfleveren.php
-            $_SESSION["DT1"] = null; // Als (records per) pagina wordt ververst wordt datum onthouden. Zo kan pagin worden doorlopen zonder steeds opnieuw datum te kiezen. Zie HokAfleveren.php
-            $_SESSION["BST"] = null; // Als (records per) pagina wordt ververst wordt bestemming onthouden. Zo kan pagin worden doorlopen zonder steeds opnieuw bestemming te kiezen. Zie HokAfleveren.php
-            $_SESSION["Fase"] = null; // Als (records per) pagina wordt ververst wordt fase onthouden. Zo kan pagin worden doorlopen zonder steeds opnieuw bestemming te kiezen. Zie HokUitscharen.php (HokAfleveren.php)
-            $_SESSION['KZ'] = null; // Als pagina wordt ververst wordt de keuze (filter) onthouden. Zie HokOverpl.php
-            $_SESSION["CNT"] = null; // Gebruikt in Contact.php
-            // TODO: variabele login wordt nergens gebruikt --BCB
-            $login = $_SESSION["U1"];
-            $lidId = $_SESSION["I1"];
-            $alias = $_SESSION["A1"];
-            $pag = $_SESSION["PA"]; // paginanummer dat moet worden ontouden als de pagina wordt ververst
-            $RPP = $_SESSION["RPP"]; // standaard aantal regels per pagina
-            //$ID = $_SESSION["ID"]; // het Id waarmee de pagina is geopend. Bijv. hokId 1559 bij HokAfleveren.php
-
-            // In de demo omgeving worden de basis gegevens elke maand opnieuw vervangen.
-            if ($dtb == "k36098_bvdvschapendbs" && $lidId > 1) {
-                // Kijken of maand is verstreken o.b.v. createdatum in tabl tblSchapen
-                $maand_voorbij = mysqli_query($db, "SELECT date_format(min(st.dmcreatie),'%Y%m') maand FROM tblStal st WHERE st.lidId = '".mysqli_real_escape_string($db, $lidId)."'
-                    ") or die(mysqli_error($db));
-                while ($ym = mysqli_fetch_assoc($maand_voorbij)) {
-                    $controle_maand = $ym['maand'];
-                }
-                $huidige_maand = date('Ym');
-                if ($controle_maand < $huidige_maand && $lidId <> 1) {
-                    // TODO: waarom worden de deletes in de ene database gedaan, en de inserts in de andere?
-                    demo_table_delete($db, $dtb, $lidId);
-                    demo_table_insert($db, $lidId);
-                }
-            }
-            // Einde In de demo omgeving worden de basis gegevens elke maand opnieuw vervangen.
-
-            if (isset($_POST['knpBasis'])) {
-                demo_userdelete();
-                demo_table_insert($db, $lidId);
-            }
-            // Laatste inlog vastleggen
-            // $today is gedeclareerd in basisfuncties.php
-            $update_tblLeden = " UPDATE tblLeden set laatste_inlog = '".mysqli_real_escape_string($db, $nu)."' WHERE lidId = '".mysqli_real_escape_string($db, $lidId)."' ";
-            mysqli_query($db, $update_tblLeden) or die(mysqli_error($db));
-            # BCB: ingevoegd.
+            $row = mysqli_fetch_assoc($qrylidId);
+            login($row);
             header("Location: $file");
             exit;
         }
@@ -133,9 +80,10 @@ if (!is_logged_in()) {
     // TODO: variabele login wordt nergens gebruikt --BCB
     $login = $_SESSION["U1"];
     $lidId = $_SESSION["I1"];
+    // TODO: (BV) is dit geplande nieuwbouw? dat het uit staat, bedoel ik?
     //$alias = $_SESSION["A1"];
-    $pag = $_SESSION["PA"];
-    $RPP = $_SESSION["RPP"];
+    $pag = $_SESSION["PA"]; // paginanummer dat moet worden ontouden als de pagina wordt ververst
+    $RPP = $_SESSION["RPP"]; // standaard aantal regels per pagina
 
     date_default_timezone_set('Europe/Paris');
 
@@ -153,6 +101,8 @@ if (!is_logged_in()) {
     while ($row = mysqli_fetch_assoc($result)) {
         $Karwerk = $row['kar_werknr'];
     }
+
+    # gebruikt in GroeiresultaatSchaap, en Zoeken
     $w_werknr = 25+(8*$Karwerk);
 
     // Bepalen aantal karakter verblijf

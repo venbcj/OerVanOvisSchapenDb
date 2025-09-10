@@ -1,6 +1,8 @@
 <?php
 # html-elementen openen in de ene template, en sluiten in een andere, dat voelt breekbaar
 # TODO werken met yield-constructies --BCB
+
+require_once('url_functions.php');
 ?>
 <link rel="stylesheet" type="text/css" href="style.css">
 <link rel="stylesheet" type="text/css" href="menu.css">

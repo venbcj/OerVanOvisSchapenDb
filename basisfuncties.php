@@ -597,3 +597,22 @@ function zoek_request_definitief($db, $reqId) {
     }
     return $def;
 }
+
+function noteer_inlogtijd($lidId) {
+    global $db;
+    global $nu;
+    $update_tblLeden = " UPDATE tblLeden set laatste_inlog = '".mysqli_real_escape_string($db, $nu)."' WHERE lidId = '".mysqli_real_escape_string($db, $lidId)."' ";
+    mysqli_query($db, $update_tblLeden) or die(mysqli_error($db));
+}
+
+function zoek_eerste_stalrecord($lidId) {
+    global $db;
+    $maand_voorbij = mysqli_query($db, "
+        SELECT date_format(min(st.dmcreatie),'%Y%m') maand FROM tblStal st
+         WHERE st.lidId = '".mysqli_real_escape_string($db, $lidId)."'
+            ") or die(mysqli_error($db));
+    while ($ym = mysqli_fetch_assoc($maand_voorbij)) {
+        $controle_maand = $ym['maand'];
+    }
+    return $controle_maand;
+}

@@ -78,13 +78,12 @@ if (!empty($ubn) && !empty($pword) && !empty($ctr_p) && $pword == $ctr_p && (!em
             WHERE ubn = '".mysqli_real_escape_string($db, $ubn)."' 
             and passw = '".mysqli_real_escape_string($db, $passw)."' ;") or die(mysqli_error($db));
         while ($row = mysqli_fetch_assoc($qrylidId)) {
-            $lId = $row['lidId'];
+            $lidId = $row['lidId'];
         }
         $_SESSION["U1"] = $ubn;
         $_SESSION["W1"] = $passw;
-        $_SESSION["I1"] = $lId;
+        $_SESSION["I1"] = $lidId;
         $_SESSION["UB"] = $ubn;
-        $lidId = $lId;
         demo_table_insert($db, $lidId);
         header("location: ".$url."Home.php");
         exit();
