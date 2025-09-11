@@ -17,7 +17,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
 <!DOCTYPE html>
 <html>
 <head>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <title>Registratie</title>
 </head>
 <body>
@@ -27,13 +27,13 @@ $titel = 'Inlezen Wegingen';
 $file = "InsWegen.php";
 include "login.php"; ?>
 
-			<TD valign = "top">
+            <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) {
 
 If (isset($_POST['knpInsert_']))  {
-	include "url.php";
-	include "post_readerWgn.php"; #Deze include moet voor de vervversing in de functie header()
+    include "url.php";
+    include "post_readerWgn.php"; #Deze include moet voor de vervversing in de functie header()
 }
 
 // Aantal nog in te lezen WEGINGEN
@@ -43,7 +43,7 @@ FROM impAgrident
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 9 and isnull(verwerkt)
 ") or die (mysqli_error($db));
  While ($zw = mysqli_fetch_assoc($zoek_wegingen))
- {	$aantwg = $zw['aant'];	}
+ {    $aantwg = $zw['aant'];    }
 // EINDE Aantal nog in te lezen WEGINGEN
 
 $velden = "str_to_date(rd.datum,'%Y-%m-%d') sort , rd.datum, rd.Id readId, rd.levensnummer levnr, rd.gewicht kg,
@@ -58,58 +58,58 @@ $velden = "str_to_date(rd.datum,'%Y-%m-%d') sort , rd.datum, rd.Id readId, rd.le
 $tabel = "
 impAgrident rd
  left join ( 
- 	SELECT levensnummer, max(stalId) stalId
- 	FROM tblSchaap s
- 	 join tblStal st on (s.schaapId = st.schaapId)
- 	GROUP BY levensnummer
+     SELECT levensnummer, max(stalId) stalId
+     FROM tblSchaap s
+      join tblStal st on (s.schaapId = st.schaapId)
+     GROUP BY levensnummer
  ) lstst on (lstst.levensnummer = rd.levensnummer)
  left join (
- 	SELECT stalId, schaapId
- 	FROM tblStal
- 	WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
+     SELECT stalId, schaapId
+     FROM tblStal
+     WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
  ) st on (st.stalId = lstst.stalId)
  left join (
-	 SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
-	 FROM tblSchaap s
-	  join tblStal st on (st.schaapId = s.schaapId)
-	  join tblHistorie h on (st.stalId = h.stalId)
-	 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
-	 GROUP BY s.schaapId, s.levensnummer, s.geslacht
+     SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
+     FROM tblSchaap s
+      join tblStal st on (st.schaapId = s.schaapId)
+      join tblHistorie h on (st.stalId = h.stalId)
+     WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
+     GROUP BY s.schaapId, s.levensnummer, s.geslacht
  ) s on (st.schaapId = s.schaapId)
  left join (
-	SELECT st.schaapId, a.actie, a.af, h.datum
-	FROM tblStal st 
-	 join tblHistorie h on (st.stalId = h.stalId)
-	 join tblActie a on (h.actId = a.actId)
-	WHERE a.af = 1 and h.skip = 0
+    SELECT st.schaapId, a.actie, a.af, h.datum
+    FROM tblStal st 
+     join tblHistorie h on (st.stalId = h.stalId)
+     join tblActie a on (h.actId = a.actId)
+    WHERE a.af = 1 and h.skip = 0
  ) haf on (haf.schaapId = s.schaapId)
  left join (
-	SELECT st.schaapId, max(h.datum) datum
-	FROM tblStal st
-	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 9 and h.skip = 0
-	GROUP BY st.schaapId
+    SELECT st.schaapId, max(h.datum) datum
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 9 and h.skip = 0
+    GROUP BY st.schaapId
  ) hlst on (hlst.schaapId = s.schaapId)
  left join (
-	SELECT st.schaapId, h.datum
-	FROM tblStal st
-	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 3 and h.skip = 0
+    SELECT st.schaapId, h.datum
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
  ) ouder on (ouder.schaapId = s.schaapId)
  
  left join (
- 	SELECT rd.Id, count(dup.Id) dubbelen
-	FROM impAgrident rd
-	 join impAgrident dup on (rd.lidId = dup.lidId and rd.levensnummer = dup.levensnummer and rd.actId = dup.actId and rd.Id <> dup.Id)
-	WHERE rd.actId = 9 and rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ISNULL(rd.verwerkt) and ISNULL(dup.verwerkt)
-	GROUP BY rd.Id
+     SELECT rd.Id, count(dup.Id) dubbelen
+    FROM impAgrident rd
+     join impAgrident dup on (rd.lidId = dup.lidId and rd.levensnummer = dup.levensnummer and rd.actId = dup.actId and rd.Id <> dup.Id)
+    WHERE rd.actId = 9 and rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ISNULL(rd.verwerkt) and ISNULL(dup.verwerkt)
+    GROUP BY rd.Id
  ) dup on (rd.Id = dup.Id)
  left join (
-	SELECT st.schaapId, max(h.datum) datum
-	FROM tblStal st 
-	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
-	GROUP BY st.schaapId 
+    SELECT st.schaapId, max(h.datum) datum
+    FROM tblStal st 
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
+    GROUP BY st.schaapId 
  ) lstday on (lstday.schaapId = st.schaapId)
  " ;
 
@@ -139,88 +139,88 @@ echo $page_numbers; ?></td>
 </tr>
 
 <?php
-if(isset($data))  {	foreach($data as $key => $array)
-	{
+if(isset($data))  {    foreach($data as $key => $array)
+    {
 unset($fase);
 
-		$var = $array['datum'];
+        $var = $array['datum'];
 $date = str_replace('/', '-', $var);
 $datum = date('d-m-Y', strtotime($date));
-$dm	   = date('Y-m-d', strtotime($date));
-	
-	$Id = $array['readId'];
-	$schaapId = $array['schaapId'];
-	$levnr = $array['levnr'];
-	$levnr_exist = $array['levensnummer'];
-	$kg = $array['kg'];
-	$geslacht = $array['geslacht'];
-	$dmaanw = $array['dmaanw']; if(isset($dmaanw) && isset($schaapId)) { if($geslacht == 'ooi') {$fase = 'moederdier'; } else if($geslacht == 'ram') { $fase = 'vaderdier';} } 
-								else if(isset($schaapId)) { $fase = 'lam';} 
-	$status = $array['actie'];
-	$dmafv = $array['dmafv']; if(isset($dmafv))	{ $afvdm = date('d-m-Y', strtotime($dmafv)); } // weeg datum mag niet na afvoerdatum liggen
+$dm       = date('Y-m-d', strtotime($date));
+    
+    $Id = $array['readId'];
+    $schaapId = $array['schaapId'];
+    $levnr = $array['levnr'];
+    $levnr_exist = $array['levensnummer'];
+    $kg = $array['kg'];
+    $geslacht = $array['geslacht'];
+    $dmaanw = $array['dmaanw']; if(isset($dmaanw) && isset($schaapId)) { if($geslacht == 'ooi') {$fase = 'moederdier'; } else if($geslacht == 'ram') { $fase = 'vaderdier';} } 
+                                else if(isset($schaapId)) { $fase = 'lam';} 
+    $status = $array['actie'];
+    $dmafv = $array['dmafv']; if(isset($dmafv))    { $afvdm = date('d-m-Y', strtotime($dmafv)); } // weeg datum mag niet na afvoerdatum liggen
 
 
 // Controleren of ingelezen waardes correct zijn.
 if (isset($_POST['knpVervers_'])) { $datum = $_POST["txtWeegdag_$Id"]; $kg = $_POST["txtKg_$Id"];
-	$makeday = date_create($_POST["txtWeegdag_$Id"]); $dm =  date_format($makeday, 'Y-m-d');
+    $makeday = date_create($_POST["txtWeegdag_$Id"]); $dm =  date_format($makeday, 'Y-m-d');
 }
 
 unset($foutbericht);
 
-	 if (!isset($schaapId)) 						{ $foutbericht = 'Levensnummer onbekend';}
-else if(empty($datum)) 								{ $foutbericht = 'De datum ontbreekt.'; } 
-else if(empty($kg)) 									{ $foutbericht = 'Gewicht is onbekend.'; } 
-else if(isset($dmafv) && $dm > $dmafv) 		{ $foutbericht = 'Dit dier is ' . $status . '.'; }
+     if (!isset($schaapId))                         { $foutbericht = 'Levensnummer onbekend';}
+else if(empty($datum))                                 { $foutbericht = 'De datum ontbreekt.'; } 
+else if(empty($kg))                                     { $foutbericht = 'Gewicht is onbekend.'; } 
+else if(isset($dmafv) && $dm > $dmafv)         { $foutbericht = 'Dit dier is ' . $status . '.'; }
 
 
-if	(isset($foutbericht)) {	$oke = 0;	} else {	$oke = 1;	} // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
+if    (isset($foutbericht)) {    $oke = 0;    } else {    $oke = 1;    } // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
 // EINDE Controleren of ingelezen waardes corretc zijn.  
 
-	 if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1) /* Als onvolledig is gewijzigd naar volledig juist */ {$cbKies = 1; $cbDel = $_POST["chbDel_$Id"]; }
+     if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1) /* Als onvolledig is gewijzigd naar volledig juist */ {$cbKies = 1; $cbDel = $_POST["chbDel_$Id"]; }
 else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDel = $_POST["chbDel_$Id"]; } 
    else { $cbKies = $oke; } // $cbKies is tbv het vasthouden van de keuze inlezen of niet ?>
 
-<!--	**************************************
-		**	   	 OPMAAK  GEGEVENS			**
-		************************************** -->
+<!--    **************************************
+        **            OPMAAK  GEGEVENS            **
+        ************************************** -->
 
 <tr style = "font-size:14px;">
  <td align = "center">
 
-	<input type = hidden size = 1 name = <?php echo "chbkies_$Id"; ?> value = 0 > <!-- hiddden -->
-	<input type = checkbox 		  name = <?php echo "chbkies_$Id"; ?> value = 1 
-	  <?php echo $cbKies == 1 ? 'checked' : ''; /* Als voorwaarde goed zijn of checkbox is aangevinkt */
+    <input type = hidden size = 1 name = <?php echo "chbkies_$Id"; ?> value = 0 > <!-- hiddden -->
+    <input type = checkbox           name = <?php echo "chbkies_$Id"; ?> value = 1 
+      <?php echo $cbKies == 1 ? 'checked' : ''; /* Als voorwaarde goed zijn of checkbox is aangevinkt */
 
-	  if ($oke == 0) /*Als voorwaarde niet klopt */ { ?> disabled <?php } else { ?> class="checkall" <?php } /* class="checkall" zorgt dat alles kan worden uit- of aangevinkt*/ ?> >
-	<input type = hidden size = 1 name = <?php echo "laatsteOke_$Id"; ?> value = <?php echo $oke; ?> > <!-- hiddden -->
+      if ($oke == 0) /*Als voorwaarde niet klopt */ { ?> disabled <?php } else { ?> class="checkall" <?php } /* class="checkall" zorgt dat alles kan worden uit- of aangevinkt*/ ?> >
+    <input type = hidden size = 1 name = <?php echo "laatsteOke_$Id"; ?> value = <?php echo $oke; ?> > <!-- hiddden -->
  </td>
  <td align = "center">
-	<input type = hidden size = 1 name = <?php echo "chbDel_$Id"; ?> value = 0 >
-	<input type = checkbox class="delete" name = <?php echo "chbDel_$Id"; ?> value = 1 <?php if(isset($cbDel)) { echo $cbDel == 1 ? 'checked' : ''; } ?> >
+    <input type = hidden size = 1 name = <?php echo "chbDel_$Id"; ?> value = 0 >
+    <input type = checkbox class="delete" name = <?php echo "chbDel_$Id"; ?> value = 1 <?php if(isset($cbDel)) { echo $cbDel == 1 ? 'checked' : ''; } ?> >
  </td>
  <td>
-	<input type = "text" size = 9 style = "font-size : 11px;" name = <?php echo "txtWeegdag_$Id"; ?> value = <?php echo $datum; ?> >
+    <input type = "text" size = 9 style = "font-size : 11px;" name = <?php echo "txtWeegdag_$Id"; ?> value = <?php echo $datum; ?> >
  </td>
  
  <td> <?php echo $levnr; ?> 
  </td>
-	
+    
  <td style = "font-size : 9px;"> 
-	<input type = "text" size = 3 style = "font-size : 11px;" name = <?php echo "txtKg_$Id"; ?> value = <?php echo $kg; ?> > </td>
+    <input type = "text" size = 3 style = "font-size : 11px;" name = <?php echo "txtKg_$Id"; ?> value = <?php echo $kg; ?> > </td>
 
  <td align="center"> <?php echo $fase; ?> 
  </td>
 
-	
+    
 
  <td width = 200 style = "color : red">
 <!-- Foutmeldingen --> <?php 
-	 if	(isset($foutbericht)) { echo $foutbericht; } ?>
- </td>	
+     if    (isset($foutbericht)) { echo $foutbericht; } ?>
+ </td>    
 </tr>
-<!--	**************************************
-	**	EINDE OPMAAK GEGEVENS	**
-	************************************** -->
+<!--    **************************************
+    **    EINDE OPMAAK GEGEVENS    **
+    ************************************** -->
 
 <?php } 
 } //einde if(isset($data)) ?>
@@ -229,7 +229,7 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 
 
 
-	</TD>
+    </TD>
 <?php
 include "menu1.php"; } ?>
 </tr>
@@ -241,41 +241,41 @@ include "menu1.php"; } ?>
 <script language="javascript">
 $(function(){
 
-	// add multiple select / deselect functionality
-	$("#selectall").click(function () {
-		  $('.checkall').attr('checked', this.checked);
-	});
+    // add multiple select / deselect functionality
+    $("#selectall").click(function () {
+          $('.checkall').attr('checked', this.checked);
+    });
 
-	// if all checkbox are selected, check the selectall checkbox
-	// and viceversa
-	$(".checkall").click(function(){
+    // if all checkbox are selected, check the selectall checkbox
+    // and viceversa
+    $(".checkall").click(function(){
 
-		if($(".checkall").length == $(".checkall:checked").length) {
-			$("#selectall").attr("checked", "checked");
-		} else {
-			$("#selectall").removeAttr("checked");
-		}
+        if($(".checkall").length == $(".checkall:checked").length) {
+            $("#selectall").attr("checked", "checked");
+        } else {
+            $("#selectall").removeAttr("checked");
+        }
 
-	});
+    });
 });
 
 $(function(){
 
-	// add multiple select / deselect functionality
-	$("#selectall_del").click(function () {
-		  $('.delete').attr('checked', this.checked);
-	});
+    // add multiple select / deselect functionality
+    $("#selectall_del").click(function () {
+          $('.delete').attr('checked', this.checked);
+    });
 
-	// if all checkbox are selected, check the selectall_del checkbox
-	// and viceversa
-	$(".delete").click(function(){
+    // if all checkbox are selected, check the selectall_del checkbox
+    // and viceversa
+    $(".delete").click(function(){
 
-		if($(".delete").length == $(".delete:checked").length) {
-			$("#selectall_del").attr("checked", "checked");
-		} else {
-			$("#selectall_del").removeAttr("checked");
-		}
+        if($(".delete").length == $(".delete:checked").length) {
+            $("#selectall_del").attr("checked", "checked");
+        } else {
+            $("#selectall_del").removeAttr("checked");
+        }
 
-	});
+    });
 });
 </script>

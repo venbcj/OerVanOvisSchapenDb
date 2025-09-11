@@ -4,14 +4,14 @@
 
 $cnt_velden = count($velden);
 
-			 foreach($inhoud as $index => $waarde) {			 	
-			
-//var_dump($waarde);		
+             foreach($inhoud as $index => $waarde) {                 
+            
+//var_dump($waarde);        
 // Inlezen record
 for($h = 0; $h < $cnt_velden; $h++) { // Er zijn 3 elementen
 
-	if($h == 0) { $insert_qry = " INSERT INTO impAgrident SET "; }
-	
+    if($h == 0) { $insert_qry = " INSERT INTO impAgrident SET "; }
+    
 
 
 if($waarde -> {$velden[$h]} == "" || $waarde -> {$velden[$h]} == "0" || $waarde -> {$velden[$h]} == "0001-01-01T00:00:00") {  $insert_qry .= "$velden[$h] = NULL, "; }
@@ -27,6 +27,6 @@ echo $insert_qry; mysqli_query($db,$insert_qry) or die (mysqli_error($db));
 unset($insert_qry);
 // Einde Inlezen record
 
-			 } // Einde foreach($data .....
+             } // Einde foreach($data .....
 
 ?>

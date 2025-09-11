@@ -17,17 +17,17 @@ foreach($array as $recId => $id) {
 // Id ophalen
 //echo '$recId = '.$recId.'<br>'; 
 // Einde Id ophalen
-	
+    
   foreach($id as $key => $value) {
 
-  	if ($key == 'chbkies') { $fldKies = $value; }
-  	if ($key == 'chbDel') { $fldDel = $value; }
+      if ($key == 'chbkies') { $fldKies = $value; }
+      if ($key == 'chbDel') { $fldDel = $value; }
 
-	if ($key == 'txtWeegdag' && !empty($value)) { $dag = date_create($value); $fldday =  date_format($dag, 'Y-m-d');  }
-	
-	if ($key == 'txtKg' && !empty($value)) { $fldkg = str_replace(',', '.', $value); }
-		
-									}
+    if ($key == 'txtWeegdag' && !empty($value)) { $dag = date_create($value); $fldday =  date_format($dag, 'Y-m-d');  }
+    
+    if ($key == 'txtKg' && !empty($value)) { $fldkg = str_replace(',', '.', $value); }
+        
+                                    }
 // (extra) controle of readerregel reeds is verwerkt. Voor als de pagina 2x wordt verstuurd bij fouten op de pagina
 unset($verwerkt);
 if($reader == 'Agrident') {
@@ -58,19 +58,19 @@ SELECT levensnummer
 FROM impAgrident
 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' 
 ") or die (mysqli_error($db));
-	while ($lvn = mysqli_fetch_assoc($zoek_levensnummer)) { $levnr = $lvn['levensnummer']; }
-	
+    while ($lvn = mysqli_fetch_assoc($zoek_levensnummer)) { $levnr = $lvn['levensnummer']; }
+    
 $schaapId = zoek_schaapId_in_database($levnr);
-	
+    
 $stalId = zoek_stalId_in_stallijst($lidId, $schaapId);
 
 insert_tblHistorie_kg($stalId,$fldday,9,$fldkg);
 
 unset ($fldkg);
 
-	
-	$updateReader	=	"UPDATE impAgrident SET verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' ";
-/*echo '$updateReader = '.$updateReader.'<br>';*/		mysqli_query($db,$updateReader) or die (mysqli_error($db));	
+    
+    $updateReader    =    "UPDATE impAgrident SET verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' ";
+/*echo '$updateReader = '.$updateReader.'<br>';*/        mysqli_query($db,$updateReader) or die (mysqli_error($db));    
 
 }
 // EINDE CONTROLE op alle verplichten velden
@@ -78,17 +78,17 @@ unset ($fldkg);
 } // Einde if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt))
 
 
-	
-if ($fldKies == 0 && $fldDel == 1) {	
-	
+    
+if ($fldKies == 0 && $fldDel == 1) {    
+    
     $updateReader = "UPDATE impAgrident SET verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' " ;
-	mysqli_query($db,$updateReader) or die (mysqli_error($db));
-	}
-	
-	
-	
-	}
+    mysqli_query($db,$updateReader) or die (mysqli_error($db));
+    }
+    
+    
+    
+    }
 
 ?>
-					
-	
+                    
+    

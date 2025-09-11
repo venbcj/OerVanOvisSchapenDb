@@ -9,7 +9,7 @@ include "connect_db.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-	exit();
+    exit();
 }
 else
 {  // Begin van else
@@ -17,7 +17,7 @@ else
 $headers = getallheaders(); // geef in een array ook headers terug die ik naar de server heb gestuurd in eerste instantie
 //var_dump($headers);
 //echo is_array($string) ? 'dit is een array' : 'dit is geen array';
-	
+    
 
 if (!isset($headers['Authorization'])) { // Als in de headers geen index 'Autorization voorkomt'
     http_response_code(401); // Unauthorized
@@ -28,31 +28,31 @@ if (!isset($headers['Authorization'])) { // Als in de headers geen index 'Autori
 
     $authorization = explode ( " ", $headers['Authorization'] );
  
- 	if (count($authorization) == 2 && trim($authorization[0]) == "Bearer" && strlen(trim($authorization[1])) == 64) {
+     if (count($authorization) == 2 && trim($authorization[0]) == "Bearer" && strlen(trim($authorization[1])) == 64) {
 
-		$zoek_lidId = mysqli_query($db, "SELECT lidId FROM tblLeden WHERE readerkey = '".mysqli_real_escape_string($db,$authorization[1])."'" ) or die(mysqli_error($db));
+        $zoek_lidId = mysqli_query($db, "SELECT lidId FROM tblLeden WHERE readerkey = '".mysqli_real_escape_string($db,$authorization[1])."'" ) or die(mysqli_error($db));
 
-		$result = mysqli_fetch_array($zoek_lidId);
+        $result = mysqli_fetch_array($zoek_lidId);
 
-		if($result){
+        if($result){
            $lidid = $result['lidId'];
-		} else {
-			http_response_code(401); // Unauthorized
-			echo 'via authorization header wordt de gebruiker niet gevonden.';
-	    	exit;
-		}
+        } else {
+            http_response_code(401); // Unauthorized
+            echo 'via authorization header wordt de gebruiker niet gevonden.';
+            exit;
+        }
 
-	} else {
-    	http_response_code(401); // Unauthorized
-    	echo 'authorization header heeft niet de juiste opmaak.';
-    	exit;
-	}
+    } else {
+        http_response_code(401); // Unauthorized
+        echo 'authorization header heeft niet de juiste opmaak.';
+        exit;
+    }
 }
  
 // $lidid = 3;
 
 switch ($_SERVER['REQUEST_METHOD']) { // Switch
-	case 'GET':      
+    case 'GET':      
 
 // Bepalen aantal karakters werknr 
 $zoek_karwerk = mysqli_query ($db,"
@@ -60,8 +60,8 @@ SELECT kar_werknr
 FROM tblLeden
 WHERE lidId = '".mysqli_real_escape_string($db,$lidid)."'
 ") or die (mysqli_error($db));
-	while ($row = mysqli_fetch_assoc($zoek_karwerk))
-		{ $karwerk = $row['kar_werknr']; } 
+    while ($row = mysqli_fetch_assoc($zoek_karwerk))
+        { $karwerk = $row['kar_werknr']; } 
 
 
 //$listname = array('Relatie', 'Worpverloop', 'lokatie');
@@ -151,13 +151,13 @@ FROM tblArtikel a
  join tblEenheiduser eu on (a.enhuId = eu.enhuId)
  LEFT join tblInkoop i on (a.artId = i.artId)
  left join (
-	SELECT n.inkId, sum(n.nutat*n.stdat) vbrat
-	FROM tblEenheiduser eu
-	 join tblArtikel a on (a.enhuId = eu.enhuId)
-	 join tblInkoop i on (i.artId = a.artId)
-	 join tblNuttig n on (i.inkId = n.inkId)
-	WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidid)."' and a.soort = 'pil'
-	GROUP BY n.inkId
+    SELECT n.inkId, sum(n.nutat*n.stdat) vbrat
+    FROM tblEenheiduser eu
+     join tblArtikel a on (a.enhuId = eu.enhuId)
+     join tblInkoop i on (i.artId = a.artId)
+     join tblNuttig n on (i.inkId = n.inkId)
+    WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidid)."' and a.soort = 'pil'
+    GROUP BY n.inkId
  ) n on (i.inkId = n.inkId)
 WHERE soort = 'pil' and eu.lidId = '".mysqli_real_escape_string($db,$lidid)."'
 GROUP BY a.artId, a.naamreader, a.naam, a.actief
@@ -204,11 +204,11 @@ FROM tblSchaap s
  join tblHistorie h on (h.stalId = st.stalId)
 WHERE s.geslacht = 'ram' and h.actId = 3 and h.skip = 0 and lidId = '".mysqli_real_escape_string($db,$lidid)."'
 and not exists (
-	SELECT st.schaapId
-	FROM tblStal stal 
-	 join tblHistorie h on (h.stalId = stal.stalId)
-	 join tblActie a on (a.actId = h.actId)
-	WHERE stal.schaapId = s.schaapId and a.af = 1 and h.datum < DATE_ADD(CURDATE(), interval -1 year) and h.skip = 0 and lidId = '".mysqli_real_escape_string($db,$lidid)."')
+    SELECT st.schaapId
+    FROM tblStal stal 
+     join tblHistorie h on (h.stalId = stal.stalId)
+     join tblActie a on (a.actId = h.actId)
+    WHERE stal.schaapId = s.schaapId and a.af = 1 and h.datum < DATE_ADD(CURDATE(), interval -1 year) and h.skip = 0 and lidId = '".mysqli_real_escape_string($db,$lidid)."')
 ORDER BY right(s.levensnummer,$karwerk)
 ") or die (mysqli_error($db)); 
 
@@ -238,13 +238,13 @@ FROM tblArtikel a
  join tblEenheiduser eu on (a.enhuId = eu.enhuId)
  LEFT join tblInkoop i on (a.artId = i.artId)
  left join (
-	SELECT n.inkId, sum(n.nutat*n.stdat) vbrat
-	FROM tblEenheiduser eu
-	 join tblArtikel a on (a.enhuId = eu.enhuId)
-	 join tblInkoop i on (i.artId = a.artId)
-	 join tblNuttig n on (i.inkId = n.inkId)
-	WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidid)."' and a.soort = 'voer'
-	GROUP BY n.inkId
+    SELECT n.inkId, sum(n.nutat*n.stdat) vbrat
+    FROM tblEenheiduser eu
+     join tblArtikel a on (a.enhuId = eu.enhuId)
+     join tblInkoop i on (i.artId = a.artId)
+     join tblNuttig n on (i.inkId = n.inkId)
+    WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidid)."' and a.soort = 'voer'
+    GROUP BY n.inkId
  ) n on (i.inkId = n.inkId)
 WHERE soort = 'voer' and eu.lidId = '".mysqli_real_escape_string($db,$lidid)."'
 GROUP BY a.artId, a.naamreader, a.naam, a.actief
@@ -264,20 +264,20 @@ $rows = mysqli_num_rows($result);
 
 if(isset($result) && $rows > 0) {
 while($row = mysqli_fetch_array($result))
-		{
-			//echo $row['hokId'].' - '.$row['hoknr'].'<br>';
-			
-			//$opties[] = array('recordid' => $row['Id'], 'name' => $row['name'], 'rownum' => $n); //https://stackoverflow.com/questions/16168552/how-to-convert-mysqli-fetch-assoc-results-into-json-format
-			
-			$opties[] = array('recordid' => $row['Id'], 'name' => str_replace( "/’/", "_", $row['name']), 'rownum' => $n);
+        {
+            //echo $row['hokId'].' - '.$row['hoknr'].'<br>';
+            
+            //$opties[] = array('recordid' => $row['Id'], 'name' => $row['name'], 'rownum' => $n); //https://stackoverflow.com/questions/16168552/how-to-convert-mysqli-fetch-assoc-results-into-json-format
+            
+            $opties[] = array('recordid' => $row['Id'], 'name' => str_replace( "/’/", "_", $row['name']), 'rownum' => $n);
 
-			$n++;
-			}
+            $n++;
+            }
 
 $listnaam[$listname[$i]] = $opties;
 }
 else {
-	$listnaam[$listname[$i]] = array();
+    $listnaam[$listname[$i]] = array();
 }
 
 //$allOpties = $opties; 
@@ -294,11 +294,11 @@ echo $vb;
 
 
 
-		 break;
-	default:
-		http_response_code(405); // Methode niet toegestaan
-		exit;
-	
+         break;
+    default:
+        http_response_code(405); // Methode niet toegestaan
+        exit;
+    
 } // Einde Switch
 //echo json_encode(array("Result" => "Tweede goede resultaat "));
 http_response_code(200); // Ok alles is goed

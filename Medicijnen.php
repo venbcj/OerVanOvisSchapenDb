@@ -31,7 +31,7 @@ $titel = 'Medicijnen';
 $file = "Medicijnen.php";
 include "login.php"; ?>
 
-				<TD valign = "top">
+                <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) { if($modtech ==1) { ?>
 
@@ -39,16 +39,16 @@ if (Auth::is_logged_in()) { if($modtech ==1) { ?>
 
 function verplicht() {
 
-var naam = document.getElementById("artikel"); 		var naam_v = naam.value;
-var stdat  = document.getElementById("standaard");	var stdat_v = stdat.value;
-var eenheid = document.getElementById("eenheid");		var eenheid_v = eenheid.value;
-var btw   = document.getElementById("btw");					var btw_v = btw.value;
+var naam = document.getElementById("artikel");         var naam_v = naam.value;
+var stdat  = document.getElementById("standaard");    var stdat_v = stdat.value;
+var eenheid = document.getElementById("eenheid");        var eenheid_v = eenheid.value;
+var btw   = document.getElementById("btw");                    var btw_v = btw.value;
 
 //alert("De omschrijving ontbreekt.");
-		 if(naam_v.length == 0) naam.focus()	+ alert("De omschrijving ontbreekt.");
-else if(stdat_v.length == 0) stdat.focus() 	+ alert("Het standaard aantal moet zijn ingevuld.");
-else if(eenheid_v.length == 0 ) eenheid.focus() 	+ alert("De eenheid moet zijn ingevuld.");
-else if(btw_v.length == 0 ) btw.focus() 	+ alert("De btw moet zijn ingevuld.");
+         if(naam_v.length == 0) naam.focus()    + alert("De omschrijving ontbreekt.");
+else if(stdat_v.length == 0) stdat.focus()     + alert("Het standaard aantal moet zijn ingevuld.");
+else if(eenheid_v.length == 0 ) eenheid.focus()     + alert("De eenheid moet zijn ingevuld.");
+else if(btw_v.length == 0 ) btw.focus()     + alert("De btw moet zijn ingevuld.");
 
 }
 
@@ -72,91 +72,91 @@ FROM tblEenheid e
 WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a.naam = '".$_POST['insNaam_']."' and a.soort = 'pil'
 GROUP BY a.naam
 ") or die (mysqli_error($db));
-		while ($rij = mysqli_fetch_assoc($controle))
-		{
-			$dubbel = ($rij['aantal']);
-		}
+        while ($rij = mysqli_fetch_assoc($controle))
+        {
+            $dubbel = ($rij['aantal']);
+        }
 
 if (!empty($dubbel) && $dubbel >= 1 )
-	{ 
-		$fout = "Dit medicijn bestaat al.";
-	}
-	else 
-	{
-if (empty($_POST["insNaam_"]))	{	$insNaam = "NULL";	}
-  else		{	$insNaam = "'$_POST[insNaam_]'";	$Artikel = $_POST[insNaam_]; }
+    { 
+        $fout = "Dit medicijn bestaat al.";
+    }
+    else 
+    {
+if (empty($_POST["insNaam_"]))    {    $insNaam = "NULL";    }
+  else        {    $insNaam = "'$_POST[insNaam_]'";    $Artikel = $_POST[insNaam_]; }
 
-if (!isset($_POST["insPres_"]) || empty($_POST["insPres_"]))	{	$insPres = $Artikel;	}
-  else		{	$insPres = $_POST[insPres_];	}
+if (!isset($_POST["insPres_"]) || empty($_POST["insPres_"]))    {    $insPres = $Artikel;    }
+  else        {    $insPres = $_POST[insPres_];    }
 
-if (empty($_POST['insRegnr_']))	{	$insRegnr = "regnr = NULL";	}
-  else		{	$insRegnr = "regnr = '$_POST[insRegnr_]' ";	}
+if (empty($_POST['insRegnr_']))    {    $insRegnr = "regnr = NULL";    }
+  else        {    $insRegnr = "regnr = '$_POST[insRegnr_]' ";    }
   
-if (empty($_POST['insStdat_']))	{	$insStdat = "stdat = NULL";	}
-  else		{	$insStdat = "stdat = '$_POST[insStdat_]' ";	}
+if (empty($_POST['insStdat_']))    {    $insStdat = "stdat = NULL";    }
+  else        {    $insStdat = "stdat = '$_POST[insStdat_]' ";    }
 
-if (empty($_POST['insNhd_']))	{	$insNhd = "NULL";	}
-  else		{	$insNhd = "'$_POST[insNhd_]'";	}
+if (empty($_POST['insNhd_']))    {    $insNhd = "NULL";    }
+  else        {    $insNhd = "'$_POST[insNhd_]'";    }
 
-if (empty($_POST['insGewicht_']))	{	$insKg = "NULL";	}
-  else		{	$insKg = "'$_POST[insGewicht_]'";	}
+if (empty($_POST['insGewicht_']))    {    $insKg = "NULL";    }
+  else        {    $insKg = "'$_POST[insGewicht_]'";    }
 
-if (empty($_POST['insBtw_']))	{	$insBtw = "NULL";	}
-  else	{	$insBtw = "'$_POST[insBtw_]'";	}
+if (empty($_POST['insBtw_']))    {    $insBtw = "NULL";    }
+  else    {    $insBtw = "'$_POST[insBtw_]'";    }
   
-if (empty($_POST['insRelatie_']))	{	$insRelatie = "NULL";	}
-  else	{	$insRelatie = "'$_POST[insRelatie_]'";	}
+if (empty($_POST['insRelatie_']))    {    $insRelatie = "NULL";    }
+  else    {    $insRelatie = "'$_POST[insRelatie_]'";    }
 
-if (empty($_POST['insWdgnV_']))	{	$inswdgn_v = "NULL";	}
-  else		{	$inswdgn_v = " '$_POST[insWdgnV_]' ";	}
+if (empty($_POST['insWdgnV_']))    {    $inswdgn_v = "NULL";    }
+  else        {    $inswdgn_v = " '$_POST[insWdgnV_]' ";    }
 
-if (empty($_POST['insWdgnM_']))	{	$inswdgn_m = "NULL";	}
-  else		{	$inswdgn_m = " '$_POST[insWdgnM_]' ";	}
+if (empty($_POST['insWdgnM_']))    {    $inswdgn_m = "NULL";    }
+  else        {    $inswdgn_m = " '$_POST[insWdgnM_]' ";    }
 
 if($modfin == 1 ) {
-if (empty($_POST['insRubriek_']))	{	$insRubriek = "NULL";	}
-  else	{	$insRubriek = "'$_POST[insRubriek_]'";	}
+if (empty($_POST['insRubriek_']))    {    $insRubriek = "NULL";    }
+  else    {    $insRubriek = "'$_POST[insRubriek_]'";    }
 }
 else
 { $insRubriek = "NULL"; }
 
 // Functie : Maak readernamen uniek
 function getReadername($datb, $lidid, $naam, $n) {
-		$n++;
-		$len = strlen($n); $string_len = 20 - $len;
-		$readername = substr($naam, 0, $string_len) . $n;
+        $n++;
+        $len = strlen($n); $string_len = 20 - $len;
+        $readername = substr($naam, 0, $string_len) . $n;
 
-		$result = mysqli_query($datb,"
-			SELECT count(*) aant 
-			FROM tblArtikel a
-			 join tblEenheiduser eu on (a.enhuId = eu.enhuId) 
-			WHERE lidId = ".mysqli_real_escape_string($datb,$lidid)." and naamreader = '".mysqli_real_escape_string($datb,$readername)."' ;") or die (mysqli_error($datb)); 
+        $result = mysqli_query($datb,"
+            SELECT count(*) aant 
+            FROM tblArtikel a
+             join tblEenheiduser eu on (a.enhuId = eu.enhuId) 
+            WHERE lidId = ".mysqli_real_escape_string($datb,$lidid)." and naamreader = '".mysqli_real_escape_string($datb,$readername)."' ;") or die (mysqli_error($datb)); 
 
-		while ($row = mysqli_fetch_assoc($result)) { $count = $row['aant']; }
+        while ($row = mysqli_fetch_assoc($result)) { $count = $row['aant']; }
 
-		if ($count > 0) { $readername = getReadername($datb, $lidid, $naam, $n); }
+        if ($count > 0) { $readername = getReadername($datb, $lidid, $naam, $n); }
 
-	return $readername;
+    return $readername;
 }
 // Einde Functie : Maak readernamen uniek
 
 $readernaam = substr($insPres, 0, 20);
 $zoek_readernaam = mysqli_query($db,"
-			SELECT count(*) aant 
-			FROM tblArtikel a
-			 join tblEenheiduser eu on (a.enhuId = eu.enhuId) 
-			WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and naamreader = '".mysqli_real_escape_string($db,$readernaam)."' ;") or die (mysqli_error($db)); 
+            SELECT count(*) aant 
+            FROM tblArtikel a
+             join tblEenheiduser eu on (a.enhuId = eu.enhuId) 
+            WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and naamreader = '".mysqli_real_escape_string($db,$readernaam)."' ;") or die (mysqli_error($db)); 
 
-		while ($dup = mysqli_fetch_assoc($zoek_readernaam)) { $count = $dup['aant']; }
+        while ($dup = mysqli_fetch_assoc($zoek_readernaam)) { $count = $dup['aant']; }
 
-		if ($count > 0) { $d = 0;
+        if ($count > 0) { $d = 0;
 $readernaam = getReadername($db, $lidId, $insPres, $d);
 }
 
 $insert_tblArtikel = "INSERT INTO tblArtikel SET soort = 'pil', naam = ".$insNaam.", naamreader = '".$readernaam."', ".$insRegnr.", ".$insStdat.", enhuId = ".$insNhd.", perkg = ".$insKg.", btw = ".$insBtw.", relId= ".$insRelatie.", wdgn_v = ".$inswdgn_v.", wdgn_m = ".$inswdgn_m.", rubuId= ".$insRubriek." ";
-		
-/*echo $insert_tblArtikel.'<br>';*/				mysqli_query($db,$insert_tblArtikel) or die (mysqli_error($db));
-	}
+        
+/*echo $insert_tblArtikel.'<br>';*/                mysqli_query($db,$insert_tblArtikel) or die (mysqli_error($db));
+    }
 }
 
 //*****************************
@@ -189,7 +189,7 @@ $insert_tblArtikel = "INSERT INTO tblArtikel SET soort = 'pil', naam = ".$insNaa
 
  <th>Actief</th> 
 </tr> 
-<?php		
+<?php        
 // START LOOP
 $loop = mysqli_query($db,"
 SELECT a.artId 
@@ -200,8 +200,8 @@ WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a.soort = 'pil'
 ORDER BY a.actief desc, a.naam
 ") or die (mysqli_error($db));
 
-	while($lus = mysqli_fetch_assoc($loop))
-	{
+    while($lus = mysqli_fetch_assoc($loop))
+    {
             $Id = $lus['artId'];
 
 
@@ -213,22 +213,22 @@ FROM tblEenheid e
 WHERE a.artId = '".mysqli_real_escape_string($db,$Id)."'
 ORDER BY a.naam ") or die (mysqli_error($db));
 
-	while($row = mysqli_fetch_assoc($qryArtikel))
-	{
-		$soort = $row['soort'];
-		$pil = $row['naam'];
-		$naamreader = $row['pres'];
-		$stdat = $row['stdat'];
-		$enhuId = $row['enhuId'];
-		$eenhd = $row['eenheid'];
-		$perkg = $row['perkg'];
-		$btw = $row['btw'];
-		$regnr = $row['regnr'];
-		$relId = $row['relId'];
-		$rubuId = $row['rubuId'];
-		$wdgn_v = $row['wdgn_v'];
-		$wdgn_m = $row['wdgn_m'];
-		$actief = $row['actief'];
+    while($row = mysqli_fetch_assoc($qryArtikel))
+    {
+        $soort = $row['soort'];
+        $pil = $row['naam'];
+        $naamreader = $row['pres'];
+        $stdat = $row['stdat'];
+        $enhuId = $row['enhuId'];
+        $eenhd = $row['eenheid'];
+        $perkg = $row['perkg'];
+        $btw = $row['btw'];
+        $regnr = $row['regnr'];
+        $relId = $row['relId'];
+        $rubuId = $row['rubuId'];
+        $wdgn_v = $row['wdgn_v'];
+        $wdgn_m = $row['wdgn_m'];
+        $actief = $row['actief'];
 
 // Bepalen of artikel al is ingekocht
 $pil_ingekocht = mysqli_query($db,"
@@ -245,35 +245,35 @@ WHERE artId = '".mysqli_real_escape_string($db,$Id)."'
 <?php
 // Veld Omschrijving (al dan niet te wijzigen)
 if ($rows_inkoop > 0) { echo $pil; }
-else 	{ ?>
+else     { ?>
 
-	<input type= "text" name= <?php echo "txtNaam_$Id"; ?> size = 30 value = <?php echo " '$pil' "; ?> style = "font-size:12px;" >
-<?php	}	
+    <input type= "text" name= <?php echo "txtNaam_$Id"; ?> size = 30 value = <?php echo " '$pil' "; ?> style = "font-size:12px;" >
+<?php    }    
 // EINDE  Veld Omschrijving (al dan niet te wijzigen) ?>
  </td>
  <?php if($reader == 'Agrident') { ?>
  <td><!--Naam reader -->
 
 <input type= "text" name= <?php echo "txtPres_$Id"; ?> size = 17 style = "font-size:12px;" value = <?php echo "'".$naamreader."'" ; ?> >
-		
+        
  </td>
 <?php } ?>
  <td><!--Registratienummer -->
 
 <input type= "text" name= <?php echo "txtRegnr_$Id"; ?> style = "font-size:12px;" value = <?php echo "'".$regnr."'" ; ?> >
-		
+        
  </td>
 
  <td>
 <!-- Standaard verbruiksaantal -->
 <input type= "text" name= <?php echo "txtStdat_$Id"; ?> size = 4 style = "font-size:12px; text-align : right;" title = "Standaard hoeveelheid per toedienen" value = <?php echo $stdat; ?> >
-		
+        
 
  </td>
  <td><?php
 // kzlVerbruikseenheid (al dan niet te wijzigen)
 if ($rows_inkoop > 0) { echo $eenhd; }
-else 	{ 
+else     { 
 
 $result = mysqli_query($db,"
 SELECT e.eenheid, eu.enhuId 
@@ -284,26 +284,26 @@ ORDER BY e.eenheid
 ") or die (mysqli_error($db));?>
  <select style="width:50;" name= <?php echo "kzlNhd_$Id"; ?> value = "" style = "font-size:12px;">
   <option></option>
-<?php		while($lijn = mysqli_fetch_array($result))
-		{
-			$raak = $lijn['enhuId'];
+<?php        while($lijn = mysqli_fetch_array($result))
+        {
+            $raak = $lijn['enhuId'];
 
-			$opties= array($lijn['enhuId']=>$lijn['eenheid']);
-			foreach ( $opties as $key => $waarde)
-			{
+            $opties= array($lijn['enhuId']=>$lijn['eenheid']);
+            foreach ( $opties as $key => $waarde)
+            {
 
   if ((!isset($_POST['knpSave_']) && $enhuId == $raak) || (isset($_POST["kzlNhd_$Id"]) && $_POST["kzlNhd_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';
-  }	
-			}
-			
-		}
+  }    
+            }
+            
+        }
 ?></select>
 
 <?php } // EINDE  kzlVerbruikseenheid (al dan niet te wijzigen) ?>
- </td>	
+ </td>    
 
  <td> <input type="text" name= <?php echo "txtGewicht_$Id"; ?> size = 1 style = "font-size:12px;" value = <?php echo "'".$perkg."'" ; ?> > kg </td>
  <td>
@@ -322,10 +322,10 @@ foreach ( $opties as $key => $waarde)
    }
 
 } ?>
-	</select>
+    </select>
  </td>
 <!-- EINDE kzlBtw bij wijzigen
-	kzlLeverancier bij wijzigen -->
+    kzlLeverancier bij wijzigen -->
  <td> <?php
 $qryLevcier = mysqli_query($db,"
 SELECT r.relId, p.naam
@@ -336,21 +336,21 @@ ORDER BY p.naam
 ") or die (mysqli_error($db)); ?>
  <select style= "width:110;" name= <?php echo "kzlRelatie_$Id"; ?> value = "" style = "font-size:12px;">
   <option></option>
-<?php		while($lijn = mysqli_fetch_array($qryLevcier))
-		{
-			$raak = $lijn['relId'];
+<?php        while($lijn = mysqli_fetch_array($qryLevcier))
+        {
+            $raak = $lijn['relId'];
 
-			$opties= array($lijn['relId']=>$lijn['naam']);
-			foreach ( $opties as $key => $waarde)
-			{
+            $opties= array($lijn['relId']=>$lijn['naam']);
+            foreach ( $opties as $key => $waarde)
+            {
   if ((!isset($_POST['knpSave_']) && $relId == $raak) || (isset($_POST["kzlRelatie_$Id"]) && $_POST["kzlRelatie_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';
-  }	
-			}
+  }    
+            }
 
-		}
+        }
 ?>
 </select>
  </td>
@@ -359,15 +359,15 @@ ORDER BY p.naam
 
 wachtdagen vlees bij wijzigen -->
  <td>
-	<input type= "text" name= <?php echo "txtWdgnV_$Id"; ?> size = 1 style = "font-size:12px; text-align : right;" title = "Aantal wachtdagen vlees" value = <?php echo $wdgn_v; ?> >
+    <input type= "text" name= <?php echo "txtWdgnV_$Id"; ?> size = 1 style = "font-size:12px; text-align : right;" title = "Aantal wachtdagen vlees" value = <?php echo $wdgn_v; ?> >
 <!--EINDE wachtdagen vlees bij wijzigen 
 
 wachtdagen melk bij wijzigen -->
  
-	<input type= "text" name= <?php echo "txtWdgnM_$Id"; ?> size = 1 style = "font-size:12px; text-align : right;" title = "Aantal wachtdagen melk" value = <?php echo $wdgn_m; ?> >
+    <input type= "text" name= <?php echo "txtWdgnM_$Id"; ?> size = 1 style = "font-size:12px; text-align : right;" title = "Aantal wachtdagen melk" value = <?php echo $wdgn_m; ?> >
 <!--EINDE wachtdagen melk bij wijzigen -->
- </td>	
-<?php		
+ </td>    
+<?php        
 if($modfin == 1 ) { ?>
 
  <td>
@@ -384,31 +384,31 @@ ORDER BY r.rubriek
  ") or die (mysqli_error($db));?>
  <select style="width:140;" name= <?php echo "kzlRubriek_$Id"; ?> value = "" style = "font-size:12px;">
   <option></option>
-<?php		while($rub = mysqli_fetch_array($qryRubriek))
-		{
-			$raak = $rub['rubuId'];
+<?php        while($rub = mysqli_fetch_array($qryRubriek))
+        {
+            $raak = $rub['rubuId'];
 
 
-			$opties = array($rub['rubuId']=>$rub['rubriek']);
-			foreach ( $opties as $key => $waarde)
-			{
-						$keuze = '';
-		
-		if( (!isset($_POST['knpSave_']) && $rubuId == $raak) || (isset($_POST["kzlRubriek_$Id"]) && $_POST["kzlRubriek_$Id"] == $key) )
-		{
-			echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
-		}
-		else
-		{		
-		echo '<option value="' . $key . '" >' . $waarde . '</option>';
-		}
-			
-		}
+            $opties = array($rub['rubuId']=>$rub['rubriek']);
+            foreach ( $opties as $key => $waarde)
+            {
+                        $keuze = '';
+        
+        if( (!isset($_POST['knpSave_']) && $rubuId == $raak) || (isset($_POST["kzlRubriek_$Id"]) && $_POST["kzlRubriek_$Id"] == $key) )
+        {
+            echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
+        }
+        else
+        {        
+        echo '<option value="' . $key . '" >' . $waarde . '</option>';
+        }
+            
+        }
 }
 ?>
 </select>
 <!-- EINDE KZLRUBRIEK bij wijzigen -->
- </td> <?php } ?>		
+ </td> <?php } ?>        
  <td> <input type = "checkbox" name = <?php echo "chkActief_$Id"; ?> id="c1" value="1" <?php echo $actief == 1 ? 'checked' : ''; ?> title = "Is medicijn te gebruiken ja/nee ?"> </td>
 
 <?php } ?>
@@ -428,7 +428,7 @@ ORDER BY r.rubriek
 *************************************
 ** EINDE ARTIKELEN IN GEBRUIK
 *************************************
-	
+    
 *********************************
  VELDEN TBV NIEUWE INVOER
 ********************************* -->
@@ -456,24 +456,24 @@ WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and eu.actief = 1
 ORDER BY e.eenheid
 ") or die (mysqli_error($db)); ?>
  <select style= "width:50;" id="eenheid" name= "insNhd_" >
- <option></option> <?php	
-		while($lijn = mysqli_fetch_array($newvrb))
-		{
-		
-			$opties= array($lijn['enhuId']=>$lijn['eenheid']);
-			foreach ( $opties as $key => $waarde)
-			{
-						$keuze = '';
-		
-		if(isset($_POST['insNhd_']) && $_POST['insNhd_'] == $key)
-		{
-			$keuze = ' selected ';
-		}
-				
-		echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
-			}
-		
-		} ?>
+ <option></option> <?php    
+        while($lijn = mysqli_fetch_array($newvrb))
+        {
+        
+            $opties= array($lijn['enhuId']=>$lijn['eenheid']);
+            foreach ( $opties as $key => $waarde)
+            {
+                        $keuze = '';
+        
+        if(isset($_POST['insNhd_']) && $_POST['insNhd_'] == $key)
+        {
+            $keuze = ' selected ';
+        }
+                
+        echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
+            }
+        
+        } ?>
  </select>
  
  </td>
@@ -511,24 +511,24 @@ ORDER BY p.naam
 ") or die (mysqli_error($db)); 
 ?>
  <select name= "insRelatie_" style= "width:110;" >
- <option> </option>	
-<?php		while($regel = mysqli_fetch_array($newcrediteur))
-		{
-		
-			$opties= array($regel['relId']=>$regel['naam']);
-			foreach ( $opties as $key => $waarde)
-			{
-						$keuze = '';
-		
-		if(isset($_POST['insRelatie_']) && $_POST['insRelatie_'] == $key)
-		{
-			$keuze = ' selected ';
-		}
-				
-		echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
-			}
-		
-		} ?>
+ <option> </option>    
+<?php        while($regel = mysqli_fetch_array($newcrediteur))
+        {
+        
+            $opties= array($regel['relId']=>$regel['naam']);
+            foreach ( $opties as $key => $waarde)
+            {
+                        $keuze = '';
+        
+        if(isset($_POST['insRelatie_']) && $_POST['insRelatie_'] == $key)
+        {
+            $keuze = ' selected ';
+        }
+                
+        echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
+            }
+        
+        } ?>
  </select>
 
  </td>
@@ -549,25 +549,25 @@ ORDER BY r.rubriek
 ") or die (mysqli_error($db));?>
  <select style="width:140;" name= "insRubriek_" value = "" style = "font-size:12px;">
   <option></option>
-<?php		while($nwrub = mysqli_fetch_array($newRubriek))
-		{
+<?php        while($nwrub = mysqli_fetch_array($newRubriek))
+        {
 
-			$opties = array($nwrub['rubuId'] => $nwrub['rubriek']);
-			foreach ($opties as $key => $waarde)
-			{
-						$keuze = '';
-		
-		if(isset($_POST['insRubriek_']) && $_POST['insRubriek_'] == $key)
-		{
-			echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
-		}
-		else
-		{		
-		echo '<option value="' . $key . '" >' . $waarde . '</option>';
-		}
-			}
-			
-		} ?>
+            $opties = array($nwrub['rubuId'] => $nwrub['rubriek']);
+            foreach ($opties as $key => $waarde)
+            {
+                        $keuze = '';
+        
+        if(isset($_POST['insRubriek_']) && $_POST['insRubriek_'] == $key)
+        {
+            echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
+        }
+        else
+        {        
+        echo '<option value="' . $key . '" >' . $waarde . '</option>';
+        }
+            }
+            
+        } ?>
 </select>
 <!-- EINDE KZLRUBRIEK bij nieuwe invoer -->
  </td>
@@ -578,8 +578,8 @@ ORDER BY r.rubriek
 <!--
 *********************************
  EINDE  VELDEN TBV NIEUWE INVOER
-*********************************	 -->
-	
+*********************************     -->
+    
 <tr><td colspan = 15><hr></td></tr>
 
 
@@ -595,8 +595,8 @@ FROM tblEenheid e
  join tblEenheiduser eu on (e.eenhId = eu.eenhId)
  join tblArtikel a on (a.enhuId = eu.enhuId)
 WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a.soort = 'pil' and a.actief = 0 ") or die (mysqli_error($db));
-	while ($uit = mysqli_fetch_assoc($Niet_in_gebruik))
-	{	$niet_actief = $uit['aant'];	}
+    while ($uit = mysqli_fetch_assoc($Niet_in_gebruik))
+    {    $niet_actief = $uit['aant'];    }
 if ($niet_actief > 0) {
 ?>
 <tr> 
@@ -620,7 +620,7 @@ if ($niet_actief > 0) {
  <th>Rubriek</th> <?php } ?>
  <th>Actief</th> 
 </tr> 
-<?php		
+<?php        
 // START LOOP
 $loop = mysqli_query($db,"
 SELECT artId, naam 
@@ -630,8 +630,8 @@ FROM tblEenheid e
 WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a.soort = 'pil' and a.actief = 0
 ORDER BY a.actief desc, a.naam ") or die (mysqli_error($db));
 
-	while($lus = mysqli_fetch_assoc($loop))
-	{
+    while($lus = mysqli_fetch_assoc($loop))
+    {
             $Id = $lus['artId'];
 
 
@@ -648,40 +648,40 @@ WHERE a.artId = '".mysqli_real_escape_string($db,$Id)."'
 ORDER BY a.naam 
 ") or die (mysqli_error($db));
 
-	while($row = mysqli_fetch_assoc($qryArtikel))
-	{
-		$soort = $row['soort'];
-		$pil = $row['naam'];
-		$stdat = $row['stdat'];
-		$enhuId = $row['enhuId'];
-		$eenhd = $row['eenheid'];
-		$perkg = $row['perkg'];
-		$btw = $row['btw'];
-		$regnr = $row['regnr'];
-		$relatie = $row['relatie'];
-		$wdgn_v = $row['wdgn_v'];
-		$wdgn_m = $row['wdgn_m'];
-		$rubriek = $row['rubriek'];
-		$actief = $row['actief'];
+    while($row = mysqli_fetch_assoc($qryArtikel))
+    {
+        $soort = $row['soort'];
+        $pil = $row['naam'];
+        $stdat = $row['stdat'];
+        $enhuId = $row['enhuId'];
+        $eenhd = $row['eenheid'];
+        $perkg = $row['perkg'];
+        $btw = $row['btw'];
+        $regnr = $row['regnr'];
+        $relatie = $row['relatie'];
+        $wdgn_v = $row['wdgn_v'];
+        $wdgn_m = $row['wdgn_m'];
+        $rubriek = $row['rubriek'];
+        $actief = $row['actief'];
 ?>
-		<tr style = "font-size:12px;">
-		<td style = "font-size : 14px;">
+        <tr style = "font-size:12px;">
+        <td style = "font-size : 14px;">
 <?php
 // Veld Medicijnnaam
 echo $pil; 
 // EINDE  Veld Medicijnnaam
 ?></td>
  <td width = 1></td>
- <td> 									<?php echo $regnr ; /* Registratienummer */ ?>	</td>
+ <td>                                     <?php echo $regnr ; /* Registratienummer */ ?>    </td>
  <td align = "center" > <?php echo $stdat; /* Standaard verbruiksaantal */ ?> </td>
  <td align = "center" > <?php echo $eenhd; /* Verbruikseenheid */ ?> </td>
  <td align = "center" > <?php echo $perkg.' kg'; /* Per gewicht */ ?> </td>
  <td align = "center" > <?php echo $btw; // Btw ?> </td>
- <td>									  <?php if(isset($relatie)) { echo $relatie; } //Leverancier ?> </td>
- <td align = "center"> 	<?php echo $wdgn_v.'&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp'.$wdgn_m; //wachtdagen ?> </td>
- <td align = "center"> 	<?php echo $rubriek; //Rubriek ?> </td>
+ <td>                                      <?php if(isset($relatie)) { echo $relatie; } //Leverancier ?> </td>
+ <td align = "center">     <?php echo $wdgn_v.'&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp'.$wdgn_m; //wachtdagen ?> </td>
+ <td align = "center">     <?php echo $rubriek; //Rubriek ?> </td>
  <td align = "center">
- 	<input type = "checkbox" name = <?php echo "chkActief_$Id"; ?> id="c1" value="1" <?php echo $actief == 1 ? 'checked' : ''; ?> title = "Is medicijn te gebruiken ja/nee ?">
+     <input type = "checkbox" name = <?php echo "chkActief_$Id"; ?> id="c1" value="1" <?php echo $actief == 1 ? 'checked' : ''; ?> title = "Is medicijn te gebruiken ja/nee ?">
  </td>
  <td></td>
 </tr>
@@ -705,7 +705,7 @@ echo $pil;
 </form>
 
 
-	</TD>
+    </TD>
 <?php } else { ?> <img src='medicijnen_php.jpg' width='900' height='500'/> <?php }
 include "menuInkoop.php"; } ?>
 

@@ -14,7 +14,7 @@ unset($fldTerug);
    
  foreach($id as $key => $value) {
 
- 	//$fldLiq = 0;
+     //$fldLiq = 0;
     if ($key == 'chbTerug') {  $fldTerug = $value; /*echo $key.'='.$value."<br/>";*/ }  
 
 }
@@ -24,11 +24,11 @@ unset($fldTerug);
 if(isset($fldTerug)) {
 
 $update_tblOpgaaf = "UPDATE tblOpgaaf SET his = NULL WHERE opgId = '".mysqli_real_escape_string($db,$recId)."' ";
-		//echo '$update_tblOpgaaf = '.$update_tblOpgaaf.'<br>';
-		mysqli_query($db,$update_tblOpgaaf) or die (mysqli_error($db));	
-		}
+        //echo '$update_tblOpgaaf = '.$update_tblOpgaaf.'<br>';
+        mysqli_query($db,$update_tblOpgaaf) or die (mysqli_error($db));    
+        }
 
 }
 ?>
-					
-	
+                    
+    

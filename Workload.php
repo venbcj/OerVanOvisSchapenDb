@@ -5,9 +5,9 @@ require_once("autoload.php");
 /*
  Bij doodgeboren wordt reden "" omgezet naar 0. Let op aantal dagen geleefd en als momId 0 is !
 
-Bij adopteren transpondernummer moeder opslaan		klaar
-Bij overplaatsen transpondernummer schaap opslaan	klaar
-Bij aanvoer transpondernummer schaap opslaan		klaar
+Bij adopteren transpondernummer moeder opslaan        klaar
+Bij overplaatsen transpondernummer schaap opslaan    klaar
+Bij aanvoer transpondernummer schaap opslaan        klaar
 
 
 Fout afhandeling als omschrijving voor en na taak niet klopt

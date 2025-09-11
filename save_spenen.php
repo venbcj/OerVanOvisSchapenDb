@@ -1,6 +1,6 @@
 <?php
 /* 22-11-2015 gemaakt 
-20-1-2017 : query aangepast n.a.v. nieuwe tblDoel. Speengewicht niet verplicht gemaakt	22-1-2017 tblBezetting gewijzigd naar tblBezet 
+20-1-2017 : query aangepast n.a.v. nieuwe tblDoel. Speengewicht niet verplicht gemaakt    22-1-2017 tblBezetting gewijzigd naar tblBezet 
 13-2-2017 : tblPeriode verwijderd en verblijf opgeslagen in tblBezet
 13-4-2019 : Volwassendieren kunnen ook uit verblijf worden gehaald door overplaasten of verlaten 
 26-4-2020 : $minDag als extra ontrole weggehaald. Controle zit ook al in HokSpenen.php
@@ -23,18 +23,18 @@ foreach($array as $recId => $id) {
 // Einde recId ophalen
    
  foreach($id as $key => $value) {
- if ($key == 'chbkies' && $value == 1 ) 	{   $box = $value ;
+ if ($key == 'chbkies' && $value == 1 )     {   $box = $value ;
 
-	
+    
   foreach($id as $key => $value) {
-	if ($key == 'txtDatum' ) { $dag = date_create($value); $updDag =  date_format($dag, 'Y-m-d');  }
-	
-	if ($key == 'txtKg' && !empty($value)) { $updKg = $value; } else if ($key == 'txtKg' && empty($value)) { $updKg = ''; }
+    if ($key == 'txtDatum' ) { $dag = date_create($value); $updDag =  date_format($dag, 'Y-m-d');  }
+    
+    if ($key == 'txtKg' && !empty($value)) { $updKg = $value; } else if ($key == 'txtKg' && empty($value)) { $updKg = ''; }
 
-	unset($kzlHok);
-	if ($key == 'kzlHok' && !empty($value)) { $kzlHok = $value; }
-		
-									}
+    unset($kzlHok);
+    if ($key == 'kzlHok' && !empty($value)) { $kzlHok = $value; }
+        
+                                    }
 
 $zoek_generatie = mysqli_query($db,"
 SELECT hisId
@@ -43,9 +43,9 @@ FROM tblStal st
 WHERE st.schaapId = '".mysqli_real_escape_string($db,$recId)."' and h.actId = 3 and h.skip = 0
 ") or die(mysqli_error($db));
 
-	while ($ge = mysqli_fetch_assoc($zoek_generatie)) { $aanw = $ge['hisId']; }
+    while ($ge = mysqli_fetch_assoc($zoek_generatie)) { $aanw = $ge['hisId']; }
 
-	if(isset($aanw)) { $gener = 'ouder'; } else { $gener = 'lam'; }
+    if(isset($aanw)) { $gener = 'ouder'; } else { $gener = 'lam'; }
 
 $zoek_spenen = mysqli_query($db,"
 SELECT hisId
@@ -54,7 +54,7 @@ FROM tblStal st
 WHERE st.schaapId = '".mysqli_real_escape_string($db,$recId)."' and h.actId = 4 and h.skip = 0
 ") or die(mysqli_error($db));
 
-	while ($sp = mysqli_fetch_assoc($zoek_spenen)) { $speen = $sp['hisId']; }
+    while ($sp = mysqli_fetch_assoc($zoek_spenen)) { $speen = $sp['hisId']; }
 
 // CONTROLE op alle verplichten velden bij spenen lam
 if (isset($recId) && $recId >0 && !empty($updDag))
@@ -70,7 +70,7 @@ FROM tblStal st
 WHERE isnull(st.rel_best) and st.schaapId = '".mysqli_real_escape_string($db,$recId)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die(mysqli_error($db));
 
-	while ($st = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $st['stalId']; }
+    while ($st = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $st['stalId']; }
 //echo '$stalId = '.$stalId.'<br>';
 
 if(isset($kzlHok) && $gener == 'lam' && !isset($speen)) { $actId = 4; }
@@ -83,7 +83,7 @@ $insert_tblHistorie = "
 INSERT INTO tblHistorie
 set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$updDag)."', kg = ".db_null_input($updKg).", actId = '".mysqli_real_escape_string($db,$actId)."'
 ";
-	mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
+    mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
 
 
 if(isset($kzlHok)) { // Als moet worden overgplaatst en dus niet volwassen dieren die verblijf alleen verlaten
@@ -95,7 +95,7 @@ FROM tblHistorie h
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = '".mysqli_real_escape_string($db,$actId)."'
 ") or die(mysqli_error($db));
 
-	while ($hi = mysqli_fetch_assoc($zoek_hisId)) { $hisId = $hi['hisId']; }
+    while ($hi = mysqli_fetch_assoc($zoek_hisId)) { $hisId = $hi['hisId']; }
 
 if(!isset($newHok) || (isset($newHok) && $kzlHok <> $newHok)) {
 $newHok = $kzlHok;
@@ -105,8 +105,8 @@ $newHok = $kzlHok;
 if(isset($hisId)) { // $hisId bestaat niet bij verlaten volwassen dieren
 
 $insert_tblBezet = "INSERT INTO tblBezet set hisId = '".mysqli_real_escape_string($db,$hisId)."', hokId = '".mysqli_real_escape_string($db,$newHok)."' "; 
-		mysqli_query($db,$insert_tblBezet) or die (mysqli_error($db)); 
-				}
+        mysqli_query($db,$insert_tblBezet) or die (mysqli_error($db)); 
+                }
 
 } // Einde if(isset($kzlHok))
 
@@ -120,15 +120,15 @@ unset($actId);
 
 
 
-										} // EINDE Alleen als checkbox chbkies de waarde 1 heeft
+                                        } // EINDE Alleen als checkbox chbkies de waarde 1 heeft
     }
 
 
-	
-	
-	
-	}
+    
+    
+    
+    }
 
 ?>
-					
-	
+                    
+    

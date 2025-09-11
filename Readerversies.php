@@ -33,7 +33,7 @@ $titel = 'Beschikbare readerversies';
 $file = "Readerversies.php";
 include "login.php"; ?>
 
-				<TD valign = 'top'>	
+                <TD valign = 'top'>    
 <?php
 if (Auth::is_logged_in()) { if($reader == 'Agrident') {
 include "kalender.php"; ?>
@@ -45,22 +45,22 @@ function toon_velden(id) {
 var chbVersie = 'versieChb_' + id;
 var lblReaderApp = 'readerApp_' + id;
 
-versiekeuze = document.getElementById(chbVersie);		var vk = versiekeuze.value;
+versiekeuze = document.getElementById(chbVersie);        var vk = versiekeuze.value;
 
 // if(mr.length > 0) alert(jArray_vdr[mr]);
   if(vk == id) {
 
-  	document.getElementById(lblReaderApp).style.display = "inline-block";
-  	//document.getElementById(txtDrachtdm).value = datum;
-  	//document.getElementById(txtWorp).style.display = "inline-block";
+      document.getElementById(lblReaderApp).style.display = "inline-block";
+      //document.getElementById(txtDrachtdm).value = datum;
+      //document.getElementById(txtWorp).style.display = "inline-block";
 
   }
   else
   {
-  	document.getElementById(lblReaderApp).style.display = "none";
-  	//document.getElementById(txtDrachtdm).value = null;
-  	//document.getElementById(txtWorp).style.display = "none";
-  	//document.getElementById(txtWorp).value = null;
+      document.getElementById(lblReaderApp).style.display = "none";
+      //document.getElementById(txtDrachtdm).value = null;
+      //document.getElementById(txtWorp).style.display = "none";
+      //document.getElementById(txtWorp).value = null;
   }
 
 }
@@ -80,7 +80,7 @@ $insToel = $_POST['insToel'];
 if(!empty($insNaamApp)) {
 $insert_tblVersiebeheer = "INSERT INTO tblVersiebeheer set datum = '".mysqli_real_escape_string($db,$insDate)."', versie = '".mysqli_real_escape_string($db,$insVersie)."', bestand = '".mysqli_real_escape_string($db,$insNaamApp)."', app = 'App', comment = " . db_null_input($insToel);
 
-	mysqli_query($db,$insert_tblVersiebeheer) or die (mysqli_error($db));
+    mysqli_query($db,$insert_tblVersiebeheer) or die (mysqli_error($db));
 }
 
 if(!empty($insNaamTaak)) {
@@ -92,7 +92,7 @@ FROM tblVersiebeheer
 WHERE bestand = '".mysqli_real_escape_string($db,$insNaamApp)."'
 ") or die (mysqli_error($db));
 
-	while ( $zvi = mysqli_fetch_assoc($zoek_versieId)) { $versieId = $zvi['Id']; }
+    while ( $zvi = mysqli_fetch_assoc($zoek_versieId)) { $versieId = $zvi['Id']; }
 
 $insert_tblVersiebeheer = "INSERT INTO tblVersiebeheer set versieId = '".mysqli_real_escape_string($db,$versieId)."', datum = '".mysqli_real_escape_string($db,$insDate)."', versie = '".mysqli_real_escape_string($db,$insVersie)."', bestand = '".mysqli_real_escape_string($db,$insNaamTaak)."', app = 'Reader', comment = " . db_null_input($insToel);
 }
@@ -101,7 +101,7 @@ else {
 $insert_tblVersiebeheer = "INSERT INTO tblVersiebeheer set datum = '".mysqli_real_escape_string($db,$insDate)."', versie = '".mysqli_real_escape_string($db,$insVersie)."', bestand = '".mysqli_real_escape_string($db,$insNaamTaak)."', app = 'Reader', comment = " . db_null_input($insToel);
 }
 
-	mysqli_query($db,$insert_tblVersiebeheer) or die (mysqli_error($db));
+    mysqli_query($db,$insert_tblVersiebeheer) or die (mysqli_error($db));
 
 } // Einde if(isset($insNaamTaak))
 
@@ -116,19 +116,19 @@ else { $hisVersies = 2; }
 
 <br> <h4 style = 'color : grey'>
  
- 	Download hier de nieuwste versie van de readerApp en de readertaken (indien van toepassing) door op de link te klikken.<br> Na het downloaden klik je op de knop Downloaden afronden. <br></h4>
- 	<h4 style = 'color : red'>
- 	Denk er aan dat voor het downloaden de reader is uitgelezen! <br><br>
+     Download hier de nieuwste versie van de readerApp en de readertaken (indien van toepassing) door op de link te klikken.<br> Na het downloaden klik je op de knop Downloaden afronden. <br></h4>
+     <h4 style = 'color : red'>
+     Denk er aan dat voor het downloaden de reader is uitgelezen! <br><br>
  
 </h4>
 <table border = 0>
 <tr height = 50 valign="top">
  <td colspan = 4 align="center"> Toon laatste
-	<input type="text" name="txtVersies_" size="1" style = "font-size:9px; text-align : center;" value = <?php echo $hisVersies; ?> >
+    <input type="text" name="txtVersies_" size="1" style = "font-size:9px; text-align : center;" value = <?php echo $hisVersies; ?> >
 versies
  </td>
  <td  align="left" > 
-	<input type="submit" name="knpVervers_" value="Ververs" style = "font-size:9px;">
+    <input type="submit" name="knpVervers_" value="Ververs" style = "font-size:9px;">
  </td>
 </tr>
 
@@ -153,8 +153,8 @@ WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
 
 ") or die (mysqli_error($db));
 
-	while ( $zsk = mysqli_fetch_assoc($zoek_startdatum_klant)) { 
-		$dmStart = $zsk['date']; }
+    while ( $zsk = mysqli_fetch_assoc($zoek_startdatum_klant)) { 
+        $dmStart = $zsk['date']; }
 
 /* Eerste query zoek alleen readerApp versies
 Tweede query zoek naar readerApp versie i.c.m. taakversies 
@@ -184,14 +184,14 @@ LIMIT ".mysqli_real_escape_string($db,$hisVersies)."
 
 ") or die (mysqli_error($db));
 
-	while ( $zvs = mysqli_fetch_assoc($zoek_versies)) { 
-		$Id = $zvs['Id']; 
-		$datum = $zvs['datum']; 
-		$jaar = $zvs['jaar']; 
-		$versienr = $zvs['versie']; 
-		$setup_bestand = $zvs['bestandApp']; 
-		$taken_bestand = $zvs['bestandTaak']; 
-		$Toelichting = $zvs['comment']; 
+    while ( $zvs = mysqli_fetch_assoc($zoek_versies)) { 
+        $Id = $zvs['Id']; 
+        $datum = $zvs['datum']; 
+        $jaar = $zvs['jaar']; 
+        $versienr = $zvs['versie']; 
+        $setup_bestand = $zvs['bestandApp']; 
+        $taken_bestand = $zvs['bestandTaak']; 
+        $Toelichting = $zvs['comment']; 
 
 
 if(isset($_POST['knpAfronden_'.$Id])) {
@@ -240,12 +240,12 @@ FROM tblVersiebeheer
 WHERE Id = '".mysqli_real_escape_string($db,$last_versieId)."'
 ") or die (mysqli_error($db));
 // $last_versieId gedeclareerd in login.php
-	while ( $zhv = mysqli_fetch_assoc($zoek_huidige_versie)) { $current_versie = $zhv['versie']; }
+    while ( $zhv = mysqli_fetch_assoc($zoek_huidige_versie)) { $current_versie = $zhv['versie']; }
  ?>
 
 <tr height = 30>
   <td>
- 	
+     
  <input onchange = "toon_velden(<?php echo $Id; ?>)" id= <?php echo "versieChb_$Id"; ?> type="checkbox" name= <?php echo "chbVersienr_$Id"; ?> value= <?php echo $Id; if($versienr == $current_versie || isset($_POST['chbVersienr_'.$Id]) ) { ?> checked <?php } ?> > <?php echo $versienr; ?>
  </td>
  <td> </td>
@@ -253,20 +253,20 @@ WHERE Id = '".mysqli_real_escape_string($db,$last_versieId)."'
 
  <td> </td>
  <td align="center" style="color : grey" > <p id= <?php echo "readerApp_$Id"; ?> class= "<?php echo $Id; ?> selectt" > 
- 	<?php 
- 	if(!isset($setup_bestand)) { echo 'n.v.t.'; } else 
- 	if ($afgerond == 'Ja') { echo 'ReaderApp'; } else { ?>
-	<a href='<?php echo $url.'/Readerversies/'.$setup_bestand; ?>' style = 'color : blue'> 
+     <?php 
+     if(!isset($setup_bestand)) { echo 'n.v.t.'; } else 
+     if ($afgerond == 'Ja') { echo 'ReaderApp'; } else { ?>
+    <a href='<?php echo $url.'/Readerversies/'.$setup_bestand; ?>' style = 'color : blue'> 
 ReaderApp</a>
  <?php } ?> </p>
  </td>
 
  <td> </td>
  <td align="center" style="color : grey" > <p class= "<?php echo $Id; ?> selectt" >
- 	<?php 
- 	if(!isset($taken_bestand)) { echo 'n.v.t.'; } else
- 	if ($afgerond == 'Ja') { echo 'Readertaken'; } else { ?>
-	<a href='<?php echo $url.'/Readerversies/'.$taken_bestand; ?>' style = 'color : blue'> 
+     <?php 
+     if(!isset($taken_bestand)) { echo 'n.v.t.'; } else
+     if ($afgerond == 'Ja') { echo 'Readertaken'; } else { ?>
+    <a href='<?php echo $url.'/Readerversies/'.$taken_bestand; ?>' style = 'color : blue'> 
 Readertaken</a>
  <?php } ?> </p>
  </td>
@@ -278,9 +278,9 @@ Readertaken</a>
  <td class= "<?php echo $Id; ?> selectt"  > 
 <?php 
 if ($afgerond == 'Ja') { ?> 
-	<input type="submit" name= <?php echo "knpNogmaals_$Id"; ?> value="Nogmaals downloaden" style = "font-size:12px;"> <?php }
+    <input type="submit" name= <?php echo "knpNogmaals_$Id"; ?> value="Nogmaals downloaden" style = "font-size:12px;"> <?php }
 else { ?> 
-	<input type="submit" name= <?php echo "knpAfronden_$Id"; ?> value="Downloaden afronden" style = "font-size:12px;"> <?php } ?>
+    <input type="submit" name= <?php echo "knpAfronden_$Id"; ?> value="Downloaden afronden" style = "font-size:12px;"> <?php } ?>
  </td>
 </tr>
 
@@ -322,7 +322,7 @@ else { ?>
 <!-- Einde Toevoegen van nieuwe versie door de beheerder -->
 <?php } // Einde if($modbeheer == 1) ?>
 
-	</TD>
+    </TD>
 <?php } else { ?> <img src='Readerversies.jpg'  width='970' height='550'/> <?php }
 
 

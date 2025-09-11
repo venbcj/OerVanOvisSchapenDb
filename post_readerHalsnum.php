@@ -23,14 +23,14 @@ foreach($array as $recId => $id) {
   if ($key == 'chbkies')   { $fldKies = $value; }
   if ($key == 'chbDel')    { $fldDel = $value; }
 
-	if ($key == 'txtDag' && !empty($value)) { $dag = date_create($value); $valuedate =  date_format($dag, 'Y-m-d'); 
-									/*echo $key.'='.$valuedate.' ';*/ $fldDay = $valuedate; }
+    if ($key == 'txtDag' && !empty($value)) { $dag = date_create($value); $valuedate =  date_format($dag, 'Y-m-d'); 
+                                    /*echo $key.'='.$valuedate.' ';*/ $fldDay = $valuedate; }
 
-	if ($key == 'kzlKleur' && !empty($value)) { /*echo $key.'='.$valuedate.' ';*/ $fldKleur = $value; }
+    if ($key == 'kzlKleur' && !empty($value)) { /*echo $key.'='.$valuedate.' ';*/ $fldKleur = $value; }
 
-	if ($key == 'txtHalsnr' && !empty($value)) { /*echo $key.'='.$valuedate.' ';*/ $fldHalsnr = $value; }
-									
-									}
+    if ($key == 'txtHalsnr' && !empty($value)) { /*echo $key.'='.$valuedate.' ';*/ $fldHalsnr = $value; }
+                                    
+                                    }
 // (extra) controle of readerregel reeds is verwerkt. Voor als de pagina 2x wordt verstuurd bij fouten op de pagina
 unset($verwerkt);
 if($reader == 'Agrident') {
@@ -56,14 +56,14 @@ if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt)) { // isset($verwerkt) is
 // CONTROLE op alle verplichten velden
 if ( isset($fldDay) && isset($fldKleur) && isset($fldHalsnr) )
 {
-	
+    
 $zoek_schaapId = mysqli_query($db,"
 SELECT s.schaapId
 FROM impAgrident rd
  join tblSchaap s on (s.levensnummer = rd.levensnummer)
 WHERE rd.Id = '".mysqli_real_escape_string($db,$recId)."'
 ") or die (mysqli_error($db));
-	while ($zs = mysqli_fetch_assoc($zoek_schaapId)) { $schaapId = $zs['schaapId']; }
+    while ($zs = mysqli_fetch_assoc($zoek_schaapId)) { $schaapId = $zs['schaapId']; }
 //echo '$levnr = '.$levnr.'<br>';
 
 $zoek_stalId = mysqli_query($db,"
@@ -71,54 +71,54 @@ SELECT stalId
 FROM tblStal
 WHERE schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(rel_best)
 ") or die (mysqli_error($db));
-	while ($st = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $st['stalId']; }
+    while ($st = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $st['stalId']; }
 //echo '$stalId = '.$stalId.'<br>';
 
-	
-	$update_tblStal = "UPDATE tblStal set kleur = '".mysqli_real_escape_string($db,$fldKleur)."', halsnr = '".mysqli_real_escape_string($db,$fldHalsnr)."'
-		WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."'
-	 ";
-		mysqli_query($db,$update_tblStal) or die (mysqli_error($db));
+    
+    $update_tblStal = "UPDATE tblStal set kleur = '".mysqli_real_escape_string($db,$fldKleur)."', halsnr = '".mysqli_real_escape_string($db,$fldHalsnr)."'
+        WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."'
+     ";
+        mysqli_query($db,$update_tblStal) or die (mysqli_error($db));
 
-	$updateReader = "UPDATE impAgrident SET verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' ";
-		mysqli_query($db,$updateReader) or die (mysqli_error($db));	
+    $updateReader = "UPDATE impAgrident SET verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' ";
+        mysqli_query($db,$updateReader) or die (mysqli_error($db));    
 }
 // EINDE CONTROLE op alle verplichten velden
 
-} // Einde if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt))	
+} // Einde if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt))    
 
 
- if($fldKies == 0 && $fldDel == 1) {	
+ if($fldKies == 0 && $fldDel == 1) {    
 
     $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' " ;
-	mysqli_query($db,$updateReader) or die (mysqli_error($db));
+    mysqli_query($db,$updateReader) or die (mysqli_error($db));
 
     }
 
 
-	
-						}
+    
+                        }
 ?>
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-	
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+    

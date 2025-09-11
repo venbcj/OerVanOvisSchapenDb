@@ -3,8 +3,8 @@
 
 <?php
 /* toegepast in :
-	- Ras.php */
-	
+    - Ras.php */
+    
 
 foreach($_POST as $fldname => $fldvalue) {  //  Voor elke post die wordt doorlopen wordt de veldnaam en de waarde teruggeven als een array
     
@@ -18,19 +18,19 @@ foreach($multip_array as $recId => $id) {
 
 
 
-	if ($key == 'txtDatum' && !empty($value) ) { $dag = date_create($value); $fldDay =  "'".date_format($dag, 'Y-m-d')."'"; /*echo $key.'='.$value."<br/>";*/}    
+    if ($key == 'txtDatum' && !empty($value) ) { $dag = date_create($value); $fldDay =  "'".date_format($dag, 'Y-m-d')."'"; /*echo $key.'='.$value."<br/>";*/}    
 
     if ($key == 'txtKilo' && !empty($value)) {  $fldKilo = $value; } else if ($key == 'txtKilo' && empty($value)) { $fldKilo = 'NULL'; }
     
-	if ($key == 'chbDelVoer') {  $fldDelVoer = $value; /*echo $key.'='.$value."<br/>";*/  }  	 
-	if ($key == 'chbDelPeri') {  $fldDelPeri = $value; /*echo $key.'='.$value."<br/>";*/  }  	 
-    	 
-    	 }
+    if ($key == 'chbDelVoer') {  $fldDelVoer = $value; /*echo $key.'='.$value."<br/>";*/  }       
+    if ($key == 'chbDelPeri') {  $fldDelPeri = $value; /*echo $key.'='.$value."<br/>";*/  }       
+         
+         }
     
 
-	 
+     
 
-	
+    
 
 
 if(isset($recId) and $recId > 0) {
@@ -45,16 +45,16 @@ FROM tblPeriode p
 WHERE p.periId = '".mysqli_real_escape_string($db,$recId)."'
 GROUP BY dmafsluit, i.artId
 ") or die (mysqli_error($db));
-	while( $co = mysqli_fetch_assoc($zoek_in_database)) { 
+    while( $co = mysqli_fetch_assoc($zoek_in_database)) { 
 
-		$dbDate = $co['dmafsluit']; /*if(empty($dbNaam)) { $dbNaam = 'NULL'; } else {*/ $dbDate = "'".$dbDate."'"; //}
-		$dbArtId = $co['artId'];
-		$dbNutat = $co['nutat'];  	if(empty($dbNutat)) { $dbNutat = 'NULL'; }
-		
-if(isset($fldDay) && $fldDay <> $dbDate) {					
-	$update_datum = "UPDATE tblPeriode SET dmafsluit = ".$fldDay." WHERE periId = '".mysqli_real_escape_string($db,$recId)."' ";
-		mysqli_query($db,$update_datum) or die (mysqli_error($db));  
-		//echo $update_datum."<br/>";
+        $dbDate = $co['dmafsluit']; /*if(empty($dbNaam)) { $dbNaam = 'NULL'; } else {*/ $dbDate = "'".$dbDate."'"; //}
+        $dbArtId = $co['artId'];
+        $dbNutat = $co['nutat'];      if(empty($dbNutat)) { $dbNutat = 'NULL'; }
+        
+if(isset($fldDay) && $fldDay <> $dbDate) {                    
+    $update_datum = "UPDATE tblPeriode SET dmafsluit = ".$fldDay." WHERE periId = '".mysqli_real_escape_string($db,$recId)."' ";
+        mysqli_query($db,$update_datum) or die (mysqli_error($db));  
+        //echo $update_datum."<br/>";
 
  } 
  unset($fldDay); 
@@ -62,7 +62,7 @@ if(isset($fldDay) && $fldDay <> $dbDate) {
 /*** WIJZIGEN VOER ***/
 if(isset($fldKilo) && $fldKilo <> $dbNutat) {
 // *** VOER toevoegen ***
-	if($fldKilo <> 'NULL' && $fldKilo > $dbNutat) {
+    if($fldKilo <> 'NULL' && $fldKilo > $dbNutat) {
 
 $verschil = $fldKilo - $dbNutat;
 // Totale hoeveelheid voer op voorraad bepalen.
@@ -70,11 +70,11 @@ $queryStock = mysqli_query($db,"
 SELECT sum(i.inkat-coalesce(v.vbrat,0)) vrdat
 FROM tblInkoop i
  left join (
-	SELECT i.inkId, sum(v.nutat*v.stdat) vbrat
-	FROM tblVoeding v
-	 join tblInkoop i on (v.inkId = i.inkId)
-	WHERE i.artId = '".mysqli_real_escape_string($db,$dbArtId)."'
-	GROUP BY i.inkId
+    SELECT i.inkId, sum(v.nutat*v.stdat) vbrat
+    FROM tblVoeding v
+     join tblInkoop i on (v.inkId = i.inkId)
+    WHERE i.artId = '".mysqli_real_escape_string($db,$dbArtId)."'
+    GROUP BY i.inkId
  ) v on (i.inkId = v.inkId)
 WHERE i.artId = '".mysqli_real_escape_string($db,$dbArtId)."'
 ") or die(mysqli_error($db));
@@ -91,17 +91,17 @@ $zoek_inkId = mysqli_query($db,"
 SELECT min(i.inkId) inkId
 FROM tblInkoop i
  left join (
-	SELECT v.inkId, sum(v.nutat*v.stdat) vbrat
-	FROM tblVoeding v
-	 join tblInkoop i on (i.inkId = v.inkId)
-	WHERE i.artId = '".mysqli_real_escape_string($db,$dbArtId)."'
-	GROUP BY v.inkId
+    SELECT v.inkId, sum(v.nutat*v.stdat) vbrat
+    FROM tblVoeding v
+     join tblInkoop i on (i.inkId = v.inkId)
+    WHERE i.artId = '".mysqli_real_escape_string($db,$dbArtId)."'
+    GROUP BY v.inkId
  ) v on (i.inkId = v.inkId)
 WHERE i.artId = '".mysqli_real_escape_string($db,$dbArtId)."' and i.inkat-coalesce(v.vbrat,0) > 0
 ") or die (mysqli_error($db));
-	
-	while($ink = mysqli_fetch_assoc($zoek_inkId))
-		  {	$inkId_ingebruik = $ink['inkId']; }
+    
+    while($ink = mysqli_fetch_assoc($zoek_inkId))
+          {    $inkId_ingebruik = $ink['inkId']; }
 
 // zoek het aantal inkIds dat nog kan worden aangesproken
 $zoek_aantal_inkIds = mysqli_query($db,"
@@ -109,9 +109,9 @@ SELECT count(inkId) aant
 FROM tblInkoop
 WHERE artId = '".mysqli_real_escape_string($db,$dbArtId)."' and inkId >= '".mysqli_real_escape_string($db,$inkId_ingebruik)."'
 ") or die (mysqli_error($db));
-	while ($nr = mysqli_fetch_assoc($zoek_aantal_inkIds)) {
-		$count = $nr['aant'];
-	}
+    while ($nr = mysqli_fetch_assoc($zoek_aantal_inkIds)) {
+        $count = $nr['aant'];
+    }
 
 for($i=1; $i<=$count; $i++) { // for loop
 
@@ -125,17 +125,17 @@ $zoek_inkId = mysqli_query($db,"
 SELECT min(i.inkId) inkId
 FROM tblInkoop i
  left join (
-	SELECT v.inkId, sum(v.nutat*v.stdat) vbrat
-	FROM tblVoeding v
-	 join tblInkoop i on (i.inkId = v.inkId)
-	WHERE i.artId = '".mysqli_real_escape_string($db,$dbArtId)."'
-	GROUP BY v.inkId
+    SELECT v.inkId, sum(v.nutat*v.stdat) vbrat
+    FROM tblVoeding v
+     join tblInkoop i on (i.inkId = v.inkId)
+    WHERE i.artId = '".mysqli_real_escape_string($db,$dbArtId)."'
+    GROUP BY v.inkId
  ) v on (i.inkId = v.inkId)
 WHERE i.artId = '".mysqli_real_escape_string($db,$dbArtId)."' and i.inkat-coalesce(v.vbrat,0) > 0
 ") or die (mysqli_error($db));
-	
-	while($ink = mysqli_fetch_assoc($zoek_inkId))
-		  {	$inkId = $ink['inkId']; }
+    
+    while($ink = mysqli_fetch_assoc($zoek_inkId))
+          {    $inkId = $ink['inkId']; }
 
 // STAP 2) Hoeveelheid voorraad ophalen van oudste inkId
 $stock_van_ink = mysqli_query($db,"
@@ -145,8 +145,8 @@ FROM tblInkoop i
 WHERE i.inkId = '".mysqli_real_escape_string($db,$inkId)."'
 GROUP BY i.inkat
 ") or die(mysqli_error($db));
-		while($istk = mysqli_fetch_assoc($stock_van_ink))
-		  {	$inkvrd = $istk['stock']; } #echo '$inkvrd = '.$inkvrd.'<br>';
+        while($istk = mysqli_fetch_assoc($stock_van_ink))
+          {    $inkvrd = $istk['stock']; } #echo '$inkvrd = '.$inkvrd.'<br>';
 
 if($inkvrd >= $verschil) { // Inkoopvoorraad volstaat WEL
 
@@ -158,17 +158,17 @@ SELECT voedId, nutat
 FROM tblVoeding
 WHERE periId = '".mysqli_real_escape_string($db,$recId)."' and inkId = '".mysqli_real_escape_string($db,$inkId)."'
 ") or die(mysqli_error($db));
-	while($vId = mysqli_fetch_assoc($zoek_ink_tblVoeding))
-		  {	$voedId = $vId['voedId']; 
-		  	$nutat = $vId['nutat']; }
+    while($vId = mysqli_fetch_assoc($zoek_ink_tblVoeding))
+          {    $voedId = $vId['voedId']; 
+              $nutat = $vId['nutat']; }
 } // Einde Als de eerst inkId wordt aangesproken kan deze reeds bestaan in tblVoeding
 
 if(isset($voedId)) { // Aan bestaand voedId toevoegen
  $newNutat = $nutat+$verschil;
 
-	$update_kilo = "UPDATE tblVoeding SET nutat = '".mysqli_real_escape_string($db,$newNutat)."' WHERE voedId = '".mysqli_real_escape_string($db,$voedId)."' 	";
-		mysqli_query($db,$update_kilo) or die (mysqli_error($db));
-		#echo $update_kilo."<br/>";
+    $update_kilo = "UPDATE tblVoeding SET nutat = '".mysqli_real_escape_string($db,$newNutat)."' WHERE voedId = '".mysqli_real_escape_string($db,$voedId)."'     ";
+        mysqli_query($db,$update_kilo) or die (mysqli_error($db));
+        #echo $update_kilo."<br/>";
 }
 else if(!isset($voedId)) {  // Nieuwe voedId toevoegen
 
@@ -177,18 +177,18 @@ SELECT stdat
 FROM tblArtikel
 WHERE artId = '".mysqli_real_escape_string($db,$dbArtId)."'
 ") or die (mysqli_error($db));
-	while($std = mysqli_fetch_assoc($zoek_stdat))
-		  {	$stdat = $std['stdat'];	}
+    while($std = mysqli_fetch_assoc($zoek_stdat))
+          {    $stdat = $std['stdat'];    }
 
-	$insert_tblVoeding = "INSERT INTO tblVoeding SET periId = '".mysqli_real_escape_string($db,$recId)."', inkId = '".mysqli_real_escape_string($db,$inkId)."', nutat = '".mysqli_real_escape_string($db,$verschil)."', stdat = '".mysqli_real_escape_string($db,$stdat)."'
+    $insert_tblVoeding = "INSERT INTO tblVoeding SET periId = '".mysqli_real_escape_string($db,$recId)."', inkId = '".mysqli_real_escape_string($db,$inkId)."', nutat = '".mysqli_real_escape_string($db,$verschil)."', stdat = '".mysqli_real_escape_string($db,$stdat)."'
 ";
-		mysqli_query($db,$insert_tblVoeding) or die(mysqli_error($db));
-		#echo $insert_tblVoeding."<br/>"; 
+        mysqli_query($db,$insert_tblVoeding) or die(mysqli_error($db));
+        #echo $insert_tblVoeding."<br/>"; 
 
 } // Einde Nieuwe voedId toevoegen
 unset($voedId);
 
-	$verschil = 0; } // Einde Inkoopvoorraad volstaat WEL
+    $verschil = 0; } // Einde Inkoopvoorraad volstaat WEL
 // Inkoopvoorraad volstaat NIET
 if($inkvrd < $verschil) { 
 
@@ -199,17 +199,17 @@ SELECT voedId, nutat
 FROM tblVoeding
 WHERE periId = '".mysqli_real_escape_string($db,$recId)."' and inkId = '".mysqli_real_escape_string($db,$inkId)."'
 ") or die(mysqli_error($db));
-	while($vId = mysqli_fetch_assoc($zoek_ink_tblVoeding))
-		  {	$voedId = $vId['voedId']; 
-		  	$nutat = $vId['nutat']; }
+    while($vId = mysqli_fetch_assoc($zoek_ink_tblVoeding))
+          {    $voedId = $vId['voedId']; 
+              $nutat = $vId['nutat']; }
 } // Einde Als de eerst inkId wordt aangesproken kan deze reeds bestaan in tblVoeding
 
 if(isset($voedId)) { // Aan bestaand voedId toevoegen
  $newNutat = $nutat+$inkvrd;
 
-	$update_kilo = "UPDATE tblVoeding SET nutat = '".mysqli_real_escape_string($db,$newNutat)."' WHERE voedId = '".mysqli_real_escape_string($db,$voedId)."' 	";
-		mysqli_query($db,$update_kilo) or die (mysqli_error($db));
-		#echo $update_kilo."<br/>";
+    $update_kilo = "UPDATE tblVoeding SET nutat = '".mysqli_real_escape_string($db,$newNutat)."' WHERE voedId = '".mysqli_real_escape_string($db,$voedId)."'     ";
+        mysqli_query($db,$update_kilo) or die (mysqli_error($db));
+        #echo $update_kilo."<br/>";
 }
 else if(!isset($voedId)) {  // Nieuwe voedId toevoegen
 
@@ -218,13 +218,13 @@ SELECT stdat
 FROM tblArtikel
 WHERE artId = '".mysqli_real_escape_string($db,$dbArtId)."'
 ") or die (mysqli_error($db));
-	while($std = mysqli_fetch_assoc($zoek_stdat))
-		  {	$stdat = $std['stdat'];	}
+    while($std = mysqli_fetch_assoc($zoek_stdat))
+          {    $stdat = $std['stdat'];    }
 
-	$insert_tblVoeding = "INSERT INTO tblVoeding SET periId = '".mysqli_real_escape_string($db,$recId)."', inkId = '".mysqli_real_escape_string($db,$inkId)."', nutat = '".mysqli_real_escape_string($db,$inkvrd)."', stdat = '".mysqli_real_escape_string($db,$stdat)."'
+    $insert_tblVoeding = "INSERT INTO tblVoeding SET periId = '".mysqli_real_escape_string($db,$recId)."', inkId = '".mysqli_real_escape_string($db,$inkId)."', nutat = '".mysqli_real_escape_string($db,$inkvrd)."', stdat = '".mysqli_real_escape_string($db,$stdat)."'
 ";
-		mysqli_query($db,$insert_tblVoeding) or die(mysqli_error($db));
-		#echo $insert_tblVoeding."<br/>"; 
+        mysqli_query($db,$insert_tblVoeding) or die(mysqli_error($db));
+        #echo $insert_tblVoeding."<br/>"; 
 
 } // Einde Nieuwe voedId toevoegen
 
@@ -240,13 +240,13 @@ $verschil = $verschil-$inkvrd;
 } // Einde for loop
 
 
-	} // Einde Voldoende voorraad
-	}
+    } // Einde Voldoende voorraad
+    }
 
 // *** Einde VOER toevoegen ***
 // *** VOER verminderen ***
 
-	if($fldKilo <> 'NULL' && $fldKilo < $dbNutat) {
+    if($fldKilo <> 'NULL' && $fldKilo < $dbNutat) {
 // Bij meerdere inkId's van 1 periId wordt per inkId gekeken hoeveel kg voer kan worden afgehaald of het inkId moet worden verwijderd.
 $verschil = $dbNutat-$fldKilo;
 
@@ -255,48 +255,48 @@ SELECT count(voedId) aant
 FROM tblVoeding
 WHERE periId = '".mysqli_real_escape_string($db,$recId)."'
 ") or die (mysqli_error($db));
-	while($aa = mysqli_fetch_assoc($hoeveel_inkIds)) { $count = $aa['aant']; }
+    while($aa = mysqli_fetch_assoc($hoeveel_inkIds)) { $count = $aa['aant']; }
 
 
 if($count == 1) {
 
-	$update_kilo = "UPDATE tblVoeding SET nutat = $fldKilo WHERE periId = '".mysqli_real_escape_string($db,$recId)."' 	";
-		mysqli_query($db,$update_kilo) or die (mysqli_error($db)); //header("Location:".$url."Ras.php");
-		#echo $update_kilo."<br/>";
+    $update_kilo = "UPDATE tblVoeding SET nutat = $fldKilo WHERE periId = '".mysqli_real_escape_string($db,$recId)."'     ";
+        mysqli_query($db,$update_kilo) or die (mysqli_error($db)); //header("Location:".$url."Ras.php");
+        #echo $update_kilo."<br/>";
 }
 else if($count > 1) { 
 
 for($i=1; $i<=$count; $i++) {
 
-	#echo $i.' - verschil = '.$verschil.'<br>';
+    #echo $i.' - verschil = '.$verschil.'<br>';
 if($verschil > 0) {
 
 $zoek_kg_laatste_inkId = mysqli_query($db,"
 SELECT v.voedId, v.nutat
 FROM tblVoeding v
  join (
-	SELECT max(voedId) voedId
-	FROM tblVoeding
-	WHERE periId = '".mysqli_real_escape_string($db,$recId)."'
+    SELECT max(voedId) voedId
+    FROM tblVoeding
+    WHERE periId = '".mysqli_real_escape_string($db,$recId)."'
  ) lv on (v.voedId = lv.voedId)
 ") or die (mysqli_error($db));
-	while($kg = mysqli_fetch_assoc($zoek_kg_laatste_inkId)) { 
-		$last_v = $kg['voedId'];
-		$nutat = $kg['nutat'];
-	}
+    while($kg = mysqli_fetch_assoc($zoek_kg_laatste_inkId)) { 
+        $last_v = $kg['voedId'];
+        $nutat = $kg['nutat'];
+    }
 
 if($nutat-$verschil >0 ) { $newNutat = $nutat-$verschil; $verschil = 0; 
 
-	$update_kilo = "UPDATE tblVoeding SET nutat = $newNutat WHERE voedId = '".mysqli_real_escape_string($db,$last_v)."' 	";
-		mysqli_query($db,$update_kilo) or die (mysqli_error($db)); //header("Location:".$url."Ras.php");
-		#echo $update_kilo."<br/>";
+    $update_kilo = "UPDATE tblVoeding SET nutat = $newNutat WHERE voedId = '".mysqli_real_escape_string($db,$last_v)."'     ";
+        mysqli_query($db,$update_kilo) or die (mysqli_error($db)); //header("Location:".$url."Ras.php");
+        #echo $update_kilo."<br/>";
 
 }
 else { $verschil = $verschil-$nutat;
 
-	$delete_voedId = "DELETE FROM tblVoeding WHERE voedId = '".mysqli_real_escape_string($db,$last_v)."' 	";
-		mysqli_query($db,$delete_voedId) or die (mysqli_error($db));
-		#echo $delete_voedId."<br/>";
+    $delete_voedId = "DELETE FROM tblVoeding WHERE voedId = '".mysqli_real_escape_string($db,$last_v)."'     ";
+        mysqli_query($db,$delete_voedId) or die (mysqli_error($db));
+        #echo $delete_voedId."<br/>";
 }
 
 } // Einde $verschil >0
@@ -312,32 +312,32 @@ else { $verschil = $verschil-$nutat;
 
 
  
-	}
+    }
 // *** Einde VOER verminderen ***
 
 
-	
+    
  } 
  unset($fldKilo);
 /*** EINDE  WIJZIGEN VOER  EINDE ***/
 
 if(isset($fldDelVoer)) {
-	$delete_voeding = "DELETE FROM tblVoeding WHERE periId = '".mysqli_real_escape_string($db,$recId)."' 	";
-		mysqli_query($db,$delete_voeding) or die (mysqli_error($db)); //header("Location:".$url."Ras.php");
-		//echo $delete_voeding."<br/>";
-		unset($fldDelVoer);
+    $delete_voeding = "DELETE FROM tblVoeding WHERE periId = '".mysqli_real_escape_string($db,$recId)."'     ";
+        mysqli_query($db,$delete_voeding) or die (mysqli_error($db)); //header("Location:".$url."Ras.php");
+        //echo $delete_voeding."<br/>";
+        unset($fldDelVoer);
  }
 
 
 if(isset($fldDelPeri)) {
-	$delete_voeding = "DELETE FROM tblVoeding WHERE periId = '".mysqli_real_escape_string($db,$recId)."' 	";
-		mysqli_query($db,$delete_voeding) or die (mysqli_error($db));
-		
-	$delete_periode = "DELETE FROM tblPeriode WHERE periId = '".mysqli_real_escape_string($db,$recId)."' 	";
-		mysqli_query($db,$delete_periode) or die (mysqli_error($db)); //header("Location:".$url."Ras.php");
-		//echo $delete_periode."<br/>";
+    $delete_voeding = "DELETE FROM tblVoeding WHERE periId = '".mysqli_real_escape_string($db,$recId)."'     ";
+        mysqli_query($db,$delete_voeding) or die (mysqli_error($db));
+        
+    $delete_periode = "DELETE FROM tblPeriode WHERE periId = '".mysqli_real_escape_string($db,$recId)."'     ";
+        mysqli_query($db,$delete_periode) or die (mysqli_error($db)); //header("Location:".$url."Ras.php");
+        //echo $delete_periode."<br/>";
 
-		unset($fldDelPeri);
+        unset($fldDelPeri);
  }
 
 
@@ -345,10 +345,10 @@ if(isset($fldDelPeri)) {
 
 
 
-	
-	}
-						
+    
+    }
+                        
 }
 ?>
-					
-	
+                    
+    

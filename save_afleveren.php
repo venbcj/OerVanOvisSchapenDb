@@ -24,17 +24,17 @@ unset($updKg);
 unset($updRelId);
 
 foreach($id as $key => $value) {
- 	if ($key == 'chbkies' && $value == 1) 	{   $fldKies = $value; }
+     if ($key == 'chbkies' && $value == 1)     {   $fldKies = $value; }
 
-	if ($key == 'txtDatum' ) { $dag = date_create($value); $updDag =  date_format($dag, 'Y-m-d');  }
-	
-	if ($key == 'txtLevnr' && !empty($value)) { $updLevnr = $value; }
-	
-	if ($key == 'txtKg' && !empty($value)) { $updKg = str_replace(',', '.', $value); }
+    if ($key == 'txtDatum' ) { $dag = date_create($value); $updDag =  date_format($dag, 'Y-m-d');  }
+    
+    if ($key == 'txtLevnr' && !empty($value)) { $updLevnr = $value; }
+    
+    if ($key == 'txtKg' && !empty($value)) { $updKg = str_replace(',', '.', $value); }
 
-	if ($key == 'kzlRel' && !empty($value)) { $updRelId = $value; }
-		
-									}
+    if ($key == 'kzlRel' && !empty($value)) { $updRelId = $value; }
+        
+                                    }
 
 if(!isset($fldKies)) { $fldKies = 0; }
 
@@ -54,8 +54,8 @@ WHERE isnull(st.rel_best) and st.schaapId = '".mysqli_real_escape_string($db,$re
 
 while ($st = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $st['stalId']; }
 
-	$insert_tblHistorie = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$updDag)."', kg = ".db_null_input($updKg).", actId = '".mysqli_real_escape_string($db,$actId)."' ";
-	mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
+    $insert_tblHistorie = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$updDag)."', kg = ".db_null_input($updKg).", actId = '".mysqli_real_escape_string($db,$actId)."' ";
+    mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
 
 if ($modmeld == 1 ) {
 $Melding = 'AFV';
@@ -74,13 +74,13 @@ while ($per = mysqli_fetch_assoc($zoek_hisId)) { $hisId = $per['hisId']; }
 include "maak_request.php";
 
 }
-	$update_tblStal = "UPDATE tblStal set rel_best = '".mysqli_real_escape_string($db,$updRelId)."' WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."' ";	
-		mysqli_query($db,$update_tblStal) or die (mysqli_error($db));
+    $update_tblStal = "UPDATE tblStal set rel_best = '".mysqli_real_escape_string($db,$updRelId)."' WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."' ";    
+        mysqli_query($db,$update_tblStal) or die (mysqli_error($db));
 
 }
 // EINDE CONTROLE op alle verplichten velden bij spenen lam
 
 
-			} ?>
-					
-	
+            } ?>
+                    
+    

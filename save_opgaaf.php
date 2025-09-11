@@ -19,16 +19,16 @@ unset($fldDel);
    
  foreach($id as $key => $value) {
 
- 	//$fldLiq = 0;
+     //$fldLiq = 0;
     if ($key == 'chbLiq') {  $fldLiq = $value; /*echo $key.'='.$value."<br/>";*/ } 
-	
-    if ($key == 'kzlRubr') {  $fldRubr = $value; /*echo $key.'='.$value."<br/>";*/  }	
-    if ($key == 'txtDatum') {  $fldDatum = $value; /*echo $key.'='.$value."<br/>"; */ $date = date_create($value); $fldDate = date_format($date, 'Y-m-d'); } 	
-    if ($key == 'txtBedrag') {  $fldBedrag = $value; /*echo $key.'='.$value."<br/>"; */ }  	
-    if ($key == 'txtToel') {  $fldToel = $value; /*echo $key.'='.$value."<br/>"; */ }  	 
+    
+    if ($key == 'kzlRubr') {  $fldRubr = $value; /*echo $key.'='.$value."<br/>";*/  }    
+    if ($key == 'txtDatum') {  $fldDatum = $value; /*echo $key.'='.$value."<br/>"; */ $date = date_create($value); $fldDate = date_format($date, 'Y-m-d'); }     
+    if ($key == 'txtBedrag') {  $fldBedrag = $value; /*echo $key.'='.$value."<br/>"; */ }      
+    if ($key == 'txtToel') {  $fldToel = $value; /*echo $key.'='.$value."<br/>"; */ }       
 
-    if ($key == 'chbArch') {  $fldArch = $value; /*echo $key.'='.$value."<br/>"; */ } 	 
-    if ($key == 'chbDel') {  $fldDel = $value; /*echo $key.'='.$value."<br/>"; */ }  	 
+    if ($key == 'chbArch') {  $fldArch = $value; /*echo $key.'='.$value."<br/>"; */ }      
+    if ($key == 'chbDel') {  $fldDel = $value; /*echo $key.'='.$value."<br/>"; */ }       
 
 }
 
@@ -41,13 +41,13 @@ SELECT o.rubuId, o.datum, o.bedrag, o.toel, o.liq
 FROM tblOpgaaf o
 WHERE o.opgId = '".mysqli_real_escape_string($db,$recId)."'
 ") or die (mysqli_error($db));
-	while ( $zwl = mysqli_fetch_assoc($zoek_waarde_liquiditeit)) { 
-		$rubuId_db = $zwl['rubuId'];
-		$date_db = $zwl['datum'];
-		$bedrag_db = $zwl['bedrag'];
-		$toel_db = $zwl['toel']; 
-		$liq_db = $zwl['liq']; 
-	}
+    while ( $zwl = mysqli_fetch_assoc($zoek_waarde_liquiditeit)) { 
+        $rubuId_db = $zwl['rubuId'];
+        $date_db = $zwl['datum'];
+        $bedrag_db = $zwl['bedrag'];
+        $toel_db = $zwl['toel']; 
+        $liq_db = $zwl['liq']; 
+    }
 
 /*if($recId == 1474) {
 echo "<br/>";
@@ -63,59 +63,59 @@ echo "<br/>";
 }*/
 
 if($fldLiq <> $liq_db) {
-	$update_tblOpgaaf_liq = "UPDATE tblOpgaaf SET liq = '".mysqli_real_escape_string($db,$fldLiq)."' WHERE opgId = '".mysqli_real_escape_string($db,$recId)."' "; 
-	
-		/*echo '$update_tblOpgaaf_liq = '.$update_tblOpgaaf_liq.'<br>';*/ 
-		mysqli_query($db,$update_tblOpgaaf_liq) or die (mysqli_error($db)); 
+    $update_tblOpgaaf_liq = "UPDATE tblOpgaaf SET liq = '".mysqli_real_escape_string($db,$fldLiq)."' WHERE opgId = '".mysqli_real_escape_string($db,$recId)."' "; 
+    
+        /*echo '$update_tblOpgaaf_liq = '.$update_tblOpgaaf_liq.'<br>';*/ 
+        mysqli_query($db,$update_tblOpgaaf_liq) or die (mysqli_error($db)); 
 }
  
 if($fldRubr <> $rubuId_db) {
-	$update_tblOpgaaf_rubr = "UPDATE tblOpgaaf SET rubuId = '".mysqli_real_escape_string($db,$fldRubr)."' WHERE opgId = '".mysqli_real_escape_string($db,$recId)."' "; 
-		
-		/*echo '$update_tblOpgaaf_rubr = '.$update_tblOpgaaf_rubr.'<br>';*/ 
-		mysqli_query($db,$update_tblOpgaaf_rubr) or die (mysqli_error($db));   
+    $update_tblOpgaaf_rubr = "UPDATE tblOpgaaf SET rubuId = '".mysqli_real_escape_string($db,$fldRubr)."' WHERE opgId = '".mysqli_real_escape_string($db,$recId)."' "; 
+        
+        /*echo '$update_tblOpgaaf_rubr = '.$update_tblOpgaaf_rubr.'<br>';*/ 
+        mysqli_query($db,$update_tblOpgaaf_rubr) or die (mysqli_error($db));   
 }
 
 if($fldDate <> $date_db) {
-	$update_tblOpgaaf_date = "UPDATE tblOpgaaf SET datum = '".mysqli_real_escape_string($db,$fldDate)."' WHERE opgId = '".mysqli_real_escape_string($db,$recId)."' ";
+    $update_tblOpgaaf_date = "UPDATE tblOpgaaf SET datum = '".mysqli_real_escape_string($db,$fldDate)."' WHERE opgId = '".mysqli_real_escape_string($db,$recId)."' ";
 
-		/*echo '$update_tblOpgaaf_date = '.$update_tblOpgaaf_date.'<br>';*/ 
-		mysqli_query($db,$update_tblOpgaaf_date) or die (mysqli_error($db));   
+        /*echo '$update_tblOpgaaf_date = '.$update_tblOpgaaf_date.'<br>';*/ 
+        mysqli_query($db,$update_tblOpgaaf_date) or die (mysqli_error($db));   
 }
 
 if($fldBedrag <> $bedrag_db) {
-	$update_tblOpgaaf_bedrag = "UPDATE tblOpgaaf SET bedrag = '".mysqli_real_escape_string($db,$fldBedrag)."' WHERE opgId = '".mysqli_real_escape_string($db,$recId)."' "; 
+    $update_tblOpgaaf_bedrag = "UPDATE tblOpgaaf SET bedrag = '".mysqli_real_escape_string($db,$fldBedrag)."' WHERE opgId = '".mysqli_real_escape_string($db,$recId)."' "; 
 
-		/*echo '$update_tblOpgaaf_bedrag = '.$update_tblOpgaaf_bedrag.'<br>';*/ 
-		mysqli_query($db,$update_tblOpgaaf_bedrag) or die (mysqli_error($db));
+        /*echo '$update_tblOpgaaf_bedrag = '.$update_tblOpgaaf_bedrag.'<br>';*/ 
+        mysqli_query($db,$update_tblOpgaaf_bedrag) or die (mysqli_error($db));
 }
 
 if($fldToel <> $toel_db) {
-	$update_tblOpgaaf_toel = "UPDATE tblOpgaaf SET toel = '".mysqli_real_escape_string($db,$fldToel)."' WHERE opgId = '".mysqli_real_escape_string($db,$recId)."' "; 
+    $update_tblOpgaaf_toel = "UPDATE tblOpgaaf SET toel = '".mysqli_real_escape_string($db,$fldToel)."' WHERE opgId = '".mysqli_real_escape_string($db,$recId)."' "; 
 
-		/*echo '$update_tblOpgaaf_toel = '.$update_tblOpgaaf_toel.'<br>';*/ 
-		mysqli_query($db,$update_tblOpgaaf_toel) or die (mysqli_error($db)); 
-	}
+        /*echo '$update_tblOpgaaf_toel = '.$update_tblOpgaaf_toel.'<br>';*/ 
+        mysqli_query($db,$update_tblOpgaaf_toel) or die (mysqli_error($db)); 
+    }
 
 
 if($fldArch == 1) {
 
 $update_record = "UPDATE tblOpgaaf SET his = 1 WHERE opgId = '".mysqli_real_escape_string($db,$recId)."' ";
-		/*echo '$update_record = '.$update_record.'<br>';*/ 
-		mysqli_query($db,$update_record) or die (mysqli_error($db));	
-		}
+        /*echo '$update_record = '.$update_record.'<br>';*/ 
+        mysqli_query($db,$update_record) or die (mysqli_error($db));    
+        }
 
 
 if($fldDel == 1) {
 $Delete_record = "DELETE FROM tblOpgaaf WHERE opgId = '".mysqli_real_escape_string($db,$recId)."' ";
-		/*echo '$Delete_record = '.$Delete_record.'<br>';*/ 
-		mysqli_query($db,$Delete_record) or die (mysqli_error($db));	
+        /*echo '$Delete_record = '.$Delete_record.'<br>';*/ 
+        mysqli_query($db,$Delete_record) or die (mysqli_error($db));    
 }
 
-	
-	
-						
+    
+    
+                        
 }
 ?>
-					
-	
+                    
+    

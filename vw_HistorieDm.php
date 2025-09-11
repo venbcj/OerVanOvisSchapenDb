@@ -6,10 +6,10 @@
 12-12-2020 : Alias actId bij NULL velden toegevoegd. Dit ging fout in MeldUitval.php
 19-02-2022 : SQL beveiligd d.m.v. quotes
 01-01-2024 : h.skip = 0 toegevoegd in de WHERE en het veld h.skip verwijderd in SELECT
-	
+    
 Toegepast in : 
-	-	MeldAfvoer.php
-	-	MeldUitval.php
+    -    MeldAfvoer.php
+    -    MeldUitval.php
 */
 
 $vw_HistorieDm =
@@ -41,8 +41,8 @@ FROM tblSchaap s
  (
     SELECT s.schaapId, h.actId, h.datum 
     FROM tblSchaap s
-	join tblStal st on (st.schaapId = s.schaapId)
-	join tblHistorie h on (h.stalId = st.stalId) 
+    join tblStal st on (st.schaapId = s.schaapId)
+    join tblHistorie h on (h.stalId = st.stalId) 
     WHERE actId = 2 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ) koop on (s.schaapId = koop.schaapId and koop.datum <= h.datum)
 WHERE a.actId = 3 and h.skip = 0 and (isnull(koop.datum) or koop.datum < h.datum) and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'

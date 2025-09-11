@@ -30,9 +30,9 @@ $cc = 44; //count($regel); // Aantal velden per regel zijn bij BurgM 46 elemente
 
 for($ii=0; $ii<$cc; $ii++){
 
-	if($ii == 0) { $insert_qry = " INSERT INTO impReader SET ".$velden[$ii]." = '".$regel[$ii]."'"; }
-	else if($regel[$ii] == "" || $regel[$ii] == "0") {   $insert_qry .= ", ".$velden[$ii]." = NULL"; }
-	else {   $insert_qry .= ", ".$velden[$ii]." = '".$regel[$ii]."'"; }
+    if($ii == 0) { $insert_qry = " INSERT INTO impReader SET ".$velden[$ii]." = '".$regel[$ii]."'"; }
+    else if($regel[$ii] == "" || $regel[$ii] == "0") {   $insert_qry .= ", ".$velden[$ii]." = NULL"; }
+    else {   $insert_qry .= ", ".$velden[$ii]." = '".$regel[$ii]."'"; }
 }
 
 $insert_qry .= ', lidId = ' . $lidId . ';';
@@ -56,7 +56,7 @@ unlink($DelFile)or die ("Kan bestand ".$inputfile." niet verwijderen. " . mysqli
 // EINDE VERWIJDEREN VAN HET BESTAND READER.TXT TUSSEN ALLE PHP BESTANDEN verplaatsen en hernoemen is gebeurd in uploadReader.php
 
 
-	
+    
 /* Bij een geboren schaap kan 1 of 2 x uitval voor merken op 1 regel in het txt bestand staan. Er kunnen dus max drie schapen van 1 moeder op een regel staan waarvan er dan twee zijn overleden voor merken.
 Als twee lammeren van 1 moeder uitvallen voor merken worden beiden lammeren geregistreerd op 1 moeder en op 1 regel/ record.  
 Om er meerder records (max 3) van te maken volgt hier een bewerking van tabel impReader. */
@@ -67,28 +67,28 @@ select count(readId) aantid
 from impReader
 where lidId = ".mysqli_real_escape_string($db,$lidId)." and levnr_geb is not null and (moment1 is not null or moment2 is not null)
 ") or die (mysqli_error($db));
-	while ($qrycntr = mysqli_fetch_assoc($zoek_aantal_geborenENuitval))
+    while ($qrycntr = mysqli_fetch_assoc($zoek_aantal_geborenENuitval))
 
-if (!empty($qrycntr['aantid']))	{
+if (!empty($qrycntr['aantid']))    {
 $ScheidUitvalVanGeboren = mysqli_query($db,"
 select datum, tijd, teller, moeder, moment1, moment2 
 from impReader 
 where lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(verwerkt) and levnr_geb is not null and (moment1 is not null or moment2 is not null)
 order by teller
 ") or die (mysqli_error($db));
-	while ($qryins = mysqli_fetch_assoc($ScheidUitvalVanGeboren)) {
+    while ($qryins = mysqli_fetch_assoc($ScheidUitvalVanGeboren)) {
 $insertimpreader = mysqli_query($db,"
  INSERT INTO impReader SET datum = '$qryins[datum]', tijd = '$qryins[tijd]', teller = '$qryins[teller]', moeder = '$qryins[moeder]', 
-	moment1 = '$qryins[moment1]', moment2 = '$qryins[moment2]',
-	lidId = ".mysqli_real_escape_string($db,$lidId)." ;
+    moment1 = '$qryins[moment1]', moment2 = '$qryins[moment2]',
+    lidId = ".mysqli_real_escape_string($db,$lidId)." ;
 ") or die (mysqli_error($db));
-			}
+            }
 $GeborenLamUniekMaken = mysqli_query($db,"
 UPDATE impReader SET moment1 = NULL, moment2 = NULL
 where lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(verwerkt) and levnr_geb is not null and (moment1 is not null or moment2 is not null)
 ") or die (mysqli_error($db));
-			
-		}
+            
+        }
 // EINDE BEWERKING 1 : Eerst worden de 1 of 2 uitgevallen lammeren gescheiden van het geboren lam
 // BEWERKING 2 : Daarna worden twee uitgevallen lammeren gescheiden indien van toepassing.
 $zoek_naar_2_uitval = mysqli_query($db,"
@@ -96,27 +96,27 @@ select count(readId) aantid
 from impReader
 where lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(verwerkt) and isnull(levnr_geb) and moment2 is not null
 ") or die (mysqli_error($db));
-	while ($dubl_do = mysqli_fetch_assoc($zoek_naar_2_uitval))
-if (!empty($dubl_do['aantid']))	{ /* Als er waardes bestaan dan eerst nieuwe records invoegen daarna pas update query of te wel 
-											lege velden moment1 vullen met moment2 !!  Dit wanneer wel moment2 is geregistreerd maar geen moment1 */
-		
+    while ($dubl_do = mysqli_fetch_assoc($zoek_naar_2_uitval))
+if (!empty($dubl_do['aantid']))    { /* Als er waardes bestaan dan eerst nieuwe records invoegen daarna pas update query of te wel 
+                                            lege velden moment1 vullen met moment2 !!  Dit wanneer wel moment2 is geregistreerd maar geen moment1 */
+        
 $zoek_2_uitval = mysqli_query($db,"
 select readId, datum, tijd, teller, moeder, moment2
 from impReader
 where lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(verwerkt) and isnull(levnr_geb) and moment2 is not null
 order by teller
 ") or die (mysqli_error($db));
-	while ($qry = mysqli_fetch_assoc($zoek_2_uitval))	
-		{ $insert_impReader = mysqli_query($db,"INSERT INTO impReader SET datum = '$qry[datum]', tijd = '$qry[tijd]', teller = '$qry[teller]', moeder = '$qry[moeder]', moment1 = '$qry[moment2]', lidId = ".mysqli_real_escape_string($db,$lidId)."  ") or die (mysqli_error($db));
-		$readId = $qry['readId'];
-		  $update_impReader = mysqli_query($db,"UPDATE impReader SET moment2 = NULL WHERE readId = ".mysqli_real_escape_string($db,$readId)."  ") or die (mysqli_error($db));
+    while ($qry = mysqli_fetch_assoc($zoek_2_uitval))    
+        { $insert_impReader = mysqli_query($db,"INSERT INTO impReader SET datum = '$qry[datum]', tijd = '$qry[tijd]', teller = '$qry[teller]', moeder = '$qry[moeder]', moment1 = '$qry[moment2]', lidId = ".mysqli_real_escape_string($db,$lidId)."  ") or die (mysqli_error($db));
+        $readId = $qry['readId'];
+          $update_impReader = mysqli_query($db,"UPDATE impReader SET moment2 = NULL WHERE readId = ".mysqli_real_escape_string($db,$readId)."  ") or die (mysqli_error($db));
 
-		}
+        }
 
 $bijwerkimpreader = mysqli_query($db,"
 update impReader SET moment1 = moment2 where lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(levnr_geb) and isnull(moment1)
 ") or die (mysqli_error($db));
-// EINDE BEWERKING 2 : Daarna worden twee uitgevallen lammeren gescheiden indien van toepassing.										
+// EINDE BEWERKING 2 : Daarna worden twee uitgevallen lammeren gescheiden indien van toepassing.                                        
 }
 
 if($modtech == 0) { // geboren lammeren zonder levensnummer mogen niet voorkomen als de module technisch niet wordt gebruikt

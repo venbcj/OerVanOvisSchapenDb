@@ -41,7 +41,7 @@ $titel = 'Inkopen';
 $file = "Inkopen.php";
 include "login.php"; ?>
 
-			<TD align = "center" valign = "top">
+            <TD align = "center" valign = "top">
 <?php
 if (Auth::is_logged_in()) { if($modtech ==1) {
 include "kalender.php";
@@ -56,8 +56,8 @@ ORDER BY soort desc, naam
 "; 
 
 $q_newvoer2 = mysqli_query($db,$newvoer) or die (mysqli_error($db));
-	while($lin = mysqli_fetch_array($q_newvoer2))
-		{
+    while($lin = mysqli_fetch_array($q_newvoer2))
+        {
 
 $array_eenheid[$lin['artId']] = $lin['eenheid'];
 
@@ -67,14 +67,14 @@ $array_eenheid[$lin['artId']] = $lin['eenheid'];
 <script>
 function verplicht() {
 
-var datum = document.getElementById("datepicker1"); 	var datum_v = datum.value;
-var artikel	= document.getElementById("artikel");		var artikel_v = artikel.value;
-var hoeveelheid	 = document.getElementById("hoeveelheid");		var hoeveelheid_v = hoeveelheid.value;
-var prijs	 = document.getElementById("prijs");		var prijs_v = prijs.value;
+var datum = document.getElementById("datepicker1");     var datum_v = datum.value;
+var artikel    = document.getElementById("artikel");        var artikel_v = artikel.value;
+var hoeveelheid     = document.getElementById("hoeveelheid");        var hoeveelheid_v = hoeveelheid.value;
+var prijs     = document.getElementById("prijs");        var prijs_v = prijs.value;
 
 
 /*artikel.focus() +*/ //alert('datum_v.length = ' + datum_v);
-	 if(datum_v.length == 0) datum.focus() + alert("Datum is onbekend.");
+     if(datum_v.length == 0) datum.focus() + alert("Datum is onbekend.");
 else if(artikel_v.length == 0) artikel.focus() + alert("Omschrijving is onbekend.");
 else if(hoeveelheid_v.length == 0) hoeveelheid.focus() + alert("Het inkoopaantal is onbekend.");
 else if(prijs_v.length == 0) prijs.focus() + alert("De prijs is onbekend.");
@@ -84,7 +84,7 @@ else if(prijs_v.length == 0) prijs.focus() + alert("De prijs is onbekend.");
 
 function eenheid_artikel() {
 
-var artikel	 = document.getElementById("artikel");		var artikel_v = artikel.value;
+var artikel     = document.getElementById("artikel");        var artikel_v = artikel.value;
 
 
  if(artikel_v.length > 0) { toon_eenheid(artikel_v); }
@@ -95,29 +95,29 @@ var artikel	 = document.getElementById("artikel");		var artikel_v = artikel.valu
  var jArray= <?php echo json_encode($array_eenheid); ?>;
 
 function toon_eenheid(e) {
-	document.getElementById('aantal').innerHTML = jArray[e] + '&nbsp &nbsp ';
+    document.getElementById('aantal').innerHTML = jArray[e] + '&nbsp &nbsp ';
 }
 
 function removeElement(e) {
-	 document.getElementById('aantal').innerHTML = '';
+     document.getElementById('aantal').innerHTML = '';
 }
 
 </script>
 <?php 
 
-if (isset($_POST['knpSave_']) ) { 	include "save_inkoop.php"; 	}
+if (isset($_POST['knpSave_']) ) {     include "save_inkoop.php";     }
 
 //*******************
 // NIEUWE INVOER POSTEN
 //*******************
 $inkprijs = '';
 
-if (isset ($_POST['knpAantal_'])) {	
-	if(!empty($_POST['txtInkdm_'])) {$inkdatum = $_POST['txtInkdm_'];}
-	if(!empty($_POST['txtCharge_'])) {$txtCharge = $_POST['txtCharge_'];}
-	if(!empty($_POST['txtInkat_'])) {$inkwaarde = $_POST['txtInkat_'];}
-	if(!empty($_POST['txtPrijs_'])) {$inkprijs = $_POST['txtPrijs_'];}	
-								}
+if (isset ($_POST['knpAantal_'])) {    
+    if(!empty($_POST['txtInkdm_'])) {$inkdatum = $_POST['txtInkdm_'];}
+    if(!empty($_POST['txtCharge_'])) {$txtCharge = $_POST['txtCharge_'];}
+    if(!empty($_POST['txtInkat_'])) {$inkwaarde = $_POST['txtInkat_'];}
+    if(!empty($_POST['txtPrijs_'])) {$inkprijs = $_POST['txtPrijs_'];}    
+                                }
 
 If (isset ($_POST['knpInsert_'])) {
 // Eenheid uit gekozen artikel ophalen om bij wijzigen artikel eenheid te controleren (die reeds is getoond)
@@ -129,24 +129,24 @@ FROM tblEenheid e
 WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a.artId = '$_POST[txtArtikel_]' 
 ") or die (mysqli_error($db));
 while ($keusnhd = mysqli_fetch_assoc($keuze_eenhd))
-{	$k_nhd = $keusnhd['eenheid'];	}
+{    $k_nhd = $keusnhd['eenheid'];    }
 // EINDE Eenheid uit gekozen artikel ophalen
 
-	
+    
 if (empty($_POST['txtPrijs_'])) { $insPrijs = 'NULL'; }
 else { $txtPrijs = $_POST['txtPrijs_']; $insPrijs = str_replace(',', '.', $txtPrijs); }
 
-if (empty($_POST['txtInkdm_']))	{	$insInkdm = "inkdm = NULL";	}
-else		{	$dateink = date_create($_POST['txtInkdm_']);
-			$insInkdm = date_format($dateink, 'Y-m-d');	}
+if (empty($_POST['txtInkdm_']))    {    $insInkdm = "inkdm = NULL";    }
+else        {    $dateink = date_create($_POST['txtInkdm_']);
+            $insInkdm = date_format($dateink, 'Y-m-d');    }
 
-if (!empty($_POST['txtCharge_']))	{	$insCharge = $_POST['txtCharge_'];	}
+if (!empty($_POST['txtCharge_']))    {    $insCharge = $_POST['txtCharge_'];    }
 
-if (!empty($_POST['txtArtikel_']))	{	$insVoer = $_POST['txtArtikel_'];	}
+if (!empty($_POST['txtArtikel_']))    {    $insVoer = $_POST['txtArtikel_'];    }
 
 $insInkat = $_POST['txtInkat_'];
-	
-	
+    
+    
 $ophalen_waardes = mysqli_query($db,"
 SELECT a.stdat, a.enhuId, a.btw, a.relId, a.rubuId, p.naam
 FROM tblArtikel a
@@ -154,15 +154,15 @@ FROM tblArtikel a
  left join tblPartij p on (r.partId = p.partId)
 WHERE a.artId = '".mysqli_real_escape_string($db,$insVoer)."'
 ") or die (mysqli_error($db));
-	while ($ln= mysqli_fetch_assoc($ophalen_waardes)) {
-		$enhuId = $ln['enhuId'];
-		$insBtw = $ln['btw'];
-		$rubuId = $ln['rubuId'];
-		$relatie = $ln['naam'];
-			if (empty($ln['relId']))	{	$insRc = "NULL";	}
-			else		{	$insRc = "$ln[relId]";	}
-			
-			}
+    while ($ln= mysqli_fetch_assoc($ophalen_waardes)) {
+        $enhuId = $ln['enhuId'];
+        $insBtw = $ln['btw'];
+        $rubuId = $ln['rubuId'];
+        $relatie = $ln['naam'];
+            if (empty($ln['relId']))    {    $insRc = "NULL";    }
+            else        {    $insRc = "$ln[relId]";    }
+            
+            }
 
 $insert_tblInkoop = "INSERT INTO tblInkoop SET dmink = '".mysqli_real_escape_string($db,$insInkdm)."', artId = '".mysqli_real_escape_string($db,$insVoer)."', charge = ". db_null_input($insCharge) .", inkat = '".mysqli_real_escape_string($db,$insInkat)."', enhuId = '".mysqli_real_escape_string($db,$enhuId)."', prijs = '".mysqli_real_escape_string($db,$insPrijs)."', btw = '".mysqli_real_escape_string($db,$insBtw)."', relId = " . db_null_input($insRc) ; 
 
@@ -174,10 +174,10 @@ if($insBtw > 1) { $btwBedrag = $insPrijs*$insBtw/100; }
 else { $btwBedrag = 0; }
 
 $PrijsInclBtw = $insPrijs + $btwBedrag;
-		$insert_tblOpgaaf = "INSERT INTO tblOpgaaf SET rubuId = ". db_null_input($rubuId) .", datum = '".mysqli_real_escape_string($db,$insInkdm)."', bedrag = '".mysqli_real_escape_string($db,$PrijsInclBtw)."', toel = ". db_null_input($relatie) .", liq = 1 ";
-		
-			/*	##*/mysqli_query($db,$insert_tblOpgaaf) or die (mysqli_error($db));
-	}
+        $insert_tblOpgaaf = "INSERT INTO tblOpgaaf SET rubuId = ". db_null_input($rubuId) .", datum = '".mysqli_real_escape_string($db,$insInkdm)."', bedrag = '".mysqli_real_escape_string($db,$PrijsInclBtw)."', toel = ". db_null_input($relatie) .", liq = 1 ";
+        
+            /*    ##*/mysqli_query($db,$insert_tblOpgaaf) or die (mysqli_error($db));
+    }
 
 } ?>
 <table border= 0><tr><td>
@@ -185,8 +185,8 @@ $PrijsInclBtw = $insPrijs + $btwBedrag;
 <form action="Inkopen.php" method="post" >
 
 <!--*********************************
-		 NIEUWE INVOER VELDEN
-	********************************* -->
+         NIEUWE INVOER VELDEN
+    ********************************* -->
 <table border= 0>
 <tr><td colspan = 3 style = "font-size:13px;"><i> Nieuwe inkoop : </i></td></tr>
 <tr style =  "font-size:12px;" valign =  "bottom"> 
@@ -203,12 +203,12 @@ $PrijsInclBtw = $insPrijs + $btwBedrag;
 
 <?php
 // kzlvoer bij nieuwe invoer
-$q_newvoer = mysqli_query($db,$newvoer) or die (mysqli_error($db));	?>
+$q_newvoer = mysqli_query($db,$newvoer) or die (mysqli_error($db));    ?>
 
  <select style= "width:280;" name = "txtArtikel_" id = "artikel" onchange = "eenheid_artikel()" >
- <option> </option>	
-<?php		while($lijn = mysqli_fetch_array($q_newvoer))
-		{
+ <option> </option>    
+<?php        while($lijn = mysqli_fetch_array($q_newvoer))
+        {
 
 $name = $lijn['naam'];
 if ($lijn['soort'] == 'pil') {$getal = "&nbsp per $lijn[stdat]"; $eenheid = $lijn['heid']; }
@@ -217,21 +217,21 @@ else {$getal = ''; $eenheid = '';}
 $cijf = str_replace('.00', '', $getal); 
 $wrde = "$name$cijf$eenheid";
 
-		
-			$opties= array($lijn['artId']=>$wrde);
-			foreach ( $opties as $key => $waarde)
-			{
-						$keuze = '';
-		
-		if(isset($_POST['txtArtikel_']) && $_POST['txtArtikel_'] == $key)
-		{
-			$keuze = ' selected ';
-		}
-				
-		echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
-			}
-		
-		} ?>
+        
+            $opties= array($lijn['artId']=>$wrde);
+            foreach ( $opties as $key => $waarde)
+            {
+                        $keuze = '';
+        
+        if(isset($_POST['txtArtikel_']) && $_POST['txtArtikel_'] == $key)
+        {
+            $keuze = ' selected ';
+        }
+                
+        echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
+            }
+        
+        } ?>
  </select>
 </td>
 <td><input type= "text" name = "txtCharge_" size = 14 value = <?php if(isset($txtcharge)) { echo $txtcharge; } ?> ></td>
@@ -251,12 +251,12 @@ $wrde = "$name$cijf$eenheid";
 <tr><td colspan = 15><hr></td></tr>
 </table>
 <!--*********************************
-		EINDE NIEUWE INVOER VELDEN
-	********************************* -->
+        EINDE NIEUWE INVOER VELDEN
+    ********************************* -->
 </td></tr><tr><td>
 <!--*****************************
-	 		WIJZIGEN VOER
-	***************************** -->
+             WIJZIGEN VOER
+    ***************************** -->
  <table border= 0 align = "left" >
  <tr> 
   <td colspan =  16 > <b>Inkopen :</b> 
@@ -267,7 +267,7 @@ $wrde = "$name$cijf$eenheid";
 
 
 
-<?php		
+<?php        
 $current_year = date("Y");
 
 // START LOOP
@@ -282,36 +282,36 @@ GROUP BY year(i.dmink)
 ORDER BY year(i.dmink) desc
 ") or die (mysqli_error($db));
 
-	while($lus = mysqli_fetch_assoc($group_jaar))
-	{
+    while($lus = mysqli_fetch_assoc($group_jaar))
+    {
             $jaar = ($lus['jaar']);   ?>
 <tr>
  <td colspan="9">
- 	
+     
  <input type="checkbox" name="jaartalCheckbox" value= <?php echo $jaar; if($jaar == $current_year) { ?> checked <?php } ?> > <?php echo $jaar; ?>
  </td>
  <td class= "<?php echo $jaar; ?> selectt" >
- 	Stuksprijs
+     Stuksprijs
  </td>
 </tr>
  <tr style =  "font-size:12px;" valign =  "bottom" class= "<?php echo $jaar; ?> selectt" > 
-		 <th>Inkoopdatum<hr></th>
-		 <th></th> 
-		 <th>Omschrijving<hr></th>
-		 <th></th> 
-		 <th>Chargenummer<hr></th>
-		 <th></th> 
-		 <th colspan = 2>Aantal<hr></th> 
-		 <th></th> 
-		 <th width = 50>(excl.)<hr></th>
-		 <th></th> 
-		 <th>Prijs (excl.)<hr></th> 
-		 <th></th>
-		 <th>Btw<hr></th>
-		 <th></th>
-		 <th>Leverancier<hr></th> 
-		 <th>Verwijder<hr></th> 
-		  
+         <th>Inkoopdatum<hr></th>
+         <th></th> 
+         <th>Omschrijving<hr></th>
+         <th></th> 
+         <th>Chargenummer<hr></th>
+         <th></th> 
+         <th colspan = 2>Aantal<hr></th> 
+         <th></th> 
+         <th width = 50>(excl.)<hr></th>
+         <th></th> 
+         <th>Prijs (excl.)<hr></th> 
+         <th></th>
+         <th>Btw<hr></th>
+         <th></th>
+         <th>Leverancier<hr></th> 
+         <th>Verwijder<hr></th> 
+          
 
 
  </tr> 
@@ -334,27 +334,27 @@ GROUP BY i.inkId, i.dmink, i.dmink, i.artId, a.naam, i.charge, inkat, i.enhuId, 
 ORDER BY i.dmink desc, inkId desc
 ") or die (mysqli_error($db));
 
-	while($row = mysqli_fetch_assoc($query))
-	{
-		$inkid = $row['inkId'];
-		$inkdm = $row['inkdm'];
-		$dmink = $row['dmink'];
-		$naam = $row['naam'];
-		$charge = $row['chargenr'];
-		$bstat = $row['inkat']; 
-		$eenhd = $row['eenheid'];
-		$stprijs = $row['stprijs'];
-		$prijs = $row['prijs'];
-		$btw_db = $row['btw']; 	 $btw = $array_btw[$btw_db];
-		$rc = $row['crediteur'];
-		$nutId = $row['nutId'];
-		$voedId = $row['voedId'];
+    while($row = mysqli_fetch_assoc($query))
+    {
+        $inkid = $row['inkId'];
+        $inkdm = $row['inkdm'];
+        $dmink = $row['dmink'];
+        $naam = $row['naam'];
+        $charge = $row['chargenr'];
+        $bstat = $row['inkat']; 
+        $eenhd = $row['eenheid'];
+        $stprijs = $row['stprijs'];
+        $prijs = $row['prijs'];
+        $btw_db = $row['btw'];      $btw = $array_btw[$btw_db];
+        $rc = $row['crediteur'];
+        $nutId = $row['nutId'];
+        $voedId = $row['voedId'];
 
 
 /*if(isset($_POST['knpDelete_'.$inkid])) {
-// crediteur toevoegen		
+// crediteur toevoegen        
 $delete_inkoop = "DELETE FROM tblInkoop WHERE inkId = ".mysqli_real_escape_string($db,$inkid) ;
-	mysqli_query($db,$delete_inkoop) or die (mysqli_error($db));
+    mysqli_query($db,$delete_inkoop) or die (mysqli_error($db));
 }*/ ?>
 
 <tr class= "<?php echo $jaar; ?> selectt" >
@@ -368,7 +368,7 @@ $delete_inkoop = "DELETE FROM tblInkoop WHERE inkId = ".mysqli_real_escape_strin
  <td width = "1"></td>
  <td align = right > &euro;&nbsp <?php echo $stprijs;?> </td>
  <td width = "1"></td>
- <td align = right > &euro;&nbsp <input type = text name = <?php echo "txtPrijs_$inkid"; ?> size = 4 style = "font-size:11px; text-align:right;" value = <?php	echo $prijs;?> ></td>
+ <td align = right > &euro;&nbsp <input type = text name = <?php echo "txtPrijs_$inkid"; ?> size = 4 style = "font-size:11px; text-align:right;" value = <?php    echo $prijs;?> ></td>
  <td width = "1"></td>
  <td align = center style = "font-size:12px;"><?php if (!empty($btw)) {echo $btw;} ?></td>
  <td width = "1"></td>
@@ -377,12 +377,12 @@ $delete_inkoop = "DELETE FROM tblInkoop WHERE inkId = ".mysqli_real_escape_strin
 
 <!--<button class=btn btn-sm btn-danger delete_class id= <?php echo $inkid; ?> >Verwijder inkoop</button> -->
 
- 	 <input type = "checkbox" name= <?php echo "chkDel_$inkid"; ?> value = "Verwijder inkoop" style = "font-size:9px" >
+      <input type = "checkbox" name= <?php echo "chkDel_$inkid"; ?> value = "Verwijder inkoop" style = "font-size:9px" >
 
- 	 <?php } ?></td>
+      <?php } ?></td>
 </tr>
 
-<?php	} ?>
+<?php    } ?>
 <tr class= "<?php echo $jaar; ?> selectt" ><td height="50"></td></tr>
 
 <?php    } ?>
@@ -391,8 +391,8 @@ $delete_inkoop = "DELETE FROM tblInkoop WHERE inkId = ".mysqli_real_escape_strin
 
 </table>
 <!--*****************************
-	 	EINDE WIJZIGEN VOER
-	***************************** -->
+         EINDE WIJZIGEN VOER
+    ***************************** -->
 
 
 
@@ -403,7 +403,7 @@ $delete_inkoop = "DELETE FROM tblInkoop WHERE inkId = ".mysqli_real_escape_strin
 
 
 
-	</TD>
+    </TD>
 <?php } else { ?> <img src='Inkopen_php.jpg'  width='970' height='550'/> <?php }
 include "menuInkoop.php"; } ?>
 

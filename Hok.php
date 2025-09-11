@@ -26,7 +26,7 @@ $titel = 'Verblijven';
 $file = "Hok.php";
 include "login.php"; ?>
 
-				<TD align = "center" valign = "top">
+                <TD align = "center" valign = "top">
 <?php 
 if (Auth::is_logged_in()) { if($modtech ==1) {
 
@@ -36,33 +36,33 @@ if (isset ($_POST['knpSave_'])) { include "save_hok.php"; }
 
 if (isset ($_POST['knpInsert_']))
 {
-	$hok = $_POST['insHok_'];
+    $hok = $_POST['insHok_'];
 // Zoek naar hok op duplicaten
 $zoek_hok = mysqli_query($db,"
 SELECT hoknr
 FROM tblHok
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and hoknr = '".mysqli_real_escape_string($db,$hok)."'
 ") or die (mysqli_error($db));
-				while ($zh = mysqli_fetch_assoc($zoek_hok))
-				{
-					$hok_aanwezig = $zh['hoknr'];
-				} 
+                while ($zh = mysqli_fetch_assoc($zoek_hok))
+                {
+                    $hok_aanwezig = $zh['hoknr'];
+                } 
 // Einde Zoek naar hok op duplicaten
-				
-	if (empty($_POST['insHok_'])) 							{ $fout = "U heeft geen verblijf ingevoerd."; }	
-	else if(isset($hok_aanwezig))	 							{ $fout = "Deze omschrijving bestaat al.";	$hok = '';	}	
-	else if(!empty($hok) && strlen("$hok")> 10)	{ $fout = "Het verblijf mag uit max. 10 karakters bestaan."; }	
-	else 
-	{
+                
+    if (empty($_POST['insHok_']))                             { $fout = "U heeft geen verblijf ingevoerd."; }    
+    else if(isset($hok_aanwezig))                                 { $fout = "Deze omschrijving bestaat al.";    $hok = '';    }    
+    else if(!empty($hok) && strlen("$hok")> 10)    { $fout = "Het verblijf mag uit max. 10 karakters bestaan."; }    
+    else 
+    {
 
 $query_hok_toevoegen= "
   INSERT INTO tblHok 
   SET lidId = '".mysqli_real_escape_string($db,$lidId)."', 
-	  hoknr = '".mysqli_real_escape_string($db,$hok)."',
-	  sort = ". db_null_input($_POST['insSort_']);
+      hoknr = '".mysqli_real_escape_string($db,$hok)."',
+      sort = ". db_null_input($_POST['insSort_']);
 
-				 mysqli_query($db,$query_hok_toevoegen) or die (mysqli_error($db));
-	}
+                 mysqli_query($db,$query_hok_toevoegen) or die (mysqli_error($db));
+    }
 }
 
 $zoek_hok = mysqli_query($db,"
@@ -72,15 +72,15 @@ WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ORDER BY sort, hokId
 ") or die (mysqli_error($db));
 
-	while($line = mysqli_fetch_assoc($zoek_hok))
-	{
+    while($line = mysqli_fetch_assoc($zoek_hok))
+    {
             $pdf = $line['hokId']; 
     } 
 
 if(isset($_POST['radHide']) && $_POST['radHide'] == 0) { $Gebl = -1; } 
  else { $Gebl = 0; }
 
-$zoek_db_relaties_alle_verblijven =	mysqli_query($db,"
+$zoek_db_relaties_alle_verblijven =    mysqli_query($db,"
 SELECT count(h.hokId) aant
 FROM tblHok h
  left join tblBezet b on (h.hokId = b.hokId)
@@ -88,8 +88,8 @@ FROM tblHok h
 WHERE h.lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief > '".mysqli_real_escape_string($db,$Gebl)."' and isnull(b.hokId) and isnull(p.hokId)
 ") or die (mysqli_error($db));
 
-	while($zdrav = mysqli_fetch_assoc($zoek_db_relaties_alle_verblijven))
-	{ $dbRelatie_allVerblijven = $zdrav['aant']; }    ?>
+    while($zdrav = mysqli_fetch_assoc($zoek_db_relaties_alle_verblijven))
+    { $dbRelatie_allVerblijven = $zdrav['aant']; }    ?>
 
 <form action="Hok.php" method="post">
 <table border = 0>
@@ -108,14 +108,14 @@ WHERE h.lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief > '".mysq
   <input type= "text" name= "insHok_" value = <?php if(isset($hok)) { echo $hok; }; ?> >
  </td>
  <td>
-	<input type= "text" name= "insSort_" size = 1 title = "Leg hier het nummer vast om de volgorde in de reader te bepalen." > 
+    <input type= "text" name= "insSort_" size = 1 title = "Leg hier het nummer vast om de volgorde in de reader te bepalen." > 
  </td>
  <td> <input type = "submit" name= "knpInsert_" value = "Toevoegen" > </td>
 </tr>
 </table>
 
  </td>
- <td>		
+ <td>        
 <table border = 0 align = 'left' >
 <tr>
  <td> <b> Verblijven</b> </td>
@@ -128,16 +128,16 @@ WHERE h.lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief > '".mysq
  <td ></td>
 
  <td style ="font-size:12px;"> 
- 		<input type = radio name = "radHide" value = 1 <?php if(!isset($_POST['knpToon']) || (isset($_POST['radHide']) && $_POST['radHide'] == 1 )) { echo "checked"; } ?> > Excl.
+         <input type = radio name = "radHide" value = 1 <?php if(!isset($_POST['knpToon']) || (isset($_POST['radHide']) && $_POST['radHide'] == 1 )) { echo "checked"; } ?> > Excl.
 
-	  <input type = radio name = "radHide" value = 0 <?php if(isset($_POST['radHide']) && $_POST['radHide'] == 0 ) { echo "checked"; } ?> > Incl. <br>&nbsp&nbsp&nbsp&nbsp geblokkeerden &nbsp&nbsp
+      <input type = radio name = "radHide" value = 0 <?php if(isset($_POST['radHide']) && $_POST['radHide'] == 0 ) { echo "checked"; } ?> > Incl. <br>&nbsp&nbsp&nbsp&nbsp geblokkeerden &nbsp&nbsp
 
     <input type = "submit" name ="knpToon" value = "Toon">
  </td>
  <td width= 200 align="right">
- 	<a href= '<?php echo $url;?>Hok_pdf.php?Id=<?php echo $pdf; ?>' style = 'color : blue'>
-	print pagina </a> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
- </td>	
+     <a href= '<?php echo $url;?>Hok_pdf.php?Id=<?php echo $pdf; ?>' style = 'color : blue'>
+    print pagina </a> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+ </td>    
 </tr>
 <tr>
  <td colspan = 6><hr> </td>
@@ -145,7 +145,7 @@ WHERE h.lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief > '".mysq
 
 
 <?php
-// START LOOP	
+// START LOOP    
 $query = mysqli_query($db,"
 SELECT hokId, hoknr, scan, sort, actief
 FROM tblHok
@@ -153,17 +153,17 @@ WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief > '".mysqli
 ORDER BY coalesce(sort, hoknr)
 ") or die (mysqli_error($db));
 
-	while($row = mysqli_fetch_assoc($query))
-	{
-	  $Id = $row['hokId'];
-	  $hoknr = $row['hoknr'];
-	  $scan = $row['scan']; 
-	  $sort = $row['sort']; 
-	  $actief = $row['actief'];
+    while($row = mysqli_fetch_assoc($query))
+    {
+      $Id = $row['hokId'];
+      $hoknr = $row['hoknr'];
+      $scan = $row['scan']; 
+      $sort = $row['sort']; 
+      $actief = $row['actief'];
 
 
 
-$zoek_db_relaties =	mysqli_query($db,"
+$zoek_db_relaties =    mysqli_query($db,"
 SELECT h.hokId
 FROM tblHok h
  left join tblBezet b on (h.hokId = b.hokId)
@@ -171,26 +171,26 @@ FROM tblHok h
 WHERE h.hokId = '".mysqli_real_escape_string($db,$Id)."' and isnull(b.hokId) and isnull(p.hokId)
 ") or die (mysqli_error($db));
 
-	while($zdr = mysqli_fetch_assoc($zoek_db_relaties))
-	{ $dbRelatie = $zdr['hokId']; }  ?>
+    while($zdr = mysqli_fetch_assoc($zoek_db_relaties))
+    { $dbRelatie = $zdr['hokId']; }  ?>
 
 
 
 <tr>
  <td> <?php echo $hoknr; ?> </td>
  <td align = "center">
-	<input type = text name = <?php echo "txtSort_$Id"; ?> size = 1 value = <?php echo $sort; ?>  >
+    <input type = text name = <?php echo "txtSort_$Id"; ?> size = 1 value = <?php echo $sort; ?>  >
  </td>
  <td align="center"> 
-	<input type = "checkbox" name = <?php echo "chbActief_$Id"; ?> id="c1" value= 1 <?php echo $actief == 1 ? 'checked' : ''; ?> 		title = "Is verblijf te gebruiken ja/nee ?">
+    <input type = "checkbox" name = <?php echo "chbActief_$Id"; ?> id="c1" value= 1 <?php echo $actief == 1 ? 'checked' : ''; ?>         title = "Is verblijf te gebruiken ja/nee ?">
  </td>
  <td align="center">
- 	<?php if(isset($dbRelatie)) { ?>
- 	<input type="checkbox" name= <?php echo "chbDel_$Id"; ?> >
+     <?php if(isset($dbRelatie)) { ?>
+     <input type="checkbox" name= <?php echo "chbDel_$Id"; ?> >
  <?php } unset($dbRelatie); ?>
  </td>
 </tr>
-<?php	} ?>
+<?php    } ?>
  </td>
 </tr>
 </table>
@@ -200,7 +200,7 @@ WHERE h.hokId = '".mysqli_real_escape_string($db,$Id)."' and isnull(b.hokId) and
 
 
 
-	</TD>
+    </TD>
 <?php } else { ?> <img src='hok_php.jpg'  width='970' height='550'/> <?php }
 include "menuBeheer.php"; } ?>
 </body>

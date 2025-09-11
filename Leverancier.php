@@ -26,103 +26,103 @@ include "login.php";
 if (Auth::is_logged_in()) { 
 
 if (empty($_GET['pstid']))
-{	$leverid = "$_POST[txtpstid]";	}
+{    $leverid = "$_POST[txtpstid]";    }
 else
-{	$leverid = "$_GET[pstid]";	}
+{    $leverid = "$_GET[pstid]";    }
 
 If (isset ($_POST['knpUpdate']))
 {
 
-		if (empty($_POST['txtubn']))	{	$updubn = "NULL";	}
-  else		{	$updubn = " '$_POST[txtubn]' ";	}
-		if (empty($_POST['txtrelnr']))	{	$updrelnr = "NULL";	}
-  else		{	$updrelnr = " '$_POST[txtrelnr]' ";	}
-		if (empty($_POST['txtpassw']))	{	$updpassw = "NULL";	}
-  else		{	$updpassw = " '$_POST[txtpassw]' ";	}
-  		if (empty($_POST['txtnaam']))	{	$updnaam = "NULL";	}
-  else		{	$updnaam = " '$_POST[txtnaam]' ";	}
+        if (empty($_POST['txtubn']))    {    $updubn = "NULL";    }
+  else        {    $updubn = " '$_POST[txtubn]' ";    }
+        if (empty($_POST['txtrelnr']))    {    $updrelnr = "NULL";    }
+  else        {    $updrelnr = " '$_POST[txtrelnr]' ";    }
+        if (empty($_POST['txtpassw']))    {    $updpassw = "NULL";    }
+  else        {    $updpassw = " '$_POST[txtpassw]' ";    }
+          if (empty($_POST['txtnaam']))    {    $updnaam = "NULL";    }
+  else        {    $updnaam = " '$_POST[txtnaam]' ";    }
   
-		if (empty($_POST['txtstraat']))	{	$updstraat = "NULL";	}
-  else		{	$updstraat = " '$_POST[txtstraat]' ";	}
-	
-		if (empty($_POST['txtnr']))		{	$updnr = "nr = NULL";	}
-  else		{	$updnr = "nr = '$_POST[txtnr]' ";	}
+        if (empty($_POST['txtstraat']))    {    $updstraat = "NULL";    }
+  else        {    $updstraat = " '$_POST[txtstraat]' ";    }
+    
+        if (empty($_POST['txtnr']))        {    $updnr = "nr = NULL";    }
+  else        {    $updnr = "nr = '$_POST[txtnr]' ";    }
 
-		if (empty($_POST['txtpc']))		{	$updpc = "pc = NULL";	}
-  else		{	$updpc = "pc = '$_POST[txtpc]' ";	}
+        if (empty($_POST['txtpc']))        {    $updpc = "pc = NULL";    }
+  else        {    $updpc = "pc = '$_POST[txtpc]' ";    }
 
-		if (empty($_POST['txtplaats']))	{	$updplaats = "plaats = NULL";	}
-  else		{	$updplaats = "plaats = '$_POST[txtplaats]' ";	}
+        if (empty($_POST['txtplaats']))    {    $updplaats = "plaats = NULL";    }
+  else        {    $updplaats = "plaats = '$_POST[txtplaats]' ";    }
 
-		if (empty($_POST['txtstraat1']))	{	$upd_straat = "NULL";	}
-  else		{	$upd_straat = " '$_POST[txtstraat1]' ";	}
-	
-		if (empty($_POST['txtnr1']))		{	$upd_nr = "nr1 = NULL";	}
-  else		{	$upd_nr = "nr1 = '$_POST[txtnr1]' ";	}
+        if (empty($_POST['txtstraat1']))    {    $upd_straat = "NULL";    }
+  else        {    $upd_straat = " '$_POST[txtstraat1]' ";    }
+    
+        if (empty($_POST['txtnr1']))        {    $upd_nr = "nr1 = NULL";    }
+  else        {    $upd_nr = "nr1 = '$_POST[txtnr1]' ";    }
 
-		if (empty($_POST['txtpc1']))		{	$upd_pc = "pc1 = NULL";	}
-  else		{	$upd_pc = "pc1 = '$_POST[txtpc1]' ";	}
+        if (empty($_POST['txtpc1']))        {    $upd_pc = "pc1 = NULL";    }
+  else        {    $upd_pc = "pc1 = '$_POST[txtpc1]' ";    }
 
-		if (empty($_POST['txtplaats1']))	{	$upd_plaats = "plaats1 = NULL";	}
-  else		{	$upd_plaats = "plaats1 = '$_POST[txtplaats1]' ";	}
+        if (empty($_POST['txtplaats1']))    {    $upd_plaats = "plaats1 = NULL";    }
+  else        {    $upd_plaats = "plaats1 = '$_POST[txtplaats1]' ";    }
 
-		if (empty($_POST['txttel']))	{	$updtel = "tel = NULL";	}
-  else		{	$updtel = "tel = '$_POST[txttel]' ";		}
+        if (empty($_POST['txttel']))    {    $updtel = "tel = NULL";    }
+  else        {    $updtel = "tel = '$_POST[txttel]' ";        }
 
-		if (empty($_POST['txtfax']))	{	$updfax = "fax = NULL";	}
-  else		{	$updfax = "fax = '$_POST[txtfax]' ";		}
+        if (empty($_POST['txtfax']))    {    $updfax = "fax = NULL";    }
+  else        {    $updfax = "fax = '$_POST[txtfax]' ";        }
   
-		if (empty($_POST['txtmail']))	{	$updmail = "email = NULL";	}
-  else		{	$updmail = "email = '$_POST[txtmail]' ";	}
+        if (empty($_POST['txtmail']))    {    $updmail = "email = NULL";    }
+  else        {    $updmail = "email = '$_POST[txtmail]' ";    }
 
-		if (empty($_POST['txtsite']))	{	$updsite = "site = NULL";	}
-  else		{	$updsite = "site = '$_POST[txtsite]' ";		}
+        if (empty($_POST['txtsite']))    {    $updsite = "site = NULL";    }
+  else        {    $updsite = "site = '$_POST[txtsite]' ";        }
 
-		if (empty($_POST['txtbank']))	{	$updbank = "banknr = NULL";	}
-  else		{	$updbank = "banknr = '$_POST[txtbank]' ";	}
+        if (empty($_POST['txtbank']))    {    $updbank = "banknr = NULL";    }
+  else        {    $updbank = "banknr = '$_POST[txtbank]' ";    }
 
-if (empty($_POST['chkActief']))	{	$updact = "actief = NULL";	}
-  else		{	$updact = "actief = '$_POST[chkActief]' ";	}
+if (empty($_POST['chkActief']))    {    $updact = "actief = NULL";    }
+  else        {    $updact = "actief = '$_POST[chkActief]' ";    }
 
-		if (empty($_POST['txtkent']))	{	$updkent = "kenteken = NULL";	}
-  else		{	$updkent = "kenteken = '$_POST[txtkent]' ";		}
+        if (empty($_POST['txtkent']))    {    $updkent = "kenteken = NULL";    }
+  else        {    $updkent = "kenteken = '$_POST[txtkent]' ";        }
 
-		if (empty($_POST['txthang']))	{	$updhang = "aanhanger = NULL";	}
-  else		{	$updhang = "aanhanger = '$_POST[txthang]' ";	}
-	
-	$wijziglever = "Update tblRelaties SET ubn = ".$updubn.", relnr = ".$updrelnr.", wachtw = ".$updpassw.", relatie = ".$updnaam." , adres = ".$updstraat." , ".$updnr." , ".$updpc." , ".$updplaats." , adres1 = ".$upd_straat." , ".$upd_nr." , ".$upd_pc." , ".$upd_plaats." , ".$updtel.", ".$updfax.", ".$updmail.", ".$updsite.", ".$updbank.", ".$updact.", ".$updkent.", ".$updhang." WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." and relatId = '$leverid' 	";
-		mysqli_query($db,$wijziglever) or die (mysqli_error($db));
+        if (empty($_POST['txthang']))    {    $updhang = "aanhanger = NULL";    }
+  else        {    $updhang = "aanhanger = '$_POST[txthang]' ";    }
+    
+    $wijziglever = "Update tblRelaties SET ubn = ".$updubn.", relnr = ".$updrelnr.", wachtw = ".$updpassw.", relatie = ".$updnaam." , adres = ".$updstraat." , ".$updnr." , ".$updpc." , ".$updplaats." , adres1 = ".$upd_straat." , ".$upd_nr." , ".$upd_pc." , ".$upd_plaats." , ".$updtel.", ".$updfax.", ".$updmail.", ".$updsite.", ".$updbank.", ".$updact.", ".$updkent.", ".$updhang." WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." and relatId = '$leverid'     ";
+        mysqli_query($db,$wijziglever) or die (mysqli_error($db));
 
-	
+    
 }
 
 //echo "$id";
 
 $lever = mysqli_query($db,"SELECT relatId, dc, ubn, relnr, wachtw, relatie, adres, nr, pc, plaats, adres1, nr1, pc1, plaats1, tel, fax, email, site, banknr, groep, actief, kenteken, aanhanger FROM tblRelaties WHERE relatid = $leverid") or die (mysqli_error($db));
  while ($row = mysqli_fetch_assoc($lever))
-	{	$ubn = "{$row['ubn']}";
-		$relnr = "{$row['relnr']}";
-		$passw = "{$row['wachtw']}";
-		$relatie = "{$row['relatie']}";
-		$straat = "{$row['adres']}"; $nr = "{$row['nr']}";
-		$pc = "{$row['pc']}";
-		$plaats = "{$row['plaats']}";
-		$straat1 = "{$row['adres1']}"; $nr1 = "{$row['nr1']}";
-		$pc1 = "{$row['pc1']}";
-		$plaats1 = "{$row['plaats1']}";
-		$tel = "{$row['tel']}";
-		$fax = "{$row['fax']}";
-		$email = "{$row['email']}";
-		$site = "{$row['site']}";
-		$bank = "{$row['banknr']}";
-		$actif = "{$row['actief']}";
-			if($row['actief'] == 1)
-		{$actief = "ja";	}
-			else if($row['actief'] == 0)
-		{$actief = "nee";	}
-		$kent = "{$row['kenteken']}";
-		$hang = "{$row['aanhanger']}";
-	
+    {    $ubn = "{$row['ubn']}";
+        $relnr = "{$row['relnr']}";
+        $passw = "{$row['wachtw']}";
+        $relatie = "{$row['relatie']}";
+        $straat = "{$row['adres']}"; $nr = "{$row['nr']}";
+        $pc = "{$row['pc']}";
+        $plaats = "{$row['plaats']}";
+        $straat1 = "{$row['adres1']}"; $nr1 = "{$row['nr1']}";
+        $pc1 = "{$row['pc1']}";
+        $plaats1 = "{$row['plaats1']}";
+        $tel = "{$row['tel']}";
+        $fax = "{$row['fax']}";
+        $email = "{$row['email']}";
+        $site = "{$row['site']}";
+        $bank = "{$row['banknr']}";
+        $actif = "{$row['actief']}";
+            if($row['actief'] == 1)
+        {$actief = "ja";    }
+            else if($row['actief'] == 0)
+        {$actief = "nee";    }
+        $kent = "{$row['kenteken']}";
+        $hang = "{$row['aanhanger']}";
+    
 
 ?> <table border = 0 > <tr><td style= 'font-size : 25px' align = center colspan = 4 height = 25> <?php echo "$relatie"?></td></tr>
 <tr><td width = 75></td><td>
@@ -186,15 +186,15 @@ Banknummer </td>
 </td></tr><tr>
 <?php
  if ($leverid == $rendac) {
-?><td>Actief</td> <td>:  <input type= "checkbox" name= "chkactief" id= "c1" <?php if(true){ echo "checked"; } ?>  disabled ></td><?php		
+?><td>Actief</td> <td>:  <input type= "checkbox" name= "chkactief" id= "c1" <?php if(true){ echo "checked"; } ?>  disabled ></td><?php        
  }
  else
  {
 ?> <td>Actief</td> 
-<td>:  <input type = "checkbox" name = "chkActief" id= "c1" value= "1" <?php echo $row['actief'] == 1 ? 'checked' : ''; ?> 		title = "Is debiteur te gebruiken ja/nee ?"> </td><?php
+<td>:  <input type = "checkbox" name = "chkActief" id= "c1" value= "1" <?php echo $row['actief'] == 1 ? 'checked' : ''; ?>         title = "Is debiteur te gebruiken ja/nee ?"> </td><?php
  } ?>
 </td></tr>
-	
+    
 <?php } ?>
 <tr><td>
 Kenteken </td>

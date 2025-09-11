@@ -13,10 +13,10 @@ $titel = 'Sjabloon';
 $file = "sjabloon.php";
 include "login.php"; ?>
 
-		<TD valign = 'top'>
+        <TD valign = 'top'>
 <?php
 if (Auth::is_logged_in()) { ?>
-	
+    
 <form action = "Systeem.php" method = "post" >
 
 </form>

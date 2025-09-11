@@ -20,45 +20,45 @@ $titel = 'Welkompagina';
 $file = "";
 include "header.tpl.php"; ?>
 
-				<TD valign = 'top'>
+                <TD valign = 'top'>
 <?php 
 /*if ($_SERVER['REQUEST_METHOD'] == "POST") {
   header("location: http://www.jouwsite.nl/pagina.html"); }*/
 if(isset($_POST['knpCreate']))
 {
-	$ubn = $_POST['txtUname'];
-	$pword =  $_POST['txtPassw']; //ongecodeerd wachtwoord
-	//$passw =  $_POST['txtPassw'];
-	$passw = md5($_POST['txtPassw'].'zfO3puW?Wod/UT<-|=)1VT]+{hgABEK(Yh^!Wv;5{ja{P~wX4t'); // wordt gebruikt bij login
-	$ctr_p =  $_POST['ctrPassw'];
-	$tel = $_POST['txtTel'];
-	$mail = $_POST['txtMail'];
-	
-	/*echo "Ubn : ".$ubn."<br>";
-	echo "Waw : ".$passw."<br>";
-	echo "Bev : ".$ctr_p."<br>";
-	echo "Tel : ".$tel."<br>";
-	echo "Mail : ".$mail."<br>";*/
-	
+    $ubn = $_POST['txtUname'];
+    $pword =  $_POST['txtPassw']; //ongecodeerd wachtwoord
+    //$passw =  $_POST['txtPassw'];
+    $passw = md5($_POST['txtPassw'].'zfO3puW?Wod/UT<-|=)1VT]+{hgABEK(Yh^!Wv;5{ja{P~wX4t'); // wordt gebruikt bij login
+    $ctr_p =  $_POST['ctrPassw'];
+    $tel = $_POST['txtTel'];
+    $mail = $_POST['txtMail'];
+    
+    /*echo "Ubn : ".$ubn."<br>";
+    echo "Waw : ".$passw."<br>";
+    echo "Bev : ".$ctr_p."<br>";
+    echo "Tel : ".$tel."<br>";
+    echo "Mail : ".$mail."<br>";*/
+    
 
 include "demo_usercreate.php";
 }
-	?>
+    ?>
 <form action= "Welkom2.php" method= "post" >
 <table border = 0 valign = 'top' align = "center">
 <tr><td valign = top>
-	<table border = 0><tr><td height = 50></td></tr>
-	<tr><td>
-	<!--<img src='deklijst.jpg' width='285' height='220'> -->
-	</td></tr>
-	<tr><td height = 150>
-	</td></tr>
-	<tr><td>
-	<!--<img src='MaanoverFok.jpg' width='245' height='39'> -->
-	</td></tr>
-	</table></td>
+    <table border = 0><tr><td height = 50></td></tr>
+    <tr><td>
+    <!--<img src='deklijst.jpg' width='285' height='220'> -->
+    </td></tr>
+    <tr><td height = 150>
+    </td></tr>
+    <tr><td>
+    <!--<img src='MaanoverFok.jpg' width='245' height='39'> -->
+    </td></tr>
+    </table></td>
 <td valign = 'top'>
-	<table border = 0 align = "center">
+    <table border = 0 align = "center">
 <tr height = 50 valign ='top' ><td colspan = 4 align = "center">
 <h2>Aanmaken demo account </td></tr>
 <tr><td width = 150></td><td width = 150>Gebruikersnaam (Ubn) </td><td><input type = text name = 'txtUname' value = <?php if(isset($ubn)) { echo $ubn;} ?> >
@@ -82,21 +82,21 @@ info@oervanovis.nl<br/><br/></td><td colspan = 4 height = 250 align = right vali
 
 
 <td valign = top>
-	<table border = 0>
-	<tr><td height = 80 align = "center" valign = 'top' >
-	</td></tr>
-	<tr><td height = 400 valign = "center">
-	</td></tr>
-	<tr><td>
-	</td></tr>
+    <table border = 0>
+    <tr><td height = 80 align = "center" valign = 'top' >
+    </td></tr>
+    <tr><td height = 400 valign = "center">
+    </td></tr>
+    <tr><td>
+    </td></tr>
 
-	</table>
+    </table>
 
 </td></tr>
 </table>
 
 <?php include "msg.php"; ?>
-	</TD>
+    </TD>
 
 </tr>
 

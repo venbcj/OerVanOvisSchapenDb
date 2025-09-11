@@ -22,7 +22,7 @@ echo '<br> Aantal elementen ='.$cnt_worp.'<br>';
 
 for($g = 0; $g < $cnt_worp; $g++) {
 
-	echo $velden_worp[$g].'<br>';
+    echo $velden_worp[$g].'<br>';
 
 }
 

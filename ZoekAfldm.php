@@ -21,7 +21,7 @@ $titel = 'Keuze afleverdatum t.b.v. VKI';
 $file = "ZoekAfldm.php";
 include "login.php"; ?>
 
-		<TD align = "center" valign = "top">
+        <TD align = "center" valign = "top">
 <?php
 if (Auth::is_logged_in()) { ?>
 
@@ -48,36 +48,36 @@ ORDER BY r.uitval, h.datum desc
 ") or die (mysqli_error($db)); ?>
  <select style="width:200;" name="kzlPost" >";
  <option></option>
-<?php		while($row = mysqli_fetch_array($result))
-		{
-				$dag = $row['datum'];
-				$bedrijf = $row['relId'];
-			  $hisId = $row['hisId'];
-			  $ant = $row['aantal'];
-			  $bestm = $row['naam'];
+<?php        while($row = mysqli_fetch_array($result))
+        {
+                $dag = $row['datum'];
+                $bedrijf = $row['relId'];
+              $hisId = $row['hisId'];
+              $ant = $row['aantal'];
+              $bestm = $row['naam'];
 
-			$opties= array($hisId=>$dag.'&nbsp &nbsp'.$bestm.'&nbsp &nbsp'.$ant);
-			foreach ( $opties as $key => $waarde)
-			{
-						$keuze = '';
-		
-		if(isset($_GET['kzlPost']) && $_GET['kzlPost'] == $key)
-		{
-			$keuze = ' selected ';
-		}
-				
-		echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
-			}
-		
-		}
+            $opties= array($hisId=>$dag.'&nbsp &nbsp'.$bestm.'&nbsp &nbsp'.$ant);
+            foreach ( $opties as $key => $waarde)
+            {
+                        $keuze = '';
+        
+        if(isset($_GET['kzlPost']) && $_GET['kzlPost'] == $key)
+        {
+            $keuze = ' selected ';
+        }
+                
+        echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
+            }
+        
+        }
 ?> </select>
 
 &nbsp &nbsp &nbsp <input type = "submit" name="knpToon" value = "Toon" >
 </form>
 
-	</TD>
+    </TD>
 <?php
 include "menuRapport.php"; }?>
 
-	</body>
-	</html>
+    </body>
+    </html>

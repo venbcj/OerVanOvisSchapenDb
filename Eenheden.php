@@ -17,14 +17,14 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 
 <?php
 if (isset ($_POST['knpUpdate'])) {
-	include "url.php";
-	header("Location: ".$url."Eenheden.php"); }
+    include "url.php";
+    header("Location: ".$url."Eenheden.php"); }
 
 $titel = 'Verbruikseenheden';
 $file = "Eenheden.php";
 include "login.php"; ?>
 
-			<TD align = "center" valign = "top">
+            <TD align = "center" valign = "top">
 <?php
 if (Auth::is_logged_in()) { if($modtech ==1) { ?>
 
@@ -48,15 +48,15 @@ where eu.lidId = ".mysqli_real_escape_string($db,$lidId)."
 order by e.eenheid
 ") or die (mysqli_error($db));
 
-	while($record = mysqli_fetch_assoc($loop))
-	{
+    while($record = mysqli_fetch_assoc($loop))
+    {
             $id = $record['enhuId']; 
 
-if (empty($_POST['txtId']))		{	$rowid = NULL;	}
-  else		{	$rowid = $_POST['txtId'];	}
+if (empty($_POST['txtId']))        {    $rowid = NULL;    }
+  else        {    $rowid = $_POST['txtId'];    }
 
-if (empty($_POST['chkAct']))	{	$updact = "NULL";	}
-  else		{	$updact = " '$_POST[chkAct]' ";	}
+if (empty($_POST['chkAct']))    {    $updact = "NULL";    }
+  else        {    $updact = " '$_POST[chkAct]' ";    }
   
 
 $query = mysqli_query($db,"
@@ -66,34 +66,34 @@ from tblEenheid e
 where eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and eu.enhuId = \"$id\" 
 order by eenheid
 ") or die (mysqli_error($db));
-		while($record = mysqli_fetch_assoc($query))
-		{
+        while($record = mysqli_fetch_assoc($query))
+        {
 ?><tr><td width = 80></td><td><?php
-			echo $record['eenheid'];?>
-		</td><form action= "Eenheden.php" method = "post">  
-		
-	<input type = "hidden" name = "txtId" value = <?php echo $id ?> >
-		
-		<td align = center><input type="checkbox" name="chkAct" id="c1" value="1"
-			<?php echo $record['actief'] == 1 ? 'checked' : ''; ?> title = "Is deze eenheid te gebruiken ja/nee ?"></td>
-		
-		<td ><input type = "submit" name="knpUpdate" value = "Opslaan" style = "font-size:9px;"></td></tr>
-		</form>
-		
-<?php	}
+            echo $record['eenheid'];?>
+        </td><form action= "Eenheden.php" method = "post">  
+        
+    <input type = "hidden" name = "txtId" value = <?php echo $id ?> >
+        
+        <td align = center><input type="checkbox" name="chkAct" id="c1" value="1"
+            <?php echo $record['actief'] == 1 ? 'checked' : ''; ?> title = "Is deze eenheid te gebruiken ja/nee ?"></td>
+        
+        <td ><input type = "submit" name="knpUpdate" value = "Opslaan" style = "font-size:9px;"></td></tr>
+        </form>
+        
+<?php    }
 
 
-	}
-?>	
+    }
+?>    
 </table>
 </table>
 
-	</TD>
+    </TD>
 <?php } else { ?> <img src='eenheden_php.jpg'  width='970' height='550'/> <?php }
 include "menuBeheer.php"; } ?>
 
-	</tr>
-	</table>
+    </tr>
+    </table>
 
-	</body>
-	</html>
+    </body>
+    </html>

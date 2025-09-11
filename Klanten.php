@@ -21,7 +21,7 @@ $titel = 'Debiteuren';
 $subtitel = ''; 
 include "header.tpl.php"; ?>
 
-		<TD width = 960 height = 400 valign = "top">
+        <TD width = 960 height = 400 valign = "top">
 <?php
 $file = "Klanten.php";
 include "login.php"; 
@@ -32,54 +32,54 @@ if (isset($_POST['knpSave_'])) { include "save_klanten.php"; }
 if (isset($_POST['knpInsert']))
 {
 
-	$controle = mysqli_query($db,"
-	select count(partId) aantal
-	from tblPartij
-	 join tblRelatie r on (p.partId = r.partId)
-	where p.lidId = ".mysqli_real_escape_string($db,$lidId)." and p.naam = '$_POST[insklant])' and r.relatie = 'deb'
-	group by naam
-	") or die (mysqli_error($db));
-				while ($rij = mysqli_fetch_assoc($controle))
-				{
-					$dubbel = ("{$rij['aantal']}");
-				}
+    $controle = mysqli_query($db,"
+    select count(partId) aantal
+    from tblPartij
+     join tblRelatie r on (p.partId = r.partId)
+    where p.lidId = ".mysqli_real_escape_string($db,$lidId)." and p.naam = '$_POST[insklant])' and r.relatie = 'deb'
+    group by naam
+    ") or die (mysqli_error($db));
+                while ($rij = mysqli_fetch_assoc($controle))
+                {
+                    $dubbel = ("{$rij['aantal']}");
+                }
 
-	if (empty($_POST['insklant']))
-	{ ?>
-		<center style = "color : red;">U heeft geen klant ingevoerd.
-<?php	}
-	else if (!empty($dubbel) && $dubbel >= 1 )
-	{ ?>
-		Deze klant bestaat al.
-<?php	}
-	else 
-	{
-if (empty($_POST['insubn']))	{	$insubn = "NULL";	}
-  else	{	$insubn = "'$_POST[insubn]'";	}
+    if (empty($_POST['insklant']))
+    { ?>
+        <center style = "color : red;">U heeft geen klant ingevoerd.
+<?php    }
+    else if (!empty($dubbel) && $dubbel >= 1 )
+    { ?>
+        Deze klant bestaat al.
+<?php    }
+    else 
+    {
+if (empty($_POST['insubn']))    {    $insubn = "NULL";    }
+  else    {    $insubn = "'$_POST[insubn]'";    }
 
-if (empty($_POST['insklant']))	{	$insklant = "NULL";	}
-  else		{	$insklant = " '$_POST[insklant]' ";	}
+if (empty($_POST['insklant']))    {    $insklant = "NULL";    }
+  else        {    $insklant = " '$_POST[insklant]' ";    }
   
-if (empty($_POST['insstraat']))	{	$insstraat = "NULL";	}
-  else		{	$insstraat = " '$_POST[insstraat]' ";	}
+if (empty($_POST['insstraat']))    {    $insstraat = "NULL";    }
+  else        {    $insstraat = " '$_POST[insstraat]' ";    }
 
-if (empty($_POST['insnr']))	{	$insnr = "NULL";	}
-  else		{	$insnr = " '$_POST[insnr]' ";	}
+if (empty($_POST['insnr']))    {    $insnr = "NULL";    }
+  else        {    $insnr = " '$_POST[insnr]' ";    }
 
-if (empty($_POST['inspc']))	{	$inspc = "NULL";	}
-  else	{	$inspc = "' $_POST[inspc]'";	}
+if (empty($_POST['inspc']))    {    $inspc = "NULL";    }
+  else    {    $inspc = "' $_POST[inspc]'";    }
   
-if (empty($_POST['insplaats']))	{	$insplaats = "NULL";	}
-  else	{	$insplaats = "'$_POST[insplaats]'";	}  
+if (empty($_POST['insplaats']))    {    $insplaats = "NULL";    }
+  else    {    $insplaats = "'$_POST[insplaats]'";    }  
 
-if (empty($_POST['instel']))	{	$instel = "NULL";	}
-  else	{	$instel = "'$_POST[instel]'";	}
+if (empty($_POST['instel']))    {    $instel = "NULL";    }
+  else    {    $instel = "'$_POST[instel]'";    }
 
   
-		$query_rel_toevoegen= "INSERT INTO tblRelatie SET lidId = ".mysqli_real_escape_string($db,$lidId).", relatie = ".$insklant.", straat = ".$insstraat.", nr = ".$insnr.", pc = ".$inspc.", plaats = ".$insplaats.", tel=  ".$instel.", ubn = ".$insubn.", dc = 'debiteur', actief = 1 ";
-		
-				mysqli_query($db,$query_rel_toevoegen) or die (mysqli_error($db));
-	}
+        $query_rel_toevoegen= "INSERT INTO tblRelatie SET lidId = ".mysqli_real_escape_string($db,$lidId).", relatie = ".$insklant.", straat = ".$insstraat.", nr = ".$insnr.", pc = ".$inspc.", plaats = ".$insplaats.", tel=  ".$instel.", ubn = ".$insubn.", dc = 'debiteur', actief = 1 ";
+        
+                mysqli_query($db,$query_rel_toevoegen) or die (mysqli_error($db));
+    }
 } ?>
 
 <form action= "Klanten.php" method= "post" >
@@ -103,7 +103,7 @@ if (empty($_POST['instel']))	{	$instel = "NULL";	}
  <th>Telefoon</th>
  <th>Actief</th>
 </tr>
-<?php		
+<?php        
 // START LOOP
 $loop = mysqli_query($db,"
 select relId, naam
@@ -113,38 +113,38 @@ where p.lidId = ".mysqli_real_escape_string($db,$lidId)." and r.relatie = 'deb'
 order by p.naam
 ") or die (mysqli_error($db));
 
-	while($record = mysqli_fetch_assoc($loop))
-	{
+    while($record = mysqli_fetch_assoc($loop))
+    {
             $Id = ("{$record['relId']}");  
 
 
 
-if (empty($_POST['txtId']))		{	$rowid = NULL;	}
-  else		{	$rowid = $_POST['txtId'];	}
+if (empty($_POST['txtId']))        {    $rowid = NULL;    }
+  else        {    $rowid = $_POST['txtId'];    }
 
-if (empty($_POST['txtubn']))	{	$updubn = "ubn = NULL";	}
-  else		{	$updubn = "ubn = '$_POST[txtubn]' ";	}
+if (empty($_POST['txtubn']))    {    $updubn = "ubn = NULL";    }
+  else        {    $updubn = "ubn = '$_POST[txtubn]' ";    }
     
-if (empty($_POST['txtnaam']))	{	$updnaam = "NULL";	}
-  else		{	$updnaam = " '$_POST[txtnaam]' ";	}
+if (empty($_POST['txtnaam']))    {    $updnaam = "NULL";    }
+  else        {    $updnaam = " '$_POST[txtnaam]' ";    }
   
-if (empty($_POST['txtStraat']))	{	$updStraat = "NULL";	}
-  else		{	$updStraat = " '$_POST[txtStraat]' ";	}
-	
-if (empty($_POST['txtnr']))		{	$updnr = "nr = NULL";	}
-  else		{	$updnr = "nr = '$_POST[txtnr]' ";	}
+if (empty($_POST['txtStraat']))    {    $updStraat = "NULL";    }
+  else        {    $updStraat = " '$_POST[txtStraat]' ";    }
+    
+if (empty($_POST['txtnr']))        {    $updnr = "nr = NULL";    }
+  else        {    $updnr = "nr = '$_POST[txtnr]' ";    }
 
-if (empty($_POST['txtpc']))		{	$updpc = "pc = NULL";	}
-  else		{	$updpc = "pc = '$_POST[txtpc]' ";	}
+if (empty($_POST['txtpc']))        {    $updpc = "pc = NULL";    }
+  else        {    $updpc = "pc = '$_POST[txtpc]' ";    }
 
-if (empty($_POST['txtplaats']))	{	$updplaats = "plaats = NULL";	}
-  else		{	$updplaats = "plaats = '$_POST[txtplaats]' ";	}
+if (empty($_POST['txtplaats']))    {    $updplaats = "plaats = NULL";    }
+  else        {    $updplaats = "plaats = '$_POST[txtplaats]' ";    }
 
-if (empty($_POST['txttel']))	{	$updtel = "tel = NULL";	}
-  else		{	$updtel = "tel = '$_POST[txttel]' ";		}
+if (empty($_POST['txttel']))    {    $updtel = "tel = NULL";    }
+  else        {    $updtel = "tel = '$_POST[txttel]' ";        }
   
-if (empty($_POST['chkActief']))	{	$updact = "actief = NULL";	}
-  else		{	$updact = "actief = '$_POST[chkActief]' ";	}
+if (empty($_POST['chkActief']))    {    $updact = "actief = NULL";    }
+  else        {    $updact = "actief = '$_POST[chkActief]' ";    }
 
 
 
@@ -158,21 +158,21 @@ where relId = '$Id'
 order by naam
 ") or die (mysqli_error($db));
 
-	while($row = mysqli_fetch_assoc($query))
-	{
-		$ubn = "{$row['ubn']}";
-		$naam = "{$row['naam']}";
-		$straat = "{$row['straat']}"; $nr = "{$row['nr']}";
-		$pc = "{$row['pc']}";
-		$plaats = "{$row['plaats']}";
-		$tel = "{$row['tel']}";
-		$fax = "{$row['fax']}";
-		$email = "{$row['email']}";
-		$site = "{$row['site']}";
-		$bank = "{$row['banknr']}";
-		$kent = "{$row['kenteken']}";
-		$hang = "{$row['aanhanger']}";
-?>		 
+    while($row = mysqli_fetch_assoc($query))
+    {
+        $ubn = "{$row['ubn']}";
+        $naam = "{$row['naam']}";
+        $straat = "{$row['straat']}"; $nr = "{$row['nr']}";
+        $pc = "{$row['pc']}";
+        $plaats = "{$row['plaats']}";
+        $tel = "{$row['tel']}";
+        $fax = "{$row['fax']}";
+        $email = "{$row['email']}";
+        $site = "{$row['site']}";
+        $bank = "{$row['banknr']}";
+        $kent = "{$row['kenteken']}";
+        $hang = "{$row['aanhanger']}";
+?>         
 <tr style = "font-size:12px;">
  <td><!--Id --><input type= "text" name= <?php echo "txtId_$Id"; ?> size = 1 value = <?php echo $Id; ?> > <!-- hiddden -->
  <input type= "text" name= <?php echo "txtUbn_$Id"; ?> size = 5 value = <?php echo $ubn; ?> ></td>
@@ -185,18 +185,18 @@ order by naam
  <td width = 1></td>
  <td><input type= "text" name= <?php echo "txtPlaats_$Id"; ?> value = <?php echo " \"$plaats\" "; ?> ></td>
  <td><input type= "text" name= <?php echo "txtTel_$Id"; ?> value = <?php echo " \"$tel\" "; ?> style= "width: 80px;"></td>
- <td><input type = "checkbox" name = <?php echo "chkActief_$Id"; ?> id= "c1" value= "1" <?php echo $row['actief'] == 1 ? 'checked' : ''; ?> 		title = "Is debiteur te gebruiken ja/nee ?"> </td>
-		
+ <td><input type = "checkbox" name = <?php echo "chkActief_$Id"; ?> id= "c1" value= "1" <?php echo $row['actief'] == 1 ? 'checked' : ''; ?>         title = "Is debiteur te gebruiken ja/nee ?"> </td>
+        
  <td width = 80> <a href='<?php echo $url; ?>Klant.php?pstid=<?php echo $Id; ?>' style = "color : blue"> meer gegevens </a> </td>
- <td> 			 <a href='<?php echo $url; ?>Contact.php?pstid=<?php echo $Id; ?>' style = "color : blue"> contacten </a> </td>
+ <td>              <a href='<?php echo $url; ?>Contact.php?pstid=<?php echo $Id; ?>' style = "color : blue"> contacten </a> </td>
 
-	</td>
-		
-<?php	}	?>
+    </td>
+        
+<?php    }    ?>
 
  <td> </td>
 </tr>
-	
+    
 
 <?php    } ?>
 </td>
@@ -217,7 +217,7 @@ order by naam
 <td colspan = 2><input type = "submit" name= "knpInsert_" value = "Toevoegen" style = "font-size:10px;"></td></tr>
 </table>
 </form>
-	
+    
 
 </TD>
 <?php

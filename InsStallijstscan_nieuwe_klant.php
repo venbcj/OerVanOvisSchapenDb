@@ -12,7 +12,7 @@ $versie = '15-07-2025'; /* Veld ubn toegevoegd. Per deze versie kan een gebruike
 <!DOCTYPE html>
 <html>
 <head>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <title>Registratie</title>
 </head>
 <body>
@@ -22,15 +22,15 @@ $titel = 'Eenmalig inlezen stallijst nieuwe klanten';
 $file = "InsStallijstscan_nieuwe_klant.php";
 include "login.php"; ?>
 
-		<TD valign = "top">
+        <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) {
 
 if ($modmeld == 1 ) { include "maak_request_func.php"; }
 
 If (isset($_POST['knpInsert_']))  {
-	include "post_readerStalscan.php";
-	}
+    include "post_readerStalscan.php";
+    }
 
 $zoek_laatste_scandag = mysqli_query($db,"
 SELECT ingescand
@@ -38,7 +38,7 @@ FROM tblLeden
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' 
 ") or die (mysqli_error($db));
 
-	while ( $zls = mysqli_fetch_assoc ($zoek_laatste_scandag)) { $lstScan = $zls['ingescand']; }
+    while ( $zls = mysqli_fetch_assoc ($zoek_laatste_scandag)) { $lstScan = $zls['ingescand']; }
 
 $lstScanDag = date('d-m-Y', strtotime($lstScan));
 
@@ -53,11 +53,11 @@ $velden = "rd.actId, rd.Id readId, rd.datum, rd.ubnId ubnId_rd, rd.levensnummer 
 $tabel = "
 impAgrident rd
  left join (
- 	SELECT rd.Id, count(dup.Id) dubbelen
-	FROM impAgrident rd
-	 join impAgrident dup on (rd.lidId = dup.lidId and rd.levensnummer = dup.levensnummer and rd.Id <> dup.Id and rd.actId = dup.actId and isnull(dup.verwerkt))
-	WHERE rd.actId = 21
-	GROUP BY rd.Id
+     SELECT rd.Id, count(dup.Id) dubbelen
+    FROM impAgrident rd
+     join impAgrident dup on (rd.lidId = dup.lidId and rd.levensnummer = dup.levensnummer and rd.Id <> dup.Id and rd.actId = dup.actId and isnull(dup.verwerkt))
+    WHERE rd.actId = 21
+    GROUP BY rd.Id
  ) dup on (rd.Id = dup.Id)
  left join tblHok ho on (rd.hokId = ho.hokId)
 ";
@@ -80,7 +80,7 @@ echo $page_numbers; ?></td>
  <td  style = "font-size : 12px;"> 
  </td>
  <td align="right" >
- 		<a href="exportStallijstScanNewUser.php?pst=<?php echo $lidId; ?>'"> Export-xlsx </a>
+         <a href="exportStallijstScanNewUser.php?pst=<?php echo $lidId; ?>'"> Export-xlsx </a>
 
  </td>
 </tr>
@@ -158,7 +158,7 @@ echo "</select>";*/
 
 if($modtech == 1) {
 
-// Declaratie HOKNUMMER			// lower(if(isnull(scan),'6karakters',scan)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.
+// Declaratie HOKNUMMER            // lower(if(isnull(scan),'6karakters',scan)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.
 $qryHoknummer = mysqli_query($db,"
 SELECT hokId, hoknr, lower(if(isnull(scan),'6karakters',scan)) scan
 FROM tblHok
@@ -180,28 +180,28 @@ unset($index);
 
 
 
-if(isset($data))  {	
+if(isset($data))  {    
 
 //echo count($data);
 
-	foreach($data as $key => $array)
-	{
+    foreach($data as $key => $array)
+    {
  unset($fase_db);
 
-		$var = $array['datum'];
+        $var = $array['datum'];
 $date = str_replace('/', '-', $var);
 //$gebdatum = date('d-m-Y', strtotime($date)-365*60*60*24);
 $datum = date('d-m-Y', strtotime($date));
-	
-	$Id = $array['readId'];
-	$ubnId_rd = $array['ubnId_rd'];
-	$levnr_rd = $array['levnr_rd']; //if (strlen($levnr_rd)== 11) {$levnr_rd = '0'.$array['levnr'];}
-	$levnr_dupl = $array['dubbelen']; // twee keer in reader bestand
-	$sekse_rd = $array['geslacht_rd'];
-	$hokId_rd = $array['hokId_rd'];
-	$hoknr_rd = $array['hoknr_rd'];
-	$doelId_rd = $array['doelId']; if($doelId_rd == 1) { $fase_rd = 'lam'; } else { if($sekse_rd == 'ooi') {$fase_rd = 'moeder';} else { $fase_rd = 'vader';} }
-	$rasId_rd = $array['rasId_rd'];
+    
+    $Id = $array['readId'];
+    $ubnId_rd = $array['ubnId_rd'];
+    $levnr_rd = $array['levnr_rd']; //if (strlen($levnr_rd)== 11) {$levnr_rd = '0'.$array['levnr'];}
+    $levnr_dupl = $array['dubbelen']; // twee keer in reader bestand
+    $sekse_rd = $array['geslacht_rd'];
+    $hokId_rd = $array['hokId_rd'];
+    $hoknr_rd = $array['hoknr_rd'];
+    $doelId_rd = $array['doelId']; if($doelId_rd == 1) { $fase_rd = 'lam'; } else { if($sekse_rd == 'ooi') {$fase_rd = 'moeder';} else { $fase_rd = 'vader';} }
+    $rasId_rd = $array['rasId_rd'];
 
 unset($schaapId);
 
@@ -214,7 +214,7 @@ $schaapId = $schaapId_db;
 }
 else
 {
-	$schaapId = $schaapId_st;
+    $schaapId = $schaapId_st;
 }
 
 unset($gebdag_db);
@@ -233,23 +233,23 @@ $zoek_levnr_db = "
 SELECT gebdag, spndag_geb, geslacht, spndag, his_aanw, r.ras
 FROM tblSchaap s
  left join (
- 	SELECT schaapId, date_format(h.datum,'%d-%m-%Y') gebdag, date_format(date_add(h.datum,interval 49 day),'%d-%m-%Y') spndag_geb
- 	FROM tblHistorie h
- 	 join tblStal st on (st.stalId = h.stalId)
- 	WHERE actId = 1 and h.skip = 0
- 	) geb on (geb.schaapId = s.schaapId)
+     SELECT schaapId, date_format(h.datum,'%d-%m-%Y') gebdag, date_format(date_add(h.datum,interval 49 day),'%d-%m-%Y') spndag_geb
+     FROM tblHistorie h
+      join tblStal st on (st.stalId = h.stalId)
+     WHERE actId = 1 and h.skip = 0
+     ) geb on (geb.schaapId = s.schaapId)
  left join (
- 	SELECT schaapId, date_format(h.datum,'%d-%m-%Y') spndag
- 	FROM tblHistorie h
- 	 join tblStal st on (st.stalId = h.stalId)
- 	WHERE actId = 4 and h.skip = 0
- 	) spn on (spn.schaapId = s.schaapId)
+     SELECT schaapId, date_format(h.datum,'%d-%m-%Y') spndag
+     FROM tblHistorie h
+      join tblStal st on (st.stalId = h.stalId)
+     WHERE actId = 4 and h.skip = 0
+     ) spn on (spn.schaapId = s.schaapId)
   left join (
- 	SELECT schaapId, hisId his_aanw
- 	FROM tblHistorie h
- 	 join tblStal st on (st.stalId = h.stalId)
- 	WHERE actId = 3 and h.skip = 0
- 	) aanw on (aanw.schaapId = s.schaapId)
+     SELECT schaapId, hisId his_aanw
+     FROM tblHistorie h
+      join tblStal st on (st.stalId = h.stalId)
+     WHERE actId = 3 and h.skip = 0
+     ) aanw on (aanw.schaapId = s.schaapId)
  left join tblRas r on (r.rasId = s.rasId)
 WHERE s.schaapId = '" . mysqli_real_escape_string($db,$schaapId) . "'
 ";
@@ -260,10 +260,10 @@ while ($zld = mysqli_fetch_assoc($zoek_levnr_db))
 { 
   $gebdag_db = $zld['gebdag'];
   $spndag_geb = $zld['spndag_geb'];  
-	$geslacht_db = $zld['geslacht'];
-	$spndag_db = $zld['spndag']; if(!isset($spndag_db) && isset($gebdag_db)) { $spndag = $spndag_geb; $txtSpeendm = $spndag_geb; } else { $spndag = $spndag_db; }
-	$aanwas_db = $zld['his_aanw']; if( isset($aanwas_db) && $geslacht_db == 'ooi') { $fase_db = 'moeder'; } else if( isset($aanwas_db) && $geslacht_db == 'ram') { $fase_db = 'vader'; } else { $fase_db = 'lam'; }
-	$ras_db = $zld['ras']; 
+    $geslacht_db = $zld['geslacht'];
+    $spndag_db = $zld['spndag']; if(!isset($spndag_db) && isset($gebdag_db)) { $spndag = $spndag_geb; $txtSpeendm = $spndag_geb; } else { $spndag = $spndag_db; }
+    $aanwas_db = $zld['his_aanw']; if( isset($aanwas_db) && $geslacht_db == 'ooi') { $fase_db = 'moeder'; } else if( isset($aanwas_db) && $geslacht_db == 'ram') { $fase_db = 'vader'; } else { $fase_db = 'lam'; }
+    $ras_db = $zld['ras']; 
 }
 //} Einde if($levnr_stal == 0)
 
@@ -271,31 +271,31 @@ while ($zld = mysqli_fetch_assoc($zoek_levnr_db))
 
 // Controleren of ingelezen waardes worden gevonden .
 if (isset($_POST['knpVervers_'])) {
-	$txtScandm = $_POST["txtScandm_$Id"];
-	$kzlUbn = $_POST["kzlUbn_$Id"];
-	$txtGebdm  = $_POST["txtGebdm_$Id"]; if(!empty($txtGebdm)) { $txtDmgeb = date_format(date_create($txtGebdm), 'Y-m-d'); }
-	$txtSpeendm  = $_POST["txtSpeendm_$Id"]; 
-	$kzlRas = $_POST["kzlRas_$Id"]; 
-	$kzlSekse = $_POST["kzlSekse_$Id"]; 
-	$fase_rd = $_POST["kzlFase_$Id"];	
-	if($modtech == 1) { $kzlHok = $_POST["kzlHok_$Id"]; }
+    $txtScandm = $_POST["txtScandm_$Id"];
+    $kzlUbn = $_POST["kzlUbn_$Id"];
+    $txtGebdm  = $_POST["txtGebdm_$Id"]; if(!empty($txtGebdm)) { $txtDmgeb = date_format(date_create($txtGebdm), 'Y-m-d'); }
+    $txtSpeendm  = $_POST["txtSpeendm_$Id"]; 
+    $kzlRas = $_POST["kzlRas_$Id"]; 
+    $kzlSekse = $_POST["kzlSekse_$Id"]; 
+    $fase_rd = $_POST["kzlFase_$Id"];    
+    if($modtech == 1) { $kzlHok = $_POST["kzlHok_$Id"]; }
 
-	if(!empty($txtGebdm) && empty($txtSpeendm)) {
-		$txtSpeendm = date('d-m-Y', strtotime($txtDmgeb. ' + 49 days')); 
+    if(!empty($txtGebdm) && empty($txtSpeendm)) {
+        $txtSpeendm = date('d-m-Y', strtotime($txtDmgeb. ' + 49 days')); 
 
 $verschil_speendatum_vandaag = date_diff(date_create($txtDmgeb), date_create($today)); // $today is gedeclareerd in basisfunctie.php
 
 if($verschil_speendatum_vandaag->days < 49) {
 echo '$verschil_speendatum_vandaag = '.$verschil_speendatum_vandaag->days.'<br>'; }
 
-	} 
+    } 
 }
 else {
-	$txtScandm = $datum;
-	$kzlUbn = $ubnId_rd;
-	$kzlRas = $rasId_rd;
-	$kzlSekse = $sekse_rd;
-	if($modtech == 1) { $kzlHok = $hokId_rd; }
+    $txtScandm = $datum;
+    $kzlUbn = $ubnId_rd;
+    $kzlRas = $rasId_rd;
+    $kzlSekse = $sekse_rd;
+    if($modtech == 1) { $kzlHok = $hokId_rd; }
 }
 
 $date2 = eerste_datum_na_geboortedatum($schaapId);
@@ -305,15 +305,15 @@ unset($onjuist);
 
 if ($lstScan < $today) { $onjuist = ""; } # De datum ingescand in tblLeden mag niet zijn gepasseerd.
 
-if (empty($txtScandm))							{ $color = 'red'; $onjuist = "Datum is onbekend."; }
-else if (empty($kzlUbn) )						{ $color = 'red'; $onjuist = "Ubn is onbekend."; }
-else if (isset($levnr_dupl) ) 					{ $color = 'blue'; $onjuist = "Dubbel in de reader."; }
-else if (isset($schaapId_st) ) 					{ $color = 'red'; $onjuist = "Dit levensnummer staat al op de stallijst."; }
+if (empty($txtScandm))                            { $color = 'red'; $onjuist = "Datum is onbekend."; }
+else if (empty($kzlUbn) )                        { $color = 'red'; $onjuist = "Ubn is onbekend."; }
+else if (isset($levnr_dupl) )                     { $color = 'blue'; $onjuist = "Dubbel in de reader."; }
+else if (isset($schaapId_st) )                     { $color = 'red'; $onjuist = "Dit levensnummer staat al op de stallijst."; }
 else if (isset($levnr_rd) && strlen($levnr_rd) <> 12) { $color = 'red'; $onjuist = "Levensnummer geen 12 karakters."; }  
-else if (Validate::numeriek($levnr_rd) == 1) 			{ $color = 'red'; $onjuist = "Levensnummer bevat een letter."; }
-else if (!isset($schaapId_db) && empty($kzlSekse)) 				{ $color = 'red'; $onjuist = "Het geslacht is verplicht."; }
-else if (!isset($schaapId_db) && $fase_rd == 'moeder' && $kzlSekse =='ram') 	{ $color = 'red'; $onjuist = "generatie en geslacht is tegenstrijdig."; }
-else if (!isset($schaapId_db) && $fase_rd == 'vader' && $kzlSekse =='ooi') 	{ $color = 'red'; $onjuist = "generatie en geslacht is tegenstrijdig."; }
+else if (Validate::numeriek($levnr_rd) == 1)             { $color = 'red'; $onjuist = "Levensnummer bevat een letter."; }
+else if (!isset($schaapId_db) && empty($kzlSekse))                 { $color = 'red'; $onjuist = "Het geslacht is verplicht."; }
+else if (!isset($schaapId_db) && $fase_rd == 'moeder' && $kzlSekse =='ram')     { $color = 'red'; $onjuist = "generatie en geslacht is tegenstrijdig."; }
+else if (!isset($schaapId_db) && $fase_rd == 'vader' && $kzlSekse =='ooi')     { $color = 'red'; $onjuist = "generatie en geslacht is tegenstrijdig."; }
 else if ($fase_rd == 'lam' && empty($txtGebdm)) { $color = 'red'; $onjuist = "Geboortedatum is onbekend."; }
 else if ($fase_rd == 'lam' && empty($kzlHok) && $modtech == 1) { $color = 'red'; $onjuist = "Verblijf is onbekend."; }
 else if (!isset($schaapId_db) && empty($fase_rd)) { $color = 'red'; $onjuist = "Generatie is onbekend."; }
@@ -321,57 +321,57 @@ else if (!isset($schaapId_db) && empty($fase_rd)) { $color = 'red'; $onjuist = "
 
 
 
-if(isset($onjuist)) {	$oke = 0; } else { $oke = 1; } // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
+if(isset($onjuist)) {    $oke = 0; } else { $oke = 1; } // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
 // EINDE Controleren of ingelezen waardes worden gevonden .  
 
 /* Als onvolledig is gewijzigd naar volledig juist */
-	 if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1)  {$cbKies = 1; $cbDel = $_POST["chbDel_$Id"]; }
+     if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1)  {$cbKies = 1; $cbDel = $_POST["chbDel_$Id"]; }
 else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDel = $_POST["chbDel_$Id"]; } 
    else { $cbKies = $oke; } // $cbKies is tbv het vasthouden van de keuze inlezen of niet 
 
 
 if($lstScan < $today) { $cbDel = 1; } ?>
 
-<!--	**************************************
-		**	  	 OPMAAK  GEGEVENS			**
-		************************************** -->
+<!--    **************************************
+        **           OPMAAK  GEGEVENS            **
+        ************************************** -->
 
 <tr style = "font-size:14px;">
  <td align = "center"> 
 
-	<input type = hidden size = 1 name = <?php echo "chbkies_$Id"; ?> value = 0 > <!-- hiddden -->
-	<input type = checkbox 		  name = <?php echo "chbkies_$Id"; ?> value = 1 
-	  <?php echo $cbKies == 1 ? 'checked' : ''; /* Als voorwaarde goed zijn of checkbox is aangevinkt */
+    <input type = hidden size = 1 name = <?php echo "chbkies_$Id"; ?> value = 0 > <!-- hiddden -->
+    <input type = checkbox           name = <?php echo "chbkies_$Id"; ?> value = 1 
+      <?php echo $cbKies == 1 ? 'checked' : ''; /* Als voorwaarde goed zijn of checkbox is aangevinkt */
 
-	  if ($oke == 0) /*Als voorwaarde niet klopt */ { ?> disabled <?php } else { ?> class="checkall" <?php } /* class="checkall" zorgt dat alles kan worden uit- of aangevinkt*/ ?> >
-	<input type = hidden size = 1 name = <?php echo "laatsteOke_$Id"; ?> value = <?php echo $oke; ?> > <!-- hiddden -->
+      if ($oke == 0) /*Als voorwaarde niet klopt */ { ?> disabled <?php } else { ?> class="checkall" <?php } /* class="checkall" zorgt dat alles kan worden uit- of aangevinkt*/ ?> >
+    <input type = hidden size = 1 name = <?php echo "laatsteOke_$Id"; ?> value = <?php echo $oke; ?> > <!-- hiddden -->
  </td>
  <td align = "center">
-	<input type = hidden size = 1 name = <?php echo "chbDel_$Id"; ?> value = 0 >
-	<input type = checkbox class="delete" name = <?php echo "chbDel_$Id"; ?> value = 1 <?php if(isset($cbDel)) { echo $cbDel == 1 ? 'checked' : ''; } ?> >
+    <input type = hidden size = 1 name = <?php echo "chbDel_$Id"; ?> value = 0 >
+    <input type = checkbox class="delete" name = <?php echo "chbDel_$Id"; ?> value = 1 <?php if(isset($cbDel)) { echo $cbDel == 1 ? 'checked' : ''; } ?> >
  </td>
  <td>
-	<input type = "text" size = 8 style = "font-size : 11px;" name = <?php echo "txtScandm_$Id"; ?> value = <?php echo $txtScandm; ?> >
+    <input type = "text" size = 8 style = "font-size : 11px;" name = <?php echo "txtScandm_$Id"; ?> value = <?php echo $txtScandm; ?> >
  </td>
- <td style = "font-size : 11px;">	
+ <td style = "font-size : 11px;">    
 <!-- KZLUBN -->
  <select style="width:65;" <?php echo " name=\"kzlUbn_$Id\" "; ?> value = "" style = "font-size:12px;">
   <option></option>
-<?php	$count = count($ubnId);	
+<?php    $count = count($ubnId);    
 for ($i = 0; $i < $count; $i++){
 
-	$opties = array($ubnId[$i]=>$ubnnm[$i]);
-			foreach($opties as $key => $waarde)
-			{
+    $opties = array($ubnId[$i]=>$ubnnm[$i]);
+            foreach($opties as $key => $waarde)
+            {
   if ((!isset($_POST['knpVervers_']) && $ubnId_rd == $ubnRaak[$i]) || (isset($_POST["kzlUbn_$Id"]) && $_POST["kzlUbn_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
-  }		
-			}
+  }        
+            }
 } ?>
  </select>
-	 <!-- EINDE KZLUBN -->
+     <!-- EINDE KZLUBN -->
  </td>
 <?php if (strlen($levnr_rd) == 12 && Validate::numeriek($levnr_rd) <> 1) { ?> 
  <td>
@@ -381,7 +381,7 @@ for ($i = 0; $i < $count; $i++){
 <!-- Geboortedatum -->
   <td align="center">
 <?php if(!isset($schaapId_st) && !isset($gebdag_db)) { ?>
-	<input type = "text" size = 8 style = "font-size : 11px;" name = <?php echo "txtGebdm_$Id"; ?> value = <?php echo $txtGebdm; ?> >
+    <input type = "text" size = 8 style = "font-size : 11px;" name = <?php echo "txtGebdm_$Id"; ?> value = <?php echo $txtGebdm; ?> >
 <?php } 
 else if(isset($gebdag_db)) { echo $gebdag_db; }?>
  </td>
@@ -389,7 +389,7 @@ else if(isset($gebdag_db)) { echo $gebdag_db; }?>
  <!-- Speendatum -->
   <td align="center">
 <?php if(!isset($schaapId_st) && !isset($spndag_db)) { /*Er mag geen speendatum vasliggen in de database */ ?>
-	<input type = "text" size = 8 style = "font-size : 11px;" name = <?php echo "txtSpeendm_$Id"; ?> value = <?php echo $txtSpeendm; ?> >
+    <input type = "text" size = 8 style = "font-size : 11px;" name = <?php echo "txtSpeendm_$Id"; ?> value = <?php echo $txtSpeendm; ?> >
 <?php } 
 else if(isset($spndag)) { echo $spndag; } ?>
  </td>
@@ -399,27 +399,27 @@ else if(isset($spndag)) { echo $spndag; } ?>
 if(isset($schaapId)) { ?> 
  <td align="center"> <?php echo $ras_db;
   } else { ?> 
- <td style = "font-size : 11px;">	
+ <td style = "font-size : 11px;">    
 <!-- KZLRAS -->
  <select style="width:65;" <?php echo " name=\"kzlRas_$Id\" "; ?> value = "" style = "font-size:12px;">
   <option></option>
-<?php	$count = count($rasId);	
+<?php    $count = count($rasId);    
 for ($i = 0; $i < $count; $i++){
 
-	$opties = array($rasId[$i]=>$rasnm[$i]);
-			foreach($opties as $key => $waarde)
-			{
+    $opties = array($rasId[$i]=>$rasnm[$i]);
+            foreach($opties as $key => $waarde)
+            {
   if ((!isset($_POST['knpVervers_']) && $rasId_rd == $rasRaak[$i]) || (isset($_POST["kzlRas_$Id"]) && $_POST["kzlRas_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
-  }		
-			}
+  }        
+            }
 }
 
  ?> </select>
 <?php } ?>
-	 <!-- EINDE KZLRAS -->
+     <!-- EINDE KZLRAS -->
  </td>
 <?php 
 
@@ -441,7 +441,7 @@ foreach ( $opties as $key => $waarde)
    }
 }
 
-	?> </select> <!-- EINDE KZLGESLACHT -->
+    ?> </select> <!-- EINDE KZLGESLACHT -->
 <?php } ?>
  </td>
  <?php 
@@ -465,18 +465,18 @@ foreach ( $opties as $key => $waarde)
    }
 }
 
-	?> </select> <!-- EINDE KZLGENERATIE -->
+    ?> </select> <!-- EINDE KZLGENERATIE -->
 <?php } ?>
  </td>
  <?php 
  unset($cbSpeen);
-	 if (($fase_rd == 'moeder' || $fase_rd == 'vader' || isset($spndag)) )  { $cbSpeen = 1; }
+     if (($fase_rd == 'moeder' || $fase_rd == 'vader' || isset($spndag)) )  { $cbSpeen = 1; }
 else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDel = $_POST["chbDel_$Id"]; } 
    //else { $cbKies = $oke; }
  ?>
  <td align="center">
- 	<input type = checkbox class="speen" name = <?php echo "chbSpeen_$Id"; ?> value = 1 <?php if(isset($cbSpeen)) { echo $cbSpeen == 1 ? 'checked' : ''; } 
- 	if ($fase_rd == 'moeder' || $fase_rd == 'vader' || isset($spndag)) /*Als voorwaarde niet klopt */ { ?> disabled <?php } ?> >
+     <input type = checkbox class="speen" name = <?php echo "chbSpeen_$Id"; ?> value = 1 <?php if(isset($cbSpeen)) { echo $cbSpeen == 1 ? 'checked' : ''; } 
+     if ($fase_rd == 'moeder' || $fase_rd == 'vader' || isset($spndag)) /*Als voorwaarde niet klopt */ { ?> disabled <?php } ?> >
  </td>
  <td>
 
@@ -489,20 +489,20 @@ if( $modtech == 1 && !isset($schaapId_st) && (!empty($txtGebdm) || isset($spndag
  <select style="width:65;" <?php echo " name=\"kzlHok_$Id\" "; ?> value = "" style = "font-size:12px;">
   <option></option>
 
-<?php	$count = count($hoknum);
+<?php    $count = count($hoknum);
 for ($i = 0; $i < $count; $i++){
 
-	$opties = array($hoknId[$i]=>$hoknum[$i]);
-			foreach($opties as $key => $waarde)
-			{
+    $opties = array($hoknId[$i]=>$hoknum[$i]);
+            foreach($opties as $key => $waarde)
+            {
   if ((!isset($_POST['knpVervers_']) && $hokId_rd == $hokRaak[$i]) || (isset($_POST["kzlHok_$Id"]) && $_POST["kzlHok_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
-  }		
-			}
+  }        
+            }
 }
-?>	</select>
+?>    </select>
 <!-- EINDE KZLHOKNR --> 
 <?php } else { echo $hoknr_rd; } ?>
  </td>
@@ -513,9 +513,9 @@ for ($i = 0; $i < $count; $i++){
  </td> 
  <td></td>
 </tr>
-<!--	**************************************
-	**	EINDE OPMAAK GEGEVENS	**
-	************************************** -->
+<!--    **************************************
+    **    EINDE OPMAAK GEGEVENS    **
+    ************************************** -->
 
 <?php } 
 } //einde if(isset($data)) ?>
@@ -536,41 +536,41 @@ include "menu1.php"; } ?>
 <script language="javascript">
 $(function(){
 
-	// add multiple select / deselect functionality
-	$("#selectall").click(function () {
-		  $('.checkall').attr('checked', this.checked);
-	});
+    // add multiple select / deselect functionality
+    $("#selectall").click(function () {
+          $('.checkall').attr('checked', this.checked);
+    });
 
-	// if all checkbox are selected, check the selectall checkbox
-	// and viceversa
-	$(".checkall").click(function(){
+    // if all checkbox are selected, check the selectall checkbox
+    // and viceversa
+    $(".checkall").click(function(){
 
-		if($(".checkall").length == $(".checkall:checked").length) {
-			$("#selectall").attr("checked", "checked");
-		} else {
-			$("#selectall").removeAttr("checked");
-		}
+        if($(".checkall").length == $(".checkall:checked").length) {
+            $("#selectall").attr("checked", "checked");
+        } else {
+            $("#selectall").removeAttr("checked");
+        }
 
-	});
+    });
 });
 
 $(function(){
 
-	// add multiple select / deselect functionality
-	$("#selectall_del").click(function () {
-		  $('.delete').attr('checked', this.checked);
-	});
+    // add multiple select / deselect functionality
+    $("#selectall_del").click(function () {
+          $('.delete').attr('checked', this.checked);
+    });
 
-	// if all checkbox are selected, check the selectall_del checkbox
-	// and viceversa
-	$(".delete").click(function(){
+    // if all checkbox are selected, check the selectall_del checkbox
+    // and viceversa
+    $(".delete").click(function(){
 
-		if($(".delete").length == $(".delete:checked").length) {
-			$("#selectall_del").attr("checked", "checked");
-		} else {
-			$("#selectall_del").removeAttr("checked");
-		}
+        if($(".delete").length == $(".delete:checked").length) {
+            $("#selectall_del").attr("checked", "checked");
+        } else {
+            $("#selectall_del").removeAttr("checked");
+        }
 
-	});
+    });
 });
 </script>

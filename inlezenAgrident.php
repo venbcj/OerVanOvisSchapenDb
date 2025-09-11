@@ -42,7 +42,7 @@ SELECT count(Id) aant
 FROM impAgrident
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 1 and isnull(verwerkt)
 ") or die (mysqli_error($db));
- while ($rec_g = mysqli_fetch_assoc($lammeren))  {	$aantgeb = $rec_g['aant'];	}
+ while ($rec_g = mysqli_fetch_assoc($lammeren))  {    $aantgeb = $rec_g['aant'];    }
 // EINDE Aantal nog in te lezen GEBOORTES
 
 // Aantal nog in te lezen LAMBAR
@@ -51,7 +51,7 @@ SELECT count(Id) aant
 FROM impAgrident
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 16 and isnull(verwerkt)
 ") or die (mysqli_error($db));
- while ($rec_lb = mysqli_fetch_assoc($lambar))  {	$aantLbar = $rec_lb['aant'];	}
+ while ($rec_lb = mysqli_fetch_assoc($lambar))  {    $aantLbar = $rec_lb['aant'];    }
 // EINDE Aantal nog in te lezen LAMBAR
 
 // Aantal nog in te lezen GESPEENDEN
@@ -60,7 +60,7 @@ SELECT count(Id) aant
 FROM impAgrident 
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 4 and isnull(verwerkt)
 ") or die (mysqli_error($db));
- while ($rec_spn = mysqli_fetch_assoc($gespeenden))  {	$aantspn = $rec_spn['aant'];	}
+ while ($rec_spn = mysqli_fetch_assoc($gespeenden))  {    $aantspn = $rec_spn['aant'];    }
 // EINDE Aantal nog in te lezen GESPEENDEN
 
 // Aantal nog in te lezen AFGELEVERDEN
@@ -69,7 +69,7 @@ SELECT count(Id) aant
 FROM impAgrident 
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 12 and isnull(ubnId) and isnull(verwerkt)
 ") or die (mysqli_error($db));
- while ($rec_afl = mysqli_fetch_assoc($afgeleverden)) {	$aantafl = $rec_afl['aant'];	}
+ while ($rec_afl = mysqli_fetch_assoc($afgeleverden)) {    $aantafl = $rec_afl['aant'];    }
 // EINDE Aantal nog in te lezen AFGELEVERDEN
 
 // Aantal nog in te lezen UITGESCHAARDEN
@@ -78,7 +78,7 @@ SELECT count(Id) aant
 FROM impAgrident 
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 10 and isnull(verwerkt)
 ") or die (mysqli_error($db));
- while ($rec_uitsch = mysqli_fetch_assoc($uitgeschaarden)) {	$aantUitsch = $rec_uitsch['aant'];	}
+ while ($rec_uitsch = mysqli_fetch_assoc($uitgeschaarden)) {    $aantUitsch = $rec_uitsch['aant'];    }
 // EINDE Aantal nog in te lezen UITGESCHAARDEN
 
 // Aantal nog in te lezen UITVAL
@@ -87,7 +87,7 @@ SELECT count(Id) aant
 FROM impAgrident 
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 14 and isnull(verwerkt)
 ") or die (mysqli_error($db));
- while ($rec_u = mysqli_fetch_assoc($uitgevallen))  {	$aantuitv = $rec_u['aant'];	}
+ while ($rec_u = mysqli_fetch_assoc($uitgevallen))  {    $aantuitv = $rec_u['aant'];    }
 // EINDE Aantal nog in te lezen UITVAL
 
 // Aantal nog in te lezen AANVOER
@@ -96,7 +96,7 @@ SELECT count(Id) aant
 FROM impAgrident 
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and (actId = 2 or actId = 3) and isnull(verwerkt)
 ") or die (mysqli_error($db));
- while ($rec_aan = mysqli_fetch_assoc($aanvoer)) {	$aantaanw = $rec_aan['aant'];	}
+ while ($rec_aan = mysqli_fetch_assoc($aanvoer)) {    $aantaanw = $rec_aan['aant'];    }
 // EINDE Aantal nog in te lezen AANVOER
 
 
@@ -106,7 +106,7 @@ SELECT count(Id) aant
 FROM impAgrident 
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 11 and isnull(verwerkt)
 ") or die (mysqli_error($db));
- while ($rec_Tuitsch = mysqli_fetch_assoc($TvUitscharen)) {	$aantTvUitsch = $rec_Tuitsch['aant'];	}
+ while ($rec_Tuitsch = mysqli_fetch_assoc($TvUitscharen)) {    $aantTvUitsch = $rec_Tuitsch['aant'];    }
 // EINDE Aantal nog in te lezen TERUG VAN UITSCHAREN
 
 // Aantal nog in te lezen OVERPLAATSING
@@ -115,19 +115,19 @@ SELECT count(Id) aant
 FROM impAgrident
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 5 and isnull(verwerkt)
 ") or die (mysqli_error($db));
- while ($rec_ovpl = mysqli_fetch_assoc($overplaatsen)) {	$aantovpl = $rec_ovpl['aant'];	}
+ while ($rec_ovpl = mysqli_fetch_assoc($overplaatsen)) {    $aantovpl = $rec_ovpl['aant'];    }
  
 $SpenenEnOverpl = mysqli_query($db,"
 SELECT count(rs.datum) aantsp
 FROM impAgrident rs 
  join (
-	SELECT lidId, levensnummer
-	FROM impAgrident
-	WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 5 and isnull(verwerkt)
+    SELECT lidId, levensnummer
+    FROM impAgrident
+    WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 5 and isnull(verwerkt)
  ) ro ON (rs.lidId = ro.lidId and rs.levensnummer = ro.levensnummer)
 WHERE rs.lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 4 and isnull(verwerkt)
 ") or die (mysqli_error($db));
- while ($rec_sp = mysqli_fetch_assoc($SpenenEnOverpl)) { $speen_ovpl = $rec_sp['aantsp'];	}
+ while ($rec_sp = mysqli_fetch_assoc($SpenenEnOverpl)) { $speen_ovpl = $rec_sp['aantsp'];    }
 // EINDE Aantal nog in te lezen OVERPLAATSING
 
 // Aantal nog in te lezen OVERLEGGEN
@@ -136,7 +136,7 @@ SELECT count(Id) aant
 FROM impAgrident 
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 15 and isnull(verwerkt)
 ") or die (mysqli_error($db));
- while ($rec_adop = mysqli_fetch_assoc($adoptie)) {	$aantadop = $rec_adop['aant'];	}
+ while ($rec_adop = mysqli_fetch_assoc($adoptie)) {    $aantadop = $rec_adop['aant'];    }
 // EINDE Aantal nog in te lezen OVERLEGGEN
 
 // Aantal nog in te lezen MEDICIJNEN
@@ -145,7 +145,7 @@ SELECT count(Id) aant
 FROM impAgrident 
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 8 and isnull(verwerkt)
 ") or die (mysqli_error($db));
- while ($rec_pil = mysqli_fetch_assoc($medicijn)) {	$aantpil = $rec_pil['aant'];	}
+ while ($rec_pil = mysqli_fetch_assoc($medicijn)) {    $aantpil = $rec_pil['aant'];    }
 // EINDE Aantal nog in te lezen MEDICIJNEN
 
 // Aantal nog in te lezen WEGINGEN
@@ -163,7 +163,7 @@ SELECT count(Id) aant
 FROM impAgrident 
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 17 and isnull(verwerkt)
 ") or die (mysqli_error($db));
- while ($rec_omn = mysqli_fetch_assoc($omnummer)) {	$aantomn = $rec_omn['aant'];	}
+ while ($rec_omn = mysqli_fetch_assoc($omnummer)) {    $aantomn = $rec_omn['aant'];    }
 // EINDE Aantal nog in te lezen OMNUMMEREN
 
 // Aantal nog in te lezen HALSNUMMERS
@@ -172,7 +172,7 @@ SELECT count(Id) aant
 FROM impAgrident 
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 1717 and isnull(verwerkt)
 ") or die (mysqli_error($db));
- while ($rec_hals = mysqli_fetch_assoc($halsnummer)) {	$aanthals = $rec_hals['aant'];	}
+ while ($rec_hals = mysqli_fetch_assoc($halsnummer)) {    $aanthals = $rec_hals['aant'];    }
 // EINDE Aantal nog in te lezen HALSNUMMERS
 
 // Aantal nog in te lezen VOERREGISTRATIE

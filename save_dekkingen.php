@@ -23,16 +23,16 @@ unset($updGrootte);
 
 foreach($id as $key => $value) {
 
-	if ($key == 'chkDel') { $delete = 1; }
-	if ($key == 'kzlRam' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $updRam = $value; }
-	if ($key == 'kzlDrachtUpd')  {  $fldDracht = $value; }
-	if ($key == 'txtDrachtdm' && !empty($value))  {  $fldDrachtdm = $value;
-													 $makeday = date_create($value); $fldDmDracht = date_format($makeday,'Y-m-d');
-													}
-	if ($key == 'txtGrootte' && !empty($value)) { $updGrootte = $value; }
-	
-		
-									}
+    if ($key == 'chkDel') { $delete = 1; }
+    if ($key == 'kzlRam' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $updRam = $value; }
+    if ($key == 'kzlDrachtUpd')  {  $fldDracht = $value; }
+    if ($key == 'txtDrachtdm' && !empty($value))  {  $fldDrachtdm = $value;
+                                                     $makeday = date_create($value); $fldDmDracht = date_format($makeday,'Y-m-d');
+                                                    }
+    if ($key == 'txtGrootte' && !empty($value)) { $updGrootte = $value; }
+    
+        
+                                    }
 
 
 unset($dmDek);
@@ -45,7 +45,7 @@ FROM tblVolwas v
  join tblHistorie h on (v.hisId = h.hisId)
 WHERE h.skip = 0 and volwId = '".mysqli_real_escape_string($db,$recId)."'
 ") or die (mysqli_error($db));
-	while ( $zdm = mysqli_fetch_assoc($zoek_dekdatum)) { $dmDek = $zdm['datum']; }
+    while ( $zdm = mysqli_fetch_assoc($zoek_dekdatum)) { $dmDek = $zdm['datum']; }
 
 // Als dekdatum niet bestaat laatste worpdatum van de ooi
 $zoek_ooi = mysqli_query($db,"
@@ -53,7 +53,7 @@ SELECT mdrId
 FROM tblVolwas
 WHERE volwId = '".mysqli_real_escape_string($db,$recId)."'
 ") or die (mysqli_error($db));
-	while ( $zo = mysqli_fetch_assoc($zoek_ooi)) { $ooiId = $zo['mdrId']; }
+    while ( $zo = mysqli_fetch_assoc($zoek_ooi)) { $ooiId = $zo['mdrId']; }
 
 $zoek_laatste_worpdatum = mysqli_query($db,"
 SELECT max(h.datum) dmworp
@@ -63,7 +63,7 @@ FROM tblSchaap s
  join tblHistorie h on (st.stalId = h.stalId)
 WHERE h.actId = 1 and v.mdrId = '".mysqli_real_escape_string($db,$ooiId)."' and h.skip = 0
 ") or die (mysqli_error($db));
-	while ( $zdm = mysqli_fetch_assoc($zoek_laatste_worpdatum)) { $dmWorp = $zdm['dmworp']; }
+    while ( $zdm = mysqli_fetch_assoc($zoek_laatste_worpdatum)) { $dmWorp = $zdm['dmworp']; }
 
 // Bepaald drachtig ja of nee o.b.v. drachtdatum of worp
 $zoek_drachtdatum = mysqli_query($db,"
@@ -74,8 +74,8 @@ WHERE h.skip = 0 and d.volwId = '".mysqli_real_escape_string($db,$recId)."'
 ") or die (mysqli_error($db));
 
 while ($zdra = mysqli_fetch_assoc($zoek_drachtdatum)) {
-	$hisId_dr_db = $zdra['hisId'];
-	$drachtdm_db = $zdra['datum'];
+    $hisId_dr_db = $zdra['hisId'];
+    $drachtdm_db = $zdra['datum'];
 }
 
 $zoek_worp = mysqli_query($db,"
@@ -86,7 +86,7 @@ WHERE v.volwId = '".mysqli_real_escape_string($db,$recId)."'
 ") or die (mysqli_error($db));
 
 while ($zw = mysqli_fetch_assoc($zoek_worp)) {
-	$schaapId = $zw['schaapId'];
+    $schaapId = $zw['schaapId'];
 }
 if(isset($drachtdm_db) || isset($schaapId)) { $drachtig = 'ja'; } else { $drachtig = 'nee'; }
 // Einde Bepaald drachtig ja of nee o.b.v. drachtdatum of worp
@@ -102,8 +102,8 @@ WHERE volwId = '".mysqli_real_escape_string($db,$recId)."'
 ") or die (mysqli_error($db));
 
 while ($dra = mysqli_fetch_assoc($zoek_worpgrootte_database)) {
-	$vdr_db = $dra['vdrId'];
-	$grootte_db = $dra['grootte'];
+    $vdr_db = $dra['vdrId'];
+    $grootte_db = $dra['grootte'];
 }
 
 
@@ -119,7 +119,7 @@ WHERE volwId = '".mysqli_real_escape_string($db,$recId)."'
 while($zh = mysqli_fetch_assoc($zoek_hisId)) { $hisId = $zh['hisId']; }
 
 $delete_dracht = "UPDATE tblHistorie SET skip = 1 WHERE hisId = '".mysqli_real_escape_string($db,$hisId). "' " ;
-/*echo $delete_dracht.'<br>';	##*/mysqli_query($db,$delete_dracht) or die (mysqli_error($db));
+/*echo $delete_dracht.'<br>';    ##*/mysqli_query($db,$delete_dracht) or die (mysqli_error($db));
 
 }
 
@@ -127,10 +127,10 @@ $delete_dracht = "UPDATE tblHistorie SET skip = 1 WHERE hisId = '".mysqli_real_e
 // Ram wijzigen
 if(isset($updRam) && $vdr_db <> $updRam) {
 
-$updateRam = "UPDATE tblVolwas SET vdrId = ".db_null_input($updRam)." WHERE volwId = '".mysqli_real_escape_string($db,$recId)."' ";	
-/*echo $updateRam.'<br>';	##*/mysqli_query($db,$updateRam) or die (mysqli_error($db));
-	
-		}
+$updateRam = "UPDATE tblVolwas SET vdrId = ".db_null_input($updRam)." WHERE volwId = '".mysqli_real_escape_string($db,$recId)."' ";    
+/*echo $updateRam.'<br>';    ##*/mysqli_query($db,$updateRam) or die (mysqli_error($db));
+    
+        }
 
 
 // Dracht wijzigen
@@ -144,18 +144,18 @@ else if($dmDek > $fldDmDracht) { $fout = 'De drachtdatum kan niet voor de dekdat
 else if($dmWorp > $fldDmDracht) { $fout = 'De drachtdatum kan niet voor de laatste werpdatum liggen.'; }
 else {
 
-$updateDracht = "UPDATE tblHistorie SET datum = '".mysqli_real_escape_string($db,$fldDmDracht)."' WHERE hisId = '".mysqli_real_escape_string($db,$hisId_dr_db)."' ";	
+$updateDracht = "UPDATE tblHistorie SET datum = '".mysqli_real_escape_string($db,$fldDmDracht)."' WHERE hisId = '".mysqli_real_escape_string($db,$hisId_dr_db)."' ";    
 
-/*echo $updateDracht.'<br>';	##*/mysqli_query($db,$updateDracht) or die (mysqli_error($db));
-	}
+/*echo $updateDracht.'<br>';    ##*/mysqli_query($db,$updateDracht) or die (mysqli_error($db));
+    }
 }
 
 // Worpgrootte wijzigen
 if($grootte_db <> $updGrootte) {
 
-$updateDracht = "UPDATE tblVolwas SET grootte = ".db_null_input($updGrootte)." WHERE volwId = '".mysqli_real_escape_string($db,$recId)."' ";	
+$updateDracht = "UPDATE tblVolwas SET grootte = ".db_null_input($updGrootte)." WHERE volwId = '".mysqli_real_escape_string($db,$recId)."' ";    
 
-/*echo $updateDracht.'<br>';	##*/mysqli_query($db,$updateDracht) or die (mysqli_error($db));
+/*echo $updateDracht.'<br>';    ##*/mysqli_query($db,$updateDracht) or die (mysqli_error($db));
 
 }
 
@@ -172,17 +172,17 @@ SELECT mdrId
 FROM tblVolwas
 WHERE volwId = '".mysqli_real_escape_string($db,$recId)."'
 ") or die (mysqli_error($db));
-	while ( $zm = mysqli_fetch_assoc($zoek_mdrId)) { $mdrId = $zm['mdrId']; }
+    while ( $zm = mysqli_fetch_assoc($zoek_mdrId)) { $mdrId = $zm['mdrId']; }
 
 $zoek_stalId = mysqli_query($db,"
 SELECT max(stalId) stalId
 FROM tblStal
 WHERE schaapId = '".mysqli_real_escape_string($db,$mdrId)."' and lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die (mysqli_error($db));
-	while ( $zs = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $zs['stalId']; }
+    while ( $zs = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $zs['stalId']; }
 
-$insert_tblHistorie = "INSERT INTO tblHistorie SET stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$fldDmDracht)."', actId = 19 ";	
-/*echo $insert_tblHistorie.'<br>';	##*/mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
+$insert_tblHistorie = "INSERT INTO tblHistorie SET stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$fldDmDracht)."', actId = 19 ";    
+/*echo $insert_tblHistorie.'<br>';    ##*/mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
 
 $zoek_hisId = mysqli_query($db,"
 SELECT max(hisId) hisId
@@ -192,9 +192,9 @@ WHERE actId = 19 and stalId = '".mysqli_real_escape_string($db,$stalId)."'
 
 while($zh = mysqli_fetch_assoc($zoek_hisId)) { $hisId = $zh['hisId']; }
 
-$insert_tblDracht = "INSERT INTO tblDracht SET volwId = '".mysqli_real_escape_string($db,$recId)."', hisId = '".mysqli_real_escape_string($db,$hisId)."' ";	
-/*echo $insert_tblDracht.'<br>';	##*/mysqli_query($db,$insert_tblDracht) or die (mysqli_error($db));
-	
+$insert_tblDracht = "INSERT INTO tblDracht SET volwId = '".mysqli_real_escape_string($db,$recId)."', hisId = '".mysqli_real_escape_string($db,$hisId)."' ";    
+/*echo $insert_tblDracht.'<br>';    ##*/mysqli_query($db,$insert_tblDracht) or die (mysqli_error($db));
+    
 }
 }
 
@@ -208,28 +208,28 @@ WHERE volwId = '".mysqli_real_escape_string($db,$recId)."'
 
 while($zh = mysqli_fetch_assoc($zoek_hisId)) { $hisId = $zh['hisId']; }
 
-$update_tblHistorie = "UPDATE tblHistorie SET skip = 1 WHERE hisId = '".mysqli_real_escape_string($db,$hisId)."' ";	
-/*echo $update_tblHistorie.'<br>';	##*/mysqli_query($db,$update_tblHistorie) or die (mysqli_error($db));
+$update_tblHistorie = "UPDATE tblHistorie SET skip = 1 WHERE hisId = '".mysqli_real_escape_string($db,$hisId)."' ";    
+/*echo $update_tblHistorie.'<br>';    ##*/mysqli_query($db,$update_tblHistorie) or die (mysqli_error($db));
 
-$updateDracht = "UPDATE tblVolwas SET grootte = NULL WHERE volwId = '".mysqli_real_escape_string($db,$recId)."' ";	
+$updateDracht = "UPDATE tblVolwas SET grootte = NULL WHERE volwId = '".mysqli_real_escape_string($db,$recId)."' ";    
 
-/*echo $updateDracht.'<br>';	##*/mysqli_query($db,$updateDracht) or die (mysqli_error($db));
+/*echo $updateDracht.'<br>';    ##*/mysqli_query($db,$updateDracht) or die (mysqli_error($db));
 
-		
+        
 }
 // Einde Dracht wijzigen
 
 
 
-	
+    
 
 
 
 
-	} // Einde if(!empty($recId))
+    } // Einde if(!empty($recId))
 
-	}
+    }
 
 ?>
-					
-	
+                    
+    

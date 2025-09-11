@@ -3,8 +3,8 @@
 
 <?php
 /* post_readerGeb.php toegepast in :
-	- InsGeboortes.php */
-	
+    - InsGeboortes.php */
+    
 
 
 foreach($_POST as $fldname => $fldvalue) {  //  Voor elke post die wordt doorlopen wordt de veldnaam en de waarde teruggeven als een array
@@ -20,7 +20,7 @@ foreach($multip_array as $id) {
 if($key == 'txtId') {
 foreach($id as $key => $value) {
 
-	     if ($key == 'txtId' ) { $updId = $value; }    
+         if ($key == 'txtId' ) { $updId = $value; }    
 
     if ($key == 'txtDatum' ) { $dag = date_create($value); $flddag =  date_format($dag, 'Y-m-d'); 
                                       }
@@ -30,12 +30,12 @@ foreach($id as $key => $value) {
     
     if ($key == 'txtNaam' && !empty($value)) {  $fldNaam = $value; }
      else if ($key == 'txtNaam' && empty($value)) {  $fldNaam = 'NULL' ; }
-	 
+     
     if ($key == 'kzlRas' && !empty($value)) {  $RasId = $value; }
      else if ($key == 'kzlRas' && empty($value)) {  $RasId = 'NULL' ; }
-	
+    
 }
-	
+    
 echo $updId."<br/>";
 echo $flddag."<br/>";
 echo $fldLevnr."<br/>";
@@ -45,9 +45,9 @@ echo $RasId."<br/>";
 
 
 
-								
+                                
 
-						
+                        
     
 
 
@@ -55,11 +55,11 @@ echo $RasId."<br/>";
 
 
 
-					
-	
-	
-						}
+                    
+    
+    
+                        }
 }
 ?>
-					
-	
+                    
+    

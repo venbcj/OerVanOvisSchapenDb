@@ -26,34 +26,34 @@ $titel = 'Instellingen';
 $file = "Systeem.php";
 include "login.php"; ?>
 
-			<TD valign = 'top'>
+            <TD valign = 'top'>
 <?php
 if (Auth::is_logged_in()) { 
 
 If (isset ($_POST['knpSave']))
-{		
-	$updKarwerk = $_POST['txtKarWerknr'];
-	$updHisto = $_POST['kzlHis'];
-	$updGroei = $_POST['kzlGroei'];
-	$updReader = $_POST['kzlReader'];
-	$updrelnr = $_POST['txtRelnr'];
-	$updurvo = $_POST['txtUrvo'];
-	$updprvo = $_POST['txtPrvo'];
+{        
+    $updKarwerk = $_POST['txtKarWerknr'];
+    $updHisto = $_POST['kzlHis'];
+    $updGroei = $_POST['kzlGroei'];
+    $updReader = $_POST['kzlReader'];
+    $updrelnr = $_POST['txtRelnr'];
+    $updurvo = $_POST['txtUrvo'];
+    $updprvo = $_POST['txtPrvo'];
 
-	
+    
 if($updKarwerk < 1 || $updKarwerk > 8) {
 $fout = "Het aantal karakters van een werknr moet liggen tussen 1 en 8.";
 
 } else {
 
-if (empty($updrelnr)) 	{ $updrelnr = 'relnr = NULL';} else { $updrelnr = "relnr = "."'$updrelnr'" ; }
-if (empty($updurvo)) 	{ $updurvo = 'urvo = NULL';} else { $updurvo = "urvo = "."'$updurvo'" ; }
-if (empty($updprvo)) 	{ $updprvo = 'prvo = NULL';} else { $updprvo = "prvo = "."'$updprvo'" ; }
-if (empty($updReader)) 	{ $updReader = 'reader = NULL';} else { $updReader = "reader = "."'$updReader'" ; }
-	
+if (empty($updrelnr))     { $updrelnr = 'relnr = NULL';} else { $updrelnr = "relnr = "."'$updrelnr'" ; }
+if (empty($updurvo))     { $updurvo = 'urvo = NULL';} else { $updurvo = "urvo = "."'$updurvo'" ; }
+if (empty($updprvo))     { $updprvo = 'prvo = NULL';} else { $updprvo = "prvo = "."'$updprvo'" ; }
+if (empty($updReader))     { $updReader = 'reader = NULL';} else { $updReader = "reader = "."'$updReader'" ; }
+    
 $update_lid = "UPDATE tblLeden SET $updrelnr, $updurvo, $updprvo, $updReader, kar_werknr = '$updKarwerk', histo = '$updHisto', groei = '$updGroei' 
-					  WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' ;";
-		mysqli_query($db,$update_lid) or die (mysqli_error($db));
+                      WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' ;";
+        mysqli_query($db,$update_lid) or die (mysqli_error($db));
 }
 }
 
@@ -64,17 +64,17 @@ WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."';
 ") or die (mysqli_error($db)); 
 
 while ($row = mysqli_fetch_assoc($result))
-		{ $relnr = $row['relnr'];
-		  $urvo = $row['urvo'];
-		  $prvo = $row['prvo'];
-		  $karwerknr = $row['kar_werknr']; 
-		  $histo = $row['histo'];
-		  $groei = $row['groei']; } ?>
+        { $relnr = $row['relnr'];
+          $urvo = $row['urvo'];
+          $prvo = $row['prvo'];
+          $karwerknr = $row['kar_werknr']; 
+          $histo = $row['histo'];
+          $groei = $row['groei']; } ?>
 
 <form action = "Systeem.php" method = "post" >
 
 <table border = 0 width = 900>
-	<tr><th colspan = 6 height="50"><hr></th></tr>
+    <tr><th colspan = 6 height="50"><hr></th></tr>
 <tr>
  <td width = 150><u><i>Inloggegevens :</i></u></td>
  <td width = 150 align = 'right'>Gebruikersnaam :</td><td width = 100><?php echo $_SESSION["U1"]; ?></td>
@@ -106,9 +106,9 @@ $opties = array(1 => 'Ja', 0 => 'Nee');
 foreach ( $opties as $key => $waarde)
 {
    if((!isset($_POST['knpSave']) && $histo == $key) || (isset($_POST["kzlHis"]) && $_POST["kzlHis"] == $key) ) {
-	echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
+    echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else {
-	echo '<option value="' . $key . '">' . $waarde . '</option>';
+    echo '<option value="' . $key . '">' . $waarde . '</option>';
   }
 } ?> 
 </select> <!-- EINDE KZLja/nee -->
@@ -127,9 +127,9 @@ $opties = array('Totale groei', 'Gemiddelde groei per dag');
 foreach ( $opties as $key => $waarde)
 {
    if((!isset($_POST['knpSave']) && $groei == $key) || (isset($_POST["kzlGroei"]) && $_POST["kzlGroei"] == $key) ) {
-	echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
+    echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else {
-	echo '<option value="' . $key . '">' . $waarde . '</option>';
+    echo '<option value="' . $key . '">' . $waarde . '</option>';
   }
 } ?> 
 </select> <!-- EINDE KZLGroei -->
@@ -144,7 +144,7 @@ foreach ( $opties as $key => $waarde)
 <tr>
  <td style = "font-size : 14;"  >Reader</td>
  <td>
- 	 	<!-- kzlReader --> 
+          <!-- kzlReader --> 
 <select <?php echo "name=\"kzlReader\" "; ?> style = "width:80; font-size:13px;">
 <option></option>
 <?php
@@ -152,9 +152,9 @@ $opties = array('Agrident' => 'Agrident', 'Biocontrol' => 'Biocontrol');
 foreach ( $opties as $key => $waarde)
 {
    if((!isset($_POST['knpSave']) && $reader == $key) || (isset($_POST["kzlReader"]) && $_POST["kzlReader"] == $key) ) {
-	echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
+    echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else {
-	echo '<option value="' . $key . '">' . $waarde . '</option>';
+    echo '<option value="' . $key . '">' . $waarde . '</option>';
   }
 } ?> 
 </select> <!-- EINDE kzlReader -->
@@ -188,7 +188,7 @@ while ($zu = mysqli_fetch_array($zoek_ubn)) { $array_ubn[] = $zu['ubn']; }
 $count = count($array_ubn);
 
 for ($i=0; $i<$count; $i++)
-	{ echo $array_ubn[$i].'<br>'; }
+    { echo $array_ubn[$i].'<br>'; }
  ?>
  </td>
 
@@ -200,7 +200,7 @@ for ($i=0; $i<$count; $i++)
 
  <td width = 160 align = "right">Wachtwoord RVO :</td><td><input type = password name = "txtPrvo" size = 15 value = <?php echo $prvo; ?> ></td>
  <td>
- 	<a href='<?php $url; ?>Ubn_toevoegen.php' style = 'color : blue'> Ubn toevoegen </a></td>
+     <a href='<?php $url; ?>Ubn_toevoegen.php' style = 'color : blue'> Ubn toevoegen </a></td>
 
 </tr>
 <tr>

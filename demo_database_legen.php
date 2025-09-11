@@ -750,7 +750,7 @@ $salbIds = implode(',',$salbId);
  </form>
  
  
-	</TD>
+    </TD>
 <?php
 include "menuBeheer.php"; } ?>
 </tr>

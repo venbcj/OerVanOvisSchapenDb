@@ -21,13 +21,13 @@ $titel = 'Welkompagina';
 $file = "";
 include "header.tpl.php"; ?>
 
-		<TD valign = 'top'>
+        <TD valign = 'top'>
 
 <form action= "Welkom.php" method= "post" >
 <table border = 0 align = "center">
 <tr>
 <td valign = 'top'>
-	<table border = 0>
+    <table border = 0>
 <tr style = "color : blue;"><td colspan = 7 align = "center">
 <h3>Welkom in de demo-omgeving van het management programma<br/> OER van OVIS.<br/><br/>
 </td></tr>
@@ -70,14 +70,14 @@ Oer van Ovis
 
 
 <td valign = top>
-	<table border = 0>
-	<tr><td height = 80 align = "center" valign = 'top' ><img src='deklijst.jpg' width='285' height='220'>
-	</td></tr>
-	<tr><td height = 400 valign = "center"><img src='ooikaart.jpg' width='325' height='250'>
-	</td></tr>
-	<tr><td>
-	</td></tr>
-	</table>
+    <table border = 0>
+    <tr><td height = 80 align = "center" valign = 'top' ><img src='deklijst.jpg' width='285' height='220'>
+    </td></tr>
+    <tr><td height = 400 valign = "center"><img src='ooikaart.jpg' width='325' height='250'>
+    </td></tr>
+    <tr><td>
+    </td></tr>
+    </table>
 
 </td></tr>
 </table>
@@ -85,7 +85,7 @@ Oer van Ovis
 
 
 
-	</TD>
+    </TD>
 
 </tr>
 

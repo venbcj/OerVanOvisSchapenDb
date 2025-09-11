@@ -3,8 +3,8 @@
 
 <?php
 /* toegepast in :
-	- Ras.php */
-	
+    - Ras.php */
+    
 
 
 foreach($_POST as $fldname => $fldvalue) {  //  Voor elke post die wordt doorlopen wordt de veldnaam en de waarde teruggeven als een array
@@ -25,10 +25,10 @@ if(!empty($recId)) {
     if ($key == 'txtScan' && !empty($value)) { $fldScan = $value; } 
 
     if ($key == 'txtSort' && !empty($value)) { $fldSort = $value; } 
-	
-    if ($key == 'chbActief') {  $fldActief = $value;   }  	 
+    
+    if ($key == 'chbActief') {  $fldActief = $value;   }       
 
-								}	
+                                }    
 
 
 $zoek_db_waardes = mysqli_query($db,"
@@ -39,9 +39,9 @@ WHERE r.rasId = '". mysqli_real_escape_string($db,$recId) ."' and ru.lidId = '".
 ") or die (mysqli_error($db));
 
 while($row = mysqli_fetch_assoc($zoek_db_waardes))
-	{ $dbScan = $row['scan'];
-	  $dbSort = $row['sort'];
-	$dbActief = $row['actief']; }
+    { $dbScan = $row['scan'];
+      $dbSort = $row['sort'];
+    $dbActief = $row['actief']; }
 
 if($reader == 'Biocontrol' && $fldScan <> $dbScan) { //$fldScan bestaat niet bij Agrident reader
 // Zoeken naar dubbel scancode
@@ -50,32 +50,32 @@ SELECT scan
 FROM tblRasuser
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and ". db_null_filter('scan',$fldScan) ." and scan is not NULL
 ") or die(mysqli_error($db));
-	while ( $zoekscannr = mysqli_fetch_assoc($dublicate_scannr)) { $aantsc = $zoekscannr['scan']; }
+    while ( $zoekscannr = mysqli_fetch_assoc($dublicate_scannr)) { $aantsc = $zoekscannr['scan']; }
 // EINDE Zoeken naar dubbel scancode
-if(isset($aantsc))	{ $fout = " Het scannr bestaat al."; }
-else {					
-	$update_scan = "UPDATE tblRasuser SET scan = ". db_null_input($fldScan) ." WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and rasId = '". mysqli_real_escape_string($db,$recId) ."' 	";
-		mysqli_query($db,$update_scan) or die (mysqli_error($db));  
-		//echo 'wijzig scan naar '.$fldScan.' bij '.$recId."<br/>";
- 	} 
+if(isset($aantsc))    { $fout = " Het scannr bestaat al."; }
+else {                    
+    $update_scan = "UPDATE tblRasuser SET scan = ". db_null_input($fldScan) ." WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and rasId = '". mysqli_real_escape_string($db,$recId) ."'     ";
+        mysqli_query($db,$update_scan) or die (mysqli_error($db));  
+        //echo 'wijzig scan naar '.$fldScan.' bij '.$recId."<br/>";
+     } 
  }
 
  if($reader == 'Agrident' && $fldSort <> $dbSort) {
 
- 	$update_sort = "UPDATE tblRasuser SET sort = ". db_null_input($fldSort) ." WHERE lidId = '". mysqli_real_escape_string($db,$lidId) ."' and rasId = '". mysqli_real_escape_string($db, $recId) ."' ";
- 	mysqli_query($db,$update_sort) or die (mysqli_error($db));
+     $update_sort = "UPDATE tblRasuser SET sort = ". db_null_input($fldSort) ." WHERE lidId = '". mysqli_real_escape_string($db,$lidId) ."' and rasId = '". mysqli_real_escape_string($db, $recId) ."' ";
+     mysqli_query($db,$update_sort) or die (mysqli_error($db));
  }
 
 if($fldActief <> $dbActief) {
-	$update_ras = "UPDATE tblRasuser SET actief = '". mysqli_real_escape_string($db,$fldActief) ."' WHERE rasId = '". mysqli_real_escape_string($db,$recId) ."'	";
+    $update_ras = "UPDATE tblRasuser SET actief = '". mysqli_real_escape_string($db,$fldActief) ."' WHERE rasId = '". mysqli_real_escape_string($db,$recId) ."'    ";
     mysqli_query($db,$update_ras) or die (mysqli_error($db)); 
     header("Location:".$url."Ras.php");
-		//echo 'wijzig Actief naar '.$fldActief.' bij '.$recId."<br/>";
+        //echo 'wijzig Actief naar '.$fldActief.' bij '.$recId."<br/>";
  }  
 
 }
 
-		}
+        }
 ?>
-					
-	
+                    
+    

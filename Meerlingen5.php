@@ -20,7 +20,7 @@ $titel = 'Meerling in periode';
 $file = "Meerlingen5.php";
 include "login.php"; ?>
 
-		<TD valign = 'top' align = 'center'>
+        <TD valign = 'top' align = 'center'>
 <?php
 if (Auth::is_logged_in()) { if($modtech ==1) {
 include "kalender.php";
@@ -28,8 +28,8 @@ include "kalender.php";
 $huidigjaar = date("Y"); $begin_datum = '1-01-'.$huidigjaar; $eind_datum = '1-03-'.$huidigjaar;
 
 $var1dag = 60*60*24;
-	$maak_datum = strtotime($eind_datum) - $var1dag; $eind_datum = date("d-m-Y", $maak_datum);
-	/*if (isset($_GET['pstId'])) {$raak = $_GET['pstId']; }*/ 
+    $maak_datum = strtotime($eind_datum) - $var1dag; $eind_datum = date("d-m-Y", $maak_datum);
+    /*if (isset($_GET['pstId'])) {$raak = $_GET['pstId']; }*/ 
 
 if(isset($_POST['knpZoek'])) {
 $worp_van = $_POST['txtWorp_van']; $van = date_format(date_create($worp_van), 'Y-m-d');
@@ -44,27 +44,27 @@ FROM tblSchaap lam
  join tblStal st on (st.schaapId = lam.schaapId)
  join tblHistorie h on (st.stalId = h.stalId)
  left join (
- 	SELECT stalId, max(datum) mdm
- 	FROM tblHistorie
-	WHERE kg is not null and actId > 1 and skip = 0
-	GROUP BY stalId
+     SELECT stalId, max(datum) mdm
+     FROM tblHistorie
+    WHERE kg is not null and actId > 1 and skip = 0
+    GROUP BY stalId
  ) mx on (mx.stalId = st.stalId)
  left join (
- 	SELECT stalId, datum, max(kg) kg
- 	FROM tblHistorie
-	WHERE kg is not null and actId > 1 and skip = 0
-	GROUP BY stalId, datum
+     SELECT stalId, datum, max(kg) kg
+     FROM tblHistorie
+    WHERE kg is not null and actId > 1 and skip = 0
+    GROUP BY stalId, datum
  ) lstkg on (lstkg.stalId = st.stalId and lstkg.datum = mx.mdm)
 WHERE lam.levensnummer is not null and isnull(st.rel_best) and h.actId = 1 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.datum >= '".mysqli_real_escape_string($db,$van)."' and h.datum <= '".mysqli_real_escape_string($db,$tot)."' and h.skip = 0
 GROUP BY lam.levensnummer, lam.geslacht, h.datum, mdr.levensnummer, mx.mdm, st.stalId
 ORDER BY right(lam.levensnummer,$Karwerk)
 ";
 
-$zoek_meerlingen = mysqli_query($db,$query) or die (mysqli_error($db));	
+$zoek_meerlingen = mysqli_query($db,$query) or die (mysqli_error($db));    
 
 while($mrl = mysqli_fetch_assoc($zoek_meerlingen))
-{				$pdf = $mrl['stalId']; // t.b.v. pdf
-			}
+{                $pdf = $mrl['stalId']; // t.b.v. pdf
+            }
 
 
 
@@ -72,7 +72,7 @@ while($mrl = mysqli_fetch_assoc($zoek_meerlingen))
 
 <form action= "Meerlingen5.php" method="post">
 <table border = 0> 
-<tr align = "center" valign = 'top' ><td colspan = 10>	
+<tr align = "center" valign = 'top' ><td colspan = 10>    
 
 <table border = 0>
 <tr>
@@ -84,7 +84,7 @@ while($mrl = mysqli_fetch_assoc($zoek_meerlingen))
 <?php } ?>
 </tr>
 
-</table>		</td></tr>	
+</table>        </td></tr>    
 
 
 <tr>
@@ -97,13 +97,13 @@ while($mrl = mysqli_fetch_assoc($zoek_meerlingen))
   <input type="submit" name="knpZoek" value="Zoek">
  </td>
  <td width= 100 align = "right">
- 	<a href= '<?php echo $url;?>Meerlingen5_pdf.php?Id=<?php echo $pdf; ?>&d1=<?php echo $van; ?>&d2=<?php echo $tot; ?>' style = 'color : blue'>
-	print pagina </a>
+     <a href= '<?php echo $url;?>Meerlingen5_pdf.php?Id=<?php echo $pdf; ?>&d1=<?php echo $van; ?>&d2=<?php echo $tot; ?>' style = 'color : blue'>
+    print pagina </a>
  </td>
 </tr>
 <tr><td colspan = 10 ><hr></td></tr>
 <tr><td></td></tr>
-<!--	Einde Gegevens tbv MOEDERDIER		-->
+<!--    Einde Gegevens tbv MOEDERDIER        -->
 <tr><td colspan = 50><table border = 0>
 
 
@@ -124,24 +124,24 @@ while($mrl = mysqli_fetch_assoc($zoek_meerlingen))
 <?php
 if(isset($_POST['knpZoek'])) {
 
-$zoek_meerlingen = mysqli_query($db,$query) or die (mysqli_error($db));	
-	while($mrl = mysqli_fetch_assoc($zoek_meerlingen))
-			{
-				$lam = $mrl['lam'];
-				$sek = $mrl['geslacht'];
-				$worp = $mrl['worp'];
-				$datum = $mrl['datum'];
-				$gemkg = $mrl['gemgroei'];
-				$maxdm = $mrl['kgdag'];
-				$ooi = $mrl['ooi'];
-				
+$zoek_meerlingen = mysqli_query($db,$query) or die (mysqli_error($db));    
+    while($mrl = mysqli_fetch_assoc($zoek_meerlingen))
+            {
+                $lam = $mrl['lam'];
+                $sek = $mrl['geslacht'];
+                $worp = $mrl['worp'];
+                $datum = $mrl['datum'];
+                $gemkg = $mrl['gemgroei'];
+                $maxdm = $mrl['kgdag'];
+                $ooi = $mrl['ooi'];
+                
 
 
 
 
 
-	if(!isset($gemkg)) { $gemkg = 'Onbekend'; }
-	else { $gemkg .= ' gr ( tot '. $maxdm .')'; }
+    if(!isset($gemkg)) { $gemkg = 'Onbekend'; }
+    else { $gemkg .= ' gr ( tot '. $maxdm .')'; }
 
 
 
@@ -167,13 +167,13 @@ $zoek_meerlingen = mysqli_query($db,$query) or die (mysqli_error($db));
 
 
 
-	
+    
 
 <?php } // Einde while($mrl = mysqli_fetch_assoc($zoek_meerlingen_ooi)) 
-	} // Einde isset($_POST['knpZoek'])	 ?>
-</table>		
+    } // Einde isset($_POST['knpZoek'])     ?>
+</table>        
 
-<!--	Einde Gegevens tbv LAM	-->	
+<!--    Einde Gegevens tbv LAM    -->    
 
 </td></tr></table>
 </form>

@@ -19,7 +19,7 @@ $titel = 'Wijzigen inloggegevens';
 $file = "Wachtwoord.php";
 include "login.php"; ?>
 
-		<TD valign = 'top' align = 'center'>
+        <TD valign = 'top' align = 'center'>
 <?php
 if (Auth::is_logged_in()) {
 
@@ -29,25 +29,25 @@ $name = $_SESSION["U1"];  ?>
 <p>
 <table>
  <tr height = 50 ><td> Gebruikersnaam : </td>
-	<td> <input type="text" name="txtUser" size="20" value = <?php echo $name; ?> ></td>
-	<td> <input type="hidden" name="txtUserOld" size="20" value = <?php echo $name; ?> ></td> <!-- hiddden -->
+    <td> <input type="text" name="txtUser" size="20" value = <?php echo $name; ?> ></td>
+    <td> <input type="hidden" name="txtUserOld" size="20" value = <?php echo $name; ?> ></td> <!-- hiddden -->
 </tr>
  <tr><td> Oud wachtwoord : </td>
-	<td> <input type="password" name="txtOld" 	  size="20" value = <?php if (isset($ww)) { echo $ww;} // $ww gedeclareerd in wachtwoord ?> ></td> 
-	<td> <input type="hidden" name="txtOldcntr" size="20" value = <?php echo $passw; ?> ></td> <!-- hiddden -->
+    <td> <input type="password" name="txtOld"       size="20" value = <?php if (isset($ww)) { echo $ww;} // $ww gedeclareerd in wachtwoord ?> ></td> 
+    <td> <input type="hidden" name="txtOldcntr" size="20" value = <?php echo $passw; ?> ></td> <!-- hiddden -->
  </tr>
  <tr><td> Nieuw wachtwoord : </td>
-	<td> <input type="password" name="txtNew" size="20" value = <?php ; ?> ></td>
+    <td> <input type="password" name="txtNew" size="20" value = <?php ; ?> ></td>
  </tr>
  <tr><td> Bevestig wachtwoord : </td>
-	<td> <input type="password" name="txtBevest" size="20" value = <?php ; ?> ></td>
+    <td> <input type="password" name="txtBevest" size="20" value = <?php ; ?> ></td>
  </tr>
  <tr height = 100 ><td colspan = 2 align = 'center'> <input type=<?php echo $veld; ?>  value="Opslaan" name="knpChange"></td></tr>
  </table></p>
  </form>
  
  
-	</TD>
+    </TD>
 <?php
 include "menuBeheer.php"; } ?>
 </tr>

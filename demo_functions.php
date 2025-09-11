@@ -1407,10 +1407,10 @@ from $dtb.tblSchaap s
  left join $dtb.tblStal st on (s.schaapId = st.schaapId)
 where r.lidId = $lidId and isnull(st.stalId) and isnull(teller_ovpl)
  and not exists (
-	select rd.levnr_ovpl
-	from $dtb.impReader rd
-	where s.levensnummer = rd.levnr_ovpl and isnull(rd.teller_ovpl) and rd.lidId <> $lidId
-	)
+    select rd.levnr_ovpl
+    from $dtb.impReader rd
+    where s.levensnummer = rd.levnr_ovpl and isnull(rd.teller_ovpl) and rd.lidId <> $lidId
+    )
 group by s.schaapId
 order by s.schaapId
 ");

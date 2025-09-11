@@ -5,7 +5,7 @@ require_once("autoload.php");
 $versie = '31-10-2016'; /* : kolom Liquiditeit toegevoegd */
 $versie = '5-11-2016'; /* : Totalen toegevoegd */
 $versie = '24-12-2016'; /* : Kolomkoppen aangepast */
-$versie = '23-03-2017'; /* : Aantal dieren naar boven afgerond dmv ceil()	26-3 : aantal geboren lammeren toegevoegd */
+$versie = '23-03-2017'; /* : Aantal dieren naar boven afgerond dmv ceil()    26-3 : aantal geboren lammeren toegevoegd */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '11-7-2020'; /* € gewijzigd in &euro; 12-7-2020 ë uit database gewijzigd in echo htmlentities(string, ENT_COMPAT,'ISO-8859-1', true); bron https://www.php.net/htmlspecialchars via https://www.phphulp.nl/php/forum/topic/speciale-tekens-in-code-omzetten/50786/ */
 $versie = '17-01-2021'; /* Enkele quotes om variabele gezet*/
@@ -25,7 +25,7 @@ $titel = 'Saldoberekening';
 $file = "";
 include "login.php"; ?>
 
-			<TD valign = 'top'>
+            <TD valign = 'top'>
 <?php
 if (Auth::is_logged_in()) { if($modfin == 1) {
 
@@ -44,33 +44,33 @@ FROM tblSalber sb
  join tblRubriekuser ru on (sb.tblId = ru.rubuId)
 WHERE sb.tbl = 'ru' and ru.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die (mysqli_error($db));
-	while ( $maxj = mysqli_fetch_assoc($zoek_jaar)) { $maxjaar = $maxj['jaar']; } if(!isset($maxjaar)) { $nextjaar = date('Y'); } else { $nextjaar = $maxjaar+1; }
+    while ( $maxj = mysqli_fetch_assoc($zoek_jaar)) { $maxjaar = $maxj['jaar']; } if(!isset($maxjaar)) { $nextjaar = date('Y'); } else { $nextjaar = $maxjaar+1; }
 
 if(isset($_POST['kzlJaar_'])) { $kzlJaar = $_POST['kzlJaar_']; } else { $nu_jaar = date('Y'); if(!isset($nu_jaar) || $maxjaar > $nu_jaar) { $kzlJaar = date('Y'); } else { $kzlJaar = $maxjaar; } }
-	$day1 = $kzlJaar.'-01-01'; $date1 = date_create($day1); $jan1 = date_format($date1,'Y-m-d');
+    $day1 = $kzlJaar.'-01-01'; $date1 = date_create($day1); $jan1 = date_format($date1,'Y-m-d');
 
-	if(isset($_POST['knpNext_'])) {
+    if(isset($_POST['knpNext_'])) {
 $ins_tblSalber = "
 INSERT INTO tblSalber (datum, tbl, tblId, waarde)
-	SELECT '".$nextjaar."-01-01', 'eu', elemuId, waarde
-	FROM tblElementuser
-	WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
-	
-	union all
-	
-	SELECT '".$nextjaar."-01-01', 'ru', rubuId, NULL
-	FROM tblRubriekuser
-	WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
-	
-	ORDER BY elemuId;
+    SELECT '".$nextjaar."-01-01', 'eu', elemuId, waarde
+    FROM tblElementuser
+    WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    
+    union all
+    
+    SELECT '".$nextjaar."-01-01', 'ru', rubuId, NULL
+    FROM tblRubriekuser
+    WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    
+    ORDER BY elemuId;
 ";
-/*echo $ins_tblSalber.'<br>'.'<br>';*/	mysqli_query($db,$ins_tblSalber) or die (mysqli_error($db));
+/*echo $ins_tblSalber.'<br>'.'<br>';*/    mysqli_query($db,$ins_tblSalber) or die (mysqli_error($db));
 
 header("Location: ".$url."Saldoberekening.php"); 
 }
 if(isset($_POST['knpSave_'])) { include "save_saldoberekening.php"; }
 
-/********	JAARTOTALEN T.B.V. PROGNOSE	********/ 
+/********    JAARTOTALEN T.B.V. PROGNOSE    ********/ 
 $zoek_gebrn_in_jaar = mysqli_query($db,"
 SELECT count(s.schaapId) aant_geb
 FROM tblSchaap s
@@ -79,137 +79,137 @@ FROM tblSchaap s
  left join tblHistorie hkoop on (hkoop.stalId = st.stalId and hkoop.actId = 2 and hkoop.skip = 0)
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(hg.datum,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and isnull(hkoop.hisId)
 ") or die (mysqli_error($db));
-	while ($geb = mysqli_fetch_assoc($zoek_gebrn_in_jaar)) { $gebrn = $geb['aant_geb']; }
-/********	einde 	JAARTOTALEN T.B.V. PROGNOSE	einde	********/ 
-/********	JAARTOTALEN T.B.V. REALITEIT	********/
+    while ($geb = mysqli_fetch_assoc($zoek_gebrn_in_jaar)) { $gebrn = $geb['aant_geb']; }
+/********    einde     JAARTOTALEN T.B.V. PROGNOSE    einde    ********/ 
+/********    JAARTOTALEN T.B.V. REALITEIT    ********/
 $zoek_ooien_in_jaar = mysqli_query($db,"
 SELECT count(s.schaapId) aant_mdr
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join (
-	SELECT stalId, datum
-	FROM tblHistorie
-	WHERE actId = 3 and skip = 0 and date_format(datum,'%Y') <= '".mysqli_real_escape_string($db,$kzlJaar)."'
+    SELECT stalId, datum
+    FROM tblHistorie
+    WHERE actId = 3 and skip = 0 and date_format(datum,'%Y') <= '".mysqli_real_escape_string($db,$kzlJaar)."'
  ) ouder on (st.stalId = ouder.stalId)
  join (
-	SELECT st.stalId
-	FROM tblHistorie h
-	 join tblStal st on (h.stalId = st.stalId)
-	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-	GROUP BY h.stalId
-	HAVING (date_format(min(h.datum),'%Y') <= '".mysqli_real_escape_string($db,$kzlJaar)."')
+    SELECT st.stalId
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+    WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    GROUP BY h.stalId
+    HAVING (date_format(min(h.datum),'%Y') <= '".mysqli_real_escape_string($db,$kzlJaar)."')
  ) mindm on (st.stalId = mindm.stalId)
  join (
-	SELECT st.stalId, st.rel_best
-	FROM tblHistorie h
-	 join tblStal st on (h.stalId = st.stalId)
-	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-	GROUP BY h.stalId, st.rel_best
-	HAVING (date_format(max(h.datum),'%Y') >= '".mysqli_real_escape_string($db,$kzlJaar)."' or isnull(st.rel_best))
+    SELECT st.stalId, st.rel_best
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+    WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    GROUP BY h.stalId, st.rel_best
+    HAVING (date_format(max(h.datum),'%Y') >= '".mysqli_real_escape_string($db,$kzlJaar)."' or isnull(st.rel_best))
  ) maxdm on (st.stalId = maxdm.stalId)
 WHERE s.geslacht = 'ooi'
 ") or die (mysqli_error($db));
-	while ($moe = mysqli_fetch_assoc($zoek_ooien_in_jaar)) { $mdrs = $moe['aant_mdr']; }
-	
+    while ($moe = mysqli_fetch_assoc($zoek_ooien_in_jaar)) { $mdrs = $moe['aant_mdr']; }
+    
 $zoek_lamrn_in_jaar = mysqli_query($db,"
 SELECT count(s.schaapId) aant_lam
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  left join (
-	SELECT stalId, datum
-	FROM tblHistorie
-	WHERE actId = 3 and skip = 0
+    SELECT stalId, datum
+    FROM tblHistorie
+    WHERE actId = 3 and skip = 0
  ) ouder on (st.stalId = ouder.stalId)
  join (
-	SELECT st.stalId
-	FROM tblHistorie h
-	 join tblStal st on (h.stalId = st.stalId)
-	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-	GROUP BY h.stalId
-	HAVING (date_format(min(h.datum),'%Y') <= '".mysqli_real_escape_string($db,$kzlJaar)."')
+    SELECT st.stalId
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+    WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    GROUP BY h.stalId
+    HAVING (date_format(min(h.datum),'%Y') <= '".mysqli_real_escape_string($db,$kzlJaar)."')
  ) mindm on (st.stalId = mindm.stalId)
  join (
-	SELECT st.stalId, st.rel_best
-	FROM tblHistorie h
-	 join tblStal st on (h.stalId = st.stalId)
-	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-	GROUP BY h.stalId, st.rel_best
-	HAVING (date_format(max(h.datum),'%Y') >= '".mysqli_real_escape_string($db,$kzlJaar)."' or isnull(st.rel_best))
+    SELECT st.stalId, st.rel_best
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+    WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    GROUP BY h.stalId, st.rel_best
+    HAVING (date_format(max(h.datum),'%Y') >= '".mysqli_real_escape_string($db,$kzlJaar)."' or isnull(st.rel_best))
  ) maxdm on (st.stalId = maxdm.stalId)
 
 WHERE (isnull(ouder.datum) or ouder.datum > '".mysqli_real_escape_string($db,$jan1)."')
 ") or die (mysqli_error($db));
-	while ($lmn = mysqli_fetch_assoc($zoek_lamrn_in_jaar)) { $lamrn = $lmn['aant_lam']; }
-	
+    while ($lmn = mysqli_fetch_assoc($zoek_lamrn_in_jaar)) { $lamrn = $lmn['aant_lam']; }
+    
 $zoek_aantal_sterfte_lammeren_in_jaar = mysqli_query($db,"
 SELECT count(s.schaapId) aant_lam
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join (
-	SELECT stalId, datum
-	FROM tblHistorie
-	WHERE actId = 14 and skip = 0
+    SELECT stalId, datum
+    FROM tblHistorie
+    WHERE actId = 14 and skip = 0
  ) dood on (st.stalId = dood.stalId)
  left join (
-	SELECT stalId, datum
-	FROM tblHistorie
-	WHERE actId = 3 and skip = 0
+    SELECT stalId, datum
+    FROM tblHistorie
+    WHERE actId = 3 and skip = 0
  ) ouder on (st.stalId = ouder.stalId)
  join (
-	SELECT st.stalId, min(h.datum) tempmin
-	FROM tblHistorie h
-	 join tblStal st on (h.stalId = st.stalId)
-	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-	GROUP BY h.stalId
-	HAVING (date_format(min(h.datum),'%Y') <= '".mysqli_real_escape_string($db,$kzlJaar)."')
+    SELECT st.stalId, min(h.datum) tempmin
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+    WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    GROUP BY h.stalId
+    HAVING (date_format(min(h.datum),'%Y') <= '".mysqli_real_escape_string($db,$kzlJaar)."')
  ) mindm on (st.stalId = mindm.stalId)
  join (
-	SELECT st.stalId, max(h.datum) tempmax, st.rel_best
-	FROM tblHistorie h
-	 join tblStal st on (h.stalId = st.stalId)
-	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-	GROUP BY h.stalId, st.rel_best
-	HAVING (date_format(max(h.datum),'%Y') >= '".mysqli_real_escape_string($db,$kzlJaar)."' or isnull(st.rel_best))
+    SELECT st.stalId, max(h.datum) tempmax, st.rel_best
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+    WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    GROUP BY h.stalId, st.rel_best
+    HAVING (date_format(max(h.datum),'%Y') >= '".mysqli_real_escape_string($db,$kzlJaar)."' or isnull(st.rel_best))
  ) maxdm on (st.stalId = maxdm.stalId)
 
 WHERE isnull(ouder.datum) and date_format(dood.datum,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."'
 ") or die (mysqli_error($db));
-	while ($dolm = mysqli_fetch_assoc($zoek_aantal_sterfte_lammeren_in_jaar)) { $lam_doo = $dolm['aant_lam']; } 
-	
+    while ($dolm = mysqli_fetch_assoc($zoek_aantal_sterfte_lammeren_in_jaar)) { $lam_doo = $dolm['aant_lam']; } 
+    
 $zoek_aantal_sterfte_moeder_in_jaar = mysqli_query($db,"
 SELECT count(s.schaapId) aant_mdr
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join (
-	SELECT stalId, datum
-	FROM tblHistorie
-	WHERE actId = 14 and skip = 0
+    SELECT stalId, datum
+    FROM tblHistorie
+    WHERE actId = 14 and skip = 0
  ) dood on (st.stalId = dood.stalId)
  join (
-	SELECT stalId, datum
-	FROM tblHistorie
-	WHERE actId = 3 and skip = 0 and date_format(datum,'%Y') <= '".mysqli_real_escape_string($db,$kzlJaar)."'
+    SELECT stalId, datum
+    FROM tblHistorie
+    WHERE actId = 3 and skip = 0 and date_format(datum,'%Y') <= '".mysqli_real_escape_string($db,$kzlJaar)."'
  ) ouder on (st.stalId = ouder.stalId)
  join (
-	SELECT st.stalId, min(h.datum) tempmin
-	FROM tblHistorie h
-	 join tblStal st on (h.stalId = st.stalId)
-	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-	GROUP BY h.stalId
-	HAVING (date_format(min(h.datum),'%Y') <= '".mysqli_real_escape_string($db,$kzlJaar)."')
+    SELECT st.stalId, min(h.datum) tempmin
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+    WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    GROUP BY h.stalId
+    HAVING (date_format(min(h.datum),'%Y') <= '".mysqli_real_escape_string($db,$kzlJaar)."')
  ) mindm on (st.stalId = mindm.stalId)
  join (
-	SELECT st.stalId, max(h.datum) tempmax, st.rel_best
-	FROM tblHistorie h
-	 join tblStal st on (h.stalId = st.stalId)
-	WHERE skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-	GROUP BY h.stalId, st.rel_best
-	HAVING (date_format(max(h.datum),'%Y') >= '".mysqli_real_escape_string($db,$kzlJaar)."' or isnull(st.rel_best))
+    SELECT st.stalId, max(h.datum) tempmax, st.rel_best
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+    WHERE skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    GROUP BY h.stalId, st.rel_best
+    HAVING (date_format(max(h.datum),'%Y') >= '".mysqli_real_escape_string($db,$kzlJaar)."' or isnull(st.rel_best))
  ) maxdm on (st.stalId = maxdm.stalId)
 WHERE s.geslacht = 'ooi' and date_format(dood.datum,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."'
 ") or die (mysqli_error($db));
-	while ($do_mdr = mysqli_fetch_assoc($zoek_aantal_sterfte_moeder_in_jaar)) { $mdr_doo = $do_mdr['aant_mdr']; }
-	
+    while ($do_mdr = mysqli_fetch_assoc($zoek_aantal_sterfte_moeder_in_jaar)) { $mdr_doo = $do_mdr['aant_mdr']; }
+    
 $zoek_worpen_in_jaar = mysqli_query($db,"
 SELECT count(distinct v.mdrId) aant_worp
 FROM tblSchaap s
@@ -219,9 +219,9 @@ FROM tblSchaap s
  left join tblHistorie hkoop on (hkoop.stalId = st.stalId and hkoop.actId = 2 and hkoop.skip = 0)
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(hg.datum,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and isnull(hkoop.hisId)
 ") or die (mysqli_error($db));
-	while ($wrp = mysqli_fetch_assoc($zoek_worpen_in_jaar)) { $worpn = $wrp['aant_worp']; }
+    while ($wrp = mysqli_fetch_assoc($zoek_worpen_in_jaar)) { $worpn = $wrp['aant_worp']; }
 
-/********	einde 	JAARTOTALEN T.B.V. REALITEIT	einde	********/ 
+/********    einde     JAARTOTALEN T.B.V. REALITEIT    einde    ********/ 
 
 // Declaratie kzlJaar
 $kzl_jaar = mysqli_query($db,"
@@ -242,11 +242,11 @@ ORDER BY  jaar desc
 ") or die (mysqli_error($db));
 
 $index = 0;
-	while ( $kzljr = mysqli_fetch_assoc($kzl_jaar)) 
-	{
-	   $jaarnr[$index] = $kzljr['jaar'];
-	   $jaarRaak[$index] = $kzlJaar;
-	   $index++; 
+    while ( $kzljr = mysqli_fetch_assoc($kzl_jaar)) 
+    {
+       $jaarnr[$index] = $kzljr['jaar'];
+       $jaarRaak[$index] = $kzlJaar;
+       $index++; 
     }
 // Einde Declaratie kzlJaar ?>
 <form action = "Saldoberekening.php" method = 'post'>
@@ -258,23 +258,23 @@ $index = 0;
  <td colspan = 5 >
  <!-- KZLJAAR -->
  <select style="width:65;" name= "kzlJaar_" >
-<?php	$count = count($jaarnr);	
+<?php    $count = count($jaarnr);    
 for ($i = 0; $i < $count; $i++){
 
-	$opties = array($jaarnr[$i]=>$jaarnr[$i]);
-			foreach($opties as $key => $waarde)
-			{
+    $opties = array($jaarnr[$i]=>$jaarnr[$i]);
+            foreach($opties as $key => $waarde)
+            {
   if ((!isset($_POST['knpToon_']) && $jaarRaak[$i] == $key) || (isset($_POST["kzlJaar_$Id"]) && $_POST["kzlJaar_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
-  }		
-			}
+  }        
+            }
 }
 
  ?> </select>
-	 <!-- EINDE KZLJAAR -->
-	<input type = 'submit' name = 'knpToon_' value = 'Toon'> </td>
+     <!-- EINDE KZLJAAR -->
+    <input type = 'submit' name = 'knpToon_' value = 'Toon'> </td>
  <td align =right width = 82> <?php if($kzlJaar >= Date('Y')-8) { ?><input type = 'submit' name = 'knpSave_' value = 'Opslaan'> <?php } ?> </td>
 <?php } ?>
  <td width = 250 align =right> <input type = 'submit' name = 'knpNext_' value = <?php echo $nextjaar."&nbsp&nbsp"."-aanmaken"; ?> > </td>
@@ -295,39 +295,39 @@ for ($i = 0; $i < $count; $i++){
 $zoek_rekencomponenten = mysqli_query($db,"
 SELECT max(elem1) ooital, max(elem12) dooperc, max(elem18) worptal, max(elem19) worpgr
 FROM (
-	SELECT sb.waarde elem1, 0 elem12, 0 elem18, 0 elem19
-	FROM tblElement e
-	 join tblElementuser eu on (e.elemId = eu.elemId)
-	 join tblSalber sb on (eu.elemuId = sb.tblId)
-	WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and year(sb.datum) = '".mysqli_real_escape_string($db,$kzlJaar)."' and sb.tbl = 'eu' and eu.sal = 1
-	and e.elemId = 1
+    SELECT sb.waarde elem1, 0 elem12, 0 elem18, 0 elem19
+    FROM tblElement e
+     join tblElementuser eu on (e.elemId = eu.elemId)
+     join tblSalber sb on (eu.elemuId = sb.tblId)
+    WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and year(sb.datum) = '".mysqli_real_escape_string($db,$kzlJaar)."' and sb.tbl = 'eu' and eu.sal = 1
+    and e.elemId = 1
   union
-	SELECT 0, sb.waarde/100 elem12, 0 elem18, 0 elem19
-	FROM tblElement e
-	 join tblElementuser eu on (e.elemId = eu.elemId)
-	 join tblSalber sb on (eu.elemuId = sb.tblId)
-	WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and year(sb.datum) = '".mysqli_real_escape_string($db,$kzlJaar)."' and sb.tbl = 'eu' and eu.sal = 1
-	and e.elemId = 12
+    SELECT 0, sb.waarde/100 elem12, 0 elem18, 0 elem19
+    FROM tblElement e
+     join tblElementuser eu on (e.elemId = eu.elemId)
+     join tblSalber sb on (eu.elemuId = sb.tblId)
+    WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and year(sb.datum) = '".mysqli_real_escape_string($db,$kzlJaar)."' and sb.tbl = 'eu' and eu.sal = 1
+    and e.elemId = 12
   union
-	SELECT 0, 0 elem12, sb.waarde elem18, 0 elem19
-	FROM tblElement e
-	 join tblElementuser eu on (e.elemId = eu.elemId)
-	 join tblSalber sb on (eu.elemuId = sb.tblId)
-	WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and year(sb.datum) = '".mysqli_real_escape_string($db,$kzlJaar)."' and sb.tbl = 'eu' and eu.sal = 1
-	and e.elemId = 18
+    SELECT 0, 0 elem12, sb.waarde elem18, 0 elem19
+    FROM tblElement e
+     join tblElementuser eu on (e.elemId = eu.elemId)
+     join tblSalber sb on (eu.elemuId = sb.tblId)
+    WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and year(sb.datum) = '".mysqli_real_escape_string($db,$kzlJaar)."' and sb.tbl = 'eu' and eu.sal = 1
+    and e.elemId = 18
   union
-	SELECT 0, 0, 0, sb.waarde elem19
-	FROM tblElement e
-	 join tblElementuser eu on (e.elemId = eu.elemId)
-	 join tblSalber sb on (eu.elemuId = sb.tblId)
-	WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and year(sb.datum) = '".mysqli_real_escape_string($db,$kzlJaar)."' and sb.tbl = 'eu' and eu.sal = 1
-	and e.elemId = 19
+    SELECT 0, 0, 0, sb.waarde elem19
+    FROM tblElement e
+     join tblElementuser eu on (e.elemId = eu.elemId)
+     join tblSalber sb on (eu.elemuId = sb.tblId)
+    WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and year(sb.datum) = '".mysqli_real_escape_string($db,$kzlJaar)."' and sb.tbl = 'eu' and eu.sal = 1
+    and e.elemId = 19
 ) reken
 
 ") or die (mysqli_error($db));
-	while ($el = mysqli_fetch_assoc($zoek_rekencomponenten)) { $p_ooital = $el['ooital']; $p_dooperc = $el['dooperc']; $p_worptal = $el['worptal']; $p_worpgr = $el['worpgr']; } ?>
+    while ($el = mysqli_fetch_assoc($zoek_rekencomponenten)) { $p_ooital = $el['ooital']; $p_dooperc = $el['dooperc']; $p_worptal = $el['worptal']; $p_worpgr = $el['worpgr']; } ?>
 <tr>
-	<td valign = top>
+    <td valign = top>
 <table border = 0 style= "font-size : 14px">
 <tr height = 23>
  <td width = 220>Lammeren productie geboren </td>
@@ -380,11 +380,11 @@ while ($v_ooi = mysqli_fetch_assoc($zoek_element_vervanging_ooi)) { $verv_ooi = 
 if(isset($verv_ooi) && isset($p_ooital) && $p_ooital >0) {
 include "vw_Saldober_Jaarbasis.php";
 $zoek_jaarbedragen_saldber_prognose_realiteit = mysqli_query($db,$vw_Saldober_Jaarbasis ) or die (mysqli_error($db)); 
-	while( $som = mysqli_fetch_assoc($zoek_jaarbedragen_saldber_prognose_realiteit)) {
-		$som_sald = $som['bedrag_slb']; $som_prog = $som['bedrag_liq']; $som_real = $som['bedrag_real'];
-		
+    while( $som = mysqli_fetch_assoc($zoek_jaarbedragen_saldber_prognose_realiteit)) {
+        $som_sald = $som['bedrag_slb']; $som_prog = $som['bedrag_liq']; $som_real = $som['bedrag_real'];
+        
 if(isset($p_ooital) && $p_ooital > 0) { $slb_ooi = round($som_sald/$p_ooital,2); $prg_ooi = round($som_prog/$p_ooital,2); $eff_ooi = round($som_real/$p_ooital,2); }
-if(isset($p_afv) && $p_afv > 0) 	  { $slb_lam = round($som_sald/$p_afv,2); 	 $prg_lam = round($som_prog/$p_afv,2); 	  $eff_lam = round($som_real/$p_afv,2); }
+if(isset($p_afv) && $p_afv > 0)       { $slb_lam = round($som_sald/$p_afv,2);      $prg_lam = round($som_prog/$p_afv,2);       $eff_lam = round($som_real/$p_afv,2); }
 }
 }
 ?>
@@ -404,8 +404,8 @@ if(isset($p_afv) && $p_afv > 0) 	  { $slb_lam = round($som_sald/$p_afv,2); 	 $pr
  </td>
 </tr>
 </table> 
-	</td>
-	<td colspan = 6 align =right valign="top">
+    </td>
+    <td colspan = 6 align =right valign="top">
 <table border = 0 style= "font-size : 14px">
 
 <tr>
@@ -441,22 +441,22 @@ WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and year(sb.datum) 
  and eenheid = 'euro'
 ORDER BY sort, element
 ") or die (mysqli_error($db));
-	while ($el = mysqli_fetch_assoc($zoek_element)) { // START LOOP COMPONENTEN
-	 $Id = $el['salbId']; $elemt = $el['element']; $waarde_eu = $el['waarde']; $elemId = $el['elemId']; $eenh = $el['eenheid'];
-	
-	$eenheid_voor = array(''=>' ','euro'=>'&euro;','getal'=>'&nbsp&nbsp','procent'=>'&nbsp&nbsp');
-	$eenheid_achter = array(''=>'','euro'=>'','getal'=>' st','procent'=>'%');
-	
+    while ($el = mysqli_fetch_assoc($zoek_element)) { // START LOOP COMPONENTEN
+     $Id = $el['salbId']; $elemt = $el['element']; $waarde_eu = $el['waarde']; $elemId = $el['elemId']; $eenh = $el['eenheid'];
+    
+    $eenheid_voor = array(''=>' ','euro'=>'&euro;','getal'=>'&nbsp&nbsp','procent'=>'&nbsp&nbsp');
+    $eenheid_achter = array(''=>'','euro'=>'','getal'=>' st','procent'=>'%');
+    
 // Realiteit en prognose ophalen per component 
 if($elemId == 1 && $kzlJaar <= date('Y')) { /* 1 = Aantal ooien*/ $real = $mdrs; }
  
 if($elemId == 12 && $kzlJaar <= date('Y')) { /* 12 = percentage uitval lammeren*/ if(isset($lamrn) && $lamrn > 0) { $real = round($lam_doo/$lamrn*100,2); } }
-if($elemId == 12)							 { /* 12 = percentage uitval lammeren*/ $p_dooperc = $waarde_eu/100; } 
+if($elemId == 12)                             { /* 12 = percentage uitval lammeren*/ $p_dooperc = $waarde_eu/100; } 
 
 if($elemId == 13 && $kzlJaar <= date('Y')) { /* 13 = percentage uitval ooien*/ if(isset($mdrs) && $mdrs > 0) { $real = round($mdr_doo/$mdrs*100,2); }}
  
 if($elemId == 16 && $kzlJaar <= date('Y')) { /* 16 = percentage vervanging ooien*/ if(isset($mdrs) && $mdrs > 0) { $real = round($mdr_doo/$mdrs*100,2); }}
-if($elemId == 16)							 { /* 16 = percentage vervanging ooien*/ $p_dooperc_mdr = $waarde_eu/100; } 
+if($elemId == 16)                             { /* 16 = percentage vervanging ooien*/ $p_dooperc_mdr = $waarde_eu/100; } 
  
 if($elemId == 18 && $kzlJaar <= date('Y')) { /* 18 = Aantal worpen*/ $real = $worpn; }
  
@@ -488,17 +488,17 @@ if(isset($oud_eenh) && $oud_eenh <> $eenh) { ?>
 </table>
  </td>
  </tr>
-	<tr> <td colspan = 7><hr SIZE="5" NOSHADE> </td> </tr>
-	<tr> <td>
+    <tr> <td colspan = 7><hr SIZE="5" NOSHADE> </td> </tr>
+    <tr> <td>
 <table border = 0>
 
 </table>
-	</td>
-	<td colspan = 5 align =right>
+    </td>
+    <td colspan = 5 align =right>
 <table border = 0 style= "font-size : 14px">
 
 </table>
-	</td> </tr>
+    </td> </tr>
 
 
 <?php
@@ -511,7 +511,7 @@ WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and hr.actief = 1 a
 GROUP BY hr.rubhId, hr.rubriek
 ORDER BY hr.sort
 ") or die (mysqli_error($db));
-	while ($rh = mysqli_fetch_assoc($zoek_HfdRubriek)) { $rubhId = $rh['rubhId']; $rubriek_h = $rh['rubriek']; ?>
+    while ($rh = mysqli_fetch_assoc($zoek_HfdRubriek)) { $rubhId = $rh['rubhId']; $rubriek_h = $rh['rubriek']; ?>
 
 <tr height = 50 > <td></td></tr>
 <tr>
@@ -544,7 +544,7 @@ WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and r.rubhId = '".m
 GROUP BY sb.salbId, ru.rubuId, r.rubriek, sb.waarde
 ORDER BY r.rubriek
 ") or die (mysqli_error($db));
-	while ($rub = mysqli_fetch_assoc($zoek_Rubriek)) { $Id = $rub['salbId']; $credeb = $rub['credeb']; $rubId = $rub['rubId']; $rubuId = $rub['rubuId']; $rubriek = $rub['rubriek']; $hoev_ru = $rub['hoev']; $waarde_ru = $rub['waarde']; $rubliq = $rub['bedrag_liq']; $rubreal = $rub['bedrag_real'];
+    while ($rub = mysqli_fetch_assoc($zoek_Rubriek)) { $Id = $rub['salbId']; $credeb = $rub['credeb']; $rubId = $rub['rubId']; $rubuId = $rub['rubuId']; $rubriek = $rub['rubriek']; $hoev_ru = $rub['hoev']; $waarde_ru = $rub['waarde']; $rubliq = $rub['bedrag_liq']; $rubreal = $rub['bedrag_real'];
 
 if(!isset($waarde_ru)) { $waarde_ru = 0; }
 $rubliq_eur = euro_format($rubliq); 
@@ -574,44 +574,44 @@ unset($diern_verv);
 if($rubId == 1 || $rubId == 40) { $diern_verv = $p_ooital*$p_dooperc_mdr; } // Aantl t.b.v. Aankoop moederdier en Verkoop moederdier 
 
 
-/*optie 1*/	
- if(!isset($diern_o) && !isset($diern_l) && !isset($diern_verv) && !isset($hoev_ru)) { $rubprog = $waarde_ru; 				$optie = 'optie1';}
+/*optie 1*/    
+ if(!isset($diern_o) && !isset($diern_l) && !isset($diern_verv) && !isset($hoev_ru)) { $rubprog = $waarde_ru;                 $optie = 'optie1';}
 
 /*optie 2*/ 
-else if(!isset($diern_o) && !isset($diern_l) && !isset($diern_verv) && isset($hoev_ru)) { $rubprog = $hoev_ru*$waarde_ru; 		$optie = 'optie2';}
+else if(!isset($diern_o) && !isset($diern_l) && !isset($diern_verv) && isset($hoev_ru)) { $rubprog = $hoev_ru*$waarde_ru;         $optie = 'optie2';}
 
 /*optie 3*/
-else if(isset($diern_o) && !isset($hoev_ru)) { $rubprog = $diern_o*$waarde_ru; $diern = $diern_o; unset($diern_o); 				$optie = 'optie3';}
+else if(isset($diern_o) && !isset($hoev_ru)) { $rubprog = $diern_o*$waarde_ru; $diern = $diern_o; unset($diern_o);                 $optie = 'optie3';}
 
 /*optie 4*/
-else if(isset($diern_o) && isset($hoev_ru)) { $rubprog = $diern_o*$hoev_ru*$waarde_ru; $diern = $diern_o; unset($diern_o); 		$optie = 'optie4';}
+else if(isset($diern_o) && isset($hoev_ru)) { $rubprog = $diern_o*$hoev_ru*$waarde_ru; $diern = $diern_o; unset($diern_o);         $optie = 'optie4';}
 
 /*optie 5*/
-else if(isset($diern_l) && !isset($hoev_ru)) { $rubprog = $diern_l*$waarde_ru; $diern = $diern_l; unset($diern_l); 				$optie = 'optie5';}
+else if(isset($diern_l) && !isset($hoev_ru)) { $rubprog = $diern_l*$waarde_ru; $diern = $diern_l; unset($diern_l);                 $optie = 'optie5';}
 
 /*optie 6*/
-else if(isset($diern_l) && isset($hoev_ru)) { $rubprog = $diern_l*$hoev_ru*$waarde_ru; $diern = $diern_l; unset($diern_l); 		$optie = 'optie6';}
+else if(isset($diern_l) && isset($hoev_ru)) { $rubprog = $diern_l*$hoev_ru*$waarde_ru; $diern = $diern_l; unset($diern_l);         $optie = 'optie6';}
 
 /*optie 7*/
 else if(isset($diern_verv) && !isset($hoev_ru)) { $rubprog = $diern_verv*$waarde_ru; $diern = $diern_verv; 
-			$optie = 'optie7';}
+            $optie = 'optie7';}
 
 /*optie 8*/
 else { $rubprog = $waarde_ru+9999999; $optie = 'optie8'; }
 
  
 
-	$rubprog_eur = euro_format($rubprog);
+    $rubprog_eur = euro_format($rubprog);
 if(isset($subprog)) { $subprog = $subprog+$rubprog; } else { $subprog = $rubprog;}
-	 if (isset($subprog_dc) && $credeb == 'c') { $subprog_dc = $subprog_dc-$rubprog; } else if(!isset($subprog_dc) && $credeb == 'c') { $subprog_dc = -$rubprog;}
+     if (isset($subprog_dc) && $credeb == 'c') { $subprog_dc = $subprog_dc-$rubprog; } else if(!isset($subprog_dc) && $credeb == 'c') { $subprog_dc = -$rubprog;}
 else if (isset($subprog_dc) && $credeb == 'd') { $subprog_dc = $subprog_dc+$rubprog; } else if(!isset($subprog_dc) && $credeb == 'd') { $subprog_dc = $rubprog;}
-	 if (isset($subliq_dc) && $credeb == 'c') { $subliq_dc = $subliq_dc-$rubliq; } else if(!isset($subliq_dc) && $credeb == 'c') { $subliq_dc = -$rubliq;}
+     if (isset($subliq_dc) && $credeb == 'c') { $subliq_dc = $subliq_dc-$rubliq; } else if(!isset($subliq_dc) && $credeb == 'c') { $subliq_dc = -$rubliq;}
 else if (isset($subliq_dc) && $credeb == 'd') { $subliq_dc = $subliq_dc+$rubliq; } else if(!isset($subliq_dc) && $credeb == 'd') { $subliq_dc = $rubliq;}
-	 if (isset($subreal_dc) && $credeb == 'c') { $subreal_dc = $subreal_dc-$rubreal; } else if(!isset($subreal_dc) && $credeb == 'c') { $subreal_dc = -$rubreal;}
+     if (isset($subreal_dc) && $credeb == 'c') { $subreal_dc = $subreal_dc-$rubreal; } else if(!isset($subreal_dc) && $credeb == 'c') { $subreal_dc = -$rubreal;}
 else if (isset($subreal_dc) && $credeb == 'd') { $subreal_dc = $subreal_dc+$rubreal; } else if(!isset($subreal_dc) && $credeb == 'd') { $subreal_dc = $rubreal;}
-	/*echo $rubriek.' $rubprog = '.$rubprog.' $subprog_dc = '.$subprog_dc.'<br>'; */
-	/*echo $rubriek.' $rubliq = '.$rubliq.' $rubliq_dc = '.$subliq_dc.'<br>'; */
-	/*echo $rubriek.' $rubreal = '.$rubreal.' $rubreal_dc = '.$subreal_dc.'<br>';*/ 
+    /*echo $rubriek.' $rubprog = '.$rubprog.' $subprog_dc = '.$subprog_dc.'<br>'; */
+    /*echo $rubriek.' $rubliq = '.$rubliq.' $rubliq_dc = '.$subliq_dc.'<br>'; */
+    /*echo $rubriek.' $rubreal = '.$rubreal.' $rubreal_dc = '.$subreal_dc.'<br>';*/ 
 ?>
 <tr>
  <td><?php echo /*$rubId.'-'.*/ $rubriek /*.' - '.$optie*/ ?></td>
@@ -671,7 +671,7 @@ else if (isset($subreal_dc) && $credeb == 'd') { $subreal_dc = $subreal_dc+$rubr
 
 
 </form>
-	</TD>
+    </TD>
 <?php } else { ?> <img src='saldoberekening_php.jpg'  width='970' height='2850'> <?php }
 include "menuFinance.php"; } ?>
 </tr>

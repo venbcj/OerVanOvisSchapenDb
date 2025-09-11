@@ -23,16 +23,16 @@ $titel = 'Medicijnoverzicht';
 $file = "Med_registratie.php";
 include "login.php"; ?>
 
-		<TD valign = "top">
+        <TD valign = "top">
 <?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"])) {
 
 $pstId = '';
 If (empty($_GET['pstId']))
-	{	$Id = $_GET['txtSchaapId'];	}
-	  else
-	{ 	$Id = $_GET['pstId']; }
-				
+    {    $Id = $_GET['txtSchaapId'];    }
+      else
+    {     $Id = $_GET['pstId']; }
+                
 ?>
 <table border = 0>
 <tr style = "font-size:12px;">
@@ -76,26 +76,26 @@ ORDER BY h.datum desc, i.inkId
 ") or die (mysqli_error($db));
 
 while($row = mysqli_fetch_assoc($result))
-			{
-				$Id = $row['schaapId'];
-				$levnr = $row['levensnummer'];
-				$toedm = $row['toedm'];
-				$naam = $row['naam'];
-				$charge = $row['charge'];
-				$vrbat = $row['nutat'];
-				$stdat = $row['stdat'];
-				$totat = $row['totat'];
-				$eenh = $row['eenheid'];
-				$reden = $row['reden']; ?>
+            {
+                $Id = $row['schaapId'];
+                $levnr = $row['levensnummer'];
+                $toedm = $row['toedm'];
+                $naam = $row['naam'];
+                $charge = $row['charge'];
+                $vrbat = $row['nutat'];
+                $stdat = $row['stdat'];
+                $totat = $row['totat'];
+                $eenh = $row['eenheid'];
+                $reden = $row['reden']; ?>
 
 <form action="MedOverzSchaap.php" method="post">
 
-<tr>	
+<tr>    
  <td width = 0> </td>
  <td width = 100 align = "center" style = "font-size:15px;"> <?php echo $levnr; ?> <br> 
-	<input type="hidden" name="txtSchaapId" value= <?php echo $Id; ?> >
+    <input type="hidden" name="txtSchaapId" value= <?php echo $Id; ?> >
  </td>
- <td width = 1> </td>	   	   
+ <td width = 1> </td>              
  <td width = 100 align = "center" style = "font-size:15px;"> <?php echo $toedm; ?> <br> </td>
  <td width = 1> </td>
  <td width = 250 style = "font-size:15px;"> <?php echo $naam; ?> <br> </td>
@@ -103,21 +103,21 @@ while($row = mysqli_fetch_assoc($result))
  <td width = 100 style = "font-size:15px;"> <?php echo $charge; ?> <br> </td>
  <td width = 1> </td>
  <td width = 100 align = "center" style = "font-size:15px;"> <?php echo $vrbat; ?> <br> </td>
- <td width = 1> </td>	
+ <td width = 1> </td>    
  <td width = 100 align = "center" style = "font-size:15px;"> <?php echo $stdat; ?> </td>
  <td width = 1> </td>
  <td width = 100 align = "center" style = "font-size:15px;"> <?php echo $totat; ?> </td>
  <td width = 1> </td>
  <td width = 160 align = "center" style = "font-size:15px;"> <?php echo $eenh; ?> </td>
  <td width = 1> </td>
-	   
+       
 <?php } ?>
 
 </form>
 </table>
 
 
-		</TD>
+        </TD>
 <?php
 include "menu1.php"; } ?>
 </tr>
@@ -128,5 +128,5 @@ include "menu1.php"; } ?>
 </html>
 
 <!-- 19-2-14 : in $result vrbat en totat afgreond tot 2 cijfers achter de komma ovv Rina (dd 18-2) 
-		Per levensnummer resultaten tonen
+        Per levensnummer resultaten tonen
 -->

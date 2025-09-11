@@ -21,7 +21,7 @@ $titel = 'Menu Voorraadbeheer';
 $file = "Inkoop.php";
 include "login.php"; ?>
 
-			<TD align = "center">
+            <TD align = "center">
 <?php
 if (Auth::is_logged_in()) { ?>
 

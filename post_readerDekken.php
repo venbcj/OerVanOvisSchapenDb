@@ -20,14 +20,14 @@ foreach($array as $recId => $id) {
   if ($key == 'chbKies')   { $fldKies = $value; }
   if ($key == 'chbDel')    { $fldDel = $value; }
 
-	if ($key == 'txtDatum' && !empty($value)) { $dag = date_create($value); $valuedag =  date_format($dag, 'Y-m-d'); 
-									$fldDag = $valuedag; }
-	
-	if ($key == 'kzlOoi' && !empty($value)) { /*echo '$fldOoi = '.$value.'<br>';*/ $fldOoi = $value; } // betreft schaapId ooi
+    if ($key == 'txtDatum' && !empty($value)) { $dag = date_create($value); $valuedag =  date_format($dag, 'Y-m-d'); 
+                                    $fldDag = $valuedag; }
+    
+    if ($key == 'kzlOoi' && !empty($value)) { /*echo '$fldOoi = '.$value.'<br>';*/ $fldOoi = $value; } // betreft schaapId ooi
 
-	if ($key == 'kzlRam' && !empty($value)) { /*echo '$fldRam = '.$value.'<br>';*/ $fldRam = $value; } // betreft schaapId ram
-	 
-									}
+    if ($key == 'kzlRam' && !empty($value)) { /*echo '$fldRam = '.$value.'<br>';*/ $fldRam = $value; } // betreft schaapId ram
+     
+                                    }
 // (extra) controle of readerregel reeds is verwerkt. Voor als de pagina 2x wordt verstuurd bij fouten op de pagina
 unset($verwerkt);
 $zoek_readerRegel_verwerkt = mysqli_query($db,"
@@ -56,8 +56,8 @@ WHERE schaapId = '".mysqli_real_escape_string($db,$fldOoi)."' and lidId = '".mys
 
 while($zs = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $zs['stalId']; }
 
-	$insert_tblHistorie = "INSERT INTO tblHistorie SET stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$fldDag)."', actId = 18 ";	
-/*echo $insert_tblHistorie.'<br>';*/		mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
+    $insert_tblHistorie = "INSERT INTO tblHistorie SET stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$fldDag)."', actId = 18 ";    
+/*echo $insert_tblHistorie.'<br>';*/        mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
 
 $zoek_hisId = mysqli_query($db,"
 SELECT max(hisId) hisId
@@ -67,11 +67,11 @@ WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."' and datum = '".mysql
 
 while($zh = mysqli_fetch_assoc($zoek_hisId)) { $hisId = $zh['hisId']; }
 
-	$insert_tblVolwas = "INSERT INTO tblVolwas SET readId = '".mysqli_real_escape_string($db,$recId)."', hisId = '".mysqli_real_escape_string($db,$hisId)."', mdrId = '".mysqli_real_escape_string($db,$fldOoi)."', vdrId = ". db_null_input($fldRam);	
-/*echo $insert_tblVolwas.'<br>';*/		mysqli_query($db,$insert_tblVolwas) or die (mysqli_error($db));	
+    $insert_tblVolwas = "INSERT INTO tblVolwas SET readId = '".mysqli_real_escape_string($db,$recId)."', hisId = '".mysqli_real_escape_string($db,$hisId)."', mdrId = '".mysqli_real_escape_string($db,$fldOoi)."', vdrId = ". db_null_input($fldRam);    
+/*echo $insert_tblVolwas.'<br>';*/        mysqli_query($db,$insert_tblVolwas) or die (mysqli_error($db));    
 
-		$updateReader = "UPDATE impAgrident SET verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' ";
-/*echo $updateReader.'<br>';*/		mysqli_query($db,$updateReader) or die (mysqli_error($db));
+        $updateReader = "UPDATE impAgrident SET verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' ";
+/*echo $updateReader.'<br>';*/        mysqli_query($db,$updateReader) or die (mysqli_error($db));
 
 
 unset($fldOoi); unset($fldRam);
@@ -81,19 +81,19 @@ unset($fldOoi); unset($fldRam);
 
 } // Einde if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt))
 
-	
- if($fldKies == 0 && $fldDel == 1) {	
-	
+    
+ if($fldKies == 0 && $fldDel == 1) {    
+    
     $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' " ;
-/*echo $updateReader.'<br>';*/		mysqli_query($db,$updateReader) or die (mysqli_error($db));
-	}
+/*echo $updateReader.'<br>';*/        mysqli_query($db,$updateReader) or die (mysqli_error($db));
+    }
 
 
 
 
 
 unset($fldlevnr);
-	}
+    }
 ?>
-					
-	
+                    
+    

@@ -28,16 +28,16 @@ $titel = 'Ooikaart per moederdier';
 $file = "Ooikaart.php";
 include "login.php"; ?>
 
-		<TD valign = 'top' align = 'center'>
+        <TD valign = 'top' align = 'center'>
 <?php
 if (Auth::is_logged_in()) { if($modtech ==1) {
 
 if (isset($_GET['pstId'])) {$raak = $_GET['pstId']; } ?>
 
-<table border = 0> <?php					
-If (empty($_POST['kzllevnr']) ) {	$kzlLevnr = '';	} else {	$kzlLevnr = $_POST['kzllevnr'];		}
-If (empty($_POST['kzlwerknr']))	{	if(isset($raak)) {$kzlWerknr = $raak;} else {$kzlWerknr = '';} } else {	$kzlWerknr = $_POST['kzlwerknr'];	}
-If (empty($_POST['kzlHalsnr']) ) {	$kzlHalsnr = '';	} else {	$kzlHalsnr = $_POST['kzlHalsnr'];		}
+<table border = 0> <?php                    
+If (empty($_POST['kzllevnr']) ) {    $kzlLevnr = '';    } else {    $kzlLevnr = $_POST['kzllevnr'];        }
+If (empty($_POST['kzlwerknr']))    {    if(isset($raak)) {$kzlWerknr = $raak;} else {$kzlWerknr = '';} } else {    $kzlWerknr = $_POST['kzlwerknr'];    }
+If (empty($_POST['kzlHalsnr']) ) {    $kzlHalsnr = '';    } else {    $kzlHalsnr = $_POST['kzlHalsnr'];        }
 
 /* Keuze ooi kan op basis van levensnummer, werknr en/of halsnr 
 Onderstaande werkt het volgende uit: 
@@ -45,7 +45,7 @@ Alle keuzes worden bij elkaar opgeteld en gedeeld door het aantal ingevulde keuz
 Elk van de gevulde keuze velden moet gelijk zijn aan het resultaat van de deling.
 Dat is   $gekozen_ooi  !!! */
 if (!empty($kzlLevnr))
-{	$zoek_moeder = mysqli_query($db,"
+{    $zoek_moeder = mysqli_query($db,"
 SELECT schaapId
 FROM tblSchaap
 WHERE schaapId = '".mysqli_real_escape_string($db,$kzlLevnr)."'
@@ -57,7 +57,7 @@ $deel = 1; }
 else { $mdrId_obv_levnr = 0; $deel = 0; }
 
 if (!empty($kzlWerknr))
-{	$zoek_moeder = mysqli_query($db,"
+{    $zoek_moeder = mysqli_query($db,"
 SELECT schaapId
 FROM tblSchaap
 WHERE schaapId = '".mysqli_real_escape_string($db,$kzlWerknr)."'
@@ -69,7 +69,7 @@ $deel++ ; }
 else { $mdrId_obv_werknr = 0; }
 
 if (!empty($kzlHalsnr))
-{	$zoek_moeder = mysqli_query($db,"
+{    $zoek_moeder = mysqli_query($db,"
 SELECT schaapId
 FROM tblSchaap
 WHERE schaapId = '".mysqli_real_escape_string($db,$kzlHalsnr)."'
@@ -79,19 +79,19 @@ while ($zm = mysqli_fetch_assoc($zoek_moeder)) { $mdrId_obv_halsnr = $zm['schaap
 $deel++ ; }
 
 else { $mdrId_obv_halsnr = 0; }
-	
+    
 if ($deel > 0) { $mdrId_obv_keuze = ($mdrId_obv_levnr + $mdrId_obv_werknr + $mdrId_obv_halsnr) / $deel; }
 if (isset($mdrId_obv_keuze) && ($mdrId_obv_keuze == $mdrId_obv_levnr || $mdrId_obv_keuze == $mdrId_obv_werknr || $mdrId_obv_keuze == $mdrId_obv_halsnr) )
 { $gekozen_ooi = $mdrId_obv_keuze; } 
 /* Einde  Keuze ooi kan op basis van levensnummer, werknr en/of halsnr */
 
-	?>
-<tr align = "center" valign = 'top' ><td colspan = 35>	<table border = 0>
+    ?>
+<tr align = "center" valign = 'top' ><td colspan = 35>    <table border = 0>
 
 <tr>
-<td width="150"> </td>	
+<td width="150"> </td>    
 <td colspan = 3><i><sub> Levensnummer </sub></i> </td>
-<td> </td>	
+<td> </td>    
 <td colspan = 3><i><sub> Werknr </sub></i> </td>
 <td> </td>
 <td colspan = 3><i><sub> Halsnr </sub></i> </td>
@@ -110,7 +110,7 @@ if (isset($mdrId_obv_keuze) && ($mdrId_obv_keuze == $mdrId_obv_levnr || $mdrId_o
 <form action= "Ooikaart.php" method= "post"> 
 
 <td colspan = 3>
-<?php	//Keuzelijst levensnummer
+<?php    //Keuzelijst levensnummer
 $kzl = mysqli_query($db,"
 SELECT mdr.schaapId, mdr.levensnummer
 FROM tblSchaap mdr
@@ -118,38 +118,38 @@ FROM tblSchaap mdr
  left join tblSchaap lam on (v.volwId = lam.volwId) 
  join tblStal st on (mdr.schaapId = st.schaapId)
  join (
-	SELECT schaapId
-	FROM tblStal st
-	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 3 and h.skip = 0
+    SELECT schaapId
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
  ) h on (st.schaapId = h.schaapId)
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best) and mdr.geslacht = 'ooi'
 GROUP BY mdr.schaapId, mdr.levensnummer
 ORDER BY mdr.levensnummer
 ") or die (mysqli_error($db)); ?>
  <select name= "kzllevnr" style= "width:120;" >
- <option> </option> 	
-<?php		while($row = mysqli_fetch_array($kzl))
-		{
-		
-			$opties= array($row['schaapId']=>$row['levensnummer']);
-			foreach ( $opties as $key => $waarde)
-			{
-						$keuze = '';
-		
-		if(isset($_POST['kzllevnr']) && $_POST['kzllevnr'] == $key)
-		{
-			$keuze = ' selected ';
-		}
-				
-		echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
-			}
-		
-		} ?>
-	</select>
-	</td>
+ <option> </option>     
+<?php        while($row = mysqli_fetch_array($kzl))
+        {
+        
+            $opties= array($row['schaapId']=>$row['levensnummer']);
+            foreach ( $opties as $key => $waarde)
+            {
+                        $keuze = '';
+        
+        if(isset($_POST['kzllevnr']) && $_POST['kzllevnr'] == $key)
+        {
+            $keuze = ' selected ';
+        }
+                
+        echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
+            }
+        
+        } ?>
+    </select>
+    </td>
 
-	<td> </td>
+    <td> </td>
 
 <td colspan = 3>
 <?php //Keuzelijst werknr
@@ -161,10 +161,10 @@ FROM tblSchaap mdr
  left join tblSchaap lam on (v.volwId = lam.volwId) 
  join tblStal st on (mdr.schaapId = st.schaapId)
  join (
-	SELECT schaapId
-	FROM tblStal st
-	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 3 and h.skip = 0
+    SELECT schaapId
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
  ) h on (st.schaapId = h.schaapId)
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best) and mdr.geslacht = 'ooi'
 GROUP BY mdr.schaapId, right(mdr.levensnummer,$Karwerk)
@@ -172,25 +172,25 @@ ORDER BY right(mdr.levensnummer,$Karwerk)
 ") or die (mysqli_error($db)); ?>
 <select name= "kzlwerknr" style= "width:<?php echo $width; ?>;" >
 <option> </option>
-<?php		while($row = mysqli_fetch_array($kzl))
-		{
-		
-			$opties= array($row['schaapId']=>$row['werknr']);
-			foreach ( $opties as $key => $waarde)
-			{
-						$keuze = '';
-		
-		if((isset($_POST['kzlwerknr']) && $_POST['kzlwerknr'] == $key) ||(isset($raak) && $raak == $key))
-		{
-			$keuze = ' selected ';
-		}
-		
-		echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
-			}
-		
-		} ?>
-	</select>
-	</td>
+<?php        while($row = mysqli_fetch_array($kzl))
+        {
+        
+            $opties= array($row['schaapId']=>$row['werknr']);
+            foreach ( $opties as $key => $waarde)
+            {
+                        $keuze = '';
+        
+        if((isset($_POST['kzlwerknr']) && $_POST['kzlwerknr'] == $key) ||(isset($raak) && $raak == $key))
+        {
+            $keuze = ' selected ';
+        }
+        
+        echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
+            }
+        
+        } ?>
+    </select>
+    </td>
 
 
 <td> </td>
@@ -205,26 +205,26 @@ WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.kleur is not
 GROUP BY s.schaapId, concat(st.kleur,' ',st.halsnr)
 ORDER BY st.kleur, st.halsnr
 ") or die (mysqli_error($db)); ?>
-			
+            
  <select name="kzlHalsnr" style= "width: 80;" >
  <option></option>
-<?php		while($row = mysqli_fetch_array($zoek_halsnr))
-		{
-		
-			$opties= array($row['schaapId']=>$row['halsnr']);
-			foreach ( $opties as $key => $waarde)
-			{
-						$keuze = '';
-		
-		if(isset($_POST['kzlHalsnr']) && $_POST['kzlHalsnr'] == $key)
-		{
-			$keuze = ' selected ';
-		}
-		
-		echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
-			}
-		
-		} ?>
+<?php        while($row = mysqli_fetch_array($zoek_halsnr))
+        {
+        
+            $opties= array($row['schaapId']=>$row['halsnr']);
+            foreach ( $opties as $key => $waarde)
+            {
+                        $keuze = '';
+        
+        if(isset($_POST['kzlHalsnr']) && $_POST['kzlHalsnr'] == $key)
+        {
+            $keuze = ' selected ';
+        }
+        
+        echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
+            }
+        
+        } ?>
  </select>
 </td>
 <!-- Einde kzlHalsnr -->
@@ -235,14 +235,14 @@ ORDER BY st.kleur, st.halsnr
 <input type = "submit" name="knpToon" value = "toon">
 </td>
 </tr>
-</form>	
+</form>    
 
-</table>		</td></tr>
+</table>        </td></tr>
 
 <?php
 
 if (isset($gekozen_ooi))
-{				
+{                
 
 $result_mdr = mysqli_query($db,"
 SELECT mdr.levensnummer, right(mdr.levensnummer,$Karwerk) werknr, r.ras, date_format(hg.datum,'%d-%m-%Y') geb_datum, date_format(hop.datum,'%d-%m-%Y') aanvoerdm, count(lam.schaapId) lammeren, datediff(current_date(),ouder.datum) dagen, count(ooi.schaapId) aantooi, count(ram.schaapId) aantram,
@@ -252,24 +252,24 @@ SELECT mdr.levensnummer, right(mdr.levensnummer,$Karwerk) werknr, r.ras, date_fo
 FROM tblSchaap mdr 
  left join tblVolwas v on (mdr.schaapId = v.mdrId)
  left join (
- 	SELECT s.schaapId, s.levensnummer, s.volwId
- 	FROM tblSchaap s
- 	 join tblStal st on (s.schaapId = st.schaapId)
- 	 join tblHistorie h on (st.stalId = h.stalId)
- 	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 1 and h.skip = 0
+     SELECT s.schaapId, s.levensnummer, s.volwId
+     FROM tblSchaap s
+      join tblStal st on (s.schaapId = st.schaapId)
+      join tblHistorie h on (st.stalId = h.stalId)
+     WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 1 and h.skip = 0
  ) lam on (v.volwId = lam.volwId)
  join (
-	SELECT max(stalId) stalId, mdr.schaapId
-	FROM tblStal st
-	 join tblSchaap mdr on (st.schaapId = mdr.schaapId)
-	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and mdr.schaapId = '".mysqli_real_escape_string($db,$gekozen_ooi)."'
-	GROUP BY mdr.schaapId
+    SELECT max(stalId) stalId, mdr.schaapId
+    FROM tblStal st
+     join tblSchaap mdr on (st.schaapId = mdr.schaapId)
+    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and mdr.schaapId = '".mysqli_real_escape_string($db,$gekozen_ooi)."'
+    GROUP BY mdr.schaapId
  ) maxst on (maxst.schaapId = mdr.schaapId)
  join (
-	SELECT st.schaapId, h.datum
-	FROM tblStal st
-	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 3 and h.skip = 0
+    SELECT st.schaapId, h.datum
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
  ) ouder on (mdr.schaapId = ouder.schaapId)
  left join tblHistorie hg on (maxst.stalId = hg.stalId and hg.actId = 1 and hg.skip = 0)
  left join tblHistorie hop on (maxst.stalId = hop.stalId and (hop.actId = 2 or hop.actId = 11) and hop.skip = 0 )
@@ -283,33 +283,33 @@ FROM tblSchaap mdr
  
 GROUP BY mdr.levensnummer, mdr.geslacht, r.ras, date_format(hg.datum,'%d-%m-%Y'), date_format(hop.datum,'%d-%m-%Y')
 ORDER BY right(mdr.levensnummer,$Karwerk) desc
-") or die (mysqli_error($db));	
+") or die (mysqli_error($db));    
 
-{	
+{    
 while($row = mysqli_fetch_assoc($result_mdr))
-			{
-				$levnr = $row['levensnummer'];
-				$werknr = $row['werknr'];
-				$ras = $row['ras'];
-				$gebdm = $row['geb_datum'];
-				$aanvdm = $row['aanvoerdm']; if(isset($gebdm)) { $opdm = $gebdm; } else { $opdm = $aanvdm; }
-				$dagen = $row['dagen'];
-				$lammeren = $row['lammeren'];
-				$levend = $row['levend'];
-				$percleven = $row['percleven'];
-				$aantooi = $row['aantooi'];
-				$aantram = $row['aantram'];
-				$gemkg = $row['gemgewicht'];
-				$aantspn = $row['aantspn'];
-				$gemspn = $row['gemspnkg'];
-				$aantafl = $row['aantafv'];
-				$gemafl = $row['gemafvkg'];			
-/*	Gegevens tbv MOEDERDIER		*/
+            {
+                $levnr = $row['levensnummer'];
+                $werknr = $row['werknr'];
+                $ras = $row['ras'];
+                $gebdm = $row['geb_datum'];
+                $aanvdm = $row['aanvoerdm']; if(isset($gebdm)) { $opdm = $gebdm; } else { $opdm = $aanvdm; }
+                $dagen = $row['dagen'];
+                $lammeren = $row['lammeren'];
+                $levend = $row['levend'];
+                $percleven = $row['percleven'];
+                $aantooi = $row['aantooi'];
+                $aantram = $row['aantram'];
+                $gemkg = $row['gemgewicht'];
+                $aantspn = $row['aantspn'];
+                $gemspn = $row['gemspnkg'];
+                $aantafl = $row['aantafv'];
+                $gemafl = $row['gemafvkg'];            
+/*    Gegevens tbv MOEDERDIER        */
 
 
 ?>
 <tr><td colspan = 6 align = "center"><h3>moederdier</td></tr>
-							
+                            
 <tr style = "font-size:12px;">
  <th width = 0 height = 30></th>
  <th width = 1 height = 30></th>
@@ -347,7 +347,7 @@ while($row = mysqli_fetch_assoc($result_mdr))
  <th width = 600></th>
 </tr>
 
-<tr align = "center">	
+<tr align = "center">    
  <td width = 0> </td>
  <td width = 1> </td>
  <td width = 100 style = "font-size:14px;"> <?php echo $levnr; ?> <br> </td>
@@ -355,63 +355,63 @@ while($row = mysqli_fetch_assoc($result_mdr))
  <td width = 100 style = "font-size:14px;"> <?php echo $werknr; ?> <br> </td>
  <td width = 1> </td>
  <td width = 100 style = "font-size:14px;"> <?php echo $ras; ?> <br> </td>
- <td width = 1> </td>	   	   
+ <td width = 1> </td>              
  <td width = 100 style = "font-size:12px;"> <?php echo $opdm; ?> <br> </td>
  <td width = 1> </td>
  <td width = 100 style = "font-size:14px;"> <?php echo $dagen; ?> <br> </td>
- <td width = 1> </td>	   	   
+ <td width = 1> </td>              
  <td width = 100 style = "font-size:14px;"> <?php echo $lammeren; ?> <br> </td>
  <td width = 1> </td>
  <td width = 100 style = "font-size:14px;"> <?php echo $levend; ?> <br> </td>
- <td width = 1> </td>	
+ <td width = 1> </td>    
  <td width = 100 style = "font-size:14px;"> <?php echo $percleven; ?> <br> </td>
  <td width = 1> </td>
  <td width = 100 style = "font-size:14px;"> <?php echo $aantooi; ?> <br> </td>
- <td width = 1> </td>	
+ <td width = 1> </td>    
  <td width = 100 style = "font-size:14px;"> <?php echo $aantram; ?> <br> </td>
  <td width = 1> </td>
- <td width = 100 style = "font-size:14px;"> <?php echo $gemkg; ?> <br> </td>	
+ <td width = 100 style = "font-size:14px;"> <?php echo $gemkg; ?> <br> </td>    
  <td width = 1> </td>
  <td width = 100 style = "font-size:12px;"> <?php echo $aantspn; ?> <br> </td>
- <td width = 1> </td>	
+ <td width = 1> </td>    
  <td width = 100 style = "font-size:12px;"> <?php echo $gemspn; ?> <br> </td>
  <td width = 1> </td>
  <td width = 100 style = "font-size:12px;"> <?php echo $aantafl; ?> <br> </td>
- <td width = 1> </td>	
+ <td width = 1> </td>    
  <td width = 100 style = "font-size:12px;"> <?php echo $gemafl; ?> <br> </td>
  <td width = 1> </td>
  <td width = 80 style = "font-size:13px;" >
 
-<?php	}   ?>
-	   </td>
+<?php    }   ?>
+       </td>
 <?php } ?>
-	   
+       
 </tr> 
 <tr><td colspan = 35 ><hr></td></tr>
 <tr><td height = 25 ></td></tr>
 <tr><td colspan = 10 align = "center"><h3>lammeren van moederdier </td></tr>
 <tr><td></td></tr>
-<!--	Einde Gegevens tbv MOEDERDIER		-->
+<!--    Einde Gegevens tbv MOEDERDIER        -->
 <tr><td colspan = 50>
-	<table border = 0>
+    <table border = 0>
 
-	<tr align = "center" style = "font-size : 12px;" height = 30 valign = 'bottom' >
-	 <td> <b>Levensnummer</b><hr></td>
-	 <td></td> <td><b> werknr </b><hr></td>
-	 <td></td> <td><b> Generatie </b><hr></td>
-	 <td></td> <td><b> Geslacht </b><hr></td>
-	 <td></td> <td><b> Ras </b><hr></td> 
-	 <td></td> <td><b> Geboren </b><hr></td>
-	 <td></td> <td><b> Gewicht </b><hr></td> 
-	 <td></td> <td><b> Speendatum </b><hr></td>
-	 <td></td> <td><b> Speen gewicht </b><hr></td>
-	 <td></td> <td><b> Gem<br>groei<br>spenen </b><hr></td>
-	 <td></td> <td><b> Afvoerdatum </b><hr></td>
-	 <td></td> <td><b> Aflever gewicht </b><hr></td>
-	 <td></td> <td><b> Reden </b><hr></td>
+    <tr align = "center" style = "font-size : 12px;" height = 30 valign = 'bottom' >
+     <td> <b>Levensnummer</b><hr></td>
+     <td></td> <td><b> werknr </b><hr></td>
+     <td></td> <td><b> Generatie </b><hr></td>
+     <td></td> <td><b> Geslacht </b><hr></td>
+     <td></td> <td><b> Ras </b><hr></td> 
+     <td></td> <td><b> Geboren </b><hr></td>
+     <td></td> <td><b> Gewicht </b><hr></td> 
+     <td></td> <td><b> Speendatum </b><hr></td>
+     <td></td> <td><b> Speen gewicht </b><hr></td>
+     <td></td> <td><b> Gem<br>groei<br>spenen </b><hr></td>
+     <td></td> <td><b> Afvoerdatum </b><hr></td>
+     <td></td> <td><b> Aflever gewicht </b><hr></td>
+     <td></td> <td><b> Reden </b><hr></td>
 
-	 <td></td> <td><b> Gem<br>groei<br>afleveren </b><hr></td>
-	</tr><?php
+     <td></td> <td><b> Gem<br>groei<br>afleveren </b><hr></td>
+    </tr><?php
 $lammeren = mysqli_query($db,"
 SELECT s.levensnummer, right(s.levensnummer,$Karwerk) werknr, r.ras, s.geslacht, ouder.datum dmaanw, date_format(hg.datum,'%d-%m-%Y') gebrndm, date_format(hg.datum,'%Y-%m-%d') dmgebrn, hg.kg gebrnkg, date_format(hs.datum,'%d-%m-%Y') speendm, hs.kg speenkg, 
 
@@ -433,54 +433,54 @@ FROM tblSchaap s
  join tblStal st_all on (st_all.schaapId = s.schaapId)
  left join tblHistorie ouder on (st_all.stalId = ouder.stalId and ouder.actId = 3 and ouder.skip = 0)
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and v.mdrId = '".mysqli_real_escape_string($db,$gekozen_ooi)."'
-ORDER BY hg.datum		") or die (mysqli_error($db));	
-	while($lam = mysqli_fetch_assoc($lammeren))
-			{
-				if (empty($lam['levensnummer'])) {$Llevnr = 'Geen';} else {$Llevnr = $lam['levensnummer'];}
-				$Lwerknr = $lam['werknr'];
-				$Lsekse = $lam['geslacht'];
-				$Ldmaanw = $lam['dmaanw'];	if(isset($Ldmaanw))	{ if($Lsekse == 'ooi') { $Lfase = 'moeder'; } if($Lsekse == 'ram') { $Lfase = 'vader'; }  } else { $Lfase = 'lam'; }
-				$Lras = $lam['ras'];
-				$Ldatum = $lam['gebrndm'];
-				$Lkg = $lam['gebrnkg'];
-				$Lspndm = $lam['speendm'];
-				$Lspnkg = $lam['speenkg'];
-				$gemgr_s = $lam['gemgr_s'];
-				$Lafldm = $lam['afvdm'];
-				$Laflkg = $lam['afvkg'];
-				$Luitvdm = $lam['uitvaldm'];
-				$Lreden= $lam['reden'];
-				$gemgr_a = $lam['gemgr_a'];
+ORDER BY hg.datum        ") or die (mysqli_error($db));    
+    while($lam = mysqli_fetch_assoc($lammeren))
+            {
+                if (empty($lam['levensnummer'])) {$Llevnr = 'Geen';} else {$Llevnr = $lam['levensnummer'];}
+                $Lwerknr = $lam['werknr'];
+                $Lsekse = $lam['geslacht'];
+                $Ldmaanw = $lam['dmaanw'];    if(isset($Ldmaanw))    { if($Lsekse == 'ooi') { $Lfase = 'moeder'; } if($Lsekse == 'ram') { $Lfase = 'vader'; }  } else { $Lfase = 'lam'; }
+                $Lras = $lam['ras'];
+                $Ldatum = $lam['gebrndm'];
+                $Lkg = $lam['gebrnkg'];
+                $Lspndm = $lam['speendm'];
+                $Lspnkg = $lam['speenkg'];
+                $gemgr_s = $lam['gemgr_s'];
+                $Lafldm = $lam['afvdm'];
+                $Laflkg = $lam['afvkg'];
+                $Luitvdm = $lam['uitvaldm'];
+                $Lreden= $lam['reden'];
+                $gemgr_a = $lam['gemgr_a'];
 
-	?>	
-	<tr align = "center" style = "font-size : 14px";>
-	 <td align = "center" > <?php echo $Llevnr; ?>  </td>
-	 <td></td> <td> <?php echo $Lwerknr; ?> </td>
-	 <td></td> <td> <?php echo $Lfase; ?> </td>
-	 <td></td> <td> <?php echo $Lsekse; ?> </td>
-	 <td></td> <td> <?php echo $Lras; ?> </td>
-	 <td></td> <td width = 70> <?php echo $Ldatum; ?> </td>
-	 <td></td> <td> <?php echo $Lkg; ?> </td>
-	 <td></td> <td> <?php echo $Lspndm; ?> </td>
-	 <td></td> <td> <?php echo $Lspnkg; ?> </td>
-	 <td></td> <td width = 50 align = 'right'> <?php echo $gemgr_s."&nbsp&nbsp"; ?> </td>
-	 <td></td> <td> <?php echo $Lafldm.$Luitvdm; ?> </td>
-	 <td></td> <td> <?php echo $Laflkg; ?> </td>
-	 <td></td> <td> <?php if(isset($Luitvdm) && !isset($Lreden)) { echo 'Overleden'; } else { echo $Lreden; } ?> </td>
-	 <td></td> <td align = 'right'> <?php echo $gemgr_a."&nbsp"; ?> </td>
-	</tr>
-	<tr>
-	 <td></td>
-	</tr>
+    ?>    
+    <tr align = "center" style = "font-size : 14px";>
+     <td align = "center" > <?php echo $Llevnr; ?>  </td>
+     <td></td> <td> <?php echo $Lwerknr; ?> </td>
+     <td></td> <td> <?php echo $Lfase; ?> </td>
+     <td></td> <td> <?php echo $Lsekse; ?> </td>
+     <td></td> <td> <?php echo $Lras; ?> </td>
+     <td></td> <td width = 70> <?php echo $Ldatum; ?> </td>
+     <td></td> <td> <?php echo $Lkg; ?> </td>
+     <td></td> <td> <?php echo $Lspndm; ?> </td>
+     <td></td> <td> <?php echo $Lspnkg; ?> </td>
+     <td></td> <td width = 50 align = 'right'> <?php echo $gemgr_s."&nbsp&nbsp"; ?> </td>
+     <td></td> <td> <?php echo $Lafldm.$Luitvdm; ?> </td>
+     <td></td> <td> <?php echo $Laflkg; ?> </td>
+     <td></td> <td> <?php if(isset($Luitvdm) && !isset($Lreden)) { echo 'Overleden'; } else { echo $Lreden; } ?> </td>
+     <td></td> <td align = 'right'> <?php echo $gemgr_a."&nbsp"; ?> </td>
+    </tr>
+    <tr>
+     <td></td>
+    </tr>
 <?php } ?>
-</table>		
+</table>        
 
-<!--	Einde Gegevens tbv LAM	-->	
+<!--    Einde Gegevens tbv LAM    -->    
 
 <?php } /* Einde if (isset($gekozen_ooi))  */ 
 
-	elseif (isset($_POST['knpToon']) && $deel == 0)  { $fout = "Er is geen keuze gemaakt."; } 
-	else if(isset($_POST['knpToon'])) { $fout = "Het zoek criterium heeft geen resultaten opgeleverd. Pas het criterum eventueel aan. "; } ?>
+    elseif (isset($_POST['knpToon']) && $deel == 0)  { $fout = "Er is geen keuze gemaakt."; } 
+    else if(isset($_POST['knpToon'])) { $fout = "Het zoek criterium heeft geen resultaten opgeleverd. Pas het criterum eventueel aan. "; } ?>
  </td>
 </tr>
 </table>

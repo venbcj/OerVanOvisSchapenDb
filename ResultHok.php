@@ -4,7 +4,7 @@ require_once("autoload.php");
 
 /* 2-3-2015 : Login toegevoegd 
 6-1-2016 : Hoknr gewijzigd aar Verblijf */
-$versie = "22-1-2017"; /* 19-1-2017 Query's aangepast n.a.v. nieuwe tblDoel		22-1-2017 tblBezetting gewijzigd naar tblBezet*/
+$versie = "22-1-2017"; /* 19-1-2017 Query's aangepast n.a.v. nieuwe tblDoel        22-1-2017 tblBezetting gewijzigd naar tblBezet*/
 /*Wat als voer wordt ingekocht zonder rubriek aan het voer !!?? */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '20-12-2019'; /* tabelnaam gewijzigd van UIT naar uit tabelnaam */
@@ -69,13 +69,13 @@ $titel = 'Periode resultaten';
 $file = "ResultHok.php";
 include "login.php"; ?>
 
-				<TD valign = 'top'>
+                <TD valign = 'top'>
 <?php
 if (Auth::is_logged_in()) { if($modtech ==1) { ?>
 
 <script src="sorteren.js"></script>
 
-	<?php
+    <?php
 /* Binnen subquery hokIn zit een union t.b.v. doelId 3. In die Where cluse is h.datum >= prnt.datum toegepast i.p.v. (h.datum >= prnt.datum or ht.datum > prnt.datum) Schapen die in een verblijf een aanwasdatum krijgen worden niet meegeteld als doelgroep 3 zijnde 'Stallijst'. Deze vallen dus enkel in de doelgroep gespeend */
 
 $result = mysqli_query($db,"
@@ -228,8 +228,8 @@ ORDER BY result.hokId, result.doelId, result.van
 <tbody>
 
 
-<?php		while($row = mysqli_fetch_array($result))
-		{ 
+<?php        while($row = mysqli_fetch_array($result))
+        { 
            $hoknr = $row['hoknr'];
            $doelgr = $row['doel']; 
            $dm1_in = $row['dmeerste_in'];
@@ -261,14 +261,14 @@ ORDER BY result.hokId, result.doelId, result.van
      <td style="display:none;"><?php echo $sort_maxBezet; ?></td> <!-- Deze cel is t.b.v. sorteren $maxBezet -->
      <td width = 100 style = "font-size:15px;"><?php echo $maxBezet; ?></td>
      <td style="display:none;"></td> <!-- Deze cel is t.b.v. sorteren $Schaapdgn -->
-    </tr>		
-		
-<?php		} ?>
+    </tr>        
+        
+<?php        } ?>
 
-	</tbody>	
+    </tbody>    
 </table>
 
-		</TD>
+        </TD>
 <?php } else { ?> <img src='resultHok_php.jpg'  width='970' height='550'/> <?php }
 include "menuRapport.php"; } ?>
 

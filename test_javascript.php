@@ -15,8 +15,8 @@ session_start();
  ?>
 <html>
 <head>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-	 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> 
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> 
 <title>Inkoop</title>
 
 <style type="text/css">
@@ -43,7 +43,7 @@ $titel = 'Inkopen';
 $subtitel = '';
 include "header.tpl.php"; ?>
 
-			<TD width = 960 height = 400 valign = "top">
+            <TD width = 960 height = 400 valign = "top">
 <?php
 $file = "test_javascript.php";
 include "login.php"; 
@@ -59,8 +59,8 @@ ORDER BY soort desc, naam
 "; 
 
 $q_newvoer2 = mysqli_query($db,$newvoer) or die (mysqli_error($db));
-	while($lin = mysqli_fetch_array($q_newvoer2))
-		{
+    while($lin = mysqli_fetch_array($q_newvoer2))
+        {
 
 $array_eenheid[$lin['artId']] = $lin['eenheid'];
 
@@ -69,11 +69,11 @@ $array_eenheid[$lin['artId']] = $lin['eenheid'];
 } ?>
 <script>
 function verplicht() {
-var datum	 = document.getElementById("datum"); 		var datum_v = datum.value;
-var artikel	 = document.getElementById("artikel");		var artikel_v = artikel.value;
+var datum     = document.getElementById("datum");         var datum_v = datum.value;
+var artikel     = document.getElementById("artikel");        var artikel_v = artikel.value;
 
 
-	 if(datum_v.length == 0) datum.focus() + alert("Datum is onbekend.");
+     if(datum_v.length == 0) datum.focus() + alert("Datum is onbekend.");
 else if(artikel_v.length == 0) artikel.focus() + alert("Omschrijving is onbekend.");
 
 }
@@ -81,7 +81,7 @@ else if(artikel_v.length == 0) artikel.focus() + alert("Omschrijving is onbekend
 
 function eenheid_artikel() {
 
-var artikel	 = document.getElementById("artikel");		var artikel_v = artikel.value;
+var artikel     = document.getElementById("artikel");        var artikel_v = artikel.value;
 
 
  if(artikel_v.length > 0) { toon_eenheid(artikel_v); }
@@ -92,7 +92,7 @@ var artikel	 = document.getElementById("artikel");		var artikel_v = artikel.valu
  var jArray= <?php echo json_encode($array_eenheid); ?>;
 
 function toon_eenheid(e) {
-	document.getElementById('aantal').innerHTML = jArray[e] + '&nbsp &nbsp ';
+    document.getElementById('aantal').innerHTML = jArray[e] + '&nbsp &nbsp ';
 }
 
 /*function value_checkbox_jaar() {
@@ -103,7 +103,7 @@ var aYrs = [];
 
 for(var x = 0, l = all_year.length; x < l; x++)
 {
-	var str = aYrs.push(all_year[x].value);
+    var str = aYrs.push(all_year[x].value);
 }
 
 var str = aYrs.join(',');
@@ -120,11 +120,11 @@ var chbJaar = document.getElementById("chbJaar"); var chbJaar_v = chbJaar.value;
 }*/
 
 /*function toon_jaar(v) {
-	document.getElementById('toonj').innerHTML = v;
+    document.getElementById('toonj').innerHTML = v;
 }*/
 
 function removeElement(e) {
-	 document.getElementById('aantal').innerHTML = '';
+     document.getElementById('aantal').innerHTML = '';
 }
 
 
@@ -156,8 +156,8 @@ function jaarnr() {
 <form action="test_javascript.php" method="post" >
 
 <!--*********************************
-		 NIEUWE INVOER VELDEN
-	********************************* -->
+         NIEUWE INVOER VELDEN
+    ********************************* -->
 <table border= 0>
 <tr><td colspan = 3 style = "font-size:13px;"><i> Nieuwe inkoop : </i></td></tr>
 <tr style =  "font-size:12px;" valign =  "bottom"> 
@@ -174,12 +174,12 @@ function jaarnr() {
 
 <?php
 // kzlvoer bij nieuwe invoer
-$q_newvoer = mysqli_query($db,$newvoer) or die (mysqli_error($db));	?>
+$q_newvoer = mysqli_query($db,$newvoer) or die (mysqli_error($db));    ?>
 
  <select style= "width:280;" name = "txtArtikel_" id = "artikel" onchange = "eenheid_artikel()" >
- <option> </option>	
-<?php		while($lijn = mysqli_fetch_array($q_newvoer))
-		{
+ <option> </option>    
+<?php        while($lijn = mysqli_fetch_array($q_newvoer))
+        {
 
 $name = $lijn['naam'];
 if ($lijn['soort'] == 'pil') {$getal = "&nbsp per $lijn[stdat]"; $eenheid = $lijn['heid'];}
@@ -188,21 +188,21 @@ else {$getal = ''; $eenheid = '';}
 $cijf = str_replace('.00', '', $getal); 
 $wrde = "$name$cijf$eenheid";
 
-		
-			$opties= array($lijn['artId']=>$wrde);
-			foreach ( $opties as $key => $waarde)
-			{
-						$keuze = '';
-		
-		if(isset($_POST['txtArtikel_']) && $_POST['txtArtikel_'] == $key)
-		{
-			$keuze = ' selected ';
-		}
-				
-		echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
-			}
-		
-		} ?>
+        
+            $opties= array($lijn['artId']=>$wrde);
+            foreach ( $opties as $key => $waarde)
+            {
+                        $keuze = '';
+        
+        if(isset($_POST['txtArtikel_']) && $_POST['txtArtikel_'] == $key)
+        {
+            $keuze = ' selected ';
+        }
+                
+        echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
+            }
+        
+        } ?>
  </select>
 </td>
 <td><input type= "text" name = "txtCharge_" size = 14 value = <?php if(isset($txtcharge)) { echo $txtcharge; } ?> ></td>
@@ -222,12 +222,12 @@ $wrde = "$name$cijf$eenheid";
 <tr><td colspan = 15><hr></td></tr>
 </table>
 <!--*********************************
-		EINDE NIEUWE INVOER VELDEN
-	********************************* -->
+        EINDE NIEUWE INVOER VELDEN
+    ********************************* -->
 </td></tr><tr><td>
 <!--*****************************
-	 		WIJZIGEN VOER
-	***************************** -->
+             WIJZIGEN VOER
+    ***************************** -->
  <table border= 0 align =  "left" >
  <tr> 
   <td colspan =  16 > <b>Inkopen :</b> 
@@ -238,7 +238,7 @@ $wrde = "$name$cijf$eenheid";
 
 
 
-<?php		
+<?php        
 // START LOOP
 $group_jaar = mysqli_query($db,"
 SELECT year(i.dmink) jaar
@@ -251,13 +251,13 @@ GROUP BY year(i.dmink)
 ORDER BY year(i.dmink) desc
 ") or die (mysqli_error($db));
 
-	while($lus = mysqli_fetch_assoc($group_jaar))
-	{
+    while($lus = mysqli_fetch_assoc($group_jaar))
+    {
             $jaar = ($lus['jaar']);   ?>
 <tr>
  <td colspan="8" >
- 	<p  id="jaartal" >  </p>
- 	<input type="checkbox" name="chbToonJaar" id="chbJaar" onchange="value_checkbox_jaar()" value= <?php echo $jaar;  	if($jaar == 2021) { ?> checked <?php } ?> > toon <?php echo $jaar; ?>
+     <p  id="jaartal" >  </p>
+     <input type="checkbox" name="chbToonJaar" id="chbJaar" onchange="value_checkbox_jaar()" value= <?php echo $jaar;      if($jaar == 2021) { ?> checked <?php } ?> > toon <?php echo $jaar; ?>
  </td>
  <td>
 <p  id="toonj" > </p>
@@ -268,27 +268,27 @@ toon_jaar(str);
 
 </td>
  <td>
- 	Stuksprijs
+     Stuksprijs
  </td>
 </tr>
  <tr style =  "font-size:12px;" valign =  "bottom"> 
-		 <th id="h_datum[]">Inkoopdatum<hr></th>
-		 <th></th> 
-		 <div class="2020 selectt"><th>Omschrijving<hr></th> </div>
-		 <th></th> 
-		 <th>Chargenummer<hr></th>
-		 <th></th> 
-		 <th colspan = 2>Aantal<hr></th> 
-		 <th></th> 
-		 <th width = 50>(excl.)<hr></th>
-		 <th></th> 
-		 <th>Prijs (excl.)<hr></th> 
-		 <th></th>
-		 <th>Btw<hr></th>
-		 <th></th>
-		 <th>Leverancier<hr></th> 
-		 <th>Verwijder<hr></th> 
-		  
+         <th id="h_datum[]">Inkoopdatum<hr></th>
+         <th></th> 
+         <div class="2020 selectt"><th>Omschrijving<hr></th> </div>
+         <th></th> 
+         <th>Chargenummer<hr></th>
+         <th></th> 
+         <th colspan = 2>Aantal<hr></th> 
+         <th></th> 
+         <th width = 50>(excl.)<hr></th>
+         <th></th> 
+         <th>Prijs (excl.)<hr></th> 
+         <th></th>
+         <th>Btw<hr></th>
+         <th></th>
+         <th>Leverancier<hr></th> 
+         <th>Verwijder<hr></th> 
+          
 
 
  </tr> 
@@ -302,8 +302,8 @@ toon_jaar(str);
 
 </table>
 <!--*****************************
-	 	EINDE WIJZIGEN VOER
-	***************************** -->
+         EINDE WIJZIGEN VOER
+    ***************************** -->
 
 
 
@@ -314,7 +314,7 @@ toon_jaar(str);
 
 
 
-	</TD>
+    </TD>
 <?php 
 include "menuInkoop.php"; } ?>
 

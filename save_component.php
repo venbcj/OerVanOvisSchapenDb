@@ -4,8 +4,8 @@
 
 <?php
 /* toegepast in :
-	- Componenten.php */
-	
+    - Componenten.php */
+    
 
 
 foreach($_POST as $fldname => $fldvalue) {  //  Voor elke post die wordt doorlopen wordt de veldnaam en de waarde teruggeven als een array
@@ -25,11 +25,11 @@ foreach($id as $key => $value) {
     if ($key == 'txtWaarde' && !empty($value)) {  $fldWaarde = $value; }    
     
     if ($key == 'chkActief') {  $fldActief = $value; }
-	
-	if ($key == 'chkSalber') {  $fldSalber = $value; }
-	 
+    
+    if ($key == 'chkSalber') {  $fldSalber = $value; }
+     
 
-	
+    
 }
 
 if(!isset($fldActief)) {  $fldActief = '0' ; }
@@ -44,11 +44,11 @@ $Update_Element = "
 UPDATE tblElementuser
 SET waarde = ".db_null_input($fldWaarde).", actief = '".mysqli_real_escape_string($db,$fldActief)."', sal = '".mysqli_real_escape_string($db,$fldSalber)."'
 WHERE elemuId = '".mysqli_real_escape_string($db,$recId)."' ";
-		mysqli_query($db,$Update_Element) or die (mysqli_error($db));
+        mysqli_query($db,$Update_Element) or die (mysqli_error($db));
 
 
 } 
 
 } ?>
-					
-	
+                    
+    

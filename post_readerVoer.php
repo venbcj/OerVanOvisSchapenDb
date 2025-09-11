@@ -15,22 +15,22 @@ foreach($_POST as $fldname => $fldvalue) {
 
 foreach($array as $recId => $id) {
 
-	#echo '<br>'.'$recId = '.$recId.'<br>';
+    #echo '<br>'.'$recId = '.$recId.'<br>';
 
   foreach($id as $key => $value) {
 
-  	if ($key == 'chbkies') 	{ $fldKies = $value; }
-  	if ($key == 'chbDel') 	{ $fldDel = $value; }
+      if ($key == 'chbkies')     { $fldKies = $value; }
+      if ($key == 'chbDel')     { $fldDel = $value; }
 
-	if ($key == 'kzlHok' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldHok = $value; }
+    if ($key == 'kzlHok' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldHok = $value; }
 
-	if ($key == 'kzlVoer' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldArtId = $value; }
+    if ($key == 'kzlVoer' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldArtId = $value; }
 
-	if ($key == 'txtAfslDatum' && !empty($value)) { $dag = date_create($value); $fldDmAfsluit =  date_format($dag, 'Y-m-d'); 
-									/*echo $key.'='.$fldDmAfsluit.' ';*/  }
+    if ($key == 'txtAfslDatum' && !empty($value)) { $dag = date_create($value); $fldDmAfsluit =  date_format($dag, 'Y-m-d'); 
+                                    /*echo $key.'='.$fldDmAfsluit.' ';*/  }
 
-	  
-									}
+      
+                                    }
 
 /*echo '<br>';
 echo 'Het gekozen verblijf = ' . $fldHok . '<br>';
@@ -86,18 +86,18 @@ FROM impAgrident
 WHERE Id = '".mysqli_real_escape_string($db,$recId)."'
 ") or die (mysqli_error($db));
 
-	while( $zd = mysqli_fetch_assoc($zoek_gegevens_uit_reader)) {
-		$doelId_rd = $zd['doelId'];
-		$datum_rd = $zd['datum']; 
-		$toedat_rd = $zd['toedat']; 
-	}*/
+    while( $zd = mysqli_fetch_assoc($zoek_gegevens_uit_reader)) {
+        $doelId_rd = $zd['doelId'];
+        $datum_rd = $zd['datum']; 
+        $toedat_rd = $zd['toedat']; 
+    }*/
 
 $zoek_gegevens_gekozen_artikel = mysqli_query($db,"
 SELECT a.artId, a.naam, a.stdat
 FROM tblArtikel a
 WHERE a.artId = '".mysqli_real_escape_string($db,$fldArtId)."'
 ") or die (mysqli_error($db));
-	while( $zga = mysqli_fetch_assoc($zoek_gegevens_gekozen_artikel)) { $naam = $zga['naam']; $stdat = $zga['stdat']; }
+    while( $zga = mysqli_fetch_assoc($zoek_gegevens_gekozen_artikel)) { $naam = $zga['naam']; $stdat = $zga['stdat']; }
 
 // Controle voldoende voervoorraad per verblijf, artikel en doelgroep
 $zoek_totaalaantal_kg_van_oorspronkelijk_verblijf_artikel_en_doelgroep = mysqli_query($db,"
@@ -105,8 +105,8 @@ SELECT sum(coalesce(toedat_upd, toedat)) toedtot
 FROM impAgrident
 WHERE hokId = '".mysqli_real_escape_string($db,$hokId_rd)."' and artId = '".mysqli_real_escape_string($db,$artId_rd)."' and doelId = '".mysqli_real_escape_string($db,$doelId_rd)."' and actId = 8888 and isnull(verwerkt)
 ") or die (mysqli_error($db));
-	while( $ztkg = mysqli_fetch_assoc($zoek_totaalaantal_kg_van_oorspronkelijk_verblijf_artikel_en_doelgroep)) 
-		{ $toedtot = $ztkg['toedtot']; } // Uitgangspunt : $toedtot is reeds vermenigvuldigd met standaard aantal !!
+    while( $ztkg = mysqli_fetch_assoc($zoek_totaalaantal_kg_van_oorspronkelijk_verblijf_artikel_en_doelgroep)) 
+        { $toedtot = $ztkg['toedtot']; } // Uitgangspunt : $toedtot is reeds vermenigvuldigd met standaard aantal !!
 
 $zoek_voorraad_voer = mysqli_query ($db,"
 SELECT sum(i.inkat) - sum(coalesce(n.nutat,0)) vrdat, a.stdat
@@ -122,7 +122,7 @@ GROUP BY a.stdat
 ") or die (mysqli_error($db));
   while ($zv = mysqli_fetch_assoc($zoek_voorraad_voer)) 
 
-  	{ $voer_vrd = $zv['vrdat']; }
+      { $voer_vrd = $zv['vrdat']; }
 
 /*echo 'Datum_gevoerd = '.$datum_rd.'<br>';
 echo 'Kilogram_voer = '.$toedat_rd.'<br>';
@@ -147,21 +147,21 @@ FROM tblPeriode
 WHERE hokId = '".mysqli_real_escape_string($db,$fldHok)."' and doelId = '".mysqli_real_escape_string($db,$doelId_rd)."' and dmafsluit = '".mysqli_real_escape_string($db,$fldDmAfsluit)."'
 ") or die (mysqli_error($db));
 
-	while( $zp = mysqli_fetch_assoc($zoek_periode)) { $periId = $zp['periId']; }
+    while( $zp = mysqli_fetch_assoc($zoek_periode)) { $periId = $zp['periId']; }
 
 if(isset($periId)) { $fout = "Deze afsluitdatum bestaat al."; }
 
 else if(!isset($periId)) {
 
 $insert_tblPeriode = "INSERT INTO tblPeriode set hokId = '".mysqli_real_escape_string($db,$fldHok)."', doelId= '".mysqli_real_escape_string($db,$doelId_rd)."', dmafsluit = '".mysqli_real_escape_string($db,$fldDmAfsluit)."' ";
-/*echo $insert_tblPeriode.'<br>';*/		mysqli_query($db,$insert_tblPeriode) or die (mysqli_error($db));
+/*echo $insert_tblPeriode.'<br>';*/        mysqli_query($db,$insert_tblPeriode) or die (mysqli_error($db));
 
 $zoek_periId = mysqli_query ($db,"
 SELECT periId
 FROM tblPeriode
 WHERE hokId = '".mysqli_real_escape_string($db,$fldHok)."' and doelId= '".mysqli_real_escape_string($db,$doelId_rd)."' and dmafsluit = '".mysqli_real_escape_string($db,$fldDmAfsluit)."'
 ") or die (mysqli_error($db));
-	while ($pi = mysqli_fetch_assoc($zoek_periId)) { $periId = $pi['periId']; }
+    while ($pi = mysqli_fetch_assoc($zoek_periId)) { $periId = $pi['periId']; }
 }
 // EINDE ASLUITPERIODE BEPALEN
 
@@ -183,7 +183,7 @@ inlezen_voer($db, $fldArtId, $inleeshoeveelheid, $datum_rd, $periId, $readId); /
 
     $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$readId)."' " ;
 
-    /*echo $updateReader.'<br>';*/	mysqli_query($db,$updateReader) or die (mysqli_error($db));
+    /*echo $updateReader.'<br>';*/    mysqli_query($db,$updateReader) or die (mysqli_error($db));
 
 } // Einde if($datum_rd <= $fldDmAfsluit)
 
@@ -198,7 +198,7 @@ if ($fldKies == 0 && $fldDel == 1) {
 
     $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$readId)."' " ;
 
-		/*echo $updateReader.'<br>';*/		mysqli_query($db,$updateReader) or die (mysqli_error($db));
+        /*echo $updateReader.'<br>';*/        mysqli_query($db,$updateReader) or die (mysqli_error($db));
 }
 
 
@@ -207,8 +207,8 @@ if ($fldKies == 0 && $fldDel == 1) {
 
 //#echo '<br>'.'einde '.$recId.'<br>';
 
-	} // Einde foreach($array as $recId => $id)
+    } // Einde foreach($array as $recId => $id)
 
 ?>
-					
-	
+                    
+    

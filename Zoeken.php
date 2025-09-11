@@ -52,7 +52,7 @@ $titel = 'Schaap zoeken';
 $file = "Zoeken.php";
 include "login.php"; ?>
 
-		<TD align = "center" valign = "top">
+        <TD align = "center" valign = "top">
 <?php
 if (Auth::is_logged_in()) {
 
@@ -60,9 +60,9 @@ if(isset($_POST['knpSave_'])) { include "save_commentzoeken.php"; }
 //include vw_Bezetting
 //include vw_Hoklijsten
 
-If (empty($_POST['kzlLevnr_']) ) 	{	$levnr = '';	} else {	$levnr = $_POST['kzlLevnr_'];		}
-If (empty($_POST['kzlWerknr_']))	{	$werknr = '';	} else {	$werknr = $_POST['kzlWerknr_'];	}
-If (!empty($_POST['kzlHalsnr_'])) {	$halsnr = $_POST['kzlHalsnr_'];	};
+If (empty($_POST['kzlLevnr_']) )     {    $levnr = '';    } else {    $levnr = $_POST['kzlLevnr_'];        }
+If (empty($_POST['kzlWerknr_']))    {    $werknr = '';    } else {    $werknr = $_POST['kzlWerknr_'];    }
+If (!empty($_POST['kzlHalsnr_'])) {    $halsnr = $_POST['kzlHalsnr_'];    };
 // tbv het posten en terug posten met dezelfde zoekcriterium
 If (empty($_POST['kzlLevnr_'])) {$pstlevnr = NULL;} else {$pstlevnr = $_POST['kzlLevnr_'];}
 If (empty($_POST['kzlWerknr_'])) {$pstwerknr = NULL;} else {$pstwerknr = $_POST['kzlWerknr_'];}
@@ -72,9 +72,9 @@ If (empty($_POST['kzlWerknr_'])) {$pstwerknr = NULL;} else {$pstwerknr = $_POST[
 <table border = 0> <!-- Zoekgedeelte -->
 
 <tr>
- <td> </td>	
+ <td> </td>    
  <td> <i><sub> Levensnummer </sub></i> </td>
- <td> </td>	
+ <td> </td>    
  <td> <i><sub> Werknr </sub></i> </td>
  <td> <i><sub> Halsnr </sub></i> </td>
  <td> </td>
@@ -100,23 +100,23 @@ ORDER BY s.levensnummer
  <select name= "kzlLevnr_" style= "width:130; height: 20px" class="search-select">
  <option></option>
  <option>Geen</option>
-<?php		while($row = mysqli_fetch_array($kzlLam))
-		{
-		
-			$opties= array($row['schaapId']=>$row['levensnummer']);
-			foreach ( $opties as $key => $waarde)
-			{
-						$keuze = '';
-		
-		if(isset($_POST['kzlLevnr_']) && $_POST['kzlLevnr_'] == $key)
-		{
-			$keuze = ' selected ';
-		}
-				
-		echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
-			}
-		
-		}
+<?php        while($row = mysqli_fetch_array($kzlLam))
+        {
+        
+            $opties= array($row['schaapId']=>$row['levensnummer']);
+            foreach ( $opties as $key => $waarde)
+            {
+                        $keuze = '';
+        
+        if(isset($_POST['kzlLevnr_']) && $_POST['kzlLevnr_'] == $key)
+        {
+            $keuze = ' selected ';
+        }
+                
+        echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
+            }
+        
+        }
 ?> </select>
 </td>
 
@@ -132,27 +132,27 @@ GROUP BY s.schaapId, right(s.levensnummer,$Karwerk)
 ORDER BY right(s.levensnummer,$Karwerk)
 ") or die (mysqli_error($db)); ?>
 
- <td>			
+ <td>            
  <select name="kzlWerknr_" style= "width:<?php echo $w_werknr; ?>;" >
  <option></option>
  <option>Geen</option>
-<?php		while($row = mysqli_fetch_array($kzlLam))
-		{
-		
-			$opties= array($row['schaapId']=>$row['werknr']);
-			foreach ( $opties as $key => $waarde)
-			{
-						$keuze = '';
-		
-		if(isset($_POST['kzlWerknr_']) && $_POST['kzlWerknr_'] == $key)
-		{
-			$keuze = ' selected ';
-		}
-		
-		echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
-			}
-		
-		} ?>
+<?php        while($row = mysqli_fetch_array($kzlLam))
+        {
+        
+            $opties= array($row['schaapId']=>$row['werknr']);
+            foreach ( $opties as $key => $waarde)
+            {
+                        $keuze = '';
+        
+        if(isset($_POST['kzlWerknr_']) && $_POST['kzlWerknr_'] == $key)
+        {
+            $keuze = ' selected ';
+        }
+        
+        echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
+            }
+        
+        } ?>
  </select>
 </td>
 
@@ -167,26 +167,26 @@ GROUP BY s.schaapId, concat(st.kleur,' ',st.halsnr)
 ORDER BY st.kleur, st.halsnr
 ") or die (mysqli_error($db)); ?>
 
- <td>			
+ <td>            
  <select name="kzlHalsnr_" style= "width: 80;" >
  <option></option>
-<?php		while($row = mysqli_fetch_array($zoek_halsnr))
-		{
-		
-			$opties= array($row['schaapId']=>$row['halsnr']);
-			foreach ( $opties as $key => $waarde)
-			{
-						$keuze = '';
-		
-		if(isset($_POST['kzlHalsnr_']) && $_POST['kzlHalsnr_'] == $key)
-		{
-			$keuze = ' selected ';
-		}
-		
-		echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
-			}
-		
-		} ?>
+<?php        while($row = mysqli_fetch_array($zoek_halsnr))
+        {
+        
+            $opties= array($row['schaapId']=>$row['halsnr']);
+            foreach ( $opties as $key => $waarde)
+            {
+                        $keuze = '';
+        
+        if(isset($_POST['kzlHalsnr_']) && $_POST['kzlHalsnr_'] == $key)
+        {
+            $keuze = ' selected ';
+        }
+        
+        echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
+            }
+        
+        } ?>
  </select>
  </td>
 <!-- Einde kzlHalsnr -->
@@ -208,23 +208,23 @@ ORDER BY right(mdr.levensnummer,$Karwerk)
  <td>
  <select name= "kzlOoi_" style= "width:<?php echo $w_werknr;?> " >
  <option></option>
-<?php		while($row = mysqli_fetch_array($kzl))
-		{
-		
-			$opties= array($row['schaapId']=>$row['werknr_ooi']);
-			foreach ( $opties as $key => $waarde)
-			{
-						$keuze = '';
-		
-		if(isset($_POST['kzlOoi_']) && $_POST['kzlOoi_'] == $key)
-		{
-			$keuze = ' selected ';
-		}
-				
-		echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
-			}
-		
-		} ?>
+<?php        while($row = mysqli_fetch_array($kzl))
+        {
+        
+            $opties= array($row['schaapId']=>$row['werknr_ooi']);
+            foreach ( $opties as $key => $waarde)
+            {
+                        $keuze = '';
+        
+        if(isset($_POST['kzlOoi_']) && $_POST['kzlOoi_'] == $key)
+        {
+            $keuze = ' selected ';
+        }
+                
+        echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
+            }
+        
+        } ?>
   </select> 
   </td>
 
@@ -243,46 +243,46 @@ ORDER BY right(vdr.levensnummer,$Karwerk)
 
  <td>
  <select name="kzlRam_" style= "width:<?php echo $w_werknr;?>;" >
- <option></option>	
-<?php		while($row = mysqli_fetch_array($kzl))
-		{
-		
-			$opties= array($row['schaapId']=>$row['werknr_ram']);
-			foreach ( $opties as $key => $waarde)
-			{
-						$keuze = '';
-		
-		if(isset($_POST['kzlRam_']) && $_POST['kzlRam_'] == $key)
-		{
-			$keuze = ' selected ';
-		}
-				
-		echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
-			}
-		
-		} ?>
+ <option></option>    
+<?php        while($row = mysqli_fetch_array($kzl))
+        {
+        
+            $opties= array($row['schaapId']=>$row['werknr_ram']);
+            foreach ( $opties as $key => $waarde)
+            {
+                        $keuze = '';
+        
+        if(isset($_POST['kzlRam_']) && $_POST['kzlRam_'] == $key)
+        {
+            $keuze = ' selected ';
+        }
+                
+        echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
+            }
+        
+        } ?>
  </select> </td>
 
 <?php $toon_historie = mysqli_query($db,"SELECT histo FROM tblLeden WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' ") or die (mysqli_error($db));
-	while ( $hi = mysqli_fetch_assoc($toon_historie)) { $histo = $hi['histo'];} ?>
-	
+    while ( $hi = mysqli_fetch_assoc($toon_historie)) { $histo = $hi['histo'];} ?>
+    
  <td width = 50></td>
  <td> Historie tonen : <input type = radio name = 'radHis_' value = 0 
-		<?php if(!isset($_POST['knpZoek_']) && !isset($_POST['knpSave_']) && $histo == 0) { echo "checked"; } 
-		 else if(isset($_POST['radHis_']) && $_POST['radHis_'] == 0 ) { echo "checked"; } ?> title = "Standaard tonen van historie te wijzigen in systeemgegevens"> Nee
-	 <input type = radio name = "radHis_" value = 1
-		<?php if(!isset($_POST['knpZoek_']) && !isset($_POST['knpSave_']) && $histo == 1) { echo "checked"; }
-		 else if(isset($_POST['radHis_']) && $_POST['radHis_'] == 1 ) { echo "checked"; } ?> title = "Standaard tonen van historie te wijzigen in systeemgegevens"> Ja 
-		
-		<?php if(isset($_POST['knpZoek_']) || isset($_POST['knpSave_']) ) { $historie = $_POST['radHis_'];} else { $historie = 0; }  ?>	
+        <?php if(!isset($_POST['knpZoek_']) && !isset($_POST['knpSave_']) && $histo == 0) { echo "checked"; } 
+         else if(isset($_POST['radHis_']) && $_POST['radHis_'] == 0 ) { echo "checked"; } ?> title = "Standaard tonen van historie te wijzigen in systeemgegevens"> Nee
+     <input type = radio name = "radHis_" value = 1
+        <?php if(!isset($_POST['knpZoek_']) && !isset($_POST['knpSave_']) && $histo == 1) { echo "checked"; }
+         else if(isset($_POST['radHis_']) && $_POST['radHis_'] == 1 ) { echo "checked"; } ?> title = "Standaard tonen van historie te wijzigen in systeemgegevens"> Ja 
+        
+        <?php if(isset($_POST['knpZoek_']) || isset($_POST['knpSave_']) ) { $historie = $_POST['radHis_'];} else { $historie = 0; }  ?>    
  </td>
  <td width="15"></td>
  <td> Voorouders tonen : <input type = radio name = 'radOud_' value = 0 
-		<?php if(isset($_POST['radOud_']) && $_POST['radOud_'] == 0) { echo "checked"; } ?> > Nee
-	 <input type = radio name = "radOud_" value = 1
-		<?php  if(!isset($_POST['radOud_']) || (isset($_POST['radOud_']) && $_POST['radOud_'] == 1 ) ) { echo "checked"; } ?> > Ja 
-		
-		<?php if(isset($_POST['knpZoek_']) || isset($_POST['knpSave_']) ) { $voorOud = $_POST['radOud_'];} else { $voorOud = 0; }  ?>	
+        <?php if(isset($_POST['radOud_']) && $_POST['radOud_'] == 0) { echo "checked"; } ?> > Nee
+     <input type = radio name = "radOud_" value = 1
+        <?php  if(!isset($_POST['radOud_']) || (isset($_POST['radOud_']) && $_POST['radOud_'] == 1 ) ) { echo "checked"; } ?> > Ja 
+        
+        <?php if(isset($_POST['knpZoek_']) || isset($_POST['knpSave_']) ) { $voorOud = $_POST['radOud_'];} else { $voorOud = 0; }  ?>    
  </td> 
 </tr>
 
@@ -300,31 +300,31 @@ ORDER BY right(vdr.levensnummer,$Karwerk)
 if ((isset($_POST['knpZoek_']) || isset($_POST['knpSave_'])) && (!empty($levnr) || !empty($werknr) || !empty($halsnr) || !empty($_POST['kzlOoi_']) || !empty($_POST['kzlRam_'])) ) {
 
 If ($levnr == 'Geen')
-{	$reslevnr = "isnull(s.levensnummer)";	$where = $reslevnr; }	
+{    $reslevnr = "isnull(s.levensnummer)";    $where = $reslevnr; }    
 else If (!empty($levnr))
-{	$reslevnr = "s.schaapId = $levnr ";	$where = $reslevnr; }
+{    $reslevnr = "s.schaapId = $levnr ";    $where = $reslevnr; }
 
 
 If ($werknr == 'Geen')
-{	$reswerknr = " isnull(s.levensnummer) "; }
+{    $reswerknr = " isnull(s.levensnummer) "; }
 else if (!empty($werknr))
-{	$reswerknr = "s.schaapId = $_POST[kzlWerknr_] ";	}
-	if(isset($where) && isset($reswerknr)) { $where = $where." and ".$reswerknr; } else if(isset($reswerknr)) { $where = $reswerknr; }
+{    $reswerknr = "s.schaapId = $_POST[kzlWerknr_] ";    }
+    if(isset($where) && isset($reswerknr)) { $where = $where." and ".$reswerknr; } else if(isset($reswerknr)) { $where = $reswerknr; }
 
 If (!empty($_POST['kzlHalsnr_']))
-{	$reshalsnr = "s.schaapId = ".$halsnr;	}
-	if(isset($where) && isset($reshalsnr)) { $where = $where." and ".$reshalsnr; } else if(isset($reshalsnr)) { $where = $reshalsnr; }
+{    $reshalsnr = "s.schaapId = ".$halsnr;    }
+    if(isset($where) && isset($reshalsnr)) { $where = $where." and ".$reshalsnr; } else if(isset($reshalsnr)) { $where = $reshalsnr; }
 
 
 If (!empty($_POST['kzlOoi_']))
-{	$resooi = "mdr.schaapId = $_POST[kzlOoi_] ";	}
-	if(isset($where) && isset($resooi)) { $where = $where." and ".$resooi; } else if(isset($resooi)) { $where = $resooi; }
+{    $resooi = "mdr.schaapId = $_POST[kzlOoi_] ";    }
+    if(isset($where) && isset($resooi)) { $where = $where." and ".$resooi; } else if(isset($resooi)) { $where = $resooi; }
 
-		
+        
 If (!empty($_POST['kzlRam_']))
-{	$resram = "vdr.schaapId = $_POST[kzlRam_] ";	}
-	if(isset($where) && isset($resram)) { $where = $where." and ".$resram; } else if(isset($resram)) { $where = $resram; }
- ##echo '$where = '.$where;	
+{    $resram = "vdr.schaapId = $_POST[kzlRam_] ";    }
+    if(isset($where) && isset($resram)) { $where = $where." and ".$resram; } else if(isset($resram)) { $where = $resram; }
+ ##echo '$where = '.$where;    
 
 // Zoeken naar eerste datum en een eventuele aankoopdatum
 $aankoop = mysqli_query($db,"
@@ -335,23 +335,23 @@ FROM tblSchaap s
  left join tblSchaap mdr on (v.mdrId = mdr.schaapId)
  left join tblSchaap vdr on (v.vdrId = vdr.schaapId)
  left join (
-	SELECT st.schaapId, h.datum 
-	FROM tblHistorie h
-	 join tblStal st on (h.stalId = st.stalId)
-	WHERE h.actId = 1 and h.skip = 0
+    SELECT st.schaapId, h.datum 
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+    WHERE h.actId = 1 and h.skip = 0
  ) hg on (hg.schaapId = s.schaapId)
  left join (
-	SELECT st.schaapId, h.datum 
-	FROM tblHistorie h
-	 join tblStal st on (h.stalId = st.stalId)
-	WHERE h.actId = 2 and h.skip = 0
+    SELECT st.schaapId, h.datum 
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+    WHERE h.actId = 2 and h.skip = 0
  ) koop on (koop.schaapId = s.schaapId)
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and $where
 ") or die (mysqli_error($db));
   
  while ($lijn = mysqli_fetch_assoc($aankoop))
-			{	$gebdm = $lijn['datum'];  
-				$dmkoop = $lijn['dmkoop']; }
+            {    $gebdm = $lijn['datum'];  
+                $dmkoop = $lijn['dmkoop']; }
 // Einde Controleren op aankoop door zoeken in tblBezetting
 
 // schapen met status onbekend
@@ -367,8 +367,8 @@ WHERE $where
 ") or die (mysqli_error($db));
 
 while($zsI = mysqli_fetch_assoc($zoek_schaapId))
-	{
-		$schaapId = $zsI['schaapId']; }
+    {
+        $schaapId = $zsI['schaapId']; }
 
 
 $result = mysqli_query($db,"
@@ -380,79 +380,79 @@ FROM tblSchaap s
  left join tblSchaap mdr on (v.mdrId = mdr.schaapId)
  left join tblSchaap vdr on (v.vdrId = vdr.schaapId)
  join (
-	SELECT min(stalId) stalId, schaapId
-	FROM tblStal
-	WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
-	GROUP BY schaapId
+    SELECT min(stalId) stalId, schaapId
+    FROM tblStal
+    WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    GROUP BY schaapId
  ) st1 on (s.schaapId = st1.schaapId)
  join (
-	SELECT max(stalId) stalId, schaapId
-	FROM tblStal
-	WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
-	GROUP BY schaapId
+    SELECT max(stalId) stalId, schaapId
+    FROM tblStal
+    WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    GROUP BY schaapId
  ) stm on (s.schaapId = stm.schaapId)
  join tblStal st on (stm.stalId = st.stalId)
  left join (
-	SELECT st.schaapId, h.datum, h.kg
-	FROM tblStal st 
-	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 1 and h.skip = 0
+    SELECT st.schaapId, h.datum, h.kg
+    FROM tblStal st 
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 1 and h.skip = 0
  ) hg on (s.schaapId = hg.schaapId)
  left join (
-	SELECT st.stalId, h.datum, h.kg
-	FROM tblStal st 
-	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 2 and h.skip = 0
+    SELECT st.stalId, h.datum, h.kg
+    FROM tblStal st 
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 2 and h.skip = 0
  ) aanv1 on (st1.stalId = aanv1.stalId)
  left join (
-	SELECT st.stalId, h.datum, h.kg
-	FROM tblStal st 
-	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 4 and h.skip = 0
+    SELECT st.stalId, h.datum, h.kg
+    FROM tblStal st 
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 4 and h.skip = 0
  ) hs on (st.stalId = hs.stalId)
  left join (
-	SELECT st.schaapId, h.datum
-	FROM tblStal st 
-	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 3 and h.skip = 0
+    SELECT st.schaapId, h.datum
+    FROM tblStal st 
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
  ) ouder on (s.schaapId = ouder.schaapId)
  left join (
-	SELECT st.stalId, a.actie, a.af
-	FROM tblActie a
-	 join tblHistorie h on (a.actId = h.actId)
-	 join tblStal st on (h.stalId = st.stalId)
-	 join tblSchaap s on (st.schaapId = s.schaapId)
-	 left join tblVolwas v on (v.volwId = s.volwId)
-	 left join tblSchaap mdr on (v.mdrId = mdr.schaapId)
-	 left join tblSchaap vdr on (v.vdrId = vdr.schaapId)
-	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId) /* tblSchaap mdr en tblSchaap vdr is voor als er op moeder of vader wordt gezocht*/."' and $where and a.af = 1 and h.skip = 0
+    SELECT st.stalId, a.actie, a.af
+    FROM tblActie a
+     join tblHistorie h on (a.actId = h.actId)
+     join tblStal st on (h.stalId = st.stalId)
+     join tblSchaap s on (st.schaapId = s.schaapId)
+     left join tblVolwas v on (v.volwId = s.volwId)
+     left join tblSchaap mdr on (v.mdrId = mdr.schaapId)
+     left join tblSchaap vdr on (v.vdrId = vdr.schaapId)
+    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId) /* tblSchaap mdr en tblSchaap vdr is voor als er op moeder of vader wordt gezocht*/."' and $where and a.af = 1 and h.skip = 0
  ) haf on (haf.stalId = st.stalId)
  left join (
-	SELECT st.schaapId, h.datum, h.kg
-	FROM tblHistorie h 
-	 join 
-	 (
-		SELECT s.levensnummer, min(h.hisId) hisId 
-		FROM tblStal st
-		 join tblSchaap s on (st.schaapId = s.schaapId)
-		 join tblHistorie h on (st.stalId = h.stalId)
-		 left join tblVolwas v on (v.volwId = s.volwId)
-		 left join tblSchaap mdr on (v.mdrId = mdr.schaapId)
-		 left join tblSchaap vdr on (v.vdrId = vdr.schaapId)
-		WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId) /* tblSchaap mdr en tblSchaap vdr is voor als er op moeder of vader wordt gezocht*/."' and $where and h.actId = 12 and h.skip = 0
-		GROUP BY s.levensnummer
-	 ) afl on (afl.hisId = h.hisId)
-	 join tblStal st on (h.stalId = st.stalId)
-	WHERE h.skip = 0
+    SELECT st.schaapId, h.datum, h.kg
+    FROM tblHistorie h 
+     join 
+     (
+        SELECT s.levensnummer, min(h.hisId) hisId 
+        FROM tblStal st
+         join tblSchaap s on (st.schaapId = s.schaapId)
+         join tblHistorie h on (st.stalId = h.stalId)
+         left join tblVolwas v on (v.volwId = s.volwId)
+         left join tblSchaap mdr on (v.mdrId = mdr.schaapId)
+         left join tblSchaap vdr on (v.vdrId = vdr.schaapId)
+        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId) /* tblSchaap mdr en tblSchaap vdr is voor als er op moeder of vader wordt gezocht*/."' and $where and h.actId = 12 and h.skip = 0
+        GROUP BY s.levensnummer
+     ) afl on (afl.hisId = h.hisId)
+     join tblStal st on (h.stalId = st.stalId)
+    WHERE h.skip = 0
  ) afl on (afl.schaapId = s.schaapId)
  left join tblRas r on(s.rasId = r.rasId)
 WHERE $where
 
 ORDER BY if(isnull(s.levensnummer),'Geen',''), dmgeb desc, status
 ") or die (mysqli_error($db)); ?>
-			
-				
-				
+            
+                
+                
 <tr style = "font-size:12px;">
  <th width = 0 height = 30></th>
  <th width = 1 height = 30></th>
@@ -489,44 +489,44 @@ ORDER BY if(isnull(s.levensnummer),'Geen',''), dmgeb desc, status
 <?php
 while($row = mysqli_fetch_assoc($result))
 {
-	$transponder = $row['transponder']; if(isset($transponder)) {$transp = 'Ja'; } else {$transp = 'Nee'; }
-	//$schaapId = $row['schaapId'];
-	$levnr = $row['levensnummer'];
-	$werknr = $row['werknr'];
-	$fokkernr = $row['fokkernr']; if(isset($fokkernr)) { $stamb = $fokkernr.' - '.$werknr; }
-	$halsnr = $row['halsnr'];
-	$gebdm = $row['gebdm'];
-	$ras = $row['ras'];
-	$sekse = $row['geslacht'];
-	if(isset($row['dmaanw'])) { if($sekse == 'ooi' ) { $fase = 'moeder'; } else { $fase = 'vader'; } } else { $fase = 'lam';}
-	$mdr = $row['werknr_ooi'];
-	$vdr = $row['werknr_ram'];
-	$status = $row['status'];
-	$opstal = $row['af'];
-	$dmspn = $row['dmspn'];
-	$spnkg = $row['spnkg'];
-	$dmafl = $row['dmafl'];
-	$aflkg = $row['aflkg'];
-	$dmgeb = $row['dmgeb'];
-	$gebkg = $row['gebkg'];
-	$dmaanv = $row['dmaanv'];
-	$aanvdm = $row['aanvdm'];
-	$aankkg = $row['aankkg'];
-	if(isset($dmgeb)) { $dmstart = $dmgeb; } else { $dmstart = $dmaanv;}
-	if(isset($gebkg)) { $startkg = $gebkg; } else { $startkg = $aankkg;}
+    $transponder = $row['transponder']; if(isset($transponder)) {$transp = 'Ja'; } else {$transp = 'Nee'; }
+    //$schaapId = $row['schaapId'];
+    $levnr = $row['levensnummer'];
+    $werknr = $row['werknr'];
+    $fokkernr = $row['fokkernr']; if(isset($fokkernr)) { $stamb = $fokkernr.' - '.$werknr; }
+    $halsnr = $row['halsnr'];
+    $gebdm = $row['gebdm'];
+    $ras = $row['ras'];
+    $sekse = $row['geslacht'];
+    if(isset($row['dmaanw'])) { if($sekse == 'ooi' ) { $fase = 'moeder'; } else { $fase = 'vader'; } } else { $fase = 'lam';}
+    $mdr = $row['werknr_ooi'];
+    $vdr = $row['werknr_ram'];
+    $status = $row['status'];
+    $opstal = $row['af'];
+    $dmspn = $row['dmspn'];
+    $spnkg = $row['spnkg'];
+    $dmafl = $row['dmafl'];
+    $aflkg = $row['aflkg'];
+    $dmgeb = $row['dmgeb'];
+    $gebkg = $row['gebkg'];
+    $dmaanv = $row['dmaanv'];
+    $aanvdm = $row['aanvdm'];
+    $aankkg = $row['aankkg'];
+    if(isset($dmgeb)) { $dmstart = $dmgeb; } else { $dmstart = $dmaanv;}
+    if(isset($gebkg)) { $startkg = $gebkg; } else { $startkg = $aankkg;}
 
-	$dagen_spn = strtotime($dmspn)-strtotime($dmstart); $dgn_s = floor($dagen_spn/3600/24);
-	$dagen_afl = strtotime($dmafl)-strtotime($dmstart); $dgn_a = floor($dagen_afl/3600/24);
+    $dagen_spn = strtotime($dmspn)-strtotime($dmstart); $dgn_s = floor($dagen_spn/3600/24);
+    $dagen_afl = strtotime($dmafl)-strtotime($dmstart); $dgn_a = floor($dagen_afl/3600/24);
 
-	if($dgn_s >0 && $startkg > 0) { $gemgr_s = round((($spnkg-$startkg)/($dgn_s)*1000),2) ; } 
+    if($dgn_s >0 && $startkg > 0) { $gemgr_s = round((($spnkg-$startkg)/($dgn_s)*1000),2) ; } 
 
 
-	if($dgn_a >0 && $startkg > 0) { $gemgr_a = round((($aflkg-$startkg)/($dgn_a)*1000),2) ; } ?>
-				
-<tr align = "center">	
+    if($dgn_a >0 && $startkg > 0) { $gemgr_a = round((($aflkg-$startkg)/($dgn_a)*1000),2) ; } ?>
+                
+<tr align = "center">    
  <td width = 0> </td>
 <td width = 1> </td>
- <td width = 90> </td>	   
+ <td width = 90> </td>       
  <td width = 150 style = "font-size:15px;"> <?php echo $transp; ?> <br> </td>
 
  <td width = 150 style = "font-size:15px;"> <?php echo $halsnr; ?> <br> </td>
@@ -545,12 +545,12 @@ while($row = mysqli_fetch_assoc($result))
 
  <td width = 100 style = "font-size:15px;"> <?php echo $vdr; ?> </td>
 
-<?php if($status == 'aanwezig' && $fase == 'moeder') { ?>	   
+<?php if($status == 'aanwezig' && $fase == 'moeder') { ?>       
  <td><a href=' <?php echo $url; ?>Ooikaart.php?pstId=<?php echo $schaapId; ?>' style = "color : blue">
-	   <?php echo $status; ?></a></td>
-<?php } else { ?>	   
+       <?php echo $status; ?></a></td>
+<?php } else { ?>       
  <td width = 160 style = "font-size:15px;"> <?php echo $status; ?> </td>
-<?php } ?>	   
+<?php } ?>       
 
  <td width = 100 style = "font-size:15px;"> <?php if(isset($gemgr_s) ) { echo $gemgr_s; unset($gemgr_s); } ?> </td>
 
@@ -558,30 +558,30 @@ while($row = mysqli_fetch_assoc($result))
 
  <td width = 100 style = "font-size:12px;"> <?php if(isset($stamb) ) { echo $stamb; unset($stamb); } ?> </td>
 
-	   <?php 
+       <?php 
 if ($status == 'aanwezig' || $status == 'uitgeschaard')
-{	?>
+{    ?>
  <td width="450">
-	<a href=' <?php echo $url; ?>OmnSchaap.php?pstschaap=<?php echo $schaapId; ?>' style = "color : blue">Omnummeren</a>
+    <a href=' <?php echo $url; ?>OmnSchaap.php?pstschaap=<?php echo $schaapId; ?>' style = "color : blue">Omnummeren</a>
    </td> <?php
    
    
 } ?>
-	   
+       
 
-<?php	} // Einde while($row = mysqli_fetch_assoc($result)) ?> 				
-	   
+<?php    } // Einde while($row = mysqli_fetch_assoc($result)) ?>                 
+       
 <?php  
 if (!isset($schaapId))
 { 
 $fout = "Het zoek criterium heeft geen resultaten opgeleverd. Pas het zoekcriterum eventueel aan.";
 } 
 } ?>
-	   
+       
 </tr>
 </table>  <!-- Einde Gegevens van het schaap -->
 
-<?php if ((isset($_POST['knpZoek_']) || isset($_POST['knpSave_'])) && $historie == 1 && (!empty($_POST['kzlLevnr_']) || !empty($_POST['kzlWerknr_']) || !empty($_POST['kzlHalsnr_'])) ) { ?>	
+<?php if ((isset($_POST['knpZoek_']) || isset($_POST['knpSave_'])) && $historie == 1 && (!empty($_POST['kzlLevnr_']) || !empty($_POST['kzlWerknr_']) || !empty($_POST['kzlHalsnr_'])) ) { ?>    
 <table border = 0>  <!-- Historie van het schaap -->
 
 <!-- Om een lege tabel te verbergen moet minimaal 1 keuze zijn gemaakt -->
@@ -609,188 +609,188 @@ $geschiedenis = mysqli_query($db,"
 SELECT his.hisId, his.ubn, his.levensnummer, his.geslacht, his.datum, his.date, his.actId, his.actie, his.actie_if, his.kg, date_format(his.dmaanw,'%Y-%m-%d 00:00:00') dmaanw, toel.toel, his.hisId hiscom, comment
 FROM
 (
-	SELECT h.hisId, u.ubn, s.levensnummer, s.geslacht, date_format(h.datum, '%d-%m-%Y') datum, h.datum date, h.actId, a.actie, right(a.actie,4) actie_if, h.kg, ouder.datum dmaanw, h.comment
-	FROM tblSchaap s
-	 join tblStal st on (st.schaapId = s.schaapId)
-	 join tblUbn u on (st.ubnId = u.ubnId)
-	 join tblHistorie h on (st.stalId = h.stalId)
-	 join tblActie a on (a.actId = h.actId)
-	 left join (
-		SELECT s.schaapId, h.datum 
-		FROM tblSchaap s 
-		 join tblStal st on (st.schaapId = s.schaapId)
-		 join tblHistorie h on (h.stalId = st.stalId)
-		WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-	 ) ouder on (ouder.schaapId = s.schaapId)
-	WHERE s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
-	 and not exists (
-		SELECT datum 
-		FROM tblHistorie ha 
-		 join tblStal st on (ha.stalId = st.stalId)
-		 join tblSchaap s on (st.schaapId = s.schaapId)
-		WHERE actId = 2 and h.skip = 0 and h.datum = ha.datum and h.actId = ha.actId+1 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."')
+    SELECT h.hisId, u.ubn, s.levensnummer, s.geslacht, date_format(h.datum, '%d-%m-%Y') datum, h.datum date, h.actId, a.actie, right(a.actie,4) actie_if, h.kg, ouder.datum dmaanw, h.comment
+    FROM tblSchaap s
+     join tblStal st on (st.schaapId = s.schaapId)
+     join tblUbn u on (st.ubnId = u.ubnId)
+     join tblHistorie h on (st.stalId = h.stalId)
+     join tblActie a on (a.actId = h.actId)
+     left join (
+        SELECT s.schaapId, h.datum 
+        FROM tblSchaap s 
+         join tblStal st on (st.schaapId = s.schaapId)
+         join tblHistorie h on (h.stalId = st.stalId)
+        WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+     ) ouder on (ouder.schaapId = s.schaapId)
+    WHERE s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
+     and not exists (
+        SELECT datum 
+        FROM tblHistorie ha 
+         join tblStal st on (ha.stalId = st.stalId)
+         join tblSchaap s on (st.schaapId = s.schaapId)
+        WHERE actId = 2 and h.skip = 0 and h.datum = ha.datum and h.actId = ha.actId+1 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."')
 
   union
 
-	SELECT h.hisId, u.ubn, s.levensnummer, s.geslacht, date_format(h.datum, '%d-%m-%Y') datum, h.datum date, h.actId, a.actie, right(a.actie,4) actie_if, h.kg, ouder.datum, h.comment
-	FROM tblHistorie h
-	 join tblStal st on (st.stalId = h.stalId)
-	 join tblUbn u on (st.ubnId = u.ubnId)
-	 join tblSchaap s on (st.schaapId = s.schaapId)
-	 join tblActie a on (a.actId = h.actId)
-	 left join (
-		SELECT s.schaapId, h.datum 
-		FROM tblSchaap s 
-		 join tblStal st on (st.schaapId = s.schaapId)
-		 join tblHistorie h on (h.stalId = st.stalId)
-		WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-	 ) ouder on (ouder.schaapId = s.schaapId)
-	WHERE s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and h.actId = 1 and h.skip = 0
+    SELECT h.hisId, u.ubn, s.levensnummer, s.geslacht, date_format(h.datum, '%d-%m-%Y') datum, h.datum date, h.actId, a.actie, right(a.actie,4) actie_if, h.kg, ouder.datum, h.comment
+    FROM tblHistorie h
+     join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (st.ubnId = u.ubnId)
+     join tblSchaap s on (st.schaapId = s.schaapId)
+     join tblActie a on (a.actId = h.actId)
+     left join (
+        SELECT s.schaapId, h.datum 
+        FROM tblSchaap s 
+         join tblStal st on (st.schaapId = s.schaapId)
+         join tblHistorie h on (h.stalId = st.stalId)
+        WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+     ) ouder on (ouder.schaapId = s.schaapId)
+    WHERE s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and h.actId = 1 and h.skip = 0
 ) his
 left join 
 (
-	SELECT 'adoptie lammeren' qry, h.hisId, concat('Bij ooi ', right(mdr.levensnummer,$Karwerk)) toel
-	FROM tblHistorie h
-	 join impAgrident vp on (h.datum = vp.datum)
-	 join tblStal st on (h.stalId = st.stalId)
-	 join tblSchaap s on (st.schaapId = s.schaapId and vp.levensnummer = s.levensnummer)
-	 left join (
-	 	SELECT levensnummer 
-	 	FROM tblSchaap mdr 
-	 	 join tblStal st on (mdr.schaapId = st.schaapId)
-	 	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-	 ) mdr on (vp.moeder = mdr.levensnummer)
-	WHERE h.actId = 15 and h.skip = 0 and vp.actId = 15 and vp.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+    SELECT 'adoptie lammeren' qry, h.hisId, concat('Bij ooi ', right(mdr.levensnummer,$Karwerk)) toel
+    FROM tblHistorie h
+     join impAgrident vp on (h.datum = vp.datum)
+     join tblStal st on (h.stalId = st.stalId)
+     join tblSchaap s on (st.schaapId = s.schaapId and vp.levensnummer = s.levensnummer)
+     left join (
+         SELECT levensnummer 
+         FROM tblSchaap mdr 
+          join tblStal st on (mdr.schaapId = st.schaapId)
+         WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+     ) mdr on (vp.moeder = mdr.levensnummer)
+    WHERE h.actId = 15 and h.skip = 0 and vp.actId = 15 and vp.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
 
 Union
 
-	SELECT 'lammeren in hok geplaatst excl. adoptie' qry, h.hisId, concat('Geplaatst in ', lower(ho.hoknr),' voor ',datediff(coalesce(ht.datum,curdate()), h.datum), If(datediff(coalesce(ht.datum,curdate()), h.datum) = 1, ' dag', ' dagen')) toel
+    SELECT 'lammeren in hok geplaatst excl. adoptie' qry, h.hisId, concat('Geplaatst in ', lower(ho.hoknr),' voor ',datediff(coalesce(ht.datum,curdate()), h.datum), If(datediff(coalesce(ht.datum,curdate()), h.datum) = 1, ' dag', ' dagen')) toel
 
-	FROM tblHok ho
-	 join tblBezet b on (b.hokId = ho.hokId)
-	 join tblHistorie h on (h.hisId = b.hisId)
-	 join tblActie a on (a.actId = h.actId)
-	 join tblStal st on (st.stalId = h.stalId)
-	 left join (
-		SELECT h1.hisId hisv, min(h2.hisId) hist
-		FROM tblHistorie h1
-		 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-		 join tblStal st on (st.stalId = h1.stalId)
-		 join tblSchaap s on (s.schaapId = st.schaapId)
-		 join tblActie a1 on (a1.actId = h1.actId)
-		 join tblActie a2 on (a2.actId = h2.actId)
-		WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-		and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
-		GROUP BY h1.hisId
-	 ) uit on (uit.hisv = b.hisId)
-	 left join tblHistorie ht on (ht.hisId = uit.hist)
-	  left join (
-		SELECT st.schaapId, h.datum
-		FROM tblStal st
-		 join tblHistorie h on (st.stalId = h.stalId)
-		WHERE h.actId = 3 and h.skip = 0
-	 ) prnt on (prnt.schaapId = st.schaapId)
-	WHERE a.aan = 1 and h.skip = 0 and h.actId != 15 and ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-	 and (isnull(prnt.schaapId) or (prnt.datum > h.datum))
-
-Union
-
-	SELECT 'Volwassenen in hok geplaatst' qry, h.hisId, concat('Geplaatst in ', lower(ho.hoknr),' voor ',datediff(coalesce(ht.datum,curdate()), h.datum), If(datediff(coalesce(ht.datum,curdate()), h.datum) = 1, ' dag', ' dagen')) toel
-
-	FROM tblHok ho
-	 join tblBezet b on (b.hokId = ho.hokId)
-	 join tblHistorie h on (h.hisId = b.hisId)
-	 join tblActie a on (a.actId = h.actId)
-	 join tblStal st on (st.stalId = h.stalId)
-	 left join (
-		SELECT h1.hisId hisv, min(h2.hisId) hist
-		FROM tblHistorie h1
-		 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-		 join tblStal st on (st.stalId = h1.stalId)
-		 join tblSchaap s on (s.schaapId = st.schaapId)
-		 join tblActie a1 on (a1.actId = h1.actId)
-		 join tblActie a2 on (a2.actId = h2.actId)
-		WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-		and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
-		GROUP BY h1.hisId
-	 ) uit on (uit.hisv = b.hisId)
-	 left join tblHistorie ht on (ht.hisId = uit.hist)
-	 join (
-		SELECT st.schaapId, h.datum
-		FROM tblStal st
-		 join tblHistorie h on (st.stalId = h.stalId)
-		WHERE h.actId = 3 and h.skip = 0
-	 ) prnt on (prnt.schaapId = st.schaapId)
-	WHERE a.aan = 1 and h.skip = 0 and ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-	 and prnt.datum <= h.datum
+    FROM tblHok ho
+     join tblBezet b on (b.hokId = ho.hokId)
+     join tblHistorie h on (h.hisId = b.hisId)
+     join tblActie a on (a.actId = h.actId)
+     join tblStal st on (st.stalId = h.stalId)
+     left join (
+        SELECT h1.hisId hisv, min(h2.hisId) hist
+        FROM tblHistorie h1
+         join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+         join tblStal st on (st.stalId = h1.stalId)
+         join tblSchaap s on (s.schaapId = st.schaapId)
+         join tblActie a1 on (a1.actId = h1.actId)
+         join tblActie a2 on (a2.actId = h2.actId)
+        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+        and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
+        GROUP BY h1.hisId
+     ) uit on (uit.hisv = b.hisId)
+     left join tblHistorie ht on (ht.hisId = uit.hist)
+      left join (
+        SELECT st.schaapId, h.datum
+        FROM tblStal st
+         join tblHistorie h on (st.stalId = h.stalId)
+        WHERE h.actId = 3 and h.skip = 0
+     ) prnt on (prnt.schaapId = st.schaapId)
+    WHERE a.aan = 1 and h.skip = 0 and h.actId != 15 and ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+     and (isnull(prnt.schaapId) or (prnt.datum > h.datum))
 
 Union
 
-	SELECT 'Volwassenen hok verlaten' qry, uit.hist hisId, concat(ho.hoknr,' verlaten ') toel
+    SELECT 'Volwassenen in hok geplaatst' qry, h.hisId, concat('Geplaatst in ', lower(ho.hoknr),' voor ',datediff(coalesce(ht.datum,curdate()), h.datum), If(datediff(coalesce(ht.datum,curdate()), h.datum) = 1, ' dag', ' dagen')) toel
 
-	FROM tblHok ho
-	 join tblBezet b on (b.hokId = ho.hokId)
-	 join tblHistorie h on (h.hisId = b.hisId)
-	 join tblActie a on (a.actId = h.actId)
-	 join tblStal st on (st.stalId = h.stalId)
-	 join (
-		SELECT h1.hisId hisv, min(h2.hisId) hist
-		FROM tblHistorie h1
-		 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-		 join tblStal st on (st.stalId = h1.stalId)
-		 join tblSchaap s on (s.schaapId = st.schaapId)
-		 join tblActie a1 on (a1.actId = h1.actId)
-		 join tblActie a2 on (a2.actId = h2.actId)
-		WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-		and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
-		GROUP BY h1.hisId
-	 ) uit on (uit.hisv = b.hisId)
-	 left join tblHistorie ht on (ht.hisId = uit.hist)
-	WHERE a.aan = 1 and h.skip = 0 and ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-	 and ht.actId = 7
-
-Union
-
-	SELECT 'toel_afvoer excl dood met een reden' qry, h.hisId, p.naam
-	FROM tblActie a
-	 join tblHistorie h on (a.actId = h.actId)
-	 join tblStal st on (st.stalId = h.stalId)
-	 join tblSchaap s on (s.schaapId = st.schaapId)
-	 join tblRelatie r on (st.rel_best = r.relId)
-	 join tblPartij p on (r.partId = p.partId)
-	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a.af = 1 and h.skip = 0
-	 and (h.actId != 14 or (h.actId = 14 and isnull(s.redId)))
+    FROM tblHok ho
+     join tblBezet b on (b.hokId = ho.hokId)
+     join tblHistorie h on (h.hisId = b.hisId)
+     join tblActie a on (a.actId = h.actId)
+     join tblStal st on (st.stalId = h.stalId)
+     left join (
+        SELECT h1.hisId hisv, min(h2.hisId) hist
+        FROM tblHistorie h1
+         join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+         join tblStal st on (st.stalId = h1.stalId)
+         join tblSchaap s on (s.schaapId = st.schaapId)
+         join tblActie a1 on (a1.actId = h1.actId)
+         join tblActie a2 on (a2.actId = h2.actId)
+        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+        and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
+        GROUP BY h1.hisId
+     ) uit on (uit.hisv = b.hisId)
+     left join tblHistorie ht on (ht.hisId = uit.hist)
+     join (
+        SELECT st.schaapId, h.datum
+        FROM tblStal st
+         join tblHistorie h on (st.stalId = h.stalId)
+        WHERE h.actId = 3 and h.skip = 0
+     ) prnt on (prnt.schaapId = st.schaapId)
+    WHERE a.aan = 1 and h.skip = 0 and ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+     and prnt.datum <= h.datum
 
 Union
 
-	SELECT 'toel_afvoer dood met een reden' qry, h.hisId, re.reden
-	FROM tblActie a
-	 join tblHistorie h on (a.actId = h.actId)
-	 join tblStal st on (st.stalId = h.stalId)
-	 join tblSchaap s on (s.schaapId = st.schaapId)
-	 join tblReden re on (s.redId = re.redId)
-	 join tblRelatie r on (st.rel_best = r.relId)
-	 join tblPartij p on (r.partId = p.partId)
-	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a.af = 1 and h.skip = 0
-	 and h.actId = 14 and s.redId is not null
+    SELECT 'Volwassenen hok verlaten' qry, uit.hist hisId, concat(ho.hoknr,' verlaten ') toel
+
+    FROM tblHok ho
+     join tblBezet b on (b.hokId = ho.hokId)
+     join tblHistorie h on (h.hisId = b.hisId)
+     join tblActie a on (a.actId = h.actId)
+     join tblStal st on (st.stalId = h.stalId)
+     join (
+        SELECT h1.hisId hisv, min(h2.hisId) hist
+        FROM tblHistorie h1
+         join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+         join tblStal st on (st.stalId = h1.stalId)
+         join tblSchaap s on (s.schaapId = st.schaapId)
+         join tblActie a1 on (a1.actId = h1.actId)
+         join tblActie a2 on (a2.actId = h2.actId)
+        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+        and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
+        GROUP BY h1.hisId
+     ) uit on (uit.hisv = b.hisId)
+     left join tblHistorie ht on (ht.hisId = uit.hist)
+    WHERE a.aan = 1 and h.skip = 0 and ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+     and ht.actId = 7
 
 Union
 
-	SELECT 'medicatie' qry, n.hisId, concat(round(sum(n.nutat*n.stdat),2),' ', e.eenheid,'  ', a.naam,'  ',coalesce(i.charge,'')) toel
-	FROM tblNuttig n
-	 join tblInkoop i on (n.inkId = i.inkId)
-	 join tblArtikel a on (a.artId = i.artId)
-	 join tblEenheiduser eu on (eu.enhuId = a.enhuId)
-	 join tblEenheid e on (e.eenhId = eu.eenhId)
-	WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-	GROUP BY n.hisId, e.eenheid, a.naam, i.charge
+    SELECT 'toel_afvoer excl dood met een reden' qry, h.hisId, p.naam
+    FROM tblActie a
+     join tblHistorie h on (a.actId = h.actId)
+     join tblStal st on (st.stalId = h.stalId)
+     join tblSchaap s on (s.schaapId = st.schaapId)
+     join tblRelatie r on (st.rel_best = r.relId)
+     join tblPartij p on (r.partId = p.partId)
+    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a.af = 1 and h.skip = 0
+     and (h.actId != 14 or (h.actId = 14 and isnull(s.redId)))
 
 Union
 
-	SELECT 'omnummeren' qry,  h.hisId, concat('Oud nummer ', h.oud_nummer) toel
-	From tblHistorie h
-	 join tblStal st on (h.stalId = st.stalId)
-	Where st.lidId = 13 and h.actId = 17 and h.skip = 0
+    SELECT 'toel_afvoer dood met een reden' qry, h.hisId, re.reden
+    FROM tblActie a
+     join tblHistorie h on (a.actId = h.actId)
+     join tblStal st on (st.stalId = h.stalId)
+     join tblSchaap s on (s.schaapId = st.schaapId)
+     join tblReden re on (s.redId = re.redId)
+     join tblRelatie r on (st.rel_best = r.relId)
+     join tblPartij p on (r.partId = p.partId)
+    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a.af = 1 and h.skip = 0
+     and h.actId = 14 and s.redId is not null
+
+Union
+
+    SELECT 'medicatie' qry, n.hisId, concat(round(sum(n.nutat*n.stdat),2),' ', e.eenheid,'  ', a.naam,'  ',coalesce(i.charge,'')) toel
+    FROM tblNuttig n
+     join tblInkoop i on (n.inkId = i.inkId)
+     join tblArtikel a on (a.artId = i.artId)
+     join tblEenheiduser eu on (eu.enhuId = a.enhuId)
+     join tblEenheid e on (e.eenhId = eu.eenhId)
+    WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    GROUP BY n.hisId, e.eenheid, a.naam, i.charge
+
+Union
+
+    SELECT 'omnummeren' qry,  h.hisId, concat('Oud nummer ', h.oud_nummer) toel
+    From tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+    Where st.lidId = 13 and h.actId = 17 and h.skip = 0
 
 ) toel
 on (his.hisId = toel.hisId)
@@ -806,50 +806,50 @@ FROM tblBezet b
  join tblUbn u on (st.ubnId = u.ubnId)
  join tblSchaap s on (st.schaapId = s.schaapId)
  join
-	 (
-		SELECT b.bezId, min(his.hisId) hist
-		FROM tblPeriode p
-		 join tblBezet b on (p.periId = b.periId)
-		 join tblHistorie h on (h.hisId = b.hisId)
-		 join tblStal st on (st.stalId = h.stalId)
-		 join tblHistorie his on (st.stalId = his.stalId)
-		 join tblActie a on (a.actId = his.actId)
-		 join tblSchaap s on (s.schaapId = st.schaapId)
-		WHERE h.skip = 0 and his.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-		 and (a.aan = 1 or a.uit = 1)
-		 and his.hisId > b.hisId
-		GROUP BY b.bezId
-	 ) uit on (uit.bezId = b.bezId)
+     (
+        SELECT b.bezId, min(his.hisId) hist
+        FROM tblPeriode p
+         join tblBezet b on (p.periId = b.periId)
+         join tblHistorie h on (h.hisId = b.hisId)
+         join tblStal st on (st.stalId = h.stalId)
+         join tblHistorie his on (st.stalId = his.stalId)
+         join tblActie a on (a.actId = his.actId)
+         join tblSchaap s on (s.schaapId = st.schaapId)
+        WHERE h.skip = 0 and his.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+         and (a.aan = 1 or a.uit = 1)
+         and his.hisId > b.hisId
+        GROUP BY b.bezId
+     ) uit on (uit.bezId = b.bezId)
  join tblHistorie ht on (ht.hisId = uit.hist)
  join 
 (
-	SELECT v.periId, v.inkId, v.nutat/sum(datediff(ht.datum,hv.datum)) kg_st
-	FROM tblVoeding v
-	 join tblPeriode p on (v.periId = p.periId)
-	 join tblBezet b on (p.periId = b.periId)
-	 join tblHistorie hv on (hv.hisId = b.hisId)
-	 join
-	 (
-		SELECT b.bezId, min(his.hisId) hist
-		FROM tblBezet b
-		 join tblHistorie h on (h.hisId = b.hisId)
-		 join tblStal st on (st.stalId = h.stalId)
-		 join tblHistorie his on (st.stalId = his.stalId)
-		 join tblActie a on (a.actId = his.actId)
-		 join (
-			SELECT b.periId
-			FROM tblBezet b
-			 join tblHistorie h on (b.hisId = h.hisId)
-			 join tblStal st on (h.stalId = st.stalId)
-			 join tblSchaap s on (s.schaapId = st.schaapId)
-			WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-		 ) peri_obv_schaap on (peri_obv_schaap.periId = b.periId)
-		WHERE (a.aan = 1 or a.uit = 1)
-		 and his.hisId > b.hisId and h.skip = 0 and his.skip = 0
-		GROUP BY b.bezId
-	 ) uit on (uit.bezId = b.bezId)
-	 join tblHistorie ht on (ht.hisId = uit.hist)
-	GROUP BY v.periId, v.inkId
+    SELECT v.periId, v.inkId, v.nutat/sum(datediff(ht.datum,hv.datum)) kg_st
+    FROM tblVoeding v
+     join tblPeriode p on (v.periId = p.periId)
+     join tblBezet b on (p.periId = b.periId)
+     join tblHistorie hv on (hv.hisId = b.hisId)
+     join
+     (
+        SELECT b.bezId, min(his.hisId) hist
+        FROM tblBezet b
+         join tblHistorie h on (h.hisId = b.hisId)
+         join tblStal st on (st.stalId = h.stalId)
+         join tblHistorie his on (st.stalId = his.stalId)
+         join tblActie a on (a.actId = his.actId)
+         join (
+            SELECT b.periId
+            FROM tblBezet b
+             join tblHistorie h on (b.hisId = h.hisId)
+             join tblStal st on (h.stalId = st.stalId)
+             join tblSchaap s on (s.schaapId = st.schaapId)
+            WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+         ) peri_obv_schaap on (peri_obv_schaap.periId = b.periId)
+        WHERE (a.aan = 1 or a.uit = 1)
+         and his.hisId > b.hisId and h.skip = 0 and his.skip = 0
+        GROUP BY b.bezId
+     ) uit on (uit.bezId = b.bezId)
+     join tblHistorie ht on (ht.hisId = uit.hist)
+    GROUP BY v.periId, v.inkId
 ) vr on (vr.periId = b.periId)
  join tblInkoop i on (i.inkId = vr.inkId)
  join tblArtikel a on (a.artId = i.artId)
@@ -864,27 +864,27 @@ FROM tblRequest r
  join tblUbn u on (st.ubnId = u.ubnId)
  join tblSchaap s on (s.schaapId = st.schaapId)
  join (
-		SELECT max(rsp.respId) respId, rsp.reqId, s.schaapId, 'wanneer niet omgenummerd'
-		FROM impRespons rsp
-		 join tblSchaap s on (rsp.levensnummer = s.levensnummer)
-		GROUP BY rsp.reqId, rsp.levensnummer
+        SELECT max(rsp.respId) respId, rsp.reqId, s.schaapId, 'wanneer niet omgenummerd'
+        FROM impRespons rsp
+         join tblSchaap s on (rsp.levensnummer = s.levensnummer)
+        GROUP BY rsp.reqId, rsp.levensnummer
 
-		UNION
+        UNION
 
-		SELECT max(rsp.respId) respId, rsp.reqId, st.schaapId, 'wanneer wel omgenummerd'
-		FROM impRespons rsp
-		 join tblHistorie h on (rsp.levensnummer = h.oud_nummer)
-		 join tblStal st on (h.stalId = st.stalId)
-		GROUP BY rsp.reqId, rsp.levensnummer
-	) id on (id.schaapId = s.schaapId and id.reqId = r.reqId)
+        SELECT max(rsp.respId) respId, rsp.reqId, st.schaapId, 'wanneer wel omgenummerd'
+        FROM impRespons rsp
+         join tblHistorie h on (rsp.levensnummer = h.oud_nummer)
+         join tblStal st on (h.stalId = st.stalId)
+        GROUP BY rsp.reqId, rsp.levensnummer
+    ) id on (id.schaapId = s.schaapId and id.reqId = r.reqId)
  join impRespons rs on (id.respId = rs.respId )
  left join (
-		SELECT s.schaapId, h.datum 
-		FROM tblSchaap s 
-		 join tblStal st on (st.schaapId = s.schaapId)
-		 join tblHistorie h on (h.stalId = st.stalId)
-		WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-	 ) ouder on (ouder.schaapId = s.schaapId)
+        SELECT s.schaapId, h.datum 
+        FROM tblSchaap s 
+         join tblStal st on (st.schaapId = s.schaapId)
+         join tblHistorie h on (h.stalId = st.stalId)
+        WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+     ) ouder on (ouder.schaapId = s.schaapId)
  
 WHERE r.dmmeld is not null and r.code = 'GER' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and h.skip = 0 and m.skip = 0
 
@@ -898,27 +898,27 @@ FROM tblRequest r
  join tblUbn u on (st.ubnId = u.ubnId)
  join tblSchaap s on (s.schaapId = st.schaapId)
  join (
-		SELECT max(rsp.respId) respId, rsp.reqId, s.schaapId, 'wanneer niet omgenummerd'
-		FROM impRespons rsp
-		 join tblSchaap s on (rsp.levensnummer = s.levensnummer)
-		GROUP BY rsp.reqId, rsp.levensnummer
+        SELECT max(rsp.respId) respId, rsp.reqId, s.schaapId, 'wanneer niet omgenummerd'
+        FROM impRespons rsp
+         join tblSchaap s on (rsp.levensnummer = s.levensnummer)
+        GROUP BY rsp.reqId, rsp.levensnummer
 
-		UNION
+        UNION
 
-		SELECT max(rsp.respId) respId, rsp.reqId, st.schaapId, 'wanneer wel omgenummerd'
-		FROM impRespons rsp
-		 join tblHistorie h on (rsp.levensnummer = h.oud_nummer)
-		 join tblStal st on (h.stalId = st.stalId)
-		GROUP BY rsp.reqId, rsp.levensnummer
-	) id on (id.schaapId = s.schaapId and id.reqId = r.reqId)
+        SELECT max(rsp.respId) respId, rsp.reqId, st.schaapId, 'wanneer wel omgenummerd'
+        FROM impRespons rsp
+         join tblHistorie h on (rsp.levensnummer = h.oud_nummer)
+         join tblStal st on (h.stalId = st.stalId)
+        GROUP BY rsp.reqId, rsp.levensnummer
+    ) id on (id.schaapId = s.schaapId and id.reqId = r.reqId)
  join impRespons rs on (id.respId = rs.respId )
  left join (
-		SELECT s.schaapId, h.datum 
-		FROM tblSchaap s 
-		 join tblStal st on (st.schaapId = s.schaapId)
-		 join tblHistorie h on (h.stalId = st.stalId)
-		WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-	 ) ouder on (ouder.schaapId = s.schaapId)
+        SELECT s.schaapId, h.datum 
+        FROM tblSchaap s 
+         join tblStal st on (st.schaapId = s.schaapId)
+         join tblHistorie h on (h.stalId = st.stalId)
+        WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+     ) ouder on (ouder.schaapId = s.schaapId)
  
 WHERE r.dmmeld is not null and r.code = 'AAN' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and h.skip = 0 and m.skip = 0
 
@@ -932,27 +932,27 @@ FROM tblRequest r
  join tblUbn u on (st.ubnId = u.ubnId)
  join tblSchaap s on (s.schaapId = st.schaapId)
  join (
-		SELECT max(rsp.respId) respId, rsp.reqId, s.schaapId, 'wanneer niet omgenummerd'
-		FROM impRespons rsp
-		 join tblSchaap s on (rsp.levensnummer = s.levensnummer)
-		GROUP BY rsp.reqId, rsp.levensnummer
+        SELECT max(rsp.respId) respId, rsp.reqId, s.schaapId, 'wanneer niet omgenummerd'
+        FROM impRespons rsp
+         join tblSchaap s on (rsp.levensnummer = s.levensnummer)
+        GROUP BY rsp.reqId, rsp.levensnummer
 
-		UNION
+        UNION
 
-		SELECT max(rsp.respId) respId, rsp.reqId, st.schaapId, 'wanneer wel omgenummerd'
-		FROM impRespons rsp
-		 join tblHistorie h on (rsp.levensnummer = h.oud_nummer)
-		 join tblStal st on (h.stalId = st.stalId)
-		GROUP BY rsp.reqId, rsp.levensnummer
-	) id on (id.schaapId = s.schaapId and id.reqId = r.reqId)
+        SELECT max(rsp.respId) respId, rsp.reqId, st.schaapId, 'wanneer wel omgenummerd'
+        FROM impRespons rsp
+         join tblHistorie h on (rsp.levensnummer = h.oud_nummer)
+         join tblStal st on (h.stalId = st.stalId)
+        GROUP BY rsp.reqId, rsp.levensnummer
+    ) id on (id.schaapId = s.schaapId and id.reqId = r.reqId)
  join impRespons rs on (id.respId = rs.respId )
  left join (
-		SELECT s.schaapId, h.datum 
-		FROM tblSchaap s 
-		 join tblStal st on (st.schaapId = s.schaapId)
-		 join tblHistorie h on (h.stalId = st.stalId)
-		WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-	 ) ouder on (ouder.schaapId = s.schaapId)
+        SELECT s.schaapId, h.datum 
+        FROM tblSchaap s 
+         join tblStal st on (st.schaapId = s.schaapId)
+         join tblHistorie h on (h.stalId = st.stalId)
+        WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+     ) ouder on (ouder.schaapId = s.schaapId)
  
 WHERE r.dmmeld is not null and r.code = 'AFV' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and h.skip = 0 and m.skip = 0
 
@@ -966,18 +966,18 @@ FROM tblRequest r
  join tblUbn u on (st.ubnId = u.ubnId)
  join tblSchaap s on (s.schaapId = st.schaapId)
  join (
-		SELECT max(respId) respId, reqId, levensnummer
-		FROM impRespons
-		GROUP BY reqId, levensnummer
-	) id on (id.levensnummer = s.levensnummer and id.reqId = r.reqId)
+        SELECT max(respId) respId, reqId, levensnummer
+        FROM impRespons
+        GROUP BY reqId, levensnummer
+    ) id on (id.levensnummer = s.levensnummer and id.reqId = r.reqId)
  join impRespons rs on (id.respId = rs.respId )
  left join (
-		SELECT s.schaapId, h.datum 
-		FROM tblSchaap s 
-		 join tblStal st on (st.schaapId = s.schaapId)
-		 join tblHistorie h on (h.stalId = st.stalId)
-		WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-	 ) ouder on (ouder.schaapId = s.schaapId)
+        SELECT s.schaapId, h.datum 
+        FROM tblSchaap s 
+         join tblStal st on (st.schaapId = s.schaapId)
+         join tblHistorie h on (h.stalId = st.stalId)
+        WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+     ) ouder on (ouder.schaapId = s.schaapId)
  
 WHERE r.dmmeld is not null and r.code = 'DOO' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and h.skip = 0 and m.skip = 0
 
@@ -991,18 +991,18 @@ FROM tblRequest r
  join tblUbn u on (st.ubnId = u.ubnId)
  join tblSchaap s on (s.schaapId = st.schaapId)
  join (
-		SELECT max(respId) respId, reqId, levensnummer_new
-		FROM impRespons
-		GROUP BY reqId, levensnummer
-	) id on (id.levensnummer_new = s.levensnummer and id.reqId = r.reqId)
+        SELECT max(respId) respId, reqId, levensnummer_new
+        FROM impRespons
+        GROUP BY reqId, levensnummer
+    ) id on (id.levensnummer_new = s.levensnummer and id.reqId = r.reqId)
  join impRespons rs on (id.respId = rs.respId )
  left join (
-		SELECT s.schaapId, h.datum 
-		FROM tblSchaap s 
-		 join tblStal st on (st.schaapId = s.schaapId)
-		 join tblHistorie h on (h.stalId = st.stalId)
-		WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-	 ) ouder on (ouder.schaapId = s.schaapId)
+        SELECT s.schaapId, h.datum 
+        FROM tblSchaap s 
+         join tblStal st on (st.schaapId = s.schaapId)
+         join tblHistorie h on (h.stalId = st.stalId)
+        WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+     ) ouder on (ouder.schaapId = s.schaapId)
  
 WHERE r.dmmeld is not null and r.code = 'VMD' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and h.skip = 0 and m.skip = 0
 
@@ -1011,35 +1011,35 @@ UNION
 SELECT hisId1 hisId, mdr.ubn, mdr.levensnummer, mdr.geslacht, date_format(mdr.worp1,'%d-%m-%Y') datum, mdr.worp1 date, NULL actId, 'Eerste worp' actie, 'worp' actie_if, NULL kg, mdr.dmaanw, concat(lam.lmrn) toel, NULL hiscom, NULL comment
 FROM
  (
-	SELECT u.ubn, s.levensnummer, s.geslacht, ouder.datum dmaanw, min(hl.datum) worp1, min(hl.hisId) hisId1
-	FROM tblStal st
-	 join tblUbn u on (st.ubnId = u.ubnId)
-	 join tblSchaap s on (s.schaapId = st.schaapId)
-	 join tblVolwas v on (v.mdrId = s.schaapId)
-	 join tblSchaap lam on (lam.volwId = v.volwId)
-	 join tblStal sl on (lam.schaapId = sl.schaapId)
-	 join tblHistorie hl on (sl.stalId = hl.stalId)
-	 left join (
-		SELECT s.schaapId, h.datum 
-		FROM tblSchaap s 
-		 join tblStal st on (st.schaapId = s.schaapId)
-		 join tblHistorie h on (h.stalId = st.stalId)
-		WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-	 ) ouder on (ouder.schaapId = s.schaapId)
+    SELECT u.ubn, s.levensnummer, s.geslacht, ouder.datum dmaanw, min(hl.datum) worp1, min(hl.hisId) hisId1
+    FROM tblStal st
+     join tblUbn u on (st.ubnId = u.ubnId)
+     join tblSchaap s on (s.schaapId = st.schaapId)
+     join tblVolwas v on (v.mdrId = s.schaapId)
+     join tblSchaap lam on (lam.volwId = v.volwId)
+     join tblStal sl on (lam.schaapId = sl.schaapId)
+     join tblHistorie hl on (sl.stalId = hl.stalId)
+     left join (
+        SELECT s.schaapId, h.datum 
+        FROM tblSchaap s 
+         join tblStal st on (st.schaapId = s.schaapId)
+         join tblHistorie h on (h.stalId = st.stalId)
+        WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+     ) ouder on (ouder.schaapId = s.schaapId)
 
-	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and sl.lidId = '".mysqli_real_escape_string($db,$lidId)."' and hl.actId = 1 and hl.skip = 0 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-	GROUP BY s.levensnummer, s.geslacht, ouder.datum
+    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and sl.lidId = '".mysqli_real_escape_string($db,$lidId)."' and hl.actId = 1 and hl.skip = 0 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+    GROUP BY s.levensnummer, s.geslacht, ouder.datum
  ) mdr
  join
  (
-	SELECT mdr.levensnummer moeder, h.datum, count(lam.schaapId) lmrn 
-	FROM tblSchaap mdr
-	 join tblVolwas v on (mdr.schaapId = v.mdrId)
-	 join tblSchaap lam on (v.volwId = lam.volwId)
-	 join tblStal st on (st.schaapId = lam.schaapId)
-	 join tblHistorie h on (h.stalId = st.stalId)
-	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 1 and h.skip = 0 and mdr.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-	GROUP BY mdr.levensnummer, h.datum
+    SELECT mdr.levensnummer moeder, h.datum, count(lam.schaapId) lmrn 
+    FROM tblSchaap mdr
+     join tblVolwas v on (mdr.schaapId = v.mdrId)
+     join tblSchaap lam on (v.volwId = lam.volwId)
+     join tblStal st on (st.schaapId = lam.schaapId)
+     join tblHistorie h on (h.stalId = st.stalId)
+    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 1 and h.skip = 0 and mdr.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+    GROUP BY mdr.levensnummer, h.datum
  ) lam on (mdr.levensnummer = lam.moeder and mdr.worp1 = lam.datum)
  
 UNION
@@ -1047,48 +1047,48 @@ UNION
 SELECT hisend hisId, mdr.ubn, mdr.levensnummer, mdr.geslacht, date_format(mdr.worpend,'%d-%m-%Y') datum, mdr.worpend date, NULL actId, 'Laatste worp' actie, 'worp' actie_if, NULL kg, mdr.dmaanw, concat(lam.lmrn) toel, NULL hiscom, NULL comment
 FROM
  (
-	SELECT u.ubn, s.levensnummer, s.geslacht, ouder.datum dmaanw, max(hl.datum) worpend, max(hl.hisId) hisend
-	FROM tblStal st
-	 join tblUbn u on (st.ubnId = u.ubnId)
-	 join tblSchaap s on (s.schaapId = st.schaapId)
-	 join tblVolwas v on (v.mdrId = s.schaapId)
-	 join tblSchaap lam on (lam.volwId = v.volwId)
-	 join tblStal sl on (lam.schaapId = sl.schaapId)
-	 join tblHistorie hl on (sl.stalId = hl.stalId)
-	 left join (
-		SELECT s.schaapId, h.datum 
-		FROM tblSchaap s 
-		 join tblStal st on (st.schaapId = s.schaapId)
-		 join tblHistorie h on (h.stalId = st.stalId)
-		WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-	 ) ouder on (ouder.schaapId = s.schaapId)
-	 
-	 left join (
-		SELECT moe.levensnummer, moe.geslacht, min(hl.datum) worp1
-		FROM tblStal st
-		 join tblSchaap moe on (moe.schaapId = st.schaapId)
-		 join tblVolwas v on (v.mdrId = moe.schaapId)
-		 join tblSchaap lam on (lam.volwId = v.volwId)
-		 join tblStal sl on (lam.schaapId = sl.schaapId)
-		 join tblHistorie hl on (sl.stalId = hl.stalId)
+    SELECT u.ubn, s.levensnummer, s.geslacht, ouder.datum dmaanw, max(hl.datum) worpend, max(hl.hisId) hisend
+    FROM tblStal st
+     join tblUbn u on (st.ubnId = u.ubnId)
+     join tblSchaap s on (s.schaapId = st.schaapId)
+     join tblVolwas v on (v.mdrId = s.schaapId)
+     join tblSchaap lam on (lam.volwId = v.volwId)
+     join tblStal sl on (lam.schaapId = sl.schaapId)
+     join tblHistorie hl on (sl.stalId = hl.stalId)
+     left join (
+        SELECT s.schaapId, h.datum 
+        FROM tblSchaap s 
+         join tblStal st on (st.schaapId = s.schaapId)
+         join tblHistorie h on (h.stalId = st.stalId)
+        WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+     ) ouder on (ouder.schaapId = s.schaapId)
+     
+     left join (
+        SELECT moe.levensnummer, moe.geslacht, min(hl.datum) worp1
+        FROM tblStal st
+         join tblSchaap moe on (moe.schaapId = st.schaapId)
+         join tblVolwas v on (v.mdrId = moe.schaapId)
+         join tblSchaap lam on (lam.volwId = v.volwId)
+         join tblStal sl on (lam.schaapId = sl.schaapId)
+         join tblHistorie hl on (sl.stalId = hl.stalId)
 
-		WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and hl.actId = 1 and hl.skip = 0 and moe.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-		GROUP BY moe.levensnummer, moe.geslacht
-	 ) lam1 on (lam1.levensnummer = s.levensnummer and lam1.worp1 = hl.datum)
-	
-	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and sl.lidId = '".mysqli_real_escape_string($db,$lidId)."' and hl.actId = 1 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and isnull(lam1.worp1)
-	GROUP BY s.levensnummer, s.geslacht, ouder.datum
+        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and hl.actId = 1 and hl.skip = 0 and moe.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+        GROUP BY moe.levensnummer, moe.geslacht
+     ) lam1 on (lam1.levensnummer = s.levensnummer and lam1.worp1 = hl.datum)
+    
+    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and sl.lidId = '".mysqli_real_escape_string($db,$lidId)."' and hl.actId = 1 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and isnull(lam1.worp1)
+    GROUP BY s.levensnummer, s.geslacht, ouder.datum
  ) mdr
  join
  (
-	SELECT mdr.levensnummer moeder, h.datum, count(lam.schaapId) lmrn 
-	FROM tblSchaap mdr
-	 join tblVolwas v on (mdr.schaapId = v.mdrId)
-	 join tblSchaap lam on (v.volwId = lam.volwId)
-	 join tblStal st on (st.schaapId = lam.schaapId)
-	 join tblHistorie h on (h.stalId = st.stalId)
-	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 1 and h.skip = 0 and mdr.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-	GROUP BY mdr.levensnummer, h.datum
+    SELECT mdr.levensnummer moeder, h.datum, count(lam.schaapId) lmrn 
+    FROM tblSchaap mdr
+     join tblVolwas v on (mdr.schaapId = v.mdrId)
+     join tblSchaap lam on (v.volwId = lam.volwId)
+     join tblStal st on (st.schaapId = lam.schaapId)
+     join tblHistorie h on (h.stalId = st.stalId)
+    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 1 and h.skip = 0 and mdr.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+    GROUP BY mdr.levensnummer, h.datum
  ) lam on (mdr.levensnummer = lam.moeder and mdr.worpend = lam.datum)
 
 ORDER BY date_format(date, '%Y-%m-%d 00:00:00') desc, hisId desc
@@ -1101,25 +1101,25 @@ kg noodzakelijk eerst hok verlaten geboren en dan de(zelfde) datum van spenen
 
 
 while ($his = mysqli_fetch_assoc($geschiedenis)) { 
-	$hisId = $his['hisId'];
-	$ubn = $his['ubn'];
-	$datum = $his['datum'];
-	$actId = $his['actId'];
-	$actie = $his['actie'];
-	$actie_if = $his['actie_if'];
-	$sekse = $his['geslacht'];
-	$date = $his['date'];
-	$dmaanw = $his['dmaanw'];
-	if( !isset($dmaanw) || $date < $dmaanw /*geen lam meer */ ||
-	($date == $dmaanw && ($actId == 5 || $actId == 6) ) ) /*zeldedatum en nog wel lam */ { $fase = 'lam';} 
-	else { if($sekse == 'ooi') { $fase = 'moeder';} else if($sekse == 'ram') { $fase = 'vader'; } }
-	$kg = $his['kg'];
-	$toel = $his['toel']; if ($actie_if == 'worp' && $toel== 1) { $toel = $toel." lam"; } else if ($actie_if == 'worp' && $toel > 1) { $toel = $toel." lammeren"; }
-	$Id = $his['hiscom']; /* hisId t.b.v. commentaar*/
-	$comm = $his['comment'];
-	
-	$lev = $his['levensnummer'];
-	?>
+    $hisId = $his['hisId'];
+    $ubn = $his['ubn'];
+    $datum = $his['datum'];
+    $actId = $his['actId'];
+    $actie = $his['actie'];
+    $actie_if = $his['actie_if'];
+    $sekse = $his['geslacht'];
+    $date = $his['date'];
+    $dmaanw = $his['dmaanw'];
+    if( !isset($dmaanw) || $date < $dmaanw /*geen lam meer */ ||
+    ($date == $dmaanw && ($actId == 5 || $actId == 6) ) ) /*zeldedatum en nog wel lam */ { $fase = 'lam';} 
+    else { if($sekse == 'ooi') { $fase = 'moeder';} else if($sekse == 'ram') { $fase = 'vader'; } }
+    $kg = $his['kg'];
+    $toel = $his['toel']; if ($actie_if == 'worp' && $toel== 1) { $toel = $toel." lam"; } else if ($actie_if == 'worp' && $toel > 1) { $toel = $toel." lammeren"; }
+    $Id = $his['hiscom']; /* hisId t.b.v. commentaar*/
+    $comm = $his['comment'];
+    
+    $lev = $his['levensnummer'];
+    ?>
 
 <tr style = "font-size : 14px;">
  <td> <?php echo $ubn; ?> </td>
@@ -1129,7 +1129,7 @@ while ($his = mysqli_fetch_assoc($geschiedenis)) {
  <td align = 'right'> <?php if(isset($kg)) { echo $kg." kg"; } ?> </td>
  <td> <?php echo "&nbsp &nbsp &nbsp". $toel."&nbsp &nbsp &nbsp"; ?> </td>
  <td> <?php if($Id > 0) { ?>
-	<input type="text" name=<?php echo "txtComm_$Id"; ?> style="font-size: 11px"; size="50" value= <?php echo " \"$comm\" "; ?> > <?php } ?> 
+    <input type="text" name=<?php echo "txtComm_$Id"; ?> style="font-size: 11px"; size="50" value= <?php echo " \"$comm\" "; ?> > <?php } ?> 
  </td>
 </tr>
 <?php }
@@ -1215,18 +1215,18 @@ else { ?>
 <th> Worpgrootte <hr></th>
 </tr>
 
-	<?php
+    <?php
 while($row = mysqli_fetch_assoc($ouders)) {
 
-	$schaap = $row['levnr'];
-	$geslacht = $row['geslacht'];
-	$ras = $row['ras'];
-	$moeder = $row['levnr_ma'];
-	$ras_ma = $row['ras_ma'];
-	$vader = $row['levnr_pa']; 
-	$ras_pa = $row['ras_pa']; 
-	$worp = $row['grootte']; 
-	?>
+    $schaap = $row['levnr'];
+    $geslacht = $row['geslacht'];
+    $ras = $row['ras'];
+    $moeder = $row['levnr_ma'];
+    $ras_ma = $row['ras_ma'];
+    $vader = $row['levnr_pa']; 
+    $ras_pa = $row['ras_pa']; 
+    $worp = $row['grootte']; 
+    ?>
 
 <tr style = "font-size:13px;">
  <td align="center"> <?php echo $schaap; ?> </td>
@@ -1242,7 +1242,7 @@ while($row = mysqli_fetch_assoc($ouders)) {
  <td align="center"> <?php echo $worp; ?> </td>
 </tr>
 
-<?php	}
+<?php    }
 
 
  } // Einde if(isset($ouders)) ?>
@@ -1254,15 +1254,15 @@ while($row = mysqli_fetch_assoc($ouders)) {
  // EINDE VOOROUDERS ?>
 
  
-</form>	
+</form>    
 
-		</TD>
+        </TD>
 <script type="text/javascript">
-	$(document).ready(function() {
-	  $(".search-select").select2();
-	});
+    $(document).ready(function() {
+      $(".search-select").select2();
+    });
 </script>
-<?php		
+<?php        
 include "menu1.php"; }
 ?>
 

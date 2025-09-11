@@ -24,7 +24,7 @@ $titel = 'Betaalde posten';
 $file = "Kostenoverzicht.php";
 include "login.php"; ?>
 
-			<TD valign = "top" align = "center">
+            <TD valign = "top" align = "center">
 <?php
 if (Auth::is_logged_in()) { if($modfin == 1) { 
 
@@ -38,12 +38,12 @@ FROM tblOpgaaf o
  join tblRubriekuser ru on (o.rubuId = ru.rubuId)
 WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and o.his = 1
 ") or die (mysqli_error($db));
-	while ( $maxj = mysqli_fetch_assoc($zoek_maxjaar)) { $maxjaar = $maxj['jaar']; }
-	
-	 if(!isset($_POST['kzlJaar_']) && isset($maxjaar)) 	{ $toon_jaar = $maxjaar; }
-else if(isset($_POST['kzlJaar_'])) 						{ $toon_jaar = $_POST['kzlJaar_']; }
-	
-	
+    while ( $maxj = mysqli_fetch_assoc($zoek_maxjaar)) { $maxjaar = $maxj['jaar']; }
+    
+     if(!isset($_POST['kzlJaar_']) && isset($maxjaar))     { $toon_jaar = $maxjaar; }
+else if(isset($_POST['kzlJaar_']))                         { $toon_jaar = $_POST['kzlJaar_']; }
+    
+    
 // Declaratie kzlJaar
 $kzlJaar = mysqli_query($db,"
 SELECT year(datum) jaar 
@@ -57,11 +57,11 @@ ORDER BY year(datum) desc
 $index = 0;
 $jaarnr = [];
 $jaarRaak = [];
-	while($kzljr = mysqli_fetch_array($kzlJaar))
-		{
-	   $jaarnr[$index] = $kzljr['jaar'];
-	   $jaarRaak[$index] = $toon_jaar;
-	   $index++; 
+    while($kzljr = mysqli_fetch_array($kzlJaar))
+        {
+       $jaarnr[$index] = $kzljr['jaar'];
+       $jaarRaak[$index] = $toon_jaar;
+       $index++; 
     }
 // Einde Declaratie kzlJaar ?>
 <form action = "Kostenoverzicht.php" method = "post">
@@ -74,22 +74,22 @@ $jaarRaak = [];
 echo 'Jaar ' ; ?>
  <!-- KZLJAAR -->
  <select style="width:60;" name= "kzlJaar_" >
-<?php	$count = count($jaarnr);	
+<?php    $count = count($jaarnr);    
 for ($i = 0; $i < $count; $i++){
 
-	$opties = array($jaarnr[$i]=>$jaarnr[$i]);
-			foreach($opties as $key => $waarde)
-			{
+    $opties = array($jaarnr[$i]=>$jaarnr[$i]);
+            foreach($opties as $key => $waarde)
+            {
   if ((!isset($_POST['knpToon_']) && $jaarRaak[$i] == $key) || (isset($_POST["kzlJaar_"]) && $_POST["kzlJaar_"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
-  }		
-			}
+  }        
+            }
 }
 
  ?> </select>
-	 <!-- EINDE KZLJAAR -->
+     <!-- EINDE KZLJAAR -->
  </td>
  <td colspan = 4 style = "font-size : 13px;">
 <?php
@@ -113,9 +113,9 @@ WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and year(o.datum) = '"
 ") or die (mysqli_error($db));
 
    $zam = mysqli_fetch_assoc($zoek_aantal_maanden);
-		$aant_mnd = $zam['mnd'];
-		
-	if ($aant_mnd >1) {
+        $aant_mnd = $zam['mnd'];
+        
+    if ($aant_mnd >1) {
  echo "&nbsp Maand " ;
  
  //kzlMaand
@@ -129,15 +129,15 @@ GROUP BY date_format(o.datum,'%m'), month(datum)
 
 $name = 'kzlMnd_'; ?>
 <select name= <?php echo"$name";?>  style="font-size : 13px" width= 108 >
- <option></option>	
-<?php		while($row = mysqli_fetch_array($kzljrmnd))
-		  { $maand = $row['maand']; 
-				$mndname = array('','januari', 'februari', 'maart','april','mei','juni','juli','augustus','september','oktober','november','december');
+ <option></option>    
+<?php        while($row = mysqli_fetch_array($kzljrmnd))
+          { $maand = $row['maand']; 
+                $mndname = array('','januari', 'februari', 'maart','april','mei','juni','juli','augustus','september','oktober','november','december');
 $kzlkey = $row['jrmnd'];
 $kzlvalue = $mndname[$maand].$row['jaar'];
 
 include "kzl.php";
-		}
+        }
 ?></select> <?php
 }
 //Einde KZLMAANDEN indien meerdere maanden
@@ -153,8 +153,8 @@ GROUP BY hr.rubriek
 ORDER BY hr.rubriek
 ") or die (mysqli_error($db));
 
-	$rows_Hrub = mysqli_num_rows($zoek_hoofdrubrieken);
-		if($rows_Hrub > 1) { echo "&nbsp Hoofdrubriek ";
+    $rows_Hrub = mysqli_num_rows($zoek_hoofdrubrieken);
+        if($rows_Hrub > 1) { echo "&nbsp Hoofdrubriek ";
 //kzlHfdRubriek
 $kzlHrub = mysqli_query($db,"
 SELECT hr.rubhId, hr.rubriek
@@ -169,7 +169,7 @@ GROUP BY hr.rubhId, hr.rubriek ORDER BY hr.sort
 $name = 'kzlHrub_';?>
 <select name = <?php echo"$name";?> style = "font-size : 13px" width = 100 >
  <option></option>
-<?php		while($row = mysqli_fetch_assoc($kzlHrub)) {
+<?php        while($row = mysqli_fetch_assoc($kzlHrub)) {
 $kzlkey = $row['rubhId'];
 $kzlvalue = $row['rubriek'];
 
@@ -189,8 +189,8 @@ WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and year(o.datum) =
 GROUP BY r.rubriek ORDER BY r.rubriek
 ") or die (mysqli_error($db));
 
-	$rows_Rub = mysqli_num_rows($zoek_rubrieken);
-		if($rows_Rub > 1) { echo "&nbsp Rubriek ";
+    $rows_Rub = mysqli_num_rows($zoek_rubrieken);
+        if($rows_Rub > 1) { echo "&nbsp Rubriek ";
 //kzlHfdRubriek
 $kzlRub = mysqli_query($db,"
 SELECT r.rubId, r.rubriek
@@ -205,7 +205,7 @@ ORDER BY r.credeb desc, r.rubriek
 $name = 'kzlRub_';?>
 <select name = <?php echo"$name";?> style = "font-size : 13px" width = 100 >
  <option></option>
-<?php		while($row = mysqli_fetch_assoc($kzlRub)) {
+<?php        while($row = mysqli_fetch_assoc($kzlRub)) {
 $kzlkey = $row['rubId'];
 $kzlvalue = $row['rubriek'];
 
@@ -221,23 +221,23 @@ include "kzl.php";
  <td> <input type = "submit" name ="knpToon_" value = "Toon"> </td>
  <td width="210"></td>
  <td>
-	<input type="submit" name= <?php echo "knpSave_"; ?> value="Opslaan" style = "font-size:12px;">
+    <input type="submit" name= <?php echo "knpSave_"; ?> value="Opslaan" style = "font-size:12px;">
  </td>
-</tr>	
+</tr>    
 </table>
 
 <?php
 If ( (isset($_POST['knpToon_']) && !empty($_POST['kzlJaar_'])) || (isset($toon_jaar)) ) {
 if(!empty($_POST['kzlJaar_'])) { $jaartal = $_POST['kzlJaar_']; } else { $jaartal = $toon_jaar; }
-	// Filter Maand
-	if ($aant_mnd <= 1 || empty($_POST['kzlMnd_'])) { $resMnd = "( (datum) is not null )"; }
-	else if ($aant_mnd > 1 && !empty($_POST['kzlMnd_'])) { $resMnd = "( date_format(datum,'%m') = ".$_POST['kzlMnd_']." )"; } // Einde Filter Maand
-	// Filter Hoofdrubriek
-	if ($rows_Hrub <= 1 || empty($_POST['kzlHrub_'])) { $resHrub = "( r.rubhId is not null )"; }
-	else if ($rows_Hrub > 1 && !empty($_POST['kzlHrub_'])) { $value = $_POST['kzlHrub_']; $resHrub = "( r.rubhId = '$value' )"; } // Einde Filter Hoofdrubriek
-	// Filter Rubriek
-	if ($rows_Rub <= 1 || empty($_POST['kzlRub_'])) { $resRub = "( r.rubId is not null )"; }
-	else if ($rows_Rub > 1 && !empty($_POST['kzlRub_'])) { $value = $_POST['kzlRub_']; $resRub = "( r.rubId = '$value' )"; } // Einde Filter Hoofdrubriek
+    // Filter Maand
+    if ($aant_mnd <= 1 || empty($_POST['kzlMnd_'])) { $resMnd = "( (datum) is not null )"; }
+    else if ($aant_mnd > 1 && !empty($_POST['kzlMnd_'])) { $resMnd = "( date_format(datum,'%m') = ".$_POST['kzlMnd_']." )"; } // Einde Filter Maand
+    // Filter Hoofdrubriek
+    if ($rows_Hrub <= 1 || empty($_POST['kzlHrub_'])) { $resHrub = "( r.rubhId is not null )"; }
+    else if ($rows_Hrub > 1 && !empty($_POST['kzlHrub_'])) { $value = $_POST['kzlHrub_']; $resHrub = "( r.rubhId = '$value' )"; } // Einde Filter Hoofdrubriek
+    // Filter Rubriek
+    if ($rows_Rub <= 1 || empty($_POST['kzlRub_'])) { $resRub = "( r.rubId is not null )"; }
+    else if ($rows_Rub > 1 && !empty($_POST['kzlRub_'])) { $value = $_POST['kzlRub_']; $resRub = "( r.rubId = '$value' )"; } // Einde Filter Hoofdrubriek
 
 //$maandjaren toont de maand(en) binnen het gekozen jaar en eventueel gekozen melding. T.b.v. de loop maand jaar
 $maandjaren = mysqli_query($db,"
@@ -250,14 +250,14 @@ GROUP BY month(datum), year(datum)
 ORDER BY month(datum), year(datum) desc
 ") or die (mysqli_error($db));
   while ($rij = mysqli_fetch_assoc($maandjaren))
-		{  // START LOOP maandnaam jaartal
-		$mndnr = $rij['maand'];
-		
+        {  // START LOOP maandnaam jaartal
+        $mndnr = $rij['maand'];
+        
 $mndnaam = array('','januari', 'februari', 'maart','april','mei','juni','juli','augustus','september','oktober','november','december'); 
-		
+        
 $tot = date("Ym"); 
-	$maand = date("m");
-	$jaarstart = date("Y")-2;
+    $maand = date("m");
+    $jaarstart = date("Y")-2;
 //$vanaf = "$jaarstart$maand";
 ?>
 
@@ -281,9 +281,9 @@ GROUP BY r.rubhId, hr.rubriek
 ORDER BY hr.sort
 ") or die (mysqli_error($db));
   while ($opg = mysqli_fetch_assoc($zoek_hoofdrubriek))
-		{  // START LOOP meldingen
-		$rubhId = $opg['rubhId'];
-		$hfdRubriek = $opg['rubriek'];  ?>
+        {  // START LOOP meldingen
+        $rubhId = $opg['rubhId'];
+        $hfdRubriek = $opg['rubriek'];  ?>
 <tr><td colspan = 2><hr> </td></tr>
 <tr><td width = 150 ><?php echo $hfdRubriek; ?></td></tr>
 <tr><td colspan = 25><hr></td></tr>
@@ -304,50 +304,50 @@ ORDER BY r.rubriek, o.datum desc
  <th width = 0 height = 5></th>
  <th style = "text-align:center; font-size : 13px;" valign="bottom";width= 80>t.b.v. <br> Liquiditeit<hr></th>
  <th style = "text-align:center;" valign="bottom"; width= 80>Datum<hr></th>
- <th style = "text-align:center;" valign="bottom";		 >Rubriek<hr></th>
+ <th style = "text-align:center;" valign="bottom";         >Rubriek<hr></th>
  <th style = "text-align:center;" valign="bottom"; width= 80>Bedrag<hr></th>
  <th width = 10>  </th>
  <th style = "text-align:left;" valign="bottom";width= 450>Toelichting<hr></th>
  <th style = "text-align:center; font-size : 12px;" width=60>Terug naar inboeken<hr></th>
 </tr>
 
-<?php 		while($zp = mysqli_fetch_array($zoek_posten))
-		{ if($zp['liq'] == 1) {$liq = 'Ja'; } else { $liq = 'Nee'; } 
+<?php         while($zp = mysqli_fetch_array($zoek_posten))
+        { if($zp['liq'] == 1) {$liq = 'Ja'; } else { $liq = 'Nee'; } 
 
-			$Id = $zp['opgId'];
-			$datum = $zp['datum'];
-			$rubriek = $zp['rubriek'];
-			$bedrag = $zp['bedrag'];
-			$toelichting = $zp['toel']; ?>
+            $Id = $zp['opgId'];
+            $datum = $zp['datum'];
+            $rubriek = $zp['rubriek'];
+            $bedrag = $zp['bedrag'];
+            $toelichting = $zp['toel']; ?>
 
-<tr>	
+<tr>    
  <td width = 0 align="right"> <?php //echo $Id; ?></td>
- <td width = 70 align = "center" style = "font-size:15px;"> <?php echo $liq; ?> <br> </td>	   
- <td width = 180 align = "center" style = "font-size:15px;"> <?php echo $datum; ?> <br> </td>	   
+ <td width = 70 align = "center" style = "font-size:15px;"> <?php echo $liq; ?> <br> </td>       
+ <td width = 180 align = "center" style = "font-size:15px;"> <?php echo $datum; ?> <br> </td>       
  <td width = 250 style = "font-size:15px;"> <?php echo $rubriek; ?> <br> </td>
  <td width = 100 align = right style = "font-size:15px;"> <?php echo '&euro; '.$bedrag; ?> <br> </td>
  <td width = 10>  </td>
  <td width = 350 style = "font-size:15px;"> <?php echo $toelichting; ?> <br> </td>
  <td width = 50 align="center"> 
- 	<input type="checkbox" name= <?php echo "chbTerug_$Id"; ?> value= 1 style = "font-size:9px;" title=" Terugzetten naar Inboeken.">
+     <input type="checkbox" name= <?php echo "chbTerug_$Id"; ?> value= 1 style = "font-size:9px;" title=" Terugzetten naar Inboeken.">
  </td>
 </tr>
 
 <?php } ?>
-<tr height = 25><td></td></tr>	 
+<tr height = 25><td></td></tr>     
 <?php } // EINDE LOOP meldingen ?>
-			
+            
 <tr style = "height : 100px;"><td colspan = 25></td></tr>
 </table>
 <?php
 
 }  // EINDE LOOP maandnaam jaartal
-	
-} //  Einde knop toon ?>			
+    
+} //  Einde knop toon ?>            
 
 
 </form>
-		</TD>
+        </TD>
 <?php } else { ?> <img src='Kostenoverzicht_php.jpg'  width='970' height='550'/> <?php }
 include "menuFinance.php"; } ?>
 </body>

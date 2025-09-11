@@ -8,7 +8,7 @@ $versie = '29-05-2025'; /* Gekopieerd van Readerversies.php */
 <!DOCTYPE html>
 <html>
 <head>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <title>Sjabloon</title>
 </head>
 <body>
@@ -18,7 +18,7 @@ $titel = 'Ingelezen readerbestanden';
 $file = "Readerbestanden.php";
 include "login.php"; ?>
 
-		<TD valign = 'top'>
+        <TD valign = 'top'>
 <?php
 if (Auth::is_logged_in()) { ?>
 

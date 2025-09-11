@@ -3,14 +3,14 @@
 require_once("autoload.php");
 
 /* 6-5-2014 : Kolom 'aantal dagen moeder'moeder verwijderd
-		query verwijderd omdat het gebruik ervan onbekend is en variabelen worden niet gebruikt :
-		$post = mysqli_query($db,"SELECT hoknr, doelgroep FROM vw_Hoklijsten Where levensnummer = '$levnr'  ") or die (mysqli_error($db));
+        query verwijderd omdat het gebruik ervan onbekend is en variabelen worden niet gebruikt :
+        $post = mysqli_query($db,"SELECT hoknr, doelgroep FROM vw_Hoklijsten Where levensnummer = '$levnr'  ") or die (mysqli_error($db));
 
-	while ($rij=mysqli_fetch_assoc($post))
-	{ $pstdoel = $rij['doelgroep'];
-	$psthoknr = $rij['hoknr'];
-	}
-	
+    while ($rij=mysqli_fetch_assoc($post))
+    { $pstdoel = $rij['doelgroep'];
+    $psthoknr = $rij['hoknr'];
+    }
+    
 4-8-2014 werknr variabel gemaakt 
 11-8-2014 : veld type gewijzigd in fase 
 11-3-2015 : Login toegevoegd */
@@ -35,14 +35,14 @@ $titel = 'Ooikaart';
 $file = "OoikaartAll.php";
 include "login.php"; ?>
 
-		<TD valign = 'top' align = 'center'>
+        <TD valign = 'top' align = 'center'>
 <?php
 if (Auth::is_logged_in()) { if($modtech ==1) { ?>
 
 <form action= "OoikaartAll.php" method="post">
 
-<table border = 0 id="myTable2">	
-			
+<table border = 0 id="myTable2">    
+            
 <tr style = "font-size:12px;">
 <th width = 0 height = 30></th>
 <th width = 1 height = 30></th>
@@ -98,16 +98,16 @@ FROM tblSchaap mdr
  left join tblSchaap lam on (v.volwId = lam.volwId)
  join tblStal st on (mdr.schaapId = st.schaapId)
  join (
-	SELECT st.schaapId
-	FROM tblStal st
-	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 3 and h.skip = 0
+    SELECT st.schaapId
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
  ) ouder on (mdr.schaapId = ouder.schaapId)
  left join (
-	SELECT st.schaapId, datum
-	FROM tblStal st
-	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 1 and h.skip = 0
+    SELECT st.schaapId, datum
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 1 and h.skip = 0
  ) hg on (st.schaapId = hg.schaapId)
  left join tblHistorie haf on (st.stalId = haf.stalId and haf.actId = 13 and haf.skip = 0)
  left join tblHistorie hdo on (st.stalId = hdo.stalId and hdo.actId = 14 and hdo.skip = 0)
@@ -120,34 +120,34 @@ FROM tblSchaap mdr
  left join tblHistorie haf_lm on (st_lm.stalId = haf_lm.stalId and haf_lm.actId = 12 and haf_lm.skip = 0)
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and mdr.geslacht = 'ooi' and isnull(haf.datum) and isnull(hdo.datum)
 GROUP BY mdr.levensnummer, r.ras, hg.datum, date_format(haf.datum,'%d-%m-%Y'), date_format(hdo.datum,'%d-%m-%Y')
-") or die (mysqli_error($db));	
+") or die (mysqli_error($db));    
 
-{	
+{    
 while($row = mysqli_fetch_assoc($result))
-			{
-				$schaapId = $row['schaapId'];
-				$levnr = $row['levensnummer'];
-				$werknr = $row['werknr'];
-				$ras = $row['ras'];
-				$dmgeb = $row['dmgebrn'];
-				$gebdm = $row['geb_datum'];
-				$lammeren = $row['lammeren'];
-				$levend = $row['levend'];
-				$percleven = $row['percleven'];
-				$aantooi = $row['aantooi'];
-				$aantram = $row['aantram'];
-				$gemkg = $row['gemgewicht'];
-				$aantspn = $row['aantspn'];
-				$percspn = $row['percspn'];
-				$gemspn = $row['gemspnkg'];
-				$gemgr_spn = $row['gemgr_spn'];
-				$aantafl = $row['aantafv'];
-				$gemafl = $row['gemafvkg'];
-				$gemgr_afv = $row['gemgr_afv'];
+            {
+                $schaapId = $row['schaapId'];
+                $levnr = $row['levensnummer'];
+                $werknr = $row['werknr'];
+                $ras = $row['ras'];
+                $dmgeb = $row['dmgebrn'];
+                $gebdm = $row['geb_datum'];
+                $lammeren = $row['lammeren'];
+                $levend = $row['levend'];
+                $percleven = $row['percleven'];
+                $aantooi = $row['aantooi'];
+                $aantram = $row['aantram'];
+                $gemkg = $row['gemgewicht'];
+                $aantspn = $row['aantspn'];
+                $percspn = $row['percspn'];
+                $gemspn = $row['gemspnkg'];
+                $gemgr_spn = $row['gemgr_spn'];
+                $aantafl = $row['aantafv'];
+                $gemafl = $row['gemafvkg'];
+                $gemgr_afv = $row['gemgr_afv'];
 
 ?>
 
-<tr align = "center">	
+<tr align = "center">    
  <td width = 0> </td>
  <td width = 1> </td>
  <td width = 100 style = "font-size:14px;"> <?php echo $levnr; ?> <br> </td>
@@ -156,29 +156,29 @@ while($row = mysqli_fetch_assoc($result))
 <?php echo $werknr; ?></a> <br> </td>
  <td width = 1> </td>
  <td width = 100 style = "font-size:14px;"> <?php echo $ras; ?> <br> </td>
- <td width = 1   style = "font-size:0px;"> <?php echo $dmgeb; ?> </td>	   	   
+ <td width = 1   style = "font-size:0px;"> <?php echo $dmgeb; ?> </td>              
  <td width = 100 style = "font-size:12px;"> <?php echo $gebdm; ?> <br> </td>
- <td width = 1> </td>  	   
+ <td width = 1> </td>         
  <td width = 100 style = "font-size:14px;"> <?php echo $lammeren; ?> <br> </td>
  <td width = 1> </td>
  <td width = 100 style = "font-size:14px;"> <?php echo $levend; ?> <br> </td>
- <td width = 1> </td>	
+ <td width = 1> </td>    
  <td width = 100 style = "font-size:14px;"> <?php echo $percleven; ?> <br> </td>
  <td width = 1> </td>
  <td width = 100 style = "font-size:14px;"> <?php echo $aantooi; ?> <br> </td>
- <td width = 1> </td>	
+ <td width = 1> </td>    
  <td width = 100 style = "font-size:14px;"> <?php echo $aantram; ?> <br> </td>
  <td width = 1> </td>
- <td width = 100 style = "font-size:14px;"> <?php echo $gemkg; ?> <br> </td>	
+ <td width = 100 style = "font-size:14px;"> <?php echo $gemkg; ?> <br> </td>    
  <td width = 1> </td>
  <td width = 100 style = "font-size:12px;"> <?php echo $aantspn; ?> <br> </td>
- <td width = 1> </td>	
+ <td width = 1> </td>    
  <td width = 100 style = "font-size:12px;"> <?php echo $gemspn; ?> <br> </td>
  <td width = 1> </td>
  <td width = 100 style = "font-size:12px;"> <?php echo $gemgr_spn; ?> <br> </td>
  <td width = 1> </td>
  <td width = 100 style = "font-size:12px;"> <?php echo $aantafl; ?> <br> </td>
- <td width = 1> </td>	
+ <td width = 1> </td>    
  <td width = 100 style = "font-size:12px;"> <?php echo $gemafl; ?> <br> </td>
  <td width = 1> </td>
  <td width = 100 style = "font-size:12px;"> <?php echo $gemgr_afv; ?> <br> </td>
@@ -186,9 +186,9 @@ while($row = mysqli_fetch_assoc($result))
 
  <td width = 80 style = "font-size:13px;" >
 
-<?php	}  ?>			
+<?php    }  ?>            
  </td> 
-<?php } ?>	   
+<?php } ?>       
 </tr>
 </table>
 

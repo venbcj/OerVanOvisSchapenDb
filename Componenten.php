@@ -22,7 +22,7 @@ $titel = 'Componenten';
 $file = "Componenten.php";
 include "login.php"; ?>
 
-		<TD align = "center" valign = "top">
+        <TD align = "center" valign = "top">
 <?php
 if (Auth::is_logged_in()) { if($modfin == 1) {
 
@@ -42,12 +42,12 @@ if (isset ($_POST['knpSave_'])) { include "save_component.php"; }
 
 
  <tr style =  "font-size:12px;" valign =  "bottom"> 
-		 <th width = 180>Component</th>
-		 <th></th>
-		 <th>Waarde</th>
-		 <th></th>
-		 <th>Actief</th> 
-		 <th>t.b.v.<br> Saldo-<br>&nbsp&nbspberekening</th> 
+         <th width = 180>Component</th>
+         <th></th>
+         <th>Waarde</th>
+         <th></th>
+         <th>Actief</th> 
+         <th>t.b.v.<br> Saldo-<br>&nbsp&nbspberekening</th> 
  </tr> 
 <?php
 // START LOOP Eenheid
@@ -60,16 +60,16 @@ group by e.eenheid
 order by e.eenheid
 ") or die (mysqli_error($db));
 
-	while($rij = mysqli_fetch_assoc($loopEenh))
-	{
-		$eenh = "{$rij['eenheid']}"; 
-	
-	if($eenh == 'euro') 	{ $eenheid = 'Bedragen'; }
-	if($eenh == 'getal') 	{ $eenheid = 'Getallen'; }
-	if($eenh == 'procent') 	{ $eenheid = 'Percentages'; } ?>
-	
-<tr><th height = 52 align = left valign = bottom><?php echo $eenheid; ?><hr></th></tr>	
-<?php		
+    while($rij = mysqli_fetch_assoc($loopEenh))
+    {
+        $eenh = "{$rij['eenheid']}"; 
+    
+    if($eenh == 'euro')     { $eenheid = 'Bedragen'; }
+    if($eenh == 'getal')     { $eenheid = 'Getallen'; }
+    if($eenh == 'procent')     { $eenheid = 'Percentages'; } ?>
+    
+<tr><th height = 52 align = left valign = bottom><?php echo $eenheid; ?><hr></th></tr>    
+<?php        
 // START LOOP Componenten
 $loopCom = mysqli_query($db,"
 select eu.elemuId, e.element, eu.waarde, e.eenheid, eu.actief, eu.sal
@@ -79,22 +79,22 @@ where eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and e.eenheid = '".my
 order by e.eenheid, e.element
 ") or die (mysqli_error($db));
 
-	while($row = mysqli_fetch_assoc($loopCom))
-	{
-		$Id = "{$row['elemuId']}";
-		$compo = "{$row['element']}";
-		$waarde = "{$row['waarde']}";
-		$eenh = "{$row['eenheid']}";
-		$actief = "{$row['actief']}";
-		$sal = "{$row['sal']}";
-		
-	$eenheid_voor = array(''=>'','euro'=>'&euro;','getal'=>'','procent'=>'');
-	$eenheid_achter = array(''=>'','euro'=>'','getal'=>'','procent'=>'%');
+    while($row = mysqli_fetch_assoc($loopCom))
+    {
+        $Id = "{$row['elemuId']}";
+        $compo = "{$row['element']}";
+        $waarde = "{$row['waarde']}";
+        $eenh = "{$row['eenheid']}";
+        $actief = "{$row['actief']}";
+        $sal = "{$row['sal']}";
+        
+    $eenheid_voor = array(''=>'','euro'=>'&euro;','getal'=>'','procent'=>'');
+    $eenheid_achter = array(''=>'','euro'=>'','getal'=>'','procent'=>'%');
 ?>
 <tr style = "font-size:12px;">
 <td width = 180 style = "font-size : 14px;">
 <!-- Veld Componentnaam -->
-	<?php echo $compo; ?>
+    <?php echo $compo; ?>
 <!-- EINDE  Veld Componentnaam  -->
 </td>
 <td width = 1><?php echo $eenheid_voor[$eenh]; ?></td>
@@ -105,17 +105,17 @@ order by e.eenheid, e.element
 
 <td align = center>
 <input type = "hidden" name = <?php echo "chkActief_$Id"; ?> size = 1 value =0 >
-<input type = "checkbox" name = <?php echo "chkActief_$Id"; ?> id="c1" value="1" <?php echo $row['actief'] == 1 ? 'checked' : ''; ?> 		title = "Is Component te gebruiken ja/nee ?"> </td>
+<input type = "checkbox" name = <?php echo "chkActief_$Id"; ?> id="c1" value="1" <?php echo $row['actief'] == 1 ? 'checked' : ''; ?>         title = "Is Component te gebruiken ja/nee ?"> </td>
 
 <td align = center>
 <input type = "hidden" name = <?php echo "chkSalber_$Id"; ?> size = 1 value =0 >
-<input type = "checkbox" name = <?php echo "chkSalber_$Id"; ?> id="c1" value="1" <?php echo $row['sal'] == 1 ? 'checked' : ''; ?> 		title = "te gebruiken bij saldoberekening ja/nee ?"> </td>
+<input type = "checkbox" name = <?php echo "chkSalber_$Id"; ?> id="c1" value="1" <?php echo $row['sal'] == 1 ? 'checked' : ''; ?>         title = "te gebruiken bij saldoberekening ja/nee ?"> </td>
 </tr>
 
-	</td>
-<?php		
-	}
-	} ?>
+    </td>
+<?php        
+    }
+    } ?>
 
 <td></td></tr>
 </table>
@@ -128,7 +128,7 @@ order by e.eenheid, e.element
 </td> <!-- Ruimte tussen de twee tabellen--> <td width = 200 align = center valign = 'top'> 
 <input type = "submit" name="knpSave_" value = "Opslaan" >
 </td>
-	
+    
 
 <?php
 
@@ -141,8 +141,8 @@ select count(elemuId) aant
 from tblElementuser
 where lidId = ".mysqli_real_escape_string($db,$lidId)." and actief = 0 and sal = 0
 ") or die (mysqli_error($db));
-	while ($uit = mysqli_fetch_assoc($Aantal_uit))
-	{	$niet_actief = $uit['aant'];	}
+    while ($uit = mysqli_fetch_assoc($Aantal_uit))
+    {    $niet_actief = $uit['aant'];    }
 if ($niet_actief > 0) {
 ?>
 <td width = 350 align = 'right' valign = 'top'> <!--betreft cel van overkoepelende tabel -->
@@ -154,14 +154,14 @@ if ($niet_actief > 0) {
 
 
  <tr style =  "font-size:12px;" valign =  "bottom"> 
-		 <th align = "left" >Component</th>
-		 <th></th>
-		 <th align = "left" >Waarde</th>
-		 <th></th>
-		 <th>Actief</th>
-		 <th>t.b.v.<br>Saldo-<br>&nbsp&nbspberekening</th> 
+         <th align = "left" >Component</th>
+         <th></th>
+         <th align = "left" >Waarde</th>
+         <th></th>
+         <th>Actief</th>
+         <th>t.b.v.<br>Saldo-<br>&nbsp&nbspberekening</th> 
  </tr> 
-<?php		
+<?php        
 // START LOOP Eenheid
 $loopEenh = mysqli_query($db,"
 select e.eenheid
@@ -172,16 +172,16 @@ group by e.eenheid
 order by e.eenheid
 ") or die (mysqli_error($db));
 
-	while($rij = mysqli_fetch_assoc($loopEenh))
-	{
-		$eenh = "{$rij['eenheid']}"; 
-	
-	if($eenh == 'euro') 	{ $eenheid = 'Bedragen'; }
-	if($eenh == 'getal') 	{ $eenheid = 'Getallen'; }
-	if($eenh == 'procent') 	{ $eenheid = 'Percentages'; } ?>
-	
-<tr><th height = 52 align = left valign = bottom><?php echo $eenheid; ?><hr></th></tr>	
-<?php		
+    while($rij = mysqli_fetch_assoc($loopEenh))
+    {
+        $eenh = "{$rij['eenheid']}"; 
+    
+    if($eenh == 'euro')     { $eenheid = 'Bedragen'; }
+    if($eenh == 'getal')     { $eenheid = 'Getallen'; }
+    if($eenh == 'procent')     { $eenheid = 'Percentages'; } ?>
+    
+<tr><th height = 52 align = left valign = bottom><?php echo $eenheid; ?><hr></th></tr>    
+<?php        
 // START LOOP Componenten
 $loopCom = mysqli_query($db,"
 select eu.elemuId, e.element, eu.waarde, eu.actief, eu.sal
@@ -192,16 +192,16 @@ order by element
 ") or die (mysqli_error($db));
 
 
-	while($row = mysqli_fetch_assoc($loopCom))
-	{
-		$Id = "{$row['elemuId']}";
-		$compo = "{$row['element']}";
-		$waarde = "{$row['waarde']}";
-		$actief = "{$row['actief']}";
-		$sal = "{$row['sal']}";
+    while($row = mysqli_fetch_assoc($loopCom))
+    {
+        $Id = "{$row['elemuId']}";
+        $compo = "{$row['element']}";
+        $waarde = "{$row['waarde']}";
+        $actief = "{$row['actief']}";
+        $sal = "{$row['sal']}";
 ?>
-		<tr style = "font-size:12px;">
-		<td style = "font-size : 14px;">
+        <tr style = "font-size:12px;">
+        <td style = "font-size : 14px;">
 <?php
 // Veld Componentnaam
 echo $compo; 
@@ -211,7 +211,7 @@ echo $compo;
 <td><!--Registratienummer -->
  <?php echo $waarde ; ?>
  <input type= "hidden" name= <?php echo "txtWaarde_$Id"; ?> size = 3 style = "font-size:12px; text-align : right" value = <?php echo $waarde ; ?>  > <!-- hiddden -->
-		<!-- txtWaarde nodig anders wordt de laatste waarde/variabele van de actieven vastgehouden en doorgegeven naar de niet actieven -->
+        <!-- txtWaarde nodig anders wordt de laatste waarde/variabele van de actieven vastgehouden en doorgegeven naar de niet actieven -->
 </td>
 
 <td width = 1 ></td>
@@ -221,10 +221,10 @@ echo $compo;
 
 <td align = center>
 <input type = "hidden" name = <?php echo "chkSalber_$Id"; ?> size = 1 value =0 >
-<input type = "checkbox" name = <?php echo "chkSalber_$Id"; ?> id="c1" value="1" <?php echo $row['sal'] == 1 ? 'checked' : ''; ?> 		title = "te gebruiken bij saldoberekening ja/nee ?"> </td>
-<?php		
-	}
-	}
+<input type = "checkbox" name = <?php echo "chkSalber_$Id"; ?> id="c1" value="1" <?php echo $row['sal'] == 1 ? 'checked' : ''; ?>         title = "te gebruiken bij saldoberekening ja/nee ?"> </td>
+<?php        
+    }
+    }
 ?>
 
 <td></td></tr>
@@ -244,7 +244,7 @@ echo $compo;
 </form> 
 
 
-	</TD>
+    </TD>
 <?php } else { ?> <img src='componenten_php.jpg'  width='970' height='550'/> <?php }
 include "menuFinance.php"; } ?>
 </body>

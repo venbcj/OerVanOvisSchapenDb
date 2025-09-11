@@ -13,7 +13,7 @@ If (isset($fout))  {$msg = $fout;}
 
 If (isset($msg))
 { 
-?>	
+?>    
 <script language = 'javascript'> 
  var fout = '<?php echo "$msg"; ?>' ;
  alert(fout); 

@@ -21,8 +21,8 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 
 <?php 
 if ( isset($_POST['knpSave_d']) || isset($_POST['knpDelete_d']) || isset($_POST['knpSave_p']) || isset($_POST['knpDelete_p']) ) { 
-	
-	if(!isset($fout)) { header("Location: ". $url ."Combireden.php"); }
+    
+    if(!isset($fout)) { header("Location: ". $url ."Combireden.php"); }
  }
  else 
 
@@ -30,19 +30,19 @@ $titel = 'Combinaties met redenen';
 $file = "Combireden.php";
 include "login.php"; ?>
 
-			<TD valign = "top" align = "center">
+            <TD valign = "top" align = "center">
 <?php
 if (Auth::is_logged_in()) { 
 
 //***********************************
-// NIEUWE COMBINATIE INLEZEN (PHP)	Zowel combinaties t.b.v. uitval als t.b.v. medicijnen  
+// NIEUWE COMBINATIE INLEZEN (PHP)    Zowel combinaties t.b.v. uitval als t.b.v. medicijnen  
 //***********************************
 IF ( isset($_POST['knpInsert_d']) || isset($_POST['knpInsert_p']) ) {
-	// Variabele t.b.v. insert into
+    // Variabele t.b.v. insert into
 if (isset($_POST['knpInsert_d'])) 
-	{ $insScan = $_POST['insScan_d']; $insArtId = 'NULL'; 		  $insRed = $_POST['insReden_d']; $fldTbl = 'd'; }
+    { $insScan = $_POST['insScan_d']; $insArtId = 'NULL';           $insRed = $_POST['insReden_d']; $fldTbl = 'd'; }
 if (isset($_POST['knpInsert_p'])) 
-	{ $insScan = $_POST['insScan_p']; $insArtId = $_POST['insPil']; $insRed = $_POST['insReden_p']; $fldTbl = 'p'; $insStdat = $_POST['insStdat']; 
+    { $insScan = $_POST['insScan_p']; $insArtId = $_POST['insPil']; $insRed = $_POST['insReden_p']; $fldTbl = 'p'; $insStdat = $_POST['insStdat']; 
 
 if(!empty($insArtId)) {
 $zoek_stdat = mysqli_query($db,"
@@ -50,27 +50,27 @@ SELECT round(a.stdat) stdat
 FROM tblArtikel a
 WHERE a.artId = ".mysqli_real_escape_string($db,$insArtId)."
 ") or die (mysqli_error($db));
-	while ( $row_stdat = mysqli_fetch_assoc($zoek_stdat))  { $dbStdat = $row_stdat['stdat']; }
-	}
+    while ( $row_stdat = mysqli_fetch_assoc($zoek_stdat))  { $dbStdat = $row_stdat['stdat']; }
+    }
 } //Einde isset($_POST['knpInsert_p'])) 
 // Variabele t.b.v. de controle query's
 if (empty($insScan)) 
-	 { $fldScan = 'scan = NULL';		$whereScan = 'ISNULL(scan)';	} 
-else { $fldScan = "scan = $insScan ";	$whereScan = $fldScan;			}
+     { $fldScan = 'scan = NULL';        $whereScan = 'ISNULL(scan)';    } 
+else { $fldScan = "scan = $insScan ";    $whereScan = $fldScan;            }
 
-if ((empty($insArtId) && $fldTbl == 'p') || ($fldTbl == 'd'))	
-	 { $fldArtId = 'artId = NULL';		$whereArtId = 'ISNULL(artId)';	}
-else { $fldArtId = "artId = $insArtId ";	$whereArtId = $fldArtId;	}
+if ((empty($insArtId) && $fldTbl == 'p') || ($fldTbl == 'd'))    
+     { $fldArtId = 'artId = NULL';        $whereArtId = 'ISNULL(artId)';    }
+else { $fldArtId = "artId = $insArtId ";    $whereArtId = $fldArtId;    }
 
 if (empty($insStdat) && !empty($insArtId) && $fldTbl == 'p') //Als het standaard aantal leeg is en het artikel niet en een medicijn betreft
-	 { $fldStdat = "stdat = $dbStdat"; 	$whereStdat = $fldStdat; 		}
+     { $fldStdat = "stdat = $dbStdat";     $whereStdat = $fldStdat;         }
 else if ((empty($insStdat) && empty($insArtId) && $fldTbl == 'p') || ($fldTbl == 'd')) //Als het standaard aantal en artikel leeg is en medicijn betreft of het betreft uitval
-	 { $fldStdat = 'stdat = NULL';		$whereStdat = 'ISNULL(stdat)';  }
-else { $fldStdat = "stdat = $insStdat"; 	$whereStdat = $fldStdat; 	}
+     { $fldStdat = 'stdat = NULL';        $whereStdat = 'ISNULL(stdat)';  }
+else { $fldStdat = "stdat = $insStdat";     $whereStdat = $fldStdat;     }
 
-if (empty($insRed))	 
-	 { $fldReden = 'reduId = NULL'; $whereRed = 'ISNULL(reduId)';	}
-else { $fldReden = "reduId = $insRed ";	$whereRed = "reduId = $insRed "; }
+if (empty($insRed))     
+     { $fldReden = 'reduId = NULL'; $whereRed = 'ISNULL(reduId)';    }
+else { $fldReden = "reduId = $insRed ";    $whereRed = "reduId = $insRed "; }
 
 $bestaat_combireden_al = mysqli_query($db,"
 SELECT cr.comrId
@@ -78,8 +78,8 @@ FROM tblCombireden cr
 WHERE $whereArtId and $whereStdat and $whereRed and cr.tbl = '$fldTbl'
 GROUP BY cr.artId, cr.reduId
 ") or die (mysqli_error($db));
-				$rows = mysqli_num_rows($bestaat_combireden_al);
-	
+                $rows = mysqli_num_rows($bestaat_combireden_al);
+    
 $bestaat_scannr_al = mysqli_query($db,"
 SELECT cr.comrId
 FROM tblCombireden cr
@@ -87,23 +87,23 @@ FROM tblCombireden cr
 WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and $whereScan and cr.tbl = '$fldTbl'
 GROUP BY cr.scan
 ") or die (mysqli_error($db));
-			$rows_scan = mysqli_num_rows($bestaat_scannr_al);
+            $rows_scan = mysqli_num_rows($bestaat_scannr_al);
 
 if(!empty($insArtId) && empty($insStdat) && $fldTbl == 'p') {  $insStdat = $dbStdat; }
-if(!empty($insArtId) && $fldTbl == 'd') 					{  $insStdat = 'NULL'; }
+if(!empty($insArtId) && $fldTbl == 'd')                     {  $insStdat = 'NULL'; }
 
-	if ($fldTbl == 'p' && empty($insArtId)){ 		$fout = "Medicijn is niet geselecteerd.";	}
-	else if ($fldTbl == 'd' && empty($insRed)){ 	$fout = "Reden is niet geselecteerd.";	}
-	else if ($rows > 0)		{		$fout = "Deze combinatie bestaat al.";	}
-	else if ($rows_scan > 0){		$fout = "Dit scannummer is al in gebruik.";	}
-	else 
-	{
-		if(empty($insRed)) { $insRed = 'NULL'; }		if(empty($insScan)) { $insScan = 'NULL'; }
-		$query_insert_tblCombireden = "INSERT INTO tblCombireden SET tbl = '$fldTbl', artId = ".$insArtId.", stdat = ".$insStdat.", reduId = ".$insRed.", scan = ".$insScan." ";
-									
-			mysqli_query($db,$query_insert_tblCombireden) or die (mysqli_error($db));
-		unset($insScan);
-	}
+    if ($fldTbl == 'p' && empty($insArtId)){         $fout = "Medicijn is niet geselecteerd.";    }
+    else if ($fldTbl == 'd' && empty($insRed)){     $fout = "Reden is niet geselecteerd.";    }
+    else if ($rows > 0)        {        $fout = "Deze combinatie bestaat al.";    }
+    else if ($rows_scan > 0){        $fout = "Dit scannummer is al in gebruik.";    }
+    else 
+    {
+        if(empty($insRed)) { $insRed = 'NULL'; }        if(empty($insScan)) { $insScan = 'NULL'; }
+        $query_insert_tblCombireden = "INSERT INTO tblCombireden SET tbl = '$fldTbl', artId = ".$insArtId.", stdat = ".$insStdat.", reduId = ".$insRed.", scan = ".$insScan." ";
+                                    
+            mysqli_query($db,$query_insert_tblCombireden) or die (mysqli_error($db));
+        unset($insScan);
+    }
 
 }
 /*******************************************
@@ -144,11 +144,11 @@ In gebruik :
 
 
  <tr style =  "font-size:12px;" align = "left" valign =  "bottom"> 
-		 <th>Scannr</th>
-		 <th>Reden</th>
+         <th>Scannr</th>
+         <th>Reden</th>
 
  </tr> 
-<?php		
+<?php        
 // START LOOP
 $zoek_reden_uitval = mysqli_query($db,"
 SELECT cr.comrId
@@ -158,12 +158,12 @@ WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and cr.tbl = 'd'
 ORDER BY cr.scan
 ") or die (mysqli_error($db));
 
-	while($lus = mysqli_fetch_assoc($zoek_reden_uitval))
-	{
+    while($lus = mysqli_fetch_assoc($zoek_reden_uitval))
+    {
             $Id = $lus['comrId'];  
 
-if (empty($_POST['txtId_d']))		{	$rowid_d = NULL;	}
-  else		{	$rowid_d = $_POST['txtId_d'];	}
+if (empty($_POST['txtId_d']))        {    $rowid_d = NULL;    }
+  else        {    $rowid_d = $_POST['txtId_d'];    }
   
 
 
@@ -174,37 +174,37 @@ WHERE comrId = ".mysqli_real_escape_string($db,$Id)."
 ORDER BY scan
 ") or die (mysqli_error($db));
 
-	while($row = mysqli_fetch_assoc($query))
-	{
-		$scan = $row['scan'];
-		$reduId = $row['reduId'];
-		
+    while($row = mysqli_fetch_assoc($query))
+    {
+        $scan = $row['scan'];
+        $reduId = $row['reduId'];
+        
 
 ?>
 <form action="Combireden.php" method="post" > 
-		<tr style = "font-size:12px;">
+        <tr style = "font-size:12px;">
 
 <td ><input type= "hidden" name= "txtId_d" size = 1 value = <?php echo "$Id";?> > <!--hiddden-->
 <!-- Scannummer -->
 <input type= "text" name= "txtScan_d" size = 1 style = "font-size:12px;" title = "Nummer voor in de reader" value = <?php echo $scan; ?> >
-		
+        
 
-</td>	
+</td>    
 <td>
 <?php
 // Declaratie REDEN  Met union all kan ik een niet actieve (aangeduid als pil) reden toch tonen en kan dit (en andere) inactieve artikelen niet worden gekozen !!
 $qryReden = ("
 SELECT u.reduId, u.reden
 FROM (
-	SELECT ru.reduId, r.reden
-	FROM tblReden r
-	 join tblRedenuser ru on (r.redId = ru.redId)
-	WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and ru.uitval = 1 
+    SELECT ru.reduId, r.reden
+    FROM tblReden r
+     join tblRedenuser ru on (r.redId = ru.redId)
+    WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and ru.uitval = 1 
    Union all
-	SELECT ru.reduId, r.reden
-	FROM tblReden r
-	 join tblRedenuser ru on (r.redId = ru.redId)
-	WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and ru.reduId = '$reduId'
+    SELECT ru.reduId, r.reden
+    FROM tblReden r
+     join tblRedenuser ru on (r.redId = ru.redId)
+    WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and ru.reduId = '$reduId'
 ) u
 GROUP BY u.reduId, u.reden
 ORDER BY u.reden
@@ -230,15 +230,15 @@ unset($index);
 <?php
 for ($i = 0; $i < $count; $i++){
 
-	$opties = array($redId_1[$i]=>$redn_1[$i]);
-			foreach($opties as $key => $waarde)
-			{
+    $opties = array($redId_1[$i]=>$redn_1[$i]);
+            foreach($opties as $key => $waarde)
+            {
   if ((!isset($_POST['knpSave_d']) && $reduId == $redId_1[$i]) || (isset($_POST["kzlReden_d"]) && $_POST["kzlReden_d"] == $key && $_POST['txtId_d'] == $rowid_d)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
-  }		
-			}
+  }        
+            }
 } 
 ?> </select>
 <!-- EINDE KZL REDEN -->
@@ -255,22 +255,22 @@ FROM tblReden r
  join tblRedenuser ru on (r.redId = ru.redId)
 WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and ru.reduId = '$reduId'
 ") or die (mysqli_error($db));
-	while ($red_act = mysqli_fetch_assoc($reden_actief))
-	{	$redActief = $red_act['uitval'];	
-		$reden = $red_act['reden'];	}
+    while ($red_act = mysqli_fetch_assoc($reden_actief))
+    {    $redActief = $red_act['uitval'];    
+        $reden = $red_act['reden'];    }
 // Controle of reden bij uitval hoort
 
 ?>
 <tr>
  <td colspan = 5 style = "font-size:12px; color:red;">
-<?php if($redActief == 0)	{ echo $reden." hoort niet bij uitval !"; } ?>
+<?php if($redActief == 0)    { echo $reden." hoort niet bij uitval !"; } ?>
  </td>
  </form> 
  <td></td>
 </tr>
 
-<?php		
-	}
+<?php        
+    }
 /**********************************************
  ** EINDE REDENEN TBV UITVAL IN GEBRUIK (HTML)
  **********************************************
@@ -279,12 +279,12 @@ WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and ru.reduId = '$red
  ** REDENEN BIJ UITVAL WIJZIGEN (PHP)
  *******************************************/
 
-If (isset($_POST['knpSave_d']))	{
+If (isset($_POST['knpSave_d']))    {
 
-	$txtScan = $_POST['txtScan_d'];  $txtRed = $_POST['kzlReden_d']; 
-	
-if (empty($txtScan)) {	$fldScan = 'scan = NULL';	$whereScan = 'ISNULL(scan)';	}  else	{ $fldScan = "scan = $txtScan ";	$whereScan = $fldScan;}
-if (empty($txtRed))	 {	$fldReden = 'reduId = NULL'; $whereRed = 'ISNULL(ru.reduId)';}  else	{ $fldReden = "reduId = $txtRed ";	$whereRed = "ru.reduId = $txtRed "; }
+    $txtScan = $_POST['txtScan_d'];  $txtRed = $_POST['kzlReden_d']; 
+    
+if (empty($txtScan)) {    $fldScan = 'scan = NULL';    $whereScan = 'ISNULL(scan)';    }  else    { $fldScan = "scan = $txtScan ";    $whereScan = $fldScan;}
+if (empty($txtRed))     {    $fldReden = 'reduId = NULL'; $whereRed = 'ISNULL(ru.reduId)';}  else    { $fldReden = "reduId = $txtRed ";    $whereRed = "ru.reduId = $txtRed "; }
 
 $bestaat_combireden_al = mysqli_query($db,"
 SELECT cr.comrId 
@@ -293,7 +293,7 @@ FROM tblCombireden cr
 WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and $whereRed and cr.comrId != ".$rowid_d." and cr.tbl = 'd'
 GROUP BY cr.artId, cr.reduId
 ") or die (mysqli_error($db));
-			$rows = mysqli_num_rows($bestaat_combireden_al);
+            $rows = mysqli_num_rows($bestaat_combireden_al);
 
 $bestaat_scannr_al = mysqli_query($db,"
 SELECT cr.comrId
@@ -302,37 +302,37 @@ FROM tblCombireden cr
 WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and $whereScan and cr.comrId != $rowid_d and cr.tbl = 'd'
 GROUP BY cr.scan
 ") or die (mysqli_error($db));
-			$rows_scan = mysqli_num_rows($bestaat_scannr_al);
+            $rows_scan = mysqli_num_rows($bestaat_scannr_al);
 
-	if ($rows > 0)
-	{ 		$fout = "Deze combinatie bestaat al.";	}
-	else if ($rows_scan > 0)
-	{ 		$fout = "Dit scannummer is al in gebruik.";	}
+    if ($rows > 0)
+    {         $fout = "Deze combinatie bestaat al.";    }
+    else if ($rows_scan > 0)
+    {         $fout = "Dit scannummer is al in gebruik.";    }
 
-	else if (empty($fout))
-	{
+    else if (empty($fout))
+    {
 
-		$query_bewerk_tblCombireden = "UPDATE tblCombireden set ".$fldScan.", ".$fldReden." WHERE comrId = ".$rowid_d." 	" ;
-			
-			mysqli_query($db,$query_bewerk_tblCombireden) or die (mysqli_error($db));	
+        $query_bewerk_tblCombireden = "UPDATE tblCombireden set ".$fldScan.", ".$fldReden." WHERE comrId = ".$rowid_d."     " ;
+            
+            mysqli_query($db,$query_bewerk_tblCombireden) or die (mysqli_error($db));    
 
-	}
-	//if (empty($fout)) { header("Location: ". $url ."Combireden.php"); }
+    }
+    //if (empty($fout)) { header("Location: ". $url ."Combireden.php"); }
 }
 
 if (isset($_POST['knpDelete_d']))
 {
 $delete_rec = "DELETE FROM tblCombireden WHERE comrId = ".$rowid_d." ";
-	mysqli_query($db,$delete_rec) or die (mysqli_error($db));
-	
-	//if (empty($fout)) { header("Location: ". $url ."Combireden.php"); }
+    mysqli_query($db,$delete_rec) or die (mysqli_error($db));
+    
+    //if (empty($fout)) { header("Location: ". $url ."Combireden.php"); }
 }
 
 /**************************************************
  ** EINDE REDENEN BIJ UITVAL WIJZIGEN (PHP)
  **************************************************/
 
-    } // EINDE LOOP	?>
+    } // EINDE LOOP    ?>
 
 <tr><td></td></tr>
 <tr><td colspan = 15><hr></td></tr>
@@ -381,25 +381,25 @@ unset($index);
 <?php
 for ($i = 0; $i < $count; $i++){
 
-	$opties = array($redId_2[$i]=>$redn_2[$i]);
-			foreach($opties as $key => $waarde)
-			{
+    $opties = array($redId_2[$i]=>$redn_2[$i]);
+            foreach($opties as $key => $waarde)
+            {
   if ( isset($_POST["insReden_d"]) && $_POST["insReden_d"] == $key ){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
-  }		
-			}
+  }        
+            }
 } 
 ?> </select>
 <!-- EINDE KZL REDEN -->
-	</td> 
+    </td> 
 <td colspan = 2><input type = "submit" name="knpInsert_d" value = "Toevoegen" style = "font-size:10px;"></td></tr>
 <!--
 ************************************************
  EINDE  NIEUWE REDENEN TBV UITVAL INVOEREN (PHP)
-************************************************	 -->
-	
+************************************************     -->
+    
 <tr><td colspan = 15><hr></td></tr>
 </table>
 </form>
@@ -425,13 +425,13 @@ FROM tblStal st
 WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)."  
 ") or die (mysqli_error($db));
 
-	while($record = mysqli_fetch_assoc($zoek_stalId)) { $pdf = $record['stalId']; }
+    while($record = mysqli_fetch_assoc($zoek_stalId)) { $pdf = $record['stalId']; }
 ?>
 <table border = 0 align =  "left" > 
 <tr> 
  <td width = 100 align =center valign =top > 
-	<a href= '<?php echo $url;?>Combireden_pdf.php?Id=<?php echo $pdf; ?>' style = 'color : blue'>
-	print pagina </a>
+    <a href= '<?php echo $url;?>Combireden_pdf.php?Id=<?php echo $pdf; ?>' style = 'color : blue'>
+    print pagina </a>
  <td colspan =  5 align = center> 
  <b>Medicijn met reden :</b><hr> 
  </td>
@@ -452,7 +452,7 @@ Combinaties in gebruik :
  <th>Reden</th>
 
 </tr> 
-<?php		
+<?php        
 // START LOOP
 $loop = mysqli_query($db,"
 SELECT cr.comrId
@@ -463,12 +463,12 @@ WHERE eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and cr.tbl = 'p'
 ORDER BY cr.scan
 ") or die (mysqli_error($db));
 
-	while($lus = mysqli_fetch_assoc($loop))
-	{
+    while($lus = mysqli_fetch_assoc($loop))
+    {
             $Id = $lus['comrId'];  
 
-if (empty($_POST['txtId_p']))		{	$rowid_p = NULL;	}
-  else		{	$rowid_p = $_POST['txtId_p'];	}
+if (empty($_POST['txtId_p']))        {    $rowid_p = NULL;    }
+  else        {    $rowid_p = $_POST['txtId_p'];    }
   
 
 
@@ -483,22 +483,22 @@ ORDER BY cr.scan";
 //echo $query;
 $query1 = mysqli_query($db,$query) or die (mysqli_error($db));
 
-	while($row = mysqli_fetch_assoc($query1))
-	{
-		$scan = $row['scan'];
-		$artId = $row['artId'];
-		$stdat = $row['stdat'];
-		$reduId = $row['reduId'];
-		
+    while($row = mysqli_fetch_assoc($query1))
+    {
+        $scan = $row['scan'];
+        $artId = $row['artId'];
+        $stdat = $row['stdat'];
+        $reduId = $row['reduId'];
+        
 
 ?>
 <form action="Combireden.php" method="post" > 
-		<tr style = "font-size:12px;">
+        <tr style = "font-size:12px;">
 <td width = 100>
 <td ><input type= "hidden" name= "txtId_p" size = 1 value = <?php echo "$Id";?> > <!--hiddden-->
 <!-- Scannummer -->
 <input type= "text" name= "txtScan_p" size = 1 style = "font-size:12px;" title = "Nummer voor in de reader" value = <?php echo $scan; ?> >
-		
+        
 
 </td><td>
 <?php
@@ -506,18 +506,18 @@ $query1 = mysqli_query($db,$query) or die (mysqli_error($db));
 $qryMedicijn = ("
 SELECT u.artId, u.naam
 FROM (
-	SELECT a.artId, a.naam
-	FROM tblEenheid e
-	 join tblEenheiduser eu on (e.eenhId = eu.eenhId)
-	 join tblArtikel a on (eu.enhuId = a.enhuId)
-	Where eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and a.soort = 'pil' and a.actief = 1
-	Union all
-	SELECT a.artId, a.naam
-	FROM tblEenheid e
-	 join tblEenheiduser eu on (e.eenhId = eu.eenhId)
-	 join tblArtikel a on (eu.enhuId = a.enhuId)
-	WHERE eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and a.artId = '$artId'
-	) u
+    SELECT a.artId, a.naam
+    FROM tblEenheid e
+     join tblEenheiduser eu on (e.eenhId = eu.eenhId)
+     join tblArtikel a on (eu.enhuId = a.enhuId)
+    Where eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and a.soort = 'pil' and a.actief = 1
+    Union all
+    SELECT a.artId, a.naam
+    FROM tblEenheid e
+     join tblEenheiduser eu on (e.eenhId = eu.eenhId)
+     join tblArtikel a on (eu.enhuId = a.enhuId)
+    WHERE eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and a.artId = '$artId'
+    ) u
 GROUP BY u.artId, u.naam
 ORDER BY u.naam
 "); 
@@ -542,15 +542,15 @@ unset($index);
 <?php
 for ($i = 0; $i < $count; $i++){
 
-	$opties = array($pilId[$i]=>$pilln[$i]);
-			foreach($opties as $key => $waarde)
-			{
+    $opties = array($pilId[$i]=>$pilln[$i]);
+            foreach($opties as $key => $waarde)
+            {
   if ((!isset($_POST['knpVervers']) && $artId == $pilId[$i]) || (isset($_POST["kzlPil"]) && $_POST["kzlPil"] == $key && $_POST['txtId_p'] == $rowid_p)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
-  }		
-			}
+  }        
+            }
 } 
 ?> </select>
 <!-- EINDE KZL MEDICIJN -->
@@ -559,7 +559,7 @@ for ($i = 0; $i < $count; $i++){
 <td>
 <!-- Standaard verbruiksaantal -->
 <input type= "text" name= <?php echo 'txtStdat'; ?> size = 1 style = "font-size:12px; text-align : right;" title = "Standaard hoeveelheid per toedienen" value = <?php if(isset($stdat)) { echo $stdat; } ?> >
-		
+        
 
 </td>
 <td>
@@ -569,15 +569,15 @@ if(!empty($reduId)) {
 $qryReden = ("
 SELECT u.reduId, u.reden
 FROM (
-	SELECT ru.reduId, r.reden
-	FROM tblReden r
-	 join tblRedenuser ru on (r.redId = ru.redId)
-	WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and ru.pil = 1 
+    SELECT ru.reduId, r.reden
+    FROM tblReden r
+     join tblRedenuser ru on (r.redId = ru.redId)
+    WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and ru.pil = 1 
    union all
-	SELECT ru.reduId, r.reden
-	FROM tblReden r
-	 join tblRedenuser ru on (r.redId = ru.redId)
-	WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and ru.reduId = ".mysqli_real_escape_string($db,$reduId)."
+    SELECT ru.reduId, r.reden
+    FROM tblReden r
+     join tblRedenuser ru on (r.redId = ru.redId)
+    WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and ru.reduId = ".mysqli_real_escape_string($db,$reduId)."
 ) u
 GROUP BY u.reduId, u.reden
 ORDER BY u.reden") ;
@@ -613,24 +613,24 @@ unset($index);
 <?php
 for ($i = 0; $i < $count; $i++){
 
-	$opties = array($redId_3[$i]=>$redn_3[$i]);
-			foreach($opties as $key => $waarde)
-			{
+    $opties = array($redId_3[$i]=>$redn_3[$i]);
+            foreach($opties as $key => $waarde)
+            {
   if ((!isset($_POST['knpSave_p']) && $reduId == $redId_3[$i]) || (isset($_POST["kzlReden_p"]) && $_POST["kzlReden_p"] == $key && $_POST['txtId_p'] == $rowid_p)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
-  }		
-			}
+  }        
+            }
 } 
 ?> </select>
 <!-- EINDE KZL REDEN -->
 
-	</td> 
+    </td> 
 
-		
-		<td ><input type = "submit" name= "knpSave_p" value = "Opslaan"  style = "font-size:10px;"></td>
-		<td ><input type = "submit" name= "knpDelete_p" value = "Verwijder" style = "font-size:10px;"></td>
+        
+        <td ><input type = "submit" name= "knpSave_p" value = "Opslaan"  style = "font-size:10px;"></td>
+        <td ><input type = "submit" name= "knpDelete_p" value = "Verwijder" style = "font-size:10px;"></td>
 </tr>
 <?php
 // Controle of medicijn actief is
@@ -641,9 +641,9 @@ FROM tblEenheid e
  join tblArtikel a on (a.enhuId = eu.enhuId)
 WHERE eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and a.artId = '$artId'
 ") or die (mysqli_error($db));
-	while ($med_act = mysqli_fetch_assoc($medicijn_actief))
-	{	$pilActief = $med_act['actief'];	
-		$medicijn = $med_act['naam'];	}
+    while ($med_act = mysqli_fetch_assoc($medicijn_actief))
+    {    $pilActief = $med_act['actief'];    
+        $medicijn = $med_act['naam'];    }
 // Controle of medicijn actief is
 // Controle of reden bij medicijn hoort
 if(!empty($reduId)) {
@@ -653,9 +653,9 @@ FROM tblReden r
  join tblRedenuser ru on (r.redId = ru.redId)
 WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and ru.reduId = ".mysqli_real_escape_string($db,$reduId)."
 ") or die (mysqli_error($db));
-	while ($red_act = mysqli_fetch_assoc($reden_actief))
-	{	$redActief = $red_act['pil'];	
-		$reden = $red_act['reden'];	}
+    while ($red_act = mysqli_fetch_assoc($reden_actief))
+    {    $redActief = $red_act['pil'];    
+        $reden = $red_act['reden'];    }
 }
 // Controle of reden bij medicijn hoort
 
@@ -664,14 +664,14 @@ WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and ru.reduId = ".mys
 <td width = 100>
 <td colspan = 5 style = "font-size:12px; color:red;">
 <?php if($pilActief == 0 && $redActief == 1) { echo $medicijn." is niet in gebruik !"; } 
-	else if(isset($reden) && $pilActief == 1 && $redActief == 0) { echo $reden." hoort niet bij een medicijn !"; unset($reden); }
-	else if($pilActief == 0 && $redActief == 0) { echo "Zowel ".$medicijn." als ".$reden." is buiten gebruik !"; unset($reden); } ?>
+    else if(isset($reden) && $pilActief == 1 && $redActief == 0) { echo $reden." hoort niet bij een medicijn !"; unset($reden); }
+    else if($pilActief == 0 && $redActief == 0) { echo "Zowel ".$medicijn." als ".$reden." is buiten gebruik !"; unset($reden); } ?>
 </td>
 </form> 
 <td></td></tr>
 
-<?php		
-	}
+<?php        
+    }
 /**********************************************
  ** EINDE COMBINATIES IN GEBRUIK TONEN (HTML)
  **********************************************
@@ -680,9 +680,9 @@ WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and ru.reduId = ".mys
  ** COMBINATIES IN GEBRUIK WIJZIGEN (PHP)
  *******************************************/
 
-If (isset($_POST['knpSave_p']))	{
+If (isset($_POST['knpSave_p']))    {
 
-	$txtScan = $_POST['txtScan_p'];  $kzlPil = $_POST['kzlPil'];  $txtStdat = $_POST['txtStdat']; $txtRed = $_POST['kzlReden_p']; 
+    $txtScan = $_POST['txtScan_p'];  $kzlPil = $_POST['kzlPil'];  $txtStdat = $_POST['txtStdat']; $txtRed = $_POST['kzlReden_p']; 
 
 if(!empty($kzlPil)) {
 $zoek_stdat = mysqli_query($db,"
@@ -690,13 +690,13 @@ SELECT round(a.stdat) stdat
 FROM tblArtikel a
 WHERE a.artId = ".mysqli_real_escape_string($db,$kzlPil)."
 ") or die (mysqli_error($db));
-	while ( $row_stdat = mysqli_fetch_assoc($zoek_stdat))  { $dbStdat = $row_stdat['stdat']; }
-	}
-	
-if (empty($txtScan)) {	$fldScan = 'scan = NULL';	$whereScan = 'ISNULL(scan)';	}  else	{ $fldScan = "scan = $txtScan ";	$whereScan = $fldScan;}
-if (empty($kzlPil))	 {	$fldArtId = 'artId = NULL';	$whereArtId = 'ISNULL(artId)';	}  else	{ $fldArtId = "artId = $kzlPil ";	$whereArtId = $fldArtId; }
-if (empty($txtStdat)){	$fldStdat = "stdat = $dbStdat"; $whereStdat = $fldStdat; } else { $fldStdat = "stdat = $txtStdat"; $whereStdat = $fldStdat; }
-if (empty($txtRed))	 {	$fldReden = 'reduId = NULL'; $whereRed = 'ISNULL(ru.reduId)';}  else	{ $fldReden = "reduId = $txtRed ";	$whereRed = "ru.reduId = $txtRed "; }
+    while ( $row_stdat = mysqli_fetch_assoc($zoek_stdat))  { $dbStdat = $row_stdat['stdat']; }
+    }
+    
+if (empty($txtScan)) {    $fldScan = 'scan = NULL';    $whereScan = 'ISNULL(scan)';    }  else    { $fldScan = "scan = $txtScan ";    $whereScan = $fldScan;}
+if (empty($kzlPil))     {    $fldArtId = 'artId = NULL';    $whereArtId = 'ISNULL(artId)';    }  else    { $fldArtId = "artId = $kzlPil ";    $whereArtId = $fldArtId; }
+if (empty($txtStdat)){    $fldStdat = "stdat = $dbStdat"; $whereStdat = $fldStdat; } else { $fldStdat = "stdat = $txtStdat"; $whereStdat = $fldStdat; }
+if (empty($txtRed))     {    $fldReden = 'reduId = NULL'; $whereRed = 'ISNULL(ru.reduId)';}  else    { $fldReden = "reduId = $txtRed ";    $whereRed = "ru.reduId = $txtRed "; }
 
 $bestaat_combireden_al = mysqli_query($db,"
 SELECT cr.comrId
@@ -705,7 +705,7 @@ FROM tblCombireden cr
 WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and $whereStdat and $whereRed and cr.comrId != $rowid_p and cr.tbl = 'p'
 GROUP BY cr.artId, cr.reduId
 ") or die (mysqli_error($db));
-			$rows = mysqli_num_rows($bestaat_combireden_al);
+            $rows = mysqli_num_rows($bestaat_combireden_al);
 
 $bestaat_scannr_al = mysqli_query($db,"
 SELECT cr.comrId
@@ -714,40 +714,40 @@ FROM tblCombireden cr
 WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and $fldScan and cr.comrId != $rowid_p and cr.tbl = 'p'
 GROUP BY cr.scan
 ") or die (mysqli_error($db));
-			$rows_scan = mysqli_num_rows($bestaat_scannr_al);
+            $rows_scan = mysqli_num_rows($bestaat_scannr_al);
 
-	if (empty($kzlPil))
-	{ 		$fout = "Medicijn is niet geselecteerd.";	}
+    if (empty($kzlPil))
+    {         $fout = "Medicijn is niet geselecteerd.";    }
 
-	else if ($rows > 0)
-	{ 		$fout = "Deze combinatie bestaat al.";	}
-	else if ($rows_scan > 0)
-	{ 		$fout = "Dit scannummer is al in gebruik.";	}
+    else if ($rows > 0)
+    {         $fout = "Deze combinatie bestaat al.";    }
+    else if ($rows_scan > 0)
+    {         $fout = "Dit scannummer is al in gebruik.";    }
 
-	else if (empty($fout))
-	{
+    else if (empty($fout))
+    {
 
-		$query_bewerk_tblCombireden = "UPDATE tblCombireden set ".$fldScan.", ".$fldArtId.", ".$fldStdat.", ".$fldReden." WHERE comrId = ".$rowid_p." 	" ;
-			
-			mysqli_query($db,$query_bewerk_tblCombireden) or die (mysqli_error($db));	
+        $query_bewerk_tblCombireden = "UPDATE tblCombireden set ".$fldScan.", ".$fldArtId.", ".$fldStdat.", ".$fldReden." WHERE comrId = ".$rowid_p."     " ;
+            
+            mysqli_query($db,$query_bewerk_tblCombireden) or die (mysqli_error($db));    
 
-	}
-	//if (empty($fout)) { header("Location: ". $url ."Combireden.php"); }
+    }
+    //if (empty($fout)) { header("Location: ". $url ."Combireden.php"); }
 }
 
 if (isset($_POST['knpDelete_p']))
 {
 $delete_rec = "DELETE FROM tblCombireden WHERE comrId = ".$rowid_p." ";
-	mysqli_query($db,$delete_rec) or die (mysqli_error($db));
-	
-	//if (empty($fout)) { header("Location: ". $url ."Combireden.php"); }
+    mysqli_query($db,$delete_rec) or die (mysqli_error($db));
+    
+    //if (empty($fout)) { header("Location: ". $url ."Combireden.php"); }
 }
 
 /**************************************************
  ** EINDE COMBINATIES IN GEBRUIK WIJZIGEN (PHP)
  **************************************************/
 
-    } // EINDE LOOP	?>
+    } // EINDE LOOP    ?>
 
 <tr><td></td></tr>
 <tr>
@@ -804,15 +804,15 @@ unset($index);
 <?php
 for ($i = 0; $i < $count; $i++){
 
-	$opties = array($pilId[$i]=>$pilln[$i]);
-			foreach($opties as $key => $waarde)
-			{
+    $opties = array($pilId[$i]=>$pilln[$i]);
+            foreach($opties as $key => $waarde)
+            {
   if ( isset($_POST["insPil"]) && $_POST["insPil"] == $key ){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
-  }		
-			}
+  }        
+            }
 } 
 ?> </select>
 <!-- EINDE KZL MEDICIJN -->
@@ -852,15 +852,15 @@ unset($index);
 <?php
 for ($i = 0; $i < $count; $i++){
 
-	$opties = array($redId_4[$i]=>$redn_4[$i]);
-			foreach($opties as $key => $waarde)
-			{
+    $opties = array($redId_4[$i]=>$redn_4[$i]);
+            foreach($opties as $key => $waarde)
+            {
   if ( isset($_POST["insReden_p"]) && $_POST["insReden_p"] == $key ){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
-  }		
-			}
+  }        
+            }
 } 
 ?> </select>
 <!-- EINDE KZL REDEN -->
@@ -871,8 +871,8 @@ for ($i = 0; $i < $count; $i++){
 <!--
 ***********************************************
  EINDE  VELDEN TBV NIEUWE INVOER COMBINATIES (HTML)
-*********************************************** 	 -->
-	
+***********************************************      -->
+    
 <tr>
  <td width = 100> 
  <td colspan = 15><hr></td></tr>
@@ -884,7 +884,7 @@ for ($i = 0; $i < $count; $i++){
 /***************************** EINDE *********************************  CODE T.B.V. COMBINATIES M.B.T. MEDICIJNEN ******************************* EINDE ****************************************/
 ?>
 
-	</TD>
+    </TD>
 <?php
 include "menuBeheer.php"; } ?>
 </body>

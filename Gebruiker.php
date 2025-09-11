@@ -24,25 +24,25 @@ $titel = 'Gebruiker';
 $file = "Systeem.php";
 include "login.php"; ?>
 
-			<TD valign = "top">
+            <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) {
 
-	if(isset($_GET['pstId']))	{ $_SESSION["ID"] = $_GET['pstId']; } $ID = $_SESSION["ID"];
+    if(isset($_GET['pstId']))    { $_SESSION["ID"] = $_GET['pstId']; } $ID = $_SESSION["ID"];
 ?>
 
 <script>
 function verplicht() {
-var rnaam 	= document.getElementById("voornaam"); 		var rnaam_v = rnaam.value;
-var anaam 	= document.getElementById("achternaam");	var anaam_v = anaam.value;
-var telf  	= document.getElementById("telefoon");		var telf_v  = telf.value;
-var relatnr = document.getElementById("relatienummer");	var relatnr_v  = +relatnr.value;
+var rnaam     = document.getElementById("voornaam");         var rnaam_v = rnaam.value;
+var anaam     = document.getElementById("achternaam");    var anaam_v = anaam.value;
+var telf      = document.getElementById("telefoon");        var telf_v  = telf.value;
+var relatnr = document.getElementById("relatienummer");    var relatnr_v  = +relatnr.value;
 
-	 if(rnaam_v.length == 0) rnaam.focus() 	+ alert("Roepnaam is onbekend.");
-else if(rnaam_v.length > 25) rnaam.focus() 	+ alert("Roepnaam mag maximaal 25 karakters zijn.");
-else if(anaam_v.length == 0) anaam.focus() 	+ alert("Achternaam is onbekend.");
-else if(anaam_v.length > 25) anaam.focus() 	+ alert("Achternaam mag maximaal 25 karakters zijn.");
-else if(telf_v.length > 11)  telf.focus()  	+ alert("Telefoonnummer mag max 11 karakters zijn.");
+     if(rnaam_v.length == 0) rnaam.focus()     + alert("Roepnaam is onbekend.");
+else if(rnaam_v.length > 25) rnaam.focus()     + alert("Roepnaam mag maximaal 25 karakters zijn.");
+else if(anaam_v.length == 0) anaam.focus()     + alert("Achternaam is onbekend.");
+else if(anaam_v.length > 25) anaam.focus()     + alert("Achternaam mag maximaal 25 karakters zijn.");
+else if(telf_v.length > 11)  telf.focus()      + alert("Telefoonnummer mag max 11 karakters zijn.");
 else if(isNaN(relatnr_v))  relatnr.focus()  + alert("Relatienummer is niet numeriek.");
 
 }
@@ -52,56 +52,56 @@ else if(isNaN(relatnr_v))  relatnr.focus()  + alert("Relatienummer is niet numer
 //echo '$ID = '.$ID.'<br>'; // $ID is de gebruiker die op de pagina is opgeroepen
 //echo '$lidId = '.$lidId.'<br>'; // $LidId is de gebruiker die is ingelogd
 if (isset ($_POST['knpSave']))
-{		
-	
+{        
+    
 $zoek_ingescand = mysqli_query($db,"
 SELECT ingescand
 FROM tblLeden 
 WHERE lidId = '".mysqli_real_escape_string($db,$ID)."' ;
 ") or die (mysqli_error($db)); 
 
-while ($zi = mysqli_fetch_assoc($zoek_ingescand)) 	{ $scanday = $zi['ingescand']; }
+while ($zi = mysqli_fetch_assoc($zoek_ingescand))     { $scanday = $zi['ingescand']; }
 
-	$txtRoep = $_POST['txtRoep'];
-	$txtVoeg = $_POST['txtVoeg'];
-	$txtNaam = $_POST['txtNaam'];
-	$txtTel = $_POST['txtTel'];
-	$txtMail = $_POST['txtMail'];
-	$txtRelnr = $_POST['txtRelnr'];
-	$txtUrvo = $_POST['txtUrvo'];
-	$txtPrvo = $_POST['txtPrvo'];
-	$kzlReader = $_POST['kzlReader'];
-	$radMeld = $_POST['radMeld'];
-	$radTech = $_POST['radTech'];
-	$radFin = $_POST['radFin'];
-	$kzlAdm = $_POST['kzlAdm'];
-	$txtLstScan = $_POST['txtIngescand'];  $dag = date_create($txtLstScan); $lstScanDay =  date_format($dag, 'Y-m-d');
+    $txtRoep = $_POST['txtRoep'];
+    $txtVoeg = $_POST['txtVoeg'];
+    $txtNaam = $_POST['txtNaam'];
+    $txtTel = $_POST['txtTel'];
+    $txtMail = $_POST['txtMail'];
+    $txtRelnr = $_POST['txtRelnr'];
+    $txtUrvo = $_POST['txtUrvo'];
+    $txtPrvo = $_POST['txtPrvo'];
+    $kzlReader = $_POST['kzlReader'];
+    $radMeld = $_POST['radMeld'];
+    $radTech = $_POST['radTech'];
+    $radFin = $_POST['radFin'];
+    $kzlAdm = $_POST['kzlAdm'];
+    $txtLstScan = $_POST['txtIngescand'];  $dag = date_create($txtLstScan); $lstScanDay =  date_format($dag, 'Y-m-d');
 
-	
+    
 
 if (empty($txtLstScan)) { $lstScanDay =  $scanday; }
-	
+    
 $update_lid = "UPDATE tblLeden SET 
-	
-	roep = '".mysqli_real_escape_string($db,$txtRoep)."',
-	voegsel = ". db_null_input($txtVoeg) . ",
-	naam = '".mysqli_real_escape_string($db,$txtNaam)."',
-	relnr = ". db_null_input($txtRelnr) . ",
-	urvo = ". db_null_input($txtUrvo) . ",
-	prvo = ". db_null_input($txtPrvo) . ",
-	mail = ". db_null_input($txtMail) . ",
-	tel = ". db_null_input($txtTel) . ",
-	meld = '".mysqli_real_escape_string($db,$radMeld)."',
-	tech = '".mysqli_real_escape_string($db,$radTech)."',
-	fin = '".mysqli_real_escape_string($db,$radFin)."',
-	beheer = '".mysqli_real_escape_string($db,$kzlAdm)."',
-	ingescand = '".mysqli_real_escape_string($db,$lstScanDay)."',
-	reader = ". db_null_input($kzlReader) . "
+    
+    roep = '".mysqli_real_escape_string($db,$txtRoep)."',
+    voegsel = ". db_null_input($txtVoeg) . ",
+    naam = '".mysqli_real_escape_string($db,$txtNaam)."',
+    relnr = ". db_null_input($txtRelnr) . ",
+    urvo = ". db_null_input($txtUrvo) . ",
+    prvo = ". db_null_input($txtPrvo) . ",
+    mail = ". db_null_input($txtMail) . ",
+    tel = ". db_null_input($txtTel) . ",
+    meld = '".mysqli_real_escape_string($db,$radMeld)."',
+    tech = '".mysqli_real_escape_string($db,$radTech)."',
+    fin = '".mysqli_real_escape_string($db,$radFin)."',
+    beheer = '".mysqli_real_escape_string($db,$kzlAdm)."',
+    ingescand = '".mysqli_real_escape_string($db,$lstScanDay)."',
+    reader = ". db_null_input($kzlReader) . "
 
 
-	WHERE lidId = '".mysqli_real_escape_string($db,$ID)."'
-	;";
-		mysqli_query($db,$update_lid) or die (mysqli_error($db));
+    WHERE lidId = '".mysqli_real_escape_string($db,$ID)."'
+    ;";
+        mysqli_query($db,$update_lid) or die (mysqli_error($db));
 
 }
 
@@ -121,24 +121,24 @@ WHERE l.lidId = '".mysqli_real_escape_string($db,$ID)."' ;
 ") or die (mysqli_error($db)); 
 
 while ($row = mysqli_fetch_assoc($result))
-		{ 
-		  $roep = $row['roep'];
-		  $tvoeg = $row['voegsel'];
-		  $naam = $row['naam'];
-		  $relnr = $row['relnr'];
-		  $ubn = $row['ubn'];
-		  $urvo = $row['urvo'];
-		  $prvo = $row['prvo'];
-		  $mail = $row['mail'];
-		  $tel = $row['tel'];
-		  $ingescand = $row['ingescand'];
-		  $meld = $row['meld'];
-		  $tech = $row['tech'];
-		  $fin = $row['fin'];
-		  $admin = $row['beheer'];
-		  $reader = $row['reader'];
-		  $readerkey = $row['readerkey'];
-		   } ?>
+        { 
+          $roep = $row['roep'];
+          $tvoeg = $row['voegsel'];
+          $naam = $row['naam'];
+          $relnr = $row['relnr'];
+          $ubn = $row['ubn'];
+          $urvo = $row['urvo'];
+          $prvo = $row['prvo'];
+          $mail = $row['mail'];
+          $tel = $row['tel'];
+          $ingescand = $row['ingescand'];
+          $meld = $row['meld'];
+          $tech = $row['tech'];
+          $fin = $row['fin'];
+          $admin = $row['beheer'];
+          $reader = $row['reader'];
+          $readerkey = $row['readerkey'];
+           } ?>
 
 <form action = "Gebruiker.php" method = "post" >
 
@@ -156,12 +156,12 @@ while ($row = mysqli_fetch_assoc($result))
 </tr>
 <tr>
  <td colspan = 15>Roepnaam : <input type = "text" name = "txtRoep" id="voornaam" size = 10 value = <?php if(isset($roep)) { echo " \"$roep\"";} ?> >
- 	Tussenvoegsel : <input type = "text" name = "txtVoeg" id="tussen" size = 3 value = <?php if(isset($tvoeg)) { echo " \"$tvoeg\"";} ?> >
- 	&nbsp&nbsp Achternaam : <input type = "text" name = "txtNaam" id="achternaam" size = 27 value = <?php if(isset($naam)) { echo " \"$naam\"";} ?> ></td>
+     Tussenvoegsel : <input type = "text" name = "txtVoeg" id="tussen" size = 3 value = <?php if(isset($tvoeg)) { echo " \"$tvoeg\"";} ?> >
+     &nbsp&nbsp Achternaam : <input type = "text" name = "txtNaam" id="achternaam" size = 27 value = <?php if(isset($naam)) { echo " \"$naam\"";} ?> ></td>
 </tr>
 <tr>
  <td colspan = 15 >Telefoonnr : <input type = "text" name = "txtTel" id="telefoon" size = 10 value = <?php if(isset($tel)) { echo " \"$tel\"";} ?> >
- 	 &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspE-mail : <input type = "text" name = "txtMail" size = 50 value =  <?php if(isset($mail)) { echo $mail;} ?> ></td>
+      &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspE-mail : <input type = "text" name = "txtMail" size = 50 value =  <?php if(isset($mail)) { echo $mail;} ?> ></td>
 </tr>
 <tr><td height = 15></td>
 </table>
@@ -185,9 +185,9 @@ while ($row = mysqli_fetch_assoc($result))
 <tr><td height = 20></td>
 </tr>
 <tr>
- <td colspan=>Reader :  	
+ <td colspan=>Reader :      
 
- 	<!-- kzlReader --> 
+     <!-- kzlReader --> 
 <select <?php echo "name=\"kzlReader\" "; ?> style = "width:80; font-size:13px;">
 <option></option>
 <?php
@@ -195,9 +195,9 @@ $opties = array('Agrident' => 'Agrident', 'Biocontrol' => 'Biocontrol');
 foreach ( $opties as $key => $waarde)
 {
    if((!isset($_POST['knpSave']) && $reader == $key) || (isset($_POST["kzlReader"]) && $_POST["kzlReader"] == $key) ) {
-	echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
+    echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else {
-	echo '<option value="' . $key . '">' . $waarde . '</option>';
+    echo '<option value="' . $key . '">' . $waarde . '</option>';
   }
 } ?> 
 </select> <!-- EINDE kzlReader -->
@@ -210,26 +210,26 @@ SELECT count(redId) aant
 FROM tblRedenuser
 WHERE redId in (8, 13, 22, 42, 43, 44) and uitval = 1 and lidId = '".mysqli_real_escape_string($db,$ID)."'
 ") or die (mysqli_error($db));
-	while ( $zr = mysqli_fetch_assoc($zoek_redenen_uitval)) { $rd_db = $zr['aant']; }
+    while ( $zr = mysqli_fetch_assoc($zoek_redenen_uitval)) { $rd_db = $zr['aant']; }
 
 $zoek_redenen_afvoer =  mysqli_query($db,"
 SELECT count(redId) aant
 FROM tblRedenuser
 WHERE redId in (15, 45, 46, 47, 48, 49, 50, 51) and afvoer = 1 and lidId = '".mysqli_real_escape_string($db,$ID)."'
 ") or die (mysqli_error($db));
-	while ( $zr = mysqli_fetch_assoc($zoek_redenen_afvoer)) { $rd_db += $zr['aant']; }
+    while ( $zr = mysqli_fetch_assoc($zoek_redenen_afvoer)) { $rd_db += $zr['aant']; }
 /*
 $zoek_Lambar = mysqli_query($db,"
 SELECT hokId
 FROM tblHok
 WHERE hoknr = 'Lambar' and lidId = '".mysqli_real_escape_string($db,$ID)."'
 ") or die (mysqli_error($db));
-while ($h = mysqli_fetch_assoc($zoek_Lambar)) {	$Lambar = $h['hokId'];	}*/
+while ($h = mysqli_fetch_assoc($zoek_Lambar)) {    $Lambar = $h['hokId'];    }*/
 
  ?>
  <td>
- 	<?php if($rd_db < 14 ) { ?>
- 	<input type = "submit" name ="knpUpdate" value="Bijwerken">
+     <?php if($rd_db < 14 ) { ?>
+     <input type = "submit" name ="knpUpdate" value="Bijwerken">
  </td>
  <?php }
  } ?>
@@ -245,37 +245,37 @@ while ($h = mysqli_fetch_assoc($zoek_Lambar)) {	$Lambar = $h['hokId'];	}*/
 <tr>
  <td width = 105 >Melden : </td>
  <td><input type = radio name = 'radMeld' value = 1 
- 	<?php 	if(!isset($_POST['radMeld']) && $meld == 1 ) 			{ echo "checked"; } 
- 		else if(isset($_POST['radMeld']) && $_POST['radMeld'] == 1) { echo "checked"; } ?> 
- 	 > Ja 
- 	 <input type = radio name = 'radMeld' value = 0
- 	<?php 	if(!isset($_POST['radMeld']) && $meld == 0 ) 			{ echo "checked"; }
- 		else if(isset($_POST['radMeld']) && $_POST['radMeld'] == 0) { echo "checked"; } ?>
- 	 > Nee 
+     <?php     if(!isset($_POST['radMeld']) && $meld == 1 )             { echo "checked"; } 
+         else if(isset($_POST['radMeld']) && $_POST['radMeld'] == 1) { echo "checked"; } ?> 
+      > Ja 
+      <input type = radio name = 'radMeld' value = 0
+     <?php     if(!isset($_POST['radMeld']) && $meld == 0 )             { echo "checked"; }
+         else if(isset($_POST['radMeld']) && $_POST['radMeld'] == 0) { echo "checked"; } ?>
+      > Nee 
  </td>
 </tr>
 <tr>
  <td width = 105 >Technisch : </td>
  <td><input type = radio name = 'radTech' value = 1
- 	<?php 	if(!isset($_POST['radTech']) && $tech == 1 ) 			{ echo "checked"; }
- 		else if(isset($_POST['radTech']) && $_POST['radTech'] == 1) { echo "checked"; } ?> 
- 	 > Ja 
- 	 <input type = radio name = 'radTech' value = 0
- 	 <?php 	if(!isset($_POST['radTech']) && $tech == 0 ) 			{ echo "checked"; }
- 	 	else if(isset($_POST['radTech']) && $_POST['radTech'] == 0) { echo "checked"; } ?>
- 	 > Nee 
+     <?php     if(!isset($_POST['radTech']) && $tech == 1 )             { echo "checked"; }
+         else if(isset($_POST['radTech']) && $_POST['radTech'] == 1) { echo "checked"; } ?> 
+      > Ja 
+      <input type = radio name = 'radTech' value = 0
+      <?php     if(!isset($_POST['radTech']) && $tech == 0 )             { echo "checked"; }
+          else if(isset($_POST['radTech']) && $_POST['radTech'] == 0) { echo "checked"; } ?>
+      > Nee 
  </td>
 </tr>
 <tr>
  <td width = 105 >Financieel : </td>
  <td><input type = radio name = 'radFin' value = 1
-  <?php 	if(!isset($_POST['radFin']) && $fin == 1 ) 			{ echo "checked"; }
-  		else if(isset($_POST['radFin']) && $_POST['radFin'] == 1)	{ echo "checked"; } ?> 
- 	 > Ja 
- 	 <input type = radio name = 'radFin' value = 0 
- 	 <?php 	if(!isset($_POST['radFin']) && $fin == 0 ) 			{ echo "checked"; }
- 	 	else if(isset($_POST['radFin']) && $_POST['radFin'] == 0) { echo "checked"; } ?>
- 	 > Nee 
+  <?php     if(!isset($_POST['radFin']) && $fin == 1 )             { echo "checked"; }
+          else if(isset($_POST['radFin']) && $_POST['radFin'] == 1)    { echo "checked"; } ?> 
+      > Ja 
+      <input type = radio name = 'radFin' value = 0 
+      <?php     if(!isset($_POST['radFin']) && $fin == 0 )             { echo "checked"; }
+          else if(isset($_POST['radFin']) && $_POST['radFin'] == 0) { echo "checked"; } ?>
+      > Nee 
  </td>
 </tr>
 <tr>
@@ -285,16 +285,16 @@ while ($h = mysqli_fetch_assoc($zoek_Lambar)) {	$Lambar = $h['hokId'];	}*/
 <tr>
  <td width = 105 >Administrator : </td>
  <td>
- 	<!-- kzlBeheer ja/nee --> 
+     <!-- kzlBeheer ja/nee --> 
 <select <?php echo "name=\"kzlAdm\" "; ?> style = "width:60; font-size:13px;">
 <?php  
 $opties = array(1 => 'Ja', 0 => 'Nee');
 foreach ( $opties as $key => $waarde)
 {
    if((!isset($_POST['knpSave']) && $admin == $key) || (isset($_POST["kzlAdm"]) && $_POST["kzlAdm"] == $key) ) {
-	echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
+    echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else {
-	echo '<option value="' . $key . '">' . $waarde . '</option>';
+    echo '<option value="' . $key . '">' . $waarde . '</option>';
   }
 } ?> 
 </select> <!-- EINDE kzlBeheer ja/nee -->
@@ -312,7 +312,7 @@ Laatste dag stallijst inlezen
  </td>
  
  <td >
- 	<input type = "text" name = "txtIngescand" size = 8 value = <?php echo $ingescand; ?> >
+     <input type = "text" name = "txtIngescand" size = 8 value = <?php echo $ingescand; ?> >
  </td>
  <td> t.b.v. nieuwe klanten
  </td>

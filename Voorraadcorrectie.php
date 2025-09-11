@@ -18,14 +18,14 @@ $titel = 'Voorraadcorrectie';
 $file = "Voorraad.php";
 include "login.php"; ?>
 
-		<TD valign = 'top'>
+        <TD valign = 'top'>
 <?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"])) {
 
 if (!empty($_GET['pst']))
-	{	$artId = $_GET['pst'];	}
-	  else
-	{ 	/*$artId = $_POST['txtArtId_'];*/ 
+    {    $artId = $_GET['pst'];    }
+      else
+    {     /*$artId = $_POST['txtArtId_'];*/ 
 
     foreach ($_POST as $name => $value) {
    //echo $name.'<br>'; 
@@ -41,20 +41,20 @@ WHERE i.inkId = ".mysqli_real_escape_string($db,$ink_id)."
 ") or die (mysqli_error($db));
 
 while($za = mysqli_fetch_assoc($zoek_artId))
-			{ $artId = $za['artId']; }
+            { $artId = $za['artId']; }
 
-	}
+    }
 
 $zoek_soort_artikel = mysqli_query($db,"
 SELECT a.soort
 FROM tblArtikel a
 WHERE a.artId = ".mysqli_real_escape_string($db,$artId)."
 ") or die (mysqli_error($db));
-while ($srt = mysqli_fetch_assoc($zoek_soort_artikel))	{ $soort = $srt['soort']; }
+while ($srt = mysqli_fetch_assoc($zoek_soort_artikel))    { $soort = $srt['soort']; }
 
 
 if(isset($_POST['knpSave_'])) { include "save_voorraadcorrectie.php";  }
-				
+                
 ?>
 <form action="Voorraadcorrectie.php" method="post">
 <table border = 0>
@@ -111,44 +111,44 @@ ORDER BY i.dmink desc, i.inkId
 $result = mysqli_query($db,$query) or die (mysqli_error($db));
 
 while($row = mysqli_fetch_assoc($result))
-			{
-				$Id = $row['inkId'];
-				$naam = $row['naam'];
-				$toedm = $row['toedm'];
-				$naam = $row['naam'];
-				$charge = $row['charge'];
-				$totat = $row['totat'];
-				$eenh = $row['eenheid'];
+            {
+                $Id = $row['inkId'];
+                $naam = $row['naam'];
+                $toedm = $row['toedm'];
+                $naam = $row['naam'];
+                $charge = $row['charge'];
+                $totat = $row['totat'];
+                $eenh = $row['eenheid'];
 
 $zoek_afgeboekt = mysqli_query($db,"
 SELECT sum(af) af
 FROM (
-	SELECT round(sum(coalesce(n.nutat*n.stdat,0)),0) af
-	FROM tblInkoop i
-	 left join tblNuttig n on (n.inkId = i.inkId)
-	WHERE n.inkId = ".mysqli_real_escape_string($db,$Id)." and correctie = 1
+    SELECT round(sum(coalesce(n.nutat*n.stdat,0)),0) af
+    FROM tblInkoop i
+     left join tblNuttig n on (n.inkId = i.inkId)
+    WHERE n.inkId = ".mysqli_real_escape_string($db,$Id)." and correctie = 1
 
 Union all
 
-	SELECT round(sum(coalesce(v.nutat*v.stdat,0)),0) af
-	FROM tblInkoop i
-	 left join tblVoeding v on (v.inkId = i.inkId)
-	WHERE v.inkId = ".mysqli_real_escape_string($db,$Id)." and correctie = 1
+    SELECT round(sum(coalesce(v.nutat*v.stdat,0)),0) af
+    FROM tblInkoop i
+     left join tblVoeding v on (v.inkId = i.inkId)
+    WHERE v.inkId = ".mysqli_real_escape_string($db,$Id)." and correctie = 1
 ) tbl
 ") or die (mysqli_error($db));
 
 while($afb = mysqli_fetch_assoc($zoek_afgeboekt))
-			{ $afboek = $afb['af']; }
+            { $afboek = $afb['af']; }
 
 ?>
 
 <tr>
  <td width = 0> </td>
  <td width = 300 align = "center" style = "font-size:15px;"> <?php echo $naam; ?> <br> 
-	<input type="hidden" name="txtArtId_" value= <?php echo $artId; ?> >
+    <input type="hidden" name="txtArtId_" value= <?php echo $artId; ?> >
  </td>
 
- <td width = 1> </td>	   	   
+ <td width = 1> </td>              
  <td width = 100 align = "center" style = "font-size:15px;"> <?php echo $toedm; ?> <br> </td>
 <?php if($soort == 'pil') { ?> 
  <td width = 1> </td>
@@ -160,7 +160,7 @@ while($afb = mysqli_fetch_assoc($zoek_afgeboekt))
  <td width = 100 align = "center" style = "font-size:13px;"> <?php if(isset($afboek)) { echo $afboek.' '.$eenh; } ?> </td>
  <td width = 1> </td>
  <td width = 100 align = "center" style = "font-size:15px;"> <input type="text" size = 1 name="<?php echo "txtCorat_$Id"; ?>" >
- 	<?php echo ' '.$eenh; ?> </td>
+     <?php echo ' '.$eenh; ?> </td>
  <td width = 1> </td>
  <td width = 100 align = "center" style = "font-size:15px;"> 
 <select name= "<?php echo "kzlCorr_$Id"; ?>" style= "width:90;" > 
@@ -177,8 +177,8 @@ foreach ( $opties as $key => $waarde)
 } ?>
  </select>
  </td>
-	   
-<?php	   }
+       
+<?php       }
 
 ?>
 
@@ -186,10 +186,10 @@ foreach ( $opties as $key => $waarde)
 </table>
 
 
-		</TD>
+        </TD>
 <?php
 include "menuInkoop.php"; } ?>
-	</tr>
+    </tr>
 
 </table>
 

@@ -21,13 +21,13 @@ unset($updDag);
 unset($updKg);
 
 foreach($id as $key => $value) {
- 	if ($key == 'chbkies' && $value == 1) 	{ /*echo $key.'='.$value.' ';*/  $fldKies = $value; } 
+     if ($key == 'chbkies' && $value == 1)     { /*echo $key.'='.$value.' ';*/  $fldKies = $value; } 
 
-	if ($key == 'txtDatum' ) { $dag = date_create($value); $updDag =  date_format($dag, 'Y-m-d');  }
-	
-	if ($key == 'txtKg' && !empty($value)) { $updKg = str_replace(',', '.', $value); } /*else if ($key == 'txtKg' && empty($value)) { $updKg = 'NULL'; }*/
-		
-									}
+    if ($key == 'txtDatum' ) { $dag = date_create($value); $updDag =  date_format($dag, 'Y-m-d');  }
+    
+    if ($key == 'txtKg' && !empty($value)) { $updKg = str_replace(',', '.', $value); } /*else if ($key == 'txtKg' && empty($value)) { $updKg = 'NULL'; }*/
+        
+                                    }
 
 //if(!isset($fldKies)) { $fldKies = 0; }
 
@@ -46,13 +46,13 @@ WHERE isnull(st.rel_best) and st.schaapId = '".mysqli_real_escape_string($db,$re
 
 while ($st = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $st['stalId']; }
 
-	$insert_tblHistorie = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$updDag)."', kg = ".db_null_input($updKg).", actId = 3 ";
-/*echo $insert_tblHistorie.'<br>';*/	mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
+    $insert_tblHistorie = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$updDag)."', kg = ".db_null_input($updKg).", actId = 3 ";
+/*echo $insert_tblHistorie.'<br>';*/    mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
 
 }
 // EINDE CONTROLE op alle verplichten velden bij aanwas lam
 
-			
+            
     } ?>
-					
-	
+                    
+    

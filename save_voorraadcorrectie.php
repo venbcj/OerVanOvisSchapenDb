@@ -3,7 +3,7 @@
 
 <?php
 /*Save_Artikel.php toegpast in :
-	- Voorraadcorrectie.php	*/
+    - Voorraadcorrectie.php    */
 
 
 
@@ -16,23 +16,23 @@ foreach($_POST as $key => $value) {
 }
 foreach($array as $recId => $id) {
 //echo '<br>'.'$recId = '.$recId.'<br>';
-	
+    
 
 
   foreach($id as $key => $value) {
-	
-	if ($key == 'txtCorat' && !empty($value)){  $updAantal = str_replace(',', '.', $value);  } 
+    
+    if ($key == 'txtCorat' && !empty($value)){  $updAantal = str_replace(',', '.', $value);  } 
 
-	if ($key == 'kzlCorr' && !empty($value)){  $updCorr = $value;  } 
-	 
+    if ($key == 'kzlCorr' && !empty($value)){  $updCorr = $value;  } 
+     
 
-									}
+                                    }
 
 
 if(isset($recId) && $recId > 0 && isset($updAantal)) {
 
-	if($updCorr == 'af')  { $updCorrat =  $updAantal; }
-	if($updCorr == 'bij') { $updCorrat = -$updAantal; }
+    if($updCorr == 'af')  { $updCorrat =  $updAantal; }
+    if($updCorr == 'bij') { $updCorrat = -$updAantal; }
 
 $zoek_soort_artikel = mysqli_query($db,"
 SELECT a.soort
@@ -40,7 +40,7 @@ FROM tblInkoop i
  join tblArtikel a on (a.artId = i.artId)
 WHERE i.inkId = '".mysqli_real_escape_string($db,$recId)."'
 ") or die (mysqli_error($db));
-while ($srt = mysqli_fetch_assoc($zoek_soort_artikel))	{ $soort = $srt['soort']; }
+while ($srt = mysqli_fetch_assoc($zoek_soort_artikel))    { $soort = $srt['soort']; }
 
 /*Wijzig voorraad medicatie */
 if($soort == 'pil') { 
@@ -56,7 +56,7 @@ GROUP BY e.eenheid
 ") or die (mysqli_error($db));
 
 while($vd = mysqli_fetch_assoc($zoek_voorraad_pil))
-			{ $voorraad = $vd['voorraad']; }
+            { $voorraad = $vd['voorraad']; }
 
 $zoek_afgeboekt_pil = mysqli_query($db,"
 SELECT round(sum(n.nutat*n.stdat),0) af
@@ -65,7 +65,7 @@ WHERE n.inkId = '".mysqli_real_escape_string($db,$recId)."' and isnull(hisId)
 ") or die (mysqli_error($db));
 
 while($afb = mysqli_fetch_assoc($zoek_afgeboekt_pil))
-			{ $afboek = $afb['af']; }
+            { $afboek = $afb['af']; }
 
 $tabel = 'tblNuttig';
 }
@@ -85,8 +85,8 @@ GROUP BY e.eenheid
 ") or die (mysqli_error($db));
 
 while($vd = mysqli_fetch_assoc($zoek_voorraad_voer))
-			{ $voorraad = $vd['voorraad']; 
-			  $eenh = $vd['eenheid']; }
+            { $voorraad = $vd['voorraad']; 
+              $eenh = $vd['eenheid']; }
 
 $zoek_afgeboekt_voer = mysqli_query($db,"
 SELECT round(sum(v.nutat*v.stdat),0) af
@@ -95,7 +95,7 @@ WHERE v.inkId = '".mysqli_real_escape_string($db,$recId)."' and isnull(periId)
 ") or die (mysqli_error($db));
 
 while($afb = mysqli_fetch_assoc($zoek_afgeboekt_voer))
-			{ $afboek = $afb['af']; }
+            { $afboek = $afb['af']; }
 
 $tabel = 'tblVoeding';
 }
@@ -106,18 +106,18 @@ else if($updCorr == 'af' && $voorraad < $updAantal) { $fout = "De correctie kan 
 else if($updCorr == 'bij' && (!isset($afboek) || $afboek <= 0) ) { $fout = "Er is niets (meer) afgeboekt. Bijboeken is niet mogelijk."; }
 else if($updCorr == 'bij' && $afboek < $updAantal) { $fout = "Er is maximaal ".$afboek." ".$eenh." bij te boeken."; }
 else {
-	
+    
 
-	$wijzig_voorraad = "INSERT INTO ".mysqli_real_escape_string($db,$tabel)." set inkId = '".mysqli_real_escape_string($db,$recId)."', nutat = '".mysqli_real_escape_string($db,$updCorrat)."', stdat = 1, correctie = 1 ";
+    $wijzig_voorraad = "INSERT INTO ".mysqli_real_escape_string($db,$tabel)." set inkId = '".mysqli_real_escape_string($db,$recId)."', nutat = '".mysqli_real_escape_string($db,$updCorrat)."', stdat = 1, correctie = 1 ";
 
-	/*echo $wijzig_voorraad.'<br>';*/		mysqli_query($db,$wijzig_voorraad) or die (mysqli_error($db));
+    /*echo $wijzig_voorraad.'<br>';*/        mysqli_query($db,$wijzig_voorraad) or die (mysqli_error($db));
 
 }
 
-unset($updAantal);	
+unset($updAantal);    
 }
 
-	}
-				
+    }
+                
 
 ?>

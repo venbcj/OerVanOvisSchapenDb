@@ -28,17 +28,17 @@ $titel = 'Groeiresultaten per schaap';
 $file = "GroeiresultaatSchaap.php";
 include "login.php"; ?>
 
-			<TD align = "center" valign = "top">
+            <TD align = "center" valign = "top">
 <?php
 if (Auth::is_logged_in()) { if($modtech ==1) {
 
 include "kalender.php";
 
 if(isset($_POST['knpZoek_'])) { 
-	$kzlSchaap = $_POST['kzlLevnr_']; $kzlMoeder = $_POST['kzlOoi_']; 
+    $kzlSchaap = $_POST['kzlLevnr_']; $kzlMoeder = $_POST['kzlOoi_']; 
 
-	$worpvan = $_POST['txtWorpVan_']; $dmWorpvan = date_format(date_create($worpvan), 'Y-m-d');
-	$worptot = $_POST['txtWorpTot_']; $dmWorptot = date_format(date_create($worptot), 'Y-m-d');
+    $worpvan = $_POST['txtWorpVan_']; $dmWorpvan = date_format(date_create($worpvan), 'Y-m-d');
+    $worptot = $_POST['txtWorpTot_']; $dmWorptot = date_format(date_create($worptot), 'Y-m-d');
 }
 
 
@@ -88,48 +88,48 @@ ORDER BY right(mdr.levensnummer,$Karwerk)
 <tr>
  <td></td>
   <td> 
-	<select name= "kzlOoi_" style= "width:<?php echo $w_werknr;?> " >
+    <select name= "kzlOoi_" style= "width:<?php echo $w_werknr;?> " >
  <option></option>
-<?php		while($row = mysqli_fetch_array($zoek_moeders))
-		{
-		
-			$opties= array($row['schaapId']=>$row['werknr_ooi']);
-			foreach ( $opties as $key => $waarde)
-			{
-						$keuze = '';
-		
-		if(isset($_POST['kzlOoi_']) && $_POST['kzlOoi_'] == $key)
-		{
-			$keuze = ' selected ';
-		}
-				
-		echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
-			}
-		
-		} ?>
- 	</select> 
+<?php        while($row = mysqli_fetch_array($zoek_moeders))
+        {
+        
+            $opties= array($row['schaapId']=>$row['werknr_ooi']);
+            foreach ( $opties as $key => $waarde)
+            {
+                        $keuze = '';
+        
+        if(isset($_POST['kzlOoi_']) && $_POST['kzlOoi_'] == $key)
+        {
+            $keuze = ' selected ';
+        }
+                
+        echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
+            }
+        
+        } ?>
+     </select> 
   </td>
   <td> </td>
   <td> 
-	<select name= "kzlLevnr_" style= "width:130; height: 20px" class="search-select">
+    <select name= "kzlLevnr_" style= "width:130; height: 20px" class="search-select">
  <option></option>
-<?php		while($row = mysqli_fetch_array($zoek_schapen))
-		{
-		
-			$opties= array($row['schaapId']=>$row['levensnummer']);
-			foreach ( $opties as $key => $waarde)
-			{
-						$keuze = '';
-		
-		if(isset($_POST['kzlLevnr_']) && $_POST['kzlLevnr_'] == $key)
-		{
-			$keuze = ' selected ';
-		}
-				
-		echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
-			}
-		
-		}
+<?php        while($row = mysqli_fetch_array($zoek_schapen))
+        {
+        
+            $opties= array($row['schaapId']=>$row['levensnummer']);
+            foreach ( $opties as $key => $waarde)
+            {
+                        $keuze = '';
+        
+        if(isset($_POST['kzlLevnr_']) && $_POST['kzlLevnr_'] == $key)
+        {
+            $keuze = ' selected ';
+        }
+                
+        echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
+            }
+        
+        }
 ?> </select>
  </td>
  <td></td>
@@ -141,7 +141,7 @@ ORDER BY right(mdr.levensnummer,$Karwerk)
  <td colspan="4" align="left"><input id = "datepicker2" type= text name = "txtWorpTot_" size = "8" value = <?php if(isset($worptot)) { echo "$worptot"; } ?> >
  </td>
  <td> <input type="submit" name="knpZoek_" value="Zoeken"> </td>
-</tr>	
+</tr>    
 
 <tr height = 35 ></tr>
 
@@ -212,13 +212,13 @@ $result = mysqli_query($db,$result) or die (mysqli_error($db));
 <th style = "text-align:center;"valign="bottom";width= 80></th>
 <th width = 100> <a href="exportGroeiSchaap.php?pst=<?php echo $lidId; ?>&where=<?php echo $where; ?> "> Export-xlsx </a> </th>
 
-	
+    
 
 <th width= 60 ></th>
  </tr>
 <?php
-		while($row = mysqli_fetch_array($result))
-		{ 
+        while($row = mysqli_fetch_array($result))
+        { 
 unset($vorige_actie);
 $levnr_record = $levnr;
 
@@ -228,11 +228,11 @@ $levnr_record = $levnr;
     $werknr = $row['werknum'];
     $geslacht = $row['geslacht']; 
     $aanw = $row['aanw']; 
-    $kg = $row['kg']; 			   //if(!isset($vorige_kg)) { $vorige_kg = $kg; }
-    $date = $row['date']; 	   	  // if(!isset($vorige_date)) { $vorige_date = $date; }
-    $datum = $row['datum']; 	   
-    $actId = $row['actId']; 	   //if(!isset($vorige_actId)) { $vorige_actId = $actId; }
-    $actie = $row['actie']; 	  // if(!isset($vorige_actie)) { $vorige_actie = $actie; }
+    $kg = $row['kg'];                //if(!isset($vorige_kg)) { $vorige_kg = $kg; }
+    $date = $row['date'];              // if(!isset($vorige_date)) { $vorige_date = $date; }
+    $datum = $row['datum'];        
+    $actId = $row['actId'];        //if(!isset($vorige_actId)) { $vorige_actId = $actId; }
+    $actie = $row['actie'];       // if(!isset($vorige_actie)) { $vorige_actie = $actie; }
     if(isset($aanw)) {if($geslacht == 'ooi') { $fase = 'moeder'; } else if($geslacht == 'ram') { $fase = 'vader'; } } else {$fase = 'lam'; } 
 
 
@@ -248,7 +248,7 @@ WHERE st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and h.datum <
 ") or die (mysqli_error($db));
 
 while($zvw = mysqli_fetch_array($zoek_vorige_weging))
-		{ $vorige_weging = $zvw['vorige_weging']; }
+        { $vorige_weging = $zvw['vorige_weging']; }
 
 if(isset($vorige_weging)) { 
 
@@ -262,10 +262,10 @@ WHERE h.hisId = '".mysqli_real_escape_string($db,$vorige_weging)."'
 ") or die (mysqli_error($db));
 
 while($zavw = mysqli_fetch_array($zoek_actie_vorige_weging))
-		{ $vorige_actId = $zavw['actId']; 
-		  $vorige_actie = $zavw['actie']; if($vorige_actId == 9) { $vorige_actie = 'vorige tussenweging'; }
-		  $vorige_date = $zavw['datum']; 
-		  $vorige_kg = $zavw['kg']; }
+        { $vorige_actId = $zavw['actId']; 
+          $vorige_actie = $zavw['actie']; if($vorige_actId == 9) { $vorige_actie = 'vorige tussenweging'; }
+          $vorige_date = $zavw['datum']; 
+          $vorige_kg = $zavw['kg']; }
 }
 
 
@@ -276,56 +276,56 @@ $datediff = $date_2 - $date_1;
 $dagen = round($datediff / (60 * 60 * 24));
 
 if(isset($vorige_weging)) { $berekening = round((($kg - $vorige_kg) / $dagen),2).' kg in '.$dagen.' dagen vanaf '.strtolower($vorige_actie); }
-	
+    
 // Einde Zoek vorige weging
 
 if(isset($levnr_record) && $levnr_nu != '') { ?>
 <tr>
  <td colspan="18"><hr></td>
-</tr>	
+</tr>    
 <?php } ?>
 
 
-<tr align = "center">	
-	   <td width = 0> </td>			
-	   
-	   <td width = 100 style = "font-size:15px;"> <?php echo $moeder; ?> <br> </td>
-	   <td width = 1> </td>	
-	   <td width = 100 style = "font-size:15px;"> <?php echo $levnr_nu; ?> <br> </td>
-	   <td width = 1> </td>	  	   
-	   <td width = 100 style = "font-size:15px;"> <?php echo $werknr; ?> <br> </td>
-	   <td width = 1> </td>
-	   <td width = 100 style = "font-size:15px;"> <?php echo $geslacht; ?> <br> </td>
-	   <td width = 1> </td>	
-	   <td width = 100 style = "font-size:15px;"> <?php echo $fase; ?> <br> </td>
-	   <td width = 1> </td>
+<tr align = "center">    
+       <td width = 0> </td>            
+       
+       <td width = 100 style = "font-size:15px;"> <?php echo $moeder; ?> <br> </td>
+       <td width = 1> </td>    
+       <td width = 100 style = "font-size:15px;"> <?php echo $levnr_nu; ?> <br> </td>
+       <td width = 1> </td>             
+       <td width = 100 style = "font-size:15px;"> <?php echo $werknr; ?> <br> </td>
+       <td width = 1> </td>
+       <td width = 100 style = "font-size:15px;"> <?php echo $geslacht; ?> <br> </td>
+       <td width = 1> </td>    
+       <td width = 100 style = "font-size:15px;"> <?php echo $fase; ?> <br> </td>
+       <td width = 1> </td>
 
-	   <td width = 80 style = "font-size:15px;"> <?php echo $kg; ?> <br> </td>
+       <td width = 80 style = "font-size:15px;"> <?php echo $kg; ?> <br> </td>
 
-	   <td width = 1> </td>
-	   <td width = 150 style = "font-size:15px;"> <?php echo $datum; ?> <br> </td>
-	   <td width = 1> </td>
-	   <td width = 150 style = "font-size:15px;"> <?php echo $actie; ?> <br> </td>
+       <td width = 1> </td>
+       <td width = 150 style = "font-size:15px;"> <?php echo $datum; ?> <br> </td>
+       <td width = 1> </td>
+       <td width = 150 style = "font-size:15px;"> <?php echo $actie; ?> <br> </td>
 
-	   <td width = 1> </td>
-	   <td width = 600 style = "font-size:15px;" align="left"> <?php echo $berekening; ?> <br> </td>
+       <td width = 1> </td>
+       <td width = 600 style = "font-size:15px;" align="left"> <?php echo $berekening; ?> <br> </td>
 
-	   
-<!-- '$vorige_kg = '.$vorige_kg.' en $kg = '.$kg; -->	   
-</tr>				
+       
+<!-- '$vorige_kg = '.$vorige_kg.' en $kg = '.$kg; -->       
+</tr>                
 <?php 
 
-		} ?>
-</tr>				
+        } ?>
+</tr>                
 </table>
 </form>
 
 
-		</TD>
+        </TD>
 <script type="text/javascript">
-	$(document).ready(function() {
-	  $(".search-select").select2();
-	});
+    $(document).ready(function() {
+      $(".search-select").select2();
+    });
 </script>
 
 <?php } else { ?> <img src='resultHok_php.jpg'  width='970' height='550'/> <?php }

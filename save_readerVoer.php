@@ -13,13 +13,13 @@ foreach($_POST as $key => $value) {
 }
 foreach($array as $recId => $id) {
 
-	//echo '<br>'.'$recId = '.$recId;
-	
+    //echo '<br>'.'$recId = '.$recId;
+    
   foreach($id as $key => $value) {
 
-	if ($key == 'txtAantal' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldAantal = str_replace(',', '.', $value); }
-	 
-									}
+    if ($key == 'txtAantal' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldAantal = str_replace(',', '.', $value); }
+     
+                                    }
 
 if(isset($fldAantal)) {
 $zoek_aantal_uit_reader = mysqli_query($db,"
@@ -36,25 +36,25 @@ while ($za = mysqli_fetch_array($zoek_aantal_uit_reader))
 
 if($fldAantal != $toedat && (!isset($toedat_upd) || $fldAantal <> $toedat_upd) ) { /*echo 'Het veld toedat_upd van regel '.$recId.' wordt gevuld of gewijzigd. <br>'; */
 
-	$updateReader = "UPDATE impAgrident set toedat_upd = '".mysqli_real_escape_string($db,$fldAantal)."' WHERE Id = '".mysqli_real_escape_string($db,$recId)."' " ;
+    $updateReader = "UPDATE impAgrident set toedat_upd = '".mysqli_real_escape_string($db,$fldAantal)."' WHERE Id = '".mysqli_real_escape_string($db,$recId)."' " ;
 
-		/*echo $updateReader.'<br>';*/		mysqli_query($db,$updateReader) or die (mysqli_error($db));
+        /*echo $updateReader.'<br>';*/        mysqli_query($db,$updateReader) or die (mysqli_error($db));
 
-	}
+    }
 
 if($fldAantal == $toedat && isset($toedat_upd)) { /*echo 'Het veld toedat_upd van regel '.$recId.' wordt leeggemaakt. <br>'; */
 
-	$updateReader = "UPDATE impAgrident set toedat_upd = NULL WHERE Id = '".mysqli_real_escape_string($db,$recId)."' " ;
+    $updateReader = "UPDATE impAgrident set toedat_upd = NULL WHERE Id = '".mysqli_real_escape_string($db,$recId)."' " ;
 
-		/*echo $updateReader.'<br>';*/		mysqli_query($db,$updateReader) or die (mysqli_error($db));
+        /*echo $updateReader.'<br>';*/        mysqli_query($db,$updateReader) or die (mysqli_error($db));
 
-	}
+    }
 
 }
 
 //#echo '<br>'.'einde '.$recId.'<br>';
-	}
+    }
 
 ?>
-					
-	
+                    
+    

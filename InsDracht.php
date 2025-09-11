@@ -20,7 +20,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
 <!DOCTYPE html>
 <html>
 <head>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <title>Registratie</title>
 
 <style type="text/css">
@@ -43,21 +43,21 @@ $titel = 'Inlezen Dracht';
 $file = "InsDracht.php";
 include "login.php"; ?>
 
-      	<TD valign = "top">
+          <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) {
 
 include "vw_kzlOoien.php";
 
 If (isset($_POST['knpInsert_']))  {
-	include "post_readerDracht.php"; #Deze include moet voor de vervversing in de functie header()
-	//header("Location: ".$url."InsDracht.php"); 
-	}
+    include "post_readerDracht.php"; #Deze include moet voor de vervversing in de functie header()
+    //header("Location: ".$url."InsDracht.php"); 
+    }
 
 // Array tbv javascript om vader automatisch te tonen
-	// Zoek de laatste dekkingen. Deze laatste dekking moet een vader hebben geregistreerd
-	// Er moet óf een dekking bestaan (tblVolwas.hisId) óf een dracht (tblDracht.hisId)
-	// Als er een dracht bestaat in tblDracht moet deze niet zijn verwijderd (zie hd.skip = 0)
+    // Zoek de laatste dekkingen. Deze laatste dekking moet een vader hebben geregistreerd
+    // Er moet óf een dekking bestaan (tblVolwas.hisId) óf een dracht (tblDracht.hisId)
+    // Als er een dracht bestaat in tblDracht moet deze niet zijn verwijderd (zie hd.skip = 0)
 $zoek_laatste_dekkingen_met_vader_zonder_werpdatum = mysqli_query($db,"
 SELECT v.volwId, v.mdrId, v.vdrId, right(vdr.levensnummer,$Karwerk) lev
 FROM tblVolwas v
@@ -159,7 +159,7 @@ while ( $zld = mysqli_fetch_assoc($zoek_laatste_werpdatum)) { $array_werpdatum_m
 function toon_dracht(id) { // id = Id uit tabel impAgrident
 
 var ooi = 'ooi_' + id;
-var moeder = document.getElementById(ooi);		var mr = moeder.value;
+var moeder = document.getElementById(ooi);        var mr = moeder.value;
 
 //alert('ooiId = ' + mr); //#/#
 
@@ -171,32 +171,32 @@ var moeder = document.getElementById(ooi);		var mr = moeder.value;
  var jArray_vdr = <?php echo json_encode($array_vader_uit_koppel); // json_encode zet array om in json code ?>;
 
 function toon_vader_uit_koppel(m, i) { // m = schaapId ooi en i = Id uit tabel impAgrident
-	//document.getElementById('result_vader').innerHTML = jArray_vdr[m];
+    //document.getElementById('result_vader').innerHTML = jArray_vdr[m];
 
 // alert('ooiId = ' + m + ' Id(impAgrident) = ' + i); //#/#
 // alert('werknr vader = ' + jArray_vdr[m]); //#/#
 
-var ram = 'ram_' + i;	// Dit verwijst naar het element kzlRam_$Id
+var ram = 'ram_' + i;    // Dit verwijst naar het element kzlRam_$Id
 var resultRam = 'result_ram_' + i; // Dit moet het werknr van de ram tonen na wijzigen van het moederdier
 var dbRam = 'dbRam_' + i; // Dit verwijst naar het div element dbRam_$Id en toont het vaderdier na laden van de pagina
 
- 	if(jArray_vdr[m] != null) // Als een vaderdier wordt gevonden in een koppel
- 	{
- //		alert('vaderdier gevonden in koppel');
-	document.getElementById(ram).style.display = "none";
-  	document.getElementById(ram).value = null; // veld leegmaken indien gevuld
-  	document.getElementById(resultRam).innerHTML = jArray_vdr[m];
-	document.getElementById(dbRam).style.display = "none"; // Dit zorgt bij wijzigen ooi dat de oorspronkelijke ram niet wordt getoond	
-	}
-  	else 
-  	{
-  	//document.getElementById(ram).style.display = "block";
-	document.getElementById(ram).style.display = "inline-block";
-	document.getElementById(resultRam).innerHTML = "";
-	document.getElementById(dbRam).style.display = "none"; // Dit zorgt bij wijzigen ooi dat de oorspronkelijke ram niet wordt getoond
-  	}
+     if(jArray_vdr[m] != null) // Als een vaderdier wordt gevonden in een koppel
+     {
+ //        alert('vaderdier gevonden in koppel');
+    document.getElementById(ram).style.display = "none";
+      document.getElementById(ram).value = null; // veld leegmaken indien gevuld
+      document.getElementById(resultRam).innerHTML = jArray_vdr[m];
+    document.getElementById(dbRam).style.display = "none"; // Dit zorgt bij wijzigen ooi dat de oorspronkelijke ram niet wordt getoond    
+    }
+      else 
+      {
+      //document.getElementById(ram).style.display = "block";
+    document.getElementById(ram).style.display = "inline-block";
+    document.getElementById(resultRam).innerHTML = "";
+    document.getElementById(dbRam).style.display = "none"; // Dit zorgt bij wijzigen ooi dat de oorspronkelijke ram niet wordt getoond
+      }
 
-  	//alert('ram = ' + jArray_vdr[m]); #/#
+      //alert('ram = ' + jArray_vdr[m]); #/#
 }
 
 </script>
@@ -208,11 +208,11 @@ $velden = "rd.Id, rd.datum, rd.moeder, mdr.schaapId mdrId, rd.drachtig, rd.groot
 $tabel = "
 impAgrident rd 
  left join (
- 	SELECT s.schaapId, s.levensnummer
- 	FROM tblSchaap s
- 	 join tblStal st on (s.schaapId = st.schaapId)
- 	WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
- 	) mdr on (mdr.levensnummer = rd.moeder)
+     SELECT s.schaapId, s.levensnummer
+     FROM tblSchaap s
+      join tblStal st on (s.schaapId = st.schaapId)
+     WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
+     ) mdr on (mdr.levensnummer = rd.moeder)
 ";
 
 $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 19 and isnull(verwerkt) ";
@@ -250,16 +250,16 @@ SELECT st.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
  left join (
- 	SELECT stalId, hisId
- 	FROM tblHistorie h
- 	 join tblActie a on (h.actId = a.actId)
- 	WHERE a.af = 1 and h.actId != 10 and h.skip = 0
+     SELECT stalId, hisId
+     FROM tblHistorie h
+      join tblActie a on (h.actId = a.actId)
+     WHERE a.af = 1 and h.actId != 10 and h.skip = 0
  ) haf on (haf.stalId = st.stalId)
  join (
- 	SELECT schaapId
- 	FROM tblStal st
- 	 join tblHistorie h on (st.stalId = h.stalId)
- 	WHERE h.actId = 3 and h.skip = 0
+     SELECT schaapId
+     FROM tblStal st
+      join tblHistorie h on (st.stalId = h.stalId)
+     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.geslacht = 'ooi' and isnull(haf.hisId)
 ORDER BY right(s.levensnummer,$Karwerk)
@@ -282,16 +282,16 @@ SELECT st.schaapId, right(s.levensnummer,$Karwerk) werknr
 FROM tblSchaap s 
  join tblStal st on (st.schaapId = s.schaapId)
  left join (
-	SELECT stalId, hisId, datum
-	FROM tblHistorie h
-	 join tblActie a on (h.actId = a.actId)
-	WHERE a.af = 1 and h.actId != 10 and h.skip = 0
+    SELECT stalId, hisId, datum
+    FROM tblHistorie h
+     join tblActie a on (h.actId = a.actId)
+    WHERE a.af = 1 and h.actId != 10 and h.skip = 0
  ) haf on (haf.stalId = st.stalId)
  join (
- 	SELECT schaapId
- 	FROM tblStal st
- 	 join tblHistorie h on (st.stalId = h.stalId)
- 	WHERE h.actId = 3 and h.skip = 0
+     SELECT schaapId
+     FROM tblStal st
+      join tblHistorie h on (st.stalId = h.stalId)
+     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.geslacht = 'ram' and ( isnull(haf.hisId) or date_add(haf.datum,interval 2 month) > CURRENT_DATE() )
 ORDER BY right(levensnummer,$Karwerk)
@@ -311,11 +311,11 @@ unset($index);
 }
 
 /**********************************
- **	 DUBBELE DRACHT ZOEKEN		**
+ **     DUBBELE DRACHT ZOEKEN        **
  **********************************/ 
 $array_dub = array();
 
-	if (isset($_POST['knpVervers_']) ) {
+    if (isset($_POST['knpVervers_']) ) {
 
 
 
@@ -335,8 +335,8 @@ foreach($array_rec as $recId => $id) {
    unset($keuzelOoi);
 
  foreach($id as $key => $value) {
-	
-	if ($key == 'kzlOoi' && !empty($value)) { /*echo '$keuzelOoi = '.$value.'<br>';*/ $keuzelOoi = $value; } // betreft schaapId ooi
+    
+    if ($key == 'kzlOoi' && !empty($value)) { /*echo '$keuzelOoi = '.$value.'<br>';*/ $keuzelOoi = $value; } // betreft schaapId ooi
 
 }
 
@@ -347,9 +347,9 @@ $array_dub[] = $keuzelOoi;
 }
 else {
 if(isset($data))  { foreach($data as $key => $array)
-	{
-	
-	$array_dub[] = $array['mdrId']; // schaapId uit tblStal o.b.v. moeder uit reader
+    {
+    
+    $array_dub[] = $array['mdrId']; // schaapId uit tblStal o.b.v. moeder uit reader
 
 }
 }
@@ -363,41 +363,41 @@ $vals = array_count_values($array_dub);
 /*print_r($vals);*/
 
 /****************************************
- **	 EINDE DUBBELE DRACHT ZOEKEN		**
+ **     EINDE DUBBELE DRACHT ZOEKEN        **
  ****************************************/ 
 
 $array_readId = array(); // Aanmaken array. Array waar Id's uit tabel impAgrident worden toegevoegd. Alleen die waarvan de moeder is gedekt door een vader. Zie hier verderop.
 
-if(isset($data))  {	foreach($data as $key => $array)
-	{
-		$var = $array['datum'];
-	$date = str_replace('/', '-', $var);
-	$datum = date('d-m-Y', strtotime($date));
-	//$makeday = date_create($date); $day = date_format($makeday, 'Y-m-d');
-	
-	$Id = $array['Id']; // Id uit tabel impAgrident
-	$moeder_rd = $array['moeder']; // levensnummer moeder uit reader
-	$mdrId_db = $array['mdrId']; // schaapId uit tblStal
+if(isset($data))  {    foreach($data as $key => $array)
+    {
+        $var = $array['datum'];
+    $date = str_replace('/', '-', $var);
+    $datum = date('d-m-Y', strtotime($date));
+    //$makeday = date_create($date); $day = date_format($makeday, 'Y-m-d');
+    
+    $Id = $array['Id']; // Id uit tabel impAgrident
+    $moeder_rd = $array['moeder']; // levensnummer moeder uit reader
+    $mdrId_db = $array['mdrId']; // schaapId uit tblStal
 
-	$drachtig_rd = $array['drachtig'];
-	$grootte_rd = $array['grootte'];
+    $drachtig_rd = $array['drachtig'];
+    $grootte_rd = $array['grootte'];
 
 
 if (isset($_POST['knpVervers_']) ) {
 
-	$txtDatum = $_POST["txtDatum_$Id"]; 
-	//$makeday = strtotime($txtDatum); $day = date_format($makeday, 'Y-m-d');
-	$kzlOoi = $_POST["kzlOoi_$Id"]; if(!empty($kzlOoi)) { unset($moeder_rd); }
-	$kzlRam = $_POST["kzlRam_$Id"];
-	$kzlDrachtig = $_POST["kzlDracht_$Id"];
-	$txtGrootte = $_POST["txtGrootte_$Id"];
+    $txtDatum = $_POST["txtDatum_$Id"]; 
+    //$makeday = strtotime($txtDatum); $day = date_format($makeday, 'Y-m-d');
+    $kzlOoi = $_POST["kzlOoi_$Id"]; if(!empty($kzlOoi)) { unset($moeder_rd); }
+    $kzlRam = $_POST["kzlRam_$Id"];
+    $kzlDrachtig = $_POST["kzlDracht_$Id"];
+    $txtGrootte = $_POST["txtGrootte_$Id"];
 }
 else { 
 
-	$txtDatum = $datum;
-	$kzlOoi = $mdrId_db;
-	$kzlDrachtig = $drachtig_rd;
-	$txtGrootte = $grootte_rd;
+    $txtDatum = $datum;
+    $kzlOoi = $mdrId_db;
+    $kzlDrachtig = $drachtig_rd;
+    $txtGrootte = $grootte_rd;
 
 }
 
@@ -478,17 +478,17 @@ $zoek_laatste_dekking_van_ooi = mysqli_query($db,"
 SELECT v.mdrId, max(v.volwId) volwId
 FROM tblVolwas v
  left join (
-		SELECT hisId
-		FROM tblHistorie h
-		 join tblStal st on (st.stalId = h.stalId)
-		WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$kzlOoi)."'
+        SELECT hisId
+        FROM tblHistorie h
+         join tblStal st on (st.stalId = h.stalId)
+        WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$kzlOoi)."'
  ) dek on (dek.hisId = v.hisId)
  left join (
-	SELECT d.volwId, date_format(h.datum,'%d-%m-%Y') drachtdatum
-	FROM tblDracht d 
-	 join tblHistorie h on (h.hisId = d.hisId)
-	 join tblStal st on (st.stalId = h.stalId)
-	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$kzlOoi)."'
+    SELECT d.volwId, date_format(h.datum,'%d-%m-%Y') drachtdatum
+    FROM tblDracht d 
+     join tblHistorie h on (h.hisId = d.hisId)
+     join tblStal st on (st.stalId = h.stalId)
+    WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$kzlOoi)."'
  ) dra on (v.volwId = dra.volwId)
  left join tblSchaap lam on (lam.volwId = v.volwId)
  left join (
@@ -520,7 +520,7 @@ $date_dracht = date_create($dmdracht);
 $date_worp = date_create($dmwerp);
 
 $verschil_drachtdm_worp = date_diff($date_dracht, $date_worp);
-$dagen_verschil_worp 	= $verschil_drachtdm_worp->days;
+$dagen_verschil_worp     = $verschil_drachtdm_worp->days;
 
 
 unset($dmwerp);
@@ -543,7 +543,7 @@ $date_dracht = date_create($dmdracht);
 $date_worp = date_create($dmwerp);
 
 $verschil_drachtdm_worp = date_diff($date_dracht, $date_worp);
-$dagen_verschil_worp 	= $verschil_drachtdm_worp->days;
+$dagen_verschil_worp     = $verschil_drachtdm_worp->days;
 
 /*echo '$dmwerp = '.$dmwerp.'<br>';#/#
 echo '$dagen_verschil_worp = '.$dagen_verschil_worp.'<br>';#/#
@@ -564,36 +564,36 @@ else if(isset($dagen_verschil_worp) && $dagen_verschil_worp > 0 && $dagen_versch
 else if (isset($afv_status_mdr))   { $color = 'red'; $onjuist = 'Ooi '.$moeder_rd.' is '.$afv_status_mdr; }
 else if (empty($txtDatum))         { $color = 'red'; $onjuist = 'De drachtdatum is onbekend'; }
 
-	if (isset($onjuist)) {	$oke = 0;	} else {	$oke = 1;	} // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
+    if (isset($onjuist)) {    $oke = 0;    } else {    $oke = 1;    } // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
 // EINDE Controleren of ingelezen waardes worden gevonden . 
 
 unset($cbDel);
-	 if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1) /* Als onvolledig is gewijzigd naar volledig juist */ {$cbKies = 1; $cbDel = 0; }
+     if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1) /* Als onvolledig is gewijzigd naar volledig juist */ {$cbKies = 1; $cbDel = 0; }
 else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbKies_$Id"];  $cbDel = $_POST["chbDel_$Id"]; } 
    else { $cbKies = $oke; } // $cbKies is tbv het vasthouden van de keuze inlezen of niet 
 
    if ($kzlDrachtig == 0) { $cbKies = 0; $cbDel = 1; } // Drachtig is Nee ?>
 
-<!--	**************************************
-		**	   	 OPMAAK  GEGEVENS			**
-		************************************** -->
+<!--    **************************************
+        **            OPMAAK  GEGEVENS            **
+        ************************************** -->
 
 <tr style = "font-size:14px;">
  <td align = center>
 <?php ##echo $Id; ?>
-	<!-- <input type = hidden size = 1 name = <?php echo "chbKies_$Id"; ?> value = 0 > --> <!-- hiddden -->
-	<input type = checkbox 		  name = <?php echo "chbKies_$Id"; ?> value = 1 
-	  <?php echo $cbKies == 1 ? 'checked' : ''; /* Als voorwaarde goed zijn of checkbox is aangevinkt */
+    <!-- <input type = hidden size = 1 name = <?php echo "chbKies_$Id"; ?> value = 0 > --> <!-- hiddden -->
+    <input type = checkbox           name = <?php echo "chbKies_$Id"; ?> value = 1 
+      <?php echo $cbKies == 1 ? 'checked' : ''; /* Als voorwaarde goed zijn of checkbox is aangevinkt */
 
-	  if ($oke == 0) /*Als voorwaarde niet klopt */ { ?> disabled <?php } else { ?> class="checkall" <?php } /* class="checkall" zorgt dat alles kan worden uit- of aangevinkt*/ ?> >
-	<input type = hidden size = 1 name = <?php echo "laatsteOke_$Id"; ?> value = <?php echo $oke; ?> > <!-- hiddden -->
+      if ($oke == 0) /*Als voorwaarde niet klopt */ { ?> disabled <?php } else { ?> class="checkall" <?php } /* class="checkall" zorgt dat alles kan worden uit- of aangevinkt*/ ?> >
+    <input type = hidden size = 1 name = <?php echo "laatsteOke_$Id"; ?> value = <?php echo $oke; ?> > <!-- hiddden -->
  </td>
  <td align = center>
-	<!-- <input type = hidden size = 1 name = <?php echo "chbDel_$Id"; ?> value = 0 > -->
-	<input type = checkbox class="delete" name = <?php echo "chbDel_$Id"; ?> value = 1 <?php if(isset($cbDel)) { echo $cbDel == 1 ? 'checked' : ''; } ?> >
+    <!-- <input type = hidden size = 1 name = <?php echo "chbDel_$Id"; ?> value = 0 > -->
+    <input type = checkbox class="delete" name = <?php echo "chbDel_$Id"; ?> value = 1 <?php if(isset($cbDel)) { echo $cbDel == 1 ? 'checked' : ''; } ?> >
  </td>
  <td>
- 	<input type = "text" size = 9 style = "font-size : 11px;" name = <?php echo "txtDatum_$Id"; ?> value = <?php echo $txtDatum; ?> >
+     <input type = "text" size = 9 style = "font-size : 11px;" name = <?php echo "txtDatum_$Id"; ?> value = <?php echo $txtDatum; ?> >
  </td>
 
  <?php $width = 25+(8*$Karwerk) ; ?>
@@ -602,49 +602,49 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbKies_$Id"];  $cbDe
 <!-- KZLMOEDER -->
  <select id= <?php echo "ooi_$Id"; ?> onchange = <?php echo "toon_dracht(".$Id.")"; ?> style= "width:<?php echo $width; ?>; font-size:12px;" name = <?php echo "kzlOoi_$Id"; ?> >
   <option></option>
-<?php	$count = count($wnrOoi);
+<?php    $count = count($wnrOoi);
 for ($i = 0; $i < $count; $i++){
 
-	$opties = array($mdrkey[$i]=>$wnrOoi[$i]);
-			foreach($opties as $key => $waarde)
-			{
+    $opties = array($mdrkey[$i]=>$wnrOoi[$i]);
+            foreach($opties as $key => $waarde)
+            {
   if ((!isset($_POST['knpVervers_']) && $mdrId_db == $key) || (isset($_POST["kzlOoi_$Id"]) && $_POST["kzlOoi_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
-  }		
-			}
+  }        
+            }
 }
 ?> </select> 
-	<!-- EINDE KZLMOEDER --> 
+    <!-- EINDE KZLMOEDER --> 
  </td>
  <td width = <?php echo $width; ?> > 
  <div id= <?php echo "dbRam_$Id"; ?> align = "center" > <?php echo $ram_db; ?> </div> <!-- dit toont het vaderdier bij laden van de pagina -->
-	<!-- KZLVADER -->
+    <!-- KZLVADER -->
  <select style= "width:<?php echo $width; ?>; font-size:12px;" id= <?php echo "ram_$Id"; ?> class= "<?php echo $Id; ?> selectt" name = <?php echo "kzlRam_$Id"; ?> >
- <option></option>	
-<?php	$count = count($wrknrRam);
+ <option></option>    
+<?php    $count = count($wrknrRam);
 for ($i = 0; $i < $count; $i++){
 
-		
-	$opties= array($vdrkey[$i]=>$wrknrRam[$i]);
-			foreach ($opties as $key => $waarde)
-			{
+        
+    $opties= array($vdrkey[$i]=>$wrknrRam[$i]);
+            foreach ($opties as $key => $waarde)
+            {
   if ((!isset($_POST['knpVervers_']) && $vdrId_db == $vdrRaak[$i]) || (isset($_POST["kzlRam_$Id"]) && $_POST["kzlRam_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
-  }	
-			}
-		
+  }    
+            }
+        
 } ?>
  </select><p id= <?php echo "result_ram_$Id"; ?> align = "center" ></p> <!-- dit toont het vaderdier na wijzigen van het moederdier -->
-	<!-- EINDE KZLVADER -->
+    <!-- EINDE KZLVADER -->
 
  </td>
  <td>
-	<!-- KZLDRACHTIG -->
-	<select style="width:50; font-size:12px;" name= <?php echo "kzlDracht_$Id"; ?> >
+    <!-- KZLDRACHTIG -->
+    <select style="width:50; font-size:12px;" name= <?php echo "kzlDracht_$Id"; ?> >
 <?php 
 $opties = array('Nee', 'Ja');
 foreach ( $opties as $key => $waarde)
@@ -658,10 +658,10 @@ foreach ( $opties as $key => $waarde)
    }
 } ?>
 </select>
-	<!-- EINDE KZLDRACHTIG -->
+    <!-- EINDE KZLDRACHTIG -->
  </td>
  <td align="center">
-	<input type = "text" size = 1 style = "font-size : 11px; text-align : right;" name = <?php echo "txtGrootte_$Id"; ?> value = <?php echo $txtGrootte; ?> >
+    <input type = "text" size = 1 style = "font-size : 11px; text-align : right;" name = <?php echo "txtGrootte_$Id"; ?> value = <?php echo $txtGrootte; ?> >
  </td>
  
  <td style = "color: <?php echo $color; ?> ; font-size:12px; " >  
@@ -669,12 +669,12 @@ foreach ( $opties as $key => $waarde)
 <div id= <?php echo "bericht_$Id"; ?> > <?php if (isset($onjuist)) { echo $onjuist; } ?> </div> 
 
  </td>
- <td></td>	
+ <td></td>    
  <td></td> 
 </tr>
-<!--	**************************************
-	**	EINDE OPMAAK GEGEVENS	**
-	************************************** -->
+<!--    **************************************
+    **    EINDE OPMAAK GEGEVENS    **
+    ************************************** -->
 
 <?php 
 } 
@@ -696,42 +696,42 @@ include "menu1.php"; } ?>
 <script language="javascript">
 $(function(){
 
-	// add multiple select / deselect functionality
-	$("#selectall").click(function () {
-		  $('.checkall').attr('checked', this.checked);
-	});
+    // add multiple select / deselect functionality
+    $("#selectall").click(function () {
+          $('.checkall').attr('checked', this.checked);
+    });
 
-	// if all checkbox are selected, check the selectall checkbox
-	// and viceversa
-	$(".checkall").click(function(){
+    // if all checkbox are selected, check the selectall checkbox
+    // and viceversa
+    $(".checkall").click(function(){
 
-		if($(".checkall").length == $(".checkall:checked").length) {
-			$("#selectall").attr("checked", "checked");
-		} else {
-			$("#selectall").removeAttr("checked");
-		}
+        if($(".checkall").length == $(".checkall:checked").length) {
+            $("#selectall").attr("checked", "checked");
+        } else {
+            $("#selectall").removeAttr("checked");
+        }
 
-	});
+    });
 });
 
 $(function(){
 
-	// add multiple select / deselect functionality
-	$("#selectall_del").click(function () {
-		  $('.delete').attr('checked', this.checked);
-	});
+    // add multiple select / deselect functionality
+    $("#selectall_del").click(function () {
+          $('.delete').attr('checked', this.checked);
+    });
 
-	// if all checkbox are selected, check the selectall_del checkbox
-	// and viceversa
-	$(".delete").click(function(){
+    // if all checkbox are selected, check the selectall_del checkbox
+    // and viceversa
+    $(".delete").click(function(){
 
-		if($(".delete").length == $(".delete:checked").length) {
-			$("#selectall_del").attr("checked", "checked");
-		} else {
-			$("#selectall_del").removeAttr("checked");
-		}
+        if($(".delete").length == $(".delete:checked").length) {
+            $("#selectall_del").attr("checked", "checked");
+        } else {
+            $("#selectall_del").removeAttr("checked");
+        }
 
-	});
+    });
 });
 
 
@@ -741,13 +741,13 @@ for (let i = 0; i < jArray_Id.length; i++) {
 
 var ram = 'ram_' + jArray_Id[i];
 
-	document.getElementById(ram).value = null; // veld leegmaken indien gevuld
-	$('.' + jArray_Id[i]).toggle();
+    document.getElementById(ram).value = null; // veld leegmaken indien gevuld
+    $('.' + jArray_Id[i]).toggle();
 }
 
 
 
-  	
+      
 
 
 </script>

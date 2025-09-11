@@ -17,13 +17,13 @@ foreach($_POST as $key => $value) {
 foreach($array as $recId => $id) {
    
  foreach($id as $key => $value) {
- if ($key == 'chbkies' && $value == 1 ) 	{ /* Alleen als checkbox chbkies de waarde 1 heeft  /*echo $key.'='.$value.' ';*/  $box = $value ;
+ if ($key == 'chbkies' && $value == 1 )     { /* Alleen als checkbox chbkies de waarde 1 heeft  /*echo $key.'='.$value.' ';*/  $box = $value ;
 
-	
+    
   foreach($id as $key => $value) {
-	if ($key == 'txtDatum' ) { $dag = date_create($value); $updDag =  date_format($dag, 'Y-m-d');  }
-		
-									}
+    if ($key == 'txtDatum' ) { $dag = date_create($value); $updDag =  date_format($dag, 'Y-m-d');  }
+        
+                                    }
 
 // CONTROLE op alle verplichten velden bij spenen lam
 if (!empty($updDag))
@@ -41,8 +41,8 @@ WHERE isnull(st.rel_best) and st.schaapId = '".mysqli_real_escape_string($db,$re
 
 while ($st = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $st['stalId']; }
 
-	$insert_tblHistorie = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$updDag)."', actId = 7";
-		mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
+    $insert_tblHistorie = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$updDag)."', actId = 7";
+        mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
 
 }
 // EINDE CONTROLE op alle verplichten velden bij spenen lam
@@ -51,15 +51,15 @@ while ($st = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $st['stalId']; }
 
 
 
-										} // EINDE Alleen als checkbox chbkies de waarde 1 heeft
+                                        } // EINDE Alleen als checkbox chbkies de waarde 1 heeft
     }
 
 
-	
-	
-	
-	}
+    
+    
+    
+    }
 
 ?>
-					
-	
+                    
+    

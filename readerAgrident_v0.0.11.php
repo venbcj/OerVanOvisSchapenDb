@@ -14,7 +14,7 @@ include "connect_db.php";
 $string = '';
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
-	exit();
+    exit();
 }
 else
 {  // Begin van else
@@ -22,7 +22,7 @@ else
 $headers = getallheaders(); // geef in een array ook headers terug die ik naar de server heb gestuurd in eerste instantie
 //var_dump($headers);
 //echo is_array($string) ? 'dit is een array' : 'dit is geen array';
-	
+    
 
 if (!isset($headers['Authorization'])) { // Als in de headers geen index 'Autorization voorkomt'
     http_response_code(401); // Unauthorized
@@ -33,41 +33,41 @@ if (!isset($headers['Authorization'])) { // Als in de headers geen index 'Autori
 
     $authorization = explode ( " ", $headers['Authorization'] );
  
- 	if (count($authorization) == 2 && trim($authorization[0]) == "Bearer" && strlen(trim($authorization[1])) == 64) {
+     if (count($authorization) == 2 && trim($authorization[0]) == "Bearer" && strlen(trim($authorization[1])) == 64) {
 
-		$zoek_lidId = mysqli_query($db, "SELECT lidId from tblLeden where readerkey = '".mysqli_real_escape_string($db,$authorization[1])."'" ) or die(mysqli_error($db));
+        $zoek_lidId = mysqli_query($db, "SELECT lidId from tblLeden where readerkey = '".mysqli_real_escape_string($db,$authorization[1])."'" ) or die(mysqli_error($db));
 
-		$result = mysqli_fetch_array($zoek_lidId);
+        $result = mysqli_fetch_array($zoek_lidId);
 
-		if($result){
+        if($result){
            $lidid = $result['lidId'];
-		} else {
-			http_response_code(401); // Unauthorized
-			echo 'via authorization header wordt de gebruiker niet gevonden.';
-	    	exit;
-		}
+        } else {
+            http_response_code(401); // Unauthorized
+            echo 'via authorization header wordt de gebruiker niet gevonden.';
+            exit;
+        }
 
-	} else {
-    	http_response_code(401); // Unauthorized
-    	echo 'authorization header heeft niet de juiste opmaak.';
-    	exit;
-	}
+    } else {
+        http_response_code(401); // Unauthorized
+        echo 'authorization header heeft niet de juiste opmaak.';
+        exit;
+    }
 }
  
 
 switch ($_SERVER['REQUEST_METHOD']) { // Switch
-	case 'POST':      
-		$input = file_get_contents('php://input'); // php://input is de rauwe data. nl. het json bestand.
+    case 'POST':      
+        $input = file_get_contents('php://input'); // php://input is de rauwe data. nl. het json bestand.
 
 
-		$data = json_decode($input); 
+        $data = json_decode($input); 
 
 $taken = array('Worpregistratie', 'Doodgeboren', 'Groepsgeboorte', 'Verplaatsing', 'Spenen', 'Tussenweging', 'Afvoer', 'Aanvoer', 'Omnummeren', 'Medicaties', 'Halsnummers', 'Groepsafvoer', 'Groepsaanvoer', 'Voerregistratie', 'Dekken', 'Dracht', 'Ubn_gr_wijzig', 'StallijstScan', 'StallijstNew');
 
 
-foreach($data as $index => $item) {			 	
-			
-		
+foreach($data as $index => $item) {                 
+            
+        
 // Inlezen record
 for($i = 0; $i<count($taken); $i++) { // Er zijn 7 elementen nl. zie array $velden
 
@@ -76,66 +76,66 @@ if($i == 0) { $inhoud = $item -> {$taken[$i]}; include "impWorpregistratie.php";
 if($i == 1) { $inhoud = $item -> {$taken[$i]}; include "impDoodgeboren.php"; }
 
 if($i == 2) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'Transponder', 'Levensnummer');
-												include "impAgrident.php"; }
+                                                include "impAgrident.php"; }
 
 if($i == 3) { $inhoud = $item -> {$taken[$i]}; include "impVerplaatsing.php"; }
 
 if($i == 4) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'HokId', 'Levensnummer', 'Gewicht');
-												/*$velden_dieren = array('Levensnummer', 'Gewicht');
-												include impAgrident_dieren*/ 
-												include "impAgrident.php"; }
+                                                /*$velden_dieren = array('Levensnummer', 'Gewicht');
+                                                include impAgrident_dieren*/ 
+                                                include "impAgrident.php"; }
 
 if($i == 5) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'Levensnummer', 'Gewicht');
 
-												include "impAgrident.php"; }
+                                                include "impAgrident.php"; }
 
 if($i == 6) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'Ubn', 'Reden', 'Transponder', 'Levensnummer', 'Gewicht');
-												/*$velden_dieren = array('Transponder', 'Levensnummer', 'Gewicht');
-												include impAgrident_dieren*/ 
-												include "impAgrident.php"; }
+                                                /*$velden_dieren = array('Transponder', 'Levensnummer', 'Gewicht');
+                                                include impAgrident_dieren*/ 
+                                                include "impAgrident.php"; }
 
 if($i == 7) { $inhoud = $item -> {$taken[$i]}; $velden = array('Datum', 'UbnId', 'Ubn', 'RasId', 'HokId', 'Transponder', 'Levensnummer','Datumdier', 'Geslacht', 'ActId', 'Gewicht');
-												/*$velden_dieren = array('Transponder', 'Levensnummer', 'Datumdier', 'ActId', 'Geslacht', 'Gewicht');*/
-												include "impAgrident.php"; }
+                                                /*$velden_dieren = array('Transponder', 'Levensnummer', 'Datumdier', 'ActId', 'Geslacht', 'Gewicht');*/
+                                                include "impAgrident.php"; }
 
-if($i == 8) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'Transponder', 'Levensnummer', 														'Nieuw_Transponder', 'Nieuw_Nummer');
-												include "impAgrident.php"; }
+if($i == 8) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'Transponder', 'Levensnummer',                                                         'Nieuw_Transponder', 'Nieuw_Nummer');
+                                                include "impAgrident.php"; }
 
 if($i == 9) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'ArtId','Reden','Toedat','Transponder','Levensnummer');
-												include "impAgrident.php"; }
+                                                include "impAgrident.php"; }
 
 if($i == 10) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'Transponder', 'Levensnummer', 'Kleur', 'Halsnr');
-										 		include "impAgrident.php"; }
+                                                 include "impAgrident.php"; }
 
 if($i == 11) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'Ubn', 'Transponder', 'Levensnummer');
-												include "impAgrident.php"; }
+                                                include "impAgrident.php"; }
 
 if($i == 12) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'UbnId', 'Ubn', 'HokId', 'Transponder', 'Levensnummer');
-												include "impAgrident.php"; }
+                                                include "impAgrident.php"; }
 
 if($i == 13) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'HokId', 'DoelId', 'ArtId', 'Toedat');
-												include "impAgrident.php"; }
+                                                include "impAgrident.php"; }
 
 if($i == 14) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'VdrId', 'MoederTransponder', 'Moeder');
-												include "impAgrident.php"; }
+                                                include "impAgrident.php"; }
 
 if($i == 15) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'MoederTransponder', 'Moeder', 'Drachtig', 'Grootte');
-												/* $velden_dieren = array('MoederTransponder', 'Moeder', 'Drachtig', 'Grootte');
-												include impAgrident_dieren*/ 
-												include "impAgrident.php"; }
+                                                /* $velden_dieren = array('MoederTransponder', 'Moeder', 'Drachtig', 'Grootte');
+                                                include impAgrident_dieren*/ 
+                                                include "impAgrident.php"; }
 if($i == 16) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'UbnId', 'HokId', 'Transponder', 'Levensnummer');
-												include "impAgrident.php"; }
+                                                include "impAgrident.php"; }
 
 if($i == 17) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'Transponder', 'Levensnummer');
-												include "impAgrident.php"; }
+                                                include "impAgrident.php"; }
 
 if($i == 18) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'UbnId', 'RasId', 'DoelId', 'HokId', 'Transponder', 'Levensnummer', 'vdrId', 'Geslacht');
-												include "impAgrident.php"; }
+                                                include "impAgrident.php"; }
 echo $i.'<br>';
-			 } 
+             } 
 
 
-			 } 
+             } 
 
 // Maak een backup in de persoonlijke map op de server
 $dir = dirname(__FILE__);
@@ -157,11 +157,11 @@ fclose($fh);
 // Einde Maak een backup in de persoonlijke map op de server
 
 
-		 break;
-	default:
-		http_response_code(405); // Methode niet toegestaan
-		exit;
-	
+         break;
+    default:
+        http_response_code(405); // Methode niet toegestaan
+        exit;
+    
 } // Einde Switch
 //echo json_encode(array("Result" => "Tweede goede resultaat "));
 http_response_code(200); // Ok alles is goed

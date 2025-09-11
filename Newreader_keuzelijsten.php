@@ -26,19 +26,19 @@ SELECT redId
 FROM tblRedenuser
 WHERE redId = '".mysqli_real_escape_string($db,$array_uitval[$i])."' and lidId = '".mysqli_real_escape_string($db,$lidid)."'
 ") or die (mysqli_error($db));
-	while ( $zr = mysqli_fetch_assoc($zoek_reden)) { $rd_db = $zr['redId']; }
+    while ( $zr = mysqli_fetch_assoc($zoek_reden)) { $rd_db = $zr['redId']; }
 
 if(isset($rd_db)) {
 
-	$update_tblRedenuser = "UPDATE tblRedenuser set uitval = 1 WHERE redId = '".mysqli_real_escape_string($db,$array_uitval[$i])."' and lidId = '".mysqli_real_escape_string($db,$lidid)."' ";
-/*echo '<br>'.$insert_tblMomentuser.'<br>'.'<br>';*/		mysqli_query($db,$update_tblRedenuser) or die (mysqli_error($db));
+    $update_tblRedenuser = "UPDATE tblRedenuser set uitval = 1 WHERE redId = '".mysqli_real_escape_string($db,$array_uitval[$i])."' and lidId = '".mysqli_real_escape_string($db,$lidid)."' ";
+/*echo '<br>'.$insert_tblMomentuser.'<br>'.'<br>';*/        mysqli_query($db,$update_tblRedenuser) or die (mysqli_error($db));
 
 }
 
 else {
 
-	$insert_tblRedenuser = "INSERT INTO tblRedenuser set redId = '".mysqli_real_escape_string($db,$array_uitval[$i])."', lidId = '".mysqli_real_escape_string($db,$lidid)."', uitval = 1 ";
-/*echo '<br>'.$insert_tblRedenuser.'<br>'.'<br>';*/		mysqli_query($db,$insert_tblRedenuser) or die (mysqli_error($db));
+    $insert_tblRedenuser = "INSERT INTO tblRedenuser set redId = '".mysqli_real_escape_string($db,$array_uitval[$i])."', lidId = '".mysqli_real_escape_string($db,$lidid)."', uitval = 1 ";
+/*echo '<br>'.$insert_tblRedenuser.'<br>'.'<br>';*/        mysqli_query($db,$insert_tblRedenuser) or die (mysqli_error($db));
 
 }
 
@@ -57,19 +57,19 @@ SELECT redId
 FROM tblRedenuser
 WHERE redId = '".mysqli_real_escape_string($db,$array_afvoer[$j])."' and lidId = '".mysqli_real_escape_string($db,$lidid)."' 
 ") or die (mysqli_error($db));
-	while ( $zr = mysqli_fetch_assoc($zoek_reden)) { $rd_db = $zr['redId']; }
+    while ( $zr = mysqli_fetch_assoc($zoek_reden)) { $rd_db = $zr['redId']; }
 
 if(isset($rd_db)) {
 
-	$update_tblRedenuser = "UPDATE tblRedenuser set afvoer = 1 WHERE redId = '".mysqli_real_escape_string($db,$array_afvoer[$j])."' and lidId = '".mysqli_real_escape_string($db,$lidid)."' ";
-/*echo '<br>'.$update_tblRedenuser.'<br>'.'<br>';*/		mysqli_query($db,$update_tblRedenuser) or die (mysqli_error($db));
+    $update_tblRedenuser = "UPDATE tblRedenuser set afvoer = 1 WHERE redId = '".mysqli_real_escape_string($db,$array_afvoer[$j])."' and lidId = '".mysqli_real_escape_string($db,$lidid)."' ";
+/*echo '<br>'.$update_tblRedenuser.'<br>'.'<br>';*/        mysqli_query($db,$update_tblRedenuser) or die (mysqli_error($db));
 
 }
 
 else {
 
-	$insert_tblRedenuser = "INSERT INTO tblRedenuser set redId = '".mysqli_real_escape_string($db,$array_afvoer[$j])."', lidId = '".mysqli_real_escape_string($db,$lidid)."', afvoer = 1 ";
-/*echo '<br>'.$insert_tblRedenuser.'<br>'.'<br>';*/		mysqli_query($db,$insert_tblRedenuser) or die (mysqli_error($db));
+    $insert_tblRedenuser = "INSERT INTO tblRedenuser set redId = '".mysqli_real_escape_string($db,$array_afvoer[$j])."', lidId = '".mysqli_real_escape_string($db,$lidid)."', afvoer = 1 ";
+/*echo '<br>'.$insert_tblRedenuser.'<br>'.'<br>';*/        mysqli_query($db,$insert_tblRedenuser) or die (mysqli_error($db));
 
 }
 
@@ -81,13 +81,13 @@ SELECT hokId
 FROM tblHok
 WHERE hoknr = 'Lambar' and lidId = '".mysqli_real_escape_string($db,$lidid)."'
 ") or die (mysqli_error($db));
-while ($h = mysqli_fetch_assoc($zoek_Lambar)) {	$Lambar = $h['hokId']; }
+while ($h = mysqli_fetch_assoc($zoek_Lambar)) {    $Lambar = $h['hokId']; }
 
 
 if(!isset($Lambar)) {
 
-	$insert_tblHok = "INSERT INTO tblHok set hoknr = 'Lambar', lidId = '".mysqli_real_escape_string($db,$lidid)."' ";
-	mysqli_query($db,$insert_tblHok) or die (mysqli_error($db));
+    $insert_tblHok = "INSERT INTO tblHok set hoknr = 'Lambar', lidId = '".mysqli_real_escape_string($db,$lidid)."' ";
+    mysqli_query($db,$insert_tblHok) or die (mysqli_error($db));
 
 // tabel impAgridenten bijwerken
 $zoek_Lambar = mysqli_query($db,"
@@ -95,11 +95,11 @@ SELECT hokId
 FROM tblHok
 WHERE hoknr = 'Lambar' and lidId = '".mysqli_real_escape_string($db,$lidid)."'
 ") or die (mysqli_error($db));
-while ($h = mysqli_fetch_assoc($zoek_Lambar)) {	$Lambar = $h['hokId']; }
+while ($h = mysqli_fetch_assoc($zoek_Lambar)) {    $Lambar = $h['hokId']; }
 
 $update_impAgrident = "UPDATE impAgrident SET hokId = '".mysqli_real_escape_string($db,$Lambar)."' WHERE actId = 16 and lidId = '".mysqli_real_escape_string($db,$lidid) ."' and ISNULL(verwerkt) ";
 
-mysqli_query($db,$update_impAgrident) or die (mysqli_error($db));	
+mysqli_query($db,$update_impAgrident) or die (mysqli_error($db));    
 // tabel impAgridenten bijwerken
 }*/
 // Einde Controle bestaan van Lambar

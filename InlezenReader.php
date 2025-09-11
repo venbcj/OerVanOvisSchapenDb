@@ -129,7 +129,7 @@ inlezen lambar </a>
 inlezen gespeenden </a>
  </td>
  <td style = "font-size : 14px;">
-    <?php if (!empty($aantspn)){ echo "&nbsp $aantspn gespeenden in te lezen.";	} ?>
+    <?php if (!empty($aantspn)){ echo "&nbsp $aantspn gespeenden in te lezen.";    } ?>
  </td>
 </tr>
 
@@ -202,9 +202,9 @@ inlezen terug van uitscharen </a>
 inlezen overplaatsen </a>
  </td>
  <td style = "font-size : 14px;">
-	<?php if (!empty($aantovpl) && empty($speen_ovpl)){	echo "&nbsp $aantovpl overplaatsingen in te lezen.";	}
-	else if (!empty($aantovpl) && $speen_ovpl == 1)	{	echo "&nbsp $aantovpl overplaatsingen in te lezen waarvan er $speen_ovpl eerst moet worden gespeend. *";	}
-	else if (!empty($aantovpl) && $speen_ovpl > 1)	{	echo "&nbsp $aantovpl overplaatsingen in te lezen waarvan er $speen_ovpl eerst moeten worden gespeend. *";	} ?>
+    <?php if (!empty($aantovpl) && empty($speen_ovpl)){    echo "&nbsp $aantovpl overplaatsingen in te lezen.";    }
+    else if (!empty($aantovpl) && $speen_ovpl == 1)    {    echo "&nbsp $aantovpl overplaatsingen in te lezen waarvan er $speen_ovpl eerst moet worden gespeend. *";    }
+    else if (!empty($aantovpl) && $speen_ovpl > 1)    {    echo "&nbsp $aantovpl overplaatsingen in te lezen waarvan er $speen_ovpl eerst moeten worden gespeend. *";    } ?>
  </td>
 </tr>
 
@@ -281,13 +281,13 @@ inlezen stallijstscan </a>
 </table>
 <br><br><br>
 <table>
-<tr><td style = "font-size : 13px ;"> <?php if (!empty($aantovpl) && $speen_ovpl > 0) { ?> * Mogelijk moeten schapen worden herverdeeld na het spenen.<br> Deze herverdeling (= functie locatie in reader) gebeurt gelijktijdig met het inlezen van gespeende lammeren.<?php } ?>	</td>
+<tr><td style = "font-size : 13px ;"> <?php if (!empty($aantovpl) && $speen_ovpl > 0) { ?> * Mogelijk moeten schapen worden herverdeeld na het spenen.<br> Deze herverdeling (= functie locatie in reader) gebeurt gelijktijdig met het inlezen van gespeende lammeren.<?php } ?>    </td>
 </tr>
 </table>
 
 </form>
 
-	</TD>
+    </TD>
 <?php
 include "menu1.php"; } ?>
 </tr>

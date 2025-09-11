@@ -26,7 +26,7 @@ $titel = 'Redenen en momenten';
 $file = "Uitval.php";
 include "login.php"; ?>
 
-		<TD valign = 'top'>
+        <TD valign = 'top'>
 <?php
 if (Auth::is_logged_in()) { 
 
@@ -34,16 +34,16 @@ if (isset($_POST['knpSaveUitv__']) || isset($_POST['knpSaveReden__'])) { include
 
 <table border = 0 ><tr><td>
 <?php
-//	****************************************
-//	** REDENEN UITVAL EN MEDICATIE **
-//	****************************************
+//    ****************************************
+//    ** REDENEN UITVAL EN MEDICATIE **
+//    ****************************************
 
 if (isset($_POST['knpInsertReden__'])) {
-	$redId = $_POST['kzlReden__'];
-	
-	if (empty($redId)) 						{ $fout = "U heeft geen reden geselecteerd."; }
-	else
-	{
+    $redId = $_POST['kzlReden__'];
+    
+    if (empty($redId))                         { $fout = "U heeft geen reden geselecteerd."; }
+    else
+    {
 // Zoeken naar reden op duplicaten
 $controle = mysqli_query($db,"
 SELECT count(redId) aantal
@@ -51,15 +51,15 @@ FROM tblRedenuser
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and redId = '".mysqli_real_escape_string($db,$redId)."'
 GROUP BY redId
 ") or die (mysqli_error($db));
-		while ($row = mysqli_fetch_assoc($controle))
-		{
-			$dubbel = ("{$row['aantal']}");
-		} // Einde Zoeken naar reden op duplicaten	
-	
-	
-		if (isset($_POST['boxUitval__']))	{ $insUitv = 1; } else { $insUitv = 0; }
-		if (isset($_POST['boxPil__']))		{ $insPil = 1; } else { $insPil = 0; }
-		if (isset($_POST['boxSterfte__']))	{ $insSterf = 1; } else { $insSterf = 0; }
+        while ($row = mysqli_fetch_assoc($controle))
+        {
+            $dubbel = ("{$row['aantal']}");
+        } // Einde Zoeken naar reden op duplicaten    
+    
+    
+        if (isset($_POST['boxUitval__']))    { $insUitv = 1; } else { $insUitv = 0; }
+        if (isset($_POST['boxPil__']))        { $insPil = 1; } else { $insPil = 0; }
+        if (isset($_POST['boxSterfte__']))    { $insSterf = 1; } else { $insSterf = 0; }
   
 $query_reden_toevoegen= "INSERT INTO tblRedenuser SET 
  lidId = '".mysqli_real_escape_string($db,$lidId)."', 
@@ -68,8 +68,8 @@ $query_reden_toevoegen= "INSERT INTO tblRedenuser SET
  pil = '".mysqli_real_escape_string($db,$insPil)."', 
  sterfte = '".mysqli_real_escape_string($db,$insSterf)."' ";
 
-		mysqli_query($db,$query_reden_toevoegen) or die (mysqli_error($db));
-	}
+        mysqli_query($db,$query_reden_toevoegen) or die (mysqli_error($db));
+    }
 }
 
 
@@ -91,9 +91,9 @@ if($modbeheer == 1 ) { ?>
 $naam = $_POST['txtNaam__'];
 
 $insert_tblReden = "INSERT into tblReden set reden = '".mysqli_real_escape_string($db,$naam)."' ";
-	
+    
  mysqli_query($db,$insert_tblReden) or die (mysqli_error($db));
-	} ?>
+    } ?>
 <?php } ?>
 
 <table border = 0 >
@@ -114,26 +114,26 @@ ORDER BY r.reden
  ") or die (mysqli_error($db));?>
  <select style="width:180;" name="kzlReden__" value = "" style = "font-size:12px;">
   <option></option>
-<?php		while($rd = mysqli_fetch_array($qryreden))
-		{
-			$raak = $rd['redId'];
+<?php        while($rd = mysqli_fetch_array($qryreden))
+        {
+            $raak = $rd['redId'];
 
 
-			$opties= array($rd['redId']=>$rd['reden']);
-			foreach ( $opties as $key => $waarde)
-			{
-						$keuze = '';
-		
-		if( (!isset($_POST['knpInsert__']) && $redId == $raak) || (isset($_POST['kzlReden__']) && $_POST['kzlReden__'] == $key) )
-		{
-			echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
-		}
-		else
-		{		
-		echo '<option value="' . $key . '" >' . $waarde . '</option>';
-		}
-			
-		}
+            $opties= array($rd['redId']=>$rd['reden']);
+            foreach ( $opties as $key => $waarde)
+            {
+                        $keuze = '';
+        
+        if( (!isset($_POST['knpInsert__']) && $redId == $raak) || (isset($_POST['kzlReden__']) && $_POST['kzlReden__'] == $key) )
+        {
+            echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
+        }
+        else
+        {        
+        echo '<option value="' . $key . '" >' . $waarde . '</option>';
+        }
+            
+        }
 }
 ?>
 </select>
@@ -170,14 +170,14 @@ WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ORDER BY if(uitval+pil = 2, 1 ,uitval+pil) desc, reden
 ") or die (mysqli_error($db));
 
-	while($rij = mysqli_fetch_assoc($loop))
-	{
+    while($rij = mysqli_fetch_assoc($loop))
+    {
             $Id = $rij['reduId']; 
             $rId = $rij['redId']; 
-			$uitv = $rij['uitval'];
-			$pil = $rij['pil']; 
-			$afvoer = $rij['afvoer'];
-			$sterfte = $rij['sterfte']; ?>
+            $uitv = $rij['uitval'];
+            $pil = $rij['pil']; 
+            $afvoer = $rij['afvoer'];
+            $sterfte = $rij['sterfte']; ?>
 
 <tr>
  <td>
@@ -185,37 +185,37 @@ ORDER BY if(uitval+pil = 2, 1 ,uitval+pil) desc, reden
  </td>
  <td align = "center">
 
-	
-	<input type = "hidden" name = <?php echo "chbUitval_$it"."_$Id"; ?> size = 1 value = 0 > <!-- hiddden --> 
-	<input type="checkbox" name= <?php echo "chbUitval_$it"."_$Id"; ?> id="c1" value= 1 
-		<?php echo $uitv == 1 ? 'checked' : ''; ?> title = "Is reden tbv uitval ja/nee ?">
+    
+    <input type = "hidden" name = <?php echo "chbUitval_$it"."_$Id"; ?> size = 1 value = 0 > <!-- hiddden --> 
+    <input type="checkbox" name= <?php echo "chbUitval_$it"."_$Id"; ?> id="c1" value= 1 
+        <?php echo $uitv == 1 ? 'checked' : ''; ?> title = "Is reden tbv uitval ja/nee ?">
  </td>
  <td align = "center">
-	<input type = "hidden" name = <?php echo "chbPil_$it"."_$Id"; ?> size = 1 value = 0 > <!-- hiddden -->
- 	<input type="checkbox" name= <?php echo "chbPil_$it"."_$Id"; ?> id="c1" value="1" <?php echo $pil == 1 ? 'checked' : ''; ?> title = "Is reden tbv medicatie ja/nee ?">
+    <input type = "hidden" name = <?php echo "chbPil_$it"."_$Id"; ?> size = 1 value = 0 > <!-- hiddden -->
+     <input type="checkbox" name= <?php echo "chbPil_$it"."_$Id"; ?> id="c1" value="1" <?php echo $pil == 1 ? 'checked' : ''; ?> title = "Is reden tbv medicatie ja/nee ?">
  </td>
  <td>
- 	<input type = "hidden" name = <?php echo "chbAfvoer_$it"."_$Id"; ?> size = 1 value = 0 > <!-- hiddden -->
- 	<input type="checkbox" name= <?php echo "chbAfvoer_$it"."_$Id"; ?> id="c1" value="1" 
- 		<?php echo $afvoer == 1 ? 'checked' : ''; ?> >
+     <input type = "hidden" name = <?php echo "chbAfvoer_$it"."_$Id"; ?> size = 1 value = 0 > <!-- hiddden -->
+     <input type="checkbox" name= <?php echo "chbAfvoer_$it"."_$Id"; ?> id="c1" value="1" 
+         <?php echo $afvoer == 1 ? 'checked' : ''; ?> >
  </td>
  <td>
- 	<input type = "hidden" name = <?php echo "chbSterfte_$it"."_$Id"; ?> size = 1 value = 0 > <!-- hiddden -->
- 	<input type="checkbox" name= <?php echo "chbSterfte_$it"."_$Id"; ?> id="c1" value="1" 
- 		<?php echo $sterfte == 1 ? 'checked' : ''; ?> >
+     <input type = "hidden" name = <?php echo "chbSterfte_$it"."_$Id"; ?> size = 1 value = 0 > <!-- hiddden -->
+     <input type="checkbox" name= <?php echo "chbSterfte_$it"."_$Id"; ?> id="c1" value="1" 
+         <?php echo $sterfte == 1 ? 'checked' : ''; ?> >
  </td>
 </tr>
 
-		
-<?php	} ?>	
+        
+<?php    } ?>    
 </table>
  </td>
  <td width = 100></td>
  <td valign = top>
 <?php
-//	****************************************
-//	**	  MOMENTEN VAN UITVAL	   **
-//	****************************************
+//    ****************************************
+//    **      MOMENTEN VAN UITVAL       **
+//    ****************************************
 ?>
 <table border = 0 >
 <th colspan = 5> Momenten tbv uitval <br><hr></th>
@@ -242,8 +242,8 @@ WHERE mu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and m.actief = 1
 ORDER BY momuId
 ") or die (mysqli_error($db));
 
-	while($lus = mysqli_fetch_assoc($qry_lus))
-	{
+    while($lus = mysqli_fetch_assoc($qry_lus))
+    {
             $Id = ("{$lus['momuId']}"); 
             $scan = ("{$lus['scan']}"); 
             $actief = ("{$lus['actief']}"); 
@@ -255,34 +255,34 @@ FROM tblMoment m
 WHERE momuId = '".mysqli_real_escape_string($db,$Id)."' and m.actief = 1
 ORDER BY moment
 ") or die (mysqli_error($db));
-		while($lus = mysqli_fetch_assoc($query))
-		{	?>
+        while($lus = mysqli_fetch_assoc($query))
+        {    ?>
 <tr>
  <td><?php echo $lus['moment']; ?> </td>
 <?php if($reader != 'Agrident') { ?>
  <td>
- <input type="text" name= <?php echo "txtScan_$it"."_$Id"; ?> size = 1 value = <?php echo $lus['scan']; ?>	> 
+ <input type="text" name= <?php echo "txtScan_$it"."_$Id"; ?> size = 1 value = <?php echo $lus['scan']; ?>    > 
  </td>
 <?php } ?> 
  <td align = "center">
  <input type="hidden" name= <?php echo "chbActief_$it"."_$Id"; ?> size = 1 value = 0 > <!-- hiddden -->
- <input type="checkbox" name= <?php echo "chbActief_$it"."_$Id"; ?> id="c1" value="1"	<?php echo $actief == 1 ? 'checked' : ''; ?> title = "Is dit uitvalmoment te gebruiken ja/nee ?"/>
+ <input type="checkbox" name= <?php echo "chbActief_$it"."_$Id"; ?> id="c1" value="1"    <?php echo $actief == 1 ? 'checked' : ''; ?> title = "Is dit uitvalmoment te gebruiken ja/nee ?"/>
  </td>
 </tr>
-		
-<?php	}
-	} ?>
+        
+<?php    }
+    } ?>
 </table>
 </form>
  </td>
 </tr>
 </table><?php
-//	****************************************
-//	**	MOMENTEN VAN UITVAL	   ** end
-//	****************************************
+//    ****************************************
+//    **    MOMENTEN VAN UITVAL       ** end
+//    ****************************************
 ?>
 
-	</TD>
+    </TD>
 <?php
 include "menuBeheer.php"; } ?>
 </tr>

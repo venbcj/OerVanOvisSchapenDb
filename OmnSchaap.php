@@ -8,7 +8,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
  session_start(); ?>
 <!DOCTYPE html>
 <html>
-<head>	
+<head>    
 <title>Registratie</title>
 </head>
 <body>
@@ -18,7 +18,7 @@ $titel = 'Omnummeren';
 $file = "OmnSchaap.php";
 include "login.php"; ?>
 
-		<TD valign = 'top'>
+        <TD valign = 'top'>
 <?php
 if (Auth::is_logged_in()) { 
 
@@ -30,20 +30,20 @@ if ($modmeld == 1 ) { include "maak_request_func.php"; }
 
 <script>
 function verplicht() {
-var levnr = document.getElementById("levnr"); 		var levnr_v = levnr.value;
-var datum = document.getElementById("datepicker1");	var datum_v = datum.value;
+var levnr = document.getElementById("levnr");         var levnr_v = levnr.value;
+var datum = document.getElementById("datepicker1");    var datum_v = datum.value;
 
-	 if(levnr_v.length == 0) levnr.focus() 	+ alert("Het nieuwe levensnummer moet zijn ingevuld.");
-else if(levnr_v.length > 0 && levnr_v.length != 12) levnr.focus() 	+ alert("Het levensnummer moet uit 12 cijfers bestaan.");
-else if(isNaN(levnr_v)) levnr.focus() 	+ alert("Het levensnummer bevat een letter.");
-else if(datum_v.length == 0) datum.focus() 	+ alert("De datum moet zijn ingevuld.");
+     if(levnr_v.length == 0) levnr.focus()     + alert("Het nieuwe levensnummer moet zijn ingevuld.");
+else if(levnr_v.length > 0 && levnr_v.length != 12) levnr.focus()     + alert("Het levensnummer moet uit 12 cijfers bestaan.");
+else if(isNaN(levnr_v)) levnr.focus()     + alert("Het levensnummer bevat een letter.");
+else if(datum_v.length == 0) datum.focus()     + alert("De datum moet zijn ingevuld.");
 
 }
 
 </script>
 <?php
 
-if(!empty($_GET['pstschaap'])) 	{	$pst = $_GET['pstschaap']; 
+if(!empty($_GET['pstschaap']))     {    $pst = $_GET['pstschaap']; 
 
 $zoek_oud_levensnummer_obv_schaapId = mysqli_query($db,"
 SELECT levensnummer
@@ -51,14 +51,14 @@ FROM tblSchaap
 WHERE schaapId = ".mysqli_real_escape_string($db,$pst)."
 ") or die (mysqli_error($db));
 
-	while ( $zl = mysqli_fetch_assoc($zoek_oud_levensnummer_obv_schaapId)) { $pstnr = $zl['levensnummer']; }
+    while ( $zl = mysqli_fetch_assoc($zoek_oud_levensnummer_obv_schaapId)) { $pstnr = $zl['levensnummer']; }
 
 //var_dump(array_keys($_GET)); 
 //$velden = (array_keys($_GET));
 //echo '<br>'.$velden[0];
 
 
-}  else	{
+}  else    {
 
 //var_dump(array_keys($_POST));
 $velden = (array_keys($_POST)); //echo '<br> velden na POST = '.$velden[0];
@@ -79,13 +79,13 @@ FROM tblSchaap
 WHERE levensnummer = '".mysqli_real_escape_string($db,$levnr_new)."'
 ") or die (mysqli_error($db));
 
-	while ( $bl = mysqli_fetch_assoc($zoek_op_bestaand_levensnummer)) { $levnr_db = $bl['schaapId']; }
+    while ( $bl = mysqli_fetch_assoc($zoek_op_bestaand_levensnummer)) { $levnr_db = $bl['schaapId']; }
 
 
 if (isset($levnr_db)) 
-	{
-		$fout = "Dit levensnummer bestaat al.";
-	}
+    {
+        $fout = "Dit levensnummer bestaat al.";
+    }
 else {
 
 $datum = $_POST['txtDag'];
@@ -97,33 +97,33 @@ FROM tblStal st
  join tblSchaap s on (st.schaapId = s.schaapId)
 WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and s.levensnummer = '".mysqli_real_escape_string($db,$levnr_old)."' and isnull(st.rel_best)
 ") or die (mysqli_error($db));
-	while ($st = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $st['stalId']; $schaapId = $st['schaapId']; }
+    while ($st = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $st['stalId']; $schaapId = $st['schaapId']; }
 
-	$insert_tblHistorie = "INSERT INTO tblHistorie set stalId = ".mysqli_real_escape_string($db,$stalId).", datum = '".mysqli_real_escape_string($db,$fldDay)."', actId = 17, oud_nummer = '".mysqli_real_escape_string($db,$levnr_old)."' ";
+    $insert_tblHistorie = "INSERT INTO tblHistorie set stalId = ".mysqli_real_escape_string($db,$stalId).", datum = '".mysqli_real_escape_string($db,$fldDay)."', actId = 17, oud_nummer = '".mysqli_real_escape_string($db,$levnr_old)."' ";
 
-		mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
+        mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
 
 
-	$update_tblSchaap = "UPDATE tblSchaap set levensnummer = '".mysqli_real_escape_string($db,$levnr_new)."' WHERE schaapId = ".mysqli_real_escape_string($db,$schaapId);
+    $update_tblSchaap = "UPDATE tblSchaap set levensnummer = '".mysqli_real_escape_string($db,$levnr_new)."' WHERE schaapId = ".mysqli_real_escape_string($db,$schaapId);
 
-		mysqli_query($db,$update_tblSchaap) or die (mysqli_error($db));
+        mysqli_query($db,$update_tblSchaap) or die (mysqli_error($db));
 
 
 
 if($modmeld == 1) {
-	
+    
 $zoek_hisId = mysqli_query($db,"
 SELECT max(hisId) hisId
 FROM tblHistorie
 WHERE stalId = ".mysqli_real_escape_string($db,$stalId)." and actId = 17
 ") or die (mysqli_error($db));
-	while ($zh = mysqli_fetch_assoc($zoek_hisId)) { $hisId = $zh['hisId']; }
+    while ($zh = mysqli_fetch_assoc($zoek_hisId)) { $hisId = $zh['hisId']; }
 
 $Melding = 'VMD';
 include "maak_request.php";
 }
 
-	} // Einde else
+    } // Einde else
 
 } // Einde if (isset ($_POST["knpSave_$pstnr"]))
 
@@ -134,7 +134,7 @@ FROM tblSchaap
 WHERE levensnummer = '".mysqli_real_escape_string($db,$pstnr)."'
 ") or die (mysqli_error($db));
 
-	while ( $si = mysqli_fetch_assoc($zoek_oud_levensnummer)) { $levnr_old = $si['levensnummer']; 
+    while ( $si = mysqli_fetch_assoc($zoek_oud_levensnummer)) { $levnr_old = $si['levensnummer']; 
 
 //echo '<br> levensnummer uit database = '.$levnr_old;
 }
@@ -156,29 +156,29 @@ WHERE levensnummer = '".mysqli_real_escape_string($db,$pstnr)."'
 </tr>
 
 
-<!--	**************************************
-		**	   	 OPMAAK  GEGEVENS			**
-		************************************** -->
+<!--    **************************************
+        **            OPMAAK  GEGEVENS            **
+        ************************************** -->
 <?php if(isset($levnr_old)) {
 if(isset($_POST["knpSave_$pstnr"])) { $dag = $_POST["txtDag"]; $levnr_new = $_POST["txtLevnrNew"]; } else { $dag = date('d-m-Y'); } ?>
 
 <tr style = "font-size:14px;">
  <td width="450"></td>
  <td>
-	<input type = "text" size = 7 style = "font-size : 14px;" id="datepicker1" name = <?php echo "txtDag"; ?> value = <?php echo $dag; ?> >
+    <input type = "text" size = 7 style = "font-size : 14px;" id="datepicker1" name = <?php echo "txtDag"; ?> value = <?php echo $dag; ?> >
  </td>
  <td></td>
  <td> <?php echo $levnr_old; ?>
  <td></td>
  </td>
  <td align="center">
- 	<input type = "text" size = 10 style = "font-size : 14px;" id="levnr" name = <?php echo "txtLevnrNew"; ?> value = <?php if(isset($levnr_new)) { echo $levnr_new; } ?> >
+     <input type = "text" size = 10 style = "font-size : 14px;" id="levnr" name = <?php echo "txtLevnrNew"; ?> value = <?php if(isset($levnr_new)) { echo $levnr_new; } ?> >
  </td>
 </tr>
 <?php } ?>
 <!--**************************************
-		**	EINDE OPMAAK GEGEVENS	**
-	************************************** -->
+        **    EINDE OPMAAK GEGEVENS    **
+    ************************************** -->
 
 
 </table>

@@ -9,7 +9,7 @@ require('fpdf/fpdf.php');
 
 include "database.php";
 
-	$db = mysqli_connect($host, $user, $pw, $dtb);
+    $db = mysqli_connect($host, $user, $pw, $dtb);
 
     if ($db == false )
     {
@@ -30,57 +30,57 @@ SELECT lidId
 FROM tblStal
 WHERE stalId = ".mysqli_real_escape_string($db,$stal)." 
 ") or die (mysqli_error($db));
-While ($row = mysqli_fetch_assoc($zoek_lid)) {	$lidId = $row['lidId']; }
+While ($row = mysqli_fetch_assoc($zoek_lid)) {    $lidId = $row['lidId']; }
 
 
 
 class PDF extends FPDF {
-	function header(){
+    function header(){
 
 
 global $rapport;
 global $headerWidth;
 global $imageWidth;
 
-		$this->SetFont('Times','',20);
-		$this->SetFillColor(166,198,235); // Blauw
-		$this->Cell($headerWidth,15,$rapport,0,1,'C',true);
+        $this->SetFont('Times','',20);
+        $this->SetFillColor(166,198,235); // Blauw
+        $this->Cell($headerWidth,15,$rapport,0,1,'C',true);
 
-		$this->Image('OER_van_OVIS.jpg',$imageWidth,11,30,14);
+        $this->Image('OER_van_OVIS.jpg',$imageWidth,11,30,14);
 
-		$this->SetFillColor(158,179,104); // Groen
-		$this->Cell($headerWidth,5,'',0,1,'',true);
-		$this->SetFont('Times','I',7);
-		$this->Ln(5);
+        $this->SetFillColor(158,179,104); // Groen
+        $this->Cell($headerWidth,5,'',0,1,'',true);
+        $this->SetFont('Times','I',7);
+        $this->Ln(5);
 
 
-		$this->Ln(5);
+        $this->Ln(5);
 
-		$this->SetFont('Times','B',9);
+        $this->SetFont('Times','B',9);
 
-		$this->SetFillColor(166,198,235);
-		$this->SetDrawColor(50,50,100);
+        $this->SetFillColor(166,198,235);
+        $this->SetDrawColor(50,50,100);
 
-		$this->Cell(30,5,'','',0,'',false);
-		$this->Cell(20,5,'Lammeren','',0,'C',false);
-		$this->Cell(15,5,'Geslacht','',0,'C',false);
-		$this->Cell(16,5,'Worpgrootte','',0,'C',false);
-		$this->Cell(21,5,'Werpdatum','',0,'C',false);
-		$this->Cell(40,5,'Gem. groei per dag','',0,'',false);
-		$this->Cell(15,5,'Ooi','',1,'C',false);
-		
-	}
-	function Footer(){
+        $this->Cell(30,5,'','',0,'',false);
+        $this->Cell(20,5,'Lammeren','',0,'C',false);
+        $this->Cell(15,5,'Geslacht','',0,'C',false);
+        $this->Cell(16,5,'Worpgrootte','',0,'C',false);
+        $this->Cell(21,5,'Werpdatum','',0,'C',false);
+        $this->Cell(40,5,'Gem. groei per dag','',0,'',false);
+        $this->Cell(15,5,'Ooi','',1,'C',false);
+        
+    }
+    function Footer(){
 
-		//Go to 1.5 cm from bottom
-		$this->SetY(-15);
+        //Go to 1.5 cm from bottom
+        $this->SetY(-15);
 
-		$this->SetFont('Times','',8);
+        $this->SetFont('Times','',8);
 
-		//Cell(float w, float h, string txt, mixed border, int ln, string align, boolean fill, mixed link)
-		//width = 0 means the cell is extended up to the right margin
-		$this->Cell(0,10,'Pagina '.$this->PageNo()." / {pages}",0,0,'C');
-	}
+        //Cell(float w, float h, string txt, mixed border, int ln, string align, boolean fill, mixed link)
+        //width = 0 means the cell is extended up to the right margin
+        $this->Cell(0,10,'Pagina '.$this->PageNo()." / {pages}",0,0,'C');
+    }
 }
 
 //A4 width : 219
@@ -110,43 +110,43 @@ FROM tblSchaap lam
  join tblStal st on (st.schaapId = lam.schaapId)
  join tblHistorie h on (st.stalId = h.stalId)
  left join (
- 	SELECT stalId, max(datum) mdm
- 	FROM tblHistorie
-	WHERE kg is not null and actId > 1
-	GROUP BY stalId
+     SELECT stalId, max(datum) mdm
+     FROM tblHistorie
+    WHERE kg is not null and actId > 1
+    GROUP BY stalId
  ) mx on (mx.stalId = st.stalId)
  left join (
- 	SELECT stalId, datum, max(kg) kg
- 	FROM tblHistorie
-	WHERE kg is not null and actId > 1
-	GROUP BY stalId, datum
+     SELECT stalId, datum, max(kg) kg
+     FROM tblHistorie
+    WHERE kg is not null and actId > 1
+    GROUP BY stalId, datum
  ) lstkg on (lstkg.stalId = st.stalId and lstkg.datum = mx.mdm)
 WHERE lam.levensnummer is not null and isnull(st.rel_best) and h.actId = 1 and st.lidId = ".mysqli_real_escape_string($db,$lidId)." and h.datum >= '".mysqli_real_escape_string($db,$van)."' and h.datum <= '".mysqli_real_escape_string($db,$tot)."'
 GROUP BY lam.levensnummer, lam.geslacht, h.datum, mdr.levensnummer, mx.mdm, st.stalId
 ORDER BY right(lam.levensnummer,$Karwerk)
 ") or die (mysqli_error($db));
 while ($row = mysqli_fetch_assoc($zoek_meerling)) {
-	$lam = $row['lam'];
-	$sek = $row['geslacht'];
-	$worp = $row['worp'];
-	$datum = $row['datum'];
-	$gemkg = $row['gemgroei'];
-	$maxdm = $row['kgdag'];
-	$ooi = $row['ooi'];
+    $lam = $row['lam'];
+    $sek = $row['geslacht'];
+    $worp = $row['worp'];
+    $datum = $row['datum'];
+    $gemkg = $row['gemgroei'];
+    $maxdm = $row['kgdag'];
+    $ooi = $row['ooi'];
 
 if(!isset($gemkg)) { $gemkg = 'Onbekend'; }
-	else { $gemkg .= ' gr ( tot '. $maxdm .')'; }
+    else { $gemkg .= ' gr ( tot '. $maxdm .')'; }
 
 $border = 'T'; 
 
-	$pdf->Cell(30,5,'','',0);
- 	$pdf->Cell(20,5,$lam,$border,0,'C');
- 	$pdf->Cell(15,5,$sek,$border,0,'C'); 
- 	$pdf->Cell(15,5,$worp,$border,0,'C'); 
- 	$pdf->Cell(25,5,$datum,$border,0,'C'); 
- 	$pdf->Cell(38,5,$gemkg,$border,0,''); 
- 	$pdf->Cell(15,5,$ooi,$border,1,'C'); 
-  	
+    $pdf->Cell(30,5,'','',0);
+     $pdf->Cell(20,5,$lam,$border,0,'C');
+     $pdf->Cell(15,5,$sek,$border,0,'C'); 
+     $pdf->Cell(15,5,$worp,$border,0,'C'); 
+     $pdf->Cell(25,5,$datum,$border,0,'C'); 
+     $pdf->Cell(38,5,$gemkg,$border,0,''); 
+     $pdf->Cell(15,5,$ooi,$border,1,'C'); 
+      
 
 } // Einde while $zoek_schaap
 

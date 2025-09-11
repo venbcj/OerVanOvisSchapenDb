@@ -24,26 +24,26 @@ unset($fldBest);
 unset($fldDood);
 
  foreach($id as $key => $value) {
- 	if ($key == 'chbKies' && $value == 1 ) 	{ /*echo $key.'='.$value.' ';*/  $fldKies = $value ; }
+     if ($key == 'chbKies' && $value == 1 )     { /*echo $key.'='.$value.' ';*/  $fldKies = $value ; }
  
-	if ($key == 'txtDatum' && !empty($value)) { $dag = date_create($value); $fldDag =  date_format($dag, 'Y-m-d'); }
-	
-	if ($key == 'kzlBest' && !empty($value)) { $fldBest = $value; /*echo 'kzlBestemm : '.$value.'<br>';*/ }
-	
-	if ($key == 'chbDood' ) { $fldDood = $value; /*echo 'Chekbox : '.$value.'<br>';*/ }
-		
-									}
+    if ($key == 'txtDatum' && !empty($value)) { $dag = date_create($value); $fldDag =  date_format($dag, 'Y-m-d'); }
+    
+    if ($key == 'kzlBest' && !empty($value)) { $fldBest = $value; /*echo 'kzlBestemm : '.$value.'<br>';*/ }
+    
+    if ($key == 'chbDood' ) { $fldDood = $value; /*echo 'Chekbox : '.$value.'<br>';*/ }
+        
+                                    }
 
 //if(!isset($fldKies)) { $fldKies = 0; }
 
-if($recId > 0) {							
+if($recId > 0) {                            
 $zoek_maxDatum = mysqli_query($db,"
 SELECT datum date, date_format(datum,'%d-%m-%Y') datum
 FROM tblHistorie h
  join (
-	SELECT max(hisId) hisId
-	FROM tblHistorie
-	WHERE stalId = ".mysqli_real_escape_string($db,$recId)." and skip = 0
+    SELECT max(hisId) hisId
+    FROM tblHistorie
+    WHERE stalId = ".mysqli_real_escape_string($db,$recId)." and skip = 0
  ) mh on (h.hisId = mh.hisId)
 ") or die(mysqli_error($db));
 
@@ -59,8 +59,8 @@ if ($fldKies == 1 && isset($fldDag) && $dmmax <= $fldDag && ( (isset($fldBest) &
 if(isset($fldBest)) { $actId = 12; $meldafvoer = 'AFV'; }
 if(isset($fldDood)) { $actId = 14; $meldafvoer = 'DOO'; $fldBest = $rendac_Id; }
 
-	$insert_tblHistorie = "INSERT INTO tblHistorie set stalId = ".mysqli_real_escape_string($db,$recId).", datum = '".mysqli_real_escape_string($db,$fldDag)."', actId = ".mysqli_real_escape_string($db,$actId)." ";
-	/*echo $insert_tblHistorie.'<br>';*/	mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
+    $insert_tblHistorie = "INSERT INTO tblHistorie set stalId = ".mysqli_real_escape_string($db,$recId).", datum = '".mysqli_real_escape_string($db,$fldDag)."', actId = ".mysqli_real_escape_string($db,$actId)." ";
+    /*echo $insert_tblHistorie.'<br>';*/    mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
 
 if ($modmeld == 11 ) {
 $Melding = $meldafvoer;
@@ -78,8 +78,8 @@ while ($per = mysqli_fetch_assoc($zoek_hisId)) { $hisId = $per['hisId']; }
 include "maak_request.php";
 
 }
-	$update_tblStal = "UPDATE tblStal set rel_best = '".mysqli_real_escape_string($db,$fldBest)."' WHERE stalId = '".mysqli_real_escape_string($db,$recId)."' ";	
-/*echo $update_tblStal.'<br>';*/		mysqli_query($db,$update_tblStal) or die (mysqli_error($db));
+    $update_tblStal = "UPDATE tblStal set rel_best = '".mysqli_real_escape_string($db,$fldBest)."' WHERE stalId = '".mysqli_real_escape_string($db,$recId)."' ";    
+/*echo $update_tblStal.'<br>';*/        mysqli_query($db,$update_tblStal) or die (mysqli_error($db));
 
 
 
@@ -87,7 +87,7 @@ include "maak_request.php";
 // EINDE CONTROLE op alle verplichten velden bij afvoer stal
 // unset($fldDag); Deze unset staat hier te vroeg. Nl. nog nodig bij foutmelding in Afvoerstal.php
 
-										
+                                        
     } ?>
-					
-	
+                    
+    

@@ -31,7 +31,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
 <!DOCTYPE html>
 <html>
 <head>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <title>Registratie</title>
 </head>
 <body>
@@ -41,13 +41,13 @@ $titel = 'Inlezen Gespeenden';
 $file = "InsSpenen.php";
 include "login.php"; ?>
 
-				<TD valign = "top">
+                <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) {
 
 If (isset($_POST['knpInsert_']))  {
-	include "url.php";
-	include "post_readerSpn.php"; #Deze include moet voor de vervversing in de functie header()
+    include "url.php";
+    include "post_readerSpn.php"; #Deze include moet voor de vervversing in de functie header()
 }
 
 if($reader == 'Agrident') {
@@ -64,56 +64,56 @@ $velden = "str_to_date(rd.datum,'%Y-%m-%d') sort , rd.datum, rd.Id readId, rd.le
 $tabel = "
 impAgrident rd
  left join (
-	SELECT lidId, levensnummer, hokId
-	FROM impAgrident
-	WHERE actId = 5 and lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(verwerkt) 
+    SELECT lidId, levensnummer, hokId
+    FROM impAgrident
+    WHERE actId = 5 and lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(verwerkt) 
  ) ro on (rd.levensnummer = ro.levensnummer)
  left join (
-	 SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
-	 FROM tblSchaap s
-	  join tblStal st on (st.schaapId = s.schaapId)
-	  join tblHistorie h on (st.stalId = h.stalId)
-	 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
-	 GROUP BY s.schaapId, s.levensnummer, s.geslacht
+     SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
+     FROM tblSchaap s
+      join tblStal st on (st.schaapId = s.schaapId)
+      join tblHistorie h on (st.stalId = h.stalId)
+     WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
+     GROUP BY s.schaapId, s.levensnummer, s.geslacht
  ) s on (rd.levensnummer = s.levensnummer)
  left join (
-	SELECT h.hisId, a.actie, a.af
-	FROM tblHistorie h
-	 join tblActie a on (h.actId = a.actId)
-	WHERE h.skip = 0
+    SELECT h.hisId, a.actie, a.af
+    FROM tblHistorie h
+     join tblActie a on (h.actId = a.actId)
+    WHERE h.skip = 0
  ) h on (h.hisId = s.hisId)
  left join (
-	SELECT st.schaapId, h.datum
-	FROM tblStal st
-	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 4 and h.skip = 0
+    SELECT st.schaapId, h.datum
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 4 and h.skip = 0
  ) hs on (hs.schaapId = s.schaapId)
  left join (
-	SELECT st.schaapId, h.datum
-	FROM tblStal st
-	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 3 and h.skip = 0
+    SELECT st.schaapId, h.datum
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
  ) ouder on (ouder.schaapId = s.schaapId)
  
  left join tblHok kh on (coalesce(rd.hokId,ro.hokId) = kh.hokId and kh.lidId = '".mysqli_real_escape_string($db,$lidId)."')
  left join (
- 	SELECT rd.Id, count(dup.Id) dubbelen
-	FROM impAgrident rd
-	 join impAgrident dup on (rd.lidId = dup.lidId and rd.levensnummer = dup.levensnummer and rd.actId = dup.actId and rd.Id <> dup.Id)
-	WHERE rd.actId = 4 and rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ISNULL(rd.verwerkt) and ISNULL(dup.verwerkt)
-	GROUP BY rd.Id
+     SELECT rd.Id, count(dup.Id) dubbelen
+    FROM impAgrident rd
+     join impAgrident dup on (rd.lidId = dup.lidId and rd.levensnummer = dup.levensnummer and rd.actId = dup.actId and rd.Id <> dup.Id)
+    WHERE rd.actId = 4 and rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ISNULL(rd.verwerkt) and ISNULL(dup.verwerkt)
+    GROUP BY rd.Id
  ) dup on (rd.Id = dup.Id)
  left join (
-	SELECT m.levensnummer, max(m.datum) datum
-	FROM (
-		SELECT s.levensnummer, h.datum
-		FROM tblSchaap s 
-		 join tblStal st on (st.schaapId = s.schaapId)
-		 join tblHistorie h on (st.stalId = h.stalId)
-		WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.levensnummer is not null and h.skip = 0
-		
-	) m
-	GROUP BY m.levensnummer 
+    SELECT m.levensnummer, max(m.datum) datum
+    FROM (
+        SELECT s.levensnummer, h.datum
+        FROM tblSchaap s 
+         join tblStal st on (st.schaapId = s.schaapId)
+         join tblHistorie h on (st.stalId = h.stalId)
+        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.levensnummer is not null and h.skip = 0
+        
+    ) m
+    GROUP BY m.levensnummer 
  ) lstday on (lstday.levensnummer = rd.levensnummer )
  " ;
 
@@ -139,56 +139,56 @@ $velden = "str_to_date(rd.datum,'%d/%m/%Y') sort , rd.datum, rd.readId, rd.levnr
 $tabel = "
 impReader rd
  left join (
-	SELECT r.lidId, r.levnr_ovpl, r.hok_ovpl
-	FROM impReader r
-	WHERE r.teller_ovpl is not null and isnull(r.verwerkt) 
+    SELECT r.lidId, r.levnr_ovpl, r.hok_ovpl
+    FROM impReader r
+    WHERE r.teller_ovpl is not null and isnull(r.verwerkt) 
  ) ro on (rd.lidId = ro.lidId and rd.levnr_sp = ro.levnr_ovpl)
  left join (
-	 SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
-	 FROM tblSchaap s
-	  join tblStal st on (st.schaapId = s.schaapId)
-	  join tblHistorie h on (st.stalId = h.stalId)
-	 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
-	 GROUP BY s.schaapId, s.levensnummer, s.geslacht
+     SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
+     FROM tblSchaap s
+      join tblStal st on (st.schaapId = s.schaapId)
+      join tblHistorie h on (st.stalId = h.stalId)
+     WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
+     GROUP BY s.schaapId, s.levensnummer, s.geslacht
  ) s on (rd.levnr_sp = s.levensnummer)
  left join (
-	SELECT h.hisId, a.actie, a.af
-	FROM tblHistorie h
-	 join tblActie a on (h.actId = a.actId)
-	 WHERE h.skip = 0
+    SELECT h.hisId, a.actie, a.af
+    FROM tblHistorie h
+     join tblActie a on (h.actId = a.actId)
+     WHERE h.skip = 0
  ) h on (h.hisId = s.hisId)
  left join (
-	SELECT st.schaapId, h.datum
-	FROM tblStal st
-	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 4 and h.skip = 0
+    SELECT st.schaapId, h.datum
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 4 and h.skip = 0
  ) hs on (hs.schaapId = s.schaapId)
  left join (
-	SELECT st.schaapId, h.datum
-	FROM tblStal st
-	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 3 and h.skip = 0
+    SELECT st.schaapId, h.datum
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
  ) ouder on (ouder.schaapId = s.schaapId)
  
  left join tblHok kh on (coalesce(rd.hok_sp,ro.hok_ovpl) = kh.scan and kh.lidId = '".mysqli_real_escape_string($db,$lidId)."')
  left join (
- 	SELECT rd.readId, count(dup.readId) dubbelen
-	FROM impReader rd
-	 join impReader dup on (rd.lidId = dup.lidId and rd.levnr_sp = dup.levnr_sp and rd.readId <> dup.readId)
-	WHERE rd.teller_sp is not null and rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ISNULL(rd.verwerkt) and ISNULL(dup.verwerkt)
-	GROUP BY rd.readId
+     SELECT rd.readId, count(dup.readId) dubbelen
+    FROM impReader rd
+     join impReader dup on (rd.lidId = dup.lidId and rd.levnr_sp = dup.levnr_sp and rd.readId <> dup.readId)
+    WHERE rd.teller_sp is not null and rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ISNULL(rd.verwerkt) and ISNULL(dup.verwerkt)
+    GROUP BY rd.readId
  ) dup on (rd.readId = dup.readId)
  left join (
-	SELECT m.levensnummer, max(m.datum) datum
-	FROM (
-		SELECT s.levensnummer, h.datum
-		FROM tblSchaap s 
-		 join tblStal st on (st.schaapId = s.schaapId)
-		 join tblHistorie h on (st.stalId = h.stalId)
-		WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.levensnummer is not null and h.skip = 0
-		
-	) m
-	GROUP BY m.levensnummer 
+    SELECT m.levensnummer, max(m.datum) datum
+    FROM (
+        SELECT s.levensnummer, h.datum
+        FROM tblSchaap s 
+         join tblStal st on (st.schaapId = s.schaapId)
+         join tblHistorie h on (st.stalId = h.stalId)
+        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.levensnummer is not null and h.skip = 0
+        
+    ) m
+    GROUP BY m.levensnummer 
  ) lstday on (lstday.levensnummer = rd.levnr_sp )
  " ;
 
@@ -222,7 +222,7 @@ echo $page_numbers;
 <?php
 
 
-// Declaratie HOKNUMMER			// lower(if(isnull(scan),'6karakters',scan)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.
+// Declaratie HOKNUMMER            // lower(if(isnull(scan),'6karakters',scan)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.
 $qryHoknummer = mysqli_query($db,"
 SELECT hokId, hoknr, lower(coalesce(scan,'6karakters')) scan
 FROM tblHok hb
@@ -242,82 +242,82 @@ unset($index);
 // EINDE Declaratie HOKNUMMER
 
 if(isset($data))  { foreach($data as $key => $array)
-	{
-		$var = $array['datum'];
+    {
+        $var = $array['datum'];
 $date = str_replace('/', '-', $var);
 $datum = date('d-m-Y', strtotime($date));
-$dm	   = date('Y-m-d', strtotime($date));
-	
-	$Id = $array['readId'];
-	$levnr = $array['levnr']; if (strlen($levnr)== 11) {$levnr = '0'.$array['levnr'];}
-	$levnr_dupl = $array['dubbelen']; // twee keer in reader bestand
-	$rd_hok = $array['rd_hok'];
-	$db_scan = $array['db_scan'];
-	$kg = $array['kg'];
-	$geslacht = $array['geslacht'];
-	$dmaanw = $array['dmaanw']; if(isset($dmaanw)) { if($geslacht == 'ooi') {$fase = 'moederdier'; } else if($geslacht == 'ram') { $fase = 'vaderdier';} } 
-								else { $fase = 'lam';} 
-	$af = $array['af']; if(isset($af) && $af == 1) { $status = $array['actie']; }
-	$dmspeen = $array['dmspeen']; // Ter controle of speendatum reeds bestaat
-	$speendm = $array['speendm']; // Ter controle of speendatum reeds bestaat
-	$dmmax = $array['dmlst']; 	$maxdm = date('d-m-Y', strtotime($dmmax)); // Laatste datum bepalen als spenen opnieuw kan worden ingelezen. De laatste datum kan dus geen speendatum zijn
+$dm       = date('Y-m-d', strtotime($date));
+    
+    $Id = $array['readId'];
+    $levnr = $array['levnr']; if (strlen($levnr)== 11) {$levnr = '0'.$array['levnr'];}
+    $levnr_dupl = $array['dubbelen']; // twee keer in reader bestand
+    $rd_hok = $array['rd_hok'];
+    $db_scan = $array['db_scan'];
+    $kg = $array['kg'];
+    $geslacht = $array['geslacht'];
+    $dmaanw = $array['dmaanw']; if(isset($dmaanw)) { if($geslacht == 'ooi') {$fase = 'moederdier'; } else if($geslacht == 'ram') { $fase = 'vaderdier';} } 
+                                else { $fase = 'lam';} 
+    $af = $array['af']; if(isset($af) && $af == 1) { $status = $array['actie']; }
+    $dmspeen = $array['dmspeen']; // Ter controle of speendatum reeds bestaat
+    $speendm = $array['speendm']; // Ter controle of speendatum reeds bestaat
+    $dmmax = $array['dmlst'];     $maxdm = date('d-m-Y', strtotime($dmmax)); // Laatste datum bepalen als spenen opnieuw kan worden ingelezen. De laatste datum kan dus geen speendatum zijn
 
 
 // Controleren of ingelezen waardes correct zijn.
 $kzlHok = $db_scan; 
 if (isset($_POST['knpVervers_'])) { $datum = $_POST["txtSpeendag_$Id"]; $kg = $_POST["txtKg_$Id"]; $kzlHok = $_POST["kzlHok_$Id"]; 
-	$makeday = date_create($_POST["txtSpeendag_$Id"]); $dm =  date_format($makeday, 'Y-m-d');
+    $makeday = date_create($_POST["txtSpeendag_$Id"]); $dm =  date_format($makeday, 'Y-m-d');
 }
 
-	 If	 
-	 (	!isset($af) || $af == 1		|| /*levensnummer moet bestaan en het dier moet aanweig zijn */
-	 	isset($levnr_dupl)			|| # of levensnummer bestaat al in reader bestand
-	    $fase == 'moederdier'		|| $fase == 'vaderdier' || # dier moet een lam zijn
-		empty($datum)				|| # of datum is leeg
-		$dm < $dmmax				|| # of datum ligt voor de laatst geregistreerde datum van het schaap
-		//(empty($kg) && $fase == 'lam')					|| # of gewicht is leeg		Per 20-1-2017 speengewicht niet verplicht gemaakt.
-		empty($kzlHok) 				|| # of verblijf is onbekend of leeg
-		isset($dmspeen)				   # het dier heeft al een speendatum
-	 											
-	 )
-	 {	$oke = 0;	} else {	$oke = 1;	} // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
+     If     
+     (    !isset($af) || $af == 1        || /*levensnummer moet bestaan en het dier moet aanweig zijn */
+         isset($levnr_dupl)            || # of levensnummer bestaat al in reader bestand
+        $fase == 'moederdier'        || $fase == 'vaderdier' || # dier moet een lam zijn
+        empty($datum)                || # of datum is leeg
+        $dm < $dmmax                || # of datum ligt voor de laatst geregistreerde datum van het schaap
+        //(empty($kg) && $fase == 'lam')                    || # of gewicht is leeg        Per 20-1-2017 speengewicht niet verplicht gemaakt.
+        empty($kzlHok)                 || # of verblijf is onbekend of leeg
+        isset($dmspeen)                   # het dier heeft al een speendatum
+                                                 
+     )
+     {    $oke = 0;    } else {    $oke = 1;    } // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
 // EINDE Controleren of ingelezen waardes correct zijn.
 
 /* Als onvolledig is gewijzigd naar volledig juist */
-	 if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1)  {$cbKies = 1; $cbDel = $_POST["chbDel_$Id"]; }
+     if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1)  {$cbKies = 1; $cbDel = $_POST["chbDel_$Id"]; }
 else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDel = $_POST["chbDel_$Id"]; } 
    else { $cbKies = $oke; } // $cbKies is tbv het vasthouden van de keuze inlezen of niet ?>
 
-<!--	**************************************
-		**	   	 OPMAAK  GEGEVENS			**
-		************************************** -->
+<!--    **************************************
+        **            OPMAAK  GEGEVENS            **
+        ************************************** -->
 
 <tr style = "font-size:14px;">
  <td align = "center"> <?php //echo $Id; ?>
-	
-	<input type = hidden size = 1 name = <?php echo "chbkies_$Id"; ?> value = 0 > <!-- hiddden -->
-	<input type = checkbox 		  name = <?php echo "chbkies_$Id"; ?> value = 1 
-	  <?php echo $cbKies == 1 ? 'checked' : ''; /* Als voorwaarde goed zijn of checkbox is aangevinkt */
+    
+    <input type = hidden size = 1 name = <?php echo "chbkies_$Id"; ?> value = 0 > <!-- hiddden -->
+    <input type = checkbox           name = <?php echo "chbkies_$Id"; ?> value = 1 
+      <?php echo $cbKies == 1 ? 'checked' : ''; /* Als voorwaarde goed zijn of checkbox is aangevinkt */
 
-	  if ($oke == 0) /*Als voorwaarde niet klopt */ { ?> disabled <?php } else { ?> class="checkall" <?php } /* class="checkall" zorgt dat alles kan worden uit- of aangevinkt*/ ?> >
-	<input type = hidden size = 1 name = <?php echo "laatsteOke_$Id"; ?> value = <?php echo $oke; ?> > <!-- hiddden -->
+      if ($oke == 0) /*Als voorwaarde niet klopt */ { ?> disabled <?php } else { ?> class="checkall" <?php } /* class="checkall" zorgt dat alles kan worden uit- of aangevinkt*/ ?> >
+    <input type = hidden size = 1 name = <?php echo "laatsteOke_$Id"; ?> value = <?php echo $oke; ?> > <!-- hiddden -->
  </td>
  <td align = "center">
-	<input type = hidden size = 1 name = <?php echo "chbDel_$Id"; ?> value = 0 >
-	<input type = checkbox class="delete" name = <?php echo "chbDel_$Id"; ?> value = 1 <?php if(isset($cbDel)) { echo $cbDel == 1 ? 'checked' : ''; } ?> >
+    <input type = hidden size = 1 name = <?php echo "chbDel_$Id"; ?> value = 0 >
+    <input type = checkbox class="delete" name = <?php echo "chbDel_$Id"; ?> value = 1 <?php if(isset($cbDel)) { echo $cbDel == 1 ? 'checked' : ''; } ?> >
  </td>
  <td>
-	<input type = "text" size = 9 style = "font-size : 11px;" name = <?php echo "txtSpeendag_$Id"; ?> value = <?php echo $datum; ?> >
+    <input type = "text" size = 9 style = "font-size : 11px;" name = <?php echo "txtSpeendag_$Id"; ?> value = <?php echo $datum; ?> >
  </td>
  
 <?php if(isset($af) && $af == 0) { ?> <td> <?php echo $levnr;} else { ?> <td style = "color : red"> <?php echo $levnr;} ?>
  </td>
  <td align = "center">
- 	<?php echo $geslacht; ?>
+     <?php echo $geslacht; ?>
  </td>
-	
+    
  <td style = "font-size : 9px;"> 
-	<input type = "text" size = 3 style = "font-size : 11px;" name = <?php echo "txtKg_$Id" ?> value = <?php echo $kg; ?> > </td>
+    <input type = "text" size = 3 style = "font-size : 11px;" name = <?php echo "txtKg_$Id" ?> value = <?php echo $kg; ?> > </td>
 
  <td align = "center">
 <!-- KZLVERBLIJF -->
@@ -327,37 +327,37 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 $count = count($hoknum);
 for ($i = 0; $i < $count; $i++){
 
-	$opties = array($hoknId[$i]=>$hoknum[$i]);
-			foreach($opties as $key => $waarde)
-			{
+    $opties = array($hoknId[$i]=>$hoknum[$i]);
+            foreach($opties as $key => $waarde)
+            {
   if ((!isset($_POST['knpVervers_']) && $rd_hok == $hokRaak[$i]) || (isset($_POST["kzlHok_$Id"]) && $_POST["kzlHok_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
-  }		
-			}
+  }        
+            }
 }
 ?> </select>
 <?php if( $rd_hok<> NULL && empty($db_scan) && empty($_POST["kzlHok_$Id"]) && $levnr > 0 ) {echo $rd_hok; ?> <b style = "color : red;"> ! </b>  <?php } ?>
  <!-- EINDE KZLVERBLIJF -->
-	
+    
 
  
 <!-- Foutmeldingen --> <?php 
-	 if (!isset($af)) 				{ $color = 'red';  $bericht =  "Levensnummer onbekend";}
-else if (isset($levnr_dupl) ) 		{ $color = 'blue'; $bericht =  "Dubbel in de reader."; }
+     if (!isset($af))                 { $color = 'red';  $bericht =  "Levensnummer onbekend";}
+else if (isset($levnr_dupl) )         { $color = 'blue'; $bericht =  "Dubbel in de reader."; }
 else if ($fase == 'moederdier' || $fase == 'vaderdier') 
-									{ $color = 'red';  $bericht =  "Dit schaap is een ".$fase."."; }
-else if (isset($af) && $af == 1) 	{ $color = 'red';  $bericht =  "Dit schaap is ".strtolower($status)."."; }
-else if($dm < $dmmax) 				{ $color = 'red';  $bericht =  "Datum ligt voor $maxdm ."; } 
-else if(isset($dmspeen)) 			{ $color = 'red';  $bericht =  "Dit schaap is al gespeend op ".$speendm." ."; } ?>
+                                    { $color = 'red';  $bericht =  "Dit schaap is een ".$fase."."; }
+else if (isset($af) && $af == 1)     { $color = 'red';  $bericht =  "Dit schaap is ".strtolower($status)."."; }
+else if($dm < $dmmax)                 { $color = 'red';  $bericht =  "Datum ligt voor $maxdm ."; } 
+else if(isset($dmspeen))             { $color = 'red';  $bericht =  "Dit schaap is al gespeend op ".$speendm." ."; } ?>
  <td colspan = 2 style = "color : <?php echo $color; ?> ; font-size : 11px;" >
- 	<?php if ( isset($bericht) ) { echo $bericht; unset($bericht); unset($color); } ?>
- </td>	
+     <?php if ( isset($bericht) ) { echo $bericht; unset($bericht); unset($color); } ?>
+ </td>    
 </tr>
-<!--	**************************************
-	**	EINDE OPMAAK GEGEVENS	**
-	************************************** -->
+<!--    **************************************
+    **    EINDE OPMAAK GEGEVENS    **
+    ************************************** -->
 
 <?php }
 } //einde if(isset($data)) ?>
@@ -366,7 +366,7 @@ else if(isset($dmspeen)) 			{ $color = 'red';  $bericht =  "Dit schaap is al ges
 
 
 
-	</TD>
+    </TD>
 <?php
 include "menu1.php"; } ?>
 </tr>
@@ -378,41 +378,41 @@ include "menu1.php"; } ?>
 <script language="javascript">
 $(function(){
 
-	// add multiple select / deselect functionality
-	$("#selectall").click(function () {
-		  $('.checkall').attr('checked', this.checked);
-	});
+    // add multiple select / deselect functionality
+    $("#selectall").click(function () {
+          $('.checkall').attr('checked', this.checked);
+    });
 
-	// if all checkbox are selected, check the selectall checkbox
-	// and viceversa
-	$(".checkall").click(function(){
+    // if all checkbox are selected, check the selectall checkbox
+    // and viceversa
+    $(".checkall").click(function(){
 
-		if($(".checkall").length == $(".checkall:checked").length) {
-			$("#selectall").attr("checked", "checked");
-		} else {
-			$("#selectall").removeAttr("checked");
-		}
+        if($(".checkall").length == $(".checkall:checked").length) {
+            $("#selectall").attr("checked", "checked");
+        } else {
+            $("#selectall").removeAttr("checked");
+        }
 
-	});
+    });
 });
 
 $(function(){
 
-	// add multiple select / deselect functionality
-	$("#selectall_del").click(function () {
-		  $('.delete').attr('checked', this.checked);
-	});
+    // add multiple select / deselect functionality
+    $("#selectall_del").click(function () {
+          $('.delete').attr('checked', this.checked);
+    });
 
-	// if all checkbox are selected, check the selectall_del checkbox
-	// and viceversa
-	$(".delete").click(function(){
+    // if all checkbox are selected, check the selectall_del checkbox
+    // and viceversa
+    $(".delete").click(function(){
 
-		if($(".delete").length == $(".delete:checked").length) {
-			$("#selectall_del").attr("checked", "checked");
-		} else {
-			$("#selectall_del").removeAttr("checked");
-		}
+        if($(".delete").length == $(".delete:checked").length) {
+            $("#selectall_del").attr("checked", "checked");
+        } else {
+            $("#selectall_del").removeAttr("checked");
+        }
 
-	});
+    });
 });
 </script>

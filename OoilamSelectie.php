@@ -19,7 +19,7 @@ $titel = 'Ooitjes uit meerlingen';
 $file = "OoilamSelectie.php";
 include "login.php"; ?>
 
-		<TD valign = 'top' align = 'center'>
+        <TD valign = 'top' align = 'center'>
 <?php
 if (Auth::is_logged_in()) { if($modtech ==1) {
 
@@ -38,18 +38,18 @@ FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join tblHistorie h on (h.stalId = st.stalId)
  join (
-	SELECT s.volwId, count(s.schaapId) aant
-	FROM tblSchaap s
-	 join tblStal st on (s.schaapId = st.schaapId)
-	WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
-	GROUP BY s.volwId
+    SELECT s.volwId, count(s.schaapId) aant
+    FROM tblSchaap s
+     join tblStal st on (s.schaapId = st.schaapId)
+    WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    GROUP BY s.volwId
  ) w on (s.volwId = w.volwId)
 WHERE s.geslacht = 'ooi' and isnull(st.rel_best) and h.actId = 1 and h.skip = 0 and h.datum >= '".mysqli_real_escape_string($db,$van)."' and h.datum <= '".mysqli_real_escape_string($db,$tot)."'
 GROUP BY aant
 ORDER BY aant desc
 ";
 
-$toon_meerlingen = mysqli_query($db,$query) or die (mysqli_error($db));	
+$toon_meerlingen = mysqli_query($db,$query) or die (mysqli_error($db));    
 
 } ?>
 
@@ -68,11 +68,11 @@ $toon_meerlingen = mysqli_query($db,$query) or die (mysqli_error($db));
 </tr>
 <tr><td colspan = 10 ><hr></td></tr>
 
-<!--	Einde Gegevens tbv MOEDERDIER		-->
+<!--    Einde Gegevens tbv MOEDERDIER        -->
 <tr><td colspan = 50><table border = 0>
 <?php if(isset($_POST['knpZoek_']) || isset($_POST['knpStuur_'])) { ?>
 <tr>
-	<td colspan = 6>Kies de gewenste opties in 1 keer en klik daarna op de knop 'Verstuur'.<br> De lijst met schapen kan nl. maar 1 keer worden samengesteld per keer dat <br> op de knop 'Verstuur' wordt geklikt.</td>
+    <td colspan = 6>Kies de gewenste opties in 1 keer en klik daarna op de knop 'Verstuur'.<br> De lijst met schapen kan nl. maar 1 keer worden samengesteld per keer dat <br> op de knop 'Verstuur' wordt geklikt.</td>
 </tr>
 <?php } ?>
 <tr height = 75 align = "center" style = "font-size : 14px;"  >
@@ -87,19 +87,19 @@ if(isset($_POST['knpZoek_']) || isset($_POST['knpStuur_'])) { ?>
 </tr>
 
 
-	<?php
+    <?php
 
-$toon_meerlingen = mysqli_query($db,$query) or die (mysqli_error($db));	
-	while($mrl = mysqli_fetch_assoc($toon_meerlingen))
-			{
-				$aantal = $mrl['aantal'];
-				$worp = $mrl['worp'];
+$toon_meerlingen = mysqli_query($db,$query) or die (mysqli_error($db));    
+    while($mrl = mysqli_fetch_assoc($toon_meerlingen))
+            {
+                $aantal = $mrl['aantal'];
+                $worp = $mrl['worp'];
 
 ?>
 <tr align = "center" style = "font-size : 14px;"  >
  <td></td>
  <td>
- 	<?php if($worp <= 6) { ?>  <input type="checkbox" name= <?php echo "check_$worp"; ?> value = 1 > <?php } ?>
+     <?php if($worp <= 6) { ?>  <input type="checkbox" name= <?php echo "check_$worp"; ?> value = 1 > <?php } ?>
  </td>
  <td> <?php echo $aantal; ?> </td>
  <td> <?php echo 'Uit een worpgrootte '.$worp; ?> </td>
@@ -109,10 +109,10 @@ $toon_meerlingen = mysqli_query($db,$query) or die (mysqli_error($db));
 </tr>
 
 <?php } // Einde while($mrl = mysqli_fetch_assoc($zoek_meerlingen_ooi)) 
-	} // Einde isset($_POST['knpZoek_'])	 ?>
-</table>		
+    } // Einde isset($_POST['knpZoek_'])     ?>
+</table>        
 
-<!--	Einde Gegevens tbv LAM	-->	
+<!--    Einde Gegevens tbv LAM    -->    
 
 </td></tr></table>
 </form>

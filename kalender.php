@@ -1,14 +1,14 @@
  <!--
  Toegepast in :
-	- Afvoerstal.php 1x
-	- HokOverpl.php 1x
-	- HokAfleveren.php 1x
-	- HokAfsluiten.php 3x
-	- Inkopen.php 1x
-	- invSchaap.php 3x
-	- Med_registratie.php 1x
+    - Afvoerstal.php 1x
+    - HokOverpl.php 1x
+    - HokAfleveren.php 1x
+    - HokAfsluiten.php 3x
+    - Inkopen.php 1x
+    - invSchaap.php 3x
+    - Med_registratie.php 1x
   - Readerversies.php 1x  per 22-10-2023
-	- UpdSchaap.php 6x
+    - UpdSchaap.php 6x
 
  --> 
   <meta charset="utf-8">
@@ -43,13 +43,13 @@ $(document).ready(function() {
     $('#datepicker5').datepicker(options);
     $('#datepicker6').datepicker(options);
 
-  	/*$('#datepicker2').datepicker({
-  	dateFormat: "dd-mm-yy",
-  	dayNamesMin: [ "zo", "ma", "di", "wo", "do", "vr", "za" ],
-  	monthNames: [ "Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December" ]
+      /*$('#datepicker2').datepicker({
+      dateFormat: "dd-mm-yy",
+      dayNamesMin: [ "zo", "ma", "di", "wo", "do", "vr", "za" ],
+      monthNames: [ "Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December" ]
     });*/
-	
-	
+    
+    
 });
 
   </script>

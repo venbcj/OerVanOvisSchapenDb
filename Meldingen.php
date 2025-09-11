@@ -30,7 +30,7 @@ $titel = 'Overzicht meldingen';
 $file = "Meldingen.php";
 include "login.php"; ?>
 
-			<TD valign = 'top' align = 'center'>
+            <TD valign = 'top' align = 'center'>
 <?php
 if (Auth::is_logged_in()) { if($modmeld == 1) {
 
@@ -38,9 +38,9 @@ include "responscheck.php";
 
 if (isset($_POST['knpOpenReq']) ) { 
 // Foute meldingen heropenen
-	$req_open = $_POST['kzlFouteMeld']; //echo '$req_open = '.$req_open.'<br>';
+    $req_open = $_POST['kzlFouteMeld']; //echo '$req_open = '.$req_open.'<br>';
 
-	$update_tblRequest = "UPDATE tblRequest set def = 'N', dmmeld = NULL WHERE reqId = '".mysqli_real_escape_string($db,$req_open)."' ";
+    $update_tblRequest = "UPDATE tblRequest set def = 'N', dmmeld = NULL WHERE reqId = '".mysqli_real_escape_string($db,$req_open)."' ";
 
  /* echo $update_tblRequest.'<br>';*/ mysqli_query($db,$update_tblRequest) or die (mysqli_error($db));
 // Einde Foute meldingen heropenen
@@ -67,8 +67,8 @@ ORDER BY date_format(rq.dmmeld,'%Y') desc
 
 $index = 0;
 $jaarArray = [];
-	while($zj = mysqli_fetch_array($zoek_jaartallen))
-		{
+    while($zj = mysqli_fetch_array($zoek_jaartallen))
+        {
 
 $jaarArray[$index] = $zj['jaar'];
 $index++;
@@ -87,7 +87,7 @@ WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(rq.
 GROUP BY date_format(rq.dmmeld,'%m')
 ") or die (mysqli_error($db));
    $zam = mysqli_fetch_assoc($zoek_aantal_maanden);
-		$rows_mnd = $zam['mnd'];
+        $rows_mnd = $zam['mnd'];
 
 if ($rows_mnd >1) {
 
@@ -102,8 +102,8 @@ WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(rq.
 GROUP BY date_format(rq.dmmeld,'%Y%m') ") or die (mysqli_error($db)); 
 
 $index = 0;
-	while($zjm = mysqli_fetch_array($zoek_jaarmaanden))
-		{
+    while($zjm = mysqli_fetch_array($zoek_jaarmaanden))
+        {
 
 $jrmndId[$index] = $zjm['jrmnd'];
 $maandNr[$index] = $zjm['maand'];
@@ -126,7 +126,7 @@ WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(rq.
 GROUP BY rq.code
 ORDER BY rq.code
 ") or die (mysqli_error($db));
-	$rows_meld = mysqli_num_rows($aantmeldingen);
+    $rows_meld = mysqli_num_rows($aantmeldingen);
 // Einde Controle meerdere soorten meldingen
 
 if($rows_meld > 1) {
@@ -143,8 +143,8 @@ GROUP BY code
 ") or die (mysqli_error($db));
 
 $index = 0;
-	while($zmk = mysqli_fetch_array($zoek_meldingen_kzl))
-		{
+    while($zmk = mysqli_fetch_array($zoek_meldingen_kzl))
+        {
 
 $meldingId[$index] = $zmk['code'];
 $index++;
@@ -164,10 +164,10 @@ FROM tblRequest rq
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rq.def = 'J' and rp.def = 'N' and date_format(rq.dmmeld,'%Y-%m-%d') <= date_format(rp.dmcreate,'%Y-%m-%d') and date_format(rp.dmcreate,'%Y-%m-%d') >= date_add(curdate(),interval -30 day)
 GROUP BY rq.reqId, rq.code
 ") or die (mysqli_error($db));
-  /*while ($zfm = mysqli_fetch_assoc($zoek_foute_meldingen))	
-  	{
-  		$reqId_openen = $zfm['reqId'];
-  		$code_openen = $zfm['code'];  } */
+  /*while ($zfm = mysqli_fetch_assoc($zoek_foute_meldingen))    
+      {
+          $reqId_openen = $zfm['reqId'];
+          $code_openen = $zfm['code'];  } */
 $rows_foute_meld = mysqli_num_rows($zoek_foute_meldingen);
 
   $index = 0; 
@@ -189,21 +189,21 @@ while ($zfm = mysqli_fetch_assoc($zoek_foute_meldingen))
 <table Border = 0 align = "center">
 <tr> <td> </td>
  <td style="font-size : 13px" > Jaar
-<!-- kzlJaar -->	
-	<select style="width:60;" name= 'kzlJaar' style = "font-size:12px;">
+<!-- kzlJaar -->    
+    <select style="width:60;" name= 'kzlJaar' style = "font-size:12px;">
   <option></option>
-<?php	$count = count($jaarArray);	
+<?php    $count = count($jaarArray);    
 for ($i = 0; $i < $count; $i++){
 
-	$opties = array($jaarArray[$i]=>$jaarArray[$i]);
-			foreach($opties as $key => $waarde)
-			{
+    $opties = array($jaarArray[$i]=>$jaarArray[$i]);
+            foreach($opties as $key => $waarde)
+            {
   if (isset($_POST["kzlJaar"]) && $_POST["kzlJaar"] == $key) {
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
-  }		
-			}
+  }        
+            }
 }
 // EINDE kzlJaar
 ?>
@@ -218,20 +218,20 @@ if ($rows_mnd > 1) { echo "&nbsp Maand ";
 // kzlJaarMaand ?>
 <select name= 'kzlMdjr' style="font-size : 13px" width= 108 >
  <option></option>
-<?php	$count = count($jrmndId);	
+<?php    $count = count($jrmndId);    
 for ($i = 0; $i < $count; $i++){
 
 $maandnaam = $mndnaam[$maandNr[$i]];
 
-	$opties = array($jrmndId[$i]=>$maandnaam .' '. $jaartalValue[$i]);
-			foreach($opties as $key => $waarde)
-			{
+    $opties = array($jrmndId[$i]=>$maandnaam .' '. $jaartalValue[$i]);
+            foreach($opties as $key => $waarde)
+            {
   if (isset($_POST["kzlMdjr"]) && $_POST["kzlMdjr"] == $key) {
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
-  }		
-			}
+  }        
+            }
 }
 // EInde kzlJaarMaand ?>
 </select> 
@@ -240,25 +240,25 @@ $maandnaam = $mndnaam[$maandNr[$i]];
 </td>
 <td colspan = 4 style = "font-size : 13px;">
 
-<?php		if($rows_meld > 1) { echo "&nbsp Melding ";
+<?php        if($rows_meld > 1) { echo "&nbsp Melding ";
 
 // kzlMelding ?>
 <select name = 'kzlMeld' style = "font-size : 13px" width = 100 >
  <option></option>
-<?php	$count = count($meldingId);	
+<?php    $count = count($meldingId);    
 for ($i = 0; $i < $count; $i++){
 
 $meldnaam = $meldingen[$meldingId[$i]];
 
-	$opties = array($meldingId[$i]=>$meldnaam);
-			foreach($opties as $key => $waarde)
-			{
+    $opties = array($meldingId[$i]=>$meldnaam);
+            foreach($opties as $key => $waarde)
+            {
   if (isset($_POST["kzlMeld"]) && $_POST["kzlMeld"] == $key) {
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
-  }	
-			}
+  }    
+            }
 }
 // EINDE kzlMelding 
 ?>
@@ -270,11 +270,11 @@ $meldnaam = $meldingen[$meldingId[$i]];
  
  
  <td> <input type = radio name = "radDel" value = 0 
-		<?php if(!isset($_POST['knpToon']) || (isset($_POST['radDel']) && $_POST['radDel'] == 0 )) { echo "checked"; } ?> > Excl.
-	 <input type = radio name = "radDel" value = 1
-		<?php if(isset($_POST['radDel']) && $_POST['radDel'] == 1 ) { echo "checked"; } ?> > Incl. verwijderden</td>
+        <?php if(!isset($_POST['knpToon']) || (isset($_POST['radDel']) && $_POST['radDel'] == 0 )) { echo "checked"; } ?> > Excl.
+     <input type = radio name = "radDel" value = 1
+        <?php if(isset($_POST['radDel']) && $_POST['radDel'] == 1 ) { echo "checked"; } ?> > Incl. verwijderden</td>
  
- </tr>	
+ </tr>    
  </table>
 
 <table border = 0 >
@@ -286,10 +286,10 @@ if (!empty($_POST['kzlJaar'])) {
 $kzlMdjr = $_POST['kzlMdjr'];
 $kzlMeld = $_POST['kzlMeld']; 
 
-	if ($rows_mnd <= 1 || empty($_POST['kzlMdjr'])) { $resJrmnd = "( date_format(rq.dmmeld,'%Y%m') is not null )"; }
-	else if ($rows_mnd > 1 && !empty($_POST['kzlMdjr'])) { $resJrmnd = "( date_format(rq.dmmeld,'%Y%m') = '".mysqli_real_escape_string($db,$kzlMdjr)."' )"; }
-	if ($rows_meld <= 1 || empty($_POST['kzlMeld'])) { $resMeld = "( code is not null )"; }
-	else if ($rows_meld > 1 && !empty($_POST['kzlMeld'])) { $resMeld = "( code = '".mysqli_real_escape_string($db,$kzlMeld)."' )"; }
+    if ($rows_mnd <= 1 || empty($_POST['kzlMdjr'])) { $resJrmnd = "( date_format(rq.dmmeld,'%Y%m') is not null )"; }
+    else if ($rows_mnd > 1 && !empty($_POST['kzlMdjr'])) { $resJrmnd = "( date_format(rq.dmmeld,'%Y%m') = '".mysqli_real_escape_string($db,$kzlMdjr)."' )"; }
+    if ($rows_meld <= 1 || empty($_POST['kzlMeld'])) { $resMeld = "( code is not null )"; }
+    else if ($rows_meld > 1 && !empty($_POST['kzlMeld'])) { $resMeld = "( code = '".mysqli_real_escape_string($db,$kzlMeld)."' )"; }
 
 // Zoek eerste getoonde maand van gekozen jaar en andere filters. Alleen bij deze maand moet eventueel kzlFouteMeld worden getoond.
 $zoek_eerste_getoonde_maand_van_jaar = mysqli_query($db,"
@@ -304,7 +304,7 @@ ORDER BY month(rq.dmmeld) desc
 LIMIT 1
 ") or die (mysqli_error($db));
   while ($zegmvj = mysqli_fetch_assoc($zoek_eerste_getoonde_maand_van_jaar))
-		{  $eerste_mndnr = $zegmvj['maand']; }
+        {  $eerste_mndnr = $zegmvj['maand']; }
 
 //$maandjaren toont de maand(en) binnen het gekozen jaar en eventueel gekozen melding. T.b.v. de loop maand jaar
 $maandjaren = mysqli_query($db,"
@@ -318,12 +318,12 @@ GROUP BY month(rq.dmmeld), date_format(rq.dmmeld,'%Y')
 ORDER BY jaar, month(rq.dmmeld) desc
 ") or die (mysqli_error($db));
   while ($rij = mysqli_fetch_assoc($maandjaren))
-		{  // START LOOP maandnaam jaartal
-		$mndnr = $rij['maand'];
-		$jaar = $rij['jaar'];
-		
+        {  // START LOOP maandnaam jaartal
+        $mndnr = $rij['maand'];
+        $jaar = $rij['jaar'];
+        
 
-		
+        
 $tot = date("Ym"); 
 $maand = date("m");
 $jaarstart = date("Y")-2;
@@ -333,24 +333,24 @@ $jaarstart = date("Y")-2;
  <?php if($rows_foute_meld > 0 && $mndnr == $eerste_mndnr) { /*$mndnr == $eerste_mndnr zorgt ervoor dat kzlFouteMeld maar 1x wordt getoond */
 // kzlFouteMeld ?>
   <td valign="bottom">
- 	<select style="width:165;" name="kzlFouteMeld" value = "" style = "font-size:12px;">
+     <select style="width:165;" name="kzlFouteMeld" value = "" style = "font-size:12px;">
   <option></option>
-<?php	$count = count($requId);	
+<?php    $count = count($requId);    
 for ($i = 0; $i < $count; $i++){
 
-	$opties = array($requId[$i]=>$requId[$i].' - '.$meldingen[$reqCode[$i]].' - '.$reqAant[$i].' schapen');
-			foreach($opties as $key => $waarde)
-			{
+    $opties = array($requId[$i]=>$requId[$i].' - '.$meldingen[$reqCode[$i]].' - '.$reqAant[$i].' schapen');
+            foreach($opties as $key => $waarde)
+            {
   if (isset($_POST["kzlFouteMeld"]) && $_POST["kzlFouteMeld"] == $key) {
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
-  }		
-			}
+  }        
+            }
 }
 
 // Einde kzlFouteMeld ?>
- 	</select>
+     </select>
  <input type = "submit" name = "knpOpenReq" value = "Heropen"> </td>
 <?php } // Einde if($rows_foute_meld > 0) ?>
 </tr>
@@ -367,8 +367,8 @@ WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ".$radioDel." a
 GROUP BY rq.code
 ") or die (mysqli_error($db));
   while ($zm = mysqli_fetch_assoc($zoek_meldingen))
-		{  // START LOOP meldingen
-		$code = $zm['code'];  
+        {  // START LOOP meldingen
+        $code = $zm['code'];  
 
 
 $zoek_aantal_per_melding = mysqli_query($db,"
@@ -384,13 +384,13 @@ ORDER BY m.skip, if(isnull(m.fout),0,1), rq.dmmeld desc
 
 unset($reqId_aant);
 $index = 0;
-	while($zapm = mysqli_fetch_array($zoek_aantal_per_melding))
-		{
+    while($zapm = mysqli_fetch_array($zoek_aantal_per_melding))
+        {
 
 $reqId_aant[$index] = $zapm['reqId'];
 $meld_aant[$index] = $zapm['aant'];
 $index++;
-}		
+}        
 
 $totaal_per_melding = mysqli_query($db,"
 SELECT count(meldId) aant
@@ -403,7 +403,7 @@ ORDER BY m.skip, if(isnull(m.fout),0,1), rq.dmmeld desc
 ") or die (mysqli_error($db));
 
 while($tpm = mysqli_fetch_array($totaal_per_melding))
-		{ $totaal = $tpm['aant']; }
+        { $totaal = $tpm['aant']; }
 
 ?>
 
@@ -414,7 +414,7 @@ while($tpm = mysqli_fetch_array($totaal_per_melding))
 <td colspan="3" style = "font-size:12px;">
 
 <?php
-$count = count($reqId_aant);	
+$count = count($reqId_aant);    
 for ($i = 0; $i < $count; $i++){
 
 $meldnr = $reqId_aant[$i];
@@ -429,12 +429,12 @@ if($count > 2 /*meer dan 2 meldnrs*/ && $totaal > 10 /* totaal aantal dieren gro
 if($count > 2 /*meer dan 2 meldnrs*/ && $totaal > 10 /* totaal aantal dieren groter dan 10*/ && $i == $count -1) { ?> </u> <?php 
 
 if($totaal < 100) {
-	echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Totaal '.$totaal; } else {
+    echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Totaal '.$totaal; } else {
   echo '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspTotaal '.$totaal; }
 }
 
 }
-}	
+}    
 
 ?></td>
 </tr>
@@ -458,20 +458,20 @@ FROM tblRequest rq
  join tblUbn u on (u.ubnId = st.ubnId)
  join tblSchaap s on (st.schaapId = s.schaapId)
  left join (
-	SELECT st.schaapId, h.datum
-	FROM tblStal st
-	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 3 and h.skip = 0
+    SELECT st.schaapId, h.datum
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
  ) ouder on (s.schaapId = ouder.schaapId)
  left join (
-	SELECT max(rs.respId) respId, rs.reqId, s.schaapId 
-	FROM impRespons rs "
-	 .$join_tblSchaap.
-	 "join tblMelding m on (m.reqId = rs.reqId)
-	 join tblHistorie h on (m.hisId = h.hisId)
-	 join tblStal st on (st.stalId = h.stalId)
-	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rs.melding = '$code'
-	GROUP BY rs.reqId, s.schaapId 
+    SELECT max(rs.respId) respId, rs.reqId, s.schaapId 
+    FROM impRespons rs "
+     .$join_tblSchaap.
+     "join tblMelding m on (m.reqId = rs.reqId)
+     join tblHistorie h on (m.hisId = h.hisId)
+     join tblStal st on (st.stalId = h.stalId)
+    WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rs.melding = '$code'
+    GROUP BY rs.reqId, s.schaapId 
  ) lresp on (lresp.reqId = rq.reqId and lresp.schaapId = s.schaapId)
  left join impRespons lr on (lr.respId = lresp.respId)
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rq.code = '$code' and date_format(rq.dmmeld,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and month(rq.dmmeld) = $mndnr and  ".$radioDel." and ".$resMeld." 
@@ -499,73 +499,73 @@ ORDER BY m.skip, if(isnull(m.fout),0,1), rq.dmmeld desc, u.ubn, right(s.levensnu
 
 <th width=60></th>
  </tr>
-<?php 		while($zim = mysqli_fetch_array($zoek_inhoud_meldingen))
-		{ 
-			$meldingnr = $zim['reqId'];
-			$skip_h = $zim['skip_h'];
-		  $skip_m = $zim['skip_m'];
-		  $foutdb = $zim['fout'];
-		  $meldtime = $zim['meldtime'];
-		  $meldtijd = $zim['meldtijd'];
-		  if($skip_m == 1) { $gemeld = 'Verwijderd'; } else if (isset($foutdb)) { $gemeld = 'Foutief'; } else { $gemeld = $meldtijd; }
-		  
-		  $sucind = $zim['sucind'];
-		  $foutmeld = $zim['foutmeld'];
-		  $respId = $zim['respId']; 
-		  
-		  $ubn = $zim['ubn'];
-		  $dmaanw = $zim['dmaanwas'];
-		  $geslacht = $zim['geslacht'];
-		  $dmschaap = $zim['dmschaap']; if(isset($dmaanw) && $dmaanw <= $dmschaap) { if($geslacht == 'ooi') { $fase = 'moeder'; } else if($geslacht == 'ram') { $fase = 'vader'; } } else { $fase = 'lam'; }
+<?php         while($zim = mysqli_fetch_array($zoek_inhoud_meldingen))
+        { 
+            $meldingnr = $zim['reqId'];
+            $skip_h = $zim['skip_h'];
+          $skip_m = $zim['skip_m'];
+          $foutdb = $zim['fout'];
+          $meldtime = $zim['meldtime'];
+          $meldtijd = $zim['meldtijd'];
+          if($skip_m == 1) { $gemeld = 'Verwijderd'; } else if (isset($foutdb)) { $gemeld = 'Foutief'; } else { $gemeld = $meldtijd; }
+          
+          $sucind = $zim['sucind'];
+          $foutmeld = $zim['foutmeld'];
+          $respId = $zim['respId']; 
+          
+          $ubn = $zim['ubn'];
+          $dmaanw = $zim['dmaanwas'];
+          $geslacht = $zim['geslacht'];
+          $dmschaap = $zim['dmschaap']; if(isset($dmaanw) && $dmaanw <= $dmschaap) { if($geslacht == 'ooi') { $fase = 'moeder'; } else if($geslacht == 'ram') { $fase = 'vader'; } } else { $fase = 'lam'; }
 
-		  $meldnr = $zim['meldnr'];
-		  $req_def = $zim['req_def'];
-		  $resp_def = $zim['resp_def'];
-		  $resptime = $zim['resptime'];
-		  
-  if ($skip_h == 1)								{ $bericht = 'Let op : Afvoer is hersteld na melden RVO.'; }
+          $meldnr = $zim['meldnr'];
+          $req_def = $zim['req_def'];
+          $resp_def = $zim['resp_def'];
+          $resptime = $zim['resptime'];
+          
+  if ($skip_h == 1)                                { $bericht = 'Let op : Afvoer is hersteld na melden RVO.'; }
   else if ($req_def == 'J' && $sucind == 'J' && $resp_def == 'N' && $resptime > $meldtime) { $bericht = 'Definitieve melding is teruggekomen als een controle melding ! Kijk op de portal van RVO wat te doen.'; }
   else if (isset($meldnr)) { $bericht = 'RVO meldt : Melding correct'; }
   else if ($sucind == 'J' && isset($foutmeld) && $gemeld == $meldtijd) { $bericht = 'RVO meldt : '. $foutmeld; }
-  else if ($sucind == 'N' && isset($foutmeld))	{ $bericht = 'RVO meldt : '.$foutmeld; }
-  else if ($gemeld == 'Foutief')				{ $bericht = 'Niet gemeld'; }
-  else if (isset($respId))						{ $bericht = 'Resultaat van melding is onbekend'; }
- ?>		
-<tr align = "center">	
-	   <td width = 0> </td>
-	   <td 			   style = "font-size:15px;"> <?php echo $meldingnr; ?> <br> </td>
-	   <td width = 0> </td>
-	   <td 			   style = "font-size:15px;"> <?php echo $meldnr; ?> <br> </td>
-	   <td width = 1> </td>
-	   <td 			   style = "font-size:15px;"> <?php echo $ubn; ?> <br> </td>
-	   <td width = 1> </td>
-	   <td width = 100 style = "font-size:15px;"> <?php echo $zim['levensnummer']; ?> <br> </td>
-	   <td width = 1> </td>		   
-	   <td width = 80 style = "font-size:15px;"> <?php echo $zim['schaapdm']; ?> <br> </td>	   
-	   <td width = 1> </td>
-	   <td			  style = "font-size:15px;"> <?php echo $fase; ?> <br> </td>
-	   <td width = 1> </td>
-	   <td width = 130 style = "font-size:15px;" align = "left"> <?php echo $gemeld; ?> <br> </td>
-	   <td width = 1> </td>
-	   <td width = 450 style = "font-size:15px;" align = "left"> <?php if(isset($bericht)) { echo $bericht; unset($bericht); } ?> <br> </td>
-	   <td width = 1> </td>
+  else if ($sucind == 'N' && isset($foutmeld))    { $bericht = 'RVO meldt : '.$foutmeld; }
+  else if ($gemeld == 'Foutief')                { $bericht = 'Niet gemeld'; }
+  else if (isset($respId))                        { $bericht = 'Resultaat van melding is onbekend'; }
+ ?>        
+<tr align = "center">    
+       <td width = 0> </td>
+       <td                style = "font-size:15px;"> <?php echo $meldingnr; ?> <br> </td>
+       <td width = 0> </td>
+       <td                style = "font-size:15px;"> <?php echo $meldnr; ?> <br> </td>
+       <td width = 1> </td>
+       <td                style = "font-size:15px;"> <?php echo $ubn; ?> <br> </td>
+       <td width = 1> </td>
+       <td width = 100 style = "font-size:15px;"> <?php echo $zim['levensnummer']; ?> <br> </td>
+       <td width = 1> </td>           
+       <td width = 80 style = "font-size:15px;"> <?php echo $zim['schaapdm']; ?> <br> </td>       
+       <td width = 1> </td>
+       <td              style = "font-size:15px;"> <?php echo $fase; ?> <br> </td>
+       <td width = 1> </td>
+       <td width = 130 style = "font-size:15px;" align = "left"> <?php echo $gemeld; ?> <br> </td>
+       <td width = 1> </td>
+       <td width = 450 style = "font-size:15px;" align = "left"> <?php if(isset($bericht)) { echo $bericht; unset($bericht); } ?> <br> </td>
+       <td width = 1> </td>
 
-	   <td width = 50> </td>
+       <td width = 50> </td>
 </tr>
 
 <?php } ?>
-<tr height = 25><td></td></tr>	 
+<tr height = 25><td></td></tr>     
 <?php } // EINDE LOOP meldingen ?>
-			
+            
 <tr style = "height : 100px;"><td colspan = 25></td></tr>
 <?php
 
 }  // EINDE LOOP maandnaam jaartal
-	
-} //  Einde knop toon ?>			
+    
+} //  Einde knop toon ?>            
 </table>
 </form>
-		</TD>
+        </TD>
 <?php } else { ?> <img src='Meldingen_php.jpg'  width='970' height='550'/> <?php }
 include "menuMelden.php"; } ?>
 </body>

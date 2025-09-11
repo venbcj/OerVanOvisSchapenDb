@@ -1,6 +1,6 @@
 <?php
 /* 22-11-2015 gemaakt 
-20-1-2017 : Query aangepast n.a.v. nieuwe tblDoel		22-1-2017 : tblBezetting gewijzigd naar tblBezet
+20-1-2017 : Query aangepast n.a.v. nieuwe tblDoel        22-1-2017 : tblBezetting gewijzigd naar tblBezet
 11-2-2017 : insert tblPeriode verwijderd 
 29-12-2023 : and h.skip = 0 toegevoegd bij tblHistorie en sql beveiligd met quotes */
 
@@ -17,30 +17,30 @@ foreach($_POST as $key => $value) {
 foreach($array as $recId => $id) { //recId is hier schaapId
    
  foreach($id as $key => $value) {
- if ($key == 'chbkies' && $value == 1 ) 	{   $box = $value ;
+ if ($key == 'chbkies' && $value == 1 )     {   $box = $value ;
 
-	
+    
   foreach($id as $key => $value) {
-	if ($key == 'txtDatum' ) { $dag = date_create($value); $updDag =  date_format($dag, 'Y-m-d');  }
-	
-	if ($key == 'kzlHok' && !empty($value)) {  $kzlHok = $value; }
-		
-									}
+    if ($key == 'txtDatum' ) { $dag = date_create($value); $updDag =  date_format($dag, 'Y-m-d');  }
+    
+    if ($key == 'kzlHok' && !empty($value)) {  $kzlHok = $value; }
+        
+                                    }
 $zoek_mindag = mysqli_query($db,"
 SELECT hm.datum
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join (
-	SELECT max(hisId) hisId, stalId
-	FROM tblHistorie
-	WHERE skip = 0
-	GROUP BY stalId
+    SELECT max(hisId) hisId, stalId
+    FROM tblHistorie
+    WHERE skip = 0
+    GROUP BY stalId
  ) hmax on (hmax.stalId = st.stalId)
  join tblHistorie hm on (hm.hisId = hmax.hisId)
 WHERE s.schaapId = '".mysqli_real_escape_string($db,$recId)."'
  ") or die(mysqli_error($db));
-	
-	while($row = mysqli_fetch_assoc($zoek_mindag)) {	$dmmin = $row['datum']; }
+    
+    while($row = mysqli_fetch_assoc($zoek_mindag)) {    $dmmin = $row['datum']; }
 
 
 // CONTROLE op alle verplichten velden bij overplaatsen schaap
@@ -53,13 +53,13 @@ FROM tblStal st
 WHERE isnull(st.rel_best) and s.schaapId = '".mysqli_real_escape_string($db,$recId)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die(mysqli_error($db));
 
-	while ($st = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $st['stalId']; } 
+    while ($st = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $st['stalId']; } 
 
 $insert_tblHistorie = "
 INSERT INTO tblHistorie 
 SET stalId = ".mysqli_real_escape_string($db,$stalId).", datum = '".mysqli_real_escape_string($db,$updDag)."', actId = 5
 ";
-	mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
+    mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
 
 $zoek_hisId = mysqli_query($db,"
 SELECT max(hisId) hisId
@@ -68,7 +68,7 @@ FROM tblHistorie h
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 5
 ") or die(mysqli_error($db));
 
-	while ($hi = mysqli_fetch_assoc($zoek_hisId)) { $hisId = $hi['hisId']; }
+    while ($hi = mysqli_fetch_assoc($zoek_hisId)) { $hisId = $hi['hisId']; }
 
 
 if(!isset($newHok) || $kzlHok <> $newHok) { // Als het gekozen verblijf is ongelijk aan verblijf van de vorige regel (record)
@@ -78,9 +78,9 @@ $newHok = $kzlHok;  // Periode van voorgaande overplaats-record mag niet meer be
 
 $insert_tblBezet = "
 INSERT INTO tblBezet SET hisId = '".mysqli_real_escape_string($db,$hisId)."', hokId = '".mysqli_real_escape_string($db,$newHok)."' ";
-	mysqli_query($db,$insert_tblBezet) or die (mysqli_error($db));
+    mysqli_query($db,$insert_tblBezet) or die (mysqli_error($db));
 
-	
+    
 
 }
 // EINDE CONTROLE op alle verplichten velden bij spenen lam
@@ -89,15 +89,15 @@ INSERT INTO tblBezet SET hisId = '".mysqli_real_escape_string($db,$hisId)."', ho
 
 
 
-										} // EINDE Alleen als checkbox chbkies de waarde 1 heeft
+                                        } // EINDE Alleen als checkbox chbkies de waarde 1 heeft
     }
 
 
-	
-	
-	
-	}
+    
+    
+    
+    }
 
 ?>
-					
-	
+                    
+    
