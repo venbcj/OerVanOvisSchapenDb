@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 
 require_once('validation_functions.php');
 $versie = '13-11-2016'; /* Aangemaakt als kopie van insAanvoer. 

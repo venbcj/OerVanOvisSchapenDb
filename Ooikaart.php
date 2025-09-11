@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /* 8-8-2014 Aantal karakters werknr variabel gemaakt 
 11-8-2014 : veld type gewijzigd in fase
 11-3-2015 : Login toegevoegd */

@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 require_once('validation_functions.php');
 require_once('basisfuncties.php');
 /*      23-11-2014 gemaakt

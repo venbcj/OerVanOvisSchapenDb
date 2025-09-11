@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /* 11-8-2014 : veld type gewijzigd in fase 
 23-11-2014 : functie header() toegevoegd. In de header wordt het vervevrsen van de pagina verstuurd (request =. response) naar de server 
 8-3-2015 : Login toegevoegd 

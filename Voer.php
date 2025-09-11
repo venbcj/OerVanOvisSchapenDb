@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /*
 <!-- 8-3-2015 : Login toegevoegd
 14-11-2015 naamwijziging van Voer naar Voerbestand -->

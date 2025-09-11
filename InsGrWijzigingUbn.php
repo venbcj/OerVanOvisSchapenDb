@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 $versie = '30-08-2025'; /* Gekopieerd van InsAfvoer.php. ActId 12 (zijnde afgeleverd) uit tabel tblActie wordt vanaf nu ook gebruikt om ubn te wijzigen. Zie InsGrWijzigingUbn.php. Als het nieuwe veld ubnId in tabel impAgrident leeg is dan is het een reguliere afvoer van een lam. Is het veld ubnId gevuld dan betreft het een wijziging van ubn van de gebruiker. Dus afvoer oude ubn en aanvoer nieuwe ubn in 1 handeling via deze pagina */
 
  session_start(); ?>

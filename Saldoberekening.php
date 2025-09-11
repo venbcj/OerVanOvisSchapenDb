@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 $versie = '31-10-2016'; /* : kolom Liquiditeit toegevoegd */
 $versie = '5-11-2016'; /* : Totalen toegevoegd */
 $versie = '24-12-2016'; /* : Kolomkoppen aangepast */

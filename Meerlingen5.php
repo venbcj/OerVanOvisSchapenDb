@@ -1,5 +1,7 @@
 <?php 
 
+require_once("autoload.php");
+
 $versie = '4-8-2019'; /* gemaakt */
 $versie = '11-11-2019'; /* kolomkop worp gewijzigd in worpgrootte */
 $versie = '28-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */

@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /*
 <!-- 16-11-2013 : kzlVerbruikseenheid ook te wijzigen na inkoop. Eenheid wordt nl. opgeslagen in tblInkoop
  8-3-2015 Login toegevoegd 

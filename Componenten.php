@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /* 23-10-2015 : Gemaakt.
 19-10-2016 : Omgebouwd naar Release 2 (28-10 geïnstalleerd op productieomgeving)*/
 $versie = '29-10-2016';/* : in tblElement veldnaam 'kenmerk' gewijzigd naar 'eenheid'*/

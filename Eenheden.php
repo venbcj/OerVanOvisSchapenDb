@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /* 11-11-2014 : header("Location: http://localhost:8080/schapendb/.....php");   toegevoegd. Dit ververst de pagina zodat een wijziging op het eerste record direct zichtbaar is 
 8-3-2015 : Login toegevoegd */
 $versie = '3-3-2017'; /* Alles m.b.t. invoer verwijderd */

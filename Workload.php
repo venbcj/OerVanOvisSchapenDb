@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /*
  Bij doodgeboren wordt reden "" omgezet naar 0. Let op aantal dagen geleefd en als momId 0 is !
 

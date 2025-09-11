@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /* 18-2-2014 : Keuzelijst uitval uitgebreid met uitvalId > 3 and uitvalId <= 6 ipv uitvalId > 3 en gesorteerd op uitvalId 
 9-5-2014 : txtUitvdm gewijzigd in txtuitvdm
 11-8-2014 : veld type gewijzigd in fase 

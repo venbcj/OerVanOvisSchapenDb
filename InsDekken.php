@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 
 require_once('validation_functions.php');
 $versie = '18-12-2021'; /* Gekopieerd van insDracht.php */

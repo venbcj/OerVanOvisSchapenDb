@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /* https://www.youtube.com/watch?v=CamDi3Syjy4
 9-8-2019 www. weggehaald bij url */
 require('fpdf/fpdf.php');

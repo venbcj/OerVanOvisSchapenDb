@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /* 30-11-2014 : keuzelijst voer gewijigd zodat enkel voer in voorraad kan worden gekozen. Bovendie first in first out (via inkId )
 28-2-2015 login toegevoegd 
 27-11-2015 : insVoer.php vervangen door save_voer.php */

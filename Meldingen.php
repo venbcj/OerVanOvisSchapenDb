@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /* 28-11-2014 Chargenummer toegevoegd  
 11-3-2015 : Login toegevoegd */
 $versie = '25-11-2016';  /* actId = 3 uit on clause gehaald en als sub query genest */

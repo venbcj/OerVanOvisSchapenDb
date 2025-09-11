@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 //https://www.youtube.com/watch?v=CamDi3Syjy4
 
 require('fpdf/fpdf.php');

@@ -1,5 +1,7 @@
 <?php 
 
+require_once("autoload.php");
+
 $versie = '26-10-2018'; /* gemaakt */
 $versie = '28-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie sql voorzien van enkele quotes */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = 'top' align = center > gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 include login voor include header gezet */

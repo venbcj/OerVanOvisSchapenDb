@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /* 8-8-2014 Aantal karakters werknr variabel gemaakt en quotes bij "hok", "groep", "aantl", "aant", "ent1", "ent2", "startdm" en "vanaf" verwijderd 
 28-2-2015 : login toegevoegd 
 14-11-2015 : 1e en 2e inenting verwijderd

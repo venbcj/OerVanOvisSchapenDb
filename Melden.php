@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /* 6-11-2014 gemaakt
 20-2-2015 : login toegevoegd
 23-11-2015 : </form> toegvoegd */

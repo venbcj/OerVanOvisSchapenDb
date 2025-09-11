@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 $versie = '19-10-2016'; 
 $versie = '5-11-2016'; /* include func_euro toegevoegd */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */ 

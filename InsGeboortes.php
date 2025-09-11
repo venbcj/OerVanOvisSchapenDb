@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 
 require_once('validation_functions.php');
 $versie = '18-2-2014'; /*Keuzelijst uitval uitgebreid met uitvalId <= 3 en gesorteerd op uitvalId */

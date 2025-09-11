@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /*1-6-2020 gemaakt 
 wordt gebruikt in
  - Newuser.php

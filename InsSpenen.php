@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /*10-4-2014 query op tabel impReader vervangen door query uit vw_Reader_sp.php 
 Deze view bevat enkel te spenen schapen uit de tabel impReader aangevuld met de velden van te overplaatsen schapen. Is hok_sp leeg dan wordt hok_ovpl gebruikt.
 Reden : na spenen van verschillende hokken worden de schapen herverdeeld o.b.v. gewicht.

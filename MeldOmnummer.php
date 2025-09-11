@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 
 require_once('validation_functions.php');
 $versie = '4-7-2020'; /* gekopieerd van MeldAanvoer.php */

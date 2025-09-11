@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /*13-3-2015 : Login toegevoegd */
 $versie = '3-4-2018'; /* : Tussenweging toegevoegd bij UpdatSchaap.php */
 $versie = '16-6-2018'; /* : Kalender toegevoegd */

@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /* 3-3-2015 : Login toegevoegd */
 $versie = '12-12-2015'; /* : Ubn niet te wijzigen */
 $versie = '29-10-2016'; /* : Optie Administrator toegevoegd */

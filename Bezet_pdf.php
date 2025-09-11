@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 //https://www.youtube.com/watch?v=CamDi3Syjy4
 /* 20-12-2019 tabelnaam gewijzigd van UIT naar uit tabelnaam 
 09-05-2022 : Werknrs gesorteerd en sql beveiligd met quotes 

@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /* 21-11-2015 Individueel spenen gewijzigd naar heel hok spenen 
 23-11-2015 breedte kzlHok flexibel gemaakt via login.php
 20-1-2017 hok_uitgez = 'Geboren' gewijzigd in hok_uitgez = 1 Speengewicht niet verplicht gemaakt */

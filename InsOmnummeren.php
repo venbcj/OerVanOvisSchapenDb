@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 
 $versie = '4-7-2020'; /* Gekopieerd van insAdoptie.php */
 $versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie en sql beveiligd met quotes */

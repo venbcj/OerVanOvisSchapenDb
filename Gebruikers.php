@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 
 $versie = '9-6-2018'; /* Gemaakt 
 ALTER TABLE `tblleden` ADD `roep` VARCHAR(25) NULL DEFAULT NULL AFTER `passw`, ADD `voegsel` VARCHAR(10) NULL DEFAULT NULL AFTER `roep`, ADD `naam` VARCHAR(25) NULL DEFAULT NULL AFTER `voegsel`, ADD INDEX (`roep`, `voegsel`, `naam`) ;

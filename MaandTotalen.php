@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /* 11-10-2014 : Maanden gewijigd van cijfers naar omschrijving
 11-3-2015 : Login toegevoegd */
 $versie = '25-2-2017'/* Maandtotalen worden getoond vanaf begin van gebruik programma		3-3-2017 : Geldt enkel voor productieomgeving !!! */;

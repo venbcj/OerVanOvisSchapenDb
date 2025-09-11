@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 
 $versie = "16-12-2017"; /* Rapport gemaakt */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */

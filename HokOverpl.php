@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /* 21-11-2015 Individueel spenen gewijzigd naar heel hok spenen 
 23-11-2015 breedte kzlHok flexibel gemaakt via login.php */
 $versie = "20-1-2017"; /* Query's aangepast n.a.v. nieuwe tblDoel en overbodige hidden velden verwijderd (txtLevnr en txtMindatum) */

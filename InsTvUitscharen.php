@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 
 require_once('validation_functions.php');
 $versie = '03-11-2024'; /* Kopie gemaakt van InsAanvoer.php */

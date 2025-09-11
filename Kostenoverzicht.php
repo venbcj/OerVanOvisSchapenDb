@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /* 28-11-2014 Chargenummer toegevoegd  
 11-3-2015 : Login toegevoegd
 20-12-2015 : sortering Hoofdrubrieken */

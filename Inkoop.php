@@ -1,5 +1,7 @@
 <?php 
 
+require_once("autoload.php");
+
 $versie = '8-3-2015'; /*Login toegevoegd*/
 $versie = '14-11-2015'; /*naamwijziging van Menu Inkoop naar Menu Voorraadbeheer*/
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */

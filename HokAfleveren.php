@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /* 21-11-2015 Individueel afleveren gewijzigd naar heel hok afleveren */
 $versie = "23-1-2017"; /* 22-1-2017 tblBezetting gewijzigd naar tblBezet 23-1-2017 kalender toegevoegd */
 $versie = "6-2-2017"; /* Aanpassing n.a.v. verblijven met verschillende doelgroepen */

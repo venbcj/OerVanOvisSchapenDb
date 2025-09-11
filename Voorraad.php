@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /*
  <!-- 8-3-2015 : Login toegevoegd 
 12-12-2015 : kolom 'Aantal nog toe te dienen' aangevuld met eenheid 

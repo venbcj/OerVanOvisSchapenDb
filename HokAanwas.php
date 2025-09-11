@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 
 $versie = '17-5-2019'; /* gemaakt als kopie van HokAfleveren */
 $versie = '20-12-2019'; /* tabelnaam gewijzigd van UIT naar uit tabelnaam */

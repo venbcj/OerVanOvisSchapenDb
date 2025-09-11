@@ -1,5 +1,7 @@
 <?php
 
+require_once("autoload.php");
+
 /* 25-2-2014 Maandoverzicht wordt ovv Rina per jaar gekozen en getoond.
  11-10-2014 : Maanden gewijigd van cijfers naar omschrijving
 11-3-2015 : Login toegevoegd */

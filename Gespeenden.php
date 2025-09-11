@@ -1,5 +1,7 @@
  <?php
 
+require_once("autoload.php");
+
 
  include "connect_db.php";
  

@@ -1,5 +1,7 @@
 <?php 
 
+require_once("autoload.php");
+
 $versie = "03-09-2017"; /* 16-7-2017 gemaakt 	3-9-2017 kg voer te wijzigen*/
 $versie = '28-09-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '16-11-2019'; /* Hoeveelheid opnieuw gebouwd i.v.m. andere manier van kg voer vastleggen. Incl. toevoegen van optie Volwassen dieren */

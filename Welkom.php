@@ -1,5 +1,7 @@
 <?php 
 
+require_once("autoload.php");
+
 require_once('url_functions.php');
 // # TODO: waar komen de modules vandaan? in header.tpl.php wordt op hun aanwezigheid gerekend. --BCB
 
