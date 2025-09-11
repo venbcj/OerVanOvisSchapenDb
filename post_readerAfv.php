@@ -15,21 +15,13 @@ include "url.php";
 include "passw.php";
 include "connect_db.php";*/ //Deze include zit ook in login.php maar binnen InsAfvoeren.php is include login nog niet gepasseerd. Hier laten staan dus.
 
-function getNameFromKey($key) {
-    $array = explode('_', $key);
-    return $array[0];
-}
 
-function getIdFromKey($key) {
-    $array = explode('_', $key);
-    return $array[1];
-}
 
 $array = array();
 
 foreach($_POST as $key => $value) {
     
-    $array[getIdFromKey($key)][getNameFromKey($key)] = $value;
+    $array[Url::getIdFromKey($key)][Url::getNameFromKey($key)] = $value;
 }
 
 foreach($array as $recId => $id) {

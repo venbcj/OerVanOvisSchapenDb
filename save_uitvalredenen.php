@@ -20,14 +20,10 @@ function getItemFromKey($string) {
     return $split_item[1];
 }
 
-function getIdFromKey($string) {
-    $split_Id = explode('_', $string); 
-    return $split_Id[2];
-}
 
 foreach($_POST as $fldname => $fldvalue) {  //  Voor elke post die wordt doorlopen wordt de veldnaam en de waarde teruggeven als een array
     
-    $multip_array[getIdFromKey($fldname)][getItemFromKey($fldname)][getNaamFromKey($fldname)] = $fldvalue;  // Opbouwen van een Multidimensional array met3 indexen.  [Id] [item] [naamveld] en een waarde nl. de veldwaarde.  
+    $multip_array[Url::getIdFromKey($fldname)][getItemFromKey($fldname)][getNaamFromKey($fldname)] = $fldvalue;  // Opbouwen van een Multidimensional array met3 indexen.  [Id] [item] [naamveld] en een waarde nl. de veldwaarde.  
 }
 
 

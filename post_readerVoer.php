@@ -4,20 +4,12 @@
 
 <?php
 
-function getNameFromKey($key) {
-    $split_naam = explode('_', $key);
-    return $split_naam[0];
-}
 
-function getIdFromKey($key) {
-    $split_Id = explode('_', $key);
-    return $split_Id[1];
-}
 
 
 foreach($_POST as $fldname => $fldvalue) {
     
-    $array[getIdFromKey($fldname)][getNameFromKey($fldname)] = $fldvalue; // Opbouwen van een Multidimensional array met 2 indexen. [Id] [naamveld] en een waarde nl. de veldwaarde. 
+    $array[Url::getIdFromKey($fldname)][Url::getNameFromKey($fldname)] = $fldvalue; // Opbouwen van een Multidimensional array met 2 indexen. [Id] [naamveld] en een waarde nl. de veldwaarde. 
 }
 
 

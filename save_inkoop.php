@@ -8,21 +8,13 @@
 	- Inkopen.php	*/
 
 
-function getNameFromKey($key) {
-    $array = explode('_', $key);
-    return $array[0];
-}
 
-function getIdFromKey($key) {
-    $array = explode('_', $key);
-    return $array[1];
-}
 
 $array = array();
 
 foreach($_POST as $fldname => $fldvalue) {
     
-    $multip_array[getIdFromKey($fldname)][getNameFromKey($fldname)] = $fldvalue;
+    $multip_array[Url::getIdFromKey($fldname)][Url::getNameFromKey($fldname)] = $fldvalue;
 }
 foreach($multip_array as $recId => $id) {
 //echo '<br>'.'$recId = '.$recId.'<br>';

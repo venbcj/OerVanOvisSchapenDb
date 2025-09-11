@@ -25,10 +25,6 @@ if (is_logged_in()) {
 include "kalender.php";
 if ($modmeld == 1 ) { include "maak_request_func.php"; }
 
-function getIdFromKey($key) {
-    $array = explode('_', $key);
-    return $array[1];
-}
 
 ?>
 
@@ -67,7 +63,7 @@ WHERE schaapId = ".mysqli_real_escape_string($db,$pst)."
 //var_dump(array_keys($_POST));
 $velden = (array_keys($_POST)); //echo '<br> velden na POST = '.$velden[0];
 
-$pstnr = getIdFromKey($velden[0]); //echo '<br> $uitkomst = '.$pstnr;
+$pstnr = Url::getIdFromKey($velden[0]); //echo '<br> $uitkomst = '.$pstnr;
 
 }
 

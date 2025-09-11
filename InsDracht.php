@@ -318,21 +318,13 @@ $array_dub = array();
 	if (isset($_POST['knpVervers_']) ) {
 
 
-function getNameFromKey($key) {
-    $array = explode('_', $key);
-    return $array[0];
-}
 
-function getIdFromKey($key) {
-    $array = explode('_', $key);
-    return $array[1];
-}
 
 $array_rec = array();
 
 foreach($_POST as $key => $value) {
     
-    $array_rec[getIdFromKey($key)][getNameFromKey($key)] = $value;
+    $array_rec[Url::getIdFromKey($key)][Url::getNameFromKey($key)] = $value;
 }
 foreach($array_rec as $recId => $id) {
 
