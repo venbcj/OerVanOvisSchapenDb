@@ -19,28 +19,28 @@ Menu :
 <br>
 <hr class="blue">
 
-<?php echo link_to('Home', 'Home.php', ['class' => 'blue']); ?>
+<?php echo View::link_to('Home', 'Home.php', ['class' => 'blue']); ?>
 <hr class="grey">
 
-<?php echo link_to('Ooikaart detail', 'Ooikaart.php', ['color' => $tech_color]); ?>
+<?php echo View::link_to('Ooikaart detail', 'Ooikaart.php', ['color' => $tech_color]); ?>
 <hr class="grey">
 
-<?php echo link_to('Ooikaart moeders', 'OoikaartAll.php', ['color' => $tech_color]); ?>
+<?php echo View::link_to('Ooikaart moeders', 'OoikaartAll.php', ['color' => $tech_color]); ?>
 <hr class="grey">
 
-<?php echo link_to('Meerling in periode', 'Meerlingen5.php', ['color' => $tech_color]); ?>
+<?php echo View::link_to('Meerling in periode', 'Meerlingen5.php', ['color' => $tech_color]); ?>
 <hr class="grey">
 
-<?php echo link_to('Meerling per geslacht', 'Meerlingen.php', ['color' => $tech_color]); ?>
+<?php echo View::link_to('Meerling per geslacht', 'Meerlingen.php', ['color' => $tech_color]); ?>
 <hr class="grey">
 
-<?php echo link_to('Meerlingen per jaar', 'Meerlingen2.php', ['color' => $tech_color]); ?>
+<?php echo View::link_to('Meerlingen per jaar', 'Meerlingen2.php', ['color' => $tech_color]); ?>
 <hr class="grey">
 
-<?php echo link_to('Meerling oplopend', 'Meerlingen3.php', ['color' => $tech_color]); ?>
+<?php echo View::link_to('Meerling oplopend', 'Meerlingen3.php', ['color' => $tech_color]); ?>
 <hr class="grey">
 
-<?php echo link_to('Meerlingen aanwezig', 'Meerlingen4.php', ['color' => $tech_color]); ?>
+<?php echo View::link_to('Meerlingen aanwezig', 'Meerlingen4.php', ['color' => $tech_color]); ?>
 
 <hr class="grey">
 

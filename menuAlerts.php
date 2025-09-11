@@ -15,13 +15,13 @@ if ($modtech != 0) {
 Menu : </br>
 <hr class="blue">
 
-<?php echo link_to('Home', 'Home.php', ['class' => 'blue']); ?>
+<?php echo View::link_to('Home', 'Home.php', ['class' => 'blue']); ?>
 <hr class="grey">
 
 <br/>
 <hr class="grey">
 
-<?php echo link_to('Ooitjes uit meerlingen', 'OoilamSelectie.php', ['class' => $tech_color]); ?>
+<?php echo View::link_to('Ooitjes uit meerlingen', 'OoilamSelectie.php', ['class' => $tech_color]); ?>
 <hr class="grey">
 
 <br/>

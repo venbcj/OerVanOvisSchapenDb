@@ -26,7 +26,7 @@ include "login.php"; ?>
 
 		<TD valign = 'top'>
 <?php
-if (is_logged_in()) { if($modtech ==1) { ?>
+if (Auth::is_logged_in()) { if($modtech ==1) { ?>
 
 <table border = 0>
 <tr><td colspan = 5 style = "font-size : 18px;"><b> Voorraad Voer </b></td></tr>

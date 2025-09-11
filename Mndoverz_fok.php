@@ -33,7 +33,7 @@ include "login.php"; ?>
 
 		<TD valign = 'top'>
 <?php
-if (is_logged_in()) { if($modtech ==1) { 
+if (Auth::is_logged_in()) { if($modtech ==1) { 
 
 if (isset($_GET['jaar'])) { $kzlJaar = $_GET['jaar']; }	elseif (isset($_POST['kzlJaar'])) { $kzlJaar = $_POST['kzlJaar']; }
 if (isset($_GET['maand'])) { $keuze_mnd = $_GET['maand']; }

@@ -26,7 +26,7 @@ include "login.php"; ?>
 
 				<TD valign = "top">
 <?php
-if (is_logged_in()) { if($modtech ==1) {
+if (Auth::is_logged_in()) { if($modtech ==1) {
 
 function aantal_fase($datb,$lidid,$M,$J,$V,$Sekse,$Ouder) { // Functie die het aantal lammeren, moederdieren of vaders telt
 $vw_totaalFase = mysqli_query($datb,"

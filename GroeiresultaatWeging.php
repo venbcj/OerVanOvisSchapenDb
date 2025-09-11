@@ -27,7 +27,7 @@ include "login.php"; ?>
 
 			<TD align = "center" valign = "top">
 <?php
-if (is_logged_in()) { if($modtech ==1) {
+if (Auth::is_logged_in()) { if($modtech ==1) {
 
 include "kalender.php";
 

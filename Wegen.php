@@ -24,7 +24,7 @@ include "login.php"; ?>
 
 		<TD valign = 'top'>
 <?php
-if (is_logged_in()) {
+if (Auth::is_logged_in()) {
 
 If(empty($_GET['pstId']))  { $schaapId = $_POST['txtlevnr']; } else { $schaapId = "$_GET[pstId]"; }
 

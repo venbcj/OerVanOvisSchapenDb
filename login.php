@@ -24,7 +24,6 @@ include "url.php";
 include "connect_db.php";
 require_once("basisfuncties.php");
 require_once("demo_functions.php");
-require_once('url_functions.php');
 
 // BCB: kunstgreep om uitvoer te scheiden van berekening
 $output = [];
@@ -48,7 +47,7 @@ if (php_uname('n') == 'basq' && isset($_GET['ingelogd'])) {
 }
 
 // *** ALS NIET IS INGELOGD ***
-if (!is_logged_in()) {
+if (!Auth::is_logged_in()) {
     Auth::logout();
 
     if (isset($_POST['knpLogin']) || isset($_POST['knpBasis'])) {
@@ -74,7 +73,7 @@ if (!is_logged_in()) {
         $output[] = "uitgelogd.tpl.php";
     }
 // *** EINDE ALS NIET IS INGELOGD ***
-} elseif (is_logged_in()) {
+} elseif (Auth::is_logged_in()) {
     // ***     ALS WEL IS INGELOGD    ***
     // TODO: variabele login wordt nergens gebruikt --BCB
     $login = $_SESSION["U1"];

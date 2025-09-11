@@ -23,7 +23,7 @@ include "login.php"; ?>
 
 			<TD valign = "top">
 <?php
-if (is_logged_in()) {
+if (Auth::is_logged_in()) {
  
 include "vw_kzlOoien.php";
 if ($modmeld == 1 ) { include "maak_request_func.php"; }

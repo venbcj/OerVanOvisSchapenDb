@@ -20,34 +20,34 @@ include "javascriptsAfhandeling.tpl.php";
 Menu : </br>
 <hr class="blue">
 
-<?php echo link_to('Home', 'Home.php', ['class' => 'blue']); ?>
+<?php echo View::link_to('Home', 'Home.php', ['class' => 'blue']); ?>
 <hr class="grey">
 
-<?php echo link_to('Inboeken', 'Kostenopgaaf.php', ['class' => $fin_color]); ?>
+<?php echo View::link_to('Inboeken', 'Kostenopgaaf.php', ['class' => $fin_color]); ?>
 <hr class="grey">
 
-<?php echo link_to('Deklijst', 'Deklijst.php', ['class' => $fin_color]); ?>
+<?php echo View::link_to('Deklijst', 'Deklijst.php', ['class' => $fin_color]); ?>
 <hr class="grey">
 
-<?php echo link_to('Liquiditeit', 'Liquiditeit.php', ['class' => $fin_color]); ?>
+<?php echo View::link_to('Liquiditeit', 'Liquiditeit.php', ['class' => $fin_color]); ?>
 <hr class="grey">
 
-<?php echo link_to('Saldoberekening', 'Saldoberekening.php', ['class' => $fin_color]); ?>
-<hr class="grey">
-
-<br/>
+<?php echo View::link_to('Saldoberekening', 'Saldoberekening.php', ['class' => $fin_color]); ?>
 <hr class="grey">
 
 <br/>
 <hr class="grey">
 
-<?php echo link_to('Rubrieken', 'Rubrieken.php', ['class' => $fin_color]); ?>
+<br/>
 <hr class="grey">
 
-<?php echo link_to('Componenten', 'Componenten.php', ['class' => $fin_color]); ?>
+<?php echo View::link_to('Rubrieken', 'Rubrieken.php', ['class' => $fin_color]); ?>
 <hr class="grey">
 
-<?php echo link_to('Betaalde posten', 'Kostenoverzicht.php', ['class' => $fin_color]); ?>
+<?php echo View::link_to('Componenten', 'Componenten.php', ['class' => $fin_color]); ?>
+<hr class="grey">
+
+<?php echo View::link_to('Betaalde posten', 'Kostenoverzicht.php', ['class' => $fin_color]); ?>
 <hr class="grey">
 
  <br/>

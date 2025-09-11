@@ -38,7 +38,7 @@ include "login.php"; ?>
 
          <TD>
 <?php
-if (is_logged_in()) {
+if (Auth::is_logged_in()) {
 
 $_SESSION["RPP"] = 30; $RPP = $_SESSION["RPP"];
 $_SESSION["PA"] = 1; $pag = $_SESSION["PA"];

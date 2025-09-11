@@ -22,7 +22,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 <?php
 if (isset ($_POST['knpNieuw'])) {
     include "url.php";
-    redirect('Newuser.php');
+    Url::redirect('Newuser.php');
 }
     
 $titel = 'Gebruikers';
@@ -31,7 +31,7 @@ include "login.php";
 ?>
         <TD valign = "top">
 <?php
-if (is_logged_in()) {
+if (Auth::is_logged_in()) {
     if($modtech ==1) { 
     if(isset($_POST['knpNieuw'])) {
         $form = "Newuser.php";

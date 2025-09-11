@@ -25,7 +25,7 @@ include "login.php"; ?>
 
 		<TD align = "center" valign = "top">
 <?php
-if (is_logged_in()) { 
+if (Auth::is_logged_in()) { 
 
 $zoek_aantal_doelgroep1 = mysqli_query($db,"
 SELECT count(hin.schaapId) aantin

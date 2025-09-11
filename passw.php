@@ -12,7 +12,7 @@ if (isset($_POST['knpLogin']) || isset($_POST['knpBasis']) || isset($_POST['knpB
     $passw = md5($_POST['txtPassw'].'zfO3puW?Wod/UT<-|=)1VT]+{hgABEK(Yh^!Wv;5{ja{P~wX4t');
 } // wordt gebruikt bij login
 
-if (is_logged_in() && isset($_SESSION["A1"])) {
+if (Auth::is_logged_in() && isset($_SESSION["A1"])) {
     $lid = $_SESSION["I1"];
     $login = $_SESSION["U1"];
     $passw = md5($_SESSION["W1"].'zfO3puW?Wod/UT<-|=)1VT]+{hgABEK(Yh^!Wv;5{ja{P~wX4t'); // wordt gebruikt bij wachtwoordgegevens en is het wachtwoord van de klant
@@ -27,7 +27,7 @@ if (isset($_POST['knpLogin'])) {
 } else if (isset($_SESSION["U1"])) {
     $username = $_SESSION["U1"];
 }
-if (isset($_POST['knpLogin']) || is_logged_in()) ) {
+if (isset($_POST['knpLogin']) || Auth::is_logged_in()) ) {
     if ($db == false ) {
         echo 'Connectie database mislukt';
     }

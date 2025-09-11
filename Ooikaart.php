@@ -30,7 +30,7 @@ include "login.php"; ?>
 
 		<TD valign = 'top' align = 'center'>
 <?php
-if (is_logged_in()) { if($modtech ==1) {
+if (Auth::is_logged_in()) { if($modtech ==1) {
 
 if (isset($_GET['pstId'])) {$raak = $_GET['pstId']; } ?>
 

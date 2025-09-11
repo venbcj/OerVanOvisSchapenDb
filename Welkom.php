@@ -2,7 +2,6 @@
 
 require_once("autoload.php");
 
-require_once('url_functions.php');
 // # TODO: waar komen de modules vandaan? in header.tpl.php wordt op hun aanwezigheid gerekend. --BCB
 
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */

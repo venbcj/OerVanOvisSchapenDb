@@ -14,10 +14,9 @@
     - Voer.php
  */
 
-require_once('url_functions.php');
 
 global $url;
-$url = getWebroot();
+$url = Url::getWebroot();
 
 // strtok zorgt ervoor dat alles na de paginanaam wordt verwijderd. bron : http://stackoverflow.com/questions/6969645/how-to-remove-the-querystring-and-get-only-the-url
 $curr_url = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].strtok($_SERVER["REQUEST_URI"], '?');
@@ -53,6 +52,6 @@ $forbidden_files = [
 ];
 foreach ($forbidden_files as $controller_name) {
     if ($curr_url == $url.$controller_name) {
-        redirect('index.php');
+        Url::redirect('index.php');
     }
 }

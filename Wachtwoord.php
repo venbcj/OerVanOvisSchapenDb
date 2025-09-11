@@ -21,7 +21,7 @@ include "login.php"; ?>
 
 		<TD valign = 'top' align = 'center'>
 <?php
-if (is_logged_in()) {
+if (Auth::is_logged_in()) {
 
 $name = $_SESSION["U1"];  ?>
 

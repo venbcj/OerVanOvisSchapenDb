@@ -32,7 +32,7 @@ include "login.php"; ?>
 
 			<TD valign = 'top' align = 'center'>
 <?php
-if (is_logged_in()) { if($modmeld == 1) {
+if (Auth::is_logged_in()) { if($modmeld == 1) {
 
 include "responscheck.php";
 

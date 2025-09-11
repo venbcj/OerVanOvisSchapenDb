@@ -22,7 +22,7 @@ include "login.php"; ?>
 
 		<TD align = 'center'>
 <?php
-if (is_logged_in()) { ?>
+if (Auth::is_logged_in()) { ?>
 
 <img src="OER_van_OVIS.jpg" width= 650 height= 240 valign = "center"/>
 </td>

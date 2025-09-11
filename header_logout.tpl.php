@@ -2,7 +2,6 @@
 # html-elementen openen in de ene template, en sluiten in een andere, dat voelt breekbaar
 # TODO werken met yield-constructies --BCB
 
-require_once('url_functions.php');
 ?>
 <link rel="stylesheet" type="text/css" href="style.css">
 <link rel="stylesheet" type="text/css" href="menu.css">
@@ -40,8 +39,8 @@ $(document).ready(function(){
 
 <div id = "rechts_uitlijnen" class = 'header_breed'><section> </section><img src='OER_van_OVIS.jpg' /></div>
 
-<ul class="header_smal" id = <?php echo getTagId(); ?> >
-    <li id = "rechts_uitlijnen"><?php echo link_to('Inloggen', 'index.php', ['class' => 'black']); ?></li>
+<ul class="header_smal" id = <?php echo Url::getTagId(); ?> >
+    <li id = "rechts_uitlijnen"><?php echo View::link_to('Inloggen', 'index.php', ['class' => 'black']); ?></li>
 </ul>
 
 <script src="test2_script_header.js"></script>

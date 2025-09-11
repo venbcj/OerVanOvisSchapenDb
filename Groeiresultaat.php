@@ -3,7 +3,6 @@
 require_once("autoload.php");
 
 
-require_once('url_functions.php');
 
 $versie = "16-12-2017"; /* Rapport gemaakt */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
@@ -26,7 +25,7 @@ include "header.tpl.php"; ?>
 <?php
 $file = "Groeiresultaat.php";
 include "login.php";
-if (is_logged_in()) { if($modtech ==1) { ?>
+if (Auth::is_logged_in()) { if($modtech ==1) { ?>
 
 <table border = 0 >
 <tr>

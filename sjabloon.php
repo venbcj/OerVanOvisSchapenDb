@@ -15,7 +15,7 @@ include "login.php"; ?>
 
 		<TD valign = 'top'>
 <?php
-if (is_logged_in()) { ?>
+if (Auth::is_logged_in()) { ?>
 	
 <form action = "Systeem.php" method = "post" >
 

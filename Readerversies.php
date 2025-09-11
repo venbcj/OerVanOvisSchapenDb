@@ -35,7 +35,7 @@ include "login.php"; ?>
 
 				<TD valign = 'top'>	
 <?php
-if (is_logged_in()) { if($reader == 'Agrident') {
+if (Auth::is_logged_in()) { if($reader == 'Agrident') {
 include "kalender.php"; ?>
 
 <script type="text/javascript">

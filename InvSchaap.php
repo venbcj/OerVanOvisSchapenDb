@@ -156,7 +156,7 @@ include "login.php"; ?>
 
 			<TD valign = "top">
 <?php
-if (is_logged_in()) { 
+if (Auth::is_logged_in()) { 
 
 // Array tbv javascript om fase automatisch te tonen bij bestaande dieren
 $zoek_fase = mysqli_query($db,"

@@ -25,7 +25,7 @@ include "login.php";
 ?>
             <TD align = "center" width = "1600">
 <?php
-if (is_logged_in()) {
+if (Auth::is_logged_in()) {
     include "responscheck.php";
 ?>
 <table>
@@ -33,7 +33,7 @@ if (is_logged_in()) {
 if ($host == 'demonstr.......nl') { ?>
 <tr align = center>
  <td>
-    <?php echo link_to('Instructieboekje', 'Instructieboekje.pdf', ['class' => 'blue', 'target' => "_blank"]); ?>
+    <?php echo View::link_to('Instructieboekje', 'Instructieboekje.pdf', ['class' => 'blue', 'target' => "_blank"]); ?>
  </td>
 </tr>
 <?php } ?>

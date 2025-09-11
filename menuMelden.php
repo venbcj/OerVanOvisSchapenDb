@@ -35,16 +35,16 @@ include "javascriptsAfhandeling.tpl.php";
 Menu : </br>
 <hr class="blue">
 
-<?php echo link_to('Home', 'Home.php', ['class' => 'blue']); ?>
+<?php echo View::link_to('Home', 'Home.php', ['class' => 'blue']); ?>
 <hr class="grey">
 
 <br/>
 <hr class="grey">
 
-<?php echo link_to('Melden RVO', 'Melden.php', ['class' => $meld_color]) ?>
+<?php echo View::link_to('Melden RVO', 'Melden.php', ['class' => $meld_color]) ?>
 <hr class="grey">
 
-<?php echo link_to('Meldingen', 'Meldingen.php', ['class' => $melding_color]); ?>
+<?php echo View::link_to('Meldingen', 'Meldingen.php', ['class' => $melding_color]); ?>
 <hr class="grey">
 
 <br/>

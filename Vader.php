@@ -24,7 +24,7 @@ include "login.php"; ?>
 
 		<TD valign = 'top'>
 <?php
-if (is_logged_in()) { if($modtech ==1) {
+if (Auth::is_logged_in()) { if($modtech ==1) {
 
 $zoek_stalId = mysqli_query($db,"
 SELECT st.stalId

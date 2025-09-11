@@ -2,7 +2,6 @@
 
 require_once("autoload.php");
 
-require_once('url_functions.php');
 
 $versie = '14-8-2014'; /*Menu (rechts) veranderd van menuInkoop naar menuBeheer en html buiten php geprogrammeerd */
 $versie = '8-3-2015'; /*Login toegevoegd*/
@@ -23,7 +22,7 @@ include "header.tpl.php"; ?>
 <?php
 $file = "Klanten.php";
 include "login.php"; 
-if (is_logged_in()) { 
+if (Auth::is_logged_in()) { 
 
 if (empty($_GET['pstid']))
 {	$klantid = "$_POST[txtpstid]";	}

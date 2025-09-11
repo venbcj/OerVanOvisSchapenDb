@@ -36,7 +36,7 @@ include "login.php"; ?>
 
 			<TD align = "center" valign = "top">
 <?php
-if (is_logged_in()) {
+if (Auth::is_logged_in()) {
 //include vw_Voorraad // incl. vw_Voorraden t.b.v. save_voer.php
 include "kalender.php";
 

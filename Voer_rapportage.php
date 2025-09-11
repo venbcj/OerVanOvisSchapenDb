@@ -30,7 +30,7 @@ $file = "Voer_rapportage.php";
 
 				<TD valign = 'top' align = 'center'>
 <?php
-if (is_logged_in()) { if($modtech == 1) { 
+if (Auth::is_logged_in()) { if($modtech == 1) { 
  
 if(isset($_POST['knpSave_'])) { include "save_voerrapport.php";  
 		//header("Location: ".$url."Voer_rapportage.php"); 

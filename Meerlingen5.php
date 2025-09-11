@@ -22,7 +22,7 @@ include "login.php"; ?>
 
 		<TD valign = 'top' align = 'center'>
 <?php
-if (is_logged_in()) { if($modtech ==1) {
+if (Auth::is_logged_in()) { if($modtech ==1) {
 include "kalender.php";
 
 $huidigjaar = date("Y"); $begin_datum = '1-01-'.$huidigjaar; $eind_datum = '1-03-'.$huidigjaar;

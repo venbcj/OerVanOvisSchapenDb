@@ -2,7 +2,6 @@
 
 require_once("autoload.php");
 
-require_once('url_functions.php');
 
 $versie = '14-8-2014'; /*Menu (rechts) veranderd van menuInkoop naar menuBeheer en html buiten php geprogrammeerd */
 $versie = '11-11-2014'; /*header("Location: http://localhost:8080/schapendb/.....php");   toegevoegd. Dit ververst de pagina zodat een wijziging op het eerste record direct zichtbaar is*/
@@ -26,7 +25,7 @@ include "header.tpl.php"; ?>
 <?php
 $file = "Klanten.php";
 include "login.php"; 
-if (is_logged_in()) {
+if (Auth::is_logged_in()) {
 
 if (isset($_POST['knpSave_'])) { include "save_klanten.php"; }
 

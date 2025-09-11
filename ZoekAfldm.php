@@ -23,7 +23,7 @@ include "login.php"; ?>
 
 		<TD align = "center" valign = "top">
 <?php
-if (is_logged_in()) { ?>
+if (Auth::is_logged_in()) { ?>
 
 <table border = 0 width= 200 height = 200 align = "left" >
 <tr> <td> </td> </tr> </table>

@@ -1,5 +1,4 @@
 <?php  
-require_once('url_functions.php');
 
 $versie = '17-2-14'; /*insInkat = ln['vrbat']*(_POST['txtBstat']); gewijzigd naar insInkat = _POST['txtBstat']; zodat de totale hoeveelheid kan worden ingevoerd bij inkoop ipv het totale aantal / verbruikeenheid in te voeren.*/
 $versie = '27-11-2014'; /*chargenr toegevoegd.*/ 
@@ -48,7 +47,7 @@ include "header.tpl.php"; ?>
 <?php
 $file = "test_javascript.php";
 include "login.php"; 
-if (is_logged_in()) { 
+if (Auth::is_logged_in()) { 
 
 $newvoer = "
 SELECT artId, stdat, naam, concat(' ', eenheid) heid, soort, eenheid

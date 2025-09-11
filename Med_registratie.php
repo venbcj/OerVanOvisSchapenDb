@@ -54,7 +54,7 @@ include "login.php"; ?>
 
 		<TD valign = "top">
 <?php
-if (is_logged_in()) { if($modtech ==1) {
+if (Auth::is_logged_in()) { if($modtech ==1) {
 
 include "kalender.php"; 
 include "func_artikelnuttigen.php";

@@ -30,45 +30,45 @@ if ($reader == 'Agrident') {
 Menu : </br>
 <hr class="blue">
 
-<?php echo link_to('Home', 'Home.php', ['class' => 'blue']); ?>
+<?php echo View::link_to('Home', 'Home.php', ['class' => 'blue']); ?>
 <hr class="grey">
 
 <br/>
 <hr class="grey">
 
-<?php echo link_to('Verblijven', 'Hok.php', ['class' => $tech_color]); ?>
+<?php echo View::link_to('Verblijven', 'Hok.php', ['class' => $tech_color]); ?>
 <hr class="grey">
 
-<?php echo link_to('Rassen', 'Ras.php', ['class' => 'blue']); ?>
+<?php echo View::link_to('Rassen', 'Ras.php', ['class' => 'blue']); ?>
 <hr class="grey">
 
-<?php echo link_to('Redenen en momenten', 'Uitval.php', ['class' => 'blue']); ?>
+<?php echo View::link_to('Redenen en momenten', 'Uitval.php', ['class' => 'blue']); ?>
 <hr class="grey">
 
-<?php echo link_to('Combi redenen', 'Combireden.php', ['class' => 'blue']); ?>
+<?php echo View::link_to('Combi redenen', 'Combireden.php', ['class' => 'blue']); ?>
 <hr class="grey">
 
-<?php echo link_to('Dekrammen', 'Vader.php', ['class' => 'blue']); ?>
+<?php echo View::link_to('Dekrammen', 'Vader.php', ['class' => 'blue']); ?>
 <hr class="grey">
 
 <br/>
 <hr class="grey">
 
-<?php echo link_to('Eenheden', 'Eenheden.php', ['class' => $tech_color]); ?>
+<?php echo View::link_to('Eenheden', 'Eenheden.php', ['class' => $tech_color]); ?>
 <hr class="grey">
 
-<?php echo link_to('Relaties', 'Relaties.php', ['class' => 'blue']); ?>
+<?php echo View::link_to('Relaties', 'Relaties.php', ['class' => 'blue']); ?>
 <hr class="grey">
 
-<?php echo link_to('Readerversies', 'Readerversies.php', ['class' => $reader_color]); ?>
+<?php echo View::link_to('Readerversies', 'Readerversies.php', ['class' => $reader_color]); ?>
 <hr class="grey">
 
 <?php if ($modbeheer == 1) { ?>
-<?php echo link_to('Gebruikers', 'Gebruikers.php', ['class' => 'blue']); ?>
+<?php echo View::link_to('Gebruikers', 'Gebruikers.php', ['class' => 'blue']); ?>
 <?php } ?>
 <hr class="grey">
 
-<?php echo link_to('Instellingen', 'Systeem.php', ['class' => 'blue']); ?>
+<?php echo View::link_to('Instellingen', 'Systeem.php', ['class' => 'blue']); ?>
 <hr class="grey">
 
 <?php include "versie.tpl.php"; ?>

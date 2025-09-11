@@ -32,7 +32,7 @@ include "login.php"; ?>
 
 		<TD align = "center" valign = "top">
 <?php
-if (is_logged_in()) {
+if (Auth::is_logged_in()) {
 
 $pstId = $_GET['pstgroep'];
 

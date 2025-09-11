@@ -21,7 +21,7 @@ include "login.php"; ?>
 
 				<TD valign = 'top' align = 'center'>
 <?php
-if (is_logged_in()) { if($modtech ==1) {
+if (Auth::is_logged_in()) { if($modtech ==1) {
 
 function aantal_meerlingen_perOoi($datb,$Lidid,$Ooiid,$Nr) {
 

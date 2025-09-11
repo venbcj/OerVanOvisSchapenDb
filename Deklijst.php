@@ -25,7 +25,7 @@ include "login.php"; ?>
 
 		<TD align = "center" valign = "top">
 <?php
-if (is_logged_in()) { if($modfin == 1) {
+if (Auth::is_logged_in()) { if($modfin == 1) {
 
 include "func_euro.php";
 

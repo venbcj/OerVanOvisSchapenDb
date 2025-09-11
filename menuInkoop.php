@@ -21,22 +21,22 @@ Menu :
 <br>
 <hr class="blue">
 
-<?php echo link_to('Home', 'Home.php', ['class' => 'blue']); ?>
+<?php echo View::link_to('Home', 'Home.php', ['class' => 'blue']); ?>
 <hr class="grey">
 
 <br/>
 <hr class="grey">
 
-<?php echo link_to('Medicijnenbestand', 'Medicijnen.php', ['color' => $tech_color]); ?>
+<?php echo View::link_to('Medicijnenbestand', 'Medicijnen.php', ['color' => $tech_color]); ?>
 <hr class="grey">
 
-<?php echo link_to('Voerbestand', 'Voer.php', ['color' => $tech_color]); ?>
+<?php echo View::link_to('Voerbestand', 'Voer.php', ['color' => $tech_color]); ?>
 <hr class="grey">
 
-<?php echo link_to('Inkopen', 'Inkopen.php', ['color' => $tech_color]); ?>
+<?php echo View::link_to('Inkopen', 'Inkopen.php', ['color' => $tech_color]); ?>
 <hr class="grey">
 
-<?php echo link_to('Voorraad', 'Voorraad.php', ['color' => $tech_color]); ?>
+<?php echo View::link_to('Voorraad', 'Voorraad.php', ['color' => $tech_color]); ?>
 <hr class="grey">
 
 <br/>

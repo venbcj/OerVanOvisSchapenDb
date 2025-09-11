@@ -47,4 +47,8 @@ class Auth {
         session_destroy();
     }
 
+    public static function is_logged_in() {
+        return isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"]);
+    }
+
 }

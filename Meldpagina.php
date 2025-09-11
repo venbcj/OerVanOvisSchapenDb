@@ -2,7 +2,6 @@
 
 require_once("autoload.php");
 
-require_once('url_functions.php');
 
 $versie = '20-12-2020'; /* Pagina gemaakt */
 
@@ -23,7 +22,7 @@ include "header.tpl.php"; ?>
 <?php 
 $file = "Meldpagina.php";
 include "login.php";
-if (is_logged_in()) { 
+if (Auth::is_logged_in()) { 
 ?>
 <img src= "OER_van_OVIS.jpg" width= 650 height= 240 valign = "center"/>
 </td>

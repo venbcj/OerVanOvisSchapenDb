@@ -25,7 +25,7 @@ include "login.php"; ?>
 
 		<TD valign = "top">
 <?php
-if (is_logged_in()) { if($modtech ==1) { ?>
+if (Auth::is_logged_in()) { if($modtech ==1) { ?>
 
 <?php
 // Omdat jaartal en maanden aflopend zijn moet de cumulatieven aantal ooien aflopend zijn i.p.v. oplopend. Het aantal cumulatief begint dus niet bij 0 maar bij het huidig aantal ooien en rammen.

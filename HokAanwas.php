@@ -32,7 +32,7 @@ include "login.php"; ?>
 
 				<TD align = "center" valign = "top">
 <?php 
-if (is_logged_in()) {
+if (Auth::is_logged_in()) {
 
 if(isset($_GET['pstId'])) { $_SESSION["ID"] = $_GET['pstId']; } $ID = $_SESSION["ID"]; /* zorgt het Id wordt onthouden bij het opnieuw laden van de pagina */
 

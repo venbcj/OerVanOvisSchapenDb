@@ -1,5 +1,4 @@
 <?php 
-require_once('url_functions.php');
 
 $versie = '27-4-2023'; /* Rina de mogelijkheid gegeven zelf de demo omgeving te ledigen*/
 $versie = '02-07-2025'; /* DELETE FROM tblUbn toegevoegd */
@@ -21,7 +20,7 @@ include "header.tpl.php"; ?>
 <?php 
 $file = "demo_database_legen.php";
 include "login.php";
-if (is_logged_in()) {
+if (Auth::is_logged_in()) {
 
 $name = $_SESSION["U1"];  
 

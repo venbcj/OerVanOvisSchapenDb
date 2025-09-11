@@ -51,47 +51,47 @@ include "javascriptsAfhandeling.tpl.php";
 Menu : <br>
 <hr class="blue">
 
-<?php echo link_to('Home', 'Home.php', ['class' => 'blue']); ?>
+<?php echo View::link_to('Home', 'Home.php', ['class' => 'blue']); ?>
 <hr class="grey">
 
-<?php echo link_to('Aanvoer schaap', 'InvSchaap.php', ['class' => 'blue']); ?>
+<?php echo View::link_to('Aanvoer schaap', 'InvSchaap.php', ['class' => 'blue']); ?>
 <hr class="grey">
 
-<?php echo link_to('Inlezen reader', 'InlezenReader.php', ['class' => 'blue']); ?> 
+<?php echo View::link_to('Inlezen reader', 'InlezenReader.php', ['class' => 'blue']); ?> 
 <hr class="grey">
 
-<?php echo link_to('RVO', 'Melden.php', ['class' => $meld_color]) ?>
+<?php echo View::link_to('RVO', 'Melden.php', ['class' => $meld_color]) ?>
 <hr class="grey">
 
 <?php if ($modtech == 0 && $modmeld == 1) { ?>
-<?php echo link_to('Afvoerlijst', 'Afvoerstal.php', ['class' => 'blue']); ?>
+<?php echo View::link_to('Afvoerlijst', 'Afvoerstal.php', ['class' => 'blue']); ?>
 <?php } else { ?>
-<?php echo link_to('Verblijven in gebruik', 'Bezet.php', ['class' => 'blue']); ?>
+<?php echo View::link_to('Verblijven in gebruik', 'Bezet.php', ['class' => 'blue']); ?>
 <?php } ?>
 <hr class="grey">
 
-<?php echo link_to('Schaap opzoeken', 'Zoeken.php', ['class' => 'blue']); ?>
+<?php echo View::link_to('Schaap opzoeken', 'Zoeken.php', ['class' => 'blue']); ?>
 <hr class="grey">
 
-<?php echo link_to('Medicijn toediening', 'Med_registratie.php', ['class' => $tech_color]); ?>
+<?php echo View::link_to('Medicijn toediening', 'Med_registratie.php', ['class' => $tech_color]); ?>
 <hr class="grey">
 
-<?php echo link_to('Dekkingen / Dracht', 'Dekkingen.php', ['class' => 'blue']); ?>
+<?php echo View::link_to('Dekkingen / Dracht', 'Dekkingen.php', ['class' => 'blue']); ?>
 <hr class="grey">
 
-<?php echo link_to('Raederalerts', 'Alerts.php', ['class' => $tech_color]); ?>
+<?php echo View::link_to('Raederalerts', 'Alerts.php', ['class' => $tech_color]); ?>
 <hr class="grey">
 
-<?php echo link_to('Rapporten', 'Rapport.php', ['class' => 'blue']); ?>
+<?php echo View::link_to('Rapporten', 'Rapport.php', ['class' => 'blue']); ?>
 <hr class="grey">
 
-<?php echo link_to('Beheer', 'Beheer.php', ['class' => $beheer_color]); ?>
+<?php echo View::link_to('Beheer', 'Beheer.php', ['class' => $beheer_color]); ?>
 <hr class="grey">
 
-<?php echo link_to('Voorraadbeheer', 'Inkoop.php', ['class' => $tech_color]); ?>
+<?php echo View::link_to('Voorraadbeheer', 'Inkoop.php', ['class' => $tech_color]); ?>
 <hr class="grey">
 
-<?php echo link_to('Financiëel', 'Finance.php', ['class' => $tech_color]); ?>
+<?php echo View::link_to('Financiëel', 'Finance.php', ['class' => $tech_color]); ?>
 <hr class="grey">
 
 <?php include "versie.tpl.php"; ?>

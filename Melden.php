@@ -80,7 +80,7 @@ $subtitel = 'Maximaal 60 per melding';
 $file = "Melden.php";
 include "login.php";
 
-if (is_logged_in()) {
+if (Auth::is_logged_in()) {
     if ($modmeld == 1) {
         include "responscheck.php";
         // Controleren of inloggevens bestaan
@@ -117,7 +117,7 @@ WHERE lidId = '".mysqli_real_escape_string($db, $lidId)."'
 <?php foreach ($target as $index => $href) { ?>
 <tr>
 <td>
-<?php echo link_to($caption[$index], $href, ['class' => 'blue']);
+<?php echo View::link_to($caption[$index], $href, ['class' => 'blue']);
 ?>
 </td>
 <td style = "font-size : 12px;">
