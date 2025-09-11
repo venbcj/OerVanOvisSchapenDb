@@ -22,7 +22,7 @@ require_once('save_melding_functions.php');
 $array = array();
 
 foreach ($_POST as $fldname => $fldvalue) {
-    $multip_array[getIdFromKey($fldname)][getNameFromKey($fldname)] = $fldvalue;
+    $multip_array[Url::getIdFromKey($fldname)][Url::getNameFromKey($fldname)] = $fldvalue;
 }
 
 foreach ($multip_array as $recId => $id) {
@@ -80,7 +80,7 @@ foreach ($multip_array as $recId => $id) {
 
         /* Eerste datum zoeken ter controle bij aanvoer bedrijf */
         if ($code == 'AAN' || $code == 'GER') {
-            $zoek_eerste_datum_stalop = zoek_eerste_datum_stalop($db, $recId);
+            $zoek_eerste_datum_stalop = Query::zoek_eerste_datum_stalop($db, $recId);
             while ($mi = mysqli_fetch_assoc($zoek_eerste_datum_stalop)) {
                 $first_day = $mi['date'];
                 $eerste_dag = $mi['datum'];
@@ -113,13 +113,13 @@ foreach ($multip_array as $recId => $id) {
         // BCB: en bij omnummeren. Commentaar loopt zo snel achter...
         if (isset($fldLevnr)) {
             // Controle op duplicaten
-            $zoek_schaapId = zoek_schaapid($db, $fldLevnr);
+            $zoek_schaapId = Query::zoek_schaapid($db, $fldLevnr);
             $zs = mysqli_fetch_assoc($zoek_schaapId);
             # TODO: nullcheck. Als fldLevnr niet voorkomt, is zs geen array, en dat geeft een warning.
         # Dit wijst erop dat de code dingen doet die niet bij elkaar horen.
             $schaapId = $zs['schaapId'] ?? 0;
 
-            $count_levnr = count_levnr($db, $fldLevnr, $schaapId);
+            $count_levnr = Query::count_levnr($db, $fldLevnr, $schaapId);
             $row = mysqli_fetch_assoc($count_levnr);
             $levnr_exist = $row['aant'];
             // Einde Controle op duplicaten
@@ -151,7 +151,7 @@ foreach ($multip_array as $recId => $id) {
         }
         /****** EINDE CONTROLE LEVENSNUMMER *******/
 
-        $zoek_in_database = zoek_in_database($db, $recId);
+        $zoek_in_database = Query::zoek_in_database($db, $recId);
         while ($co = mysqli_fetch_assoc($zoek_in_database)) {
             $reqId = $co['reqId'];
             $code = $co['code'];
@@ -168,7 +168,7 @@ foreach ($multip_array as $recId => $id) {
         // Als verwijderd wordt hersteld bestaat kzlBest niet maar de bestemming in de database mogelijk wel en dus $fldBest dan ook !!
         // Dit t.b.v. $wrong_partij
         if ($fldSkip == 0 && $skip_db == 1) {
-            $zoek_bestemming_in_db = zoek_bestemming_in_db($db, $recId);
+            $zoek_bestemming_in_db = Query::zoek_bestemming_in_db($db, $recId);
             while ($zbid = mysqli_fetch_assoc($zoek_bestemming_in_db)) {
                 $fldBest = $zbid['rel_best'];
             }
