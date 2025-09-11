@@ -3,7 +3,6 @@
 require_once("autoload.php");
 
 
-require_once('validation_functions.php');
 $versie = '18-12-2021'; /* Gekopieerd van insDracht.php */
 $versie = '02-03-2023'; /* zoek_vader_laatste_dekkingen toegevoegd */
 $versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */

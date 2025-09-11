@@ -2,7 +2,6 @@
 
 require_once("autoload.php");
 
-require_once('validation_functions.php');
 /* 8-8-2014 Aantal karakters werknr variabel gemaakt en quotes bij "kg" weggehaald 
 23-11-2014 : functie header() toegevoegd. In de header wordt het vervevrsen van de pagina verstuurd (request =. response) naar de server
 8-3-2015 : Login toegevoegd 
@@ -356,7 +355,7 @@ if($modtech == 1) { $gewicht = $_POST["txtkg_$Id"]; $kzlHok = $_POST["kzlHok_$Id
 	($levnr_stal > 0 && !isset($afgevoerd))	|| # of levensnummer staat op de stallijst
 								isset($levnr_dupl)  	|| # of levensnummer bestaat al in reader bestand
 							strlen($levnr_rd)<> 12	|| # of levensnummer is geen 12 karakters lang of dus leeg
-						numeriek($levnr_rd) == 1	|| # of levensnummer bevat een letter 
+						Validate::numeriek($levnr_rd) == 1	|| # of levensnummer bevat een letter 
 		($fase == 'moeder' && $sekse =='ram') 	|| #generatie en geslacht is tegenstrijdig
 		($fase == 'vader' && $sekse =='ooi')	 ) #generatie en geslacht is tegenstrijdig
 							
@@ -368,7 +367,7 @@ if($modtech == 1) { $gewicht = $_POST["txtkg_$Id"]; $kzlHok = $_POST["kzlHok_$Id
 	($levnr_stal > 0 && !isset($afgevoerd))	|| # of levensnummer staat op de stallijst
 								isset($levnr_dupl)  	|| # of levensnummer bestaat al in reader bestand
 							strlen($levnr_rd)<> 12	|| # of levensnummer is geen 12 karakters lang of dus leeg
-						numeriek($levnr_rd) == 1	|| # of levensnummer bevat een letter
+						Validate::numeriek($levnr_rd) == 1	|| # of levensnummer bevat een letter
 		 	 ($modtech == 1 && empty($kzlHok))	 ) # of hoknr is onbekend of leeg
 					)
 	||
@@ -425,7 +424,7 @@ for ($i = 0; $i < $count; $i++){
  ?> </select>
  <!-- Einde KZLUBN -->
  </td>
-<?php if (($levnr_stal == 0 || ($levnr_stal > 0 && isset($afgevoerd)) ) && strlen($levnr_rd) == 12 && numeriek($levnr_rd) <> 1) { ?> 
+<?php if (($levnr_stal == 0 || ($levnr_stal > 0 && isset($afgevoerd)) ) && strlen($levnr_rd) == 12 && Validate::numeriek($levnr_rd) <> 1) { ?> 
  <td>
 <?php echo $levnr_rd; } else { ?> <td style = "color : red;" > <?php echo $levnr_rd; } ?>
 <!-- <input type = "hidden" name = <p??hp echo " \"txtlevgeb_$Id\" value = \"$levnr_rd\" ;"?> size = 9 style = "font-size : 9px;"> -->
@@ -581,7 +580,7 @@ for ($i = 0; $i < $count; $i++){
 if ( !empty($levnr_rd) && ($levnr_stal > 0 && !isset($afgevoerd)) ) 		{ $color = 'red'; $bericht = "Staat al op stallijst."; }
 else if (isset($levnr_dupl) ) 					{ $color = 'blue'; $bericht =  "Dubbel in de reader."; }
 else if (isset($levnr_rd) && strlen($levnr_rd) <> 12) { $color = 'red'; $bericht = "Levensnummer geen 12 karakters."; }  
-else if (numeriek($levnr_rd) == 1) 				{ $color = 'red'; $bericht = "Levensnummer bevat een letter."; } ?>
+else if (Validate::numeriek($levnr_rd) == 1) 				{ $color = 'red'; $bericht = "Levensnummer bevat een letter."; } ?>
 
 
  <td colspan = 3 style = "color : <?php echo $color; ?> ; font-size : 11px;"> <?php if(isset($bericht)) { echo $bericht; unset($bericht); unset($color); } ?>

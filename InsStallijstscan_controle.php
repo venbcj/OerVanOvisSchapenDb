@@ -2,8 +2,6 @@
 
 require_once("autoload.php");
 
-
-require_once('validation_functions.php');
 $versie = '05-08-2023'; /* kopie gemaaky van InsAanvoer 
 op 21-8-2023 heeft Rina het volgende verzocht
 - Geboren niet verplicht, alleen als er een melding naar RVO moet.
@@ -366,7 +364,7 @@ if (isset($levnr_dupl)) 				{ $color = 'blue'; $onjuist = "Dubbel in de reader."
 else if (empty($scandatum)) 			{ $color = 'red'; $onjuist = "De datum is onbekend."; }
 else if (isset($afvoer)) 				{ $color = 'red'; $onjuist = "Dit schaap is ".strtolower($afvoer)."."; }  
 else if (isset($levnr_rd) && strlen($levnr_rd) <> 12) { $color = 'red'; $onjuist = "Levensnummer geen 12 karakters."; }  
-else if (numeriek($levnr_rd) == 1) 	{ $color = 'red'; $onjuist = "Levensnummer bevat een letter."; } 
+else if (Validate::numeriek($levnr_rd) == 1) 	{ $color = 'red'; $onjuist = "Levensnummer bevat een letter."; } 
 else if (isset($txtDmgeb) && isset($date2) && $date2 < $txtDmgeb)	{ $color = 'red'; $onjuist = "De geboortedatum mag niet na ".$datum2." liggen."; }
 else if ($levnr_stal == 0) { // Als het levensnummer niet op de stallijst staat
 
@@ -432,7 +430,7 @@ for ($i = 0; $i < $count; $i++){
 	 <!-- EINDE KZLUBN -->
 <?php } ?>
  </td>
-<?php if ($levnr_stal > 0 && strlen($levnr_rd) == 12 && numeriek($levnr_rd) <> 1) { ?> 
+<?php if ($levnr_stal > 0 && strlen($levnr_rd) == 12 && Validate::numeriek($levnr_rd) <> 1) { ?> 
  <td style = "text-align:center;" width= 100>
 <?php echo $levnr_rd; } else { ?> <td style = "text-align:center; color : red;" > <?php echo $levnr_rd; } ?>
 <!-- <input type = "hidden" name = <p??hp echo " \"txtlevgeb_$Id\" value = \"$levnr_rd\" ;"?> size = 9 style = "font-size : 9px;"> -->

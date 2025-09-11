@@ -3,7 +3,6 @@
 require_once("autoload.php");
 
 
-require_once('validation_functions.php');
 $versie = '18-2-2014'; /*Keuzelijst uitval uitgebreid met uitvalId <= 3 en gesorteerd op uitvalId */
 $versie = '15-4-2014'; /*vw_Reader_geb toegevoegd query verplaatst naar vw_Reader.php*/
 $versie = '9-05-2014'; /*Toegevogd => Ras en geslacht mogen niet leeg zijn, dan is nl. het selectieveld niet aangevinkt*/
@@ -613,7 +612,7 @@ If (!empty($levnr_rd)) { /* Controle bij levend geborenen */
 if($levnr_db > 0)                   { $color = 'red';  $onjuist = 'Dit levensnummer bestaat al.'; }
 else if (isset($levnr_dupl) )       { $color = 'blue'; $onjuist = 'Dubbel in de reader.'; }
 else if (strlen($levnr_rd) <> 12)   { $color = 'red';  $onjuist = 'Dit levensnummer is geen 12 karakters lang.'; }
-else if (numeriek($levnr_rd) == 1)  { $color = 'red';  $onjuist =  "Levensnummer bevat een letter."; } 
+else if (Validate::numeriek($levnr_rd) == 1)  { $color = 'red';  $onjuist =  "Levensnummer bevat een letter."; } 
 else if (strlen($array['levnr_rd']) == 11 && strlen($levnr_rd) == 12) { $onjuist =  "Toevoeging voorloopnul levensnummer !"; }
 else if($modtech == 1 && empty($kzlHok))              { $color = 'red'; $onjuist = 'Het verblijf is niet ingevuld'; }
 
@@ -697,7 +696,7 @@ $zoek_dracht = mysqli_query($db,"
 <?php if (isset($_POST['knpVervers_'])) { $datum = $_POST["txtDatum_$Id"]; } ?>
 	<input type = "text" size = 7 style = "font-size : 11px;" name = <?php echo "txtDatum_$Id"; ?> value = <?php echo $datum; ?> >
  </td>
-<?php if ($levnr_db == 0 && strlen($levnr_rd) == 12 && numeriek($levnr_rd) == 0) { ?> 
+<?php if ($levnr_db == 0 && strlen($levnr_rd) == 12 && Validate::numeriek($levnr_rd) == 0) { ?> 
  <td>
 <?php echo $levnr_rd; } else { ?> <td style = "color : red;" > <?php echo $levnr_rd; } ?>
  </td>

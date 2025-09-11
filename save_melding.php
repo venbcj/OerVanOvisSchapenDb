@@ -141,7 +141,7 @@ foreach ($multip_array as $recId => $id) {
                 } else {
                     $wrong_levnr = $fldLevnr." is geen 12 karakters lang";
                 }
-            } elseif (numeriek($fldLevnr) == 1) {
+            } elseif (Validate::numeriek($fldLevnr) == 1) {
                 if (isset($wrong_dag)) {
                     $wrong_levnr = $wrong_dag." en ".$fldLevnr." bevat een letter";
                 } else {

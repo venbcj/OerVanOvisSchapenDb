@@ -227,7 +227,6 @@ class MeldingTest extends EndToEndCase {
         $_SERVER['REQUEST_SCHEME'] = 'http';
         $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
-        require_once "validation_functions.php";
         include "connect_db.php";
         $this->db = $db;
         # AND
@@ -303,7 +302,6 @@ class MeldingTest extends EndToEndCase {
     }
 
     public function testGeboorteLevnrSpelfout() {
-        require_once "validation_functions.php";
         # TODO deze case gecombineerd met verkeerde dag
         # GIVEN
         # om het uberhaupt te laten werken

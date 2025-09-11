@@ -2,7 +2,6 @@
 
 require_once("autoload.php");
 
-require_once('validation_functions.php');
 require_once('basisfuncties.php');
 /*      23-11-2014 gemaakt
 26-3-2015 login toegevoegd
@@ -450,7 +449,7 @@ if ($check == 1) {
             $boodschap = $foutieve_invoer;
             // $foutieve_invoer en $wrong kan gelijktijdig van toepassing zijn
             $color = "blue";
-        } elseif (strlen($levnr) <> 12 || numeriek($levnr) == 1 || intval($levnr) == 0) {
+        } elseif (strlen($levnr) <> 12 || Validate::numeriek($levnr) == 1 || intval($levnr) == 0) {
             $color = 'red';
             $boodschap =  'Levensnummer is onjuist.'.$waarschuwing;
         } else {

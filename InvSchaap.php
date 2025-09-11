@@ -2,7 +2,6 @@
 
 require_once("autoload.php");
 
-require_once('validation_functions.php');
 /* 8-8-2014 Aantal karakters werknr variabel gemaakt en quotes bij "met" en "zonder" weggehaald 
 11-8-2014 : veld type gewijzigd in fase 
 5-11-2014 : Bijwerken database aangevuld met inserten tblRequest en tblMeldingen 

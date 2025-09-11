@@ -2,7 +2,6 @@
 
 require_once("autoload.php");
 
-require_once('validation_functions.php');
 $versie = '7-11-2014'; /*gemaakt */
 $versie = '24-3-2015'; /*login toegevoegd 
 mail 13-04-2015 Arjen Dijkstra : U meldt een geboorte binnen zes maanden in I&R
@@ -269,7 +268,7 @@ if (empty($schaapdm) 				 || # datum is leeg
 	(empty($sekse) && $modtech == 1) || # geslacht is leeg bij module technisch of financieel
 	$dmschaap > $today 				 || # geboorte datum ligt in de toekomst 
 	strlen($levnr)<> 12 			 || # of levensnummer is geen 12 karakters lang
-	numeriek($levnr) == 1			 || # het levensnummer bevat een letter
+	Validate::numeriek($levnr) == 1			 || # het levensnummer bevat een letter
 	intval($levnr) == 0 			 || # het levensnummer is 000000000000 of te wel onjuist
 	intval(str_replace('-','',$schaapdm)) == 0 # Van datum naar nummer is 0 of te wel datum = 00-00-0000
 ) 	 
@@ -352,7 +351,7 @@ foreach ( $opties as $key => $waarde)
 	if($skip == 1) 					{ $boodschap = "Verwijderd"; 	 $color = "black"; }
 elseif(isset($bericht)) 			{ $boodschap = $bericht; 		 $color = "#FF4000"; unset($bericht); }
 elseif(isset($foutieve_invoer) )	{ $boodschap = $foutieve_invoer; $color = "blue"; unset($foutieve_invoer); /*unset($wrong);*/ } // $foutieve_invoer en $wrong kan gelijktijdig van toepassing zijn 
-elseif(strlen($levnr) <> 12 || numeriek($levnr) == 1 || intval($levnr) == 0) { $color = 'red';  $boodschap =  'Levensnummer is onjuist.'.$waarschuwing; } 
+elseif(strlen($levnr) <> 12 || Validate::numeriek($levnr) == 1 || intval($levnr) == 0) { $color = 'red';  $boodschap =  'Levensnummer is onjuist.'.$waarschuwing; } 
 //elseif (intval(str_replace('-','',$dmschaap)) == 0) { $color = 'red';  $boodschap =  "Datum is onjuist.".$waarschuwing; } 
 else 								{ $color = 'red';  $boodschap = $waarschuwing; } 
 

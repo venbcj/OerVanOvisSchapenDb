@@ -2,8 +2,6 @@
 
 require_once("autoload.php");
 
-
-require_once('validation_functions.php');
 $versie = '05-08-2023'; /* kopie gemaaky van InsAanvoer */
 $versie = '26-12-2023'; /* Een schaap mag alleen in een verblijf worden geplaatst als in de database een speendatum bestaat of kan worden bepaald aan de hand van de geboortedatum */
 $versie = '13-12-2024'; /* Controle en foutmeldingen samengevoegd, zie onjuist */
@@ -312,7 +310,7 @@ else if (empty($kzlUbn) )						{ $color = 'red'; $onjuist = "Ubn is onbekend."; 
 else if (isset($levnr_dupl) ) 					{ $color = 'blue'; $onjuist = "Dubbel in de reader."; }
 else if (isset($schaapId_st) ) 					{ $color = 'red'; $onjuist = "Dit levensnummer staat al op de stallijst."; }
 else if (isset($levnr_rd) && strlen($levnr_rd) <> 12) { $color = 'red'; $onjuist = "Levensnummer geen 12 karakters."; }  
-else if (numeriek($levnr_rd) == 1) 			{ $color = 'red'; $onjuist = "Levensnummer bevat een letter."; }
+else if (Validate::numeriek($levnr_rd) == 1) 			{ $color = 'red'; $onjuist = "Levensnummer bevat een letter."; }
 else if (!isset($schaapId_db) && empty($kzlSekse)) 				{ $color = 'red'; $onjuist = "Het geslacht is verplicht."; }
 else if (!isset($schaapId_db) && $fase_rd == 'moeder' && $kzlSekse =='ram') 	{ $color = 'red'; $onjuist = "generatie en geslacht is tegenstrijdig."; }
 else if (!isset($schaapId_db) && $fase_rd == 'vader' && $kzlSekse =='ooi') 	{ $color = 'red'; $onjuist = "generatie en geslacht is tegenstrijdig."; }
@@ -375,7 +373,7 @@ for ($i = 0; $i < $count; $i++){
  </select>
 	 <!-- EINDE KZLUBN -->
  </td>
-<?php if (strlen($levnr_rd) == 12 && numeriek($levnr_rd) <> 1) { ?> 
+<?php if (strlen($levnr_rd) == 12 && Validate::numeriek($levnr_rd) <> 1) { ?> 
  <td>
 <?php echo $levnr_rd; } else { ?> <td style = "color : red;" > <?php echo $levnr_rd; } ?>
 <!-- <input type = "hidden" name = <p??hp echo " \"txtlevgeb_$Id\" value = \"$levnr_rd\" ;"?> size = 9 style = "font-size : 9px;"> -->

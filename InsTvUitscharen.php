@@ -3,7 +3,6 @@
 require_once("autoload.php");
 
 
-require_once('validation_functions.php');
 $versie = '03-11-2024'; /* Kopie gemaakt van InsAanvoer.php */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '09-08-2025'; /* Veld Ubn toegevoegd. Betreft eigen ubn van gebruiker. Per deze versie kan een gebruiker meerdere ubn's hebben */
@@ -364,7 +363,7 @@ for ($i = 0; $i < $count; $i++){
  ?> </select>
  <!-- Einde KZLUBN -->
  </td>
-<?php if (strlen($levnr_rd) == 12 && numeriek($levnr_rd) <> 1) { ?> 
+<?php if (strlen($levnr_rd) == 12 && Validate::numeriek($levnr_rd) <> 1) { ?> 
  <td>
 <?php echo $levnr_rd; } else { ?> <td style = "color : red;" > <?php echo $levnr_rd; } ?>
 <!-- <input type = "hidden" name = <p??hp echo " \"txtlevgeb_$Id\" value = \"$levnr_rd\" ;"?> size = 9 style = "font-size : 9px;"> -->

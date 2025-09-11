@@ -1,5 +1,5 @@
 <?php
-require_once('validation_functions.php');
+
 require_once('demo_functions.php');
 
 include "connect_db.php";
@@ -65,7 +65,7 @@ if (!empty($ubn) && !empty($pword) && !empty($ctr_p) && $pword == $ctr_p && (!em
         $fout = "Dit ubn bestaat al." ;
         // } elseif (!empty($ubn) && strlen("$ubn")<> 7) {
         // $fout = "Dit is geen ubn";
-    } elseif (!empty($ubn) && numeriek($ubn) == 1) {
+    } elseif (!empty($ubn) && Validate::numeriek($ubn) == 1) {
         $fout = "Dit ubn wordt niet herkend.";
     } elseif ($ubn == 1234567 || $ubn == 2345678 || $ubn == 3456789 || $ubn == 4567890 || $ubn == 0123456) {
         echo "Nee, Dit is geen ubn";

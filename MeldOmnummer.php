@@ -3,7 +3,6 @@
 require_once("autoload.php");
 
 
-require_once('validation_functions.php');
 $versie = '4-7-2020'; /* gekopieerd van MeldAanvoer.php */
 $versie = '26-9-2020'; /* Aangepast op 14-8 na.v. contact met Bright */
 $versie = '30-1-2022'; /* Keuze controle en knop melden bij elkaar gezet. Sql beveiligd met quotes */

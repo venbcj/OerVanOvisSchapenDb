@@ -1,7 +1,8 @@
 <?php
-require_once('validation_functions.php');
-$str = '1507131';
 
+require_once('autoload.php');
+
+$str = '1507131';
 
 $ww = md5($str);
 $ww1 = md5($str.'zfO3puW?Wod/UT<-|=)1VT]+{hgABEK(Yh^!Wv;5{ja{P~wX4t');
@@ -22,5 +23,5 @@ $subject = 'a-, b-, c-, d-, e-, f-, g-, h-, i-, j-, k-, l-, m-, n-, o-, p-, q-, 
 
 
 //echo $result. "<br>";
-if ( numeriek('100024575441') <> 1) { echo "Zo had ik controle numeriek inderdaad gewild"; }
+if ( Validate::numeriek('100024575441') <> 1) { echo "Zo had ik controle numeriek inderdaad gewild"; }
 else {echo "Zo dus niet";}
