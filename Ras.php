@@ -1,4 +1,5 @@
 <?php
+
 $versie = '11-11-2014'; /*header("Location: http://localhost:8080/schapendb/.....php");   toegevoegd. Dit ververst de pagina zodat een wijziging op het eerste record direct zichtbaar is */
 $versie = '8-3-2015'; /*Login toegevoegd*/ 
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */

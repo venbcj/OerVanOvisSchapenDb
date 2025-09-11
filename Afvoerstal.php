@@ -1,4 +1,6 @@
-<?php /* 18-9-2016 aangemaakt t.b.v. afvoeren bij alleen module melden */
+<?php
+
+/* 18-9-2016 aangemaakt t.b.v. afvoeren bij alleen module melden */
 $versie = '22-11-2016'; /* actId = 3 uit on clause gehaald en als sub query genest */
 $versie = '4-2-2017'; /* kalender toegevoegd*/
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */

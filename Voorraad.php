@@ -1,7 +1,10 @@
-<!-- 8-3-2015 : Login toegevoegd 
+<?php
+
+/*
+ <!-- 8-3-2015 : Login toegevoegd 
 12-12-2015 : kolom 'Aantal nog toe te dienen' aangevuld met eenheid 
 29-8-2020 : Voorraadcorrectie toegevoegd -->
-<?php
+ */
 $versie = '12-12-2015';
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */

@@ -1,4 +1,6 @@
-<?php 
+<?php
+
+
 require_once('validation_functions.php');
 $versie = '13-11-2016'; /* Aangemaakt als kopie van insAanvoer. 
 schaap 100214520769 gewijzigd in */

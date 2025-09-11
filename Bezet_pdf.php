@@ -1,4 +1,6 @@
-<?php //https://www.youtube.com/watch?v=CamDi3Syjy4
+<?php
+
+//https://www.youtube.com/watch?v=CamDi3Syjy4
 /* 20-12-2019 tabelnaam gewijzigd van UIT naar uit tabelnaam 
 09-05-2022 : Werknrs gesorteerd en sql beveiligd met quotes 
 30-12-2023 : and h.skip = 0 toegevoegd bij tblHistorie 

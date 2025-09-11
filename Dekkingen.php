@@ -1,4 +1,5 @@
 <?php 
+
 $versie = '6-2-2019'; /* Vaderdier is tot een jaar terug te kiezen */
 $versie = '11-7-2020'; /* Gegevens zijn ook langer dan het laatste half jaar zichtbaar. Als volwId is opgeslagen in tblSchaap kan het record niet meer worden verwijderd. */
 $versie = '25-12-2021'; /* Pagina hernoemd van Dracht.php naar Dekkingen.php. */

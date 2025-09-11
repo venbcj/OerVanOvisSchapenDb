@@ -1,4 +1,6 @@
-<?php 
+<?php
+
+
 $versie = '7-5-2014'; /*voorwaarde levensnummer moet bestaan mag ook geen moeder zijn daardoor 'empty(status) || status == 'Overleden' ' gewijzigd in*/
 $versie = '9-5-2014'; /*voorwaarde "Overplaatsing niet mogelijk. Zie status." uitgebreid met !empty(status). Empty is nl al "levensnummer onbekend"
 	        voorwaarde "Datum ligt voor maxdm ." uitgebreid met status == 'lam'. Deze voorwaarde geldt immers enkel bij een lam en bijv. niet bij een moederdier.*/

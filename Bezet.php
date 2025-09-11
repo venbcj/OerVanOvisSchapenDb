@@ -1,4 +1,6 @@
-<?php /* 20-2-2015 : login toegevoegd 
+<?php
+
+/* 20-2-2015 : login toegevoegd 
 14-11-2015 Eerste en tweede inenting verwijderd
 18-11-2015 Hok gewijzigd naar verblijf 
 23-11-2015 Spenen afleveren mogelijk gemaakt en link 'periode afsluiten verplaatst naar achteren'

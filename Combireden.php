@@ -1,4 +1,6 @@
-<?php /* 12-12-2014 gemaakt 
+<?php
+
+/* 12-12-2014 gemaakt 
 8-3-2015 : Login toegevoegd
 31-7-2016 : uitvalmoment niet verplicht gemaakt. */
 $versie = '28-12-2016';/* toevoegen en wijzigen mogelijk gemaakt. Combi's t.b.v. medicijnen alleen mogelijk gemaakt bij technische module */

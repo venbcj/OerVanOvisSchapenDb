@@ -1,4 +1,6 @@
-<?php /* 28-11-2014 Chargenummer toegevoegd  
+<?php
+
+/* 28-11-2014 Chargenummer toegevoegd  
 11-3-2015 : Login toegevoegd */
 $versie = '25-11-2016';  /* actId = 3 uit on clause gehaald en als sub query genest */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */

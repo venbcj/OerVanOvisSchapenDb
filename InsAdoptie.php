@@ -1,4 +1,5 @@
 <?php 
+
 $versie = '21-5-2020'; /*Gekopieerd van insOverplaats.php*/
 $versie = '04-07-2020'; /* 1 tabel impAgrident gemaakt */
 $versie = '31-12-2023'; /* sql beveiligd met quotes */

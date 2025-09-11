@@ -1,4 +1,6 @@
-<?php /* 17-2-14 : schaapgegevens aangepast. vw_Schapen is aangevuld met max bezetId (laatste hoknr). Op deze manier wordt maar 1 regel uit vw_Bezetting gekoppeld met vw_Schapen. Het hok wordt alleen getoond als het dier een lam is. 
+<?php
+
+/* 17-2-14 : schaapgegevens aangepast. vw_Schapen is aangevuld met max bezetId (laatste hoknr). Op deze manier wordt maar 1 regel uit vw_Bezetting gekoppeld met vw_Schapen. Het hok wordt alleen getoond als het dier een lam is. 
 		Bij keuze moederdier moet per schaap het selectieveld uit staan 
   18-2-2014 : reslevnr aangepast. levnr vervangen door _POST['kzlLevnr'] 
   

@@ -1,4 +1,6 @@
-<?php 
+<?php
+
+
 require_once('validation_functions.php');
 $versie = '18-12-2021'; /* Gekopieerd van insDracht.php */
 $versie = '02-03-2023'; /* zoek_vader_laatste_dekkingen toegevoegd */

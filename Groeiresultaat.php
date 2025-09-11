@@ -1,4 +1,6 @@
-<?php 
+<?php
+
+
 require_once('url_functions.php');
 
 $versie = "16-12-2017"; /* Rapport gemaakt */

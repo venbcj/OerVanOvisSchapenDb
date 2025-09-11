@@ -1,4 +1,5 @@
 <?php 
+
 $versie = '24-10-2015'; /*gemaakt */
 $versie = '6-12-2015'; /*Totaal per hoofdrubriek verbeterd deze klopte niet*/
 $versie = '19-12-2015'; /*Hoofdrubrieken gesorteerd */

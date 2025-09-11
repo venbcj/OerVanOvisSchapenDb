@@ -1,6 +1,10 @@
+<?php
+
+/*
 <!-- 8-3-2015 : Login toegevoegd
 14-11-2015 naamwijziging van Voer naar Voerbestand -->
-<?php $versie = '19-12-2015'; /* : Rubriek toegevoegd */
+ */
+$versie = '19-12-2015'; /* : Rubriek toegevoegd */
 $versie = '1-8-2017'; /* save_artikel.php toegevoegd */ 
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '7-4-2019'; /* Btw gewijzigd van 6 naar 9% */

@@ -1,4 +1,6 @@
-<?php /* 6-11-2014 gemaakt
+<?php
+
+/* 6-11-2014 gemaakt
 20-2-2015 : login toegevoegd
 23-11-2015 : </form> toegvoegd */
 $versie = "22-1-2017"; /* Foto toegevoegd voor gebruikers die module melden niet hebben */

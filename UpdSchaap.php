@@ -1,4 +1,6 @@
-<?php /* 5-8-2014 karakters werknr variabel gemaakt
+<?php
+
+/* 5-8-2014 karakters werknr variabel gemaakt
 11-8-2014 : veld type gewijzigd in fase 
 13-11-2014 variabel actie_afv toegevoegd bij foutmeldingen zodat melding verkoopdatum niet verschijnt bij uitgevallen dieren 
 1-03-2015 : login toegevoegd 

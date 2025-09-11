@@ -1,4 +1,6 @@
-<?php /* 25-2-2014 Maandoverzicht wordt ovv Rina per jaar gekozen en getoond.
+<?php
+
+/* 25-2-2014 Maandoverzicht wordt ovv Rina per jaar gekozen en getoond.
  11-10-2014 : Maanden gewijigd van cijfers naar omschrijving
 11-3-2015 : Login toegevoegd */
 $versie = '25-11-2016'; /*25-11-2016 : query m.b.t. totalen verwijderd en gebaseerd op de query met loop per maand */

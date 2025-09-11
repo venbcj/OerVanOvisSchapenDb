@@ -1,4 +1,5 @@
 <?php 
+
 $versie = '27-12-2019'; /* gekopieerd van HokOverpl.php */
 $versie = '16-2-2020'; /* in variabele tabel 'and h2.actId != 3' toegevoegd zodat moederdier wordt getoond */
 $versie = '27-4-2021'; /* Datum aanwas hoeft niet meer kleiner of gelijk te zijn aan datum in verblijf. sql beveiligd met quotes */

@@ -1,4 +1,6 @@
-<?php 
+<?php
+
+
 require_once('validation_functions.php');
 $versie = '4-7-2020'; /* gekopieerd van MeldAanvoer.php */
 $versie = '26-9-2020'; /* Aangepast op 14-8 na.v. contact met Bright */

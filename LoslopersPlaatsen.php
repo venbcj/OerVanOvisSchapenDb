@@ -1,4 +1,5 @@
 <?php 
+
 $versie = '23-12-2019'; /* Gekopieerd van HokOverpl.php */
 $versie = '31-12-2023'; /* and h.skip = 0 aangevuld aan tblHistorie en sql beveiligd */
 $versie = "11-03-2024"; /* Bij geneste query uit 

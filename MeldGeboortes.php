@@ -1,4 +1,5 @@
 <?php
+
 require_once('validation_functions.php');
 $versie = '7-11-2014'; /*gemaakt */
 $versie = '24-3-2015'; /*login toegevoegd 

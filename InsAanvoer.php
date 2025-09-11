@@ -1,4 +1,5 @@
 <?php
+
 require_once('validation_functions.php');
 /* 8-8-2014 Aantal karakters werknr variabel gemaakt en quotes bij "kg" weggehaald 
 23-11-2014 : functie header() toegevoegd. In de header wordt het vervevrsen van de pagina verstuurd (request =. response) naar de server

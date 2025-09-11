@@ -1,4 +1,5 @@
 <?php 
+
 require_once('url_functions.php');
 
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */

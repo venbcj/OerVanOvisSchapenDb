@@ -1,4 +1,6 @@
-<?php /*	  7-11-2014 gemaakt 
+<?php
+
+/*	  7-11-2014 gemaakt 
 24-3-2015 : login toegevoegd 
 mail 13-04-2015 Arjen Dijkstra : Andere meldingen dan een geboorte doet u binnen zeven kalenderdagen na de gebeurtenis. De meldtermijn van 7 dagen betekent niet, dat je daarna niet meer kunt melden. Dit is in feite onbeperkt.
 					  m.b.t. ‘datum in de toekomst’: dit is inderdaad 3 dagen en dat mag alleen bij Afvoermelding en Exportmelding */

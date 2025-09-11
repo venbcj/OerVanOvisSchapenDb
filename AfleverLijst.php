@@ -1,4 +1,6 @@
-<?php /* 9-8-2014 : werknr variabel gemaakt zie $Karwerk en quotes bij "$datum" en "$aantal" weggehaald 
+<?php
+
+/* 9-8-2014 : werknr variabel gemaakt zie $Karwerk en quotes bij "$datum" en "$aantal" weggehaald 
 1-3-2015 : login toegevoegd 
 19-12-2015 : Uitval toegevoegd */
 $versie = '08-01-2017'; /* LidId = 1 variabel gemaankt naar lidId = ".mysqli_real_escape_string($db,$lidId)." */

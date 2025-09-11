@@ -1,4 +1,6 @@
-<?php /* 28-11-2014 Chargenummer toegevoegd  
+<?php
+
+/* 28-11-2014 Chargenummer toegevoegd  
 11-3-2015 : Login toegevoegd
 20-12-2015 : sortering Hoofdrubrieken */
 $versie = '24-12-2016'; /* keuzelijst standaard huidig jaar */

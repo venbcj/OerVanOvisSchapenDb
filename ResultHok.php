@@ -1,4 +1,6 @@
-<?php /* 2-3-2015 : Login toegevoegd 
+<?php
+
+/* 2-3-2015 : Login toegevoegd 
 6-1-2016 : Hoknr gewijzigd aar Verblijf */
 $versie = "22-1-2017"; /* 19-1-2017 Query's aangepast n.a.v. nieuwe tblDoel		22-1-2017 tblBezetting gewijzigd naar tblBezet*/
 /*Wat als voer wordt ingekocht zonder rubriek aan het voer !!?? */

@@ -1,4 +1,6 @@
-<?php /* 11-8-2014 : veld type gewijzigd in fase 
+<?php
+
+/* 11-8-2014 : veld type gewijzigd in fase 
 23-11-2014 : functie header() toegevoegd. In de header wordt het vervevrsen van de pagina verstuurd (request =. response) naar de server 
 8-3-2015 : Login toegevoegd 
 21-12-2015 : maak_request_func.php ge-include i.p.v. in maak_request.php */

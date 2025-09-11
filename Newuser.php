@@ -1,4 +1,6 @@
-<?php /* 3-3-2015 : Login toegevoegd */
+<?php
+
+/* 3-3-2015 : Login toegevoegd */
 $versie = '12-12-2015'; /* : Ubn niet te wijzigen */
 $versie = '29-10-2016'; /* : Optie Administrator toegevoegd */
 $versie = '09-01-2017'; /* : Link naar teamviewer toegevoegd */

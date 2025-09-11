@@ -1,4 +1,6 @@
-<?php /* 28-11-2014 Chargenummer toegevoegd  
+<?php
+
+/* 28-11-2014 Chargenummer toegevoegd  
 11-3-2015 : Login toegevoegd */
 $versie = '25-11-2016';  /* actId = 3 uit on clause gehaald en als sub query genest */
 $versie = "22-1-2017"; /* Foto toegevoegd voor gebruikers die module melden niet hebben */

@@ -1,4 +1,6 @@
-<?php 
+<?php
+
+
 require_once('validation_functions.php');
 $versie = '05-08-2023'; /* kopie gemaaky van InsAanvoer */
 $versie = '26-12-2023'; /* Een schaap mag alleen in een verblijf worden geplaatst als in de database een speendatum bestaat of kan worden bepaald aan de hand van de geboortedatum */

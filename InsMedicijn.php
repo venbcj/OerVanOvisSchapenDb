@@ -1,4 +1,6 @@
-<?php /* 
+<?php
+
+/* 
 11-12-2014 gemaakt 
 8-3-2015 : Login toegevoegd */
 $versie = '24-2-2017'; /* Aangpast na.v. Release 2 of wel nieuwe databasestructuur */

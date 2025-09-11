@@ -1,4 +1,6 @@
-<?php /* 8-8-2014 Aantal karakters werknr variabel gemaakt en html buiten php geprogrammeerd 
+<?php
+
+/* 8-8-2014 Aantal karakters werknr variabel gemaakt en html buiten php geprogrammeerd 
 13-3-2015 : Login toegevoegd */
 $versie = "22-1-2017"; /* 19-1-2017 Query's aangepast n.a.v. nieuwe tblDoel		22-1-2017 tblBezetting gewijzigd naar tblBezet */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */

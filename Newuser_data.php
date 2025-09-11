@@ -1,4 +1,5 @@
 <?php
+
 /* 11-6-2020 Standaard Lambar toegevoegd bij nieuwe users 
 8-4-2023 naamreader Rendac standaard vullen. Relatie Vermist standaard toevoegen en SQL beveiligd met quotes 
 21-02-2025 Invoer Rendac in tblRelatie uitval = 1 gesplitst van Invoer Vermist in tblRelatie i.v.m. uitval = 0 */

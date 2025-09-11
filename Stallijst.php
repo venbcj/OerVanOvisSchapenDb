@@ -1,4 +1,6 @@
-<?php /* 20-3-2014 Ovv Rina werknr toegevoegd en sortering op werknr van laag naar hoog.
+<?php
+
+/* 20-3-2014 Ovv Rina werknr toegevoegd en sortering op werknr van laag naar hoog.
 	5-8-2014 karakters werknr variabel gemaakt
 	11-8-2014 : veld type gewijzigd in fase
 11-3-2015 : Login toegevoegd */

@@ -1,4 +1,5 @@
 <?php 
+
 $versie = '20-6-2021'; /* Gekopieerd van insOmnummeren.php */
 $versie = '5-9-2021'; /* func_artikelnuttigen.php toegevoegd en eenheid toegevoegd */
 $versie = '24-6-2023'; /* Registraties samengevoegd tot 1 regeistratie per verblijf, Voer en doelgroep */

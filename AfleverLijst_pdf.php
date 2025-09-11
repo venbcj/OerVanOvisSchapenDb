@@ -1,4 +1,6 @@
-<?php /* https://www.youtube.com/watch?v=CamDi3Syjy4
+<?php
+
+/* https://www.youtube.com/watch?v=CamDi3Syjy4
 31-7-2020; wdgn gewijzigd in wdgn_v 
 30-12-2023 : and h.skip = 0 toegevoegd bij tblHistorie en sql beveiligd met quotes 
 07-07-2024 : Werknr oplopend gesorteerd 

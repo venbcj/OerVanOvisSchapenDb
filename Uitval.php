@@ -1,4 +1,6 @@
-<?php /* 11-11-2014 : header("Location: http://localhost:8080/schapendb/.....php");   toegevoegd. Dit ververst de pagina zodat een wijziging op het eerste record direct zichtbaar is 
+<?php
+
+/* 11-11-2014 : header("Location: http://localhost:8080/schapendb/.....php");   toegevoegd. Dit ververst de pagina zodat een wijziging op het eerste record direct zichtbaar is 
 8-3-2015 : Login toegevoegd */
 $versie = '28-12-2016'; /* Vinkje bij toevoegen medicijnen wordt nu opgeslagen. Underscore ontbrak in de naam van het veld. Hidden velden verwijderd zoals txtId en ctrUitval */
 $versie = '11-03-2017'; /* Naast Id ook it (item) toegevoegd aan naam van de velden om opslaan reden en moment te kunnen splitsen. Hidden velden verwijderd. */

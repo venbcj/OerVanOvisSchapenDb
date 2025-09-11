@@ -1,8 +1,12 @@
+<?php
+
+/*
 <!-- 16-11-2013 : kzlVerbruikseenheid ook te wijzigen na inkoop. Eenheid wordt nl. opgeslagen in tblInkoop
  8-3-2015 Login toegevoegd 
  14-11-2015 naamwijziging van Medicijnen naar Medicijnenbestand 
  30-11-2015 : Spatie in registratienumer mogelijk gemaakt -->
-<?php $versie = '1-8-2017'; /* Rubriek toegevoegd incl. save_artikel.php */ 
+ */
+$versie = '1-8-2017'; /* Rubriek toegevoegd incl. save_artikel.php */ 
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '7-4-2019'; /* Btw gewijzigd van 6 naar 9% */
 $versie = '5-7-2020'; /* Veld Per gewicht toegevoegd en wachtdagen gesplitst in vlees en melk */

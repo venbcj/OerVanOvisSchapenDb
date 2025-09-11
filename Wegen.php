@@ -1,4 +1,6 @@
-<?php /*13-3-2015 : Login toegevoegd */
+<?php
+
+/*13-3-2015 : Login toegevoegd */
 $versie = '3-4-2018'; /* : Tussenweging toegevoegd bij UpdatSchaap.php */
 $versie = '16-6-2018'; /* : Kalender toegevoegd */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */

@@ -1,4 +1,6 @@
-<?php 
+<?php
+
+
 require_once('url_functions.php');
 
 $versie = '14-8-2014'; /*Menu (rechts) veranderd van menuInkoop naar menuBeheer en html buiten php geprogrammeerd */

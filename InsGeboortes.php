@@ -1,4 +1,6 @@
-<?php 
+<?php
+
+
 require_once('validation_functions.php');
 $versie = '18-2-2014'; /*Keuzelijst uitval uitgebreid met uitvalId <= 3 en gesorteerd op uitvalId */
 $versie = '15-4-2014'; /*vw_Reader_geb toegevoegd query verplaatst naar vw_Reader.php*/

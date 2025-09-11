@@ -1,4 +1,6 @@
-<?php /* 8-8-2014 Aantal karakters werknr variabel gemaakt 
+<?php
+
+/* 8-8-2014 Aantal karakters werknr variabel gemaakt 
 11-8-2014 : veld type gewijzigd in fase 
 20-2-2015 : login toegevoegd 
 19-11-2015 geboorte datum kan ook aankoopdatum zijn 

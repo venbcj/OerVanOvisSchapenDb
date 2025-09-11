@@ -1,4 +1,6 @@
-<?php /*   7-11-2014 gemaakt 
+<?php
+
+/*   7-11-2014 gemaakt 
 24-3-2015 : login toegevoegd */
 $versie = '25-11-2016';  /* actId = 3 uit on clause gehaald en als sub query genest */
 $versie = '4-12-2016'; /* Index keuzelijst 'vastleggen' kzlDef_ gewijigd van 0 en 1 naar N en J	9-2-2017 : ook where clouse bij vastleggen melddatum  */

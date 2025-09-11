@@ -1,4 +1,6 @@
-<?php 
+<?php
+
+
 $versie = '10-6-2017'; /* Gemaakt */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '15-3-2020'; /* veld reader toegevoegd */

@@ -1,4 +1,6 @@
-<?php /* 8-8-2014 Aantal karakters werknr variabel gemaakt 
+<?php
+
+/* 8-8-2014 Aantal karakters werknr variabel gemaakt 
 11-8-2014 : veld type gewijzigd in fase
 11-3-2015 : Login toegevoegd */
 $versie = '30-11-2016';  /* actId = 3 aan schaapId gekoppeld i.p.v. een stalId */

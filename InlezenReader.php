@@ -1,4 +1,5 @@
 <?php 
+
 $versie = '10-4-2014'; /*vw_Reader_sp wordt gebruikt in InsSpenen*/
 $versie = '13-4-2014'; /*vw_Reader_ovpl wordt gebruikt in InsOverplaatsen */
 $versie = '20-2-2015'; /*login toegevoegd*/ 

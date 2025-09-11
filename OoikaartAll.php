@@ -1,4 +1,6 @@
-<?php /* 6-5-2014 : Kolom 'aantal dagen moeder'moeder verwijderd
+<?php
+
+/* 6-5-2014 : Kolom 'aantal dagen moeder'moeder verwijderd
 		query verwijderd omdat het gebruik ervan onbekend is en variabelen worden niet gebruikt :
 		$post = mysqli_query($db,"SELECT hoknr, doelgroep FROM vw_Hoklijsten Where levensnummer = '$levnr'  ") or die (mysqli_error($db));
 

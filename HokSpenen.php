@@ -1,4 +1,6 @@
-<?php /* 21-11-2015 Individueel spenen gewijzigd naar heel hok spenen 
+<?php
+
+/* 21-11-2015 Individueel spenen gewijzigd naar heel hok spenen 
 23-11-2015 breedte kzlHok flexibel gemaakt via login.php
 20-1-2017 hok_uitgez = 'Geboren' gewijzigd in hok_uitgez = 1 Speengewicht niet verplicht gemaakt */
 $versie = "23-1-2017"; /* 22-1-2017 tblBezetting gewijzigd naar tblBezet 23-1-2017 kalender toegevoegd */

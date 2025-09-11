@@ -1,4 +1,5 @@
 <?php 
+
 $versie = '20-12-2020'; /* gemaakt */
 $versie = '31-12-2023'; /* and h.skip = 0 aangevuld aan tblHistorie */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = 'top' align = center > gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 include login voor include header gezet */

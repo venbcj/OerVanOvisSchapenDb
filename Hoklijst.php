@@ -1,4 +1,6 @@
-<?php /* 28-02-2015 html gesplitst van php en login toegevoegd 
+<?php
+
+/* 28-02-2015 html gesplitst van php en login toegevoegd 
 19-1-2015 : Hok- gewijzigd naar verblijfoverzicht */
 $versie = "18-1-2017"; /* Query's aangepast n.a.v. nieuwe tblDoel incl. $_GET['pstgroep'] */
 $versie = "22-1-2017"; /* tblBezetting gewijzigd naar tblBezet */

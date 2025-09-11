@@ -1,4 +1,6 @@
-<?php 
+<?php
+
+
 require_once('validation_functions.php');
 $versie = '05-08-2023'; /* kopie gemaaky van InsAanvoer 
 op 21-8-2023 heeft Rina het volgende verzocht
