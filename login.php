@@ -66,7 +66,7 @@ if (!is_logged_in()) {
             $output[] = "login_form.tpl.php";
         } else {
             $row = mysqli_fetch_assoc($qrylidId);
-            login($row);
+            Auth::login($row);
             header("Location: $file");
             exit;
         }
