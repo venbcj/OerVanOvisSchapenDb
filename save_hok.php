@@ -5,15 +5,11 @@
 20-04-2024 : Verblijven kunnen worden verwijderd zolang er geen relatie ligt met andere tabellen 
 10-03-2025 : Hidden veld chbActief_Id in Hok.php verwijderd en hier lege checkbox gedefinieerd */
 
-function getNaamFromKey($string) {
-    $split_naam = explode('_', $string);
-    return $split_naam[0];
-}
 
 
 foreach($_POST as $fldname => $fldvalue) {  //  Voor elke post die wordt doorlopen wordt de veldnaam en de waarde teruggeven als een array
     
-    $multip_array[Url::getIdFromKey($fldname)][getNaamFromKey($fldname)] = $fldvalue;  // Opbouwen van een Multidimensional array met 2 indexen. [Id] [naamveld] en een waarde nl. de veldwaarde. 
+    $multip_array[Url::getIdFromKey($fldname)][Url::getNameFromKey($fldname)] = $fldvalue;  // Opbouwen van een Multidimensional array met 2 indexen. [Id] [naamveld] en een waarde nl. de veldwaarde. 
 }
 foreach($multip_array as $recId => $id) {
 unset($fldSort);

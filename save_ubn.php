@@ -1,15 +1,11 @@
 <?php
 /* 03-07-2025 : Bestand gemaakt als kopie van save_hok.php  */
 
-function getNaamFromKey($string) {
-    $split_naam = explode('_', $string);
-    return $split_naam[0];
-}
 
 
 foreach($_POST as $fldname => $fldvalue) {  //  Voor elke post die wordt doorlopen wordt de veldnaam en de waarde teruggeven als een array
     
-    $multip_array[Url::getIdFromKey($fldname)][getNaamFromKey($fldname)] = $fldvalue;  // Opbouwen van een Multidimensional array met 2 indexen. [Id] [naamveld] en een waarde nl. de veldwaarde. 
+    $multip_array[Url::getIdFromKey($fldname)][Url::getNameFromKey($fldname)] = $fldvalue;  // Opbouwen van een Multidimensional array met 2 indexen. [Id] [naamveld] en een waarde nl. de veldwaarde. 
 }
 foreach($multip_array as $recId => $id) {
 unset($fldActief);

@@ -10,10 +10,6 @@
 /* toegepast in :
 	- Uitval.php */
 	
-function getNaamFromKey($string) {
-    $split_naam = explode('_', $string);
-    return $split_naam[0];
-}
 
 function getItemFromKey($string) {
     $split_item = explode('_', $string); 
@@ -23,7 +19,7 @@ function getItemFromKey($string) {
 
 foreach($_POST as $fldname => $fldvalue) {  //  Voor elke post die wordt doorlopen wordt de veldnaam en de waarde teruggeven als een array
     
-    $multip_array[Url::getIdFromKey($fldname)][getItemFromKey($fldname)][getNaamFromKey($fldname)] = $fldvalue;  // Opbouwen van een Multidimensional array met3 indexen.  [Id] [item] [naamveld] en een waarde nl. de veldwaarde.  
+    $multip_array[Url::getIdFromKey($fldname)][getItemFromKey($fldname)][Url::getNameFromKey($fldname)] = $fldvalue;  // Opbouwen van een Multidimensional array met3 indexen.  [Id] [item] [naamveld] en een waarde nl. de veldwaarde.  
 }
 
 
