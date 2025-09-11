@@ -221,7 +221,7 @@ if (isset($_POST['knpVervers_']) ) { $cbKies = $_POST["chbkies_$Id"]; $txtOke = 
 include "menu1.php"; } ?>
 </body>
 </html>
-<SCRIPT language="javascript">
+<script language="javascript">
 $(function(){
 
 	 // add multiple select / deselect functionality
@@ -241,4 +241,4 @@ $(function(){
 
 	 });
 });
-</SCRIPT>
+</script>

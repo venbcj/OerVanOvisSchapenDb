@@ -693,7 +693,7 @@ include "menu1.php"; } ?>
 
 </body>
 </html>
-<SCRIPT language="javascript">
+<script language="javascript">
 $(function(){
 
 	// add multiple select / deselect functionality
@@ -750,4 +750,4 @@ var ram = 'ram_' + jArray_Id[i];
   	
 
 
-</SCRIPT>
+</script>

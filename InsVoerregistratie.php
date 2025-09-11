@@ -438,7 +438,7 @@ include "menu1.php"; } ?>
 
 </body>
 </html>
-<SCRIPT language="javascript">
+<script language="javascript">
 $(function(){
 
 	// add multiple select / deselect functionality
@@ -478,7 +478,7 @@ $(function(){
 
 	});
 });
-</SCRIPT>
+</script>
 
 
 
