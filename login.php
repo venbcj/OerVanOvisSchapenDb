@@ -25,7 +25,6 @@ include "connect_db.php";
 require_once("basisfuncties.php");
 require_once("demo_functions.php");
 require_once('url_functions.php');
-require_once('login_functions.php');
 
 // BCB: kunstgreep om uitvoer te scheiden van berekening
 $output = [];
@@ -50,7 +49,7 @@ if (php_uname('n') == 'basq' && isset($_GET['ingelogd'])) {
 
 // *** ALS NIET IS INGELOGD ***
 if (!is_logged_in()) {
-    logout();
+    Auth::logout();
 
     if (isset($_POST['knpLogin']) || isset($_POST['knpBasis'])) {
         $qrylidId = mysqli_query($db, "
