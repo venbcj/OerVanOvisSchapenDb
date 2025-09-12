@@ -7,7 +7,7 @@
 </tr>
 <?php
 $pagina_naam = strtok($_SERVER["REQUEST_URI"], '?');
-if ($pagina_naam == '/index.php') : ?>
+if (true || $pagina_naam == '/index.php') : ?>
 <tr align = center>
  <td colspan = 3>
     <input type="text" name="txtUser" size="20"><br>
