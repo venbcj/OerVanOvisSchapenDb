@@ -38,7 +38,7 @@ if (isset($actuele_versie)) {
 <link rel="stylesheet" type="text/css" href="style.css">
 <link rel="stylesheet" href="menu.css">
 
-<?php include "back_to_top.tpl.php" ?>
+<?php include "back_to_top.js.php" ?>
 
 <div id = "rechts_uitlijnen" class = 'header_breed'>
     <section style="text-align : center">

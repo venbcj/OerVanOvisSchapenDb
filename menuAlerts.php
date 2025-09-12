@@ -1,9 +1,9 @@
 <?php
 /*
  <!-- 20-12-2020 : Pagina gemaakt 
-29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.tpl.php -->
+29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.js.php -->
  */
-include "javascriptsAfhandeling.tpl.php";
+include "javascriptsAfhandeling.js.php";
  
 $tech_color = 'grey';
 if ($modtech != 0) {

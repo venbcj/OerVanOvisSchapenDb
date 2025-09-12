@@ -1,6 +1,6 @@
 <?php
 /* 25-11-206 : versie weergave toegevoegd
-29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.tpl.php
+29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.js.php
 07-10-2024 Groeiresultaten per weging toegevoegd */
 
 include "url.php";
@@ -10,7 +10,7 @@ if ($modtech != 0) {
     $tech_color = 'blue';
 }
 
-include "javascriptsAfhandeling.tpl.php";
+include "javascriptsAfhandeling.js.php";
 ?>
 
 <link rel="stylesheet" href="menu.css">

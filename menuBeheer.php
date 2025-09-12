@@ -4,11 +4,11 @@
 12-12-2015 :  versie toegveoged
 1-6-2020 : Uitval en redenen gewijzigd naar Redenen en momenten
 12-02-2021 : Systeemgegevens gewijzigd naar Instellingen
-29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.tpl.php
+29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.js.php
 22-10-2023 : Readerversie toegevoegd
  */
 
-include "javascriptsAfhandeling.tpl.php";
+include "javascriptsAfhandeling.js.php";
 
 $tech_color = 'grey';
 if ($modtech == 1) {

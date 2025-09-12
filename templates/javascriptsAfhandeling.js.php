@@ -22,7 +22,8 @@ if (isset($fout)) {
     $msg = $fout;
 }
 if (isset($msg)) {
-    include "message.tpl.php";
+    // TODO: (BCB) inline. message.js.php wordt verder niet gebruikt
+    include "message.js.php";
 }
 ?>
 

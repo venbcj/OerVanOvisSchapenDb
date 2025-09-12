@@ -1,7 +1,7 @@
 <?php
 /*
  <!-- 20-12-2020 : Pagina gemaakt 
- 29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.tpl.php -->
+ 29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.js.php -->
  */
 
 // TODO: dit is een kopie uit menu1. Moet een functie worden. --BCB
@@ -27,7 +27,7 @@ if ($modmeld != 0) {
     $melding_color = 'blue';
 }
 
-include "javascriptsAfhandeling.tpl.php";
+include "javascriptsAfhandeling.js.php";
 ?>
 
 <link rel="stylesheet" href="menu.css">

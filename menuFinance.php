@@ -3,7 +3,7 @@
  <!-- 6-12-2015 :  versie toegveoged 
 28-12-2016 : linken grijs bij module niet in gebruik 
 29-12-2016 : Archief gewijzigd in Betaalde 
-29-08-2021: msg.php gewijzigd naar javascriptsAfhandeling.tpl.php 
+29-08-2021: msg.php gewijzigd naar javascriptsAfhandeling.js.php 
 07-01-2025: De omschrijving Invulformulier gewijzigd naar Inboeken -->
  */
 
@@ -12,7 +12,7 @@ if ($modfin == 1) {
     $fin_color = 'blue';
 }
 
-include "javascriptsAfhandeling.tpl.php";
+include "javascriptsAfhandeling.js.php";
 ?>
 
 <link rel="stylesheet" href="menu.css">

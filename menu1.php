@@ -8,7 +8,7 @@
 6-12-2015 :  versie toegveoged
 19-12-2015 : query moduleFinancieel verplaatst naar login.php
 20-12-2020 : Alerts toegevoegd
-29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.tpl.php
+29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.js.php
 25-12-2021 : Dracht.php hernoemd naar Dekkingen.php 11-1-2022 kleur link variabel gemaakt
 22-10-2023 : Menu optie Beheer kleur rood als er nog een nieuwe readerversie moet worden gedownload
 23-10-2024 : Invoer nieuwe schapen gewijzigd naar Aanvoer schaap
@@ -43,7 +43,7 @@ if (isset($actuele_versie) || $reader != 'Agrident') {
     $beheer_color = 'blue';
 }
 
-include "javascriptsAfhandeling.tpl.php";
+include "javascriptsAfhandeling.js.php";
 ?>
 
 <link rel="stylesheet" href="menu.css">
