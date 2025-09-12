@@ -6,3 +6,4 @@ tags
 *.actual
 *.sublime-*
 globals-candidates*
+*.swo

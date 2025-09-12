@@ -5,13 +5,18 @@
 include "back_to_top.js.php";
 ?>
 
-<div id = "rechts_uitlijnen" class = 'header_breed'><section> </section><img src='OER_van_OVIS.jpg' /></div>
+<div id = "rechts_uitlijnen" class = 'header_breed'>
+    <section style="text-align : center">
+    </section>
+    <img src='OER_van_OVIS.jpg' />
+</div>
 
 <ul class="header_smal" id = <?php echo Url::getTagId(); ?> >
-    <li id = "rechts_uitlijnen"><?php echo View::link_to('Inloggen', 'index.php', ['class' => 'black']); ?></li>
+    <li id = "rechts_uitlijnen">
+        <?php echo View::link_to('Inloggen', 'index.php', ['class' => 'black']); ?></li>
 </ul>
 
-<?php #TODO: (BV) dit bestaat toch niet? # ?>
+<?php # TODO: (BV) dit bestaat toch niet? # ?>
 <script src="test2_script_header.js"></script>
 
 <?php
@@ -19,7 +24,7 @@ include "back_to_top.js.php";
 # TODO werken met yield-constructies --BCB
 
 ?>
-<table id ="table1">
+<table id ="table1" align="center">
 <tbody>
 <tr height = 90> </tr>
 <TR>

@@ -59,22 +59,24 @@ if (isset($actuele_versie)) {
 }
 
 ?>
-
 <link rel="stylesheet" type="text/css" href="style.css">
-<link rel="stylesheet" href="menu.css">
+<link rel="stylesheet" type="text/css" href="menu.css">
 
-<?php include "back_to_top.js.php" ?>
+<?php
+include "back_to_top.js.php";
+?>
 
 <div id = "rechts_uitlijnen" class = 'header_breed'>
     <section style="text-align : center">
 <?php # TODO: waarom de spaties? # ?>
         <?php echo $titel . str_repeat('&nbsp;', 28); ?>
-        </section>
+    </section>
     <img src='OER_van_OVIS.jpg' />
 </div>
 
 <ul class="header_smal" id = <?php echo Url::getTagId(); ?> >
-    <li class="dropdown"><?php echo View::link_to('Home', 'Home.php', ['class' => 'black']); ?></li>
+    <li class="dropdown">
+<?php echo View::link_to('Home', 'Home.php', ['class' => 'black']); ?></li>
     <li class="dropdown"><span>Registratie</span>
         <div class="dropdown-content">
             <?php echo View::link_to('Aanvoer schaap', 'InvSchaap.php', ['class' => 'black']); ?>
