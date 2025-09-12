@@ -95,7 +95,7 @@ info@oervanovis.nl<br/><br/></td><td colspan = 4 height = 250 align = right vali
 </td></tr>
 </table>
 
-<?php include "msg.php"; ?>
+<?php include "javascriptsAfhandeling.js.php"; ?>
     </TD>
 
 </tr>

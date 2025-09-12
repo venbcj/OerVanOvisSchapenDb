@@ -1,5 +1,7 @@
 <?php 
 
+# TODO: (BV) dit kladblaadje kan wel weg neem ik aan? --BCB
+
 $now = DateTime::createFromFormat('U.u', microtime(true));
 
 $Backup = $now->format("Y-m-d_H:i:s.u");

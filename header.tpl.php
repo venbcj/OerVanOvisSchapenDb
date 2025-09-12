@@ -1,5 +1,30 @@
 <?php
 
+/* TODO: verbouwen.
+ * De beslissing over de kleuren (afhankelijk van gebruikers-rechten) hoort niet in de view. Zeker niet met een query erin.
+Hoe dan?
+- er zijn nu al twee plekken die een menu tonen: bovenin horizontaal, en rechts vertikaal.
+- beide plekken hebben een inhoud (menu-items, dat zijn links) en een opmaak -> scheiden in rekenbestand en templatebestand
+  horizontaal menu werkt met ul/li, vertikaal menu met td(hr)--er zit geen tr in die template, en alles zit in 1 td, dus daar kan nog wat html naar de omliggende template
+- header.tpl wordt alleen opgehaald in login.php. Nee, dat is helaas niet waar.
+    Groeiresultaat.php -> doet al include login
+    Leveranciers.php -> wordt nergens gebruikt, zit niet in navigatie.
+    Leverancier.php idem
+    Klanten.php -> wordt nergens gebruikt, zit niet in navigatie.
+    Klant.php idem
+    Welkom.php -> problematisch, zet niet de module-globals waar header op rekent. Zit niet in navigatie.
+    Welkom2.php idem
+    demo_database_legen.php -> doet al include login
+    Meldpagina.php -> doet al include login
+    Worpindex.php -> idem, plus "deze pagina is nog in ontwikkeling"
+    test_javascript.php -> dit soort bestanden zou je in een subfolder moeten zetten
+  afgezien daarvan: de rekencode kan dus verhuizen naar login, om te beginnen.
+- maak een functie die deze kleuren teruggeeft, en dan niet als vier globals, maar als een array.
+- maak een functie die de menuitems teruggeeft. Of twee: sitenav(), en pagenav(); voor in het bovenste en rechter menu.
+  Een menuitem kan een leeg element zijn (voor de witte cellen in het pagina-menu).
+  Een menuitem kan kinderen hebben (voor in het site-menu)
+ */
+
 $tech_color = 'grey';
 if ($modtech != 0) {
     $tech_color = 'blue';
