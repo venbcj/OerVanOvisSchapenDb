@@ -82,26 +82,8 @@ $zoek_artId_op_voorraad1 = mysqli_query($db,$zoek_artId_op_voorraad) or die (mys
 $array_eenheid[$lin['artId']] = 'x '.$stdat. $lin['eenheid'].' per schaap';
 
 //echo $array_eenheid[$lin['artId']].'<br>';
+include "med-registratie.js.php";
 }
-?>
-
-<script>
-function eenheid_artikel() {
-
-var artikel     = document.getElementById("artikel");        var artikel_v = artikel.value;
-
-
- if(artikel_v.length > 0) toon_eenheid(artikel_v);
-
-}
-
- var jArray= <?php echo json_encode($array_eenheid); ?>;
-
-function toon_eenheid(e) {
-    document.getElementById('aantal').innerHTML = jArray[e];
-}
-</script>
-<?php
 $hok_uitgez = "Alles";
     
 //If (empty($_POST['txtStdrd']))    {    $stdrd = 1;        } else {    $stdrd = $_POST['txtStdrd'];    }
@@ -123,8 +105,6 @@ if(!empty($_POST['txtGeb_tot'])) { $Geb_tot = $_POST['txtGeb_tot']; }
 
                                 }
 
-?>
-<?php
 If (isset($_POST['knpInsert'])) {
 
 if(empty($_POST['chbKeuze'])) { $fout = "Er is geen schaap geselecteerd."; }
@@ -693,15 +673,9 @@ WHERE s.geslacht = 'ooi' and $where_mdr
     $levnr_mdr = $kkop['levensnummer'];
     }
 }
+include "med-registratie-toggle.js.php";
+// TODO: onclick aanhangen met jquery, niet in html
 ?>
-<script type="text/javascript">
-function toggle(source) {
-  checkboxes = document.getElementsByName("chbKeuze[]");
-  for(var i=0, n=checkboxes.length;i<n;i++) {
-    checkboxes[i].checked = source.checked;
-  }
-}
-</script>
 <table border = 0>
 <tr height = 30><td></td></tr>
 <tr style = "font-size:12px;">

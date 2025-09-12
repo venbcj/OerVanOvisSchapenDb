@@ -43,6 +43,7 @@ $(document).ready(function(){
     <li id = "rechts_uitlijnen"><?php echo View::link_to('Inloggen', 'index.php', ['class' => 'black']); ?></li>
 </ul>
 
+<?php #TODO: (BV) dit bestaat toch niet? # ?>
 <script src="test2_script_header.js"></script>
 
 <?php # TODO: halve html-elementen heel maken --BCB # ?>

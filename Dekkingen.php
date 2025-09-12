@@ -50,45 +50,10 @@ include "login.php"; ?>
 <?php
 if (Auth::is_logged_in()) { if($modtech == 1) {
 
-include "vw_kzlOoien.php"; ?>
+    include "vw_kzlOoien.php";
 
-<script type="text/javascript">
+    include "dekkingen.js.php";
 
-function toon_txtDatum(id, datum, aantal) {
-
-var txtDrachtdm = 'drachtdatum_' + id;
-var kzlDrachtig = 'drachtig_' + id;
-var txtWorp = 'worp_' + id;
-
-dracht = document.getElementById(kzlDrachtig);        var dr = dracht.value;
-
-// if(mr.length > 0) alert(jArray_vdr[mr]);
-  if(dr == 'ja') {
-
-      document.getElementById(txtDrachtdm).style.display = "inline-block";
-      document.getElementById(txtDrachtdm).value = datum;
-      document.getElementById(txtWorp).style.display = "inline-block";
-      if(aantal > 0) {
-      document.getElementById(txtWorp).value = aantal;
-      }
-
-  }
-  else
-  {
-      document.getElementById(txtDrachtdm).style.display = "none";
-      document.getElementById(txtDrachtdm).value = null;
-      document.getElementById(txtWorp).style.display = "none";
-      document.getElementById(txtWorp).value = null;
-  }
-
-}
-
-
-
-</script>
-
-
-<?php
 // Declaratie vaderdier
 $resultvader = mysqli_query($db,"
 SELECT st.schaapId, right(s.levensnummer,$Karwerk) werknr
@@ -1108,43 +1073,8 @@ foreach ( $opties as $key => $waarde)
 
 <?php
 include "menu1.php"; } 
-} // Einde if($modtech == 1) ?>
-
-
-<script type="text/javascript">
-var cur_year = new Date().getFullYear();
-
-//$('.' + cur_year + '.selectt').toggle();
-$('.' + cur_year).toggle();
-
-
-
-    $(document).ready(function() {
-        $('input[type="checkbox"]').click(function() {
-            var inputValue = $(this).attr("value");
-            //alert(inputValue);
-            $("." + inputValue).toggle();
-        });
-    });
-
-
-
-var jArray_Id = <?php echo json_encode($array_drachtdatum); ?>;
-
-for (let i = 0; i < jArray_Id.length; i++) {
-
-    //alert(i);
-
-var drachtdm = 'drachtdatum_' + jArray_Id[i];
-
-    document.getElementById(drachtdm).value = null; // veld leegmaken indien gevuld
-    $('.' + jArray_Id[i]).toggle();
-}
-
-
-
-</script>
-
-
+} // Einde if($modtech == 1)
+include "dekkingen-2.js.php";
+?>
 </body>
 </html>

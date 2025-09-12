@@ -1875,23 +1875,9 @@ for ($i = 0; $i < $count; $i++){
  </td> 
 </tr> <?php } ?>
 </table> <!-- Einde tabel 5 : t.b.v. velden bestaande afvoer -->
-
-      <script>
-
-    function datumControle() {
-    
-    var x = document.getElementById("datepicker4").value;
-    /*document.getElementById("demo").innerHTML = "You selected: " + x;*/
-    $nietv = '12-01-2001';
-    if(isset($nietv)) { 
-     y = 'De datum mag niet voor ' + $nietv + ' liggen.';
-        window.alert(y);
-    }
-    
-}
-</script>
-
-<?php     } // Einde if( isset($afvhis) && ($actId_afv == 12 || $actId_afv == 13) ) 
+<?php
+         include "validate-updschaap.js.php";
+} // Einde if( isset($afvhis) && ($actId_afv == 12 || $actId_afv == 13) ) 
 // EINDE VELDEN T.B.V. AFGELEVERDEN EN VERKOCHTEN SCHAPEN
 
 

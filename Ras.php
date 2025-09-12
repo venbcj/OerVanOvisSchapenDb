@@ -27,16 +27,8 @@ include "login.php"; ?>
 
             <TD valign = 'top'>
 <?php
-if (Auth::is_logged_in()) { ?>
-
-    <script>
-function verplicht() {
-var eigenRas = document.getElementById("txtRas"); var eigenRas_v = eigenRas.value;
-
-     if(eigenRas_v.length > 50) eigenRas.focus()     + alert("Het Ras mag max 50 karakters zijn.");
-}
-</script>
-<?php
+if (Auth::is_logged_in()) {
+    include "validate-ras.js.php";
 if (isset ($_POST['knpSave_'])) { include "save_ras.php"; }
 
 

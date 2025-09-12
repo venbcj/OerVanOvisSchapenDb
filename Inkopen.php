@@ -63,47 +63,10 @@ $array_eenheid[$lin['artId']] = $lin['eenheid'];
 
 //echo $array_eenheid[$lin['artId']].'<br>';
 
-} ?>
-<script>
-function verplicht() {
+    }
 
-var datum = document.getElementById("datepicker1");     var datum_v = datum.value;
-var artikel    = document.getElementById("artikel");        var artikel_v = artikel.value;
-var hoeveelheid     = document.getElementById("hoeveelheid");        var hoeveelheid_v = hoeveelheid.value;
-var prijs     = document.getElementById("prijs");        var prijs_v = prijs.value;
-
-
-/*artikel.focus() +*/ //alert('datum_v.length = ' + datum_v);
-     if(datum_v.length == 0) datum.focus() + alert("Datum is onbekend.");
-else if(artikel_v.length == 0) artikel.focus() + alert("Omschrijving is onbekend.");
-else if(hoeveelheid_v.length == 0) hoeveelheid.focus() + alert("Het inkoopaantal is onbekend.");
-else if(prijs_v.length == 0) prijs.focus() + alert("De prijs is onbekend.");
-
-}
-
-
-function eenheid_artikel() {
-
-var artikel     = document.getElementById("artikel");        var artikel_v = artikel.value;
-
-
- if(artikel_v.length > 0) { toon_eenheid(artikel_v); }
- else { removeElement(artikel_v); }
-
-}
-
- var jArray= <?php echo json_encode($array_eenheid); ?>;
-
-function toon_eenheid(e) {
-    document.getElementById('aantal').innerHTML = jArray[e] + '&nbsp &nbsp ';
-}
-
-function removeElement(e) {
-     document.getElementById('aantal').innerHTML = '';
-}
-
-</script>
-<?php 
+    // verwacht $array_eenheid
+    include "validate-inkopen.js.php";
 
 if (isset($_POST['knpSave_']) ) {     include "save_inkoop.php";     }
 
@@ -394,54 +357,16 @@ $delete_inkoop = "DELETE FROM tblInkoop WHERE inkId = ".mysqli_real_escape_strin
          EINDE WIJZIGEN VOER
     ***************************** -->
 
-
-
 </form>
 
 <td><tr></table>
 
-
-
-
     </TD>
 <?php } else { ?> <img src='Inkopen_php.jpg'  width='970' height='550'/> <?php }
-include "menuInkoop.php"; } ?>
+include "menuInkoop.php"; } 
 
-
-
-<script>    
-        $('.delete_class').click(function(){
-            var tr = $(this).closest('tr'),
-                del_id = $(this).attr('id');
-
-            $.ajax({
-                url: "delete_inkoop.php?delete_id="+ del_id,
-                cache: false,
-                success:function(result){
-                    tr.fadeOut(1000, function(){
-                        $(this).remove();
-                    });
-                }
-            });
-        });
-</script>
-
-<script type="text/javascript">
-var cur_year = new Date().getFullYear();
-
-$('.' + cur_year + '.selectt').toggle();
-
-
-    $(document).ready(function() {
-        $('input[type="checkbox"]').click(function() {
-            var inputValue = $(this).attr("value");
-            $("." + inputValue).toggle();
-        });
-    });
-</script>
-
+include "inkopen.js.php";
+?>
 
 </body>
 </html>
-
-

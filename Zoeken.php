@@ -1257,13 +1257,9 @@ while($row = mysqli_fetch_assoc($ouders)) {
 </form>    
 
         </TD>
-<script type="text/javascript">
-    $(document).ready(function() {
-      $(".search-select").select2();
-    });
-</script>
 <?php        
 include "menu1.php"; }
+include "zoeken.js.php";
 ?>
 
 </body>

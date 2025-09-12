@@ -283,7 +283,7 @@ for ($i = 0; $i < $count; $i++){
 </TD>
 <?php    
           include "menu1.php"; }
-//include table_sort
+//include table-sort.js
  ?>
 
 

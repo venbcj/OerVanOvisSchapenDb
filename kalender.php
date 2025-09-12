@@ -1,4 +1,7 @@
- <!--
+<?php
+
+/*
+<!--
  Toegepast in :
     - Afvoerstal.php 1x
     - HokOverpl.php 1x
@@ -10,7 +13,11 @@
   - Readerversies.php 1x  per 22-10-2023
     - UpdSchaap.php 6x
 
- --> 
+    --> 
+ */
+// TODO: (BV) dit bestand wordt binnen de <body> opgehaald, dat werkt zo niet.
+// TODO: (BV) die title lijkt me ongewenst.
+?>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -24,32 +31,6 @@
 
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-  <script>
-
-
-
-$(document).ready(function() {
-
-  var options = {
-    dateFormat: "dd-mm-yy",
-    dayNamesMin: [ "zo", "ma", "di", "wo", "do", "vr", "za" ],
-    monthNames: [ "Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December" ]
-    }
-        
-    $('#datepicker1').datepicker(options);
-    $('#datepicker2').datepicker(options);
-    $('#datepicker3').datepicker(options);
-    $('#datepicker4').datepicker(options);
-    $('#datepicker5').datepicker(options);
-    $('#datepicker6').datepicker(options);
-
-      /*$('#datepicker2').datepicker({
-      dateFormat: "dd-mm-yy",
-      dayNamesMin: [ "zo", "ma", "di", "wo", "do", "vr", "za" ],
-      monthNames: [ "Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December" ]
-    });*/
-    
-    
-});
-
-  </script>
+<?php
+include "kalender.js.php";
+?>

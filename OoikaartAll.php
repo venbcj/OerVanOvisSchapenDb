@@ -200,7 +200,7 @@ while($row = mysqli_fetch_assoc($result))
 <?php 
 } else { ?> <img src='ooikaartAll_php.jpg'  width='950' height='500'/> <?php }
 include "menuRapport1.php"; } 
-include "table_sort.php"; ?>
+include "table-sort.js.php"; ?>
 </tr>
 </table>
 

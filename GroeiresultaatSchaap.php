@@ -322,13 +322,11 @@ if(isset($levnr_record) && $levnr_nu != '') { ?>
 
 
         </TD>
-<script type="text/javascript">
-    $(document).ready(function() {
-      $(".search-select").select2();
-    });
-</script>
 
 <?php } else { ?> <img src='resultHok_php.jpg'  width='970' height='550'/> <?php }
-include "menuRapport.php"; } ?>
+include "menuRapport.php"; }
+
+include "zoeken.js.php";
+?>
 </body>
 </html>

@@ -205,11 +205,8 @@ if (isset($actuele_versie)) {
     </li>
 </ul>
 
-<!-- <script src="test2_script_header.js"></script> -->
-
 <?php # TODO: halve html-elementen heel maken --BCB # ?>
 <table id ="table1" align="center">
 <tbody>
 <tr height = 90> </tr>
 <TR>
-
