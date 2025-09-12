@@ -1,7 +1,8 @@
 <?php
 
 # include-path voorlopig maar even hier
-set_include_path('.:classes');
+$app_folders = ['classes', 'templates'];
+set_include_path(implode(':', array_merge(explode(':', get_include_path()), $app_folders)));
 
 spl_autoload_register(function ($class) {
     foreach (explode(':', get_include_path()) as $prefix) {
