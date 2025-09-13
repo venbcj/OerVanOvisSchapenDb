@@ -1,5 +1,5 @@
 /vendor/
-.phpunit.cache
+.phpunit*.cache
 coverage-html/*
 db
 tags

@@ -1,5 +1,5 @@
 #!/bin/bash
 if [ $(cover p) == 'on' ]; then
-    export XDEBUG_MODE=coverage
+    export XDEBUG_MODE=coverage,develop,debug
 fi
 vendor/bin/phpunit tests $*

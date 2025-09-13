@@ -9,6 +9,8 @@ class EndToEndCase extends TestCase {
     # php-8
     # protected string $output = '';
     # protected bool $redirected = false;
+    protected $output = '';
+    protected $redirected = false;
 
     protected static function runfixture($name) {
         if (file_exists($file = getcwd()."/tests/fixtures/$name.sql")) {

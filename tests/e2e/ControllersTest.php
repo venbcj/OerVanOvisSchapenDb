@@ -2,9 +2,6 @@
 
 # use PHPUnit\Framework\Attributes\DataProvider;
 
-# use PHPUnit\Framework\Attributes\RunInSeparateProcess;
-# helpt tegen meermaals functions includen, maar is erg langzaam
-
 class ControllersTest extends EndToEndCase {
 
     public static function gettable_controllers() {
@@ -153,6 +150,21 @@ TXT
         );
     }
 
+    public static function controllers_needing_database() {
+        return self::txt2ar(<<<TXT
+TXT
+);
+    }
+
+    // Tijdelijk.
+    // Sommige controllers geven (nog) warnings als je niet bent ingelogd
+    // Doel: dit weer leeg, en bij alle get-controllers ook een keer inloggen
+    public static function controllers_needing_login() {
+        return self::txt2ar(<<<TXT
+TXT
+        );
+    }
+
     // in schema.sql zitten niet alle tabellen.
     public static function controllers_missing_tables() {
         return self::txt2ar(<<<TXT
@@ -164,11 +176,16 @@ TXT
 
     private static function txt2ar($text) {
         $lemmata = preg_split('/\s+/', $text);
-        return array_combine($lemmata, array_map(function ($str) { return [$str]; }, $lemmata));
+        return array_combine($lemmata, array_map(function ($str) {
+            return [$str];
+        }, $lemmata));
     }
 
     # php-8
     # #[DataProvider('gettable_controllers')]
+    /**
+     * @dataProvider gettable_controllers
+     */
     public function testGetRouteGuest($controller) {
         $this->get("/$controller");
         $this->assertNoNoise();
@@ -176,7 +193,20 @@ TXT
 
     # php-8
     # #[DataProvider('gettable_controllers')]
+    /**
+     * @dataProvider gettable_controllers
+     */
     public function testGetRouteAuthenticated($controller) {
+        include "connect_db.php";
+        $this->get("/$controller", ['ingelogd' => 1]);
+        $this->assertNoNoise();
+    }
+
+    # #[DataProvider('controllers_needing_login')]
+    /**
+     * @dataProvider controllers_needing_login
+     */
+    public function testGetRouteLogin($controller) {
         include "connect_db.php";
         $this->get("/$controller", ['ingelogd' => 1]);
         $this->assertNoNoise();
