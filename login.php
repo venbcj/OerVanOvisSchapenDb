@@ -66,7 +66,7 @@ if (!Auth::is_logged_in()) {
             $row = mysqli_fetch_assoc($qrylidId);
             Auth::login($row);
             header("Location: $file");
-            exit;
+            return;
         }
     } else {
         $output[] = "header_logout.tpl.php";

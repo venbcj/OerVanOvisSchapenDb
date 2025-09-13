@@ -17,14 +17,14 @@ class LoginTest extends EndToEndCase {
         $this->assertAbsent('Je bent niet ingelogd');
     }
 
-    public function testLoginWithIncorrectUserFails() {
+    public function testLoginWithWrongUserFails() {
         $this->post('/index.php', ['txtUser' => 'ONGELDIG', 'txtPassw' => 'harpje', 'knpLogin' => 1]);
         $this->assertAbsent('Je bent niet ingelogd');
     }
 
     public function testLoginCorrect() {
         $this->post('/index.php', ['txtUser' => 'harm', 'txtPassw' => 'harpje', 'knpLogin' => 1]);
-        $this->approve();
+        $this->assertRedirected();
     }
 
     public function testAlreadyLoggedin() {

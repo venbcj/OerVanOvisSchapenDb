@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 class EndToEndCase extends TestCase {
 
     protected string $output = '';
+    protected bool $redirected = false;
 
     protected static function runfixture($name) {
         if (file_exists($file = getcwd()."/tests/fixtures/$name.sql")) {
@@ -49,6 +50,11 @@ class EndToEndCase extends TestCase {
         ob_start();
         include getcwd().$path;
         $this->output = ob_get_clean();
+        $this->redirected = (http_response_code() == 302);
+    }
+
+    protected function assertRedirected() {
+        $this->assertTrue($this->redirected);
     }
 
     protected function approve() {

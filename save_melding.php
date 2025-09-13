@@ -17,8 +17,6 @@
 - MeldUitval.php
  */
 
-require_once('save_melding_functions.php');
-
 $array = array();
 
 foreach ($_POST as $fldname => $fldvalue) {
