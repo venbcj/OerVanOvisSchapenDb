@@ -51,38 +51,17 @@ WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(st.rel_bes
 
 /* Totalen lammeren, ooien en rammen */
 
-function aantal_fase($datb,$lidid,$Sekse,$Ouder) {
-$vw_aantalFase = mysqli_query($datb,"
-SELECT count(distinct(s.schaapId)) aant 
-FROM tblSchaap s
- join tblStal st on (st.schaapId = s.schaapId)
- left join (
-    SELECT st.schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = s.schaapId) 
-WHERE st.lidId = ".mysqli_real_escape_string($datb,$lidid)." and isnull(st.rel_best) and ".$Sekse." and ".$Ouder." 
-");
-
-if($vw_aantalFase)
-        {    $row = mysqli_fetch_assoc($vw_aantalFase);
-                return $row['aant'];
-        }
-        return FALSE; // Foutafhandeling
-}
-
 $sekse = "(isnull(s.geslacht) or s.geslacht is not null)";;
 $ouder = 'isnull(prnt.schaapId)';
-$lammer = aantal_fase($db,$lidId,$sekse,$ouder);
+$lammer = Query::aantal_fase_stal($db,$lidId,$sekse,$ouder);
 
 $sekse = "s.geslacht = 'ooi'";
 $ouder = 'prnt.schaapId is not null';
-$moeders = aantal_fase($db,$lidId,$sekse,$ouder);
+$moeders = Query::aantal_fase_stal($db,$lidId,$sekse,$ouder);
 
 $sekse = "s.geslacht = 'ram'";
 $ouder = 'prnt.schaapId is not null';
-$vaders = aantal_fase($db,$lidId,$sekse,$ouder);
+$vaders = Query::aantal_fase_stal($db,$lidId,$sekse,$ouder);
 
 /* EInde Totalen lammeren, ooien en rammen */
 

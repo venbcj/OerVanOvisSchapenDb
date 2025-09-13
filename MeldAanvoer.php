@@ -21,7 +21,6 @@ $versie = '10-03-2024'; /* Als alle regels moeten worden verwijderd kan dit vana
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 $versie = '13-07-2025'; /* Ubn van gebruiker per regel getoond omdat een gebruiker per deze versie meerdere ubn's kan hebben */
 
-session_start();
 ?>
 <!DOCTYPE html>
 <html>

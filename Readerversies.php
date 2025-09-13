@@ -324,9 +324,6 @@ else { ?>
 
     </TD>
 <?php } else { ?> <img src='Readerversies.jpg'  width='970' height='550'/> <?php }
-
-
-
 include "menuBeheer.php"; 
  } // Einde if (isset($_SESSION["U1"]) && isset($_SESSI....... ?>
 </tr>
@@ -334,14 +331,7 @@ include "menuBeheer.php";
 </form>
 
 <?php
-
-// verlangt $last_versieId
 include "readerversies.js.php";
-
 ?>
-
 </body>
 </html>
-
-
- 

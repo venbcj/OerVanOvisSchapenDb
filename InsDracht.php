@@ -45,6 +45,7 @@ include "login.php"; ?>
 
           <TD valign = "top">
 <?php
+$array_readId = array(); // Aanmaken array. Array waar Id's uit tabel impAgrident worden toegevoegd. Alleen die waarvan de moeder is gedekt door een vader. Zie hier verderop.
 if (Auth::is_logged_in()) {
 
 include "vw_kzlOoien.php";

@@ -27,7 +27,7 @@ include "login.php"; ?>
 <?php
 if (Auth::is_logged_in()) { if($modfin == 1) {
 
-include "func_euro.php";
+require_once "func_euro.php";
 
 function last_day_of_month($d) {
 

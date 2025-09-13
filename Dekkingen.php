@@ -48,6 +48,8 @@ include "login.php"; ?>
 
         <TD valign = "top">
 <?php
+// wordt in javascript gebruikt, dat buiten de if() wordt ingeclude.
+$array_drachtdatum = array();
 if (Auth::is_logged_in()) { if($modtech == 1) {
 
     include "vw_kzlOoien.php";
@@ -1055,7 +1057,7 @@ foreach ( $opties as $key => $waarde)
   ?>
 <tr class= "<?php echo $jaar; ?> selectt" ><td height="50"></td></tr>
 
-<?php    } //var_dump($array_drachtdatum);
+<?php    }
  ?>
 
 </td></tr>

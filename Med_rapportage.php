@@ -28,31 +28,6 @@ include "login.php"; ?>
 <?php
 if (Auth::is_logged_in()) { if($modtech ==1) {
 
-function aantal_fase($datb,$lidid,$M,$J,$V,$Sekse,$Ouder) { // Functie die het aantal lammeren, moederdieren of vaders telt
-$vw_totaalFase = mysqli_query($datb,"
-SELECT count(distinct s.levensnummer) werknrs
-FROM tblSchaap s
- join tblStal st on (s.schaapId = st.schaapId)
- join tblHistorie h on (st.stalId = h.stalId)
- join tblNuttig n on (h.hisId = n.hisId)
- join tblInkoop i on (n.inkId = i.inkId)
- left join (
-    SELECT st.schaapId, h.hisId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) oudr on (s.schaapId = oudr.schaapId)
-WHERE h.skip = 0 and month(h.datum) = $M and date_format(h.datum,'%Y') = $J and i.artId = $V and ".$Sekse." and ".$Ouder."
-    and st.lidId = '".mysqli_real_escape_string($datb,$lidid)."' and h.actId = 8
-GROUP BY date_format(h.datum,'%Y%m')
-");
-
-if($vw_totaalFase)
-        {    $row = mysqli_fetch_assoc($vw_totaalFase);
-                return $row['werknrs'];
-        }
-        return FALSE; // Foutafhandeling
-}
 
 function voer_fase($datb,$lidid,$M,$J,$V,$Sekse,$Ouder) { // Functie die de hoeveelheid voer berekend per lammeren, moederdieren of vaders
 $vw_totaalFase = mysqli_query($datb,"
@@ -253,7 +228,7 @@ $tot = date("Ym");
 // TOTALEN
 $sekse = 's.geslacht is not null';
 $ouder = 'isnull(oudr.hisId)';
-$werknrs = aantal_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
+$werknrs = Query::med_aantal_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
     if ($werknrs == 1) {$fasen = 'lam';} else if(isset($werknrs))    {$fasen = 'lammeren';}
 $voer = voer_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
 $eenheid = eenheid_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
@@ -277,7 +252,7 @@ $eenheid = eenheid_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
 unset($fasen); 
 $sekse = 's.geslacht = \'ooi\'';
 $ouder = 'oudr.hisId is not null';
-$werknrs = aantal_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
+$werknrs = Query::med_aantal_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
     if ($werknrs == 1) {$fasen = 'moederdier';} else if(isset($werknrs))    {$fasen = 'moederdieren';}
 $voer = voer_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
 $eenheid = eenheid_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
@@ -300,7 +275,7 @@ $eenheid = eenheid_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
 unset($fasen); 
 $sekse = 's.geslacht = \'ram\'';
 $ouder = 'oudr.hisId is not null';
-$werknrs = aantal_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
+$werknrs = Query::med_aantal_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
     if ($werknrs == 1) {$fasen = 'vaderdier';} else if(isset($werknrs))    {$fasen = 'vaderdieren';}
 $voer = voer_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
 $eenheid = eenheid_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);

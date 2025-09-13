@@ -38,7 +38,7 @@ if(isset($rd_db)) {
 else {
 
     $insert_tblRedenuser = "INSERT INTO tblRedenuser set redId = '".mysqli_real_escape_string($db,$array_uitval[$i])."', lidId = '".mysqli_real_escape_string($db,$lidid)."', uitval = 1 ";
-/*echo '<br>'.$insert_tblRedenuser.'<br>'.'<br>';*/        mysqli_query($db,$insert_tblRedenuser) or die (mysqli_error($db));
+    mysqli_query($db,$insert_tblRedenuser) or die (mysqli_error($db));
 
 }
 

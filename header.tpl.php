@@ -26,17 +26,17 @@ Hoe dan?
  */
 
 $tech_color = 'grey';
-if ($modtech != 0) {
+if ($modtech ?? 0 != 0) {
     $tech_color = 'blue';
 }
 
 $fin_color = 'grey';
-if ($modfin == 1) {
+if ($modfin ?? 0 == 1) {
     $fin_color = 'black';
 }
 
 $meld_color = 'grey';
-if ($modmeld != 0) {
+if ($modmeld ?? 0 != 0) {
     // NOTE: kleur is hier zwart, in menu1 (en zo) blauw. Misschien stijlen hernoemen naar 'inactief', 'actief', 'attentie' --BCB
     $meld_color = 'black';
     // Kijken of er nog meldingen openstaan

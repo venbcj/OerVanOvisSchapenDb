@@ -51,8 +51,6 @@ $versie = '10-07-2025'; /* Keuzelijst ubn toegevoegd voor gebruikers met meerder
 <body>
 <?php
 
- // TODO: (BV) verwacht array_vader_uit_koppel ... maar die wordt verderop pas gezet. Klopt dit?
- include "validate-invschaap.js.php";
 
 $titel = 'Aanvoer schaap';
 $file = "InvSchaap.php";
@@ -274,6 +272,9 @@ WHERE h.hisId = '".mysqli_real_escape_string($db,$uitgeschaard)."'
 
  }
 
+ // TODO: (BV) verwacht array_vader_uit_koppel ... maar die wordt verderop pas gezet. Klopt dit?
+// ik heb het maar vast hier gezet, ipv op regel 54 of zo
+ include "validate-invschaap.js.php";
 /***********************
  ****    OPSLAAN        ****
  ***********************/

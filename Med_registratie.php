@@ -57,7 +57,7 @@ include "login.php"; ?>
 if (Auth::is_logged_in()) { if($modtech ==1) {
 
 include "kalender.php"; 
-include "func_artikelnuttigen.php";
+require_once "func_artikelnuttigen.php";
 
 $zoek_artId_op_voorraad = " 
 SELECT a.artId, a.naam, a.stdat, e.eenheid, sum(i.inkat-coalesce(n.vbrat,0)) vrdat

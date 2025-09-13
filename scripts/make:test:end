@@ -1,0 +1,17 @@
+#!/bin/bash
+if [ -z "$1" ]; then
+    echo synopsis: $0 classname
+    echo Leave out 'Test' suffix
+    exit
+fi
+TESTFILE=tests/e2e/$1Test.php
+CLASSNAME=$1Test
+cat << TXT > $TESTFILE
+<?php
+
+class $CLASSNAME extends EndToEndCase {
+
+}
+TXT
+echo $TESTFILE
+vi $TESTFILE

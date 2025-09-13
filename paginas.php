@@ -15,6 +15,7 @@ define("THIS_PAGE", $_SERVER['PHP_SELF']); // Geeft de pagina naam terug bijv. /
 *    CLASS PAGE NUMBERS
 ********/
 
+if (!class_exists('Page_numbers')) {
 class Page_numbers
 {
     var $table;
@@ -25,7 +26,7 @@ class Page_numbers
     var $total_pages; // totaal aantal pagina's
     var $page; // Getoonde pagina nummer
     var $offset; // record waar vanaf getoond moet worden vb : 60 betekend tonen x records (per pagina) vanaf 61 (paginanr - 1 * records per pagina)
-    var $query_string;
+    var $query_string = ''; // TODO: (BV) kan dit weg? Lijkt me dode code --BCB
 
 
     /********
@@ -222,6 +223,7 @@ class Page_numbers
     }*/
 
 } // Einde class Page_numbers
+}
 
 
 

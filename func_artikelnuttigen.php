@@ -185,4 +185,3 @@ $inlezen_pil = "INSERT INTO tblNuttig SET hisId = '".mysqli_real_escape_string($
 
 } // Einde function inlezen_pil(
 
-?>

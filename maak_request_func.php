@@ -13,6 +13,7 @@ De function wordt toegepast in maak_request.php. Dat script zit in een loop. Een
 De include vindt plaats in bovengenoemde toegepaste scripts. Via de gelijknamige naam post_reader____.php wordt maak_request.php bereikt.
 Voor afleveren geldt dus : include in InsAfleveren.php => post_readerAflev.php  =>  maak_request.php */
 
+if (!function_exists('maak_request')) {
 function maak_request($datb,$lidid,$fldCode) {
     
         $insert_tblRequest = "INSERT INTO tblRequest SET lidId_new = ".mysqli_real_escape_string($datb,$lidid).", code = '".mysqli_real_escape_string($datb,$fldCode)."' ";     
@@ -26,6 +27,7 @@ function maak_request($datb,$lidid,$fldCode) {
                 return $open['reqId'];
         }
         return FALSE;
+}
 }
 
 ?>

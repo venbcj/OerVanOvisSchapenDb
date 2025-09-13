@@ -10,7 +10,7 @@ save_afsluiten.php toegpast in :
     - HokAfsluiten.php  -->
 
 <?php
-include "func_artikelnuttigen.php";
+require_once "func_artikelnuttigen.php";
 
 // Controle op volldig ingevulde vleden
 if((isset($txtKg) && !isset($fldArt)) || !isset($txtKg) && isset($fldArt)) { $fout = "Het voer is onvolledig ingevuld."; }

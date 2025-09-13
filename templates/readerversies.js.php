@@ -1,15 +1,11 @@
 <script type="text/javascript">
-var cur_versie = <?php echo $last_versieId; ?> ; // gedeclareerd in login.php
-
-//$('.' + cur_versie + '.selectt').toggle();
+<?php if (isset($last_versieId)) { ?>
+var cur_versie = <?php echo $last_versieId; ?> ;
 $('.' + cur_versie).toggle();
-
-
-
+<?php } ?>
     $(document).ready(function() {
         $('input[type="checkbox"]').click(function() {
             var inputValue = $(this).attr("value");
-            //alert(inputValue);
             $("." + inputValue).toggle();
         });
     });

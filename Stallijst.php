@@ -78,58 +78,6 @@ include "login.php"; ?>
 <?php
 if (Auth::is_logged_in()) {
 
-function aantal_fase($datb,$lidid,$Sekse,$Ouder) {
-$zoeken_aantalFase = mysqli_query($datb,"
-SELECT count(distinct(s.schaapId)) aant 
-FROM tblSchaap s
- join tblStal st on (st.schaapId = s.schaapId)
- left join (
-    SELECT st.schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = s.schaapId) 
-WHERE st.lidId = '".mysqli_real_escape_string($datb,$lidid)."' and isnull(st.rel_best) and ".$Sekse." and ".$Ouder." 
-");
-
-if($zoeken_aantalFase)
-        {    $row = mysqli_fetch_assoc($zoeken_aantalFase);
-                return $row['aant'];
-        }
-        return FALSE; // Foutafhandeling
-} 
-
-function aantal_fase_uitgeschaard($datb,$lidid,$Sekse,$Ouder) {
-$zoeken_aantalFase_uitgeschaard = mysqli_query($datb,"
-SELECT count(distinct(s.schaapId)) aant 
-FROM tblSchaap s
- join (
-     SELECT lidId, schaapId, max(stalId) stalId
-     FROM tblStal
-     WHERE lidId = '".mysqli_real_escape_string($datb,$lidid)."'
-     GROUP BY lidId, schaapId
-  ) mst on (mst.schaapId = s.schaapId)
- join (
-     SELECT h.stalId, h.actId
-     FROM tblHistorie h
-      join tblStal st on (h.stalId = st.stalId)
-     WHERE h.actId = 10
- ) haf on (haf.stalId = mst.stalId)
- left join (
-    SELECT st.schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = s.schaapId) 
-WHERE mst.lidId = '".mysqli_real_escape_string($datb,$lidid)."' and ".$Sekse." and ".$Ouder." 
-");
-
-if($zoeken_aantalFase_uitgeschaard)
-        {    $zau = mysqli_fetch_assoc($zoeken_aantalFase_uitgeschaard);
-                return $zau['aant'];
-        }
-        return FALSE; // Foutafhandeling
-} 
 
 $zoek_stapel = mysqli_query($db,"
 SELECT count(distinct(s.schaapId)) aant
@@ -143,15 +91,15 @@ WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_b
 
 $sekse = "(isnull(s.geslacht) or s.geslacht is not null)";
 $ouder = 'isnull(prnt.schaapId)';
-$aantalLam_opStal = aantal_fase($db,$lidId,$sekse,$ouder);
+$aantalLam_opStal = Query::aantal_fase_stal($db,$lidId,$sekse,$ouder);
 
 $sekse = "s.geslacht = 'ooi'";
 $ouder = 'prnt.schaapId is not null';
-$aantalOoi_opStal = aantal_fase($db,$lidId,$sekse,$ouder);
+$aantalOoi_opStal = Query::aantal_fase_stal($db,$lidId,$sekse,$ouder);
 
 $sekse = "s.geslacht = 'ram'";
 $ouder = 'prnt.schaapId is not null';
-$aantalRam_opStal = aantal_fase($db,$lidId,$sekse,$ouder);
+$aantalRam_opStal = Query::aantal_fase_stal($db,$lidId,$sekse,$ouder);
 ?>
 
 <table border = 0 align = "center">

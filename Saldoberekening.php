@@ -29,7 +29,7 @@ include "login.php"; ?>
 <?php
 if (Auth::is_logged_in()) { if($modfin == 1) {
 
-include "func_euro.php";
+require_once "func_euro.php";
 
 $zoek_jaar = mysqli_query($db,"
 SELECT year(max(sb.datum)) jaar

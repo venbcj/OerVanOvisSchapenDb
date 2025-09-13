@@ -21,6 +21,7 @@ class EndToEndCase extends TestCase {
         $_SERVER['HTTP_HOST'] = 'basq';
         $_SERVER['REQUEST_SCHEME'] = 'http';
         $_SERVER['REQUEST_URI'] = $path;
+        $_SERVER['PHP_SELF'] = $path; // TODO: (BCB) hier niet meer om vragen in HokAfleveren
         $_GET = [];
         $_POST = [];
         foreach ($data as $key => $value) {
@@ -51,6 +52,7 @@ class EndToEndCase extends TestCase {
     }
 
     protected function visit($path) {
+        extract($GLOBALS);
         ob_start();
         include getcwd().$path;
         $this->output = ob_get_clean();
@@ -59,6 +61,12 @@ class EndToEndCase extends TestCase {
 
     protected function assertRedirected() {
         $this->assertTrue($this->redirected);
+    }
+
+    protected function assertNoNoise() {
+        $this->assertStringNotContainsString('Notice', $this->output);
+        $this->assertStringNotContainsString('Warning', $this->output);
+        $this->assertStringNotContainsString('Error', $this->output);
     }
 
     protected function approve() {

@@ -145,11 +145,11 @@ while ($zg = mysqli_fetch_assoc($zoek_gebruiker))
 $insert_tblUbn = "INSERT INTO tblUbn SET lidId = '".mysqli_real_escape_string($db,$newId)."', ubn = '".mysqli_real_escape_string($db,$txtUbn)."' ";
         mysqli_query($db,$insert_tblUbn) or die (mysqli_error($db));
     
-include"Newuser_data.php";
+include"newuser_data.php";
 
 
     $lidid = $newId;
-include "Newreader_keuzelijsten.php";
+include "newreader_keuzelijsten.php";
 
 
 $map = 'user_'.$newId;

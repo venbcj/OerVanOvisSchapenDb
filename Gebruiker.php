@@ -91,7 +91,7 @@ if (isset ($_POST['knpUpdate']))
 {
 
 $lidid = $ID;
-include "Newreader_keuzelijsten.php";
+include "newreader_keuzelijsten.php";
 
 }
 

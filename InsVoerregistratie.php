@@ -36,7 +36,7 @@ include "login.php"; ?>
 if (Auth::is_logged_in()) { 
 
 include "kalender.php";
-include "func_artikelnuttigen.php"; 
+require_once "func_artikelnuttigen.php"; 
 
 ?>
 
