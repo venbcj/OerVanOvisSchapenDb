@@ -14,7 +14,7 @@ $vorigjaar = date('Y')-1;
 function first_field_from_result($SQL) {
     global $db;
     $view = mysqli_query($db, $SQL);
-    if (mysqli_num_rows($db) > 0) {
+    if (mysqli_num_rows($view) > 0) {
         return mysqli_fetch_row($view)[0];
     }
     return null;
@@ -24,8 +24,9 @@ function first_field_from_result($SQL) {
 - Dekkingen.php
  */
 // TODO: alle query-functies op deze manier herschrijven --BCB
-function startjaar_gebruiker($LIDID) {
-    $lidId = mysqli_real_escape_string($db, $LIDID);
+function startjaar_gebruiker($lidId) {
+    global $db;
+    $lidId = mysqli_real_escape_string($db, $lidId);
     $SQL = <<<SQL
 SELECT year(dmcreate) jaar
 FROM tblLeden

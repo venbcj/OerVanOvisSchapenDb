@@ -22,11 +22,13 @@ include "login.php"; ?>
 <?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"])) {
 
+    $artId = 0;
 if (!empty($_GET['pst']))
     {    $artId = $_GET['pst'];    }
       else
     {     /*$artId = $_POST['txtArtId_'];*/ 
 
+        $ink_id = 0;
     foreach ($_POST as $name => $value) {
    //echo $name.'<br>'; 
    //echo $value;
@@ -50,6 +52,7 @@ SELECT a.soort
 FROM tblArtikel a
 WHERE a.artId = ".mysqli_real_escape_string($db,$artId)."
 ") or die (mysqli_error($db));
+$soort = 'pil';
 while ($srt = mysqli_fetch_assoc($zoek_soort_artikel))    { $soort = $srt['soort']; }
 
 

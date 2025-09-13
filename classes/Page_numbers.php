@@ -39,7 +39,8 @@ class Page_numbers {
     ********/
     function count_records()
     {
-        $res = @mysqli_query($this->link_id,"SELECT count(*) tot FROM ".$this->table." ".$this->condition);
+        $res = mysqli_query($this->link_id,"SELECT count(*) tot FROM ".$this->table." ".$this->condition);
+        if (!$res) throw new Exception(mysqli_error($this->link_id));
         while($row = mysqli_fetch_assoc($res))
         {
             $k = $row['tot'];

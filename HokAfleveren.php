@@ -44,6 +44,9 @@ include "login.php"; ?>
                 <TD align = "center" valign = "top">
 <?php
 if (Auth::is_logged_in()) {
+    if (!isset($_SESSION['BST'])) $_SESSION['BST'] = 1;
+    if (!isset($_SESSION['Fase'])) $_SESSION['Fase'] = 1;
+    if (!isset($_SESSION['DT1'])) $_SESSION['DT1'] = 1;
 
 if(isset($_GET['pstId'])) { $_SESSION["ID"] = $_GET['pstId']; } $ID = $_SESSION["ID"]; /* zorgt het Id wordt onthouden bij het opnieuw laden van de pagina */
 if(isset($_POST['knpVerder_']) && isset($_POST['kzlRelall_']))    { 

@@ -34,6 +34,7 @@ include "login.php"; ?>
 <?php
 if (Auth::is_logged_in()) { if($modtech ==1) { 
 
+    $kzlJaar = '';
 if (isset($_GET['jaar'])) { $kzlJaar = $_GET['jaar']; }    elseif (isset($_POST['kzlJaar'])) { $kzlJaar = $_POST['kzlJaar']; }
 if (isset($_GET['maand'])) { $keuze_mnd = $_GET['maand']; } 
 
@@ -373,7 +374,7 @@ while($kgd = mysqli_fetch_array($kg_per_maand)) { $mndkg = $kgd['kgMnd']; }
  <td width = 100 style = "font-size:15px;" align = "right"> <?php echo $mndnaam[$mndnr]; ?> <br> </td>    
  <td width = 1> </td>
  <td width = 100 style = "font-size:15px;"> <?php echo $row['speenat']; ?> <br> </td>
-<?php    if(isset($totSpeen)) {$totSpeen = $totSpeen+$row['speenat']; } else { $totSpeen = $row['speenat']; } ?>
+<?php    if(isset($totSpeen)) {$totSpeen = $totSpeen+$row['speenat']; } else { $totSpeen = $row['speenat'] ?? 0; } ?>
  <td width = 1> </td>
  <td width = 100 style = "font-size:15px;">
 
@@ -405,17 +406,17 @@ while($kgd = mysqli_fetch_array($kg_per_maand)) { $mndkg = $kgd['kgMnd']; }
  <td width = 0> </td>
  <td width = 100 style = "font-size:15px;"> <hr /><b> Totaal <?php echo $kzlJaar; ?> </b><br> </td>       
  <td width = 1> </td>
- <td width = 100 style = "font-size:15px;"> <hr /><b> <?php echo $totSpeen; ?> </b><br> </td>
+ <td width = 100 style = "font-size:15px;"> <hr /><b> <?php echo $totSpeen ?? 0; ?> </b><br> </td>
  <td width = 1> </td>
- <td width = 100 style = "font-size:15px;"> <hr /><b> <?php echo $totDood; ?>  </b><br> </td>
- <td width = 1> </td>
- <td width = 100 style = "font-size:15px;"> <hr /><b>  </b><br> </td>
- <td width = 1> </td>
- <td width = 100 style = "font-size:15px;"> <hr /><b> <?php echo $totAfv; ?>  </b><br> </td>
+ <td width = 100 style = "font-size:15px;"> <hr /><b> <?php echo $totDood ?? 0; ?>  </b><br> </td>
  <td width = 1> </td>
  <td width = 100 style = "font-size:15px;"> <hr /><b>  </b><br> </td>
  <td width = 1> </td>
- <td width = 100 style = "font-size:15px;"> <hr /><b> <?php echo $totKg; ?>  </b><br> </td>
+ <td width = 100 style = "font-size:15px;"> <hr /><b> <?php echo $totAfv ?? 0; ?>  </b><br> </td>
+ <td width = 1> </td>
+ <td width = 100 style = "font-size:15px;"> <hr /><b>  </b><br> </td>
+ <td width = 1> </td>
+ <td width = 100 style = "font-size:15px;"> <hr /><b> <?php echo $totKg ?? 0; ?>  </b><br> </td>
  <td width = 1> </td>
  <td width = 50> </td>
 </tr> <?php

@@ -178,6 +178,9 @@ ORDER BY ras
 $RAS = mysqli_query($db,$qryRassen) or die (mysqli_error($db)); 
 
 $index = 0; 
+$rasId = [];
+$rasnm = [];
+$rasRaak = [];
 while ($ras = mysqli_fetch_array($RAS)) 
 {
    $rasId[$index] = $ras['rasId']; 

@@ -31,7 +31,7 @@ include "kalender.php";
 if(isset($_POST['knpVerder_']) && isset($_POST['kzlRelall_']))    { 
     $datum = $_POST['txtDatumall_']; $_SESSION["DT1"] = $datum;
     $bestkeuze = $_POST['kzlRelall_']; $_SESSION["BST"] = $bestkeuze; }
- else { $bestkeuze = $_SESSION["BST"]; } $sess_dag = $_SESSION["DT1"]; $sess_bestm = $_SESSION["BST"];
+ else { $bestkeuze = $_SESSION["BST"] ?? 0; } $sess_dag = $_SESSION["DT1"] ?? 0; $sess_bestm = $_SESSION["BST"] ?? 0;
 
 if(isset($_POST['knpSave_'])) { $actId = 13; include "save_afleveren.php"; }
 
@@ -112,7 +112,7 @@ else { $width = 200; } ?>
 <table border = 0 > <!-- tabel2 -->
 <tr> 
 <td width = <?php echo $width; ?> rowspan = 2 style = "font-size : 18px;">
-  <b> <?php echo $hoknr; ?></b>
+  <b> <?php echo $hoknr ?? 0; ?></b>
 </td>
 
  <?php if(!isset($sess_dag) && !isset($sess_bestm)) { ?>

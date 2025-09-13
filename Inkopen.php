@@ -56,6 +56,7 @@ ORDER BY soort desc, naam
 "; 
 
 $q_newvoer2 = mysqli_query($db,$newvoer) or die (mysqli_error($db));
+$array_eenheid = [];
     while($lin = mysqli_fetch_array($q_newvoer2))
         {
 

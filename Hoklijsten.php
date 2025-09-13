@@ -48,11 +48,12 @@ include "login.php"; ?>
 <?php
 if (Auth::is_logged_in()) { 
 
-$Id = $_GET['pst'];
+$Id = $_GET['pst'] ?? 0;
 
 $zoek_hok = mysqli_query ($db,"
 SELECT hoknr FROM tblHok WHERE hokId = '".mysqli_real_escape_string($db,$Id)."'
 ") or die (mysqli_error($db));
+$hoknr = 0;
     while ($h = mysqli_fetch_assoc($zoek_hok)) { $hoknr = $h['hoknr']; } 
 
 // ***** BEZETTING VANAF LAATSTE PERIODE ***** 

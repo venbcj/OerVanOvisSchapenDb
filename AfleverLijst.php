@@ -31,7 +31,7 @@ if (Auth::is_logged_in()) {
 
 //include vw_Voeding
 
-$hisId = $_POST['kzlPost']; // kzlPost bestaat in ZoekAfldm.php 
+$hisId = $_POST['kzlPost'] ?? ''; // kzlPost bestaat in ZoekAfldm.php 
 
 $zoek_datum_bestemmming = mysqli_query($db,"
 SELECT datum, rel_best
@@ -39,6 +39,8 @@ FROM tblHistorie h
  join tblStal st on (st.stalId = h.stalId)
 WHERE h.hisId = '".mysqli_real_escape_string($db,$hisId)."'
 ") or die (mysqli_error($db));
+$bestm = '0';
+$date = '';
     while( $da_be = mysqli_fetch_assoc($zoek_datum_bestemmming)) { $date = $da_be['datum']; $bestm = $da_be['rel_best']; }
 
 
@@ -54,6 +56,9 @@ FROM tblStal st
 WHERE a.af = 1 and st.rel_best = '".mysqli_real_escape_string($db,$bestm)."' and h.datum = '".mysqli_real_escape_string($db,$date)."' and h.skip = 0
 GROUP BY p.naam, date_format(h.datum,'%d-%m-%Y')
 ") or die (mysqli_error($db));
+$bestemming = '';
+$datum = '';
+$aantal = '';
     while ($za = mysqli_fetch_array($zoek_aflevergegevens))
     {
 $bestemming = $za['naam'];

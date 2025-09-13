@@ -26,7 +26,7 @@ include "login.php"; ?>
 <?php
 if (Auth::is_logged_in()) {
 
-If(empty($_GET['pstId']))  { $schaapId = $_POST['txtlevnr']; } else { $schaapId = "$_GET[pstId]"; }
+If(empty($_GET['pstId']))  { $schaapId = $_POST['txtlevnr'] ?? ''; } else { $schaapId = "$_GET[pstId]"; }
 
 include "kalender.php";
 

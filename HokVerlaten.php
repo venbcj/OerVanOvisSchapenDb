@@ -33,6 +33,8 @@ include "login.php"; ?>
 <?php 
 if (Auth::is_logged_in()) {
 
+    if (!isset($_SESSION['DT1'])) $_SESSION['DT1'] = 1;
+
 if(isset($_GET['pstId']))    { $_SESSION["ID"] = $_GET['pstId']; } $ID = $_SESSION["ID"]; /* zorgt het Id wordt onthouden bij het opnieuw laden van de pagina */
 
 

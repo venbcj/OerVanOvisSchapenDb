@@ -39,7 +39,7 @@ if(isset($_GET['pstId'])) { $_SESSION["ID"] = $_GET['pstId']; } $ID = $_SESSION[
 
 if(isset($_POST['knpVerder_']) )    { 
     $datum = $_POST['txtDatumall_']; $_SESSION["DT1"] = $datum; }
-  $sess_dag = $_SESSION["DT1"];
+  $sess_dag = $_SESSION["DT1"] ?? 0;
 
 if(isset($_POST['knpSave_'])) { include "save_aanwas.php"; }
 

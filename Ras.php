@@ -106,6 +106,7 @@ FROM tblRasuser
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die (mysqli_error($db));
 
+$pdf = 0;
     while($line = mysqli_fetch_assoc($zoek_rasuId))
     {
             $pdf = $line['rasuId']; 

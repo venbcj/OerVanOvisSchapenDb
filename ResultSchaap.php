@@ -81,7 +81,7 @@ include "login.php"; ?>
 <?php
 if (Auth::is_logged_in()) {
 
-$periId = $_GET['pstId'];
+$periId = $_GET['pstId'] ?? 0;
 
 $zoek_doelId = mysqli_query($db,"
 SELECT p.hokId, ho.hoknr, p.doelId, d.doel, p.dmafsluit, date_format(p.dmafsluit,'%d-%m-%Y') afsluitdm
@@ -90,6 +90,12 @@ FROM tblPeriode p
  join tblDoel d on (p.doelId = d.doelId)
 WHERE periId = ".mysqli_real_escape_string($db,$periId)."
 ") or die (mysqli_error($db));
+$hokId = 0;
+$hok = 0;
+$doelId = 0;
+$groep = 0;
+$dmafsl = 0;
+$afsldm = 0;
     while($zd = mysqli_fetch_assoc($zoek_doelId))
     {
      $hokId = $zd['hokId'];
@@ -98,6 +104,9 @@ WHERE periId = ".mysqli_real_escape_string($db,$periId)."
      $groep = $zd['doel'];
      $dmafsl = $zd['dmafsluit'];
      $afsldm = $zd['afsluitdm'];
+    }
+    if (empty($hokId)) {
+        $hokId = 1;
     }
 
 $zoek_start_periode = mysqli_query($db,"
@@ -111,6 +120,7 @@ WHERE hokId = '".mysqli_real_escape_string($db,$hokId)."' and doelId = '".mysqli
      $StartPeriodedm = $zsp['Startdm'];
     }  
 
+    $fase_tijdens_betreden_verblijf = 'true';
 if($doelId == 1) { $fase_tijdens_betreden_verblijf = '( (isnull(spn.datum) and isnull(prnt.datum)) or h.datum < spn.datum)'; }
 if($doelId == 2) { $fase_tijdens_betreden_verblijf = '((h.datum >= spn.datum and (isnull(prnt.datum) or h.datum < prnt.datum)) or (isnull(spn.datum) and h.datum < prnt.datum))'; }
 if($doelId == 3) { $fase_tijdens_betreden_verblijf = '(h.datum >= prnt.datum or ht.datum > prnt.datum)'; }

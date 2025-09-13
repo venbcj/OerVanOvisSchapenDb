@@ -58,7 +58,7 @@ WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and i.inkat-coalesc
 GROUP BY a.naam, a.stdat, e.eenheid
 ORDER BY a.naam";
 
-if (empty ($_GET['pstId'])) { $Id = $_POST['txtId']; } // Id = hokId
+if (empty ($_GET['pstId'])) { $Id = $_POST['txtId'] ?? 0; } // Id = hokId
 else { $Id = $_GET['pstId']; }
 
 

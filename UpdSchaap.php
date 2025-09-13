@@ -59,9 +59,14 @@ if(Auth::is_logged_in()) {
 
 include "kalender.php";
 include "vw_kzlOoien.php"; 
-    
-     if(empty($_GET['pstschaap']))     {    $schaapId = $_POST['txtSchaapId'];  }  else    {     $schaapId = $_GET['pstschaap'];  }
-    
+
+// niet direct vanaf navigatie aanspreekbaar.
+// Bij alle oproepen is er ofwel een GET[pstschaap, ofwel een POST[txtschaapid]
+if(empty($_GET['pstschaap'])) {
+    $schaapId = $_POST['txtSchaapId'];
+} else {
+    $schaapId = $_GET['pstschaap'];
+}    
      If(empty($_GET['pstwerknr']) && empty($_POST['txtwerknr']))                 {    $pstwerknr = '';}  
 else if(empty($_GET['pstwerknr']))  {$pstwerknr = $_POST['txtwerknr'];} else    {     $pstwerknr = $_GET['pstwerknr']; }
 

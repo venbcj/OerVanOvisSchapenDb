@@ -42,7 +42,7 @@ if(isset($_GET['pstId']))    { $_SESSION["ID"] = $_GET['pstId']; } $ID = $_SESSI
 if(isset($_POST['knpVerder_']) && isset($_POST['kzlHokall_']))    { 
     $datum = $_POST['txtDatumall_']; $_SESSION["DT1"] = $datum;
     $hokkeuze = $_POST['kzlHokall_']; $_SESSION["BST"] = $hokkeuze; } 
- else { $hokkeuze = $_SESSION["BST"];  } $sess_dag = $_SESSION["DT1"]; $sess_bestm = $_SESSION["BST"];
+ else { $hokkeuze = $_SESSION["BST"] ?? '';  } $sess_dag = $_SESSION["DT1"] ?? ''; $sess_bestm = $_SESSION["BST"] ?? '';
 
 if(isset($_POST['knpSave_'])) { include "save_spenen.php"; }
 

@@ -177,6 +177,7 @@ FROM tblVolwas v
  join tblSchaap vdr on (vdr.schaapId = v.vdrId)
 ") or die (mysqli_error($db));
 
+$array_vader_uit_koppel = [];
 while ( $zld = mysqli_fetch_assoc($zoek_laatste_dekkingen)) { $array_vader_uit_koppel[$zld['mdrId']] = $zld['lev']; }
 
 // Einde Array tbv javascript om vader automatisch te tonen
@@ -210,6 +211,7 @@ WHERE h.actId = 1 and h.skip = 0 and date_add(h.datum,interval 30 day) > CURRENT
 GROUP BY v.mdrId, h.datum
 ") or die (mysqli_error($db));
 
+$array_worp = [];
 while ( $zwld = mysqli_fetch_assoc($zoek_werpdatum_laatste_dekking)) { $array_worp[$zwld['mdrId']] = $zwld['werpdm']; }
 // Einde Array tbv javascript om werpdatum automatisch te tonen
 
@@ -1173,7 +1175,7 @@ while ($zu = mysqli_fetch_assoc($zoek_ubn))
     $opties = array('' => '', 'blauw' => 'blauw', 'geel' => 'geel', 'groen' => 'groen', 'oranje' => 'oranje', 'paars' => 'paars', 'rood'=>'rood', 'wit' => 'wit', 'zwart' => 'zwart');
     foreach ( $opties as $key => $waarde)
     {
-       if((!isset($_POST['knpSave']) && $kzlKleur == $key) || (isset($_POST["kzlKleur"]) && $_POST["kzlKleur"] == $key) ) {
+       if((!isset($_POST['knpSave']) && ($kzlKleur ?? '') == $key) || (isset($_POST["kzlKleur"]) && $_POST["kzlKleur"] == $key) ) {
         echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
       } else {
         echo '<option value="' . $key . '">' . $waarde . '</option>';

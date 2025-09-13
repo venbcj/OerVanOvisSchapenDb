@@ -111,7 +111,7 @@ left join tblSchaap s on (rd.levnr_pil = s.levensnummer)
 left join tblStal st on (s.schaapId = st.schaapId and st.lidId = rd.lidId)
 left join (
     SELECT c.scan, a.artId, c.stdat, a.actief, ru.pil, ru.reduId, r.reden
-    FROM tblCombiReden c 
+    FROM tblCombireden c 
      join tblArtikel a on (a.artId = c.artId)
      join tblRedenuser  ru on (ru.reduId = c.reduId)
      join tblReden r on (ru.redId = r.redId)
@@ -139,7 +139,7 @@ left join
 
 $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.teller_pil is not null and isnull(rd.verwerkt) ";
 
-
+include "paginas.php";
 
 $data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.readId");
 

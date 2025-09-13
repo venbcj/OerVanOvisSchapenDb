@@ -10,6 +10,10 @@ class MeldingTest extends EndToEndCase {
 
     public function setup(): void {
         $this->runfixture('melding-4');
+        require_once "autoload.php";
+        $_SERVER['HTTP_HOST'] = 'basq';
+        $_SERVER['REQUEST_SCHEME'] = 'http';
+        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
     }
 
     # TODO: testcases waar "datum" voor de eerst mogelijke, of na de laatst mogelijke ligt.
@@ -21,9 +25,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;
@@ -45,9 +46,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;
@@ -70,9 +68,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;
@@ -95,9 +90,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;
@@ -119,9 +111,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;
@@ -144,9 +133,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;
@@ -169,9 +155,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;
@@ -198,9 +181,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;
@@ -223,9 +203,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;
@@ -249,9 +226,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;
@@ -276,9 +250,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;
@@ -306,9 +277,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;
@@ -335,9 +303,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;
@@ -366,9 +331,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;
@@ -398,9 +360,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;
@@ -430,9 +389,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;
@@ -463,9 +419,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;
@@ -488,9 +441,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;
@@ -514,9 +464,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;
@@ -541,9 +488,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;
@@ -569,9 +513,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;
@@ -595,9 +536,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;
@@ -621,9 +559,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;
@@ -649,9 +584,6 @@ class MeldingTest extends EndToEndCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
         require_once "basisfuncties.php";
         include "connect_db.php";
         $this->db = $db;

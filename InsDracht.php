@@ -103,6 +103,7 @@ WHERE isnull(hl.werpId)
 GROUP BY  v.volwId, v.mdrId, v.vdrId, right(vdr.levensnummer,$Karwerk)
 ") or die (mysqli_error($db));
 
+$array_vader_uit_koppel = [];
 while ( $zld = mysqli_fetch_assoc($zoek_laatste_dekkingen_met_vader_zonder_werpdatum)) { $array_vader_uit_koppel[$zld['mdrId']] = $zld['lev']; }
 
 // Einde Array tbv javascript om vader automatisch te tonen. Key is schaapId ooi en value is werknr ram

@@ -306,6 +306,7 @@ FROM tblPartij p
 WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.naam = 'Vermist'
 ") or die (mysqli_error($db));
 
+$niet_tonen = 0;
     while($zcv = mysqli_fetch_assoc($zoek_crediteur_vermist))
     { $niet_tonen = $zcv['relId']; }
 

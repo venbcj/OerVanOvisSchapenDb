@@ -135,7 +135,7 @@ WHERE h.lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief > '".mysq
     <input type = "submit" name ="knpToon" value = "Toon">
  </td>
  <td width= 200 align="right">
-     <a href= '<?php echo $url;?>Hok_pdf.php?Id=<?php echo $pdf; ?>' style = 'color : blue'>
+     <a href= '<?php echo $url;?>Hok_pdf.php?Id=<?php echo $pdf ?? ''; ?>' style = 'color : blue'>
     print pagina </a> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
  </td>    
 </tr>

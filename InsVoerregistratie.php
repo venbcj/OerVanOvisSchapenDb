@@ -41,6 +41,7 @@ require_once "func_artikelnuttigen.php";
 ?>
 
 <?php
+$periode = '';
 if (isset($_POST['knpVervers_']) || isset($_POST['knpSaveVoer_'])) { 
     $periode = $_POST["txtDatumPeriode_"];
 }
@@ -102,6 +103,7 @@ $tabel = "
 ";
 
 //$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 8888 and isnull(rd.verwerkt) ";
+$WHERE = '';
 
 include "paginas.php";
 

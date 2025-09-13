@@ -70,6 +70,8 @@ FROM tblElement e
 WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and e.elemId = 10
 ") or die (mysqli_error($db));
     
+$prijs_nm = 0;
+$prijs_val = 0;
     while ($prl = mysqli_fetch_assoc($zoek_prijs_lam)) { 
         $prijs_nm = $prl['element'];
         $prijs_val = $prl['waarde'];
@@ -82,6 +84,8 @@ FROM tblElement e
 WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and e.elemId = 19
 ") or die (mysqli_error($db));
 
+$worp_nm = 0;
+$worp_val = 0;
     while ($wrp = mysqli_fetch_assoc($zoek_worpgrootte)) {
         $worp_nm = $wrp['element'];
         $worp_val = $wrp['waarde'];
@@ -94,6 +98,8 @@ FROM tblElement e
 WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and e.elemId = 12
 ") or die (mysqli_error($db));
 
+$sterf_nm = 0;
+$sterf_val = 0;
     while ($stf = mysqli_fetch_assoc($zoek_sterfte)) {
         $sterf_nm = $stf['element'];
         $sterf_val = $stf['waarde'];
@@ -135,7 +141,7 @@ SELECT rubuId
 FROM tblRubriekuser
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die (mysqli_error($db)) ;
-
+$rubuId = 0;
 while ( $rub = mysqli_fetch_assoc($zoek_rubuId)) { $rubuId = $rub['rubuId'];
 
 for ($i = 1 ; $i <= 12 ; $i++){
@@ -197,6 +203,7 @@ FROM tblRubriekuser
 WHERE rubId = 39 and lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die (mysqli_error($db));
 
+$rubuId = 0;
     while ( $zrv = mysqli_fetch_assoc($zoek_rubriek_verkooplammeren)) { $rubuId = $zrv['rubuId']; }
 
 

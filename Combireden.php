@@ -425,6 +425,7 @@ FROM tblStal st
 WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)."  
 ") or die (mysqli_error($db));
 
+$pdf = '';
     while($record = mysqli_fetch_assoc($zoek_stalId)) { $pdf = $record['stalId']; }
 ?>
 <table border = 0 align =  "left" > 

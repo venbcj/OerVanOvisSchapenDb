@@ -31,6 +31,9 @@ $var1dag = 60*60*24;
     $maak_datum = strtotime($eind_datum) - $var1dag; $eind_datum = date("d-m-Y", $maak_datum);
     /*if (isset($_GET['pstId'])) {$raak = $_GET['pstId']; }*/ 
 
+$van = '';
+$tot = '';
+$pdf = '';
 if(isset($_POST['knpZoek'])) {
 $worp_van = $_POST['txtWorp_van']; $van = date_format(date_create($worp_van), 'Y-m-d');
 $worp_tot = $_POST['txtWorp_tot']; $tot = date_format(date_create($worp_tot), 'Y-m-d');
@@ -65,6 +68,7 @@ $zoek_meerlingen = mysqli_query($db,$query) or die (mysqli_error($db));
 while($mrl = mysqli_fetch_assoc($zoek_meerlingen))
 {                $pdf = $mrl['stalId']; // t.b.v. pdf
             }
+if (empty($pdf)) $pdf = 0;
 
 
 

@@ -27,6 +27,8 @@ include "login.php"; ?>
 <?php
 if (Auth::is_logged_in()) {
 include "kalender.php";
+    if (!isset($_SESSION['BST'])) $_SESSION['BST'] = 1;
+    if (!isset($_SESSION['DT1'])) $_SESSION['DT1'] = 1;
 
 if(isset($_POST['knpVerder_']) && isset($_POST['kzlHokall_']))    {
     $datum = $_POST['txtDatumall_']; $_SESSION["DT1"] = $datum;

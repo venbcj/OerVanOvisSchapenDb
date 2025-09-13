@@ -39,6 +39,7 @@ WHERE s.geslacht = 'ram' and isnull(st.rel_best) and lidId = '".mysqli_real_esca
 GROUP BY st.stalId  
 ") or die (mysqli_error($db));
 
+$pdf = 0;
     while($record = mysqli_fetch_assoc($zoek_stalId))
     {
             $pdf = $record['stalId']; }

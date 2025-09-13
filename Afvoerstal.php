@@ -38,6 +38,9 @@ $qryRelatiekeuze = mysqli_query($db,"SELECT r.relId, p.naam
             ORDER BY p.naam") or die (mysqli_error($db)); 
 
 $index = 0; 
+$relId = [];
+$relnm = [];
+$relRaak = [];
 while ($rel = mysqli_fetch_array($qryRelatiekeuze)) 
 { 
    $relId[$index] = $rel['relId']; 

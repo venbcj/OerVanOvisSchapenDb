@@ -26,6 +26,7 @@ include "kalender.php";
 
 include "validate-omnschaap.js.php";
 
+$pstnr = 0;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $velden = (array_keys($_POST));
     $pstnr = Url::getIdFromKey($velden[0]);

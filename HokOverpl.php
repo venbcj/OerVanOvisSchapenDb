@@ -41,14 +41,22 @@ if (Auth::is_logged_in()) {
 
 if(isset($_GET['pstId']))    { $_SESSION["ID"] = $_GET['pstId']; } $ID = $_SESSION["ID"]; /* zorgt het Id wordt onthouden bij het opnieuw laden van de pagina */
 
-if($_POST['radFase_'] == 'lam') { $_SESSION["KZ"] = 1; }
-else if($_POST['radFase_'] == 'volw') { $_SESSION["KZ"] = 2; }
-else if($_POST['radFase_'] == 'alles') { $_SESSION["KZ"] = NULL; }
-
+switch ($_POST['radFase_'] ?? 'alles') {
+case 'lam':
+ $_SESSION["KZ"] = 1; 
+break;
+case 'volw':
+ $_SESSION["KZ"] = 2; 
+break;
+default:
+ $_SESSION["KZ"] = NULL; 
+}
 $KEUZE = $_SESSION["KZ"];
 
 
 ##echo '$KEUZE = '.$KEUZE.'<br>';
+    if (!isset($_SESSION['BST'])) $_SESSION['BST'] = 1;
+    if (!isset($_SESSION['DT1'])) $_SESSION['DT1'] = 1;
 
 
 if(isset($_POST['knpVerder_']) && isset($_POST['kzlHokall_']))    {
@@ -157,6 +165,7 @@ while ($hnr = mysqli_fetch_array($qryHokkeuze))
 unset($index);
 // EINDE Declaratie HOKNUMMER  KEUZE 
 
+$filterResult = '';
          if($KEUZE == 1) { $filterResult = ' and isnull(prnt)'; }
 else if($KEUZE == 2) { $filterResult = ' and prnt is not null'; }
 

@@ -29,7 +29,7 @@ if (isset($_SESSION["U1"]) && isset($_SESSION["W1"])) {
 
 $pstId = '';
 If (empty($_GET['pstId']))
-    {    $Id = $_GET['txtSchaapId'];    }
+    {    $Id = $_GET['txtSchaapId'] ?? 1;    }
       else
     {     $Id = $_GET['pstId']; }
                 

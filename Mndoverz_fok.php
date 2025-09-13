@@ -35,6 +35,7 @@ include "login.php"; ?>
 <?php
 if (Auth::is_logged_in()) { if($modtech ==1) { 
 
+    $kzlJaar = '';
 if (isset($_GET['jaar'])) { $kzlJaar = $_GET['jaar']; }    elseif (isset($_POST['kzlJaar'])) { $kzlJaar = $_POST['kzlJaar']; }
 if (isset($_GET['maand'])) { $keuze_mnd = $_GET['maand']; }
 
@@ -282,8 +283,19 @@ ORDER BY aant.maand desc
 </tr>
 
 <?php
-        while($row = mysqli_fetch_array($result))/*    $row zorgt voor de waardes per maand     */
-        { $mndnr = $row['maand'];
+$totWorp = 0;
+$totGeb = 1; // wordt door gedeeld.
+$totDood = 0;
+$totOndood = 1; // eh... zombie-schapen?
+$gemWorp = 0;
+$totLevnr = 0;
+$totSpnat = 0;
+$totVrmerk = 0;
+$totVrspn = 0;
+
+    /*    $row zorgt voor de waardes per maand     */
+while($row = mysqli_fetch_array($result)) {
+    $mndnr = $row['maand'];
 
 // Kg voer per maand
 $kg_per_maand = mysqli_query($db,"
@@ -536,6 +548,7 @@ FROM tblHistorie h
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 1 and h.skip = 0 and year(h.datum) = '".mysqli_real_escape_string($db,$kzlJaar)."' and v.mdrId is not null
 ") or die (mysqli_error($db));
     while($rij = mysqli_fetch_array($zoek_aantal_maanden)) { $mndat = $rij['mndat']; }
+if (empty($mndat)) $mndat = 1; // niet 0, want daar deelt het niet lekker door
     
 $zoek_aantal_maanden_groei = mysqli_query($db,"
 SELECT count(distinct(month(h.datum))) mndat
@@ -551,6 +564,7 @@ FROM tblHistorie h
  ) spn on (spn.schaapId = s.schaapId)
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 1 and h.skip = 0 and year(h.datum) = '".mysqli_real_escape_string($db,$kzlJaar)."' and v.mdrId is not null
 ") or die (mysqli_error($db));
+$mndat_gr = 1;
     while($rij = mysqli_fetch_array($zoek_aantal_maanden_groei)) { $mndat_gr = $rij['mndat']; }
 // Gemiddelden ?>
 

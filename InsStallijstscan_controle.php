@@ -314,13 +314,13 @@ FROM tblSchaap s
      FROM tblHistorie h
       join tblStal st on (st.stalId = h.stalId)
      WHERE actId = 1 and h.skip = 0
-     ) geb on (geb.schaapId = s.schaapId)
+ ) geb on (geb.schaapId = s.schaapId)
  left join (
      SELECT schaapId, hisId his_aanw
      FROM tblHistorie h
       join tblStal st on (st.stalId = h.stalId)
      WHERE actId = 3 and h.skip = 0
-     ) aanw on (aanw.schaapId = s.schaapId)
+ ) aanw on (aanw.schaapId = s.schaapId)
  left join tblRas r on (r.rasId = s.rasId)
 WHERE s.levensnummer = '" . mysqli_real_escape_string($db,$levnr_rd) . "'
 ";

@@ -112,6 +112,7 @@ unset($index);
     if(!empty($_POST['kzlWat_'])) { $registratie = $_POST['kzlWat_']; }
     if(!empty($_POST['kzlOoi_'])) { $kzlMdr = $_POST['kzlOoi_']; } #echo 'Moeder : '.$kzlMdr.'<br>';
     if(!empty($_POST['kzlRamNew1_'])) { $kzlVdr = $_POST['kzlRamNew1_']; } #echo 'Vader : '.$kzlVdr.'<br>';
+    $txtGrootte = '';
     if(isset($_POST['txtWorp_'])) { $txtGrootte = $_POST['txtWorp_']; }  #echo 'Dracht : '.$dracht.'<br><br>';
 
 
@@ -597,7 +598,7 @@ for ($i = 0; $i < $count; $i++){
  </select>
  </td>
 
- <td align="center"><input type = "text" size = 1 name = "txtWorp_" style = "font-size:10px;" value = <?php echo $txtGrootte; ?> >
+ <td align="center"><input type = "text" size = 1 name = "txtWorp_" style = "font-size:10px;" value = <?php echo $txtGrootte ?? ''; ?> >
  </td>
  <td colspan = 2><input type = "submit" name = "knpInsert1_" value = "Toevoegen" style = "font-size:10px;">
  </td>

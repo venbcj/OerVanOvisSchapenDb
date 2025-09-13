@@ -34,13 +34,14 @@ include "login.php"; ?>
 <?php
 if (Auth::is_logged_in()) {
 
-$pstId = $_GET['pstgroep'];
+$pstId = $_GET['pstgroep'] ?? 1; // TODO: wat is een verstandige default?
 
 $zoek_doel = mysqli_query($db,"
 SELECT doel
 FROM tblDoel
 WHERE doelId = '".mysqli_real_escape_string($db,$pstId)."' 
 ") or die (mysqli_error($db));
+$dgroep = 'fout';
 while($dl = mysqli_fetch_array($zoek_doel)){ $dgroep = $dl['doel']; } ?>
 
 <table border = 0 >
@@ -55,7 +56,7 @@ while($dl = mysqli_fetch_array($zoek_doel)){ $dgroep = $dl['doel']; } ?>
 </table>
 <?php
 if($pstId == 1) {
-$zoek_hok_ingebruik_geb = mysqli_query($db,"
+$zoek_hok_ingebruik = mysqli_query($db,"
 SELECT ho.hokId, ho.hoknr
 FROM tblBezet b
  join tblHok ho on (b.hokId = ho.hokId)
@@ -89,10 +90,11 @@ FROM tblBezet b
  ) prnt on (prnt.schaapId = st.schaapId)
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0 and isnull(uit.bezId) and isnull(spn.schaapId) and isnull(prnt.schaapId)
 GROUP BY ho.hokId, ho.hoknr
-") or die (mysqli_error($db)); $zoek_hok_ingebruik = $zoek_hok_ingebruik_geb; }
+") or die (mysqli_error($db));
+}
 
 if($pstId == 2) {
-$zoek_hok_ingebruik_spn = mysqli_query($db,"
+$zoek_hok_ingebruik = mysqli_query($db,"
 SELECT ho.hokId, ho.hoknr
 FROM tblBezet b
  join tblHok ho on (b.hokId = ho.hokId)
@@ -126,8 +128,9 @@ FROM tblBezet b
  ) prnt on (prnt.schaapId = st.schaapId)
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0 and isnull(uit.bezId) and isnull(prnt.schaapId)
 GROUP BY ho.hokId, ho.hoknr
-") or die (mysqli_error($db)); $zoek_hok_ingebruik = $zoek_hok_ingebruik_spn; }
-        
+") or die (mysqli_error($db)); 
+}
+
     while($hk = mysqli_fetch_assoc($zoek_hok_ingebruik))
         { $hokId = $hk['hokId']; $hok = $hk['hoknr'];  ?>
                 

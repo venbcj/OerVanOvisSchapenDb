@@ -26,9 +26,9 @@ include "login.php";
 if (Auth::is_logged_in()) { 
 
 if (empty($_GET['pstid']))
-{    $leverid = "$_POST[txtpstid]";    }
+{    $leverid = $_POST['txtpstid'] ?? 0;    }
 else
-{    $leverid = "$_GET[pstid]";    }
+{    $leverid = $_GET['pstid'];    }
 
 If (isset ($_POST['knpUpdate']))
 {

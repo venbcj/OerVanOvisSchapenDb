@@ -26,7 +26,7 @@ include "login.php"; ?>
 if (Auth::is_logged_in()) { 
 
 If (empty($_GET['pstid']))
-{    $partId = $_SESSION["CNT"];    }
+{    $partId = $_SESSION["CNT"] ?? 0;    }
 else { $_SESSION["CNT"] = $_GET['pstid']; $partId = $_GET['pstid'];    }
 
 if (isset ($_POST['knpInsert_']))

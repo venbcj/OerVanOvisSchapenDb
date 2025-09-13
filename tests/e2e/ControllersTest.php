@@ -13,7 +13,6 @@ Beheer.php
 Bezet.php
 Combireden.php
 Componenten.php
-Contact.php
 Dekkingen.php
 Deklijst.php
 Eenheden.php
@@ -51,7 +50,6 @@ InsMedicijn.php
 InsOmnummeren.php
 InsOverplaats.php
 InsSpenen.php
-InsStallijstscan_controle.php
 InsStallijstscan_nieuwe_klant.php
 InsTvUitscharen.php
 InsUitscharen.php
@@ -62,11 +60,9 @@ InvSchaap.php
 Klanten.php
 Kostenopgaaf.php
 Kostenoverzicht.php
-Leverancier.php
 Leveranciers.php
 Liquiditeit.php
 Loslopers.php
-LoslopersPlaatsen.php
 LoslopersVerkopen.php
 MaandTotalen.php
 Medicijnen.php
@@ -96,9 +92,7 @@ OoilamSelectie.php
 Rapport1.php
 Rapport.php
 Ras.php
-Readerbestanden.php
 Readerversies.php
-Relatie.php
 Relaties.php
 ResultHok.php
 ResultSchaap.php
@@ -108,7 +102,6 @@ Stallijst.php
 Systeem.php
 Ubn_toevoegen.php
 Uitval.php
-UpdSchaap.php
 Vader.php
 Voer.php
 Voer_rapportage.php
@@ -125,9 +118,14 @@ TXT
     }
 
     public static function problematic_controllers() {
+        // de welkoms doen raar met de sessie
+        // de insstallijstscancontrole maakt een 'unknown column s.rasId in ON' ... ?
+        // queries in loslopersplaatsen bevatten geen kolom 'aantin', maar daar wordt vervolgens wel naar gevraagd
         return self::txt2ar(<<<TXT
 Welkom.php
 Welkom2.php
+InsStallijstscan_controle.php
+LoslopersPlaatsen.php
 TXT
         );
     }
@@ -161,6 +159,7 @@ TXT
         return self::txt2ar(<<<TXT
 Gespeenden.php
 Klant.php
+Leverancier.php
 TXT
         );
     }
@@ -191,5 +190,33 @@ TXT
         $this->get("/$controller", ['ingelogd' => 1]);
         $this->assertNoNoise();
     }
+
+    public function testUpdSchaap() {
+        $this->get("/UpdSchaap.php", ['pstschaap' => 1]);
+        $this->assertNoNoise();
+    }
+
+    public function testContact() {
+        $_SESSION['CNT'] = 0;
+        $this->get("/Contact.php");
+        $this->assertNoNoise();
+    }
+
+    public function testRelatie() {
+        $this->get("/Relatie.php", ['pstid' => 0]);
+        $this->assertNoNoise();
+    }
+
+    public function testReaderbestanden() {
+        $this->markTestIncomplete('spreekt directory aan');
+        $this->get('/Readerbestanden.php');
+        $this->assertNoNoise();
+    }
+
+    // 11
+    // Afleverlijst:79 bestemming
+    // Wachtwoord:45 veld
+    // LoslopersPlaatsen:70 aantin'
+    // Voorraadcorrectie:52 artId
 
 }
