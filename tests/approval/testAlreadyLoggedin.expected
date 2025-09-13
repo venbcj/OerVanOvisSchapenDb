@@ -46,7 +46,7 @@ $(document).ready(function(){
 
     <div id = "rechts_uitlijnen" class = 'header_breed'><section style = "text-align : center"; > Home&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp </section><img src='OER_van_OVIS.jpg' /></div>
 
-<ul class="header_smal" id = balkCoach >
+<ul class="header_smal" id = balkOntw >
     <li class="dropdown"><a href= 'http://oer-dev/Home.php' style = 'color : black'>Home</a></li>
     <li class="dropdown"><span>Registratie</span>
         <div class="dropdown-content">

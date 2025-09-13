@@ -41,7 +41,7 @@ $(document).ready(function(){
 
 <div id = "rechts_uitlijnen" class = 'header_breed'><section> </section><img src='OER_van_OVIS.jpg' /></div>
 
-<ul class="header_smal" id = balkCoach >
+<ul class="header_smal" id = balkOntw >
     <li id = "rechts_uitlijnen"><a href='index.php' style = 'color : black'>Inloggen</a></li>
 </ul>
 
@@ -98,7 +98,7 @@ $(document).ready(function(){
 
 <div id = "rechts_uitlijnen" class = 'header_breed'><section> </section><img src='OER_van_OVIS.jpg' /></div>
 
-<ul class="header_smal" id = balkCoach >
+<ul class="header_smal" id = balkOntw >
     <li id = "rechts_uitlijnen"><a href='http://oer-dev/index.php' style = 'color : black'>Inloggen</a></li>
 </ul>
 

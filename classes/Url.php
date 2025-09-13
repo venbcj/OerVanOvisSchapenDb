@@ -32,7 +32,7 @@ class Url {
             $tagid = 'balkProd';
         }
         if (php_uname('n') == 'basq') {
-            $tagid = 'balkCoach';
+            $tagid = 'balkOntw';
         }
         return $tagid;
     }
