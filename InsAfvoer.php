@@ -5,7 +5,6 @@ require_once("autoload.php");
 /* 11-8-2014 : veld type gewijzigd in fase 
 23-11-2014 : functie header() toegevoegd. In de header wordt het vervevrsen van de pagina verstuurd (request =. response) naar de server 
 8-3-2015 : Login toegevoegd 
-21-12-2015 : maak_request_func.php ge-include i.p.v. in maak_request.php */
 $versie = '9-11-2016';  /* vw_StatusSchaap verwijderd */
 $versie = '23-11-2016';  /* actId = 3 uit on clause gehaald en als sub query genest */
 $versie = "22-1-2017"; /* tblBezetting gewijzigd naar tblBezet */
@@ -52,7 +51,6 @@ if (Auth::is_logged_in()) {
 
 include "vw_HistorieDm.php";
 
-if ($modmeld == 1 ) { include "maak_request_func.php"; }
 
 If (isset($_POST['knpInsert_'])) {
 

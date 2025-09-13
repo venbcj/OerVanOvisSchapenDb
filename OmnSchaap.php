@@ -23,32 +23,24 @@ include "login.php"; ?>
 if (Auth::is_logged_in()) { 
 
 include "kalender.php";
-if ($modmeld == 1 ) { include "maak_request_func.php"; }
 
 include "validate-omnschaap.js.php";
 
-if(!empty($_GET['pstschaap']))     {    $pst = $_GET['pstschaap']; 
-
-$zoek_oud_levensnummer_obv_schaapId = mysqli_query($db,"
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $velden = (array_keys($_POST));
+    $pstnr = Url::getIdFromKey($velden[0]);
+} else {
+    if(!empty($_GET['pstschaap'])) {
+        $pst = $_GET['pstschaap']; 
+        $zoek_oud_levensnummer_obv_schaapId = mysqli_query($db,"
 SELECT levensnummer
 FROM tblSchaap 
 WHERE schaapId = ".mysqli_real_escape_string($db,$pst)."
 ") or die (mysqli_error($db));
-
-    while ( $zl = mysqli_fetch_assoc($zoek_oud_levensnummer_obv_schaapId)) { $pstnr = $zl['levensnummer']; }
-
-//var_dump(array_keys($_GET)); 
-//$velden = (array_keys($_GET));
-//echo '<br>'.$velden[0];
-
-
-}  else    {
-
-//var_dump(array_keys($_POST));
-$velden = (array_keys($_POST)); //echo '<br> velden na POST = '.$velden[0];
-
-$pstnr = Url::getIdFromKey($velden[0]); //echo '<br> $uitkomst = '.$pstnr;
-
+    while ($zl = mysqli_fetch_assoc($zoek_oud_levensnummer_obv_schaapId)) {
+        $pstnr = $zl['levensnummer'];
+    }
+}
 }
 
 if (isset ($_POST["knpSave_$pstnr"])) {

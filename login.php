@@ -31,6 +31,13 @@ $output = [];
 // - globale variabelen zetten
 // - redirecten
 // - uitvoer genereren
+// Wat gaan we doen?
+// - Vervang alle losse session_start() door
+//     Auth::start();
+//     if (Auth::redirected()) {
+//       return;
+//     }
+// - Auth::start() gaat alles doen wat nu in login staat, op de uitvoer na
 
 //$host = "localhost"; $user = "bvdvschaapovis"; $pw = "MSenWL44"; $dtb = $db_p;
 if (($url == 'https://test.oervanovis.nl/' || $url == 'https://demo.oervanovis.nl/') && $dtb == 'k36098_bvdvSchapenDb') {

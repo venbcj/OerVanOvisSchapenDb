@@ -45,8 +45,6 @@ include "login.php"; ?>
 <?php
 if (Auth::is_logged_in()) {
 
-if ($modmeld == 1 ) { include "maak_request_func.php"; }
-
 if(isset($_GET['pstId'])) { $_SESSION["ID"] = $_GET['pstId']; } $ID = $_SESSION["ID"]; /* zorgt het Id wordt onthouden bij het opnieuw laden van de pagina */
 if(isset($_POST['knpVerder_']) && isset($_POST['kzlRelall_']))    { 
     $datum = $_POST['txtDatumall_']; $_SESSION["DT1"] = $datum;

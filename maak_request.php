@@ -1,6 +1,7 @@
-<!-- 21-12-2015 : include maak_request_func verplaatst naar InsAanvoer.php, InsAfleveren.php, Insgeboortes.php en InsUitval.php
-11-1-2022 sql Beveiligd met quotes. Per 2-9-2023 insert_tblMelding ook beveiligd
+<?php
 
+/*
+11-1-2022 sql Beveiligd met quotes. Per 2-9-2023 insert_tblMelding ook beveiligd
 
 maak_request.php toegepast in :
     x Afleveren.php
@@ -9,8 +10,7 @@ maak_request.php toegepast in :
     - post_readerAflev.php
     - post_readerGeb.php
     - post_readerUitv.php -->
-
-<?php
+*/
 include "url.php";
 unset($reqId); // Nodig als er diverse soorten meldingen tegelijk worden aangemaakt. Zie bijv. Afvoerstal.php (alleen module melden)
 // *** HET REQUEST ***
@@ -29,14 +29,15 @@ HAVING (count(r.reqId) < 60)
         
         if(!isset($reqId)){
 // Nieuw request aanmaken indien nodig
-        $reqId = maak_request($db,$lidId,$Melding); /* Gedeclareerd in maak_request_func.php 
-                                                        Hier gaat het niet omdat dit script in een loop zit en een function maar 1x kan worden aangemaakt. */
-        $newlidId = $lidId; // T.t.v. het aanmaken van het request zijn er nog geen meldingen gekoppeld en is dus niet bekend voor welke gebruiker dit request is bestemd. Zolang er geen meldingen voorkomen in tblMelding bepaald $newlidId voor welke gebruiker het request is bestemd. 
+            $reqId = Request::maak_request($db,$lidId,$Melding); 
+            $newlidId = $lidId; 
+            // T.t.v. het aanmaken van het request zijn er nog geen meldingen gekoppeld 
+            // en is dus niet bekend voor welke gebruiker dit request is bestemd.
+            //  Zolang er geen meldingen voorkomen in tblMelding
+            //    bepaalt $newlidId voor welke gebruiker het request is bestemd. 
         } 
 // Einde Nieuw request aanmaken indien nodig
 // *** EINDE HET REQUEST ***
-
-
 
 // *** DE MELDINGEN ***        
 // Insert tblMeldingen
@@ -51,4 +52,3 @@ HAVING (count(r.reqId) < 60)
         }            
 // Einde Insert tblMeldingen    
 // *** EINDE DE MELDINGEN ***
- ?>

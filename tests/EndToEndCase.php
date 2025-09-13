@@ -6,8 +6,9 @@ use PHPUnit\Framework\TestCase;
 
 class EndToEndCase extends TestCase {
 
-    protected string $output = '';
-    protected bool $redirected = false;
+    # php-8
+    # protected string $output = '';
+    # protected bool $redirected = false;
 
     protected static function runfixture($name) {
         if (file_exists($file = getcwd()."/tests/fixtures/$name.sql")) {
@@ -19,6 +20,7 @@ class EndToEndCase extends TestCase {
 
     private function simulateGetRequest($path, $data) {
         $_SERVER['HTTP_HOST'] = 'basq';
+        $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['REQUEST_SCHEME'] = 'http';
         $_SERVER['REQUEST_URI'] = $path;
         $_SERVER['PHP_SELF'] = $path; // TODO: (BCB) hier niet meer om vragen in HokAfleveren

@@ -45,6 +45,7 @@ $knptype = "submit";
 $today = date("Y-m-d");
 
 // De gegevens van het request
+$reqId = 0;
 $zoek_oudste_request_niet_definitief_gemeld = mysqli_query($db,"
 SELECT min(rq.reqId) reqId, l.relnr
 FROM tblRequest rq

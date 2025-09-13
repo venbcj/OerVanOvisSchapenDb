@@ -8,7 +8,6 @@ require_once("autoload.php");
 23-11-2014 : functie header() toegevoegd. In de header wordt het vervevrsen van de pagina verstuurd (request =. response) naar de server 
 6-3-2015 : sql beveiligd 
 8-3-2015 : Login toegevoegd 
-21-12-2015 : maak_request_func.php ge-include i.p.v. in maak_request.php */
 $versie = '9-11-2016';  /* vw_StatusSchaap verwijderd en gebaseerd op laatste hisId */
 $versie = '23-11-2016';  /* actId = 3 uit on clause gehaald en als sub query genest */
 $versie = '2-3-2017';  /* hidden veld txtId verwijderd     10-3-2017 : view vw_HistorieDm vervangen door script */
@@ -40,8 +39,6 @@ include "login.php"; ?>
                 <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) {
-
-if ($modmeld == 1 ) { include "maak_request_func.php"; }
 
 If (isset($_POST['knpInsert_'])) {
     include "post_readerUitv.php"; #Deze include moet voor de vervversing in de functie header()

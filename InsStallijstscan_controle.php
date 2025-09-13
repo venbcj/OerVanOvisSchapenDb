@@ -36,8 +36,6 @@ include "login.php"; ?>
 <?php
 if (Auth::is_logged_in()) {
 
-if ($modmeld == 1 ) { include "maak_request_func.php"; }
-
 If (isset($_POST['knpInsert_']))  {
     include "post_readerStalscan.php";
     }

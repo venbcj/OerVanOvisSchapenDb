@@ -463,7 +463,7 @@ function zoek_oudste_request_niet_definitief_gemeld($db, $lidId) {
     while ($req = mysqli_fetch_assoc($zoek_oudste_request_niet_definitief_gemeld)) {
         $reqId = $req['reqId'];
     }
-    return $reqId;
+    return $reqId ?? 0;
 }
 
 function alias_voor_lid($db, $lidId) {

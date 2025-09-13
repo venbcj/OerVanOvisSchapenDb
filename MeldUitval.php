@@ -45,6 +45,7 @@ $knptype = "submit"; $vldtype = "text";
 // $today = date("Y-m-d"); //$today gedeclareerd in basisfuncties.php  // tbv save_melding.php
 
 // De gegevens van het request
+$reqId = 0;
 $zoek_oudste_request_niet_definitief_gemeld = mysqli_query($db,"
 SELECT min(rq.reqId) reqId, l.relnr
 FROM tblRequest rq
@@ -65,7 +66,6 @@ $aantMeld = aantal_melden($db,$reqId); // Aantal dieren te melden functie gedecl
 
 // Aantal dieren goed geregistreerd om automatisch te kunnen melden.
 function aantal_oke_uitv($datb,$lidid,$fldReqId,$nestHistorieDm) {
-
 $juistaantal = mysqli_query ($datb,"
 SELECT count(*) aant
 FROM tblMelding m
@@ -95,6 +95,7 @@ WHERE m.reqId = '".mysqli_real_escape_string($datb,$fldReqId)."'
     }
     return FALSE;
 }
+
 $oke = aantal_oke_uitv($db,$lidId,$reqId,$vw_HistorieDm);
 // Einde Aantal dieren goed geregistreerd om automatisch te kunnen melden
 

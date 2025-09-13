@@ -28,9 +28,6 @@ include "login.php"; ?>
 if (Auth::is_logged_in()) {
 include "kalender.php";
 
-if ($modmeld == 1 ) { include "maak_request_func.php"; }
-
-
 if(isset($_POST['knpVerder_']) && isset($_POST['kzlRelall_']))    { 
     $datum = $_POST['txtDatumall_']; $_SESSION["DT1"] = $datum;
     $bestkeuze = $_POST['kzlRelall_']; $_SESSION["BST"] = $bestkeuze; }

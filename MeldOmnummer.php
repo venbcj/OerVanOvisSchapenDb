@@ -39,6 +39,7 @@ $knptype = "submit";
 $today = date("Y-m-d");
 
 // De gegevens van het request
+$reqId = 0;
 $zoek_oudste_request_niet_definitief_gemeld = mysqli_query($db,"
 SELECT min(rq.reqId) reqId, l.relnr
 FROM tblRequest rq
@@ -58,7 +59,6 @@ $aantMeld = aantal_melden($db,$reqId); // Aantal dieren te melden functie gedecl
 
 // Aantal dieren goed geregistreerd om automatisch te kunnen melden. De datum mag hier niet liggen na de afvoerdatum.
 function aantal_oke_Omnum($datb,$fldReqId) {
-
 $juistaantal = mysqli_query ($datb,"
 SELECT count(*) aant 
 FROM tblMelding m

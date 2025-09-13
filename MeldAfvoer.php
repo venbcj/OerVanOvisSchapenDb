@@ -57,6 +57,7 @@ $overovermorgen = mktime(0, 0, 0, date("m")  , date("d")+3, date("Y"));
 $maxdag = date('Y-m-d', $overovermorgen);
 
 // De gegevens van het request 
+$reqId = 0;
 $zoek_oudste_request_niet_definitief_gemeld = mysqli_query($db,"
 SELECT min(rq.reqId) reqId, l.relnr
 FROM tblRequest rq

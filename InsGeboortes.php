@@ -2,7 +2,6 @@
 
 require_once("autoload.php");
 
-
 $versie = '18-2-2014'; /*Keuzelijst uitval uitgebreid met uitvalId <= 3 en gesorteerd op uitvalId */
 $versie = '15-4-2014'; /*vw_Reader_geb toegevoegd query verplaatst naar vw_Reader.php*/
 $versie = '9-05-2014'; /*Toegevogd => Ras en geslacht mogen niet leeg zijn, dan is nl. het selectieveld niet aangevinkt*/
@@ -12,7 +11,6 @@ $versie = '13-11-2014'; /*functie header() toegevoegd. In de header wordt het ve
 $versie = '21-2-2015'; /*login toegevoegd*/
 $versie = '5-3-2015'; /*sql beveiligd*/
 $versie = '3-12-2015'; /*Karwerki gewijzigd in Karwerk*/
-$versie = '21-12-2015'; /*maak_request_func.php ge-include i.p.v. in maak_request.php*/ 
 $versie = '17-09-2016'; /* modules gesplitst */
 $versie = '2-11-2016'; /* : controle of moment bij doelgroep geboren hoort verwijderd. Betreft voormalig veld 'geb' in tblMoment */
 $versie = '20-1-2017'; /* : hok_uitgez = 'Gespeend' gewijzigd in hok_uitgez = 2 */
@@ -64,7 +62,6 @@ include "login.php"; ?>
 if (Auth::is_logged_in()) {
 
 include "vw_kzlOoien.php";
-if ($modmeld == 1 ) { include "maak_request_func.php"; } 
 
 $today_number = strtotime("now"); 
 $jaarlater = date('Y-m-d', strtotime('+ 1 year', $today_number));

@@ -24,8 +24,6 @@ if (Auth::is_logged_in()) {
 
 include "vw_HistorieDm.php";
 
-if ($modmeld == 1 ) { include "maak_request_func.php"; }
-
 If (isset($_POST['knpInsert_'])) {
 
     include "post_readerUbn.php";#Deze include moet voor de verversing in de functie header()

@@ -760,7 +760,6 @@ WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."' and actId = '".mysql
 
 //$reqst_file = 'UpdSchaap.php_afvoer';
 $Melding = 'AFV';
-include "maak_request_func.php";
 include "maak_request.php";
 }
 }
@@ -830,7 +829,6 @@ WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."' and actId = '".mysql
 
 //$reqst_file = 'UpdSchaap.php_afvoer';
 $Melding = 'DOO';
-include "maak_request_func.php";
 include "maak_request.php";
 }
 }
@@ -988,7 +986,6 @@ if($modmeld == 1) {
 $hisId = zoek_hisId_stal($new_stalId,11);
 
 $Melding = 'AAN';
-include "maak_request_func.php";
 include "maak_request.php";
 
 }

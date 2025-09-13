@@ -6,7 +6,6 @@ require_once("autoload.php");
 23-11-2014 : functie header() toegevoegd. In de header wordt het vervevrsen van de pagina verstuurd (request =. response) naar de server
 8-3-2015 : Login toegevoegd 
 18-11-2015 Aanwas gewijzigd naar Aanvoer
-21-12-2015 : maak_request_func.php ge-include i.p.v. in maak_request.php
  */
 $versie = '9-11-2016'; /* Controle moederdier aangepast */
 $versie = '11-11-2016'; /* Controle of dier elders nog op stal staat verwijderd. Dit werkt ave rechts op het programma. Alleen i.v.m. andere gebruikers heeft dit een blokkerende werking. */
@@ -47,8 +46,6 @@ include "login.php"; ?>
 <?php 
 if (Auth::is_logged_in()) {
  
-if ($modmeld == 1 ) { include "maak_request_func.php"; }
-
 If (isset($_POST['knpInsert_']))  {
     include "post_readerAanv.php"; #Deze include moet voor de vervversing in de functie header()
     //header("Location: ".$url."InsAanvoer.php"); 

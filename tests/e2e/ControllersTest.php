@@ -1,6 +1,7 @@
 <?php
 
-use PHPUnit\Framework\Attributes\DataProvider;
+# use PHPUnit\Framework\Attributes\DataProvider;
+
 # use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 # helpt tegen meermaals functions includen, maar is erg langzaam
 
@@ -122,16 +123,19 @@ Workload.php
 Worpindex.php
 ZoekAfldm.php
 Zoeken.php
-TXT);
+TXT
+        );
     }
 
     public static function problematic_controllers() {
         return self::txt2ar(<<<TXT
-Welkom2.php
 Welkom.php
-TXT);
+Welkom2.php
+TXT
+        );
     }
 
+    // deze hebben allemaal fpdf nodig
     public static function controllers_missing_libraries() {
         return self::txt2ar(<<<TXT
 AfleverLijst_pdf.php
@@ -145,52 +149,34 @@ Ooikaart_pdf.php
 Ras_pdf.php
 Stallijst_pdf.php
 Vader_pdf.php
-TXT);
+TXT
+        );
     }
 
-    public static function controllers_needing_database() {
-        return self::txt2ar(<<<TXT
-TXT);
-    }
-
-    // Tijdelijk.
-    // Sommige controllers geven (nog) warnings als je niet bent ingelogd
-    // Doel: dit weer leeg, en bij alle get-controllers ook een keer inloggen
-    public static function controllers_needing_login() {
-        return self::txt2ar(<<<TXT
-TXT);
-    }
-
+    // in schema.sql zitten niet alle tabellen.
     public static function controllers_missing_tables() {
         return self::txt2ar(<<<TXT
 Gespeenden.php
 Klant.php
-TXT);
+TXT
+        );
     }
 
     private static function txt2ar($text) {
         $lemmata = preg_split('/\s+/', $text);
-        return array_combine($lemmata, array_map(fn($str) => [$str], $lemmata));
+        return array_combine($lemmata, array_map(function ($str) { return [$str]; }, $lemmata));
     }
 
-    #[DataProvider('gettable_controllers')]
-    # #[RunInSeparateProcess()]
-    public function testGetRoute($controller) {
+    # php-8
+    # #[DataProvider('gettable_controllers')]
+    public function testGetRouteGuest($controller) {
         $this->get("/$controller");
         $this->assertNoNoise();
     }
 
-    #[DataProvider('controllers_needing_database')]
-    # #[RunInSeparateProcess()]
-    public function testGetRouteDb($controller) {
-        include "connect_db.php";
-        $this->get("/$controller", ['ingelogd' => 1]);
-        $this->assertNoNoise();
-    }
-
-    #[DataProvider('controllers_needing_login')]
-    # #[RunInSeparateProcess()]
-    public function testGetRouteLogin($controller) {
+    # php-8
+    # #[DataProvider('gettable_controllers')]
+    public function testGetRouteAuthenticated($controller) {
         include "connect_db.php";
         $this->get("/$controller", ['ingelogd' => 1]);
         $this->assertNoNoise();

@@ -26,7 +26,6 @@ include "login.php"; ?>
 if (Auth::is_logged_in()) {
  
 include "vw_kzlOoien.php";
-if ($modmeld == 1 ) { include "maak_request_func.php"; }
 
 If (isset($_POST['knpInsert_']))  {
     include "post_readerTvUitsch.php"; #Deze include moet voor de vervversing in de functie header()
