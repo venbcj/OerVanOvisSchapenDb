@@ -82,11 +82,11 @@ include "topnav.tpl.php";
 <?php if (Auth::is_logged_in()) { ?>
         <?php echo View::link_to('Uitloggen', 'index.php', ['class' => 'black']); ?>
 <?php } else { ?>
+        <?php echo View::link_to('Inloggen', 'index.php', ['class' => 'black']); ?>
 <?php } ?>
     </li>
 </ul>
 
-<?php # TODO: halve html-elementen heel maken --BCB # ?>
 <table id ="table1" align="center">
 <tbody>
 <tr height = 90> </tr>

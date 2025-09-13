@@ -19,19 +19,13 @@ include "topnav.tpl.php";
 } ?>
     <li id = "rechts_uitlijnen">
 <?php if (Auth::is_logged_in()) { ?>
+        <?php echo View::link_to('Uitloggen', 'index.php', ['class' => 'black']); ?>
 <?php } else { ?>
-        <?php echo View::link_to('Inloggen', 'index.php', ['class' => 'black']); ?></li>
+        <?php echo View::link_to('Inloggen', 'index.php', ['class' => 'black']); ?>
 <?php } ?>
+    </li>
 </ul>
 
-<?php # TODO: (BV) dit bestaat toch niet? # ?>
-<script src="test2_script_header.js"></script>
-
-<?php
-# html-elementen openen in de ene template, en sluiten in een andere, dat voelt breekbaar
-# TODO werken met yield-constructies --BCB
-
-?>
 <table id ="table1" align="center">
 <tbody>
 <tr height = 90> </tr>
