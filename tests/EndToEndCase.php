@@ -21,6 +21,8 @@ class EndToEndCase extends TestCase {
         $_SERVER['HTTP_HOST'] = 'basq';
         $_SERVER['REQUEST_SCHEME'] = 'http';
         $_SERVER['REQUEST_URI'] = $path;
+        $_GET = [];
+        $_POST = [];
         foreach ($data as $key => $value) {
             $_GET[$key] = $value;
         }
@@ -31,6 +33,8 @@ class EndToEndCase extends TestCase {
         $_SERVER['REQUEST_SCHEME'] = 'http';
         $_SERVER['REQUEST_URI'] = $path;
         $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_GET = [];
+        $_POST = [];
         foreach ($data as $key => $value) {
             $_POST[$key] = $value;
         }

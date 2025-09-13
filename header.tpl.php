@@ -59,6 +59,7 @@ if (isset($actuele_versie)) {
 }
 
 ?>
+
 <link rel="stylesheet" type="text/css" href="style.css">
 <link rel="stylesheet" type="text/css" href="menu.css">
 
