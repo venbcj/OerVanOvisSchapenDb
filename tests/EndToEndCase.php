@@ -74,7 +74,10 @@ class EndToEndCase extends TestCase {
     }
 
     protected function approve() {
-        $file = getcwd().'/tests/approval/'.$this->name();
+        # phpunit 8:
+        $file = getcwd().'/tests/approval/'.$this->getName();
+        # phpunit 12:
+        # $file = getcwd().'/tests/approval/'.$this->name();
         $expected_file = $file.'.expected';
         $actual_file = $file.'.actual';
         if (!file_exists($expected_file)) {

@@ -156,15 +156,6 @@ TXT
 );
     }
 
-    // Tijdelijk.
-    // Sommige controllers geven (nog) warnings als je niet bent ingelogd
-    // Doel: dit weer leeg, en bij alle get-controllers ook een keer inloggen
-    public static function controllers_needing_login() {
-        return self::txt2ar(<<<TXT
-TXT
-        );
-    }
-
     // in schema.sql zitten niet alle tabellen.
     public static function controllers_missing_tables() {
         return self::txt2ar(<<<TXT
@@ -197,17 +188,6 @@ TXT
      * @dataProvider gettable_controllers
      */
     public function testGetRouteAuthenticated($controller) {
-        include "connect_db.php";
-        $this->get("/$controller", ['ingelogd' => 1]);
-        $this->assertNoNoise();
-    }
-
-    # #[DataProvider('controllers_needing_login')]
-    /**
-     * @dataProvider controllers_needing_login
-     */
-    public function testGetRouteLogin($controller) {
-        include "connect_db.php";
         $this->get("/$controller", ['ingelogd' => 1]);
         $this->assertNoNoise();
     }

@@ -40,15 +40,20 @@ class Auth {
     }
 
     public static function logout() {
-        if (session_status() != PHP_SESSION_ACTIVE) {
-            session_start();
-        }
+        self::ensure_session();
         unset($_SESSION);
         session_destroy();
     }
 
     public static function is_logged_in() {
+        self::ensure_session();
         return isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"]);
+    }
+
+    private static function ensure_session() {
+        if (session_status() != PHP_SESSION_ACTIVE) {
+            session_start();
+        }
     }
 
 }
