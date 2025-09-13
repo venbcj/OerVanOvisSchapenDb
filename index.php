@@ -9,6 +9,7 @@ require_once("autoload.php");
 $versie = '26-12-2024';
 /* <TD width = 1390 height = 400 align = "center"> gewijzigd naar <TD align = "center">  */
 
+$titel = '';
 Auth::logout();
 
 echo <<<HTML

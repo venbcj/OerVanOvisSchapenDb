@@ -18,3 +18,8 @@ hr.blue {
 a.red {
     color: red;
 }
+
+.topnav a {
+    display: block;
+    margin-bottom: 1em;
+}
