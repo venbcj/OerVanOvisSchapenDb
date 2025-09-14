@@ -27,6 +27,7 @@ require_once("demo_functions.php");
 
 // BCB: kunstgreep om uitvoer te scheiden van berekening
 $output = [];
+
 // TODO: verder scheiden. Dit doet nu:
 // - globale variabelen zetten
 // - redirecten
@@ -38,6 +39,35 @@ $output = [];
 //       return;
 //     }
 // - Auth::start() gaat alles doen wat nu in login staat, op de uitvoer na
+//
+// TODO: LET OP
+// Deze verbouwing kan pas beginnen wanneer hier geen globals meer worden aangemaakt.
+/* hier zijn wat globals die in dit bestand worden aangemaakt, en elders worden gebruikt:
+$actuele_versie
+$Karwerk
+  # komt voornamelijk (alleen maar?) in queries voor.
+$last_versieId
+$lidId
+$message
+$mod # <== dit zou een goede eerste stap zijn, ipv de vier volgende
+$modbeheer
+$modfin
+$modmeld
+$modtech
+$pag
+$persoonlijke_map
+  # importRespons, Newuser, Readerversies
+$reader
+$Readersetup_bestand // voor Readerversies, dus kan ook daar opgebouwd. Oh: /wordt/ ook daar opgebouwd. Dan kan het hier gewoon weg.
+$Readertaken_bestand // idem
+$appfile_exists // idem
+$takenfile_exists // idem
+$rendac_Id
+$rendac_ubn
+$RPP
+$w_hok
+$w_werknr
+ */
 
 //$host = "localhost"; $user = "bvdvschaapovis"; $pw = "MSenWL44"; $dtb = $db_p;
 if (($url == 'https://test.oervanovis.nl/' || $url == 'https://demo.oervanovis.nl/') && $dtb == 'k36098_bvdvSchapenDb') {
@@ -181,6 +211,7 @@ WHERE app = 'App' and Id = '".mysqli_real_escape_string($db, $last_versieId)."'
          $Readersetup_bestand = $zrv['bestand'];
     }
 
+    // hee, dit fragment /staat/ al in Readerversies.php
     if (isset($Readersetup_bestand)) {
         $appfile_exists = file_exists($persoonlijke_map.'/Readerversies/'.$Readersetup_bestand);
     } else {
@@ -197,6 +228,7 @@ WHERE app = 'Reader' and (Id = '".mysqli_real_escape_string($db, $last_versieId)
          $Readertaken_bestand = $zrv['bestand'];
     }
 
+    // hee, dit fragment /staat/ al in Readerversies.php
     if (isset($Readertaken_bestand)) {
         $takenfile_exists = file_exists($persoonlijke_map.'/Readerversies/'.$Readertaken_bestand);
     } else {
