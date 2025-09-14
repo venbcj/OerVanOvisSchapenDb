@@ -32,9 +32,9 @@ WHERE hokId = ".mysqli_real_escape_string($db,$hok)."
 ") or die (mysqli_error($db));
 
 while ($row = mysqli_fetch_assoc($zoek_lid)) { $lidId = $row['lidId']; }
+<?php
 
-
-class PDF extends FPDF {
+class HokPdf extends FPDF {
     function header(){
 
 
@@ -87,7 +87,7 @@ global $imageWidth;
 //default margin : 10mm each side
 //writable horizontal : 219-(10*2)=189mm
 
-$pdf = new PDF($Afdrukstand,'mm','A4'); //use new class
+$pdf = new HokPdf($Afdrukstand,'mm','A4'); //use new class
 
 //define new alias for total page numbers
 $pdf->AliasNbPages('{pages}');
@@ -120,4 +120,3 @@ $border = 'T';
 
 
 $pdf->Output($rapport.".pdf","D");
-?>
