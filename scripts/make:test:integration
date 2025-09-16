@@ -4,12 +4,12 @@ if [ -z "$1" ]; then
     echo Leave out 'Test' suffix
     exit
 fi
-TESTFILE=tests/e2e/$1Test.php
+TESTFILE=tests/integration/$1Test.php
 CLASSNAME=$1Test
 cat << TXT > $TESTFILE
 <?php
 
-class $CLASSNAME extends EndToEndCase {
+class $CLASSNAME extends IntegrationCase {
 
 }
 TXT

@@ -2,7 +2,7 @@
 
 # use PHPUnit\Framework\Attributes\DataProvider;
 
-class ControllersTest extends EndToEndCase {
+class ControllersTest extends IntegrationCase {
 
     public static function gettable_controllers() {
         return self::txt2ar(<<<TXT
@@ -191,10 +191,9 @@ TXT
         $this->assertNoNoise();
     }
 
-    public function testUpdSchaap() {
-        $this->get("/UpdSchaap.php", ['pstschaap' => 1]);
-        $this->assertNoNoise();
-    }
+    # geen centrale test voor post-routes met een knop;
+    # ten eerste moet daar ook postdata bij,
+    # ten tweede zitten er teveel verschillen tussen om dat leesbaar te bundelen
 
     public function testContact() {
         $_SESSION['CNT'] = 0;
@@ -212,11 +211,5 @@ TXT
         $this->get('/Readerbestanden.php');
         $this->assertNoNoise();
     }
-
-    // 11
-    // Afleverlijst:79 bestemming
-    // Wachtwoord:45 veld
-    // LoslopersPlaatsen:70 aantin'
-    // Voorraadcorrectie:52 artId
 
 }

@@ -1,6 +1,6 @@
 <?php
 
-class MeldAanvoerTest extends EndToEndCase {
+class MeldAanvoerTest extends IntegrationCase {
 
     private function simulateLogin() {
         $_GET['ingelogd'] = true;

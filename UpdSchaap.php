@@ -81,6 +81,7 @@ ORDER BY r.ras
 ") or die (mysqli_error($db));
 
 $index = 0; 
+$rsnum = [];
 while ($rs = mysqli_fetch_array($qry_Ras)) 
 { 
    $rsId[$index] = $rs['rasId']; 
@@ -101,6 +102,7 @@ ORDER BY p.naam
 ") or die (mysqli_error($db));
 
 $index = 0; 
+$bstnum = [];
 while ($bst = mysqli_fetch_array($qry_Bestemming)) 
 { 
    $bstnId[$index] = $bst['relId']; 
@@ -120,6 +122,7 @@ ORDER BY hoknr
 ") or die (mysqli_error($db));
 
 $index = 0;
+$hoknum = [];
 while ($hnr = mysqli_fetch_array($qryHokkeuze)) 
 { 
    $hoknId[$index] = $hnr['hokId']; 
@@ -140,6 +143,7 @@ ORDER BY r.reden
 ") or die (mysqli_error($db));
 
 $index = 0; 
+$rednum = [];
 while ($red = mysqli_fetch_array($qryReden)) 
 { 
    $rednId[$index] = $red['redId']; 
@@ -208,6 +212,9 @@ If(isset($_POST['txtFokrnr']) && $_POST['txtFokrnr'] <> $dbFokrnr) {
 // Einde Wijzigen Fokkersnummer
 
 // Wijzigen Halsnummer
+# TODO: (BV) kzlKleur zetten moet niet binnen de if, omdat je het zometeen gebruikt zonder voorwaarden.
+$kzlKleur = '';
+$txtHnr = '';
 if(isset($_POST['kzlKleur'])) { $kzlKleur = $_POST["kzlKleur"]; } 
 if(isset($_POST['txtHnr'])) { $txtHnr = $_POST['txtHnr']; }
 
@@ -417,7 +424,7 @@ else {
     $zoek_volwId = mysqli_query($db,"
         SELECT max(volwId) volwId
         FROM tblVolwas
-        WHERE ".db_null_filter(mdrId, $newmdrId) . " and " . db_null_filter(vdrId, $newvdrId) . "
+        WHERE ".db_null_filter('mdrId', $newmdrId) . " and " . db_null_filter('vdrId', $newvdrId) . "
     ") or die (mysqli_error($db));
         while ($vw = mysqli_fetch_assoc($zoek_volwId)) { $volwId = $vw['volwId']; }
 
@@ -1093,6 +1100,18 @@ ORDER BY right(s.levensnummer,$Karwerk)
 //echo 'query $show = '.$show.'<br>';
 $show = mysqli_query($db,$show) or die (mysqli_error($db));    
 
+$spndm = '';
+$spnkg = '';
+$afvdm = '';
+$afvkg = '';
+$stalId = 0;
+$levnr = '';
+$kleur = '';
+$sekse = 'ram'; // anders probleem op regel 1944
+$fase = '';
+$mdr = '';
+$vdr = '';
+
     while($record=mysqli_fetch_array($show))
     {    
             
@@ -1111,6 +1130,7 @@ $show = mysqli_query($db,$show) or die (mysqli_error($db));
     $aanwdm = $record['aanwdm']; // Aanwasdatum uit de hele historie van het schaap
 
     $mdr_db = $record['mdrId'];
+    # TODO: variabele anders noemen. $mdr was net een recordset --BCB
     $mdr = $record['werknr_ooi'];
     $vdr_db = $record['vdrId'];
     $vdr = $record['werknr_ram'];
@@ -1150,12 +1170,15 @@ WHERE hisId = '".mysqli_real_escape_string($db,$maxhis)."' and a.af = 1
 
 ") or die (mysqli_error($db));    
 
+$actie_afv = '';
+
     while($za = mysqli_fetch_array($zoek_afgevoerd))
     { 
     $afvhis = $za['afvhisId']; // Nodig tijdens bijwerken van afvoer en bepalen van een na laatste hisId
     $afvdm = $za['afvoerdm'];
     $afvkg = $za['afvoerkg'];
     $actId_afv = $za['actId'];
+    # TODO: (BV) gebruik alsjeblieft geen hoofdletters om een verschil aan te duiden. Hier kan afvoer_actie en afvoer_status prima.
     $Actie_afv = $za['actie'];
     $actie_afv = $za['status'];
     }
@@ -1672,7 +1695,10 @@ ORDER BY right(s.levensnummer,$Karwerk)
  <td> Geboortedatum : </td>
  <td colspan = 3> 
      <?php if(isset($gebdm)) { echo $gebdm; }
- else { ?>
+    else {
+        # TODO: $txtGebdm wordt nergens gezet!
+        $txtGebdm = '';
+?>
   <input type= "text" id="datepicker6" name= "txtGebdm" size = 8 value = <?php echo $txtGebdm; ?> >
   <?php } ?> 
   </td>
@@ -1744,6 +1770,8 @@ WHERE st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and h.actId =
 weging registreren
             </a>   </td></tr>
 <?php    
+    # TODO: logica traceren; pstlevnr wordt straks gebruikt, ook al is deze if niet waar
+$pstlevnr = '';
 if(!empty($weegid))
 { ?>
 <tr style = "font-size:12px;">

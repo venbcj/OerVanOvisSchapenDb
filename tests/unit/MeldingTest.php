@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-class MeldingTest extends EndToEndCase {
+class MeldingTest extends IntegrationCase {
     # extend is luiheid; ik wil runfixture gebruiken.
     # Nu teveel gedoe om dat in een trait te stoppen
 

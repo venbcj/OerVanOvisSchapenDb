@@ -4,7 +4,7 @@ use Tests\Stringdiff;
 
 use PHPUnit\Framework\TestCase;
 
-class EndToEndCase extends TestCase {
+class IntegrationCase extends TestCase {
 
     # php-8
     # protected string $output = '';
@@ -31,6 +31,7 @@ class EndToEndCase extends TestCase {
         foreach ($data as $key => $value) {
             $_GET[$key] = $value;
         }
+        $_REQUEST = $_GET;
     }
 
     private function simulatePostRequest($path, $data) {
@@ -43,6 +44,7 @@ class EndToEndCase extends TestCase {
         foreach ($data as $key => $value) {
             $_POST[$key] = $value;
         }
+        $_REQUEST = $_POST;
     }
 
     protected function get($path, $data = []) {

@@ -1,6 +1,6 @@
 <?php
 
-class LoginTest extends EndToEndCase {
+class LoginTest extends IntegrationCase {
 
     public static function setupBeforeClass(): void {
         static::runfixture('user-harm');
