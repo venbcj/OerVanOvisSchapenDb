@@ -73,7 +73,8 @@ $w_werknr
 if (($url == 'https://test.oervanovis.nl/' || $url == 'https://demo.oervanovis.nl/') && $dtb == 'k36098_bvdvSchapenDb') {
     $output[] = 'pasop.tpl.php';
 }
-if (php_uname('n') == 'basq' && isset($_REQUEST['ingelogd'])) {
+if (php_uname('n') == 'basq') {
+   if (isset($_REQUEST['ingelogd'])) {
      // met deze hack kan ik op mijn computer het ingelogd-zijn simuleren vanuit een unit test --BCB
      $_SESSION['U1'] = 1;
      $_SESSION['W1'] = 1;
@@ -81,6 +82,10 @@ if (php_uname('n') == 'basq' && isset($_REQUEST['ingelogd'])) {
      $_SESSION['PA'] = 1;
      $_SESSION['RPP'] = 30;
      $_SESSION['ID'] = 1;
+   }
+   if (isset($_REQUEST['force_meld'])) {
+       $modmeld = 1;
+   }
 }
 
 // *** ALS NIET IS INGELOGD ***
