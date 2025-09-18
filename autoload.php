@@ -1,7 +1,7 @@
 <?php
 
 # include-path voorlopig maar even hier
-$app_folders = ['classes', 'templates'];
+$app_folders = ['classes', 'templates', 'fpdf'];
 set_include_path(implode(':', array_merge(explode(':', get_include_path()), $app_folders)));
 
 spl_autoload_register(function ($class) {
