@@ -209,15 +209,4 @@ class InvSchaapTest extends IntegrationCase {
         ], $data);
     }
 
-    private function assertFout($str) {
-        if (false == strpos($this->output, $str)) {
-            $complaint = 'Er is geen foutmelding.';
-            if (preg_match("/alert\(('[^']*')\)/", $this->output, $matches)) {
-                $complaint = PHP_EOL.'   Vindt '.$matches[1];
-            }
-            $this->fail("Verwacht '$str' in de 'foutmelding'. $complaint");
-        }
-        $this->assertTrue(true); // ruis. Kan dit weg?
-    }
-
 }

@@ -1,0 +1,2 @@
+-- todo.
+-- insert into tblBezet(bezId, hisId, hokId)

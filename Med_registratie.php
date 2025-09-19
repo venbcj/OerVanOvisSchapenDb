@@ -118,6 +118,7 @@ FROM tblArtikel a
 WHERE a.artId = '".mysqli_real_escape_string($db,$kzlArt)."'
 ") or die (mysqli_error($db));
 
+$stdrd = 0;
 while ($qryvrd = mysqli_fetch_assoc($qryArtikel))
 {    $stdrd = str_replace('.00', '', $qryvrd['stdat']); // haalt .00 weg in de waarde
     $naam = $qryvrd['naam'];    
@@ -139,6 +140,7 @@ WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.levensnummer 
 
     while ($tal = mysqli_fetch_assoc($tel_aantal_schapen))
  $rows_lev = $tal['schpat'];
+
  $nut_totaal = $stdrd * $toedat * $rows_lev;
 // EINDE Berekening Totaal hoeveelheid toe te dienen medicijnen
 
@@ -168,6 +170,7 @@ else if(empty($_POST['kzlReden']))    {    $fout = "De reden is niet geselecteer
                             if(!empty($_POST['kzlArtikel']))    {    $knpInsert = "toonknpInsert";    }
                                     }
 
+// TODO: (BV) dit is dode code. Je komt alleen in deze tak als er wel een keuze is aangevinkt.
 else if (empty($_POST['chbKeuze'])) {    $fout = "Er is geen schaap geselecteerd.";    
                             if(!empty($_POST['kzlArtikel']))    {    $knpInsert = "toonknpInsert";    }
                                     }
@@ -266,7 +269,7 @@ if(isset($melding)) { $fout = 'De volgende dieren hebben geen medicatie gekregen
 <tr><td colspan = 5 style = "font-size : 18px;"><b> Keuze medicijnvoorraad </b></td></tr>
 <tr>
 <td><i><sub> Datum </sub></i></td>
-<td><i><sub>medicijn &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp</sub></i><i style = "font-size:12px;"><sub>(voorraad)</sub></i> </td>
+<td><i><sub>medicijn &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</sub></i><i style = "font-size:12px;"><sub>(voorraad)</sub></i> </td>
 <td><i><sub> Reden </sub></i></td>
 <td colspan = 2 ><i><sub> Aantal</sub></i></td>
 </tr>
@@ -303,11 +306,11 @@ $name = "kzlArtikel";
  <option></option>
 <?php        while($row = mysqli_fetch_array($zoek_artId_op_voorraad2))
         {
-$vrd = str_replace('.00', '', $row[vrdat]);
-$stdrd = str_replace('.00', '', $row[stdat]);
+$vrd = str_replace('.00', '', $row['vrdat']);
+$stdrd = str_replace('.00', '', $row['stdat']);
         
 $kzlkey="$row[artId]";
-$kzlvalue="$row[naam] &nbsp per $stdrd $row[eenheid] &nbsp ($vrd $row[eenheid])";
+$kzlvalue="$row[naam] &nbsp; per $stdrd $row[eenheid] &nbsp; ($vrd $row[eenheid])";
 
 include "kzl.php";
         }
@@ -348,7 +351,7 @@ include "kzl.php";
  </td>
 <?php If(!empty($knpInsert) || isset($fout)) { ?>
  <td></td>
- <td align = "center"><input type = 'submit' name ='knpInsert' value ='Toedienen'></td>    <?php }    ?>
+ <td align = "center"><input type='submit' name='knpInsert' value='Toedienen'></td>    <?php }    ?>
 </tr>
 </table>
 <hr>
@@ -405,7 +408,8 @@ global $db;
 return $keuze == 1 ? "(isnull(afv.datum) or (afv.datum > date_add(curdate(), interval -666 month) )) and " : "isnull(afv.stalId) and ";
 }
 
-if(!isset($_POST['radAfv'])) { $radAfv = 0; }
+$radAfv = 0;
+if(isset($_POST['radAfv'])) { $radAfv = $_POST['radAfv']; }
 
     
 /*    $histo = "(isnull(afv.datum) or (afv.datum > date_add(curdate(), interval -666 month) )) and "; 
@@ -572,7 +576,7 @@ $width= 100 ;
 <?php        while($row = mysqli_fetch_array($kzl_verblijven))
         {
 $kzlkey="$row[hokId]";
-$kzlvalue="$row[hoknr] &nbsp ($row[nu])";
+$kzlvalue="$row[hoknr] &nbsp; ($row[nu])";
 
 include "kzl.php";
         }

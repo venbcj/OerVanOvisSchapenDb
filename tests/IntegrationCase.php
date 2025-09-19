@@ -106,4 +106,32 @@ class IntegrationCase extends TestCase {
         $this->assertStringNotContainsString($string, $this->output);
     }
 
+    protected function assertFout($str) {
+        if (false == strpos($this->output, $str)) {
+            $complaint = 'Er is geen foutmelding.';
+            if (preg_match("/alert\(('[^']*')\)/", $this->output, $matches)) {
+                $complaint = PHP_EOL.'   Vindt '.$matches[1];
+            }
+            $this->fail("Verwacht '$str' in de 'foutmelding'. $complaint");
+        }
+    }
+
+    protected function assertNotFout() {
+        if ($found = preg_match("/alert\(('[^']*')\)/", $this->output, $matches)) {
+            $complaint = PHP_EOL.'   Vindt '.$matches[1];
+            $this->assertFalse($found, $complaint);
+        }
+    }
+
+    protected function assertOptieCount($name, $count) {
+        $dom = new DOMDocument();
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($this->output);
+        $path = new DOMXPath($dom);
+        $select = $path->query('//select[@name="'.$name.'"]');
+        $this->assertCount(1, $select, "kan select met name $name niet vinden");
+        $options = $path->query('//select[@name="'.$name.'"]/option');
+        $this->assertCount($count, $options, "select heeft niet de verwachte $count opties");
+    }
+
 }
