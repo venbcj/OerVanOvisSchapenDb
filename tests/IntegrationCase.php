@@ -6,6 +6,8 @@ use PHPUnit\Framework\TestCase;
 
 class IntegrationCase extends TestCase {
 
+    protected $db;
+
     # php-8
     # protected string $output = '';
     # protected bool $redirected = false;

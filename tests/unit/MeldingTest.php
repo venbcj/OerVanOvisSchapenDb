@@ -4,8 +4,6 @@ class MeldingTest extends IntegrationCase {
     # extend is luiheid; ik wil runfixture gebruiken.
     # Nu teveel gedoe om dat in een trait te stoppen
 
-    private $db;
-
     public function setup(): void {
         $this->runfixture('melding-4');
         require_once "autoload.php";
