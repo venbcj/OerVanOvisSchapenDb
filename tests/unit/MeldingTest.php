@@ -1,7 +1,5 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
-
 class MeldingTest extends IntegrationCase {
     # extend is luiheid; ik wil runfixture gebruiken.
     # Nu teveel gedoe om dat in een trait te stoppen
@@ -601,15 +599,6 @@ class MeldingTest extends IntegrationCase {
         $res = ob_get_clean();
         # THEN
         $this->assertTableWithPK('tblMelding', 'meldId', 4, ['fout' => 'De datum is onjuist en bestemming moet zijn gevuld.']);
-    }
-
-    private function assertTableWithPK($table, $pk, $id, $values) {
-        $vw = $this->db->query("SELECT * FROM $table WHERE $pk=$id");
-        $this->assertEquals(1, $vw->num_rows);
-        $row = $vw->fetch_assoc();
-        foreach ($values as $key => $expected) {
-            $this->assertEquals($expected, $row[$key]);
-        }
     }
 
 }

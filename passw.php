@@ -83,6 +83,7 @@ WHERE lidId = '".mysqli_real_escape_string($db, $lid)."'
             if (empty($txtpassw)) {
                 $wwnew = $ww;
             }
+            echo "user $txtuser password $wwnew";
             $count = mysqli_query($db, "SELECT login, passw FROM tblLeden 
                 WHERE login = '".mysqli_real_escape_string($db, $txtuser)."' 
                 and passw = '".mysqli_real_escape_string($db, $wwnew)."' ") or die(mysqli_error($db));
@@ -92,19 +93,7 @@ WHERE lidId = '".mysqli_real_escape_string($db, $lid)."'
             } else {
             // EINDE controle of combinatie tussen user en passw al bestaat
                 // username en wachtwoord wijzigen
-                // BCB: code uitgeschakeld door "false", ipv commentaar
-                if (false && $txtuser <> $_POST['txtUserOld'] && !empty($_POST['txtOld']) && !empty($txtpassw) && !empty($_POST['txtBevest'])) {
-                    $updateUW = "UPDATE tblLeden SET login = '".mysqli_real_escape_string($db, $txtuser)."',
-                        passw = '".mysqli_real_escape_string($db, $wwnew)."'
-                        WHERE login = '".mysqli_real_escape_string($db, $login)."'
-                        and passw = '".mysqli_real_escape_string($db, $passw)."' ";
-                    mysqli_query($db, $updateUW) or die(mysqli_error($db));
-                    $_SESSION["U1"] = $txtuser; /* tbv de query $result in login.php*/
-                    //$passw = $wwnew; /*tbv de query $result in login.php */
-                    //$_SESSION["W1"] = $txtpassw; /* tbv (nieuwe) sessie gegevens */
-                    //$goed = "De inloggegevens zijn gewijzigd";
-                    $veld = "hidden";
-                } elseif ($txtuser <> $user_db) {
+                if ($txtuser <> $user_db) {
                 // username wijzigen
                     $updateUS = "UPDATE tblLeden SET login = '".mysqli_real_escape_string($db, $txtuser)."' 
                         WHERE lidId = '".mysqli_real_escape_string($db, $lid)."' ";

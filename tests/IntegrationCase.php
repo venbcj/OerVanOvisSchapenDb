@@ -20,11 +20,11 @@ class IntegrationCase extends TestCase {
         }
     }
 
-    private function simulateGetRequest($path, $data) {
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_METHOD'] = 'GET';
+    protected function simulateGetRequest($path, $data = []) {
+        $_SERVER['HTTP_HOST'] = 'oer-dev';
         $_SERVER['REQUEST_SCHEME'] = 'http';
         $_SERVER['REQUEST_URI'] = $path;
+        $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['PHP_SELF'] = $path; // TODO: (BCB) hier niet meer om vragen in HokAfleveren
         $_GET = [];
         $_POST = [];
@@ -34,8 +34,8 @@ class IntegrationCase extends TestCase {
         $_REQUEST = $_GET;
     }
 
-    private function simulatePostRequest($path, $data) {
-        $_SERVER['HTTP_HOST'] = 'basq';
+    protected function simulatePostRequest($path, $data = []) {
+        $_SERVER['HTTP_HOST'] = 'oer-dev';
         $_SERVER['REQUEST_SCHEME'] = 'http';
         $_SERVER['REQUEST_URI'] = $path;
         $_SERVER['REQUEST_METHOD'] = 'POST';
@@ -132,6 +132,15 @@ class IntegrationCase extends TestCase {
         $this->assertCount(1, $select, "kan select met name $name niet vinden");
         $options = $path->query('//select[@name="'.$name.'"]/option');
         $this->assertCount($count, $options, "select heeft niet de verwachte $count opties");
+    }
+
+    protected function assertTableWithPK($table, $pk, $id, $values) {
+        $vw = $this->db->query("SELECT * FROM $table WHERE $pk=$id");
+        $this->assertEquals(1, $vw->num_rows);
+        $row = $vw->fetch_assoc();
+        foreach ($values as $key => $expected) {
+            $this->assertEquals($expected, $row[$key]);
+        }
     }
 
 }
