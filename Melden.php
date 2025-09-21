@@ -19,9 +19,6 @@ session_start();
 // voor verder splitsen van berekening en uitvoer
 // moet eerst login.php onderverdeeld worden. Zie opmerking in login --BCB
 
-// TODO: dit uit een class laten komen
-require_once("melden_functions.php");
-
 // Nu nog een layout die op de juiste plek een yield() naar deze inhoud doet --BCB
 
 ?>
@@ -47,7 +44,7 @@ if (Auth::is_logged_in()) {
         // Controleren of inloggevens bestaan
         $lid_gateway = new LidGateway($db);
         if ($lid_gateway->hasCompleteRvo($lidId)) {
-            $viewdata['links'] = melden_menu($db, $lidId);
+            $viewdata['links'] = Menu::melden($db, $lidId);
         }
     }
     // de melden/page-template bevat een omliggende td, die waarschijnlijk naar de layout kan verhuizen
