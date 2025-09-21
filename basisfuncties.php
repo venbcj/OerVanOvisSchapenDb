@@ -320,13 +320,6 @@ return $zv['volwId'];
 }
 
 /**********************************************************************
-Toegepast in :
-- Melden.php */
-
-function aantal_te_melden($datb, $lidid, $fldCode) {
-    $request_gateway = new RequestGateway($datb);
-    return $request_gateway->countPerCode($lidid, $fldCode);
-}
 
 /*
 Toegepast in :
