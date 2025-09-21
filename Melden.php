@@ -41,7 +41,7 @@ if (Auth::is_logged_in()) {
         // Controleren of inloggevens bestaan
         $lid_gateway = new LidGateway($db);
         if ($lid_gateway->hasCompleteRvo($lidId)) {
-            [$target, $caption, $remark] = melden_menu($db, $lidId);
+            $links = melden_menu($db, $lidId);
         } else {
             $onvolledig = 'variabele bestaat';
         }
@@ -60,14 +60,14 @@ if (Auth::is_logged_in()) {
 <?php
         } else {
 ?>
-<?php foreach ($target as $index => $href) { ?>
+<?php foreach ($links as $index => $link) { ?>
 <tr>
 <td>
-<?php echo View::link_to($caption[$index], $href, ['class' => 'blue']);
+<?php echo View::link_to($link['caption'], $link['href'], ['class' => 'blue']);
 ?>
 </td>
 <td style = "font-size : 12px;">
-<?php echo $remark[$index]; ?>
+<?php echo $link['remark']; ?>
 </td>
 </tr>
 <?php } ?>

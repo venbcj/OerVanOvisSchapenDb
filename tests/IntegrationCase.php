@@ -1,7 +1,5 @@
 <?php
 
-use Stringdiff;
-
 class IntegrationCase extends UnitCase {
 
     # php-8
