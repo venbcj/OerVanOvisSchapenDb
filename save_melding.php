@@ -66,6 +66,7 @@ foreach ($multip_array as $recId => $id) {
         $fldSkip = 0;
     }
 
+    // TODO: deze conditie omkeren en gebruiken als guard clause -> early return.
     if (isset($recId) and $recId > 0) {
         $recId = (int) $recId;
         if (!isset($fldDef)) {
@@ -77,12 +78,10 @@ foreach ($multip_array as $recId => $id) {
         $nummer_van_datum = intval(str_replace('-', '', $txtDag));
 
         /* Eerste datum zoeken ter controle bij aanvoer bedrijf */
+        $historie_gateway = new HistorieGateway($db);
         if ($code == 'AAN' || $code == 'GER') {
-            $zoek_eerste_datum_stalop = Query::zoek_eerste_datum_stalop($db, $recId);
-            while ($mi = mysqli_fetch_assoc($zoek_eerste_datum_stalop)) {
-                $first_day = $mi['date'];
-                $eerste_dag = $mi['datum'];
-            }
+            // TODO: deze variabelen zijn alleen nodig om de foutmelding wrong_dag te vormen. Verplaats naar HistorieGateway
+            [$first_day, $eerste_dag] = $historie_gateway->zoek_eerste_datum_stalop($recId);
         }
         /* Einde Eerste datum zoeken ter controle bij aanvoer bedrijf */
 
@@ -106,20 +105,14 @@ foreach ($multip_array as $recId => $id) {
 
         /****** EINDE CONTROLE DATUM *******/
 
+        $schaap_gateway = new SchaapGateway($db);
         /****** CONTROLE LEVENSNUMMER *******/
         // Bestaat alleen bij Geboortes en Aanvoer
         // BCB: en bij omnummeren. Commentaar loopt zo snel achter...
         if (isset($fldLevnr)) {
             // Controle op duplicaten
-            $zoek_schaapId = Query::zoek_schaapid($db, $fldLevnr);
-            $zs = mysqli_fetch_assoc($zoek_schaapId);
-            # TODO: nullcheck. Als fldLevnr niet voorkomt, is zs geen array, en dat geeft een warning.
-        # Dit wijst erop dat de code dingen doet die niet bij elkaar horen.
-            $schaapId = $zs['schaapId'] ?? 0;
-
-            $count_levnr = Query::count_levnr($db, $fldLevnr, $schaapId);
-            $row = mysqli_fetch_assoc($count_levnr);
-            $levnr_exist = $row['aant'];
+            $schaapId = $schaap_gateway->zoek_schaapid($fldLevnr);
+            $levnr_exist = $schaap_gateway->count_levnr($fldLevnr, $schaapId);
             // Einde Controle op duplicaten
             if (intval($fldLevnr) == 0) { // levensnummer is 000000000000
                 if (isset($wrong_dag)) {
@@ -149,78 +142,46 @@ foreach ($multip_array as $recId => $id) {
         }
         /****** EINDE CONTROLE LEVENSNUMMER *******/
 
-        $zoek_in_database = Query::zoek_in_database($db, $recId);
-        while ($co = mysqli_fetch_assoc($zoek_in_database)) {
-            $reqId = $co['reqId'];
-            $code = $co['code'];
-            $def_db = $co['def'];
-            $skip_db = $co['skip'];
-            $fout_db = $co['fout'];
-            $datum_db = $co['datum'];
-            $Levnr_db = $co['levensnummer'];
-            $sekse_db = $co['geslacht'];
-            $herk_db = $co['rel_herk'];
-            $best_db = $co['rel_best'];
-        }
+        $request_gateway = new RequestGateway($db);
+        $co = $request_gateway->find($recId);
 
         // Als verwijderd wordt hersteld bestaat kzlBest niet maar de bestemming in de database mogelijk wel en dus $fldBest dan ook !!
         // Dit t.b.v. $wrong_partij
-        if ($fldSkip == 0 && $skip_db == 1) {
-            $zoek_bestemming_in_db = Query::zoek_bestemming_in_db($db, $recId);
-            while ($zbid = mysqli_fetch_assoc($zoek_bestemming_in_db)) {
-                $fldBest = $zbid['rel_best'];
-            }
+        $melding_gateway = new MeldingGateway($db);
+        if ($fldSkip == 0 && $co['skip'] == 1) {
+            $fldBest = $melding_gateway->zoek_bestemming($recId);
         }
         // Wijzigen keuze 'controle' versus 'vastleggen'
-        if (isset($fldDef) && $fldDef <> $def_db) {
-            $upd_tblRequest = "UPDATE tblRequest SET def = '".mysqli_real_escape_string($db, $fldDef)."' WHERE reqId = '".mysqli_real_escape_string($db, $reqId)."' ";
-            mysqli_query($db, $upd_tblRequest) or die(mysqli_error($db));
+        // fldDef is hierboven op 'N' gezet, dus die isset() kan weg --BCB
+        if (isset($fldDef) && $fldDef <> $co['def']) {
+            $request_gateway->setDef($fldDef, $co['reqId']);
         }
-        //unset ($reqId);
         //Hiermee wordt het requestId maar 1x doorlopen en is t.b.v. wijzigen tblRequest i.p.v. elke regel uit tblMeldingen
 
         // CONTROLE op gewijzigde velden
 
         // Wijzigen datum
 
-        if (!empty($fldDay) && $fldDay <> $datum_db && !isset($wrong_dag)) {
-            $upd_tblHistorie = "
- UPDATE tblHistorie h
-  join tblMelding m on (h.hisId = m.hisId)
- set   h.datum  = '".mysqli_real_escape_string($db, $fldDay)."'
- WHERE m.meldId = '$recId' 
- ";
-            mysqli_query($db, $upd_tblHistorie) or die(mysqli_error($db));
+        if (!empty($fldDay) && $fldDay <> $co['datum'] && !isset($wrong_dag)) {
+            $historie_gateway->setDatum($fldDay, $recId);
         }
 
         // Wijzigen levensnummer
         // TODO: wanneer kan dit waar zijn? Je zoekt een schaap op basis van fldLevnr, en db_levnr is het levensnummer van het schaap --BCB
-        if (isset($fldLevnr) && $fldLevnr <> $Levnr_db && !isset($wrong_levnr)) {
-            $upd_tblSchaap = "UPDATE tblSchaap SET levensnummer = '".mysqli_real_escape_string($db, $fldLevnr)."'
-                WHERE levensnummer = '".mysqli_real_escape_string($db, $Levnr_db)."' ";
-            mysqli_query($db, $upd_tblSchaap) or die(mysqli_error($db));
+        if (isset($fldLevnr) && $fldLevnr <> $co['levensnummer'] && !isset($wrong_levnr)) {
+            $schaap_gateway->changeLevensnummer($co['levensnummer'], $fldLevnr);
         }
 
         // Wijzigen geslacht
-        if (isset($fldSekse) && ($fldSekse <> $sekse_db || !isset($sekse_db))) {
-            $upd_tblSchaap = "UPDATE tblSchaap SET geslacht = '".mysqli_real_escape_string($db, $fldSekse)."'
-                WHERE levensnummer = '".mysqli_real_escape_string($db, $Levnr_db)."' ";
-            mysqli_query($db, $upd_tblSchaap) or die(mysqli_error($db));
+        if (isset($fldSekse) && ($fldSekse <> $co['geslacht'] || !isset($co['geslacht']))) {
+            $schaap_gateway->updateGeslacht($co['levensnummer'], $fldSekse);
         }
 
-        // TODO: Op dit punt is $code niet langer de waarde uit de includer, maar een veld uit een databaseregel. Is dat de bedoeling? --BCB
-        //
+        $stal_gateway = new StalGateway($db);
         // Wijzigen herkomst
-        if (isset($fldHerk) && (!isset($herk_db) || $fldHerk <> $herk_db)) {
-            $upd_tblStal = "
-            UPDATE tblStal st
-             join tblHistorie h on (h.stalId = st.stalId)
-             join tblMelding m on (m.hisId = h.hisId)
-            set st.rel_herk = '".mysqli_real_escape_string($db, $fldHerk)."' 
-            WHERE m.meldId = '$recId'
-            ";
-            mysqli_query($db, $upd_tblStal) or die(mysqli_error($db));
-        } elseif (!isset($fldHerk) && $code == 'AAN') {
+        if (isset($fldHerk) && (!isset($co['rel_herk']) || $fldHerk <> $co['rel_herk'])) {
+            $stal_gateway->updateHerkomstByMelding($recId, $fldHerk);
+        } elseif (!isset($fldHerk) && $co['code'] == 'AAN') {
             if (isset($wrong_levnr)) {
                 $wrong_partij = $wrong_levnr." en herkomst moet zijn gevuld.";
             } elseif (!isset($wrong_levnr) && isset($wrong_dag)) {
@@ -231,16 +192,9 @@ foreach ($multip_array as $recId => $id) {
         }
 
         // Wijzigen bestemming
-        if ((isset($fldBest) && (!isset($best_db) || $fldBest <> $best_db) )) {
-            $upd_tblStal = "
-            UPDATE tblStal st
-             join tblHistorie h on (h.stalId = st.stalId)
-             join tblMelding m on (m.hisId = h.hisId)
-            set st.rel_best = '".mysqli_real_escape_string($db, $fldBest)."'
-            WHERE m.meldId = '$recId'
-            ";
-            mysqli_query($db, $upd_tblStal) or die(mysqli_error($db));
-        } elseif (!isset($fldBest) && $code == 'AFV') {
+        if ((isset($fldBest) && (!isset($co['rel_best']) || $fldBest <> $co['rel_best']) )) {
+            $stal_gateway->updateBestemmingByMelding($recId, $fldBest);
+        } elseif (!isset($fldBest) && $co['code'] == 'AFV') {
             if (isset($wrong_levnr)) {
                 $wrong_partij = $wrong_levnr." en bestemming moet zijn gevuld.";
             } elseif (isset($wrong_dag)) {
@@ -253,9 +207,8 @@ foreach ($multip_array as $recId => $id) {
 
         // Veld skip vullen en veld fout ledigen.
         //Als skip wordt gewijzigd naar 0 dan wordt het veld fout eventueel ingevuld bij Foutmelding opslaan
-        if ($fldSkip <> $skip_db) {
-            $upd_tblMelding = "UPDATE tblMelding SET skip = '".mysqli_real_escape_string($db, $fldSkip)."', fout = NULL WHERE meldId = '$recId' ";
-            mysqli_query($db, $upd_tblMelding) or die(mysqli_error($db));
+        if ($fldSkip <> $co['skip']) {
+            $melding_gateway->updateSkip($recId, $fldSkip);
         }
         // Foutmelding opslaan
         if (isset($wrong_partij)) {
@@ -265,10 +218,9 @@ foreach ($multip_array as $recId => $id) {
         } elseif (isset($wrong_dag)) {
             $wrong = $wrong_dag;
         }
-        if ((isset($wrong) && (!isset($fout_db) || ($wrong <> $fout_db) )) || (!isset($wrong) && isset($fout_db))) {
+        if ((isset($wrong) && (!isset($co['fout']) || ($wrong <> $co['fout']) )) || (!isset($wrong) && isset($co['fout']))) {
             // TODO: $wrong niet zomaar gebruiken, is soms niet gezet --BCB
-            $upd_tblMelding = "UPDATE tblMelding SET fout = " . db_null_input($wrong ?? null) . " WHERE meldId = '$recId' and skip <> 1";
-            mysqli_query($db, $upd_tblMelding) or die(mysqli_error($db));
+            $melding_gateway->updateFout($recId, $wrong ?? null);
         }
         unset($wrong);
         unset($wrong_dag);
