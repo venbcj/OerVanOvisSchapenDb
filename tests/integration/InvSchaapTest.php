@@ -9,7 +9,7 @@ class InvSchaapTest extends IntegrationCase {
     public function testPostInvSchaap() {
         $this->post("/InvSchaap.php", ['ingelogd' => 1, 'txtLevnr' => 1]);
         $this->assertNoNoise();
-        // todo case met uitgeschaard
+        // TODO: case met uitgeschaard
     }
 
     public function testSaveInvSchaapZonderLevnr() {
@@ -61,7 +61,7 @@ class InvSchaapTest extends IntegrationCase {
         ]));
         $this->assertNoNoise();
         $this->assertFout('Bij overlijden moet datum t.b.v. uitval zijn ingevuld.');
-        // todo: er zijn nog twee redenen voor deze fout
+        // TODO: er zijn nog twee redenen voor deze fout
     }
 
     public function testValidatieInvSchaapPrematuurOverlijden() {
@@ -127,7 +127,7 @@ class InvSchaapTest extends IntegrationCase {
             'txtLevnr' => self::LEVNR_IN_FIXTURE,
             'kzlSekse' => 'ram',
             'kzlFase' => 'lam',
-            'kzlMoment' => 5, // <= dit is 1 van de mogelijkheden. todo ook met uitvaldatum of reden
+            'kzlMoment' => 5, // <= dit is 1 van de mogelijkheden. TODO: ook met uitvaldatum of reden
             'txtUitvdm' => '1-1-2001',
         ]));
         $this->assertNoNoise();
@@ -178,25 +178,25 @@ class InvSchaapTest extends IntegrationCase {
         $this->assertFout('Geboortedatum kan niet na afvoerdatum van moederdier liggen.');
     }
 
-    // todo case "geboortedatum na eerste geboortedatum
-    // todo case aanvoerdatum voor laatste afvoerdatum
-    // todo case dood schaap
-    // todo case levensnummer komt al voor
-    // todo case korte draagtijd (BCB: is dat juist? Kan dit ook: lam 1 in september, schaap wordt meteen weer zwanger, lam 2 doodgeboren in november?)
-    // todo case te korte draagtijd
+    // TODO: case "geboortedatum na eerste geboortedatum
+    // TODO: case aanvoerdatum voor laatste afvoerdatum
+    // TODO: case dood schaap
+    // TODO: case levensnummer komt al voor
+    // TODO: case korte draagtijd (BCB: is dat juist? Kan dit ook: lam 1 in september, schaap wordt meteen weer zwanger, lam 2 doodgeboren in november?)
+    // TODO: case te korte draagtijd
 
-    // todo case levnr niet in db en geen aanvoer
-    // todo gevallen "levnr in db, geen ouders" en "aanvoer met registratie ouders"
-    // todo case vorige worp minder dan 6 maanden terug
-    // todo case volgende worp meer dan 6 maanden later (aha, achterlopende administratie)
+    // TODO: case levnr niet in db en geen aanvoer
+    // TODO: gevallen "levnr in db, geen ouders" en "aanvoer met registratie ouders"
+    // TODO: case vorige worp minder dan 6 maanden terug
+    // TODO: case volgende worp meer dan 6 maanden later (aha, achterlopende administratie)
 
-    // todo $scenario sensen? Alleen nodig als je de verschillen niet aan uitvoer kunt aflezen (BCB)
+    // TODO: $scenario sensen? Alleen nodig als je de verschillen niet aan uitvoer kunt aflezen (BCB)
     
-    // todo test voor knpZoek
+    // TODO: test voor knpZoek
 
-    // todo case aantal_ubn > 1
+    // TODO: case aantal_ubn > 1
 
-    // todo fixtures voor tblRas, tblRasuser; vw_kzlOoien; resultvader; moment uitval; reden uitval; tblHok
+    // TODO: fixtures voor tblRas, tblRasuser; vw_kzlOoien; resultvader; moment uitval; reden uitval; tblHok
     // ==> welke asserts passen daar bij? aantal option-tags tellen binnen een benoemde select?
 
     private function minimal($data = []) {

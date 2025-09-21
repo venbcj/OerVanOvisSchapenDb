@@ -19,7 +19,7 @@ session_start();
 // voor verder splitsen van berekening en uitvoer
 // moet eerst login.php onderverdeeld worden. Zie opmerking in login --BCB
 
-// todo: dit uit een class laten komen
+// TODO: dit uit een class laten komen
 require_once("melden_functions.php");
 
 // Nu nog een layout die op de juiste plek een yield() naar deze inhoud doet --BCB
@@ -42,7 +42,7 @@ if (Auth::is_logged_in()) {
     $viewdata = ['authorized' => false];
     if ($modmeld == 1) {
         $viewdata['authorized'] = true;
-        // todo: dit nader uitzoeken. Doet geen uitvoer, maar zou wel $fout kunnen vullen. Dat heeft dan effect via menuMelden...
+        // TODO: dit nader uitzoeken. Doet geen uitvoer, maar zou wel $fout kunnen vullen. Dat heeft dan effect via menuMelden...
         include "responscheck.php";
         // Controleren of inloggevens bestaan
         $lid_gateway = new LidGateway($db);

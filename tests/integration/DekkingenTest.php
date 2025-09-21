@@ -107,8 +107,8 @@ class DekkingenTest extends IntegrationCase {
         $this->assertFout('Dit verblijf heeft geen moederdieren.');
     }
 
-    // todo query aantal_laatste_dekkingen_van_moeders_uit_gekozen_verblijf_met_laatste_dekkingen_met_gekozen_vader
-    // todo deze naam wordt hergebruikt!
+    // TODO: query aantal_laatste_dekkingen_van_moeders_uit_gekozen_verblijf_met_laatste_dekkingen_met_gekozen_vader
+    // TODO: deze naam wordt hergebruikt!
 
         // $this->assertFout('De dekdatum mag niet voor de laatste dekking met dit vaderdier liggen. Dit geldt voor tenminste 1 moederdier uit dit verblijf.');
 

@@ -5,7 +5,7 @@ class UpdSchaapTest extends IntegrationCase {
     public function testGetUpdSchaap() {
         $this->get("/UpdSchaap.php", ['ingelogd' => 1, 'pstschaap' => 1]);
         $this->assertNoNoise();
-        // todo:
+        // TODO:
         // records in $show -- ik denk eigenlijk maar 1 record
         // $volwas gezet via zoek_in_tblvolwas (nog extracten)
         // records in $rsnum, qry_ras
@@ -25,7 +25,7 @@ class UpdSchaapTest extends IntegrationCase {
             'kzlRam' => 1,
         ]);
         $this->assertNoNoise();
-        // todo:
+        // TODO:
         // txtLevnr in de post -> effect in tblSchaap en impRespons
         // txtFokrnr in de post -> effect in tblSchaap
         // kzlKleur en/of txtHnr in de post, verschillend van de waarden in tblStal -> effect in tblStal
@@ -46,7 +46,7 @@ class UpdSchaapTest extends IntegrationCase {
         // kzlHokOoi
         // txtTerugdm
         //
-        // todo tests voor andere knoppen:
+        // TODO: tests voor andere knoppen:
         // knpUitHok -> tblHistorie
         // knpHerstel, met radHerst. Yay, switch!
     }
