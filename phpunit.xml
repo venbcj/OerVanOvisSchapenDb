@@ -11,7 +11,8 @@
         <directory>tests</directory>
         <directory>vendor</directory>
       </exclude>
-      <directory>.</directory>
+      <file>./gateways/RequestGateway.php</file>
+      <file>./melden_functions.php</file>
     </whitelist>
   </filter>
 </phpunit>

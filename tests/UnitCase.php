@@ -6,6 +6,12 @@ class UnitCase extends TestCase {
 
     protected $db;
 
+    protected function setupServer($path = 'Maaktnietuit.php') {
+        $_SERVER['HTTP_HOST'] = 'oer-dev';
+        $_SERVER['REQUEST_SCHEME'] = 'http';
+        $_SERVER['REQUEST_URI'] = $path;
+    }
+
     protected static function runfixture($name) {
         if (file_exists($file = getcwd()."/tests/fixtures/$name.sql")) {
             system("cat $file | scripts/console");
