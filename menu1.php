@@ -44,6 +44,27 @@ if (isset($actuele_versie) || $reader != 'Agrident') {
 }
 
 include "javascriptsAfhandeling.js.php";
+$menu_items = [
+    (object)['caption' => 'Home', 'href' => 'Home.php', 'class' => 'blue'],
+    (object)['caption' => 'Aanvoer schaap', 'href' => 'InvSchaap.php', 'class' => 'blue'],
+    (object)['caption' => 'Inlezen reader', 'href' => 'InlezenReader.php', 'class' => 'blue'],
+    (object)['caption' => 'RVO', 'href' => 'Melden.php', 'class' => $meld_color],
+    (object)['caption' => 'Afvoerlijst', 'href' => 'Afvoerstal.php', 'class' => 'blue', 
+    'if' => (!$modtech && $modmeld)],
+    (object)['caption' => 'Verblijven in gebruik', 'href' => 'Bezet.php', 'class' => 'blue',
+    'if' => !(!$modtech && $modmeld)],
+    (object)['caption' => 'Schaap opzoeken', 'href' => 'Zoeken.php', 'class' => 'blue'],
+    (object)['caption' => 'Medicijn toediening', 'href' => 'Med_registratie.php', 'class' => $tech_color],
+    (object)['caption' => 'Dekkingen / Dracht', 'href' => 'Dekkingen.php', 'class' => 'blue'],
+    (object)['caption' => 'Raederalerts', 'href' => 'Alerts.php', 'class' => $tech_color],
+    (object)['caption' => 'Rapporten', 'href' => 'Rapport.php', 'class' => 'blue'],
+    (object)['caption' => 'Beheer', 'href' => 'Beheer.php', 'class' => 'blue'],
+    (object)['caption' => 'Voorraadbeheer', 'href' => 'Inkoop.php', 'class' => 'blue'],
+    (object)['caption' => 'Financiëel', 'href' => 'Finance.php', 'class' => 'blue'],
+];
+$menu_items = array_filter($menu_items, function ($item) {
+    return !isset($item->if) || $item->if;
+});
 ?>
 
 <link rel="stylesheet" href="menu.css">
@@ -51,49 +72,15 @@ include "javascriptsAfhandeling.js.php";
 Menu : <br>
 <hr class="blue">
 
-<?php echo View::link_to('Home', 'Home.php', ['class' => 'blue']); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Aanvoer schaap', 'InvSchaap.php', ['class' => 'blue']); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Inlezen reader', 'InlezenReader.php', ['class' => 'blue']); ?> 
-<hr class="grey">
-
-<?php echo View::link_to('RVO', 'Melden.php', ['class' => $meld_color]) ?>
-<hr class="grey">
-
-<?php if ($modtech == 0 && $modmeld == 1) { ?>
-<?php echo View::link_to('Afvoerlijst', 'Afvoerstal.php', ['class' => 'blue']); ?>
-<?php } else { ?>
-<?php echo View::link_to('Verblijven in gebruik', 'Bezet.php', ['class' => 'blue']); ?>
-<?php } ?>
-<hr class="grey">
-
-<?php echo View::link_to('Schaap opzoeken', 'Zoeken.php', ['class' => 'blue']); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Medicijn toediening', 'Med_registratie.php', ['class' => $tech_color]); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Dekkingen / Dracht', 'Dekkingen.php', ['class' => 'blue']); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Raederalerts', 'Alerts.php', ['class' => $tech_color]); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Rapporten', 'Rapport.php', ['class' => 'blue']); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Beheer', 'Beheer.php', ['class' => $beheer_color]); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Voorraadbeheer', 'Inkoop.php', ['class' => $tech_color]); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Financiëel', 'Finance.php', ['class' => $tech_color]); ?>
-<hr class="grey">
+<?php
+foreach ($menu_items as $item) :
+    if ($item) {
+        echo View::link_to($item->caption, $item->href, ['class' => $item->class]);
+    } else {
+        echo '<br/>';
+    }
+echo PHP_EOL.'<hr class="grey">'.PHP_EOL;
+endforeach; ?>
 
 <?php include "versie.tpl.php"; ?>
 </td>
-<!-- einde -->

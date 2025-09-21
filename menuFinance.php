@@ -13,6 +13,21 @@ if ($modfin == 1) {
 }
 
 include "javascriptsAfhandeling.js.php";
+$menu_items = [
+    (object)['caption' => 'Home', 'href' => 'Home.php', 'class' => 'blue'],
+    (object)['caption' => 'Inboeken', 'href' => 'Kostenopgaaf.php', 'class' => $tech_color],
+    (object)['caption' => 'Deklijst', 'href' => 'Deklijst.php', 'class' => $tech_color],
+    (object)['caption' => 'Liquiditeit', 'href' => 'Liquiditeit.php', 'class' => $tech_color],
+    (object)['caption' => 'Saldoberekening', 'href' => 'Saldoberekening.php', 'class' => $tech_color],
+    '',
+    '',
+    (object)['caption' => 'Rubrieken', 'href' => 'Rubrieken.php', 'class' => $tech_color],
+    (object)['caption' => 'Componenten', 'href' => 'Componenten.php', 'class' => $tech_color],
+    (object)['caption' => 'Betaalde posten', 'href' => 'Kostenoverzicht.php', 'class' => $tech_color],
+    '',
+    '',
+    '',
+];
 ?>
 
 <link rel="stylesheet" href="menu.css">
@@ -20,44 +35,15 @@ include "javascriptsAfhandeling.js.php";
 Menu : </br>
 <hr class="blue">
 
-<?php echo View::link_to('Home', 'Home.php', ['class' => 'blue']); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Inboeken', 'Kostenopgaaf.php', ['class' => $fin_color]); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Deklijst', 'Deklijst.php', ['class' => $fin_color]); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Liquiditeit', 'Liquiditeit.php', ['class' => $fin_color]); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Saldoberekening', 'Saldoberekening.php', ['class' => $fin_color]); ?>
-<hr class="grey">
-
-<br/>
-<hr class="grey">
-
-<br/>
-<hr class="grey">
-
-<?php echo View::link_to('Rubrieken', 'Rubrieken.php', ['class' => $fin_color]); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Componenten', 'Componenten.php', ['class' => $fin_color]); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Betaalde posten', 'Kostenoverzicht.php', ['class' => $fin_color]); ?>
-<hr class="grey">
-
- <br/>
-<hr class="grey">
-
- <br/>
-<hr class="grey">
-
- <br/>
-<hr class="grey">
+<?php
+foreach ($menu_items as $item) :
+    if ($item) {
+        echo View::link_to($item->caption, $item->href, ['class' => $item->class]);
+    } else {
+        echo '<br/>';
+    }
+echo PHP_EOL.'<hr class="grey">'.PHP_EOL;
+endforeach; ?>
 
 <?php include "versie.tpl.php"; ?>
 </td>

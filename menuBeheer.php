@@ -23,6 +23,27 @@ if ($reader == 'Agrident') {
         $reader_color = 'blue';
     }
 }
+
+$menu_items = [
+    (object)['caption' => 'Home', 'href' => 'Home.php', 'class' => 'blue'],
+    '',
+    (object)['caption' => 'Verblijven', 'href' => 'Hok.php', 'class' => $tech_color],
+    (object)['caption' => 'Rassen', 'href' => 'Ras.php', 'class' => 'blue'],
+    (object)['caption' => 'Redenen en momenten', 'href' => 'Uitval.php', 'class' => 'blue'],
+    (object)['caption' => 'Combi redenen', 'href' => 'Combireden.php', 'class' => 'blue'],
+    (object)['caption' => 'Dekrammen', 'href' => 'Vader.php', 'class' => 'blue'],
+    '',
+    (object)['caption' => 'Eenheden', 'href' => 'Eenheden.php', 'class' => $tech_color],
+    (object)['caption' => 'Relaties', 'href' => 'Relaties.php', 'class' => 'blue'],
+    (object)['caption' => 'Readerversies', 'href' => 'Readerversies.php', 'class' => $reader_color],
+    (object)['caption' => 'Gebruikers', 'href' => 'Gebruikers.php', 'class' => 'blue',
+    'if' => $modbeheer],
+    (object)['caption' => 'Instellingen', 'href' => 'Systeem.php', 'class' => 'blue'],
+
+];
+$menu_items = array_filter($menu_items, function ($item) {
+    return !isset($item->if) || $item->if;
+});
 ?>
 
 <link rel="stylesheet" href="menu.css">
@@ -30,46 +51,15 @@ if ($reader == 'Agrident') {
 Menu : </br>
 <hr class="blue">
 
-<?php echo View::link_to('Home', 'Home.php', ['class' => 'blue']); ?>
-<hr class="grey">
-
-<br/>
-<hr class="grey">
-
-<?php echo View::link_to('Verblijven', 'Hok.php', ['class' => $tech_color]); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Rassen', 'Ras.php', ['class' => 'blue']); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Redenen en momenten', 'Uitval.php', ['class' => 'blue']); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Combi redenen', 'Combireden.php', ['class' => 'blue']); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Dekrammen', 'Vader.php', ['class' => 'blue']); ?>
-<hr class="grey">
-
-<br/>
-<hr class="grey">
-
-<?php echo View::link_to('Eenheden', 'Eenheden.php', ['class' => $tech_color]); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Relaties', 'Relaties.php', ['class' => 'blue']); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Readerversies', 'Readerversies.php', ['class' => $reader_color]); ?>
-<hr class="grey">
-
-<?php if ($modbeheer == 1) { ?>
-<?php echo View::link_to('Gebruikers', 'Gebruikers.php', ['class' => 'blue']); ?>
-<?php } ?>
-<hr class="grey">
-
-<?php echo View::link_to('Instellingen', 'Systeem.php', ['class' => 'blue']); ?>
-<hr class="grey">
+<?php
+foreach ($menu_items as $item) :
+    if ($item) {
+        echo View::link_to($item->caption, $item->href, ['class' => $item->class]);
+    } else {
+        echo '<br/>';
+    }
+echo PHP_EOL.'<hr class="grey">'.PHP_EOL;
+endforeach; ?>
 
 <?php include "versie.tpl.php"; ?>
 </td>

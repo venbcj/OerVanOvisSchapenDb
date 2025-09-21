@@ -76,7 +76,7 @@ if (($url == 'https://test.oervanovis.nl/' || $url == 'https://demo.oervanovis.n
 if (php_uname('n') == 'basq') {
    if (isset($_REQUEST['ingelogd'])) {
      // met deze hack kan ik op mijn computer het ingelogd-zijn simuleren vanuit een unit test --BCB
-     $_SESSION['U1'] = 1;
+     $_SESSION['U1'] = 1; // moet eigenlijk username zijn, maar dan vallen alle approval-tests om. Niet nodig.
      $_SESSION['W1'] = 1;
      $_SESSION['I1'] = $_REQUEST['ingelogd'];
      $_SESSION['PA'] = 1;

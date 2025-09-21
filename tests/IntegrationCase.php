@@ -79,7 +79,7 @@ class IntegrationCase extends UnitCase {
             $expected_nowhitespace = preg_replace('/\s/', '', $expected);
             $actual_nowhitespace = preg_replace('/\s/', '', $this->output);
             if ($expected_nowhitespace != $actual_nowhitespace) {
-                $diff = StringDiff::create(5, $expected_nowhitespace, $actual_nowhitespace);
+                $diff = Stringdiff::create(5, $expected_nowhitespace, $actual_nowhitespace);
                 $this->fail($diff->diff());
             }
         }

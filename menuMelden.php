@@ -28,51 +28,36 @@ if ($modmeld != 0) {
 }
 
 include "javascriptsAfhandeling.js.php";
+$menu_items = [
+    (object)['caption' => 'Home', 'href' => 'Home.php', 'class' => 'blue'],
+    '',
+    (object)['caption' => 'Melden RVO', 'href' => 'Melden.php', 'class' => $meld_color],
+    (object)['caption' => 'Meldingen', 'href' => 'Meldingen.php', 'class' => $melding_color],
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+];
 ?>
 
-<link rel="stylesheet" href="menu.css">
-<td width = '150' height = '100' valign='top'>
+<td width='150' height='100' valign='top'>
 Menu : </br>
 <hr class="blue">
 
-<?php echo View::link_to('Home', 'Home.php', ['class' => 'blue']); ?>
-<hr class="grey">
-
-<br/>
-<hr class="grey">
-
-<?php echo View::link_to('Melden RVO', 'Melden.php', ['class' => $meld_color]) ?>
-<hr class="grey">
-
-<?php echo View::link_to('Meldingen', 'Meldingen.php', ['class' => $melding_color]); ?>
-<hr class="grey">
-
-<br/>
-<hr class="grey">
-
-<br/>
-<hr class="grey">
-
-<br/>
-<hr class="grey">
-
-<br/>
-<hr class="grey">
-
-<br/>
-<hr class="grey">
-
-<br/>
-<hr class="grey">
-
-<br/>
-<hr class="grey">
-
-<br/>
-<hr class="grey">
-
-<br/>
-<hr class="grey">
+<?php
+foreach ($menu_items as $item) :
+    if ($item) {
+        echo View::link_to($item->caption, $item->href, ['class' => $item->class]);
+    } else {
+        echo '<br/>';
+    }
+echo PHP_EOL.'<hr class="grey">'.PHP_EOL;
+endforeach; ?>
 
 <?php include "versie.tpl.php"; ?>
 </td>

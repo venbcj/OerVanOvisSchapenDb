@@ -3,47 +3,43 @@
  <!-- 20-12-2020 : Pagina gemaakt 
 29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.js.php -->
  */
-include "javascriptsAfhandeling.js.php";
- 
+
 $tech_color = 'grey';
 if ($modtech != 0) {
     $tech_color = 'blue';
 }
 
+include "javascriptsAfhandeling.js.php";
+$menu_items = [
+    (object)['caption' => 'Home', 'href' => 'Home.php', 'class' => 'blue'],
+    '',
+    (object)['caption' => 'Ooitjes uit meerlingen', 'href' => 'OoilamSelectie.php', 'class' => $tech_color],
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+];
+ 
 ?>
-<td width = '150' height = '100' valign='top'>
+<td width='150' height='100' valign='top'>
 Menu : </br>
 <hr class="blue">
 
-<?php echo View::link_to('Home', 'Home.php', ['class' => 'blue']); ?>
-<hr class="grey">
-
-<br/>
-<hr class="grey">
-
-<?php echo View::link_to('Ooitjes uit meerlingen', 'OoilamSelectie.php', ['class' => $tech_color]); ?>
-<hr class="grey">
-
-<br/>
-<hr class="grey">
-<br/>
-<hr class="grey">
-<br/>
-<hr class="grey">
-<br/>
-<hr class="grey">
-<br/>
-<hr class="grey">
-<br/>
-<hr class="grey">
-<br/>
-<hr class="grey">
-<br/>
-<hr class="grey">
-<br/>
-<hr class="grey">
-<br/>
-<hr class="grey">
+<?php
+foreach ($menu_items as $item) :
+    if ($item) {
+        echo View::link_to($item->caption, $item->href, ['class' => $item->class]);
+    } else {
+        echo '<br/>';
+    }
+echo PHP_EOL.'<hr class="grey">'.PHP_EOL;
+endforeach; ?>
 
 <?php include "versie.tpl.php"; ?>
 </td>

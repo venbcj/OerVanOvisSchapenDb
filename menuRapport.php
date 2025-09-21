@@ -11,6 +11,22 @@ if ($modtech != 0) {
 }
 
 include "javascriptsAfhandeling.js.php";
+$menu_items = [
+    (object)['caption' => 'Home', 'href' => 'Home.php', 'class' => 'blue'],
+    (object)['caption' => 'Stallijst', 'href' => 'Stallijst.php', 'class' => 'blue'],
+    (object)['caption' => 'Afleverlijst', 'href' => 'ZoekAfldm.php', 'class' => 'blue'],
+    (object)['caption' => 'Maandoverz. fokkerij', 'href' => 'Mndoverz_fok.php', 'class' => $tech_color],
+    (object)['caption' => 'Maandoverz. vleeslam', 'href' => 'Mndoverz_vlees.php', 'class' => $tech_color],
+    (object)['caption' => 'Medicijn rapportage', 'href' => 'Med_rapportage.php', 'class' => $tech_color],
+    (object)['caption' => 'Voer rapportage', 'href' => 'Voer_rapportage.php', 'class' => $tech_color],
+    (object)['caption' => 'Ooi rapporten', 'href' => 'Rapport1.php', 'class' => $tech_color],
+    (object)['caption' => 'Maandtotalen', 'href' => 'MaandTotalen.php', 'class' => $tech_color],
+    (object)['caption' => 'Groeiresultaten per schaap', 'href' => 'GroeiresultaatSchaap.php', 'class' => $tech_color],
+    (object)['caption' => 'Groeiresultaten per weging', 'href' => 'GroeiresultaatWeging.php', 'class' => $tech_color],
+    (object)['caption' => 'Resultaten', 'href' => 'ResultHok.php', 'class' => $tech_color],
+    '',
+    '',
+];
 ?>
 
 <link rel="stylesheet" href="menu.css">
@@ -19,47 +35,15 @@ Menu :
 <br>
 <hr class="blue">
 
-<?php echo View::link_to('Home', 'Home.php', ['class' => 'blue']); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Stallijst', 'Stallijst.php', ['class' => 'blue']); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Afleverlijst', 'ZoekAfldm.php', ['class' => 'blue']); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Maandoverz. fokkerij', 'Mndoverz_fok.php', ['color' => $tech_color]); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Maandoverz. vleeslam.', 'Mndoverz_vlees.php', ['color' => $tech_color]); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Medicijn rapportage', 'Med_rapportage.php', ['color' => $tech_color]); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Voer rapportage', 'Voer_rapportage.php', ['color' => $tech_color]); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Ooi rapporten', 'Rapport1.php', ['color' => $tech_color]); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Maandtotalen', 'MaandTotalen.php', ['color' => $tech_color]); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Groeiresultaten per schaap', 'GroeiresultaatSchaap.php', ['color' => $tech_color]); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Groeiresultaten per weging', 'GroeiresultaatWeging.php', ['color' => $tech_color]); ?>
-<hr class="grey">
-
-<?php echo View::link_to('Resultaten', 'ResultHok.php', ['color' => $tech_color]); ?>
-<hr class="grey">
-
-<br/>
-<hr class="grey">
-
-<br/>
-<hr class="grey">
+<?php
+foreach ($menu_items as $item) :
+    if ($item) {
+        echo View::link_to($item->caption, $item->href, ['class' => $item->class]);
+    } else {
+        echo '<br/>';
+    }
+echo PHP_EOL.'<hr class="grey">'.PHP_EOL;
+endforeach; ?>
 
 <?php include "versie.tpl.php"; ?>
 </td>
