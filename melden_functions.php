@@ -1,5 +1,7 @@
 <?php
 
+// nu dit nog in een class verpakken, zodat de expliciete require in Melden kan vervallen
+
 function melden_menu($db, $lidId) {
     $request_gateway = new RequestGateway($db);
 

@@ -19,7 +19,10 @@ session_start();
 // voor verder splitsen van berekening en uitvoer
 // moet eerst login.php onderverdeeld worden. Zie opmerking in login --BCB
 
+// todo: dit uit een class laten komen
 require_once("melden_functions.php");
+
+// Nu nog een layout die op de juiste plek een yield() naar deze inhoud doet --BCB
 
 ?>
 <!DOCTYPE html>
@@ -31,64 +34,28 @@ require_once("melden_functions.php");
 
 <?php
 $titel = 'Melden RVO';
+// TODO: (BV) subtitel wordt nergens afgedrukt. Maken? Verwijderen?
 $subtitel = 'Maximaal 60 per melding';
 $file = "Melden.php";
 include "login.php";
-
 if (Auth::is_logged_in()) {
+    $viewdata = ['authorized' => false];
     if ($modmeld == 1) {
+        $viewdata['authorized'] = true;
+        // todo: dit nader uitzoeken. Doet geen uitvoer, maar zou wel $fout kunnen vullen. Dat heeft dan effect via menuMelden...
         include "responscheck.php";
         // Controleren of inloggevens bestaan
         $lid_gateway = new LidGateway($db);
         if ($lid_gateway->hasCompleteRvo($lidId)) {
-            $links = melden_menu($db, $lidId);
-        } else {
-            $onvolledig = 'variabele bestaat';
+            $viewdata['links'] = melden_menu($db, $lidId);
         }
-?>
-<TD valign = 'top'>    
-<!-- <form action="Melden.php" method = "post"> -->
-
-<br><br>
-<h2 align="center" style="color:blue">Hier kun je meldingen bij RVO indienen.</h2>
-<table border = 0 align="center">
-<tr  height = 40><td></td></tr>
-<?php
-        if (isset($onvolledig)) {
-?>
-    <tr><td>Melden is niet mogelijk. Inloggevens RVO zijn onvolledig. Zie systeemgegevens.</td></tr>
-<?php
-        } else {
-?>
-<?php foreach ($links as $index => $link) { ?>
-<tr>
-<td>
-<?php echo View::link_to($link['caption'], $link['href'], ['class' => 'blue']);
-?>
-</td>
-<td style = "font-size : 12px;">
-<?php echo $link['remark']; ?>
-</td>
-</tr>
-<?php } ?>
-
-<?php
-        } ?>
-</table>
-<br><br><br>
-    </TD>
-<?php
-    } else {
-?>
-    <img src='Melden_php.jpg'  width='970' height='550'/>
-<?php
     }
+    // de melden/page-template bevat een omliggende td, die waarschijnlijk naar de layout kan verhuizen
+    View::render('melden/page', $viewdata);
     include "menuMelden.php";
 }
 ?>
 </tr>
 </table>
-<!-- </form> -->
-
 </body>
 </html>

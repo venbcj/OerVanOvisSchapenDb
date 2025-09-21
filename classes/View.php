@@ -22,4 +22,16 @@ class View {
         );
     }
 
+    // $name is bestandsnaam zonder .tpl.php, uitgaande van /templates
+    // In fase 1 dumpt dit de uitvoer nog naar het scherm.
+    public static function render($name, $data = []) {
+        // TODO hier moet waarschijnlijk nog een file-root voor, vergelijkbaar met Url::getWebroot
+        $file = "templates/$name.tpl.php";
+        if (!file_exists($file)) {
+            throw new Exception("template file $file not found");
+        }
+        extract($data);
+        include $file;
+    }
+
 }
