@@ -89,7 +89,6 @@ $vawerknr = [];
 $vaRaak = [];
 while ($va = mysqli_fetch_array($resultvader)) 
 { 
-   //$vaId[$index] = $va['schaapId']; 
    $vawerknr[$index] = $va['werknr'];
    $vaRaak[$index] = $va['schaapId'];   
    $index++; 
@@ -101,19 +100,21 @@ unset($index);
     /****************************************
             NIEUWE INVOER PER DIER
     *****************************************/
-    if (isset($_POST['knpInsert1_']))
-{
+    if (isset($_POST['knpInsert1_'])) {
     if(!empty($_POST['txtDatum1_'])) {
         $dag1 = $_POST['txtDatum1_']; 
-        //if(empty($dag1)) { $dag1 = date('d-m-Y'); } #echo 'Datum :'.$dag1.'<br>'; 
         $date = date_create($dag1);
-        $txtDay =  date_format($date, 'Y-m-d');   #echo 'Datum database : '.$txtDay.'<br>';
+        $txtDay =  date_format($date, 'Y-m-d');   
+        #echo 'Datum database : '.$txtDay.'<br>';
     }
     if(!empty($_POST['kzlWat_'])) { $registratie = $_POST['kzlWat_']; }
-    if(!empty($_POST['kzlOoi_'])) { $kzlMdr = $_POST['kzlOoi_']; } #echo 'Moeder : '.$kzlMdr.'<br>';
-    if(!empty($_POST['kzlRamNew1_'])) { $kzlVdr = $_POST['kzlRamNew1_']; } #echo 'Vader : '.$kzlVdr.'<br>';
+    if(!empty($_POST['kzlOoi_'])) { $kzlMdr = $_POST['kzlOoi_']; } 
+    #echo 'Moeder : '.$kzlMdr.'<br>';
+    if(!empty($_POST['kzlRamNew1_'])) { $kzlVdr = $_POST['kzlRamNew1_']; } 
+    #echo 'Vader : '.$kzlVdr.'<br>';
     $txtGrootte = '';
-    if(isset($_POST['txtWorp_'])) { $txtGrootte = $_POST['txtWorp_']; }  #echo 'Dracht : '.$dracht.'<br><br>';
+    if(isset($_POST['txtWorp_'])) { $txtGrootte = $_POST['txtWorp_']; }  
+    #echo 'Dracht : '.$dracht.'<br><br>';
 
 
 
@@ -133,7 +134,8 @@ FROM tblVolwas v
 WHERE mdrId = '".mysqli_real_escape_string($db,$kzlMdr)."' and h.actId = 1 and h.skip = 0
 ") or die (mysqli_error($db));
 
-    while ( $vw = mysqli_fetch_assoc ($zoek_60dagen_na_laatste_worp)) { $vroegst_volgende_dekdatum = $vw['datum']; } // Datum dat moeder weer drachtig kan zijn
+while ( $vw = mysqli_fetch_assoc ($zoek_60dagen_na_laatste_worp)) { $vroegst_volgende_dekdatum = $vw['datum']; } 
+// Datum dat moeder weer drachtig kan zijn
 
 $zoek_laatste_koppel_na_laatste_worp_obv_moeder = mysqli_query($db,"
 SELECT max(v.volwId) volwId
@@ -143,7 +145,8 @@ FROM tblVolwas v
 WHERE (isnull(dek.skip) or dek.skip = 0) and isnull(lam.volwId) and v.mdrId = '".mysqli_real_escape_string($db,$kzlMdr)."'
 ") or die (mysqli_error($db));
 
-    while ( $lk = mysqli_fetch_assoc ($zoek_laatste_koppel_na_laatste_worp_obv_moeder)) { $koppel = $lk['volwId']; } //Laatste_koppel_zonder_worp
+    while ( $lk = mysqli_fetch_assoc ($zoek_laatste_koppel_na_laatste_worp_obv_moeder)) { $koppel = $lk['volwId']; } 
+//Laatste_koppel_zonder_worp
 
 $zoek_moeder_vader_uit_laatste_koppel = mysqli_query($db,"
 SELECT mdrId, vdrId, v.hisId his_dek, d.hisId his_dracht
@@ -153,6 +156,8 @@ FROM tblVolwas v
 WHERE (isnull(hd.skip) or hd.skip = 0) and v.volwId = '".mysqli_real_escape_string($db,$koppel)."'
 ") or die (mysqli_error($db));
 
+$lst_mdr = 0;
+$lst_vdr = 0;
     while ( $v_m = mysqli_fetch_assoc ($zoek_moeder_vader_uit_laatste_koppel)) { 
         $lst_mdr = $v_m['mdrId']; 
         $lst_vdr = $v_m['vdrId']; 
@@ -165,18 +170,21 @@ echo '$lst_vdr = '.$lst_vdr.' keuze vdr = '.$kzlVdr.'<br>' ;*/
 
 
 if($lst_mdr == $kzlMdr) {
-if(isset($dekMoment) && $lst_vdr == $kzlVdr && isset($kzlVdr)) {
+    if(isset($dekMoment) && $lst_vdr == $kzlVdr && isset($kzlVdr)) {
 
-$zoek_dekdatum = mysqli_query($db,"
+        $zoek_dekdatum = mysqli_query($db,"
 SELECT date_format(datum,'%d-%m-%Y') datum, year(datum) jaar
 FROM tblHistorie
 WHERE hisId = '".mysqli_real_escape_string($db,$dekMoment)."' and skip = 0
-") or die (mysqli_error($db));
-    while ( $zd = mysqli_fetch_assoc($zoek_dekdatum)) { $dekdm = $zd['datum']; $dekjaar = $zd['jaar']; }
-
+    ") or die (mysqli_error($db));
+while ( $zd = mysqli_fetch_assoc($zoek_dekdatum)) {
+    $dekdm = $zd['datum']; $dekjaar = $zd['jaar']; 
+}
     $fout = "Deze ram heeft deze ooi reeds als laatste gedekt en wel op ".$dekdm.". ";
 
-    if($registratie == 'dracht') { $fout .= " Wijzig de dekking uit ".$dekjaar."."; }
+if($registratie == 'dracht') {
+    $fout .= " Wijzig de dekking uit ".$dekjaar.".";
+}
 }
 if(isset($drachtMoment)) {
 
@@ -185,7 +193,9 @@ SELECT date_format(datum,'%d-%m-%Y') datum
 FROM tblHistorie
 WHERE hisId = '".mysqli_real_escape_string($db,$drachtMoment)."' and skip = 0
 ") or die (mysqli_error($db));
-    while ( $zd = mysqli_fetch_assoc($zoek_drachtdatum)) { $drachtdm = $zd['datum']; }
+while ( $zd = mysqli_fetch_assoc($zoek_drachtdatum)) {
+    $drachtdm = $zd['datum']; 
+}
 
     $fout = "Deze ooi is reeds drachtig per ".$drachtdm.". ";
 }
@@ -217,17 +227,20 @@ insert_tblHistorie($stalId,$txtDay,19);
 $hisId = zoek_max_hisId_stal($stalId,19);
 
 $insert_tblDracht = "INSERT INTO tblDracht SET volwId = '".mysqli_real_escape_string($db,$volwId)."', hisId = '".mysqli_real_escape_string($db,$hisId)."' ";    
-/*echo $insert_tblDracht.'<br>';*/        mysqli_query($db,$insert_tblDracht) or die (mysqli_error($db));
+/*echo $insert_tblDracht.'<br>';*/
+mysqli_query($db,$insert_tblDracht) or die (mysqli_error($db));
 
       }
 
-            } // Einde if (isset($txtDay) && isset($registratie) && isset($kzlMdr))
+            } 
+// Einde if (isset($txtDay) && isset($registratie) && isset($kzlMdr))
 
             else if(!isset($txtDay))         { $fout = "De datum is onbekend."; }
             else if(!isset($registratie))    { $fout = "Soort registratie is onbekend."; }
             else if(!isset($kzlMdr))            { $fout = "Moederdier is onbekend."; }
 
-} // Einde if (isset($_POST['knpInsert1_']))
+} 
+// Einde if (isset($_POST['knpInsert1_']))
     /****************************************
         EINDE NIEUWE INVOER PER DIER
     *****************************************/
@@ -236,23 +249,29 @@ $insert_tblDracht = "INSERT INTO tblDracht SET volwId = '".mysqli_real_escape_st
     /****************************************
             NIEUWE INVOER O.B.V. VERBLIJF
     *****************************************/
-    if (isset($_POST['knpInsert2_']))
-{
+    if (isset($_POST['knpInsert2_'])) {
     if(!empty($_POST['txtDatum2_'])) {
         $dag2 = $_POST['txtDatum2_']; 
-        //if(empty($dag2)) { $dag2 = date('d-m-Y'); } #echo 'Datum :'.$dag2.'<br>'; 
         $date = date_create($dag2);
-        $txtDay =  date_format($date, 'Y-m-d');   #echo 'Datum database : '.$txtDay.'<br>';
+        $txtDay =  date_format($date, 'Y-m-d');   
+    #echo 'Datum database : '.$txtDay.'<br>';
     }
     $registratie = 'dekking';
-    if(!empty($_POST['kzlHok_'])) { $kzlHok = $_POST['kzlHok_']; } #echo '$kzlHok : '.$kzlHok.'<br>';
-    if(!empty($_POST['kzlRamNew2_'])) { $kzlVdr = $_POST['kzlRamNew2_']; } #echo 'Vader : '.$kzlVdr.'<br>';
+    if(!empty($_POST['kzlHok_'])) {
+        $kzlHok = $_POST['kzlHok_']; 
+    } 
+    #echo '$kzlHok : '.$kzlHok.'<br>';
+    if(!empty($_POST['kzlRamNew2_'])) {
+        $kzlVdr = $_POST['kzlRamNew2_']; 
+    } 
+    #echo 'Vader : '.$kzlVdr.'<br>';
 
 
 if (isset($txtDay) && isset($registratie) && isset($kzlHok) && isset($kzlVdr)) {
 
 //Controle of vaderdier dit verblijf als laatste reeds heeft gedekt. Zie toelichting onder deze eerste query
 
+    $dgn_verschil = 0;
 $aantal_laatste_dekkingen_van_moeders_uit_gekozen_verblijf_met_laatste_dekkingen_met_gekozen_vader = mysqli_query($db,"
 SELECT count(mdrs.mdrId) aant, datediff('".mysqli_real_escape_string($db,$txtDay)."', h.datum) verschil
 FROM (
@@ -299,8 +318,12 @@ FROM (
 
 ") or die (mysqli_error($db));
 
-    while ( $ald = mysqli_fetch_assoc($aantal_laatste_dekkingen_van_moeders_uit_gekozen_verblijf_met_laatste_dekkingen_met_gekozen_vader)) { $aant_mdrs = $ald['aant'];  // aantal moeders uit verblijf waarvan laatste dekking van gekozen vaderdier is
-        $dgn_verschil = $ald['verschil']; } // aantal dagen tussen laatste dekking met dit vaderdier en de huidig gekozen datum
+$aant_mdrs = 0;
+while ( $ald = mysqli_fetch_assoc($aantal_laatste_dekkingen_van_moeders_uit_gekozen_verblijf_met_laatste_dekkingen_met_gekozen_vader)) {
+    $aant_mdrs = $ald['aant'];  
+// aantal moeders uit verblijf waarvan laatste dekking van gekozen vaderdier is
+        $dgn_verschil = $ald['verschil']; } 
+// aantal dagen tussen laatste dekking met dit vaderdier en de huidig gekozen datum
 
 /*
 echo '$aant_mdrs = '. $aant_mdrs.'<br>';
@@ -376,8 +399,10 @@ FROM (
 
 ") or die (mysqli_error($db));
 
-    while ( $ald = mysqli_fetch_assoc($aantal_laatste_dekkingen_van_moeders_uit_gekozen_verblijf_met_laatste_dekkingen_met_gekozen_vader)) { $aant_mdrs = $ald['aant'];  // aantal moeders uit verblijf waarvan laatste dekking van gekozen vaderdier is
-        $dgn_verschil = $ald['verschil']; } // aantal dagen tussen laatste dekking met dit vaderdier en de huidig gekozen datum
+    while ( $ald = mysqli_fetch_assoc($aantal_laatste_dekkingen_van_moeders_uit_gekozen_verblijf_met_laatste_dekkingen_met_gekozen_vader)) { $aant_mdrs = $ald['aant'];  
+// aantal moeders uit verblijf waarvan laatste dekking van gekozen vaderdier is
+        $dgn_verschil = $ald['verschil']; } 
+// aantal dagen tussen laatste dekking met dit vaderdier en de huidig gekozen datum
 
 
 if($aant_mdrs >= 5 && $dgn_verschil <= 21) { $fout = 'Controle dubbele registratie: \nMinimaal 5 moederdieren uit dit verblijf zijn al als laatst gedekt door dit vaderdier binnen 21 dagen. \nEr wordt daarom niets ingelezen. '; }
@@ -419,7 +444,8 @@ $num_rows = mysqli_num_rows($zoek_moeders_in_verblijf);
 if($num_rows == 0) { $fout = 'Dit verblijf heeft geen moederdieren.'; }
 else {
 
-    while ( $zmv = mysqli_fetch_assoc($zoek_moeders_in_verblijf)) { $mdrId = $zmv['mdrId']; 
+    while ( $zmv = mysqli_fetch_assoc($zoek_moeders_in_verblijf)) {
+        $mdrId = $zmv['mdrId']; 
 
 
 
@@ -473,7 +499,8 @@ WHERE schaapId = '" . mysqli_real_escape_string($db,$mdrId) . "'
 }
 
 
-} // Einde if(isset($max_worp))
+} 
+// Einde if(isset($max_worp))
 // Einde Controle dekking binnen 60 dagen na laatste worp per moeder
 
 if(!isset($max_worp) || (isset($dmwerp_plus_60dgn) && $dmwerp_plus_60dgn <= $txtDay)) {
@@ -491,26 +518,33 @@ insert_dekking_mdr($hisId,$mdrId,$kzlVdr);
 // Einde Inlezen dekking door kzlVdr bij ooien in verblijf kzlHok
 }
 
-} // Einde while ( $zmv = mysqli_fetch_assoc($zoek_moeders_in_verblijf))
+} 
+// Einde while ( $zmv = mysqli_fetch_assoc($zoek_moeders_in_verblijf))
 
-} // Else van if($num_rows == 0)
+} 
+// Else van if($num_rows == 0)
 
-} // Einde if(!isset($fout))
+} 
+// Einde if(!isset($fout))
 
-            } // Einde if (isset($txtDay) && isset($registratie) && isset($kzlHok) && isset($kzlVdr))
+            } 
+// Einde if (isset($txtDay) && isset($registratie) && isset($kzlHok) && isset($kzlVdr))
 
             else if(!isset($txtDay))             { $fout = "De datum is onbekend."; }
             else if(!isset($kzlHok))            { $fout = "Verblijf is onbekend."; }
             else if(!isset($kzlVdr))            { $fout = "Ram is onbekend."; }
 
 
-} // Einde if (isset($_POST['knpInsert2_']))
+} 
+// Einde if (isset($_POST['knpInsert2_']))
 
     /****************************************
         EINDE NIEUWE INVOER O.B.V. VERBLIJF
     *****************************************/
 
-if(isset($_POST['knpSave_'])) { include "save_dekkingen.php"; }
+if(isset($_POST['knpSave_'])) {
+    include "save_dekkingen.php";
+}
 ?>    
 <form action = "Dekkingen.php" method = "post" >
 
@@ -733,8 +767,10 @@ else { $hisJaar = 2; } ?>
 $current_year = date("Y");
 $first_year = date("Y")-$hisJaar+1;
 
-$startjaar_gebruiker = startjaar_gebruiker($lidId); //Het jaartal dat de gebruiker is gestart
-$een_startjaar_eerder_gebruiker = startjaar_gebruiker($lidId)-1; // 1 jaar eerder t.o.v. het jaartal dat de gebruiker is gestart
+$startjaar_gebruiker = startjaar_gebruiker($lidId); 
+//Het jaartal dat de gebruiker is gestart
+$een_startjaar_eerder_gebruiker = startjaar_gebruiker($lidId)-1; 
+// 1 jaar eerder t.o.v. het jaartal dat de gebruiker is gestart
 $start_datum_historie = date_add_months($today,-12); /* Oude dekkingen zijn tot een jaar terug te wijzigen */
 
 $array_drachtdatum = array();
@@ -750,7 +786,8 @@ WHERE (actId = 18 or actId = 19) and skip = 0 and st.lidId = '".mysqli_real_esca
     while($zj = mysqli_fetch_assoc($zoek_jaartal_eerste_dekking_dracht)) { $first_year_db = $zj['jaar']; }
 
 
-if(!isset($first_year_db)) { $first_year = $current_year; }    // Als er geen dekking of dracht bestaat
+if(!isset($first_year_db)) { $first_year = $current_year; }    
+// Als er geen dekking of dracht bestaat
 else if($first_year < $first_year_db) { $first_year = $first_year_db; } 
 
 
@@ -856,8 +893,10 @@ if(isset($zoek_dekkingen1))  { foreach($zoek_dekkingen1 as $key => $array)
     
     $worpgrootte = $array['lamrn'];
 
-    if($worpgrootte > 0) { // Vul de array alleen als er een worp bestaat
-    $array_dub[] = $array['mdrId']; // schaapId van moeder
+    if($worpgrootte > 0) { 
+// Vul de array alleen als er een worp bestaat
+    $array_dub[] = $array['mdrId']; 
+// schaapId van moeder
     }
 }
 }
@@ -964,7 +1003,9 @@ if($regels_tonen == 'Ja') {
 $array_drachtdatum[] = $Id; ?>
 
 <tr class= "<?php echo $jaar; ?> selectt" > 
-<td><?php /*echo $Id;*/ ?> </td>
+<td><?php
+/*echo $Id;*/
+ ?> </td>
  <td align = center style = "font-size:14px;"><?php if(!isset($drachtig) || $drachtig =='nee' ) { ?> 
 
 <!-- <button class=btn btn-sm btn-danger delete_class id= <?php echo $Id; ?> >Verwijder dekking</button> -->
@@ -975,7 +1016,9 @@ $array_drachtdatum[] = $Id; ?>
  </td>
  <td align = center style = "font-size: <?php echo $fontsize; ?> ; color : <?php echo $color; ?> ;"><?php echo $dekdm; ?></td><td width = "1">
  </td>
- <?php if(isset($lamrn) ) { /*unset($fontsize);*/ } ?>
+<?php if(isset($lamrn) ) {
+/*unset($fontsize);*/
+ } ?>
  <td align = center style = "font-size: <?php echo $fontsize; ?> ; color : <?php echo $color; ?> ;"><?php echo "$moeder";?>
  </td>
  <td width = "1">
@@ -1048,7 +1091,8 @@ foreach ( $opties as $key => $waarde)
 
 </tr>
 
-<?php } // Einde if($regels_tonen == 'Ja') ?>
+<?php } 
+// Einde if($regels_tonen == 'Ja') ?>
 
 
 </tr>
@@ -1076,7 +1120,8 @@ foreach ( $opties as $key => $waarde)
 
 <?php
 include "menu1.php"; } 
-} // Einde if($modtech == 1)
+} 
+// Einde if($modtech == 1)
 include "dekkingen-2.js.php";
 ?>
 </body>

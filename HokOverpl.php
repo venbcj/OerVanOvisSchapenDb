@@ -56,7 +56,7 @@ $KEUZE = $_SESSION["KZ"];
 
 ##echo '$KEUZE = '.$KEUZE.'<br>';
     if (!isset($_SESSION['BST'])) $_SESSION['BST'] = 1;
-    if (!isset($_SESSION['DT1'])) $_SESSION['DT1'] = 1;
+    if (!isset($_SESSION['DT1'])) $_SESSION['DT1'] = '1900-01-01';
 
 
 if(isset($_POST['knpVerder_']) && isset($_POST['kzlHokall_']))    {
@@ -155,6 +155,7 @@ ORDER BY hoknr
 ") or die (mysqli_error($db));
 
 $index = 0;
+$hoknum = [];
 while ($hnr = mysqli_fetch_array($qryHokkeuze)) 
 { 
    $hoknId[$index] = $hnr['hokId']; 
@@ -351,10 +352,19 @@ if(isset($data)) {
         $prnt = $array['prnt']; if(isset($prnt)) { if($sekse == 'ooi') { $fase = 'moeder'; } else if($sekse == 'ram') { $fase = 'vader'; } } else { $fase = 'lam'; }
 
 
-if( (isset($_POST['knpVervers_']) || isset($_POST['knpSave_']) ) && !isset($_POST['kzlHokall_']) ) { $cbKies = $_POST["chbkies_$schaapId"]; $datum = $_POST["txtDatum_$schaapId"]; }
-// Bij de eerste keer openen van deze pagina bestaat als enigste keer het veld kzlHokall_ . knpVervers_ bestaat als hidden veld. txtDatum_$schaapId en txtGewicht_$schaapId bestaan dan nog niet. Variabalen $datum en $kg kunnen enkel worden gevuld als wordt voldaan aan (isset($_POST['knpVervers_']) && !isset($_POST['kzlHokall_']))  !!!
+        if( (isset($_POST['knpVervers_']) || isset($_POST['knpSave_']) ) && !isset($_POST['kzlHokall_']) ) {
+            $cbKies = $_POST["chbkies_$schaapId"];
+            $datum = $_POST["txtDatum_$schaapId"];
+        }
+        // Bij de eerste keer openen van deze pagina bestaat als enigste keer het veld kzlHokall_ .
+        //  knpVervers_ bestaat als hidden veld. txtDatum_$schaapId en txtGewicht_$schaapId bestaan dan nog niet.
+        //  Variabalen $datum en $kg kunnen enkel worden gevuld als wordt voldaan aan (isset($_POST['knpVervers_']) && !isset($_POST['kzlHokall_']))  !!!
     if(!isset($datum) && isset($sess_dag)) { $datum = $sess_dag; }
-    if(isset($datum)) /*$datum kan al bestaan voor isset($_POST['knpVervers_']) */ { $makeday = date_create($datum); $day = date_format($makeday,'Y-m-d'); }
+            /*$datum kan al bestaan voor isset($_POST['knpVervers_']) */
+        if(isset($datum)) {
+            $makeday = date_create($datum);
+            $day = date_format($makeday,'Y-m-d'); 
+        }
     
 // Controleren of ingelezen waardes correct zijn.
     if( empty($datum)                                                    || # Overplaatsdatum is leeg

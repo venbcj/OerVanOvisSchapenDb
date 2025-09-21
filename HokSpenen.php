@@ -106,6 +106,8 @@ ORDER BY hoknr
 ") or die (mysqli_error($db)); 
 
 $index = 0; 
+$hoknum = [];
+
 while ($hnr = mysqli_fetch_array($qryHokkeuze)) 
 { 
    $hoknId[$index] = $hnr['hokId']; 

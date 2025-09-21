@@ -46,7 +46,7 @@ include "login.php"; ?>
 if (Auth::is_logged_in()) {
     if (!isset($_SESSION['BST'])) $_SESSION['BST'] = 1;
     if (!isset($_SESSION['Fase'])) $_SESSION['Fase'] = 1;
-    if (!isset($_SESSION['DT1'])) $_SESSION['DT1'] = 1;
+    if (!isset($_SESSION['DT1'])) $_SESSION['DT1'] = '1900-01-01';
 
 if(isset($_GET['pstId'])) { $_SESSION["ID"] = $_GET['pstId']; } $ID = $_SESSION["ID"]; /* zorgt het Id wordt onthouden bij het opnieuw laden van de pagina */
 if(isset($_POST['knpVerder_']) && isset($_POST['kzlRelall_']))    { 
@@ -243,6 +243,7 @@ for ($i = 0; $i < $count; $i++){
      <th colspan = 3 ><hr></th>
     </tr>
 <?php  
+       $fase = '';
 if(isset($data)) {
     foreach($data as $key => $array)
     {
@@ -254,7 +255,9 @@ if(isset($data)) {
         $maxdm = $array['lstdm'];
         $ouder = $array['ouder']; 
 
-        if(isset($ouder)) { if($geslacht == 'ooi') { $fase = 'moeder'; } else if($geslacht == 'ram') { $fase = 'vader'; } }
+        if(isset($ouder)) {
+            if($geslacht == 'ooi') { $fase = 'moeder'; } else if($geslacht == 'ram') { $fase = 'vader'; } 
+        }
         else { $fase = 'lam'; }
 
 
