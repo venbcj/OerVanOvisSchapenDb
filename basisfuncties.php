@@ -323,26 +323,10 @@ return $zv['volwId'];
 Toegepast in :
 - Melden.php */
 
-// Functie aantal nog te melden
 function aantal_te_melden($datb, $lidid, $fldCode) {
-$aantalmelden = mysqli_query($datb, "
-SELECT count(*) aant
-FROM tblRequest r
- join tblMelding m on (r.reqId = m.reqId)
- join tblHistorie h on (m.hisId = h.hisId)
- join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($datb, $lidid)."'
- and h.skip = 0
- and isnull(r.dmmeld)
- and code = '".mysqli_real_escape_string($datb, $fldCode)."'
-"); // Foutafhandeling zit in return FALSE
-    if ($aantalmelden) {
-$row = mysqli_fetch_assoc($aantalmelden);
-            return $row['aant'];
-    }
-    return false; // Foutafhandeling
+    $request_gateway = new RequestGateway($datb);
+    return $request_gateway->countPerCode($lidid, $fldCode);
 }
-// Einde Functie aantal nog te melden
 
 /*
 Toegepast in :

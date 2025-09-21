@@ -75,6 +75,7 @@ $qryRelatiekeuze = mysqli_query($db,"SELECT r.relId, concat(p.ubn, ' - ', p.naam
             ORDER BY p.naam") or die (mysqli_error($db)); 
 
 $index = 0; 
+$relnm = [];
 while ($rel = mysqli_fetch_array($qryRelatiekeuze)) 
 { 
    $relId[$index] = $rel['relId']; 

@@ -23,4 +23,25 @@ UPDATE tblRequest SET def = '".mysqli_real_escape_string($this->db, $def)."'
 WHERE reqId = '".mysqli_real_escape_string($this->db, $reqId)."' ");
     }
 
+    // wordt een aantal keer aangeroepen met steeds een andere fldcode...
+    // zou ook de bundel ineens kunnen ophalen --BCB
+    public function countPerCode($lidid, $fldCode) {
+        $vw = mysqli_query($this->db, "
+SELECT count(*) aant
+FROM tblRequest r
+ join tblMelding m on (r.reqId = m.reqId)
+ join tblHistorie h on (m.hisId = h.hisId)
+ join tblStal st on (st.stalId = h.stalId)
+WHERE st.lidId = '".mysqli_real_escape_string($this->db, $lidid)."'
+ and h.skip = 0
+ and isnull(r.dmmeld)
+ and code = '".mysqli_real_escape_string($this->db, $fldCode)."'
+"); // Foutafhandeling zit in return FALSE
+    if ($vw) {
+        $row = mysqli_fetch_assoc($vw);
+            return $row['aant'];
+    }
+    return false; // Foutafhandeling
+    }
+
 }
