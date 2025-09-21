@@ -27,6 +27,7 @@ class LoginTest extends IntegrationCase {
         $this->assertRedirected();
     }
 
+    // faalt bij seed 1758476906 ... ? waarom?
     public function testAlreadyLoggedin() {
         $this->get('/Home.php', ['ingelogd' => 1]);
         $this->approve();

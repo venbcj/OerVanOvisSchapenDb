@@ -40,16 +40,6 @@ if (Auth::is_logged_in()) {
         include "responscheck.php";
         // Controleren of inloggevens bestaan
         $lid_gateway = new LidGateway($db);
-        $queryInlog = mysqli_query($db, "
-SELECT relnr, urvo, prvo
-FROM tblLeden
-WHERE lidId = '".mysqli_real_escape_string($db, $lidId)."'
-") or die(mysqli_error($db));
-        while ($inl = mysqli_fetch_assoc($queryInlog)) {
-            $relnr = $inl['relnr'];
-            $urvo = $inl['urvo'];
-            $prvo = $inl['prvo'];
-        }
         if ($lid_gateway->hasCompleteRvo($lidId)) {
             [$target, $caption, $remark] = melden_menu($db, $lidId);
         } else {

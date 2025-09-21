@@ -1,6 +1,6 @@
 <?php
 
-use Tests\Stringdiff;
+use Stringdiff;
 
 class IntegrationCase extends UnitCase {
 
