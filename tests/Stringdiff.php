@@ -1,6 +1,7 @@
 <?php
 
-namespace Tests;
+# namespace Tests;
+# de vendor-autoloader doet nog niet lekker mee
 
 class Stringdiff {
 

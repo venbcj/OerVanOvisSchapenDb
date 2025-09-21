@@ -78,7 +78,7 @@ if (php_uname('n') == 'basq') {
      // met deze hack kan ik op mijn computer het ingelogd-zijn simuleren vanuit een unit test --BCB
      $_SESSION['U1'] = 1;
      $_SESSION['W1'] = 1;
-     $_SESSION['I1'] = 1;
+     $_SESSION['I1'] = $_REQUEST['ingelogd'];
      $_SESSION['PA'] = 1;
      $_SESSION['RPP'] = 30;
      $_SESSION['ID'] = 1;

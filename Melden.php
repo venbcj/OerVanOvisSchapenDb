@@ -39,6 +39,7 @@ if (Auth::is_logged_in()) {
     if ($modmeld == 1) {
         include "responscheck.php";
         // Controleren of inloggevens bestaan
+        $lid_gateway = new LidGateway($db);
         $queryInlog = mysqli_query($db, "
 SELECT relnr, urvo, prvo
 FROM tblLeden
@@ -49,10 +50,10 @@ WHERE lidId = '".mysqli_real_escape_string($db, $lidId)."'
             $urvo = $inl['urvo'];
             $prvo = $inl['prvo'];
         }
-        if (!isset($relnr) || !isset($urvo) || !isset($prvo)) {
-            $onvolledig = 'variabele bestaat';
-        } else {
+        if ($lid_gateway->hasCompleteRvo($lidId)) {
             [$target, $caption, $remark] = melden_menu($db, $lidId);
+        } else {
+            $onvolledig = 'variabele bestaat';
         }
 ?>
 <TD valign = 'top'>    

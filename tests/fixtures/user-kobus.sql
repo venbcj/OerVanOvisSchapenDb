@@ -5,7 +5,7 @@ INSERT INTO tblLeden(login,passw,lidId,
     relnr, urvo, prvo
 ) 
 VALUES('kobus', 'c435ea81ca8884510f3453c0a4fbedd5',42,
-    1,1,1,1,
+    0,1,1,1,
     13,18,22
 );
 
