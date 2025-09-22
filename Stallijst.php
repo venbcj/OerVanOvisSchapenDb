@@ -89,17 +89,10 @@ WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_b
     while($zs = mysqli_fetch_array($zoek_stapel))
         { $stapel = $zs['aant']; }
 
-$sekse = "(isnull(s.geslacht) or s.geslacht is not null)";
-$ouder = 'isnull(prnt.schaapId)';
-$aantalLam_opStal = Query::aantal_fase_stal($db,$lidId,$sekse,$ouder);
-
-$sekse = "s.geslacht = 'ooi'";
-$ouder = 'prnt.schaapId is not null';
-$aantalOoi_opStal = Query::aantal_fase_stal($db,$lidId,$sekse,$ouder);
-
-$sekse = "s.geslacht = 'ram'";
-$ouder = 'prnt.schaapId is not null';
-$aantalRam_opStal = Query::aantal_fase_stal($db,$lidId,$sekse,$ouder);
+    $schaap_gateway = new SchaapGateway($db);
+    $aantalLam_opStal = $schaap_gateway->aantalLamOpStal($lidId);
+    $aantalOoi_opStal = $schaap_gateway->aantalOoiOpStal($lidId);
+    $aantalRam_opStal = $schaap_gateway->aantalRamOpStal($lidId);
 ?>
 
 <table border = 0 align = "center">
@@ -292,18 +285,10 @@ while($ta = mysqli_fetch_array($toon_aanwezigen))
 /* UITGESCHAARDE DIEREN */
 if($aantal_uitgeschaarden > 0) { 
 
-$sekse = "(isnull(s.geslacht) or s.geslacht is not null)";
-$ouder = 'isnull(prnt.schaapId)';
-$aantalLam_uitschaar = aantal_fase_uitgeschaard($db,$lidId,$sekse,$ouder);
-
-$sekse = "s.geslacht = 'ooi'";
-$ouder = 'prnt.schaapId is not null';
-$aantalOoi_uitschaar = aantal_fase_uitgeschaard($db,$lidId,$sekse,$ouder);
-
-$sekse = "s.geslacht = 'ram'";
-$ouder = 'prnt.schaapId is not null';
-$aantalRam_uitschaar = aantal_fase_uitgeschaard($db,$lidId,$sekse,$ouder);    ?>
-
+$aantalLam_uitschaar = $schaap_gateway->aantalLamUitschaar($lidId);
+$aantalOoi_uitschaar = $schaap_gateway->aantalOoiUitschaar($lidId);
+$aantalRam_uitschaar = $schaap_gateway->aantalRamUitschaar($lidId);
+?>
 <table border = 0 align = "center">
 <tr id="Uitgeschaarden" height = 150> <td></td></tr>
 <tr> <td colspan="14"  align="center" valign="bottom"> UITGESCHAARDE SCHAPEN </td></tr>

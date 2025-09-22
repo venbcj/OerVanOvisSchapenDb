@@ -27,7 +27,7 @@ include "login.php"; ?>
                 <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) { if($modtech ==1) {
-
+$schaap_gateway = new SchaapGateway($db);
 
 function voer_fase($datb,$lidid,$M,$J,$V,$Sekse,$Ouder) { // Functie die de hoeveelheid voer berekend per lammeren, moederdieren of vaders
 $vw_totaalFase = mysqli_query($datb,"
@@ -228,7 +228,7 @@ $tot = date("Ym");
 // TOTALEN
 $sekse = 's.geslacht is not null';
 $ouder = 'isnull(oudr.hisId)';
-$werknrs = Query::med_aantal_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
+$werknrs = $schaap_gateway->med_aantal_fase($lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
     if ($werknrs == 1) {$fasen = 'lam';} else if(isset($werknrs))    {$fasen = 'lammeren';}
 $voer = voer_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
 $eenheid = eenheid_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
@@ -252,7 +252,7 @@ $eenheid = eenheid_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
 unset($fasen); 
 $sekse = 's.geslacht = \'ooi\'';
 $ouder = 'oudr.hisId is not null';
-$werknrs = Query::med_aantal_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
+$werknrs = $schaap_gateway->med_aantal_fase($lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
     if ($werknrs == 1) {$fasen = 'moederdier';} else if(isset($werknrs))    {$fasen = 'moederdieren';}
 $voer = voer_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
 $eenheid = eenheid_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
@@ -275,7 +275,7 @@ $eenheid = eenheid_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
 unset($fasen); 
 $sekse = 's.geslacht = \'ram\'';
 $ouder = 'oudr.hisId is not null';
-$werknrs = Query::med_aantal_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
+$werknrs = $schaap_gateway->med_aantal_fase($lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
     if ($werknrs == 1) {$fasen = 'vaderdier';} else if(isset($werknrs))    {$fasen = 'vaderdieren';}
 $voer = voer_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
 $eenheid = eenheid_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);

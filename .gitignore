@@ -8,3 +8,4 @@ tags
 globals-candidates*
 *.swo
 coverage.xml
+erd.pdf

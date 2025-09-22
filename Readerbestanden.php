@@ -32,12 +32,11 @@ $dir = dirname(__FILE__).'/user_'.$lidId.'/Readerbestanden/';
 // Sort in descending order
 $b = scandir($dir,1);
 
+$array = [];
 foreach ($b as $bestandsnaam) {
-
-if (substr($bestandsnaam,7,4) >= $vorigjaar) { // $vorigjaar is gedeclareerd in basisfuncties.php
-    $array[] = $bestandsnaam;
-}
-
+    if (substr($bestandsnaam,7,4) >= $vorigjaar) { // $vorigjaar is gedeclareerd in basisfuncties.php
+        $array[] = $bestandsnaam;
+    }
 }
 
 // Pagina instellingen

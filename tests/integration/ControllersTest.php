@@ -207,9 +207,19 @@ TXT
     }
 
     public function testReaderbestanden() {
-        $this->markTestIncomplete('spreekt directory aan');
-        $this->get('/Readerbestanden.php');
+        $dir = 'user_1/Readerbestanden/';
+        $file = 'x'.date('d-m-Y');
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+        if (!file_exists("$dir$file")) {
+            touch("$dir$file");
+        }
+        $this->get('/Readerbestanden.php', ['ingelogd' => 1]);
         $this->assertNoNoise();
+        unlink("$dir$file");
+        rmdir($dir);
+        rmdir('user_1');
     }
 
 }

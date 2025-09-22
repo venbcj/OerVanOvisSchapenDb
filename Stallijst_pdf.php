@@ -51,17 +51,10 @@ WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(st.rel_bes
 
 /* Totalen lammeren, ooien en rammen */
 
-$sekse = "(isnull(s.geslacht) or s.geslacht is not null)";;
-$ouder = 'isnull(prnt.schaapId)';
-$lammer = Query::aantal_fase_stal($db,$lidId,$sekse,$ouder);
-
-$sekse = "s.geslacht = 'ooi'";
-$ouder = 'prnt.schaapId is not null';
-$moeders = Query::aantal_fase_stal($db,$lidId,$sekse,$ouder);
-
-$sekse = "s.geslacht = 'ram'";
-$ouder = 'prnt.schaapId is not null';
-$vaders = Query::aantal_fase_stal($db,$lidId,$sekse,$ouder);
+    $schaap_gateway = new SchaapGateway($db);
+$lammer = $schaap_gateway->aantalLamOpStap($lidId);
+$moeders = $schaap_gateway->aantalOoiOpStal($lidId);
+$vaders = $schaap_gateway->aantalRamOpStal($lidId);
 
 /* EInde Totalen lammeren, ooien en rammen */
 

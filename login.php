@@ -93,28 +93,23 @@ if (!Auth::is_logged_in()) {
     Auth::logout();
 
     if (isset($_POST['knpLogin']) || isset($_POST['knpBasis'])) {
-        $qrylidId = mysqli_query($db, "
-            SELECT lidId, alias, tech, fin, meld
-            FROM tblLeden 
-            WHERE login = '".mysqli_real_escape_string($db, $_POST['txtUser'])."' and passw = '".mysqli_real_escape_string($db, $passw)."' ;
-        ") or die(mysqli_error($db));
-        if (mysqli_num_rows($qrylidId) == 0) {
-            $output[] = "header_logout.tpl.php";
-            $message = ' Gebruikersnaam of wachtwoord onjuist !';
-            // NOTE: $file moet gezet zijn voor login_form
-            // TODO: $destination of $target zouden betere namen zijn voor deze variabele --BCB
-            $output[] = "login_form.tpl.php";
-        } else {
-            $row = mysqli_fetch_assoc($qrylidId);
+        $lid_gateway = new LidGateway($db);
+        $row = $lid_gateway->findByUserPassword($_POST['txtUser'], $passw);
+        if ($row) {
             Auth::login($row);
             header("Location: $file");
             return;
         }
+        $output[] = "header_logout.tpl.php";
+        $message = ' Gebruikersnaam of wachtwoord onjuist !';
+        // NOTE: $file moet gezet zijn voor login_form
+        // TODO: $destination of $target zouden betere namen zijn voor deze variabele --BCB
+        $output[] = "login_form.tpl.php";
     } else {
         $output[] = "header_logout.tpl.php";
         $output[] = "uitgelogd.tpl.php";
     }
-// *** EINDE ALS NIET IS INGELOGD ***
+    // *** EINDE ALS NIET IS INGELOGD ***
 } elseif (Auth::is_logged_in()) {
     // ***     ALS WEL IS INGELOGD    ***
     // TODO: variabele login wordt nergens gebruikt --BCB
