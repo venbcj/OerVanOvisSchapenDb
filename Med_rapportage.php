@@ -29,59 +29,6 @@ include "login.php"; ?>
 if (Auth::is_logged_in()) { if($modtech ==1) {
 $schaap_gateway = new SchaapGateway($db);
 
-function voer_fase($datb,$lidid,$M,$J,$V,$Sekse,$Ouder) { // Functie die de hoeveelheid voer berekend per lammeren, moederdieren of vaders
-$vw_totaalFase = mysqli_query($datb,"
-SELECT round(sum(n.nutat*n.stdat),2) totats
-FROM tblSchaap s
- join tblStal st on (s.schaapId = st.schaapId)
- join tblHistorie h on (st.stalId = h.stalId)
- join tblNuttig n on (h.hisId = n.hisId)
- join tblInkoop i on (n.inkId = i.inkId)
- left join (
-    SELECT st.schaapId, h.hisId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) oudr on (s.schaapId = oudr.schaapId)
-WHERE month(h.datum) = $M and date_format(h.datum,'%Y') = $J and i.artId = $V and ".$Sekse." and ".$Ouder."
- and st.lidId = '".mysqli_real_escape_string($datb,$lidid)."' and h.skip = 0
-GROUP BY concat(date_format(h.datum,'%Y'),month(h.datum))
-");
-
-if($vw_totaalFase)
-        {    $row = mysqli_fetch_assoc($vw_totaalFase);
-                return $row['totats'];
-        }
-        return FALSE; // Foutafhandeling
-}
-
-function eenheid_fase($datb,$lidid,$M,$J,$V,$Sekse,$Ouder) { // Functie die de eenheid ophaalt per lammeren, moederdieren of vaders
-$vw_totaalFase = mysqli_query($datb,"
-SELECT e.eenheid 
-FROM tblEenheid e
- join tblEenheiduser eu on (e.eenhId = eu.eenhId)
- join tblArtikel a on (eu.enhuId = a.enhuId)
- join tblInkoop i on (a.artId = i.artId)
- join tblNuttig n on (n.inkId = i.inkId)
- join tblHistorie h on (h.hisId = n.hisId)
- join tblStal st on (st.stalId = h.stalId)
- join tblSchaap s on (s.schaapId = st.schaapId)
- left join (
-    SELECT st.schaapId, h.hisId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) oudr on (s.schaapId = oudr.schaapId)
-WHERE h.skip = 0 and eu.lidId = '".mysqli_real_escape_string($datb,$lidid)."' and month(h.datum) = $M and date_format(h.datum,'%Y') = $J and i.artId = $V and ".$Sekse." and ".$Ouder."
-GROUP BY e.eenheid
-");
-
-if($vw_totaalFase)
-        {    $row = mysqli_fetch_assoc($vw_totaalFase);
-                return $row['eenheid'];
-        }
-        return FALSE; // Foutafhandeling
-}
 $minjaar = date("Y")-8;
 $maxjaar = date("Y");
 if(isset($_POST['knpToon'])) {$kzlpil = $_POST['kzlpil'];}
@@ -105,16 +52,8 @@ ORDER BY date_format(h.datum,'%Y%m') desc
 <table Border = 0 align = "center">
 
 <?php
-$kzl = mysqli_query($db,"
-SELECT a.artId, a.naam
-FROM tblEenheiduser eu
- join tblArtikel a on (eu.enhuId = a.enhuId)
- join tblInkoop i on (a.artId = i.artId)
- join tblNuttig n on (n.inkId = i.inkId)
-WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a.soort = 'pil'
-GROUP BY a.naam
-ORDER BY a.naam
-") or die (mysqli_error($db));
+    $artikel_gateway = new ArtikelGateway($db);
+$kzl = $artikel_gateway->pilForLid($lidId);
 ?>
 <form action = "Med_rapportage.php" method = "post">
 <tr> <td> </td>
@@ -165,6 +104,7 @@ If (isset($_POST['knpToon']) && !empty($_POST['kzlpil'])) {    $label = ""; }
 echo $label;
 
 //kzlMedicijn
+// TODO: (BCB) $kzl verder extraheren, zit nu half in artikegateway
 $name = "kzlpil";
 $width= 200 ; ?>
 <select name=<?php echo"$name";?> style="width:<?php echo "$width";?>;\" >
@@ -230,8 +170,8 @@ $sekse = 's.geslacht is not null';
 $ouder = 'isnull(oudr.hisId)';
 $werknrs = $schaap_gateway->med_aantal_fase($lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
     if ($werknrs == 1) {$fasen = 'lam';} else if(isset($werknrs))    {$fasen = 'lammeren';}
-$voer = voer_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
-$eenheid = eenheid_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
+$voer = $schaap_gateway->voer_fase($lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
+$eenheid = $schaap_gateway->eenheid_fase($lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
 ?>
         
 <tr align = "center">    
@@ -254,8 +194,8 @@ $sekse = 's.geslacht = \'ooi\'';
 $ouder = 'oudr.hisId is not null';
 $werknrs = $schaap_gateway->med_aantal_fase($lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
     if ($werknrs == 1) {$fasen = 'moederdier';} else if(isset($werknrs))    {$fasen = 'moederdieren';}
-$voer = voer_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
-$eenheid = eenheid_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
+$voer = $schaap_gateway->voer_fase($lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
+$eenheid = $schaap_gateway->eenheid_fase($lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
     ?>
 <tr align = "center">    
  <td width = 0> </td>       
@@ -277,8 +217,8 @@ $sekse = 's.geslacht = \'ram\'';
 $ouder = 'oudr.hisId is not null';
 $werknrs = $schaap_gateway->med_aantal_fase($lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
     if ($werknrs == 1) {$fasen = 'vaderdier';} else if(isset($werknrs))    {$fasen = 'vaderdieren';}
-$voer = voer_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
-$eenheid = eenheid_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
+$voer = $schaap_gateway->voer_fase($lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
+$eenheid = $schaap_gateway->eenheid_fase($lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
     ?>
 <tr align = "center">    
  <td width = 0> </td>       

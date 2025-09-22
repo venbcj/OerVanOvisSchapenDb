@@ -78,18 +78,9 @@ include "login.php"; ?>
 <?php
 if (Auth::is_logged_in()) {
 
-
-$zoek_stapel = mysqli_query($db,"
-SELECT count(distinct(s.schaapId)) aant
-FROM tblSchaap s
- join tblStal st on (st.schaapId = s.schaapId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best)
-") or die (mysqli_error($db));
-
-    while($zs = mysqli_fetch_array($zoek_stapel))
-        { $stapel = $zs['aant']; }
-
     $schaap_gateway = new SchaapGateway($db);
+    $stapel = $schaap_gateway->zoekStapel($lidId);
+
     $aantalLam_opStal = $schaap_gateway->aantalLamOpStal($lidId);
     $aantalOoi_opStal = $schaap_gateway->aantalOoiOpStal($lidId);
     $aantalRam_opStal = $schaap_gateway->aantalRamOpStal($lidId);
@@ -128,46 +119,8 @@ else if($aantalRam_opStal > 1)  { echo '- ' .$aantalRam_opStal. ' vaders'; }
 </tr>
 
 <?php
-$zoek_uitgeschaarden = mysqli_query($db,"
-SELECT s.levensnummer, right(s.levensnummer, $Karwerk) werknum, s.transponder, date_format(hg.datum,'%Y%m%d') gebdm_sort, date_format(hg.datum,'%d-%m-%Y') gebdm, s.geslacht, prnt.datum aanw, best.naam, haf.actId
-FROM tblSchaap s
- join (
-     SELECT schaapId, max(stalId) stalId
-     FROM tblStal
-     WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
-     GROUP BY schaapId
-  ) mst on (mst.schaapId = s.schaapId)
- left join (
-     SELECT st.schaapId, h.datum
-     FROM tblHistorie h
-      join tblStal st on (st.stalId = h.stalId)
-     WHERE h.actId = 1 and h.skip = 0
- ) hg on (s.schaapId = hg.schaapId) 
- left join (
-    SELECT st.schaapId, datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = s.schaapId)
- join tblStal st on (st.stalId = mst.stalId)
- join (
-     SELECT relId, naam
-     FROM tblPartij p
-      join tblRelatie r on (p.partId = r.partId)
-     WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."'
- ) best on (best.relId = st.rel_best)
- join (
-     SELECT h.stalId, h.actId
-     FROM tblHistorie h
-      join tblStal st on (h.stalId = st.stalId)
-      join tblActie a on (h.actId = a.actId)
-     WHERE a.af = 1 and h.skip = 0
- ) haf on (haf.stalId = st.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and haf.actId = 10
-") or die (mysqli_error($db));
 
-$aantal_uitgeschaarden = mysqli_num_rows($zoek_uitgeschaarden);
-
+$aantal_uitgeschaarden = $schaap_gateway->countUitgeschaarden($lidId);
 
  if($aantal_uitgeschaarden > 0) { ?>
 <tr>
@@ -183,41 +136,8 @@ $aantal_uitgeschaarden = mysqli_num_rows($zoek_uitgeschaarden);
 <br>
 
 <?php
-$toon_aanwezigen = mysqli_query($db,"
-SELECT u.ubn, s.transponder, right(s.levensnummer, $Karwerk) werknum, s.levensnummer, date_format(hg.datum,'%Y%m%d') gebdm_sort, date_format(hg.datum,'%d-%m-%Y') gebdm, s.geslacht, prnt.datum aanw, scan.dag_sort, scan.dag, haf.actId
-FROM tblSchaap s
- join tblStal st on (st.schaapId = s.schaapId)
- join tblUbn u on (u.ubnId = st.ubnId)
- left join tblHistorie hg on (st.stalId = hg.stalId and hg.actId = 1 and hg.skip = 0) 
- left join (
-    SELECT st.schaapId, datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = s.schaapId) 
- left join (
-     SELECT contr_scan.schaapId, date_format(datum,'%Y%m%d') dag_sort, date_format(datum,'%d-%m-%Y') dag
-     FROM tblHistorie h
-      join (
-         SELECT max(hisId) hismx, schaapId
-         FROM tblHistorie h
-          join tblStal st on (h.stalId = st.stalId)
-         WHERE actId = 22 and h.skip = 0 and lidId = '".mysqli_real_escape_string($db,$lidId)."'
-         GROUP BY schaapId
-    ) contr_scan on (contr_scan.hismx = h.hisId)
- ) scan on (scan.schaapId = s.schaapId)
- left join (
-     SELECT h.stalId, h.actId
-     FROM tblHistorie h
-      join tblStal st on (h.stalId = st.stalId)
-      join tblActie a on (h.actId = a.actId)
-     WHERE a.af = 1 and h.skip = 0
- ) haf on (haf.stalId = st.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(haf.actId)
-ORDER BY u.ubn, right(s.levensnummer, $Karwerk)
-
-") or die (mysqli_error($db)); ?>
-
+     $toon_aanwezigen = $schaap_gateway->aanwezigen($lidId, $Karwerk);
+?>
 <table border = 0 id="sortableTable" align = "center">
 
 <?php
@@ -244,6 +164,7 @@ if(mysqli_num_rows($toon_aanwezigen) > 0) { ?>
 
 <tbody id="tbody_1">
 <?php
+    // TODO: overstappen
 while($ta = mysqli_fetch_array($toon_aanwezigen))
 {
     $ubn = $ta['ubn'];
@@ -339,6 +260,8 @@ else if($aantalRam_uitschaar > 1) { echo '- ' .$aantalRam_uitschaar. ' vaders'; 
 <tbody id="tbody_2">
 <?php
 
+    $zoek_uitgeschaarden = $schaap_gateway->zoekUitgeschaarden($lidId, $Karwerk);
+// TODO overstappen op een object dat ->each_record() ondersteunt (BCB)
 while($zu = mysqli_fetch_array($zoek_uitgeschaarden))
     {
     $transponder = $zu['transponder']; if(isset($transponder)) {$transp = 'Ja'; } else {$transp = 'Nee'; }

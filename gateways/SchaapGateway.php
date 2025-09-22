@@ -141,12 +141,196 @@ WHERE h.skip = 0 and month(h.datum) = $M and date_format(h.datum,'%Y') = $J and 
     and st.lidId = '".mysqli_real_escape_string($this->db,$lidid)."' and h.actId = 8
 GROUP BY date_format(h.datum,'%Y%m')
 ");
+        if($vw_totaalFase) {
+            $row = mysqli_fetch_assoc($vw_totaalFase);
+            return $row['werknrs'];
+        }
+        return FALSE; // Foutafhandeling
+    }
+
+    // Functie die de hoeveelheid voer berekend per lammeren, moederdieren of vaders
+    public function voer_fase($lidid,$M,$J,$V,$Sekse,$Ouder) { 
+        $vw_totaalFase = mysqli_query($this->db,"
+        SELECT round(sum(n.nutat*n.stdat),2) totats
+        FROM tblSchaap s
+         join tblStal st on (s.schaapId = st.schaapId)
+         join tblHistorie h on (st.stalId = h.stalId)
+         join tblNuttig n on (h.hisId = n.hisId)
+         join tblInkoop i on (n.inkId = i.inkId)
+         left join (
+            SELECT st.schaapId, h.hisId
+            FROM tblStal st
+             join tblHistorie h on (st.stalId = h.stalId)
+            WHERE h.actId = 3 and h.skip = 0
+         ) oudr on (s.schaapId = oudr.schaapId)
+        WHERE month(h.datum) = $M and date_format(h.datum,'%Y') = $J and i.artId = $V and ".$Sekse." and ".$Ouder."
+         and st.lidId = '".mysqli_real_escape_string($this->db,$lidid)."' and h.skip = 0
+        GROUP BY concat(date_format(h.datum,'%Y'),month(h.datum))
+        ");
+        if($vw_totaalFase)
+                {    $row = mysqli_fetch_assoc($vw_totaalFase);
+                        return $row['totats'];
+                }
+                return FALSE; // Foutafhandeling
+    }
+
+    // zou dit in EenheidGateway horen?
+    // Functie die de eenheid ophaalt per lammeren, moederdieren of vaders
+    public function eenheid_fase($lidid,$M,$J,$V,$Sekse,$Ouder) {
+        $vw_totaalFase = mysqli_query($this->db,"
+SELECT e.eenheid 
+FROM tblEenheid e
+ join tblEenheiduser eu on (e.eenhId = eu.eenhId)
+ join tblArtikel a on (eu.enhuId = a.enhuId)
+ join tblInkoop i on (a.artId = i.artId)
+ join tblNuttig n on (n.inkId = i.inkId)
+ join tblHistorie h on (h.hisId = n.hisId)
+ join tblStal st on (st.stalId = h.stalId)
+ join tblSchaap s on (s.schaapId = st.schaapId)
+ left join (
+    SELECT st.schaapId, h.hisId
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
+ ) oudr on (s.schaapId = oudr.schaapId)
+WHERE h.skip = 0 and eu.lidId = '".mysqli_real_escape_string($this->db,$lidid)."' and month(h.datum) = $M and date_format(h.datum,'%Y') = $J and i.artId = $V and ".$Sekse." and ".$Ouder."
+GROUP BY e.eenheid
+");
 if($vw_totaalFase) {
     $row = mysqli_fetch_assoc($vw_totaalFase);
-                return $row['werknrs'];
+                return $row['eenheid'];
         }
         return FALSE; // Foutafhandeling
 }
 
+public function zoekStapel($lidId) {
+    $zoek_stapel = mysqli_query($this->db,"
+SELECT count(distinct(s.schaapId)) aant
+FROM tblSchaap s
+ join tblStal st on (st.schaapId = s.schaapId)
+WHERE st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and isnull(st.rel_best)
+");
+$stapel = null;
+    while($zs = mysqli_fetch_array($zoek_stapel))
+        { $stapel = $zs['aant']; }
+    return $stapel;
+}
+
+public function countUitgeschaarden($lidId) {
+    $vw = mysqli_query($this->db,"
+SELECT count(*) aantal
+FROM tblSchaap s
+ join (
+     SELECT schaapId, max(stalId) stalId
+     FROM tblStal
+     WHERE lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+     GROUP BY schaapId
+  ) mst on (mst.schaapId = s.schaapId)
+ left join (
+     SELECT st.schaapId, h.datum
+     FROM tblHistorie h
+      join tblStal st on (st.stalId = h.stalId)
+     WHERE h.actId = 1 and h.skip = 0
+ ) hg on (s.schaapId = hg.schaapId) 
+ left join (
+    SELECT st.schaapId, datum
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
+ ) prnt on (prnt.schaapId = s.schaapId)
+ join tblStal st on (st.stalId = mst.stalId)
+ join (
+     SELECT relId, naam
+     FROM tblPartij p
+      join tblRelatie r on (p.partId = r.partId)
+     WHERE p.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+ ) best on (best.relId = st.rel_best)
+ join (
+     SELECT h.stalId, h.actId
+     FROM tblHistorie h
+      join tblStal st on (h.stalId = st.stalId)
+      join tblActie a on (h.actId = a.actId)
+     WHERE a.af = 1 and h.skip = 0
+ ) haf on (haf.stalId = st.stalId)
+WHERE st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and haf.actId = 10
+");
+return mysqli_num_rows($vw);
+}
+
+public function zoekUitgeschaarden($lidId, $Karwerk) {
+return mysqli_query($this->db,"
+SELECT s.levensnummer, right(s.levensnummer, $Karwerk) werknum, s.transponder, date_format(hg.datum,'%Y%m%d') gebdm_sort, date_format(hg.datum,'%d-%m-%Y') gebdm, s.geslacht, prnt.datum aanw, best.naam, haf.actId
+FROM tblSchaap s
+ join (
+     SELECT schaapId, max(stalId) stalId
+     FROM tblStal
+     WHERE lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+     GROUP BY schaapId
+  ) mst on (mst.schaapId = s.schaapId)
+ left join (
+     SELECT st.schaapId, h.datum
+     FROM tblHistorie h
+      join tblStal st on (st.stalId = h.stalId)
+     WHERE h.actId = 1 and h.skip = 0
+ ) hg on (s.schaapId = hg.schaapId) 
+ left join (
+    SELECT st.schaapId, datum
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
+ ) prnt on (prnt.schaapId = s.schaapId)
+ join tblStal st on (st.stalId = mst.stalId)
+ join (
+     SELECT relId, naam
+     FROM tblPartij p
+      join tblRelatie r on (p.partId = r.partId)
+     WHERE p.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+ ) best on (best.relId = st.rel_best)
+ join (
+     SELECT h.stalId, h.actId
+     FROM tblHistorie h
+      join tblStal st on (h.stalId = st.stalId)
+      join tblActie a on (h.actId = a.actId)
+     WHERE a.af = 1 and h.skip = 0
+ ) haf on (haf.stalId = st.stalId)
+WHERE st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and haf.actId = 10
+");
+}
+
+public function aanwezigen($lidId, $Karwerk) {
+return mysqli_query($this->db,"
+SELECT u.ubn, s.transponder, right(s.levensnummer, $Karwerk) werknum, s.levensnummer, date_format(hg.datum,'%Y%m%d') gebdm_sort, date_format(hg.datum,'%d-%m-%Y') gebdm, s.geslacht, prnt.datum aanw, scan.dag_sort, scan.dag, haf.actId
+FROM tblSchaap s
+ join tblStal st on (st.schaapId = s.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
+ left join tblHistorie hg on (st.stalId = hg.stalId and hg.actId = 1 and hg.skip = 0) 
+ left join (
+    SELECT st.schaapId, datum
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
+ ) prnt on (prnt.schaapId = s.schaapId) 
+ left join (
+     SELECT contr_scan.schaapId, date_format(datum,'%Y%m%d') dag_sort, date_format(datum,'%d-%m-%Y') dag
+     FROM tblHistorie h
+      join (
+         SELECT max(hisId) hismx, schaapId
+         FROM tblHistorie h
+          join tblStal st on (h.stalId = st.stalId)
+         WHERE actId = 22 and h.skip = 0 and lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+         GROUP BY schaapId
+    ) contr_scan on (contr_scan.hismx = h.hisId)
+ ) scan on (scan.schaapId = s.schaapId)
+ left join (
+     SELECT h.stalId, h.actId
+     FROM tblHistorie h
+      join tblStal st on (h.stalId = st.stalId)
+      join tblActie a on (h.actId = a.actId)
+     WHERE a.af = 1 and h.skip = 0
+ ) haf on (haf.stalId = st.stalId)
+WHERE st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and isnull(haf.actId)
+ORDER BY u.ubn, right(s.levensnummer, $Karwerk)
+");
+}
 
 }
