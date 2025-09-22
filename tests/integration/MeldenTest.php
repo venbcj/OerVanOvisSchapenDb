@@ -53,4 +53,22 @@ class MeldenTest extends IntegrationCase {
         $this->assertPresent('&nbsp; 61 afvoer te melden.&nbsp&nbsp&nbsp U ziet per melding max. 60 schapen. ');
     }
 
+    public function testImport() {
+        $this->runfixture('user-harm');
+        $this->runfixture('request-lid-codes');
+        $this->runfixture('response');
+        $dir = 'BRIGHT/';
+        $reqfile = '_1_request.txt';
+        $respfile = '_1_response.txt';
+        $userdir = 'user_1/';
+        if (!is_dir($dir)) mkdir($dir);
+        if (!is_dir($userdir)) mkdir($userdir);
+        touch("$dir$reqfile");
+        touch("$dir$respfile");
+        $this->get('/Melden.php', ['ingelogd' => 1]);
+        $this->assertFalse(file_exists("$dir$reqfile"), "request niet verplaatst?");
+        $this->assertFalse(file_exists("$dir$respfile"), "response niet verplaatst?");
+        rmdir($dir);
+    }
+
 }

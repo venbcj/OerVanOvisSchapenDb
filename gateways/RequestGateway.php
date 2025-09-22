@@ -44,4 +44,23 @@ WHERE st.lidId = '".mysqli_real_escape_string($this->db, $lidid)."'
     return false; // Foutafhandeling
     }
 
+    public function zoekLaatsteResponse($lidId) {
+return mysqli_query($this->db, "
+SELECT r.reqId, r.code
+FROM tblRequest r
+ join tblMelding m on (r.reqId = m.reqId)
+ join tblHistorie h on (h.hisId = m.hisId)
+ join tblStal st on (st.stalId = h.stalId)
+ left join(
+    SELECT max(respId) respId, reqId
+    FROM impRespons 
+    GROUP BY reqId
+    ) lr on (r.reqId = lr.reqId)
+ left join impRespons rp on (rp.respId = lr.respId)
+WHERE st.lidId = '".mysqli_real_escape_string($this->db, $lidId)."' and (rp.def != 'J' or isnull(rp.def)) and h.skip = 0
+GROUP BY r.reqId
+ORDER BY r.reqId
+");
+    }
+
 }

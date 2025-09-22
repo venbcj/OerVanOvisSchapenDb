@@ -9,3 +9,4 @@ globals-candidates*
 *.swo
 coverage.xml
 erd.pdf
+user_*

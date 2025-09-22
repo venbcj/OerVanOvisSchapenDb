@@ -10,56 +10,35 @@
 28-12-2023 : and h.skip = 0 toegevoegd bij tblHistorie 
 15-07-2025 : ubn uit bestandsnaam $requestfile en $responsfile (richting RVO) gehaald --> 
  */
-/* Toegepast in :
-- Home.php
-- MeldAanwas.php
-- MeldAfleveren.php
-- MedGeboortes.php
-- Melden.php
-- MeldUitval.php */
 
 # TODO: ik denk dat dit bestand, en importRespons, functies kunnen worden
+# - veroorzaakt geen uitvoer
+# - heeft neveneffecten (bestanden hernoemd/verplaatst, database gewijzigd)
+# - zijn er nog andere global-effecten dan $fout en $goed?
 
 include "url.php";
 
 /*** Script ter controle van het bestaan van Response.txt bestanden afkomstig van RVO ***/
 // Lokatie en klant gegegevens Responsbestand ophalen
-$result = mysqli_query($db, "SELECT alias FROM tblLeden WHERE lidId = '".mysqli_real_escape_string($db, $lidId)."' ") or die(mysqli_error($db));
-while ($row = mysqli_fetch_assoc($result)) {
-    $alias = $row['alias'];
-}
-
+$lid_gateway = new LidGateway($db);
+$alias = $lid_gateway->findAlias($lidId);
 $dir = dirname(__FILE__); // Locatie bestanden op FTP server
 
 // De gegevens van het request uit impResponse waarvan de laatste import een controle melding is
-$zoek_laatste_response = mysqli_query($db, "
-SELECT r.reqId, r.code
-FROM tblRequest r
- join tblMelding m on (r.reqId = m.reqId)
- join tblHistorie h on (h.hisId = m.hisId)
- join tblStal st on (st.stalId = h.stalId)
- left join(
-    SELECT max(respId) respId, reqId
-    FROM impRespons 
-    GROUP BY reqId
-    ) lr on (r.reqId = lr.reqId)
- left join impRespons rp on (rp.respId = lr.respId)
-WHERE st.lidId = '".mysqli_real_escape_string($db, $lidId)."' and (rp.def != 'J' or isnull(rp.def)) and h.skip = 0
-GROUP BY r.reqId
-ORDER BY r.reqId
-") or die(mysqli_error($db));
+$request_gateway = new RequestGateway($db);
+$zoek_laatste_response = $request_gateway->zoekLaatsteResponse($lidId);
+// is dit terecht een while(), of is er hoogstens 1 regel?
 while ($req = mysqli_fetch_assoc($zoek_laatste_response)) {
     $reqId = $req['reqId'];
     $code = $req['code'];   // t.b.v. importRespons.php
     // Einde De gegevens van het request
     // requestfile, responsefile: parameters voor importRespons
-    $requestfile = $alias."_".$reqId."_request.txt"; #echo $requestfile.' moet worden gezocht <br>'; // T.b.v. verplaatsen in importRespons.php
-    $responsfile = $alias."_".$reqId."_response.txt"; #echo $responsfile.' moet worden gezocht <br>';
+    $requestfile = $alias."_".$reqId."_request.txt";  // T.b.v. verplaatsen in importRespons.php
+    $responsfile = $alias."_".$reqId."_response.txt";
+    # error_log("requestfile=$requestfile\n", 3, "log/development.log");
     $request_aanwezig = file_exists($dir.'/BRIGHT/'.$requestfile);
     $respons_aanwezig = file_exists($dir.'/BRIGHT/'.$responsfile);
     if ($respons_aanwezig == 1 && $request_aanwezig == 1) {
         include "importRespons.php";
     }
 }
-
-/*** EINDE  *** Script ter controle van het bestaan van Response.txt bestanden afkomstig van RVO *** EINDE ***/

@@ -25,4 +25,12 @@ return mysqli_num_rows($vw) > 0;
         return mysqli_fetch_assoc($vw);
     }
 
+    public function findAlias($lidId) {
+        $result = mysqli_query($this->db, "SELECT alias FROM tblLeden WHERE lidId = '".mysqli_real_escape_string($this->db, $lidId)."' ");
+        while ($row = mysqli_fetch_assoc($result)) {
+            return $row['alias'];
+        }
+        return '';
+    }
+
 }

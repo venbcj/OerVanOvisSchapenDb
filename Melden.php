@@ -16,11 +16,7 @@ $versie = '10-08-2025'; /* veld ubn uit tblLeden verwijderd */
 
 session_start();
 
-// voor verder splitsen van berekening en uitvoer
-// moet eerst login.php onderverdeeld worden. Zie opmerking in login --BCB
-
 // Nu nog een layout die op de juiste plek een yield() naar deze inhoud doet --BCB
-
 ?>
 <!DOCTYPE html>
 <html>

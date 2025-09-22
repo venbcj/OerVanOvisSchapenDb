@@ -13,6 +13,11 @@
 23-08-2025 : ubn uit bestandsnaam responsfile_rename en requestfile_rename gehaald -->
  */
 
+// OBSERVATIES
+// - wij worden alleen in responscheck opgevraagd
+// - responsecheck doet al een include van url.php -> hier weg
+// - $dir is in responsecheck al gezet
+// - $requestfile en $responsefile bestaan allebei op schijf, anders worden wij niet geinclude; die hele riedel rond $fout is onnodig
 include "url.php";
 
 $dir = dirname(__FILE__); // Locatie bestanden op FTP server
@@ -79,7 +84,7 @@ if (!isset($fout)) {
 
     if ($zoek_response_phpBestanden == 1) { // Als response bestand bestaat tussen alle php-bestanden
         $DelFile = $dir."/".$responsfile;
-        unlink($DelFile)or die("Kan bestand ".$responsfile." niet verwijderen. " . mysqli_error($db));// verwijdert respons bestand tussen alle php bestanden
+        unlink($DelFile)or die("Kan bestand ".$responsfile." niet verwijderen. ");// verwijdert respons bestand tussen alle php bestanden
     }
 
     // Verplaatsen van responsbestand van map BRIGHT naar persoonlijke map
@@ -107,7 +112,7 @@ if (!isset($fout)) {
 
         $DelFile = $bright_map.$responsfile;
         // Verwijderen response bestand in Bright map
-        unlink($DelFile)or die("Kan bestand ".$responsfile." in de map BRIGHT niet verwijderen. " . mysqli_error($db));// verwijdert respons bestand op locatie BRIGHT
+        unlink($DelFile)or die("Kan bestand ".$responsfile." in de map BRIGHT niet verwijderen. ");// verwijdert respons bestand op locatie BRIGHT
 
         $responsfile_rename = $alias."_".$reqId."_response_".$response_filedate.".txt";
         // Respons bestand in persoonlijke map hernoemen
@@ -139,7 +144,7 @@ if (!isset($fout)) {
         copy($bright_map.$requestfile, $persoonlijke_map.$requestfile);
 
         $DelFile = $bright_map.$requestfile;
-        unlink($DelFile)or die("Kan bestand ".$requestfile." in de map BRIGHT niet verwijderen. " . mysqli_error($db));// verwijdert request bestand op locatie BRIGHT
+        unlink($DelFile)or die("Kan bestand ".$requestfile." in de map BRIGHT niet verwijderen. ");// verwijdert request bestand op locatie BRIGHT
 
         $requestfile_rename = $alias."_".$reqId."_request_".$request_filedate.".txt";
         // Request bestand in persoonlijke map hernoemen
@@ -175,8 +180,8 @@ if (!isset($fout)) {
     ") or die(mysqli_error($db));
 
     while ($resp = mysqli_fetch_assoc($zoek_status_response)) {
-        $def_resp = $resp['def'];
-        $meldnr = $resp['meldnr'];
+        $def_resp = $resp['def']; // local
+        $meldnr = $resp['meldnr']; // wordt niet gebruikt
     }
 
     // bericht als definitieve melding terugkomt als controle melding

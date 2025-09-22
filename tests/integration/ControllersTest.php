@@ -218,8 +218,6 @@ TXT
         $this->get('/Readerbestanden.php', ['ingelogd' => 1]);
         $this->assertNoNoise();
         unlink("$dir$file");
-        rmdir($dir);
-        rmdir('user_1');
     }
 
 }
