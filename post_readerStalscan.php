@@ -18,8 +18,8 @@ foreach($_POST as $key => $value) {
     
     $array[Url::getIdFromKey($key)][Url::getNameFromKey($key)] = $value;
 }
-
 foreach($array as $recId => $id) {
+    if (!$recId) continue; // dit stond hier niet. Hoe kan dat gewerkt hebben? --BCB
 
 // Id ophalen
 //echo $recId.'<br>'; 
@@ -76,12 +76,12 @@ if ($key == 'kzlHok' && !empty($value)) {  $fldHok = $value; }
 if ($key == 'kzlActie' && !empty($value))   { $fldActie = $value; }
 
 if ($key == 'chbRvo')   { $fldRvo = $value; }
+  } // dit stond onder de volgende ifs, dat kan nooit gewerkt hebben --BCB
 
          if($fldFase == 'moeder' && !isset($fldSekse)) { $fldSekse = 'ooi'; }
      else if($fldFase == 'vader' && !isset($fldSekse)) { $fldSekse = 'ram'; }
 
      
-                                    }
 
 
 

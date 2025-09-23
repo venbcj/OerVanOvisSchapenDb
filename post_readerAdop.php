@@ -16,6 +16,7 @@ foreach($_POST as $key => $value) {
     $array[Url::getIdFromKey($key)][Url::getNameFromKey($key)] = $value;
 }
 foreach($array as $recId => $id) {
+    if (!$recId) continue;
 
 // Id ophalen
 //echo '$recId = '.$recId.'<br>'; 

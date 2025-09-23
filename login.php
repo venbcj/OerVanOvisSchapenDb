@@ -74,11 +74,12 @@ if (($url == 'https://test.oervanovis.nl/' || $url == 'https://demo.oervanovis.n
     $output[] = 'pasop.tpl.php';
 }
 if (php_uname('n') == 'basq') {
-   if (isset($_REQUEST['ingelogd'])) {
+    // twee sleutels, omdat de post_ includes veel werken met getIdFromKey, en die vraagt op alle sleutels een aanwezige underscore
+   if (isset($_REQUEST['ingelogd']) || isset($_REQUEST['ingelogd_'])) {
      // met deze hack kan ik op mijn computer het ingelogd-zijn simuleren vanuit een unit test --BCB
      $_SESSION['U1'] = 1; // moet eigenlijk username zijn, maar dan vallen alle approval-tests om. Niet nodig.
      $_SESSION['W1'] = 1;
-     $_SESSION['I1'] = $_REQUEST['ingelogd'];
+     $_SESSION['I1'] = $_REQUEST['ingelogd'] ?? $_REQUEST['ingelogd_'];
      $_SESSION['PA'] = 1;
      $_SESSION['RPP'] = 30;
      $_SESSION['ID'] = $_REQUEST['uid'] ?? 1;

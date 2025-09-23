@@ -9,6 +9,78 @@ class ControllersTest extends IntegrationCase {
         self::runfixture('user-harm');
     }
 
+    public static function controllers_with_post_include() {
+        return [
+            ['InsAanvoer.php', [], ['kzlFase_1' => 1, 'chbkies_1' => 1, 'chbDel_1' => 0, ]],
+            ['InsAdoptie.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
+            ['InsAfvoer.php', [], []],
+            ['InsDekken.php', [], ['chbKies_1' => 1, 'chbDel_1' => 0, ]], // hoofdletter K !?!
+            ['InsDracht.php', [], ['chbKies_1' => 1, ]],
+            ['InsGeboortes.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
+            ['InsGrWijzigingUbn.php', [], []],
+            ['InsHalsnummers.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
+            ['InsLambar.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
+            ['InsMedicijn.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
+            ['InsOmnummeren.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
+            ['InsOverplaats.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
+            # ['InsSpenen.php', [], ['chbkies_1' => 1, ]],
+            # deze checkt fldKies die nooit gezet wordt
+            # ['InsStallijstscan_controle.php', ['impagrident'], ['chbkies_1' => 1, 'kzlFase_1' => 1, 'chbDel_1' => 0, ]],
+            # deze veroorzaakt Unknown column s.rasId in ON, Page_numbers:43
+            ['InsStallijstscan_nieuwe_klant.php', [], ['chbkies_1' => 1, 'kzlFase_1' => 1, 'chbDel_1' => 0, ]],
+            ['InsTvUitscharen.php', [], ['chbKies_1' => 1, 'chbDel_1' => 0, ]], // hoofdletter K ?!
+            ['InsUitscharen.php', [], []],
+            ['InsUitval.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
+            ['InsVoerregistratie.php', [], []],
+            ['InsWegen.php', [], ['chbkies_1' => 1,'chbDel_1' => 0, ]],
+        ];
+    }
+
+    public static function controllers_with_save_include() {
+        return self::txt2ar(<<<TXT
+HokAfleveren.php
+HokVerlaten.php
+Hok.php
+Uitval.php
+Componenten.php
+Afvoerstal.php
+Voer.php
+Deklijst.php
+Relaties.php
+HokOverpl.php
+HokSpenen.php
+Kostenopgaaf.php
+Voorraadcorrectie.php
+Klanten.php
+Saldoberekening.php
+Contact.php
+Dekkingen.php
+Zoeken.php
+HokAfsluiten.php
+Rubrieken.php
+MeldAfvoer.php
+Relatie.php
+LoslopersVerkopen.php
+InsVoerregistratie.php
+MeldAanvoer.php
+Ras.php
+InsGeboortes.php
+Medicijnen.php
+Kostenoverzicht.php
+MeldUitval.php
+MeldGeboortes.php
+MeldOmnummer.php
+OoilamSelectie.php
+Inkopen.php
+Liquiditeit.php
+HokAanwas.php
+LoslopersPlaatsen.php
+Ubn_toevoegen.php
+Voer_rapportage.php
+TXT
+        );
+    }
+
     public static function gettable_controllers() {
         return self::txt2ar(<<<TXT
 AfleverLijst.php
@@ -193,6 +265,35 @@ TXT
      */
     public function testGetRouteAuthenticated($controller) {
         $this->get("/$controller", ['ingelogd' => 1]);
+        $this->assertNoNoise();
+    }
+
+    # php-8
+    # #[DataProvider('controllers_with_post_include')]
+    /**
+     * @dataProvider controllers_with_post_include
+     * Dit is een beginnetje tbv coverage / storingsdetectie
+     */
+    public function testPostInsert($controller, $fixtures, $postdata) {
+        foreach ($fixtures as $fixture) {
+            $this->runfixture($fixture);
+        }
+        $full_postdata = array_merge(['ingelogd_' => 1, 'knpInsert_' => 1], $postdata);
+        $this->post("/$controller", $full_postdata);
+        $this->assertNoNoise();
+    }
+
+    # php-8
+    # #[DataProvider('controllers_with_save_include')]
+    /**
+     * @dataProvider controllers_with_save_include
+     * Dit is een beginnetje tbv coverage / storingsdetectie
+     */
+    # public function testPostSave($controller, $fixtures, $postdata) {
+    public function fntestPostSave($controller) {
+        $postdata = [];
+        $full_postdata = array_merge(['ingelogd_' => 1, 'knpSave_' => 1], $postdata);
+        $this->post("/$controller", $full_postdata);
         $this->assertNoNoise();
     }
 

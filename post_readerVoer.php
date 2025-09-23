@@ -14,6 +14,7 @@ foreach($_POST as $fldname => $fldvalue) {
 
 
 foreach($array as $recId => $id) {
+    if (!$recId) continue;
 
     #echo '<br>'.'$recId = '.$recId.'<br>';
 
