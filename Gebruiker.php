@@ -216,7 +216,7 @@ while ( $zr = mysqli_fetch_assoc($zoek_redenen_afvoer)) {
 <?php
  $collection = ['Ja' => 1, 'Nee' => 0];
  $name = 'radMeld';
-$selected = $_POST['radMeld'] ?? $row['meld'];
+ $selected = $_POST['radMeld'] ?? $row['meld'];
 foreach ($collection as $caption => $value) {
 ?>
     <input type=radio name="<?php echo $name ?>" value="<?php echo $value ?>"<?php
