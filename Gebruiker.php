@@ -213,16 +213,14 @@ while ( $zr = mysqli_fetch_assoc($zoek_redenen_afvoer)) {
 <tr>
  <td width = 105 >Melden : </td>
  <td>
-<input type = radio name = 'radMeld' value = 1
-<?php
+<input type=radio name="radMeld" value="1"<?php
 if (!isset($_POST['radMeld']) && $row['meld'] == 1) {
-     echo "checked";
+     echo " checked";
 } elseif (isset($_POST['radMeld']) && $_POST['radMeld'] == 1) {
-     echo "checked";
+     echo " checked";
 }
-?>
-      > Ja 
-      <input type = radio name = 'radMeld' value = 0
+?>> Ja 
+      <input type=radio name='radMeld' value=0
 <?php
 if (!isset($_POST['radMeld']) && $row['meld'] == 0) {
     echo "checked";
@@ -235,7 +233,7 @@ if (!isset($_POST['radMeld']) && $row['meld'] == 0) {
 </tr>
 <tr>
  <td width = 105 >Technisch : </td>
- <td><input type = radio name = 'radTech' value = 1
+ <td><input type=radio name='radTech' value=1
 <?php
     if (!isset($_POST['radTech']) && $row['tech'] == 1) {
         echo "checked";
@@ -244,7 +242,7 @@ if (!isset($_POST['radMeld']) && $row['meld'] == 0) {
     }
 ?> 
       > Ja 
-      <input type = radio name = 'radTech' value = 0
+      <input type=radio name='radTech' value=0
 <?php
 if (!isset($_POST['radTech']) && $row['tech'] == 0) {
     echo "checked";
@@ -257,7 +255,7 @@ if (!isset($_POST['radTech']) && $row['tech'] == 0) {
 </tr>
 <tr>
  <td width = 105 >Financieel : </td>
- <td><input type = radio name = 'radFin' value = 1
+ <td><input type=radio name='radFin' value=1
 <?php
 if (!isset($_POST['radFin']) && $row['fin'] == 1) {
     echo "checked";
@@ -266,7 +264,7 @@ if (!isset($_POST['radFin']) && $row['fin'] == 1) {
 }
 ?> 
       > Ja 
-      <input type = radio name = 'radFin' value = 0 
+      <input type=radio name='radFin' value=0 
 <?php
 if (!isset($_POST['radFin']) && $row['fin'] == 0) {
     echo "checked";
@@ -285,7 +283,7 @@ if (!isset($_POST['radFin']) && $row['fin'] == 0) {
  <td width = 105 >Administrator : </td>
  <td>
      <!-- kzlBeheer ja/nee --> 
-<select <?php echo "name=\"kzlAdm\" "; ?> style = "width:60; font-size:13px;">
+<select name="kzlAdm" style="width:60; font-size:13px;">
 <?php
 $opties = array(1 => 'Ja', 0 => 'Nee');
 foreach ( $opties as $key => $waarde)

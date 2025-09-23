@@ -242,27 +242,26 @@ else if(isNaN(relatnr_v))  relatnr.focus()  + alert("Relatienummer is niet numer
 <tr>
  <td width = 105 >Melden : </td>
  <td>
-<input type = radio name = 'radMeld' value = 1
-      > Ja 
-      <input type = radio name = 'radMeld' value = 0
+<input type=radio name="radMeld" value="1"> Ja 
+      <input type=radio name='radMeld' value=0
 checked      > Nee 
  </td>
 </tr>
 <tr>
  <td width = 105 >Technisch : </td>
- <td><input type = radio name = 'radTech' value = 1
+ <td><input type=radio name='radTech' value=1
 checked 
       > Ja 
-      <input type = radio name = 'radTech' value = 0
+      <input type=radio name='radTech' value=0
       > Nee 
  </td>
 </tr>
 <tr>
  <td width = 105 >Financieel : </td>
- <td><input type = radio name = 'radFin' value = 1
+ <td><input type=radio name='radFin' value=1
 checked 
       > Ja 
-      <input type = radio name = 'radFin' value = 0 
+      <input type=radio name='radFin' value=0 
       > Nee 
  </td>
 </tr>
@@ -274,7 +273,7 @@ checked
  <td width = 105 >Administrator : </td>
  <td>
      <!-- kzlBeheer ja/nee --> 
-<select name="kzlAdm"  style = "width:60; font-size:13px;">
+<select name="kzlAdm" style="width:60; font-size:13px;">
 <option value="1" selected>Ja</option><option value="0">Nee</option> 
 </select> <!-- EINDE kzlBeheer ja/nee -->
  </td>

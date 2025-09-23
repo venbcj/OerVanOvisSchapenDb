@@ -224,7 +224,7 @@ else if(isNaN(relatnr_v))  relatnr.focus()  + alert("Relatienummer is niet numer
  <td colspan=>Reader :      
 
      <!-- kzlReader --> 
-<select name="kzlReader"  style = "width:80; font-size:13px;">
+<select name="kzlReader" style = "width:80; font-size:13px;">
 <option></option>
 <option value="Agrident" selected>Agrident</option><option value="Biocontrol">Biocontrol</option> 
 </select> <!-- EINDE kzlReader -->
@@ -244,29 +244,28 @@ else if(isNaN(relatnr_v))  relatnr.focus()  + alert("Relatienummer is niet numer
 <tr><th><hr> Module<hr></th><th colspan = 3 align="left"><hr>&nbsp&nbsp<hr></th></tr>
 <tr>
  <td width = 105 >Melden : </td>
- <td><input type = radio name = 'radMeld' value = 1 
-      
-      > Ja 
-      <input type = radio name = 'radMeld' value = 0
-     checked      > Nee 
+ <td>
+<input type=radio name="radMeld" value="1"> Ja 
+      <input type=radio name='radMeld' value=0
+checked      > Nee 
  </td>
 </tr>
 <tr>
  <td width = 105 >Technisch : </td>
- <td><input type = radio name = 'radTech' value = 1
-     checked 
+ <td><input type=radio name='radTech' value=1
+checked 
       > Ja 
-      <input type = radio name = 'radTech' value = 0
-            > Nee 
+      <input type=radio name='radTech' value=0
+      > Nee 
  </td>
 </tr>
 <tr>
  <td width = 105 >Financieel : </td>
- <td><input type = radio name = 'radFin' value = 1
-  checked 
+ <td><input type=radio name='radFin' value=1
+checked 
       > Ja 
-      <input type = radio name = 'radFin' value = 0 
-            > Nee 
+      <input type=radio name='radFin' value=0 
+      > Nee 
  </td>
 </tr>
 <tr>
@@ -277,7 +276,7 @@ else if(isNaN(relatnr_v))  relatnr.focus()  + alert("Relatienummer is niet numer
  <td width = 105 >Administrator : </td>
  <td>
      <!-- kzlBeheer ja/nee --> 
-<select name="kzlAdm"  style = "width:60; font-size:13px;">
+<select name="kzlAdm" style="width:60; font-size:13px;">
 <option value="1" selected>Ja</option><option value="0">Nee</option> 
 </select> <!-- EINDE kzlBeheer ja/nee -->
  </td>
