@@ -214,9 +214,7 @@ while ( $zr = mysqli_fetch_assoc($zoek_redenen_afvoer)) {
  <td width = 105 >Melden : </td>
  <td>
 <input type=radio name="radMeld" value="1"<?php
-if (!isset($_POST['radMeld']) && $row['meld'] == 1) {
-     echo " checked";
-} elseif (isset($_POST['radMeld']) && $_POST['radMeld'] == 1) {
+if ((!isset($_POST['radMeld']) && $row['meld'] == 1) || (isset($_POST['radMeld']) && $_POST['radMeld'] == 1)) {
      echo " checked";
 }
 ?>> Ja 
