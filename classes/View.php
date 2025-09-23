@@ -34,6 +34,10 @@ class View {
         include $file;
     }
 
+    public static function janee($name, $selected) {
+        self::radios($name, ['Ja' => 1, 'Nee' => 0], $selected);
+    }
+
     public static function radios($name, $collection, $selected) {
         self::render('form/_radios', compact(array_keys(get_defined_vars())));
     }

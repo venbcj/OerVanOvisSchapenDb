@@ -212,56 +212,15 @@ while ( $zr = mysqli_fetch_assoc($zoek_redenen_afvoer)) {
 <tr><th><hr> Module<hr></th><th colspan = 3 align="left"><hr>&nbsp&nbsp<hr></th></tr>
 <tr>
  <td width = 105 >Melden : </td>
- <td>
-<?php
- $collection = ['Ja' => 1, 'Nee' => 0];
- View::radios('radMeld', $collection, $_POST['radMeld'] ?? $row['meld']);
-?> 
- </td>
+ <td> <?php View::janee('radMeld', $_POST['radMeld'] ?? $row['meld']); ?> </td>
 </tr>
 <tr>
  <td width = 105 >Technisch : </td>
- <td><input type=radio name='radTech' value=1
-<?php
-    if (!isset($_POST['radTech']) && $row['tech'] == 1) {
-        echo "checked";
-    } elseif (isset($_POST['radTech']) && $_POST['radTech'] == 1) {
-        echo "checked";
-    }
-?> 
-      > Ja 
-      <input type=radio name='radTech' value=0
-<?php
-if (!isset($_POST['radTech']) && $row['tech'] == 0) {
-    echo "checked";
-} elseif (isset($_POST['radTech']) && $_POST['radTech'] == 0) {
-    echo "checked";
-}
-?>
-      > Nee 
- </td>
+ <td> <?php View::janee('radTech', $_POST['radTech'] ?? $row['tech']); ?> </td>
 </tr>
 <tr>
  <td width = 105 >Financieel : </td>
- <td><input type=radio name='radFin' value=1
-<?php
-if (!isset($_POST['radFin']) && $row['fin'] == 1) {
-    echo "checked";
-} elseif (isset($_POST['radFin']) && $_POST['radFin'] == 1) {
-    echo "checked";
-}
-?> 
-      > Ja 
-      <input type=radio name='radFin' value=0 
-<?php
-if (!isset($_POST['radFin']) && $row['fin'] == 0) {
-    echo "checked";
-} elseif (isset($_POST['radFin']) && $_POST['radFin'] == 0) {
-    echo "checked";
-}
-?>
-      > Nee 
- </td>
+ <td> <?php View::janee('radFin', $_POST['radFin'] ?? $row['fin']); ?> </td>
 </tr>
 <tr>
  <td height="15">
