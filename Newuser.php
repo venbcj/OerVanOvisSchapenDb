@@ -12,7 +12,7 @@ $versie = '16-10-2023'; /* Aanmaken map /Readerversies toegevoegd */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 $versie = '29-08-2025'; /* Ubn wordt vanaf nu opgeslagen in tblUbn i.p.v. tblLeden. Tevens de keuze Biocontrol in het veld Reader verwijderd */
 
- session_start(); 
+session_start(); 
 
 require_once("newuser_functions.php");
 
@@ -37,8 +37,7 @@ if (Auth::is_logged_in()) {
 
 $ingescand = date_add_months($today,1); //zie basisfuncties.php
 
-If (isset ($_POST['knpSave']))
-{        
+if (isset ($_POST['knpSave'])) {        
     # als je de formulier-elementen "user[roepnaam]" enz noemt, kun je $_POST['user'] in 1x oppakken. En doorgeven aan je gateway.
     $txtRoep = $_POST['txtRoep'];
     $txtVoeg = $_POST['txtVoeg'];
@@ -60,16 +59,11 @@ If (isset ($_POST['knpSave']))
     $alias = getAlias($db,$login,0);
 
     $key = getApiKey($db);
-
-
-$zoek_ubn = mysqli_query($db,"SELECT ubn FROM tblUbn WHERE ubn = '".mysqli_real_escape_string($db,$txtUbn)."' ;") or Logger::error(mysqli_error($db)); 
-
-        while ($zu = mysqli_fetch_assoc($zoek_ubn)) { $gevonden_ubn = $zu['ubn']; }
-
-if(isset($gevonden_ubn)) { $fout = "Dit ubn bestaat al."; }
-
-else {
-
+$ubn_gateway = new UbnGateway($db);
+if ($ubn_gateway->exists($txtUbn)) {
+    $fout = "Dit ubn bestaat al."; 
+} else {
+    # ... want we gaan niet 13 losse variabelen een methode in sturen.
 $insert_lid = "INSERT INTO tblLeden SET 
     alias = '".mysqli_real_escape_string($db,$alias)."',
     login = '".mysqli_real_escape_string($db,$txtUbn)."',
@@ -96,18 +90,26 @@ $insert_lid = "INSERT INTO tblLeden SET
     ;";
         mysqli_query($db,$insert_lid) or Logger::error(mysqli_error($db));
 
+        # alias is nu de primaire sleutel; uniek door de aanpak in "getAlias" (die we "createAlias" gaan noemen).
+        # Rest van de db gebruikt lidId, dus die halen we even op.
+        # Na verbouwing kan een insert-query direct het aangemaakte nummer teruggeven --BCB
+        $lid_gateway = new LidGateway($db);
+        $newId = $lid_gateway->findIdByAlias($alias);
 
-$zoek_gebruiker = mysqli_query($db,"
-    SELECT lidId FROM tblLeden WHERE alias = '".mysqli_real_escape_string($db,$alias)."' ;") or Logger::error(mysqli_error($db)); 
-
-while ($zg = mysqli_fetch_assoc($zoek_gebruiker))
-        { $newId = $zg['lidId'];  }
-
-$insert_tblUbn = "INSERT INTO tblUbn SET lidId = '".mysqli_real_escape_string($db,$newId)."', ubn = '".mysqli_real_escape_string($db,$txtUbn)."' ";
-        mysqli_query($db,$insert_tblUbn) or Logger::error(mysqli_error($db));
+        $ubn_gateway->insert($newId, $txtUbn);
     
-include"newuser_data.php";
+        # voormalige include "newuser_data":
+/* 11-6-2020 Standaard Lambar toegevoegd bij nieuwe users 
+8-4-2023 naamreader Rendac standaard vullen. Relatie Vermist standaard toevoegen en SQL beveiligd met quotes 
+21-02-2025 Invoer Rendac in tblRelatie uitval = 1 gesplitst van Invoer Vermist in tblRelatie i.v.m. uitval = 0 */
 
+$lid_gateway->createLambar($newId);
+$lid_gateway->createMoments($newId);
+$lid_gateway->createEenheden($newId);
+$lid_gateway->createElementen($newId);
+$lid_gateway->createPartij($newId);
+$lid_gateway->createRelatie($newId);
+$lid_gateway->createRubriek($newId);
 
     $lidid = $newId;
 include "newreader_keuzelijsten.php";

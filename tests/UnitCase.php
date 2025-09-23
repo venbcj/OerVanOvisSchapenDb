@@ -20,13 +20,21 @@ class UnitCase extends TestCase {
         }
     }
 
-    protected function assertTableWithPK($table, $pk, $id, $values) {
+    protected function assertTableWithPK($table, $pk, $id, $values = []) {
         $vw = $this->db->query("SELECT * FROM $table WHERE $pk=$id");
         $this->assertEquals(1, $vw->num_rows);
         $row = $vw->fetch_assoc();
         foreach ($values as $key => $expected) {
             $this->assertEquals($expected, $row[$key]);
         }
+    }
+
+    protected function assertTableRowcount($table, $count) {
+        $this->assertEquals($count, $this->tableRowcount($table));
+    }
+
+    protected function tableRowcount($table) {
+        return $this->db->query("SELECT COUNT(*) FROM $table")->fetch_row()[0];
     }
 
 }

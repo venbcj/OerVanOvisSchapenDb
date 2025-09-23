@@ -33,4 +33,80 @@ return mysqli_num_rows($vw) > 0;
         return '';
     }
 
+    public function findIdByAlias($alias) {
+        $result = mysqli_query($this->db, "SELECT lidId FROM tblLeden WHERE alias = '".mysqli_real_escape_string($this->db, $alias)."' ");
+        while ($row = mysqli_fetch_assoc($result)) {
+            return $row['lidId'];
+        }
+        return '';
+    }
+
+    // onderdelen van create-nieuw-lid
+
+    public function createLambar($lidId) {
+        mysqli_query($this->db, "INSERT INTO tblHok SET lidId=$lidId, hoknr='Lambar', actief=1");
+    }
+
+    public function createMoments($lidId) {
+$insert_tblMomentuser = "INSERT INTO tblMomentuser (lidId, momId)
+    SELECT '".mysqli_real_escape_string($this->db,$lidId)."', momId
+    FROM tblMoment
+    ";
+        mysqli_query($this->db,$insert_tblMomentuser) or Logger::error(mysqli_error($this->db));
+    }
+
+    public function createEenheden($lidId) {
+$insert_tblEenheiduser = "INSERT INTO tblEenheiduser (lidId, eenhId)
+    SELECT '".mysqli_real_escape_string($this->db,$lidId)."', eenhId
+    FROM tblEenheid
+    ";
+        mysqli_query($this->db,$insert_tblEenheiduser) or Logger::error(mysqli_error($this->db));
+    }
+
+    public function createElementen($lidId) {
+        // TODO 'waarde' heeft geen default, en mag niet null zijn. Dit kan niet werken. Ik zet er 0. Wat moet het zijn?
+        $insert_tblElementuser = "INSERT INTO tblElementuser (elemId, lidId, waarde)
+            SELECT elemId, '".mysqli_real_escape_string($this->db,$lidId)."', 0
+            FROM tblElement
+            ORDER BY elemId
+";
+        mysqli_query($this->db,$insert_tblElementuser) or Logger::error(mysqli_error($this->db));
+        //een aantal elementen m.b.t. de saldoberekening worden standaard uitgezet
+        $update_tblElementuser = "UPDATE tblElementuser set sal = 0
+            WHERE lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and elemId IN (2,3,4,5,67,8,10,11,14,15,17) ";
+        mysqli_query($this->db,$update_tblElementuser) or Logger::error(mysqli_error($this->db));
+    }
+
+    public function createPartij($lidId) {
+$insert_tblPartij = "INSERT INTO tblPartij (lidId, ubn, naam, actief, naamreader ) VALUES
+(    '".mysqli_real_escape_string($this->db,$lidId)."', 123123, 'Rendac', 1, 'Rendac'),
+(    '".mysqli_real_escape_string($this->db,$lidId)."', 123456, 'Vermist', 1, 'Vermist');
+";
+        mysqli_query($this->db,$insert_tblPartij) or Logger::error(mysqli_error($this->db));
+    }
+
+    public function createRelatie($lidId) {
+        $insert_tblRelatie_Rendac = "INSERT INTO tblRelatie (partId, relatie, uitval, actief)
+            SELECT p.partId, 'cred', 1, 1
+            FROM tblPartij p
+            WHERE p.ubn = '123123' and p.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' ;
+";
+        mysqli_query($this->db,$insert_tblRelatie_Rendac) or Logger::error(mysqli_error($this->db));
+        $insert_tblRelatie_Vermist = "INSERT INTO tblRelatie (partId, relatie, actief)
+            SELECT p.partId, 'cred', 0
+            FROM tblPartij p
+            WHERE p.ubn = '123456' and p.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' ;
+";
+        mysqli_query($this->db,$insert_tblRelatie_Vermist) or Logger::error(mysqli_error($this->db));
+    }
+
+    public function createRubriek($lidId) {
+        $insert_tblRubriekuser = "INSERT INTO tblRubriekuser (rubId, lidId)
+            SELECT rubId, '".mysqli_real_escape_string($this->db,$lidId)."'
+            FROM tblRubriek
+            ORDER BY rubId;
+";
+        mysqli_query($this->db,$insert_tblRubriekuser) or Logger::error(mysqli_error($this->db));
+    }
+
 }

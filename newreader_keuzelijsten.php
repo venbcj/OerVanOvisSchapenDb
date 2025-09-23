@@ -103,6 +103,3 @@ mysqli_query($db,$update_impAgrident) or die (mysqli_error($db));
 // tabel impAgridenten bijwerken
 }*/
 // Einde Controle bestaan van Lambar
-
-
-?>
