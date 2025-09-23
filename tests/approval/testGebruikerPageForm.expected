@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Beheer</title>
+</head>
+<body>
+
+
+<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" type="text/css" href="menu.css">
+
+<!-- BackToTop button javascript 
+    bron : https://www.wpromotions.eu/nl/hoe-een-scroll-to-top-knop-toevoegen-aan-website-in-webnode/    -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- Deze links komen uit Zoeken.php per 14-12-2024 -->
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+<!-- Einde Deze links komen uit Zoeken.php per 14-12-2024 -->
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $(window).scroll(function(){
+        if($(this).scrollTop() > 100){
+            $('#scroll').fadeIn();
+        }else{
+            $('#scroll').fadeOut();
+        }
+    });
+    $('#scroll').click(function(){
+        $("html, body").animate({ scrollTop: 0 }, 600);
+        return false;
+    });
+});
+</script>
+
+<a href="javascript;" id="scroll" title="Scroll to Top" style="display: none;">Top<span></span></a> 
+<!-- Einde BackToTop button javascript -->
+
+<div id = "rechts_uitlijnen" class = 'header_breed'>
+    <section style="text-align : center">
+        Gebruiker&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    </section>
+    <img src='OER_van_OVIS.jpg' />
+</div>
+
+<ul class="header_smal topnav" id = balkOntw >
+    <li class="dropdown">
+<a href="http://oer-dev/Home.php" class="black">Home</a>
+</li>
+    <li class="dropdown"><span>Registratie</span>
+        <div class="dropdown-content">
+            <a href="http://oer-dev/InvSchaap.php" class="black">Aanvoer schaap</a>
+            <a href="http://oer-dev/Med_registratie.php" class="blue">Medicijn toediening</a>
+            <a href="http://oer-dev/Dekkingen.php" class="blue">Dekkingen / Dracht</a>
+        </div>
+    </li>
+
+    <li class="dropdown"><span>Reader</span>
+        <div class="dropdown-content-smal">
+            <a href="http://oer-dev/InlezenReader.php" class="black">Inlezen reader</a>
+ 
+            <a href="http://oer-dev/Alerts.php" class="black">Raederalerts</a>
+        </div>
+    </li>
+
+    <li class="dropdown"><span style = "color : black ;">RVO</span>
+        <div class="dropdown-content-smal">
+            <a href="http://oer-dev/Melden.php" class="black">Melden RVO</a>
+            <a href="http://oer-dev/Meldingen.php" class="black">Meldingen</a>
+        </div>
+    </li>
+
+    <li class="dropdown"><span>RAADPLEGEN</span>
+        <div class="dropdown-content">
+                        <a href="http://oer-dev/Bezet.php" class="black">Verblijven in gebruik</a>
+                        <a href="http://oer-dev/Zoeken.php" class="black">Schaap opzoeken</a>
+            <a href="http://oer-dev/Stallijst.php" class="black">Stallijst</a>
+            <a href="http://oer-dev/ZoekAfldm.php" class="black">Afleverlijst</a>
+        </div>
+    </li>
+
+    <li class="dropdown"><span>Rapporten</span>
+        <div class="dropdown-content-breed">
+            <a href="http://oer-dev/Mndoverz_fok.php" class="blue">Maandoverz. fokkerij</a>
+            <a href="http://oer-dev/Mndoverz_vlees.php" class="blue">Maandoverz. vleeslam.</a>
+            <a href="http://oer-dev/Med_rapportage.php" class="blue">Medicijn rapportage</a>
+            <a href="http://oer-dev/Voer_rapportage.php" class="blue">Voer rapportage</a>
+            <a href="http://oer-dev/MaandTotalen.php" class="blue">Maandtotalen</a>
+            <a href="http://oer-dev/GroeiresultaatSchaap.php" class="blue">Groeiresultaten per schaap</a>
+            <a href="http://oer-dev/GroeiresultaatWeging.php" class="blue">Groeiresultaten per weging</a>
+                        <a href="http://oer-dev/ResultHok.php" class="blue">Periode resultaten</a>
+
+        <ul class="nested-dropdown">
+        <li class="dropdown2"><span>Ooi rapporten</span>
+            <div class="dropdown-content2">
+                <a href="http://oer-dev/Ooikaart.php" class="blue">Ooikaart detail</a>
+                <a href="http://oer-dev/OoikaartAll.php" class="blue">Ooikaart moeders</a>
+                <a href="http://oer-dev/Meerlingen5.php" class="blue">Meerling in periode</a>
+                <a href="http://oer-dev/Meerlingen.php" class="blue">Meerling per geslacht</a>
+                <a href="http://oer-dev/Meerlingen2.php" class="blue">Meerlingen per jaar</a>
+                <a href="http://oer-dev/Meerlingen3.php" class="blue">Meerling oplopend</a>
+                <a href="http://oer-dev/Meerlingen4.php" class="blue">Meerlingen aanwezig</a>
+            </div>
+        </li>
+        </ul>
+
+        </div>
+    </li>
+
+    <li class="dropdown"><span>Voorraadbeheer</span>
+        <div class="dropdown-content">
+            <a href="http://oer-dev/Medicijnen.php" class="blue">Medicijnenbestand</a>
+            <a href="http://oer-dev/Voer.php" class="blue">Voerbestand</a>
+            <a href="http://oer-dev/Inkopen.php" class="blue">Inkopen</a>
+            <a href="http://oer-dev/Voorraad.php" class="blue">Voorraad</a>
+        </div>
+    </li>
+
+    <li class="dropdown"><span>Financieel</span>
+        <div class="dropdown-content">
+            <a href="http://oer-dev/Kostenopgaaf.php" class="black">Inboeken</a>
+            <a href="http://oer-dev/Deklijst.php" class="black">Deklijst</a>
+            <a href="http://oer-dev/Liquiditeit.php" class="black">Liquiditeit</a>
+            <a href="http://oer-dev/Saldoberekening.php" class="black">Saldoberekening</a>
+            <a href="http://oer-dev/Rubrieken.php" class="black">Rubrieken</a>
+            <a href="http://oer-dev/Componenten.php" class="black">Componenten</a>
+            <a href="http://oer-dev/Kostenoverzicht.php" class="black">Betaalde posten</a>
+        </div>
+    </li>
+
+    <li class="dropdown"><span style = 'color : black'>Beheer</span>
+        <div class="dropdown-content">
+            <a href="http://oer-dev/Hok.php" class="blue">Verblijven</a>
+            <a href="http://oer-dev/Ras.php" class="black">Rassen</a>
+            <a href="http://oer-dev/Uitval.php" class="black">Redenen en momenten</a>
+            <a href="http://oer-dev/Combireden.php" class="black">Combi redenen</a>
+            <a href="http://oer-dev/Vader.php" class="black">Dekrammen</a>
+            <a href="http://oer-dev/Eenheden.php" class="blue">Eenheden</a>
+            <a href="http://oer-dev/Relaties.php" class="black">Relaties</a>
+            <a href="http://oer-dev/Readerversies.php" class="red">Readerversies</a>
+            <a href="http://oer-dev/bestanden.php" class="black">Readerbestanden</a>
+                        <a href="http://oer-dev/Gebruikers.php" class="black">Gebruikers</a>
+                        <a href="http://oer-dev/Systeem.php" class="blue">Instellingen</a>
+        </div>
+    </li>
+    <li id = "rechts_uitlijnen">
+        <a href="http://oer-dev/index.php" class="black">Uitloggen</a>
+    </li>
+</ul>
+
+<table id ="table1" align="center">
+<tbody>
+<tr height = 90> </tr>
+<TR>
+
+            <TD valign = "top">
+<script>
+function verplicht() {
+var rnaam     = document.getElementById("voornaam");         var rnaam_v = rnaam.value;
+var anaam     = document.getElementById("achternaam");    var anaam_v = anaam.value;
+var telf      = document.getElementById("telefoon");        var telf_v  = telf.value;
+var relatnr = document.getElementById("relatienummer");    var relatnr_v  = +relatnr.value;
+
+     if(rnaam_v.length == 0) rnaam.focus()     + alert("Roepnaam is onbekend.");
+else if(rnaam_v.length > 25) rnaam.focus()     + alert("Roepnaam mag maximaal 25 karakters zijn.");
+else if(anaam_v.length == 0) anaam.focus()     + alert("Achternaam is onbekend.");
+else if(anaam_v.length > 25) anaam.focus()     + alert("Achternaam mag maximaal 25 karakters zijn.");
+else if(telf_v.length > 11)  telf.focus()      + alert("Telefoonnummer mag max 11 karakters zijn.");
+else if(isNaN(relatnr_v))  relatnr.focus()  + alert("Relatienummer is niet numeriek.");
+
+}
+</script>
+
+<form action = "Gebruiker.php" method = "post" >
+
+<table border = 0 width = 900>
+<tr height = 20><td></td></tr>
+<tr><th colspan = 3><hr>Gebruiker gegevens<hr></th></tr>
+</table>
+
+<table border = 0 width = 900>
+<tr>
+ <td colspan = 15><u><i>Gebruiker :</i></u></td>
+</tr>
+<tr>
+  <td colspan = 15>
+    Roepnaam : <input type="text" name="txtRoep" id="voornaam" size="10" value="Koob">
+    Tussenvoegsel : <input type="text" name="txtVoeg" id="tussen" size="3" value="de">
+    &nbsp&nbsp
+    Achternaam : <input type="text" name="txtNaam" id="achternaam" size="27" value="Tester">
+  </td>
+</tr>
+<tr>
+  <td colspan = 15 >
+    Telefoonnr : <input type="text" name="txtTel" id="telefoon" size="10" value="030-2434609">
+    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+    E-mail : <input type="text" name="txtMail" size=50 value="kobus@alcus.com">
+  </td>
+</tr>
+<tr><td height = 15></td>
+</table>
+<table border = 0 width = 900>
+<tr>
+ <td colspan = 15><u><i>Bedrijfgegevens RVO :</i></u></td>
+</tr>
+<tr>
+ <td width = 150 align = 'right'>Ubn :</td>
+ <td width = 100> 99 </td>
+ <td width = 100 align = "right" >Gebruikersnaam RVO :</td>
+ <td colspan = 2 ><input type = "text" name = "txtUrvo" size = 10 value = 18 ></td>
+</tr>
+<tr>
+ <td width = 150>Relatienummer RVO :</td>
+ <td><input type = text name = "txtRelnr" id="relatienummer" size = 10 value = 13></td>
+ <td width = 160 align = "right">Wachtwoord RVO :</td>
+ <td colspan = 2 ><input type = password name = "txtPrvo" size = 10 value = 22 ></td>
+
+</tr>
+<tr><td height = 20></td>
+</tr>
+<tr>
+ <td colspan=>Reader :      
+
+     <!-- kzlReader --> 
+<select name="kzlReader" style = "width:80; font-size:13px;">
+<option></option>
+<option value="Agrident">Agrident</option><option value="Biocontrol" selected>Biocontrol</option> 
+</select> <!-- EINDE kzlReader -->
+
+ </td>
+ </tr>
+<tr>
+ <td colspan="4">Reader wachtwoord :  </td>
+</tr>
+</table>
+
+<table border = 0 width = 900>
+<tr height = 15><td></td></tr>
+<tr><th><hr> Module<hr></th><th colspan = 3 align="left"><hr>&nbsp&nbsp<hr></th></tr>
+<tr>
+ <td width = 105 >Melden : </td>
+ <td>
+<input type = radio name = 'radMeld' value = 1
+      > Ja 
+      <input type = radio name = 'radMeld' value = 0
+checked      > Nee 
+ </td>
+</tr>
+<tr>
+ <td width = 105 >Technisch : </td>
+ <td><input type = radio name = 'radTech' value = 1
+checked 
+      > Ja 
+      <input type = radio name = 'radTech' value = 0
+      > Nee 
+ </td>
+</tr>
+<tr>
+ <td width = 105 >Financieel : </td>
+ <td><input type = radio name = 'radFin' value = 1
+checked 
+      > Ja 
+      <input type = radio name = 'radFin' value = 0 
+      > Nee 
+ </td>
+</tr>
+<tr>
+ <td height="15">
+ </td>
+</tr>
+<tr>
+ <td width = 105 >Administrator : </td>
+ <td>
+     <!-- kzlBeheer ja/nee --> 
+<select name="kzlAdm"  style = "width:60; font-size:13px;">
+<option value="1" selected>Ja</option><option value="0">Nee</option> 
+</select> <!-- EINDE kzlBeheer ja/nee -->
+ </td>
+</tr>
+<tr> <td colspan="4"> <hr></td></tr>
+</table>
+
+<table border = 0 width = 900>
+<tr>
+ <td width = 105 >
+    Laatste dag stallijst inlezen
+ </td>
+ <td >
+    <input type="text" name="txtIngescand" size="8" value="">
+ </td>
+ <td> t.b.v. nieuwe klanten
+ </td>
+ <td width = 500 ></td>
+</tr>
+<tr height = 50 ></tr>
+<tr>
+ <td colspan = 4 align =right><input type = "submit" name = "knpSave" onfocus = "verplicht()" value = "Opslaan"></td>
+</tr>
+</table>
+</form>
+
+</TD>
+
+<script>
+$('#datepicker1').attr('autocomplete','off');
+$('#datepicker2').attr('autocomplete','off');
+$('#datepicker3').attr('autocomplete','off');
+$('#datepicker4').attr('autocomplete','off');
+$('#datepicker5').attr('autocomplete','off');
+</script>
+
+<link rel="stylesheet" href="menu.css">
+<td width = '150' height = '100' valign='top'>
+Menu : </br>
+<hr class="blue">
+
+<a href="http://oer-dev/Home.php" class="blue">Home</a>
+
+<hr class="grey">
+<br/>
+<hr class="grey">
+<a href="http://oer-dev/Hok.php" class="blue">Verblijven</a>
+
+<hr class="grey">
+<a href="http://oer-dev/Ras.php" class="blue">Rassen</a>
+
+<hr class="grey">
+<a href="http://oer-dev/Uitval.php" class="blue">Redenen en momenten</a>
+
+<hr class="grey">
+<a href="http://oer-dev/Combireden.php" class="blue">Combi redenen</a>
+
+<hr class="grey">
+<a href="http://oer-dev/Vader.php" class="blue">Dekrammen</a>
+
+<hr class="grey">
+<br/>
+<hr class="grey">
+<a href="http://oer-dev/Eenheden.php" class="blue">Eenheden</a>
+
+<hr class="grey">
+<a href="http://oer-dev/Relaties.php" class="blue">Relaties</a>
+
+<hr class="grey">
+<a href="http://oer-dev/Readerversies.php" class="grey">Readerversies</a>
+
+<hr class="grey">
+<a href="http://oer-dev/Gebruikers.php" class="blue">Gebruikers</a>
+
+<hr class="grey">
+<a href="http://oer-dev/Systeem.php" class="blue">Instellingen</a>
+
+<hr class="grey">
+
+<i style = "color : #E2E2E2;">versie : 26-12-2024 </i> <br>
+<i style = "color : #E2E2E2;">ingelogd : 1</i>
+</td>
+</tr>
+
+</table>
+
+</body>
+</html>

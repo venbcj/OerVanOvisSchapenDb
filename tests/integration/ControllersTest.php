@@ -4,6 +4,11 @@
 
 class ControllersTest extends IntegrationCase {
 
+    public static function setupBeforeClass() : void {
+        self::runfixture('hok');
+        self::runfixture('user-harm');
+    }
+
     public static function gettable_controllers() {
         return self::txt2ar(<<<TXT
 AfleverLijst.php

@@ -3,4 +3,9 @@ export XDEBUG_MODE=develop,debug
 if [ $(cover p) == 'on' ]; then
     export XDEBUG_MODE=coverage
 fi
-vendor/bin/phpunit tests $*
+WHAT=tests
+if [ -n "$*" ]; then
+    WHAT="$*"
+fi
+echo "vendor/bin/phpunit $WHAT"
+vendor/bin/phpunit $WHAT
