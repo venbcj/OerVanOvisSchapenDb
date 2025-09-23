@@ -81,7 +81,8 @@ if (php_uname('n') == 'basq') {
      $_SESSION['I1'] = $_REQUEST['ingelogd'];
      $_SESSION['PA'] = 1;
      $_SESSION['RPP'] = 30;
-     $_SESSION['ID'] = $_REQUEST['uid'] ?? 0;
+     $_SESSION['ID'] = $_REQUEST['uid'] ?? 1;
+     // dit ID is mede van invloed op HokSpenen HokOverpl HokAanwas HokVerlaten Uitval HokAfleveren HokVerkopen HokUitscharen
    }
    if (isset($_REQUEST['force_meld'])) {
        $modmeld = 1;
