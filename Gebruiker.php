@@ -213,20 +213,22 @@ while ( $zr = mysqli_fetch_assoc($zoek_redenen_afvoer)) {
 <tr>
  <td width = 105 >Melden : </td>
  <td>
-<input type=radio name="radMeld" value="1"<?php
+<?php
+$meld = 0;
 if ((!isset($_POST['radMeld']) && $row['meld'] == 1) || (isset($_POST['radMeld']) && $_POST['radMeld'] == 1)) {
+    $meld = 1;
+}
+?>
+<input type=radio name="radMeld" value="1"<?php
+if ($meld == 1) {
      echo " checked";
 }
 ?>> Ja 
-      <input type=radio name='radMeld' value=0
-<?php
-if (!isset($_POST['radMeld']) && $row['meld'] == 0) {
-    echo "checked";
-} elseif (isset($_POST['radMeld']) && $_POST['radMeld'] == 0) {
-    echo "checked";
+<input type=radio name="radMeld" value="0"<?php
+if ((!isset($_POST['radMeld']) && $row['meld'] == 0) || (isset($_POST['radMeld']) && $_POST['radMeld'] == 0)) {
+    echo " checked";
 }
-?>
-      > Nee 
+?>> Nee 
  </td>
 </tr>
 <tr>
