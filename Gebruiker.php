@@ -58,14 +58,14 @@ if (isset ($_POST['knpSave'])) {
     $radTech = $_POST['radTech'];
     $radFin = $_POST['radFin'];
     $kzlAdm = $_POST['kzlAdm'];
-    $txtLstScan = $_POST['txtIngescand'];  $dag = date_create($txtLstScan); $lstScanDay =  date_format($dag, 'Y-m-d');
-
-    
-
-if (empty($txtLstScan)) { $lstScanDay =  $scanday; }
+    $txtLstScan = $_POST['txtIngescand'];
+    $dag = date_create($txtLstScan);
+    $lstScanDay =  date_format($dag, 'Y-m-d');
+    if (empty($txtLstScan)) {
+        $lstScanDay =  $scanday;
+    }
     
 $update_lid = "UPDATE tblLeden SET 
-    
     roep = '".mysqli_real_escape_string($db,$txtRoep)."',
     voegsel = ". db_null_input($txtVoeg) . ",
     naam = '".mysqli_real_escape_string($db,$txtNaam)."',
@@ -80,12 +80,9 @@ $update_lid = "UPDATE tblLeden SET
     beheer = '".mysqli_real_escape_string($db,$kzlAdm)."',
     ingescand = '".mysqli_real_escape_string($db,$lstScanDay)."',
     reader = ". db_null_input($kzlReader) . "
-
-
     WHERE lidId = '".mysqli_real_escape_string($db,$ID)."'
     ;";
         mysqli_query($db,$update_lid) or die (mysqli_error($db));
-
 }
 
 if (isset ($_POST['knpUpdate'])) {

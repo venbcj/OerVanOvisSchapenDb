@@ -25,7 +25,7 @@ class UnitCase extends TestCase {
         $this->assertEquals(1, $vw->num_rows);
         $row = $vw->fetch_assoc();
         foreach ($values as $key => $expected) {
-            $this->assertEquals($expected, $row[$key]);
+            $this->assertEquals($expected, $row[$key], "verwacht $expected voor $key");
         }
     }
 

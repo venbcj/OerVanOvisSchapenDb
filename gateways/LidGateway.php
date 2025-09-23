@@ -109,4 +109,31 @@ $insert_tblPartij = "INSERT INTO tblPartij (lidId, ubn, naam, actief, naamreader
         mysqli_query($this->db,$insert_tblRubriekuser) or Logger::error(mysqli_error($this->db));
     }
 
+    public function storeUitvalOm($lidId, $redId) {
+        if ($this->heeftReden($lidId, $redId)) {
+            $SQL = "UPDATE tblRedenuser set uitval = 1 WHERE redId = '".mysqli_real_escape_string($this->db,$redId)."' and lidId = '".mysqli_real_escape_string($this->db,$lidId)."' ";
+        } else {
+            $SQL = "INSERT INTO tblRedenuser set uitval=1, redId = '".mysqli_real_escape_string($this->db,$redId)."', lidId = '".mysqli_real_escape_string($this->db,$lidId)."' ";
+        }
+        mysqli_query($this->db,$SQL) or Logger::error(mysqli_error($this->db));
+    }
+
+    public function storeAfvoerOm($lidId, $redId) {
+        if($this->heeftReden($lidId, $redId)) {
+            $SQL = "UPDATE tblRedenuser set afvoer = 1 WHERE redId = '".mysqli_real_escape_string($this->db,$redId)."' and lidId = '".mysqli_real_escape_string($this->db,$lidId)."'";
+        } else {
+            $SQL = "INSERT INTO tblRedenuser set afvoer = 1, redId = '".mysqli_real_escape_string($this->db,$redId)."', lidId = '".mysqli_real_escape_string($this->db,$lidId)."'";
+        }
+        mysqli_query($this->db,$SQL) or Logger::error(mysqli_error($this->db));
+    }
+
+    public function heeftReden($lidId, $redId) {
+        $vw = mysqli_query($this->db,"
+SELECT redId
+FROM tblRedenuser
+WHERE redId = '".mysqli_real_escape_string($this->db,$redId)."' and lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+") or die (mysqli_error($this->db));
+return $vw->num_rows > 0;
+    }
+
 }

@@ -2,6 +2,8 @@
 
 class GebruikerTest extends IntegrationCase {
 
+    const AANTAL_REDENEN_IN_NEWREADER_KEUZELIJSTEN = 14;
+
     // deze vier tests dekken de radioknop "melden: Ja"
 
     public function testGetNotMeld() {
@@ -32,6 +34,46 @@ class GebruikerTest extends IntegrationCase {
         $this->runfixture('user-kobus');
         $this->post('/Gebruiker.php', ['ingelogd' => 1, 'pstId' => 42, 'radMeld' => 1]);
         $this->assertPresent('"radMeld" value="1" checked');
+    }
+
+    public function testSaveGebruiker() {
+        $this->runfixture('user-kobus');
+        include "just_connect_db.php";
+        $this->db = $db;
+        $this->post('/Gebruiker.php', [
+            'ingelogd' => 1,
+            'uid' => 42, // hack. login.php vangt dit op;
+            'knpSave' => 1,
+            'txtRoep' => 'rr',
+            'txtVoeg' => 'rr',
+            'txtNaam' => 'rr',
+            'txtTel' => 'rr',
+            'txtMail' => '',
+            'txtRelnr' => 993,
+            'txtUrvo' => 994,
+            'txtPrvo' => 995,
+            'kzlReader' => 'Agrident',
+            'radMeld' => 1,
+            'radTech' => 1,
+            'radFin' => 0,
+            # 'radBeheer' => 1, # and this, my friend, is why we do not put the form implementation into the name
+            'kzlAdm' => 1,
+            'txtIngescand' => '01-01-2021',
+        ]);
+        $this->assertTableWithPK('tblLeden', 'lidId', 42, ['prvo' => 995, 'meld' => 1, 'fin' => 0]);
+    }
+
+    public function testUpdateGebruiker() {
+        include "just_connect_db.php";
+        $this->db = $db;
+        $this->db->query("DELETE FROM tblRedenuser");
+        $this->post('/Gebruiker.php', [
+            'ingelogd' => 1,
+            'uid' => 42, // hack. login.php vangt dit op;
+            'knpUpdate' => 1,
+        ]);
+        $this->assertNoNoise();
+        $this->assertTableRowcount('tblRedenuser', self::AANTAL_REDENEN_IN_NEWREADER_KEUZELIJSTEN);
     }
 
 }

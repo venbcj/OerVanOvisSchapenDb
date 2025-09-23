@@ -10,3 +10,4 @@ globals-candidates*
 coverage.xml
 erd.pdf
 user_*
+log/*

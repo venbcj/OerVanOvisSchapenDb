@@ -81,7 +81,7 @@ if (php_uname('n') == 'basq') {
      $_SESSION['I1'] = $_REQUEST['ingelogd'];
      $_SESSION['PA'] = 1;
      $_SESSION['RPP'] = 30;
-     $_SESSION['ID'] = 1;
+     $_SESSION['ID'] = $_REQUEST['uid'] ?? 0;
    }
    if (isset($_REQUEST['force_meld'])) {
        $modmeld = 1;
