@@ -39,6 +39,7 @@ $ingescand = date_add_months($today,1); //zie basisfuncties.php
 
 If (isset ($_POST['knpSave']))
 {        
+    # als je de formulier-elementen "user[roepnaam]" enz noemt, kun je $_POST['user'] in 1x oppakken. En doorgeven aan je gateway.
     $txtRoep = $_POST['txtRoep'];
     $txtVoeg = $_POST['txtVoeg'];
     $txtNaam = $_POST['txtNaam'];
@@ -61,7 +62,7 @@ If (isset ($_POST['knpSave']))
     $key = getApiKey($db);
 
 
-$zoek_ubn = mysqli_query($db,"SELECT ubn FROM tblUbn WHERE ubn = '".mysqli_real_escape_string($db,$txtUbn)."' ;") or die (mysqli_error($db)); 
+$zoek_ubn = mysqli_query($db,"SELECT ubn FROM tblUbn WHERE ubn = '".mysqli_real_escape_string($db,$txtUbn)."' ;") or Logger::error(mysqli_error($db)); 
 
         while ($zu = mysqli_fetch_assoc($zoek_ubn)) { $gevonden_ubn = $zu['ubn']; }
 
@@ -93,17 +94,17 @@ $insert_lid = "INSERT INTO tblLeden SET
     reader = ". db_null_input($kzlReader) . ",
     readerkey = '".mysqli_real_escape_string($db,$key)."'
     ;";
-        mysqli_query($db,$insert_lid) or die (mysqli_error($db));
+        mysqli_query($db,$insert_lid) or Logger::error(mysqli_error($db));
 
 
 $zoek_gebruiker = mysqli_query($db,"
-    SELECT lidId FROM tblLeden WHERE alias = '".mysqli_real_escape_string($db,$alias)."' ;") or die (mysqli_error($db)); 
+    SELECT lidId FROM tblLeden WHERE alias = '".mysqli_real_escape_string($db,$alias)."' ;") or Logger::error(mysqli_error($db)); 
 
 while ($zg = mysqli_fetch_assoc($zoek_gebruiker))
         { $newId = $zg['lidId'];  }
 
 $insert_tblUbn = "INSERT INTO tblUbn SET lidId = '".mysqli_real_escape_string($db,$newId)."', ubn = '".mysqli_real_escape_string($db,$txtUbn)."' ";
-        mysqli_query($db,$insert_tblUbn) or die (mysqli_error($db));
+        mysqli_query($db,$insert_tblUbn) or Logger::error(mysqli_error($db));
     
 include"newuser_data.php";
 
@@ -116,7 +117,7 @@ $map = 'user_'.$newId;
     mkdir("$map"); // Persoonlijk map voor user maken
 
 $map = 'user_'.$newId.'/Readerbestanden';
-    mkdir("$map"); // Persoonlijk map voor user maken t.b.v. readerbestanden die uit de reader komen als de reader wordt uitgelezen
+    mkdir("$map"); // Persoonlijk map voor user maken t.b.v. readerbestanden Logger::erroruit de reader komen als de reader wordt uitgelezen
 
 $map = 'user_'.$newId.'/Readerversies';
     mkdir("$map"); // Persoonlijk map voor user maken t.b.v. readerversies

@@ -106,7 +106,7 @@ class IntegrationCase extends UnitCase {
 
     protected function assertNotFout() {
         if ($found = preg_match("/alert\(('[^']*')\)/", $this->output, $matches)) {
-            $complaint = PHP_EOL.'   Vindt '.$matches[1];
+            $complaint = PHP_EOL.'Er zou geen melding-alert in de pagina moeten zitten. Vindt '.$matches[1];
             $this->assertFalse($found, $complaint);
         }
     }

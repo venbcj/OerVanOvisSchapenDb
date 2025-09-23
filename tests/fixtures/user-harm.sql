@@ -1,4 +1,5 @@
 truncate tblLeden;
+truncate tblUbn;
 INSERT INTO tblLeden(login,passw,lidId,
     meld,tech,fin,beheer,
     relnr, urvo, prvo
