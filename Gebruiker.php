@@ -214,21 +214,17 @@ while ( $zr = mysqli_fetch_assoc($zoek_redenen_afvoer)) {
  <td width = 105 >Melden : </td>
  <td>
 <?php
-$meld = 0;
-if ((!isset($_POST['radMeld']) && $row['meld'] == 1) || (isset($_POST['radMeld']) && $_POST['radMeld'] == 1)) {
-    $meld = 1;
-}
+ $collection = ['Ja' => 1, 'Nee' => 0];
+ $name = 'radMeld';
+$selected = $_POST['radMeld'] ?? $row['meld'];
+foreach ($collection as $caption => $value) {
 ?>
-<input type=radio name="radMeld" value="1"<?php
-if ($meld == 1) {
+    <input type=radio name="<?php echo $name ?>" value="<?php echo $value ?>"<?php
+if ($selected == $value) {
      echo " checked";
 }
-?>> Ja 
-<input type=radio name="radMeld" value="0"<?php
-if ((!isset($_POST['radMeld']) && $row['meld'] == 0) || (isset($_POST['radMeld']) && $_POST['radMeld'] == 0)) {
-    echo " checked";
-}
-?>> Nee 
+?>> <?php echo $caption ?>
+<?php } ?> 
  </td>
 </tr>
 <tr>
