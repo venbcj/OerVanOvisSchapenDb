@@ -34,4 +34,8 @@ class View {
         include $file;
     }
 
+    public static function radios($name, $collection, $selected) {
+        self::render('form/_radios', compact(array_keys(get_defined_vars())));
+    }
+
 }

@@ -215,16 +215,8 @@ while ( $zr = mysqli_fetch_assoc($zoek_redenen_afvoer)) {
  <td>
 <?php
  $collection = ['Ja' => 1, 'Nee' => 0];
- $name = 'radMeld';
- $selected = $_POST['radMeld'] ?? $row['meld'];
-foreach ($collection as $caption => $value) {
-?>
-    <input type=radio name="<?php echo $name ?>" value="<?php echo $value ?>"<?php
-if ($selected == $value) {
-     echo " checked";
-}
-?>> <?php echo $caption ?>
-<?php } ?> 
+ View::radios('radMeld', $collection, $_POST['radMeld'] ?? $row['meld']);
+?> 
  </td>
 </tr>
 <tr>
