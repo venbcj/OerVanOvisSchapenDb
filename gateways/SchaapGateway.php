@@ -137,8 +137,15 @@ FROM tblSchaap s
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
  ) oudr on (s.schaapId = oudr.schaapId)
-WHERE h.skip = 0 and month(h.datum) = $M and date_format(h.datum,'%Y') = $J and i.artId = $V and ".$Sekse." and ".$Ouder."
-    and st.lidId = '".mysqli_real_escape_string($this->db,$lidid)."' and h.actId = 8
+WHERE true
+  AND h.skip = 0
+  AND month(h.datum) = $M
+  AND date_format(h.datum,'%Y') = $J
+  AND i.artId = $V
+  AND ".$Sekse."
+  AND ".$Ouder."
+  AND st.lidId = '".mysqli_real_escape_string($this->db,$lidid)."'
+  AND h.actId = 8
 GROUP BY date_format(h.datum,'%Y%m')
 ");
         if($vw_totaalFase) {
@@ -163,8 +170,14 @@ GROUP BY date_format(h.datum,'%Y%m')
              join tblHistorie h on (st.stalId = h.stalId)
             WHERE h.actId = 3 and h.skip = 0
          ) oudr on (s.schaapId = oudr.schaapId)
-        WHERE month(h.datum) = $M and date_format(h.datum,'%Y') = $J and i.artId = $V and ".$Sekse." and ".$Ouder."
-         and st.lidId = '".mysqli_real_escape_string($this->db,$lidid)."' and h.skip = 0
+        WHERE true
+  AND h.skip = 0
+  AND month(h.datum) = $M
+  AND date_format(h.datum,'%Y') = $J
+  AND i.artId = $V
+  AND ".$Sekse."
+  AND ".$Ouder."
+  AND st.lidId = '".mysqli_real_escape_string($this->db,$lidid)."'
         GROUP BY concat(date_format(h.datum,'%Y'),month(h.datum))
         ");
         if($vw_totaalFase)
@@ -193,7 +206,14 @@ FROM tblEenheid e
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
  ) oudr on (s.schaapId = oudr.schaapId)
-WHERE h.skip = 0 and eu.lidId = '".mysqli_real_escape_string($this->db,$lidid)."' and month(h.datum) = $M and date_format(h.datum,'%Y') = $J and i.artId = $V and ".$Sekse." and ".$Ouder."
+WHERE true
+  AND h.skip = 0
+  AND month(h.datum) = $M
+  AND date_format(h.datum,'%Y') = $J
+  AND i.artId = $V
+  AND ".$Sekse."
+  AND ".$Ouder."
+  AND eu.lidId = '".mysqli_real_escape_string($this->db,$lidid)."'
 GROUP BY e.eenheid
 ");
 if($vw_totaalFase) {
@@ -216,6 +236,8 @@ $stapel = null;
     return $stapel;
 }
 
+// todo: dit is de count-query bij zoekUitgeschaarden. Maak dat duidelijk.
+// Misschien de select parameteriseren?
 public function countUitgeschaarden($lidId) {
     $vw = mysqli_query($this->db,"
 SELECT count(*) aantal
