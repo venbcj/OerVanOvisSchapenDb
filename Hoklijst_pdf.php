@@ -6,14 +6,7 @@ require_once("autoload.php");
 9-8-2019 www. weggehaald bij url 
 20-12-2019 tabelnaam gewijzigd van UIT naar uit tabelnaam */
 
-include "database.php";
-
-    $db = mysqli_connect($host, $user, $pw, $dtb);
-
-    if ($db == false )
-    {
-        echo 'Connectie database niet gelukt';
-    }
+include "just_connect_db.php";
 
 $groep = $_GET['Id'];
 

@@ -5,15 +5,7 @@ require_once("autoload.php");
 //https://www.youtube.com/watch?v=CamDi3Syjy4
 /* 30-12-2019 Gekopieerd van Bezet_pdf.php */
 
-include "database.php";
-
-    $db = mysqli_connect($host, $user, $pw, $dtb);
-
-    if ($db == false )
-    {
-        echo 'Connectie database niet gelukt';
-    }
-
+include "just_connect_db.php";
 
 if(isset($_GET['Id'])) { $hokId = $_GET['Id']; } // via pagina Bezet.php bestaat $_GET['Id'] niet 
 

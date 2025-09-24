@@ -13,16 +13,7 @@ join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.
 I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 
 */
 
-
-include "database.php";
-
-    $db = mysqli_connect($host, $user, $pw, $dtb);
-
-    if ($db == false )
-    {
-        echo 'Connectie database niet gelukt';
-    }
-
+include "just_connect_db.php";
 
 if(isset($_GET['Id'])) { $hokId = $_GET['Id']; } // via pagina Bezet.php bestaat $_GET['Id'] niet 
 

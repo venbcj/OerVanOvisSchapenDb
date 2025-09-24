@@ -4,17 +4,7 @@ require_once("autoload.php");
 
 //https://www.youtube.com/watch?v=CamDi3Syjy4
 
-
-// TODO: je kunt hier connect_db niet gebruiken omdat dat ook passw includet zeker? --BCB
-include "database.php";
-
-    $db = mysqli_connect($host, $user, $pw, $dtb);
-
-    if ($db == false )
-    {
-        echo 'Connectie database niet gelukt';
-    }
-
+include "just_connect_db.php";
 
 $ooi = $_GET['Id'];
 

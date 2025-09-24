@@ -8,16 +8,7 @@ require_once("autoload.php");
 07-07-2024 : Werknr oplopend gesorteerd 
 19-03-2025 : Gewicht toegevoegd */
 
-
-include "database.php";
-
-    $db = mysqli_connect($host, $user, $pw, $dtb);
-
-    if ($db == false )
-    {
-        echo 'Connectie database niet gelukt';
-    }
-
+include "just_connect_db.php";
 
 $his = $_GET['hisId'];
 
