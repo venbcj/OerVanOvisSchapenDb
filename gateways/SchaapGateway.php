@@ -355,4 +355,82 @@ ORDER BY u.ubn, right(s.levensnummer, $Karwerk)
 ");
 }
 
+public function aantal_meerlingen_perOoi($Lidid,$Ooiid,$Nr) {
+$zoek_meerlingen = "
+SELECT v.volwId
+FROM tblSchaap mdr
+ join tblStal stm on (stm.schaapId = mdr.schaapId)
+ join tblVolwas v on (v.mdrId = mdr.schaapId)
+ join tblSchaap lam on (v.volwId = lam.volwId)
+ join tblStal st on (st.schaapId = lam.schaapId)
+ join tblHistorie h on (st.stalId = h.stalId)
+ 
+WHERE isnull(stm.rel_best) and st.lidId = '".mysqli_real_escape_string($this->db,$Lidid)."' and h.actId = 1 and mdr.schaapId = '".mysqli_real_escape_string($this->db,$Ooiid)."' and h.skip = 0
+GROUP BY v.volwId
+HAVING count(st.schaapId) in ('".mysqli_real_escape_string($this->db,$Nr)."')
+ORDER BY date_format(h.datum,'%Y') desc, date_format(h.datum,'%m') desc
+";
+return $zoek_meerlingen;
+} 
+
+public function periode($Volwid) {
+    $zoek_periode = mysqli_query($this->db,"
+SELECT date_format(h.datum,'%Y') jaar, date_format(h.datum,'%m')*1 mndnr
+FROM tblSchaap s
+ join tblStal st on (st.schaapId = s.schaapId)
+ join tblHistorie h on (st.stalId = h.stalId)
+WHERE s.volwId = '".mysqli_real_escape_string($this->db,$Volwid)."' and h.actId = 1 and h.skip = 0
+GROUP BY date_format(h.datum,'%Y'), date_format(h.datum,'%m')
+") or die(mysqli_error($this->db));
+while($a = mysqli_fetch_assoc($zoek_periode)) { 
+    return array(1=>$a['mndnr'], $a['jaar']); 
+    }
+}
+
+public function de_lammeren($Volwid,$KarWerk) {
+    $zoek_lammeren = mysqli_query($this->db,"
+SELECT coalesce(geslacht,'---') geslacht, coalesce(right(s.levensnummer,$KarWerk),'-------') werknr
+FROM tblSchaap s
+ join tblStal st on (st.schaapId = s.schaapId)
+ join tblHistorie h on (st.stalId = h.stalId)
+WHERE s.volwId = '".mysqli_real_escape_string($this->db,$Volwid)."' and h.actId = 1 and h.skip = 0
+ORDER BY coalesce(geslacht,'zzz')
+") or die(mysqli_error($this->db));
+while($a = mysqli_fetch_assoc($zoek_lammeren)) { $rr[] = array($a['geslacht'], $a['werknr']); 
+ }
+return $rr;
+}
+
+public function meerlingen_perOoi_perJaar($Lidid,$Ooiid,$Jaar,$Maand) {
+$zoek_meerlingen = "
+SELECT count(lam.schaapId) aant, v.volwId
+FROM tblSchaap mdr
+ join tblVolwas v on (v.mdrId = mdr.schaapId)
+ join tblSchaap lam on (v.volwId = lam.volwId)
+ join tblStal st on (st.schaapId = lam.schaapId)
+ join tblHistorie h on (st.stalId = h.stalId)
+ 
+WHERE st.lidId = ".mysqli_real_escape_string($this->db,$Lidid)." and mdr.schaapId = ".mysqli_real_escape_string($this->db,$Ooiid)." and h.actId = 1 and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($this->db,$Jaar)."' and date_format(h.datum,'%m') = '".mysqli_real_escape_string($this->db,$Maand)."' and h.skip = 0
+GROUP BY v.volwId
+ORDER BY date_format(h.datum,'%Y%m') desc
+";
+//echo $zoek_meerlingen;
+$zoek_meerlingen = mysqli_query($this->db,$zoek_meerlingen) or die (mysqli_error($this->db));    
+    while($mrl = mysqli_fetch_assoc($zoek_meerlingen))
+            {
+                return array($mrl['aant'], $mrl['volwId']); 
+            } 
+} 
+
+public function aantal_perGeslacht($Volwid,$Geslacht,$Jaar,$Maand) {
+    $zoek_aantal_geslacht = mysqli_query($this->db,"
+SELECT count(s.schaapId) aant
+FROM tblSchaap s
+ join tblStal st on (st.schaapId = s.schaapId)
+ join tblHistorie h on (st.stalId = h.stalId)
+WHERE s.volwId = ".mysqli_real_escape_string($this->db,$Volwid)." and s.geslacht = '".mysqli_real_escape_string($this->db,$Geslacht)."' and h.actId = 1 and date_format(h.datum,'%m') = ".mysqli_real_escape_string($this->db,$Maand)." and date_format(h.datum,'%Y') = ".mysqli_real_escape_string($this->db,$Jaar)." and h.skip = 0        
+") or die(mysqli_error($this->db));
+while($a = mysqli_fetch_assoc($zoek_aantal_geslacht)) { return $a['aant']; }
+}
+
 }

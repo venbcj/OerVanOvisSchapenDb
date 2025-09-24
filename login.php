@@ -100,7 +100,7 @@ if (!Auth::is_logged_in()) {
         $row = $lid_gateway->findByUserPassword($_POST['txtUser'], $passw);
         if ($row) {
             Auth::login($row);
-            header("Location: $file");
+            Response::redirect($file);
             return;
         }
         $output[] = "header_logout.tpl.php";

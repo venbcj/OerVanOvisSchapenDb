@@ -4,7 +4,6 @@ require_once("autoload.php");
 
 //https://www.youtube.com/watch?v=CamDi3Syjy4
 
-require('fpdf/fpdf.php');
 
 // TODO: je kunt hier connect_db niet gebruiken omdat dat ook passw includet zeker? --BCB
 include "database.php";

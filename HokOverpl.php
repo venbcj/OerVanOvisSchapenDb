@@ -352,7 +352,6 @@ if(isset($data)) {
         $sekse = $array['geslacht'];
         $prnt = $array['prnt']; if(isset($prnt)) { if($sekse == 'ooi') { $fase = 'moeder'; } else if($sekse == 'ram') { $fase = 'vader'; } } else { $fase = 'lam'; }
 
-        Logger::debug(print_r($_POST, 1));
         if( (isset($_POST['knpVervers_']) || isset($_POST['knpSave_']) ) && !isset($_POST['kzlHokall_']) ) {
             $cbKies = $_POST["chbkies_$schaapId"];
             $datum = $_POST["txtDatum_$schaapId"];
@@ -362,6 +361,7 @@ if(isset($data)) {
         //  Variabalen $datum en $kg kunnen enkel worden gevuld als wordt voldaan aan (isset($_POST['knpVervers_']) && !isset($_POST['kzlHokall_']))  !!!
     if(!isset($datum) && isset($sess_dag)) { $datum = $sess_dag; }
             /*$datum kan al bestaan voor isset($_POST['knpVervers_']) */
+        $day = '';
         if(isset($datum)) {
             $makeday = date_create($datum);
             $day = date_format($makeday,'Y-m-d'); 
@@ -422,7 +422,8 @@ for ($i = 0; $i < $count; $i++){
     
 <td align = center> <?php if(isset($fase)) { echo $fase; } ?> </td>
 <td colspan = 3 style = "color : red"> 
-<?php if($day < $dmmax) { echo 'De datum '.$datum.' mag niet voor '.$maxdm.' liggen.';}
+<?php # TODO: FIXME: $datum hoeft niet per se gezet te zijn. Verbouw de logica zodat die er wel altijd is, of print hier iets anders --BCB # ?>
+<?php if($day < $dmmax) { echo 'De datum '.($datum ?? '').' mag niet voor '.$maxdm.' liggen.';}
 ?>
 </td>    
 </tr>

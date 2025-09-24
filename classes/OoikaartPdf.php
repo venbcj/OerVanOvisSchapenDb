@@ -1,6 +1,6 @@
 <?php
 
-class OoikaartPdf extends FPDF {
+class OoikaartPdf extends Fpdf {
     function header(){
         
 global $rapport;

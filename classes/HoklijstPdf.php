@@ -1,6 +1,6 @@
 <?php
 
-class HoklijstPdf extends FPDF {
+class HoklijstPdf extends Fpdf {
     function header(){
 
 global $rapport;

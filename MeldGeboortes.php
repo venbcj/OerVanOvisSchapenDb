@@ -40,7 +40,11 @@ if (Auth::is_logged_in()) {
 
 include "responscheck.php";
 
-if (isset($_POST['knpSave_'])) { /* $code bestaat ook in responscheck.php */ $code = 'GER';    include "save_melding.php";  header("Location: ".$curr_url); } 
+if (isset($_POST['knpSave_'])) {
+    $code = 'GER';
+    include "save_melding.php";
+    Response::redirect($curr_url);
+} 
 
 $knptype = "submit";
 $today = date("Y-m-d");

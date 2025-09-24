@@ -4,7 +4,7 @@ class BezetPdfPageTest extends IntegrationCase {
 
     /**
      * omdat deze code direct in pdf schrijft, is de uitvoer lastig te testen.
-     * Ik voeg sensing variables toe aan FPDF;
+     * Ik voeg sensing variables toe aan Fpdf;
      * zodra de echte library wordt bijgevoegd, moet de test er zijn
      * testbare pdf tussen schuiven.
      * Dat wordt een dependency-verbouwing.

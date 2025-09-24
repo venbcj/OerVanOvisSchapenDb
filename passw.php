@@ -10,6 +10,7 @@
 include "url.php";
 global $passw, $veld;
 if (isset($_POST['knpLogin']) || isset($_POST['knpBasis']) || isset($_POST['knpBasis1']) || isset($_POST['knpBasis2'])) {
+    Logger::debug('*** uit post');
     $passw = md5($_POST['txtPassw'].'zfO3puW?Wod/UT<-|=)1VT]+{hgABEK(Yh^!Wv;5{ja{P~wX4t');
 } // wordt gebruikt bij login
 
@@ -17,6 +18,7 @@ if (Auth::is_logged_in() && (Session::isset("A1"))) {
     $lid = Session::get("I1");
     # TODO: in login.php wordt $login (note: wordt niet gebruikt) ook al gezet op de U1-sleutel uit sessie. Waarom nu weer? --BCB
     $login = Session::get("U1");
+    Logger::debug('*** uit sessie');
     $passw = md5(Session::get("W1").'zfO3puW?Wod/UT<-|=)1VT]+{hgABEK(Yh^!Wv;5{ja{P~wX4t'); // wordt gebruikt bij wachtwoordgegevens en is het wachtwoord van de klant
     $ww = $passw; // tbv value in veld txtOld binnen wachtwoord.php
 }
@@ -108,6 +110,7 @@ WHERE lidId = '".mysqli_real_escape_string($db, $lid)."'
                     $updateWW = "UPDATE tblLeden SET passw = '".mysqli_real_escape_string($db, $wwnew)."' 
                         WHERE lidId = '".mysqli_real_escape_string($db, $lid)."' ";
                     /*echo $updateWW.'<br>';*/ mysqli_query($db, $updateWW) or die(mysqli_error($db));
+                    Logger::debug('*** uit wijziging');
                     $passw = $wwnew; /*tbv de query $result in login.php */
                     Session::set("W1", $txtpassw); /* tbv (nieuwe) sessie gegevens */
                     $goed = "De inloggegevens zijn gewijzigd." ;

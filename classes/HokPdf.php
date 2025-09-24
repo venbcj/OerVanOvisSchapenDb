@@ -1,6 +1,6 @@
 <?php
 
-class HokPdf extends FPDF {
+class HokPdf extends Fpdf {
     function header(){
 
 

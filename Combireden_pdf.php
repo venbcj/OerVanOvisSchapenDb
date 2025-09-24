@@ -6,7 +6,6 @@ require_once("autoload.php");
 9-8-2019 : www. weggehaald bij url 
 */
 
-require('fpdf/fpdf.php');
 
 include "database.php";
 

@@ -34,7 +34,12 @@ if (Auth::is_logged_in()) {
 
 include "responscheck.php";
 
-if (isset($_POST['knpSave_'])) { /* $code bestaat ook in responscheck.php */ $code = 'VMD';    include "save_melding.php";  header("Location: ".$curr_url); }
+if (isset($_POST['knpSave_'])) {
+    $code = 'VMD';
+    include "save_melding.php";
+    Response::redirect($curr_url);
+    return;
+}
 
 $knptype = "submit";
 $today = date("Y-m-d");
@@ -58,41 +63,13 @@ GROUP BY l.relnr
 $aantMeld = aantal_melden($db,$reqId); // Aantal dieren te melden functie gedeclareerd in basisfuncties.php
 // Einde Aantal dieren te melden
 
-// Aantal dieren goed geregistreerd om automatisch te kunnen melden. De datum mag hier niet liggen na de afvoerdatum.
-function aantal_oke_Omnum($datb,$fldReqId) {
-$juistaantal = mysqli_query ($datb,"
-SELECT count(*) aant 
-FROM tblMelding m
- join tblHistorie h on (h.hisId = m.hisId)
- join tblStal st on (st.stalId = h.stalId)
- join tblSchaap s on (st.schaapId = s.schaapId)
- left join (
-    SELECT schaapId, max(datum) datum 
-    FROM tblHistorie h 
-     join tblStal st on (h.stalId = st.stalId)
-     join tblActie a on (h.actId = a.actId)
-    WHERE a.af = 1 and h.skip = 0
-    GROUP BY schaapId
- ) afv on (st.schaapId = afv.schaapId)
-WHERE m.reqId = '".mysqli_real_escape_string($datb,$fldReqId)."'
- and h.skip = 0
- and h.datum is not null
- and (h.datum <= afv.datum or isnull(afv.datum))
- and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12 
- and m.skip <> 1
-");
+$melding_gateway = new MeldingGateway($db);
 
-    if($juistaantal)
-    {    $row = mysqli_fetch_assoc($juistaantal);
-            return $row['aant'];
-    }
-    return FALSE;
-}
-$oke = aantal_oke_Omnum($db,$reqId);
+$oke = $melding_gateway->aantal_oke_Omnum($reqId);
 // Einde Aantal dieren goed geregistreerd om automatisch te kunnen melden.
  
 // MELDEN
-if (isset($_POST['knpMeld_'])) {    include "save_melding.php"; $aantMeld = aantal_melden($db,$reqId); $oke = aantal_oke_Omnum($db,$reqId);
+if (isset($_POST['knpMeld_'])) {    include "save_melding.php"; $aantMeld = aantal_melden($db,$reqId); $oke = $melding_gateway->aantal_oke_Omnum($reqId);
 if( $aantMeld > 0 && $oke > 0) {
 // Bestand maken
 $qry_Leden = mysqli_query($db,"

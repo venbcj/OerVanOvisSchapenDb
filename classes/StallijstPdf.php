@@ -1,6 +1,6 @@
 <?php
 
-class StallijstPdf extends FPDF {
+class StallijstPdf extends Fpdf {
     function header(){
         
 global $rapport;

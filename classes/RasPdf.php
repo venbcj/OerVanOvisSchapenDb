@@ -1,6 +1,6 @@
 <?php
 
-class RasPdf extends FPDF {
+class RasPdf extends Fpdf {
     function header(){
 
 

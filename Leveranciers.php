@@ -20,16 +20,13 @@ Session::start();
 if (isset ($_POST['knpUpdate'])) { include "url.php"; header("Location: ".$url."Leveranciers.php"); }
 $titel = 'Crediteuren';
 $subtitel = '';
-# TODO: (BV) dit is dubbel; login.php doet nu ook al die include.
-# Maar, ik zie Leveranciers nergens in de navigatie. Is dit verlaten code? --BCB
-include "header.tpl.php"; ?>
-
-        <TD width = 960 height = 400 valign = "top">
-<?php
+# TODO: (BV) ik zie Leveranciers nergens in de navigatie. Is dit verlaten code? --BCB
 $file = "Leveranciers.php";
 include "login.php"; 
 if (Auth::is_logged_in()) { 
-
+?>
+        <TD width = 960 height = 400 valign = "top">
+<?php
 if (isset ($_POST['knpInsert']))
 {    
 

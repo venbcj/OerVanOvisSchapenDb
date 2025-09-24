@@ -1,6 +1,6 @@
 <?php
 
-class BezetPdf extends FPDF {
+class BezetPdf extends Fpdf {
     function header(){
 
 global $rapport;

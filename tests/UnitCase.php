@@ -6,6 +6,12 @@ class UnitCase extends TestCase {
 
     protected $db;
 
+    protected function uses_db() {
+        require_once "just_connect_db.php";
+        global $db;
+        $this->db = $db;
+    }
+
     protected function setupServer($path = 'Maaktnietuit.php') {
         $_SERVER['HTTP_HOST'] = 'oer-dev';
         $_SERVER['REQUEST_SCHEME'] = 'http';

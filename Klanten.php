@@ -2,7 +2,6 @@
 
 require_once("autoload.php");
 
-
 $versie = '14-8-2014'; /*Menu (rechts) veranderd van menuInkoop naar menuBeheer en html buiten php geprogrammeerd */
 $versie = '11-11-2014'; /*header("Location: http://localhost:8080/schapendb/.....php");   toegevoegd. Dit ververst de pagina zodat een wijziging op het eerste record direct zichtbaar is*/
 $versie = '8-3-2015'; /*Login toegevoegd*/
@@ -20,13 +19,12 @@ Session::start();
 if (isset ($_POST['knpSave_'])) { /*header("Location: ".$url."Klanten.php");*/ }
 $titel = 'Debiteuren';
 $subtitel = ''; 
-include "header.tpl.php"; ?>
-
-        <TD width = 960 height = 400 valign = "top">
-<?php
 $file = "Klanten.php";
 include "login.php"; 
 if (Auth::is_logged_in()) {
+?>
+        <TD width = 960 height = 400 valign = "top">
+<?php
 
     // TODO: FIXME: save_klanten bestaat niet. Is dit misschien oude code?
 if (isset($_POST['knpSave_'])) { include "save_klanten.php"; }

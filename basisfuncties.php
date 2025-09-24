@@ -43,6 +43,17 @@ function date_add_months($day, $var) {
      return date('Y-m-d', strtotime($day . $var .' months'));
 }
 
+function last_day_of_month($d) {
+    $day = new DateTime($d); 
+    return $day->format( 'Y-m-t' );
+}
+
+function db_filter_afvoerdatum($keuze){
+    global $db;
+    //Evt kun je ook meteen is_boolean($var) omzetten naar 0/1, enz
+    return $keuze == 1 ? "(isnull(afv.datum) or (afv.datum > date_add(curdate(), interval -666 month) )) and " : "isnull(afv.stalId) and ";
+}
+
 function db_null_input($var){
     global $db;
     //Evt kun je ook meteen is_boolean($var) omzetten naar 0/1, enz

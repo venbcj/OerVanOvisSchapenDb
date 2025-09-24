@@ -4,7 +4,6 @@ require_once("autoload.php");
 
 /* https://www.youtube.com/watch?v=CamDi3Syjy4
 9-8-2019 www. weggehaald bij url */
-require('fpdf/fpdf.php');
 
 if($_SERVER['HTTP_HOST'] == 'localhost:8080') { $database = 'SchapenDb1'; $username = 'root'; $ww = 'usbw'; }
 else if($_SERVER['HTTP_HOST'] == 'test.oervanovis.nl')           { $database = 'k36098_bvdvSchapenDbT'; $username = 'bvdvschaapt'; $ww = 'MSenWL44'; }
@@ -34,7 +33,7 @@ WHERE hokId = ".mysqli_real_escape_string($db,$hok)."
 while ($row = mysqli_fetch_assoc($zoek_lid)) { $lidId = $row['lidId']; }
 <?php
 
-class HokPdf extends FPDF {
+class HokPdf extends Fpdf {
     function header(){
 
 

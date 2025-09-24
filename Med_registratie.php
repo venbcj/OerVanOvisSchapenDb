@@ -403,12 +403,6 @@ include "kzl.php";
  <td>
 <?php //kzlLevensnummer
 
-function db_filter_afvoerdatum($keuze){
-global $db;
-//Evt kun je ook meteen is_boolean($var) omzetten naar 0/1, enz
-return $keuze == 1 ? "(isnull(afv.datum) or (afv.datum > date_add(curdate(), interval -666 month) )) and " : "isnull(afv.stalId) and ";
-}
-
 $radAfv = 0;
 if(isset($_POST['radAfv'])) { $radAfv = $_POST['radAfv']; }
 

@@ -5,7 +5,6 @@ require_once("autoload.php");
 /* https://www.youtube.com/watch?v=CamDi3Syjy4
 9-8-2019 www. weggehaald bij url 
 11-11-2019 kolomkop worp gewijzigd in worpgrootte */
-require('fpdf/fpdf.php');
 
 include "database.php";
 

@@ -1,6 +1,6 @@
 <?php
 
-class MeerlingenPdf extends FPDF {
+class MeerlingenPdf extends Fpdf {
     function header(){
 
 

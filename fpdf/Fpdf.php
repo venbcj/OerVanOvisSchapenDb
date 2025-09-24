@@ -1,6 +1,6 @@
 <?php
 
-class FPDF {
+class Fpdf {
 
     public function AliasNbPages() {
     }

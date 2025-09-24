@@ -44,7 +44,8 @@ if (Auth::is_logged_in()) {
         /* $code bestaat ook in responscheck.php */
         $code = 'AAN';
         include "save_melding.php";
-        header("Location: ".$curr_url);
+        Response::redirect($curr_url);
+        return;
     }
 
     $knptype = "submit";

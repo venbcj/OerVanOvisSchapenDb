@@ -53,6 +53,7 @@ $forbidden_files = [
 ];
 foreach ($forbidden_files as $controller_name) {
     if ($curr_url == $url.$controller_name) {
-        Url::redirect('index.php');
+        Response::redirect('index.php');
+        break;
     }
 }

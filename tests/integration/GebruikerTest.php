@@ -20,6 +20,7 @@ class GebruikerTest extends IntegrationCase {
     }
 
     public function testGetMeld() {
+        $this->runfixture('user-harm');
         $this->runfixture('user-kobus');
         include "just_connect_db.php";
         $db->query("UPDATE tblLeden SET meld=1 WHERE lidId=42");
@@ -28,6 +29,7 @@ class GebruikerTest extends IntegrationCase {
     }
 
     public function testPostNotMeld() {
+        $this->runfixture('user-harm');
         $this->runfixture('user-kobus');
         include "just_connect_db.php";
         $db->query("UPDATE tblLeden SET meld=1 WHERE lidId=42");

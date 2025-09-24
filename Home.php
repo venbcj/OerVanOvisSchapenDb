@@ -7,7 +7,7 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $versie = '11-5-2020'; /* verwijzing naar demo site gewijzigd. 23-5 : jpg aangepast */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 align = "center"> gewijzigd naar <TD align = "center"> 31-12-24 include login voor include header gezet */
 
-# Session::start();
+Session::start();
 
 # ob_start('ob_gzhandler');
 ?>

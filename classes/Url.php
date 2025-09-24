@@ -14,7 +14,6 @@ class Url {
 
     public static function redirect($path) {
         header("Location: ".self::getWebroot().$path);
-        exit();
     }
 
     public static function getTagId() {

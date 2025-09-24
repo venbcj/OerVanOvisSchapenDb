@@ -6,7 +6,8 @@ class MeldingTest extends IntegrationCase {
 
     public function setup(): void {
         $this->runfixture('melding-4');
-        require_once "autoload.php";
+        require_once "basisfuncties.php";
+        $this->uses_db();
         $_SERVER['HTTP_HOST'] = 'basq';
         $_SERVER['REQUEST_SCHEME'] = 'http';
         $_SERVER['REQUEST_URI'] = 'Meldingen.php';
@@ -21,9 +22,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [
@@ -42,9 +41,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [
@@ -64,9 +61,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [
@@ -86,9 +81,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [
@@ -107,9 +100,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [
@@ -129,9 +120,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [
@@ -151,9 +140,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [
@@ -177,9 +164,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [
@@ -199,9 +184,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [
@@ -222,9 +205,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [
@@ -246,9 +227,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [
@@ -273,9 +252,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [
@@ -299,9 +276,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [
@@ -327,9 +302,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [
@@ -356,9 +329,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [
@@ -385,9 +356,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [
@@ -415,9 +384,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [
@@ -437,9 +404,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [
@@ -460,9 +425,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [
@@ -484,9 +447,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [
@@ -509,9 +470,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [
@@ -532,9 +491,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [
@@ -555,9 +512,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [
@@ -580,9 +535,7 @@ class MeldingTest extends IntegrationCase {
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
-        require_once "basisfuncties.php";
-        include "connect_db.php";
-        $this->db = $db;
+        $db = $GLOBALS['db'];
         # AND
         # specifiek voor de testcase
         $_POST = [

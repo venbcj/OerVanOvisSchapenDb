@@ -3,12 +3,8 @@
 class RequestGatewayTest extends UnitCase {
 
     public function setup() : void {
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
-        require_once('connect_db.php');
-        $this->db = $db;
-        $this->sut = new RequestGateway($db);
+        $this->uses_db();
+        $this->sut = new RequestGateway($this->db);
     }
 
     public function test_find_nothing() {

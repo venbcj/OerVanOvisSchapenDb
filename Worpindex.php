@@ -17,7 +17,7 @@ Session::start();
 <?php
 $titel = 'Worpindex';
 $subtitel = '';
-include "header.tpl.php"; ?>
+?>
     <TD width = 960 height = 400 valign = "top" align = "center">
 <?php
 $file = "Worpindex.php";

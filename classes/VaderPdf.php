@@ -1,6 +1,6 @@
 <?php
 
-class VaderPdf extends FPDF {
+class VaderPdf extends Fpdf {
     function header(){
 
 

@@ -20,12 +20,12 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $titel = 'Groei resultaten per schaap';
 $subtitel = ''; 
  
-include "header.tpl.php"; ?>
+$file = "Groeiresultaat.php";
+include "login.php";
+?>
 
         <TD width = 960 height = 400 valign = "top" >
 <?php
-$file = "Groeiresultaat.php";
-include "login.php";
 if (Auth::is_logged_in()) { if($modtech ==1) { ?>
 
 <table border = 0 >

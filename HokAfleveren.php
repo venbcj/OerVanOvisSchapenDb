@@ -274,7 +274,11 @@ if( (isset($_POST['knpVervers_']) || isset($_POST['knpSave_']) ) && !isset($_POS
     }
 // Bij de eerste keer openen van deze pagina bestaat als enigste keer het veld kzlRelall_ . txtDatum_$levnr en txtGewicht_$levnr bestaan dan nog niet. Variabalen $datum en $kg kunnen enkel worden gevuld als wordt voldaan aan (isset($_POST['knpVervers_']) && !isset($_POST['kzlRelall_']))  !!!
     if(!isset($datum) && isset($sess_dag)) { $datum = $sess_dag; }
-    if(isset($datum))  { $makeday = date_create($datum); $day = date_format($makeday,'Y-m-d'); }
+    $day = '';
+    if(isset($datum))  {
+        $makeday = date_create($datum);
+        $day = date_format($makeday,'Y-m-d');
+    }
 /*datum kan al bestaan voor isset($_POST['knpVervers_']) */
 // Controleren of ingelezen waardes correct zijn.
     if( empty($datum)                || # Afleverdatum is leeg

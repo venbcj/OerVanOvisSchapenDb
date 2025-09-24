@@ -71,6 +71,7 @@ if (isset ($_POST['knpSave_']))
 { include "save_contact.php";    }
 
 $querybedrijf = mysqli_query($db,"SELECT naam FROM tblPartij WHERE partId = ".mysqli_real_escape_string($db,$partId)." ") or die (mysqli_error($db));
+$bedrijf = '';
         While($rij= mysqli_fetch_assoc($querybedrijf))
         {    $bedrijf = ("{$rij['naam']}");    } ?>
 

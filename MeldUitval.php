@@ -40,7 +40,12 @@ if (Auth::is_logged_in()) {
 include "vw_HistorieDm.php";
 include "responscheck.php";
 
-if (isset($_POST['knpSave_'])) { /* $code bestaat ook in responscheck.php */ $code = 'DOO';    include "save_melding.php";  header("Location: ".$curr_url); } 
+if (isset($_POST['knpSave_'])) {
+    $code = 'DOO';
+    include "save_melding.php";  
+    Response::redirect($curr_url);
+    return;
+} 
 
 $knptype = "submit"; $vldtype = "text";
 // $today = date("Y-m-d"); //$today gedeclareerd in basisfuncties.php  // tbv save_melding.php
@@ -64,44 +69,14 @@ GROUP BY l.relnr
 
 $aantMeld = aantal_melden($db,$reqId); // Aantal dieren te melden functie gedeclareerd in basisfuncties.php
 
+$melding_gateway = new MeldingGateway($db);
 
-// Aantal dieren goed geregistreerd om automatisch te kunnen melden.
-function aantal_oke_uitv($datb,$lidid,$fldReqId,$nestHistorieDm) {
-$juistaantal = mysqli_query ($datb,"
-SELECT count(*) aant
-FROM tblMelding m
- join tblHistorie h on (h.hisId = m.hisId)
- join tblStal st on (st.stalId = h.stalId)
- join tblSchaap s on (st.schaapId = s.schaapId) 
- join (
-    SELECT schaapId, max(datum) lastdatum 
-    FROM (".$nestHistorieDm.") hd 
-    WHERE hd.actId != 14 and actie != 'Gevoerd' and actie not like '% gemeld'
-    GROUP BY schaapId
- ) mhd on (st.schaapId = mhd.schaapId)
- join tblRelatie r on (r.relId = st.rel_best)
- join tblPartij p on (r.partId = p.partId)
-WHERE m.reqId = '".mysqli_real_escape_string($datb,$fldReqId)."'
- and h.datum is not null
- and h.datum >= mhd.lastdatum
- and h.datum <= curdate()
- and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12 
- and p.ubn is not null    
- and m.skip <> 1
- and h.skip = 0                            
-");
-    if($juistaantal)
-    {    $row = mysqli_fetch_assoc($juistaantal);
-            return $row['aant'];
-    }
-    return FALSE;
-}
 
-$oke = aantal_oke_uitv($db,$lidId,$reqId,$vw_HistorieDm);
+$oke = $melding_gateway->aantal_oke_uitv($lidId,$reqId,$vw_HistorieDm);
 // Einde Aantal dieren goed geregistreerd om automatisch te kunnen melden
 
 // MELDEN
-if (isset($_POST['knpMeld_'])) {    include "save_melding.php"; $aantMeld = aantal_melden($db,$reqId); $oke = aantal_oke_uitv($db,$lidId,$reqId,$vw_HistorieDm);
+if (isset($_POST['knpMeld_'])) {    include "save_melding.php"; $aantMeld = aantal_melden($db,$reqId); $oke = $melding_gateway->aantal_oke_uitv($lidId,$reqId,$vw_HistorieDm);
 if( $aantMeld > 0 && $oke > 0) {
 // Bestand maken
 $qry_Leden = mysqli_query($db,"

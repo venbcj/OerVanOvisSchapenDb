@@ -1,5 +1,5 @@
 delete from tblLeden where lidId=42;
-delete from tblUbn where lidId=42;
+delete from tblUbn where lidId=42 or ubnId=2;
 
 INSERT INTO tblLeden(login,passw,lidId,alias,
     meld,tech,fin,beheer,

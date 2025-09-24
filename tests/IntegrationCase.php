@@ -50,11 +50,10 @@ class IntegrationCase extends UnitCase {
         ob_start();
         include getcwd().$path;
         $this->output = ob_get_clean();
-        $this->redirected = (http_response_code() == 302);
     }
 
     protected function assertRedirected() {
-        $this->assertTrue($this->redirected);
+        $this->assertTrue(Response::isRedirected());
     }
 
     protected function assertNoNoise() {

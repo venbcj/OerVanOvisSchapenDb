@@ -5,13 +5,13 @@ define('APP', '/usr/local/var/chi/proj/OerVanOvisSchapenDb/');
 class Logger {
 
     public static function error($msg) {
-        error_log('ERROR: '.$msg.PHP_EOL, 3, 'log/development.log');
-        error_log(self::trace(), 3, 'log/development.log');
+        error_log('ERROR: '.$msg.PHP_EOL, 3, APP.'log/development.log');
+        error_log(self::trace(), 3, APP.'log/development.log');
         # throw new Exception($msg);
     }
 
     public static function debug($msg) {
-        error_log('DEBUG: '.$msg.PHP_EOL, 3, 'log/development.log');
+        error_log('DEBUG: '.$msg.PHP_EOL, 3, APP.'log/development.log');
         # throw new Exception($msg);
     }
 

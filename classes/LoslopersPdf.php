@@ -1,6 +1,6 @@
 <?php
 
-class LoslopersPdf extends FPDF {
+class LoslopersPdf extends Fpdf {
     function header(){
 
 global $rapport;

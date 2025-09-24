@@ -7,6 +7,7 @@ class ControllersTest extends IntegrationCase {
     public static function setupBeforeClass() : void {
         self::runfixture('hok');
         self::runfixture('user-harm');
+        Response::setTest();
     }
 
     public static function controllers_with_post_include() {
@@ -306,7 +307,8 @@ TXT
     }
 
     public function testRelatie() {
-        $this->get("/Relatie.php", ['pstid' => 0]);
+        $this->runfixture('partij-1');
+        $this->get("/Relatie.php", ['pstid' => 1]);
         $this->assertNoNoise();
     }
 

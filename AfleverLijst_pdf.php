@@ -8,7 +8,6 @@ require_once("autoload.php");
 07-07-2024 : Werknr oplopend gesorteerd 
 19-03-2025 : Gewicht toegevoegd */
 
-require('fpdf/fpdf.php');
 
 include "database.php";
 

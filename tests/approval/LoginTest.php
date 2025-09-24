@@ -23,6 +23,7 @@ class LoginTest extends IntegrationCase {
     }
 
     public function testLoginCorrect() {
+        Response::setTest();
         $this->post('/index.php', ['txtUser' => 'harm', 'txtPassw' => 'harpje', 'knpLogin' => 1]);
         $this->assertRedirected();
     }

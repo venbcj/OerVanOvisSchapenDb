@@ -3,12 +3,9 @@
 class SchaapGatewayTest extends UnitCase {
 
     public function setup() : void {
-        $_SERVER['HTTP_HOST'] = 'basq';
-        $_SERVER['REQUEST_SCHEME'] = 'http';
-        $_SERVER['REQUEST_URI'] = 'Meldingen.php';
-        require_once('connect_db.php');
-        $this->db = $db;
-        $this->sut = new SchaapGateway($db);
+        require_once('just_connect_db.php');
+        $this->uses_db();
+        $this->sut = new SchaapGateway($this->db);
     }
 
     // deze tests zijn inhoudelijk nog zwak. Er kan van alles varieren.

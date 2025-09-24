@@ -51,7 +51,9 @@ class Session {
 
     protected function kill_session() {
         unset($_SESSION);
-        session_destroy();
+        if (session_status() == PHP_SESSION_ACTIVE) {
+            session_destroy();
+        }
     }
 
     public function getkey($name) {
@@ -61,7 +63,14 @@ class Session {
         return null;
     }
 
+    public function setkey($name, $value) {
+        $_SESSION[$name] = $value;
+    }
+
     public function issetkey($name) {
+        if (!isset($_SESSION)) {
+            return false;
+        }
         return array_key_exists($name, $_SESSION);
     }
 

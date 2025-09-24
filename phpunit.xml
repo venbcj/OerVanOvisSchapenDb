@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/8.5/phpunit.xsd" bootstrap="tests/bootstrap.php" cacheResultFile=".phpunit.cache/test-results" executionOrder="random" forceCoversAnnotation="true" beStrictAboutCoversAnnotation="true" beStrictAboutOutputDuringTests="true" beStrictAboutTodoAnnotatedTests="true" convertDeprecationsToExceptions="true" verbose="true" processIsolation="true">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/8.5/phpunit.xsd" bootstrap="tests/bootstrap.php" cacheResultFile=".phpunit.cache/test-results" executionOrder="random" forceCoversAnnotation="false" beStrictAboutCoversAnnotation="false" beStrictAboutOutputDuringTests="true" beStrictAboutTodoAnnotatedTests="true" convertDeprecationsToExceptions="true" verbose="true" processIsolation="false">
   <testsuites>
     <testsuite name="default">
       <directory>tests</directory>
     </testsuite>
+    <testsuite name="gebruiker">
+      <file>tests/approval/GebruikerPageTest.php</file>
+      <file>tests/integration/GebruikerTest.php</file>
+    </testsuite>
   </testsuites>
   <filter>
-    <whitelist processUncoveredFilesFromWhitelist="true">
+    <whitelist processUncoveredFilesFromWhitelist="false">
       <exclude>
         <directory>tests</directory>
         <directory>vendor</directory>
       </exclude>
-      <file>./gateways/RequestGateway.php</file>
-      <file>./melden_functions.php</file>
+      <directory>.</directory>
     </whitelist>
   </filter>
 </phpunit>

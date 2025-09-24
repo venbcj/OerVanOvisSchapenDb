@@ -17,14 +17,11 @@ Session::start();
 <?php
 $titel = 'Meldingen RVO';
 $subtitel = '';
-include "header.tpl.php"; ?>
-
-<td width = 960 height = 400 align = "center">
-<?php 
 $file = "Meldpagina.php";
 include "login.php";
 if (Auth::is_logged_in()) { 
 ?>
+<td width = 960 height = 400 align = "center">
 <img src= "OER_van_OVIS.jpg" width= 650 height= 240 valign = "center"/>
 </td>
 <?php

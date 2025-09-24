@@ -15,3 +15,5 @@ spl_autoload_register(function ($class) {
         }
     }
 });
+Session::set_instance(new Session());
+Response::setProduction();

@@ -30,13 +30,6 @@ if (Auth::is_logged_in()) { if($modfin == 1) {
 
 require_once "func_euro.php";
 
-function last_day_of_month($d) {
-
-$day = new DateTime($d); 
-return $day->format( 'Y-m-t' );
-
-}
-
 $zoek_laatste_jaar = mysqli_query($db,"
 SELECT max(year(dmdek)) maxjaar
 FROM tblDeklijst 

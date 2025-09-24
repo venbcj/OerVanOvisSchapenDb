@@ -46,10 +46,10 @@ include "vw_HistorieDm.php";
 include "responscheck.php";
 
 if (isset($_POST['knpSave_'])) {
-    /* $code bestaat ook in responscheck.php */
     $code = 'AFV';
     include "save_melding.php";
-    header("Location: ".$curr_url);
+    Response::redirect($curr_url);
+    return;
 } 
 // include kan niet binnen de loop van $zoek_meldregels om dat de functies binnen 'save_melding' dan vaker wordt aangemaakt en dat kan niet. Via phphulp ben ik hier achter gekomen. bron : http://www.phphulp.nl/php/forum/topic/cannot-redeclare-makequote-previously/67477/
 
@@ -76,43 +76,14 @@ GROUP BY l.relnr
 
 $aantMeld = aantal_melden($db,$reqId); // Aantal dieren te melden functie gedeclareerd in basisfuncties.php
 
+$melding_gateway = new MeldingGateway($db);
 
 // Aantal dieren goed geregistreerd om automatisch te kunnen melden.
-function aantal_oke_afv($datb,$lidid,$fldReqId,$nestHistorieDm) {
-
-$juistaantal = mysqli_query ($datb,"
-SELECT count(*) aant
-FROM tblMelding m
- join tblHistorie h on (m.hisId = h.hisId)
- join tblStal st on (st.stalId = h.stalId)
- join tblSchaap s on (st.schaapId = s.schaapId)
- join ( 
-    SELECT schaapId, max(datum) lastdatum 
-    FROM (".$nestHistorieDm.") hd
-     left join tblActie a on (hd.actId = a.actId)
-    WHERE (a.af = 0 or isnull(a.af)) and hd.actie != 'Gevoerd' and hd.actie not like '% gemeld'
-    GROUP BY schaapId
- ) mhd on (s.schaapId = mhd.schaapId)
-WHERE m.reqId = '".mysqli_real_escape_string($datb,$fldReqId)."' 
- and h.datum is not null
- and h.datum >= mhd.lastdatum
- and h.datum <= (curdate() + interval 3 day)
- and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12 
- and st.rel_best is not null
- and m.skip <> 1
- and h.skip = 0
-");
-    if($juistaantal)
-    {    $row = mysqli_fetch_assoc($juistaantal);
-            return $row['aant'];
-    }
-    return FALSE;
-}
-$oke = aantal_oke_afv($db,$lidId,$reqId,$vw_HistorieDm);
+$oke = $melding_gateway->aantal_oke_afv($lidId,$reqId,$vw_HistorieDm);
 // Einde Aantal dieren goed geregistreerd om automatisch te kunnen melden.
 
 // MELDEN
-if (isset($_POST['knpMeld_'])) {    include "save_melding.php"; $aantMeld = aantal_melden($db,$reqId); $oke = aantal_oke_afv($db,$lidId,$reqId,$vw_HistorieDm);
+if (isset($_POST['knpMeld_'])) {    include "save_melding.php"; $aantMeld = aantal_melden($db,$reqId); $oke = $melding_gateway->aantal_oke_afv($lidId,$reqId,$vw_HistorieDm);
 if( $aantMeld > 0 && $oke > 0) {
 // Bestand maken
 $qry_Leden = mysqli_query($db,"

@@ -4,7 +4,6 @@ require_once("autoload.php");
 
 //https://www.youtube.com/watch?v=CamDi3Syjy4
 /* 30-12-2019 Gekopieerd van Bezet_pdf.php */
-require('fpdf/fpdf.php');
 
 include "database.php";
 

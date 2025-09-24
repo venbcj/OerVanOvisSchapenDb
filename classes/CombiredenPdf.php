@@ -1,6 +1,6 @@
 <?php
 
-class CombiredenPdf extends FPDF {
+class CombiredenPdf extends Fpdf {
     function header(){
 
 

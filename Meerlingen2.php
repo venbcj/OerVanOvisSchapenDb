@@ -34,41 +34,8 @@ $jaar2 = $huidigjaar-1;
 $jaar3 = $huidigjaar-2;
 $jaar4 = $huidigjaar-3; 
 
-function meerlingen_perOoi_perJaar($datb,$Lidid,$Ooiid,$Jaar,$Maand) {
 
-$zoek_meerlingen = "
-SELECT count(lam.schaapId) aant, v.volwId
-FROM tblSchaap mdr
- join tblVolwas v on (v.mdrId = mdr.schaapId)
- join tblSchaap lam on (v.volwId = lam.volwId)
- join tblStal st on (st.schaapId = lam.schaapId)
- join tblHistorie h on (st.stalId = h.stalId)
- 
-WHERE st.lidId = ".mysqli_real_escape_string($datb,$Lidid)." and mdr.schaapId = ".mysqli_real_escape_string($datb,$Ooiid)." and h.actId = 1 and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($datb,$Jaar)."' and date_format(h.datum,'%m') = '".mysqli_real_escape_string($datb,$Maand)."' and h.skip = 0
-GROUP BY v.volwId
-ORDER BY date_format(h.datum,'%Y%m') desc
-";
-//echo $zoek_meerlingen;
-$zoek_meerlingen = mysqli_query($datb,$zoek_meerlingen) or die (mysqli_error($datb));    
-    while($mrl = mysqli_fetch_assoc($zoek_meerlingen))
-            {
-                return array($mrl['aant'], $mrl['volwId']); 
-            } 
-
-} 
-
-function aantal_perGeslacht($datb,$Volwid,$Geslacht,$Jaar,$Maand) {
-    $zoek_aantal_geslacht = mysqli_query($datb,"
-SELECT count(s.schaapId) aant
-FROM tblSchaap s
- join tblStal st on (st.schaapId = s.schaapId)
- join tblHistorie h on (st.stalId = h.stalId)
-WHERE s.volwId = ".mysqli_real_escape_string($datb,$Volwid)." and s.geslacht = '".mysqli_real_escape_string($datb,$Geslacht)."' and h.actId = 1 and date_format(h.datum,'%m') = ".mysqli_real_escape_string($datb,$Maand)." and date_format(h.datum,'%Y') = ".mysqli_real_escape_string($datb,$Jaar)." and h.skip = 0        
-") or die(mysqli_error($datb));
-
-while($a = mysqli_fetch_assoc($zoek_aantal_geslacht)) { return $a['aant']; }
-
-} ?>
+?>
 
 <form action= "Meerlingen2.php" method="post">
 <table border = 0> 
@@ -243,6 +210,7 @@ GROUP BY date_format(h.datum,'%m')
 ORDER BY date_format(h.datum,'%m')
 ";
 //echo $zoek_maanden_per_ooi; 
+$schaap_gateway = new SchaapGateway($db);
 $zoek_maanden_per_ooi = mysqli_query($db,$zoek_maanden_per_ooi) or die (mysqli_error($db));    
     while($mrl = mysqli_fetch_assoc($zoek_maanden_per_ooi))
             { $maandtxt = $mrl['mndtxt']; 
@@ -251,14 +219,14 @@ $zoek_maanden_per_ooi = mysqli_query($db,$zoek_maanden_per_ooi) or die (mysqli_e
 /* Gegevens jaar 1 opvragen : meerling, aantal ooitjes en/of rammetjes */
 unset($ooi_st1);
 unset($ram_st1);
-$jaar_1 = meerlingen_perOoi_perJaar($db,$lidId,$ooiId,$jaar1,$maandtxt);
+$jaar_1 = $schaap_gateway->meerlingen_perOoi_perJaar($lidId,$ooiId,$jaar1,$maandtxt);
 
     $volwId = $jaar_1[1];
 
 if(isset($volwId)) {
 
-$ooi_st1 = aantal_perGeslacht($db,$volwId,'ooi',$jaar1,$maandtxt); if($ooi_st1 == 1) { $vrouw1 = 'ooitje'; } else { $vrouw1 = 'ooitjes'; }
-$ram_st1 = aantal_perGeslacht($db,$volwId,'ram',$jaar1,$maandtxt); if($ram_st1 == 1) { $man1 = 'ram'; } else { $man1 = 'rammen'; }
+$ooi_st1 = $schaap_gateway->aantal_perGeslacht($volwId,'ooi',$jaar1,$maandtxt); if($ooi_st1 == 1) { $vrouw1 = 'ooitje'; } else { $vrouw1 = 'ooitjes'; }
+$ram_st1 = $schaap_gateway->aantal_perGeslacht($volwId,'ram',$jaar1,$maandtxt); if($ram_st1 == 1) { $man1 = 'ram'; } else { $man1 = 'rammen'; }
 
 unset($volwId);
 }
@@ -267,14 +235,14 @@ unset($volwId);
 /* Gegevens jaar 2 opvragen : meerling, aantal ooitjes en/of rammetjes */
 unset($ooi_st2);
 unset($ram_st2);
-$jaar_2 = meerlingen_perOoi_perJaar($db,$lidId,$ooiId,$jaar2,$maandtxt);
+$jaar_2 = $schaap_gateway->meerlingen_perOoi_perJaar($lidId,$ooiId,$jaar2,$maandtxt);
 
     $volwId = $jaar_2[1]; 
 
 if(isset($volwId)) {
 
-$ooi_st2 = aantal_perGeslacht($db,$volwId,'ooi',$jaar2,$maandtxt); if($ooi_st2 == 1) { $vrouw2 = 'ooitje'; } else { $vrouw2 ='ooitjes'; }
-$ram_st2 = aantal_perGeslacht($db,$volwId,'ram',$jaar2,$maandtxt); if($ram_st2 == 1) { $man2 = 'ram'; } else { $man2 = 'rammen'; }
+$ooi_st2 = $schaap_gateway->aantal_perGeslacht($volwId,'ooi',$jaar2,$maandtxt); if($ooi_st2 == 1) { $vrouw2 = 'ooitje'; } else { $vrouw2 ='ooitjes'; }
+$ram_st2 = $schaap_gateway->aantal_perGeslacht($volwId,'ram',$jaar2,$maandtxt); if($ram_st2 == 1) { $man2 = 'ram'; } else { $man2 = 'rammen'; }
 
 unset($volwId);
 }
@@ -283,14 +251,14 @@ unset($volwId);
 /* Gegevens jaar 3 opvragen : meerling, aantal ooitjes en/of rammetjes */
 unset($ooi_st3); 
 unset($ram_st3);
-$jaar_3 = meerlingen_perOoi_perJaar($db,$lidId,$ooiId,$jaar3,$maandtxt);
+$jaar_3 = $schaap_gateway->meerlingen_perOoi_perJaar($lidId,$ooiId,$jaar3,$maandtxt);
 
     $volwId = $jaar_3[1];
 
 if(isset($volwId)) {
 
-$ooi_st3 = aantal_perGeslacht($db,$volwId,'ooi',$jaar3,$maandtxt); if($ooi_st3 == 1) { $vrouw3 = 'ooitje'; } else { $vrouw3 = 'ooitjes'; }
-$ram_st3 = aantal_perGeslacht($db,$volwId,'ram',$jaar3,$maandtxt); if($ram_st3 == 1) { $man3 = 'ram'; } else { $man3 = 'rammen'; }
+$ooi_st3 = $schaap_gateway->aantal_perGeslacht($volwId,'ooi',$jaar3,$maandtxt); if($ooi_st3 == 1) { $vrouw3 = 'ooitje'; } else { $vrouw3 = 'ooitjes'; }
+$ram_st3 = $schaap_gateway->aantal_perGeslacht($volwId,'ram',$jaar3,$maandtxt); if($ram_st3 == 1) { $man3 = 'ram'; } else { $man3 = 'rammen'; }
 
 unset($volwId);
 }
@@ -299,14 +267,14 @@ unset($volwId);
 /* Gegevens jaar 4 opvragen : meerling, aantal ooitjes en/of rammetjes */
 unset($ooi_st4);
 unset($ram_st4);
-$jaar_4 = meerlingen_perOoi_perJaar($db,$lidId,$ooiId,$jaar4,$maandtxt);
+$jaar_4 = $schaap_gateway->meerlingen_perOoi_perJaar($lidId,$ooiId,$jaar4,$maandtxt);
 
     $volwId = $jaar_4[1];
 
 if(isset($volwId)) {
 
-$ooi_st4 = aantal_perGeslacht($db,$volwId,'ooi',$jaar4,$maandtxt); if($ooi_st4 == 1) { $vrouw4 = 'ooitje'; } else { $vrouw4 = 'ooitjes'; }
-$ram_st4 = aantal_perGeslacht($db,$volwId,'ram',$jaar4,$maandtxt); if($ram_st4 == 1) { $man4 = 'ram'; } else { $man4 = 'rammen'; }
+$ooi_st4 = $schaap_gateway->aantal_perGeslacht($volwId,'ooi',$jaar4,$maandtxt); if($ooi_st4 == 1) { $vrouw4 = 'ooitje'; } else { $vrouw4 = 'ooitjes'; }
+$ram_st4 = $schaap_gateway->aantal_perGeslacht($volwId,'ram',$jaar4,$maandtxt); if($ram_st4 == 1) { $man4 = 'ram'; } else { $man4 = 'rammen'; }
 
 unset($volwId);
 }

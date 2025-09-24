@@ -13,7 +13,6 @@ join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.
 I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 
 */
 
-require('fpdf/fpdf.php');
 
 include "database.php";
 

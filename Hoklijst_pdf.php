@@ -5,7 +5,6 @@ require_once("autoload.php");
 /* https://www.youtube.com/watch?v=CamDi3Syjy4
 9-8-2019 www. weggehaald bij url 
 20-12-2019 tabelnaam gewijzigd van UIT naar uit tabelnaam */
-require('fpdf/fpdf.php');
 
 include "database.php";
 
