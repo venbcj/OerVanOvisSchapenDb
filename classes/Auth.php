@@ -4,7 +4,8 @@ class Auth {
 
     public static function login($row) {
         global $db, $dtb;
-        session_start();
+        Session::start();
+
         $_SESSION["U1"] = "$_POST[txtUser]";
         $_SESSION["W1"] = "$_POST[txtPassw]";
         $_SESSION["I1"] = $row['lidId'];
@@ -52,7 +53,8 @@ class Auth {
 
     private static function ensure_session() {
         if (session_status() != PHP_SESSION_ACTIVE) {
-            session_start();
+            Session::start();
+
         }
     }
 

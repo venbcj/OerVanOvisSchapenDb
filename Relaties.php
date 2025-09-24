@@ -15,7 +15,8 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
 $versie = '27-02-2025'; /* <input type= "hidden" name= echo "txtcreId_$Id"; en <input type= "hidden" name= <?php echo "txtId_$Id" verwijderd 
 08-07-2025 : naam txtcredPres_ gewijzigd naar insPres_ */
 
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

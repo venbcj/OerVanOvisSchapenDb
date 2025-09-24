@@ -6,7 +6,8 @@ require_once("autoload.php");
 $versie = '03-11-2024'; /* kopie gemaakt van InsAfvoer.php */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

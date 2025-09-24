@@ -19,7 +19,8 @@ $versie = '21-01-2025'; /* In subquery vmax_mdr_met_vdr h.skip = 0 toegevoegd */
 $versie = '12-03-2025'; /* In query zoek_dekkingen tabel 'join tblHistorie h on (stm.stalId = h.stalId and v.hisId = h.hisId)' toegevoegd om de relaties met andere stalId's uit tblStal (bijv. uitgeschaarden) uit te sluiten. Dit veroorzaakte nl. dubbel aantal worpen */
 $versie = '26-03-2025'; /* Verblijf tijdens dekking toegevoegd aan historie */
 
-session_start(); ?>  
+Session::start();
+ ?>  
 <!DOCTYPE html>
 <html>
 <head>

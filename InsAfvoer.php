@@ -31,7 +31,8 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
 $versie = '24-08-2025'; /* Uitgeschaarde schapen konden worden afgevoerd. Nu niet meer */
 $versie = '30-08-2025'; /* ActId 12 (zijnde afgeleverd) uit tabel tblActie wordt vanaf nu ook gebruikt om ubn te wijzigen. Zie InsGrWijzigingUbn.php. Als het nieuwe veld ubnId in tabel impAgrident leeg is dan is het een reguliere afvoer van een lam. Is het veld ubnId gevuld dan betreft het een wijziging van ubn van de gebruiker */
 
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

@@ -10,7 +10,8 @@ $versie = '10-03-2024'; /* Filter op worp periode toegevoegd en filter meenemen 
 $versie = '29-09-2024'; /* Hernoemd van Groeiresultaat.php naar GroeiresultaatSchaap.php*/
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 include login voor include header gezet */
 
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

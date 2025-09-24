@@ -5,20 +5,38 @@ class Session {
     private static $instance;
 
     public static function get($name) {
-        self::ensure_instance();
-        return self::$instance->getkey($name);
+        static::ensure_instance();
+        return static::$instance->getkey($name);
+    }
+
+    public static function set($name, $value) {
+        static::ensure_instance();
+        return static::$instance->setkey($name, $value);
     }
 
     public static function start() {
-        self::ensure_instance();
-        self::ensure_session();
+        static::ensure_instance();
+        static::$instance->ensure_session();
     }
 
-    public static function ensure_instance() {
-        if (isset(self::$instance)) {
+    private static function ensure_instance() {
+        if (isset(static::$instance)) {
             return;
         }
-        self::$instance = new self();
+        // het is niet de bedoeling dat je TestSession::get() enz gaat gebruiken
+        // daarom hier niet new static
+        static::$instance = new self();
+    }
+
+    // te gebruiken in tests
+    public static function set_instance($session) {
+        static::$instance = $session;
+    }
+
+    protected function ensure_session() {
+        if (session_status() != PHP_SESSION_ACTIVE) {
+            session_start();
+        }
     }
 
     public function getkey($name) {
@@ -26,12 +44,6 @@ class Session {
             return $_SESSION[$name];
         }
         return null;
-    }
-
-    private static function ensure_session() {
-        if (session_status() != PHP_SESSION_ACTIVE) {
-            session_start();
-        }
     }
 
 }

@@ -5,7 +5,8 @@ require_once("autoload.php");
 $versie = '20-12-2020'; /* Pagina gemaakt */
 $versie = '31-12-2024'; /* <TD width = 960 height = 400 align = "center" > gewijzigd naar <TD align = "center"> 31-12-24 include login voor include header gezet */
 
-session_start(); ?>
+Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

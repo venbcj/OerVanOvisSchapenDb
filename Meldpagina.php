@@ -5,7 +5,8 @@ require_once("autoload.php");
 
 $versie = '20-12-2020'; /* Pagina gemaakt */
 
-session_start(); ?>
+Session::start();
+ ?>
 <html>
 <head>
 <title>Menu</title>

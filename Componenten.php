@@ -9,7 +9,8 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $versie = '11-7-2020'; /* € gewijzigd in &euro; */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '07-03-2025'; /* <input type= "hidden" name= <?php echo "txtId_$Id"; ?> size = 1 value = <?php echo "$Id";?> > verwijderd */
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

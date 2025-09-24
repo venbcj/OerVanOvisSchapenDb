@@ -10,7 +10,8 @@ $versie = '20-6-2020'; /* knop bewerken toegevoegd als reader = Agrident en bepa
 $versie = '12-2-2021'; /* Redenen afvoer toegevoegd. Controle lambar verwijderd */
 $versie = '11-8-2023'; /* Veld ingescand toegevoed. Dit is de laatste dag dat een stallijst kan worden ingelezen bij een nieuwe klant. functie db_null_input() gebruikt. Sql beveiligd met quotes */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
- session_start(); 
+ Session::start();
+ 
  ?>
 <!DOCTYPE html>
 <html>

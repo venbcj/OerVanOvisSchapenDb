@@ -18,7 +18,8 @@ $versie = '17-1-2022'; /* Btw 0% en javascript verplicht() toegevoegd. SQL bevei
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '23-04-2025'; /* De letters kg achter het veld geplaaats i.p.v. er onder */
 
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

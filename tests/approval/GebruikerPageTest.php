@@ -8,6 +8,7 @@ class GebruikerPageTest extends IntegrationCase {
         $this->runfixture('hok');
         include "just_connect_db.php";
         $db->query("delete from tblRedenuser");
+        $db->query("delete from tblRequest");
         $this->get('/Gebruiker.php', ['ingelogd' => 1, 'pstId' => 42]);
         $this->approve();
     }
@@ -19,6 +20,7 @@ class GebruikerPageTest extends IntegrationCase {
         $this->runfixture('hok');
         include "just_connect_db.php";
         $db->query("delete from tblRedenuser");
+        $db->query("delete from tblRequest");
         $this->get('/Gebruiker.php', ['ingelogd' => 1, 'pstId' => 42]);
         $this->approve();
     }

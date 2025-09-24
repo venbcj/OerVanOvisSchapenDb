@@ -4,3 +4,4 @@
 set_include_path(get_include_path() . ':tests');
 require 'vendor/autoload.php';
 require "autoload.php";
+Session::set_instance(new TestSession());

@@ -1,6 +1,7 @@
 <!--Dit is commentaar-->
 
-<?php session_start(); ?>  
+<?php Session::start();
+ ?>  
 <!DOCTYPE html>
 <html>
 <head>

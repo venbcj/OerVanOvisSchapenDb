@@ -13,7 +13,8 @@ $versie = '20-04-2024'; /* Niet actieve verblijven weggefilterd met optie om te 
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '10-03-2025'; /* hidden veld chbActief_$Id verwijderd. <input type = hidden name = <?php echo "chbActief_$Id"; ?> value= 0 > <!-- hiddden --> */
 
-session_start(); ?>
+Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

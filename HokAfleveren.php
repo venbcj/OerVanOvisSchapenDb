@@ -22,7 +22,8 @@ $versie = "10-11-2024"; /* Uitscharen toegevoegd  */
 $versie = '26-12-2024'; /* <TD width = 940 height = 400 valign = "top"> gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '23-02-2025'; /* $_SESSION["Fase"] = NULL toegevoegd. In Hoklijsten.php wordt deze leeg gemaakt */
 
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

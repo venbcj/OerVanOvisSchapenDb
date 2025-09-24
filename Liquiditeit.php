@@ -19,7 +19,8 @@ $versie = '11-7-2020'; /* € gewijzigd in &euro; 12-7 ë uit database gewijzigd in
 $versie = '26-12-2024'; /* <TD width = 1010 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '11-03-2025'; /* Het hidden veld type = 'hidden' name = <?php echo "txtM_Id"."_i"; ?> verwijderd. txtM_Id"."_i wordt alleen getoond als tesktveld == 'tonen' */
 
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

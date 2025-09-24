@@ -10,7 +10,8 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $versie = '16-5-2021'; /* s.geslacht = 'ooi' toegevoegd in query result_permaand, subquery aanw_m. Sql beveiligd met quotes */
 $versie = '22-1-2023'; /* query result_permaand uitgebreid met vaderdieren. Verticale lijnen toegevoegd */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

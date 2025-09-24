@@ -7,7 +7,8 @@ $versie = '03-11-2024'; /* Kopie gemaakt van InsAanvoer.php */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '09-08-2025'; /* Veld Ubn toegevoegd. Betreft eigen ubn van gebruiker. Per deze versie kan een gebruiker meerdere ubn's hebben */
 
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

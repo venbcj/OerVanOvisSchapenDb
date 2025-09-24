@@ -18,7 +18,8 @@ $versie = "13-12-2024"; /* Niet gescande dieren onderaan gezet en link naar deze
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '15-07-2025'; /* Veld/keuzelijst ubn toegevoegd */
 
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

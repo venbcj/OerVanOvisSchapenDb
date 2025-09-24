@@ -7,7 +7,8 @@ $versie = '5-9-2021'; /* func_artikelnuttigen.php toegevoegd en eenheid toegevoe
 $versie = '24-6-2023'; /* Registraties samengevoegd tot 1 regeistratie per verblijf, Voer en doelgroep */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

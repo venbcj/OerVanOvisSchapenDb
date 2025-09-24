@@ -10,7 +10,8 @@ $versie = '7-4-2019'; /* Prijs in tblOpgaaf incl. btw gemaakt */
 $versie = '11-7-2020'; /* € gewijzigd in &euro; 1-8-2020 : kalender toegevoegd */
 $versie = '28-11-2020'; /* 28-11-2020 velde chkDel toegevoegd */
 
-session_start();
+Session::start();
+
  ?>
 
 <html>

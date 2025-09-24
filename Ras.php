@@ -11,7 +11,8 @@ $versie = '13-6-2020'; /* Mogelijkheid eigen rassen toevoegen */
 $versie = '20-4-2024'; /* Sortering rassen in gebruik */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

@@ -11,7 +11,8 @@ $versie = '27-10-2023'; /* Laatste inlog tijdstip toegevoegd */
 $versie = '29-10-2023'; /* Wachtwoord resetten mogelijk gemaakt */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 include "login.php"; voor include "header.tpl.php" gezet */
 
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

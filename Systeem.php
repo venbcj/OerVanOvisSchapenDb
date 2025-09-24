@@ -13,7 +13,8 @@ $versie = '06-10-2024'; /* Standaard tonen van groei toegevoegd en sql beveiligd
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 $versie = '10-04-2025'; /* Veld root_reader uit tblLeden verwijderd. Daarmee ook variabele updlokatie en html veld txtLokatie */
 
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

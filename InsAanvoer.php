@@ -28,7 +28,8 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
 $versie = '17-04-2025'; /* Controle of levensnummer al bestaat in database vervangen door controle op aan- of afwezigheid op de stallijst. Zie (levnr_stal > 0 && !isset(afgevoerd)) */
 $versie = '11-07-2025'; /* Veld Ubn toegevoegd. Betreft eigen ubn van gebruiker. Per deze versie kan een gebruiker meerdere ubn's hebben */
 
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

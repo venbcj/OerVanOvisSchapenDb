@@ -15,7 +15,8 @@ I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkend
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" align = center> gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 include login voor include header gezet */
 $versie = '19-02-2025'; /* Gegevens werden niet getoond omdat geneste query's als variabele in mysqli_real_escape_string(db,... stonden. 23-02-2025 Titel gewijzigd van Overzicht voertoediening naar Voer rapportage*/
 
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

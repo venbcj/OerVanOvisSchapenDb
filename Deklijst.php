@@ -10,7 +10,8 @@ $versie = '07-05-2023'; /* De beide variabele dek_bedrag) <> euro_format(liq_bed
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '09-03-2025'; /* veld txtId_Id verwijderd <input type = hidden name = <?php echo "txtId_Id"; ?> size = 1 value = <?php echo Id; ?> >*/
 
-session_start();  ?> 
+Session::start();
+  ?> 
 <!DOCTYPE html>
 <html>
 <head>

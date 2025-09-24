@@ -15,7 +15,8 @@ I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkend
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 $versie = '27-01-2025'; /* Sortering toegepast en vastzetten kolomkop. De gegevens klopte niet. Queries daarom ook aangepast. */
 
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

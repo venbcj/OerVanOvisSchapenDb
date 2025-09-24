@@ -4,7 +4,8 @@ require_once("autoload.php");
 
 $versie = '03-07-2025'; /* Bestand gemaakt als kopie van Hok.php */
 
-session_start(); ?>
+Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

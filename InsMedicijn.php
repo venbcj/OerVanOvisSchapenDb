@@ -21,7 +21,8 @@ $versie = '22-09-2021'; /* func_artikelnuttigen.php toegevoegd */
 $versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '15-01-2025'; /*  and isnull(st.rel_best) toegevoegd aan opvragen van gegevens uit tabel impAgrident zodat stalId's van uitgeschaarden niet worden getoond */
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

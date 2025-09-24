@@ -20,7 +20,8 @@ $versie = '19-01-2025'; /* Kolomkop vastgezet tegen de header */
 $versie = '11-04-2025'; /* in query toon_aanwezigen en toon_aanwezigen aan subquery haf in where-clause and h.skip = 0 toegevoegd */
 
 
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

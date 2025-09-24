@@ -9,7 +9,8 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $versie = '30-12-2023'; /* Veld scan (tblStal) weggehaald en daarmee ook de knop Opslaan en het bestand save_vader.php. Ook sql beveiligd met quotes */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

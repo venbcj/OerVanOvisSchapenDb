@@ -31,7 +31,8 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 $versie = '20-01-2025'; /* In subquery hg where clause gewijzigd van h.actId = 1 naar h.actId = 1 and h.skip = 0 */
 $versie = '23-02-2025'; /* $_SESSION["Fase"] = NULL toegevoegd */
 $versie = '13-07-2025'; /* veld Ubn toegevoegd */
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

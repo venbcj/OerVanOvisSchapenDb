@@ -5,7 +5,8 @@ require_once("autoload.php");
 
 $versie = '11-3-2015'; /* Login toegevoegd*/
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
-session_start(); ?>
+Session::start();
+ ?>
 <html>
 <head>
 <title>Rapport</title>

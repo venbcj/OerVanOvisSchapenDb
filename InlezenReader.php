@@ -23,7 +23,8 @@ $versie = '21-12-2024'; /* Bestanden uploaden van raeder Biocontrol verwijderd *
 $versie = '31-12-2024'; /* include login voor include header gezet */
 $versie = '28-02-2025'; /* Als de stallijst leeg is wordt de link inlezen stallijst nieuwe klant ook getoond */
 
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

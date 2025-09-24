@@ -43,7 +43,8 @@ $versie = '09-04-2025'; /* De subquery mdr binnen query data aangepast. Uitgesch
 $versie = '10-07-2025'; /* De index van kzlOoi gewijzigd van schaapId naar stalId zodat het ubnId makkelijker kan worden opgehaald */
 $versie = '29-08-2025'; /* Controle of ubn kan worden gevonden bij gebruikers die geen module technisch hebben toegevoegd */
 
- session_start(); ?>   
+ Session::start();
+ ?>   
 <!DOCTYPE html>
 <html>
 <head>

@@ -10,7 +10,8 @@ $versie = '07-09-2024'; /* Periode tussen werpen en dekken teruggebracht naar 60
 $versie = '23-11-2024'; /* In keuzelijst moeder- en vaderdieren  uitgeschaarde dieren wel tonen. zoek_afvoerstatus_mdr aangevuld met h.actId != 10 */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

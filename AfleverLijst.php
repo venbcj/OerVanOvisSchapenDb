@@ -12,7 +12,8 @@ $versie = '30-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie en sql beve
 $versie = '07-07-2024'; /* Werknr oplopend gesorteerd */
 $versie = '31-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '19-03-2025'; /* Gewicht toegevoegd en exporteren naar excel mogelijk gemaakt */
- session_start();  ?>
+ Session::start();
+  ?>
 <!DOCTYPE html>
 <html>
 <head>

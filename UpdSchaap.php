@@ -40,7 +40,8 @@ $versie = "09-11-2024"; /* invoerdate <= dmOoiHokNa gewijzigd naar invoerdate < 
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 $versie = '18-02-2024'; /* De historie als 3e kolom getoond rechts naast de andere gegevens */
 
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

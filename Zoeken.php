@@ -39,7 +39,8 @@ $versie = '14-12-2024'; /* 4 links t.b.v. jquery en ajax verplaatst naar header.
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '16-08-2025'; /* ubn van gebruiker toegevoegd. Per deze versie kan een gebruiker meerdere ubn's hebben */
 
- session_start();  ?>
+ Session::start();
+  ?>
 <!DOCTYPE html>
 <html>
 <head>

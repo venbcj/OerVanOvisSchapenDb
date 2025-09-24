@@ -6,7 +6,8 @@ require_once("autoload.php");
 $versie = '14-8-2014'; /*Menu (rechts) veranderd van menuInkoop naar menuBeheer en html buiten php geprogrammeerd */
 $versie = '8-3-2015'; /*Login toegevoegd*/
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
-session_start(); ?>
+Session::start();
+ ?>
 <html>
 <head>
 <title>Inkoop</title>

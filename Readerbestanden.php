@@ -4,7 +4,8 @@ require_once("autoload.php");
 
 $versie = '29-05-2025'; /* Gekopieerd van Readerversies.php */
 
- session_start(); ?>
+ Session::start();
+ ?>
 <!DOCTYPE html>
 <html>
 <head>

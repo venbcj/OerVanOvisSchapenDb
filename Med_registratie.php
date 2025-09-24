@@ -39,7 +39,8 @@ $versie = '30-11-2024'; /* In keuzelijst levensnummer en werknr uitgeschaarde di
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = top > gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '15-01-2025'; /*h1.actId != 2 verwijderd in de geneste query 'uit' in de query kzl_verblijven */
 
- session_start();  ?>
+ Session::start();
+  ?>
 <!DOCTYPE html>
 <html>
 <head>

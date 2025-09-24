@@ -38,7 +38,8 @@ $versie = '26-12-2024'; /* <TD width = "960" height = "400" valign = "top" > gew
 $versie = '17-02-2025'; /* Terug van uitscharen mogelijk gemaakt 22-02-2025 velden m.b.t. index verwijderd */
 $versie = '10-07-2025'; /* Keuzelijst ubn toegevoegd voor gebruikers met meerdere ubn's */
 
- session_start();  ?>
+ Session::start();
+  ?>
 <!DOCTYPE html>
 <html>
 <head>

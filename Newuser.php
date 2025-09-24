@@ -12,7 +12,8 @@ $versie = '16-10-2023'; /* Aanmaken map /Readerversies toegevoegd */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 $versie = '29-08-2025'; /* Ubn wordt vanaf nu opgeslagen in tblUbn i.p.v. tblLeden. Tevens de keuze Biocontrol in het veld Reader verwijderd */
 
-session_start(); 
+Session::start();
+ 
 
 require_once("newuser_functions.php");
 
