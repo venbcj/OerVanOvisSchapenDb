@@ -33,7 +33,7 @@ $versie = '23-02-2025'; /* Session::set("Fase", NULL) toegevoegd. In Hoklijsten.
 <body>
 
 <?php
-$paginanaam = $_SERVER['PHP_SELF']; 
+$paginanaam = strtok($_SERVER["REQUEST_URI"], '?');
 $pagina = '';
     if($paginanaam == '/HokAfleveren.php') { $pagina = 'Afleveren'; }
     if($paginanaam == '/HokVerkopen.php') { $pagina = 'Verkopen'; }

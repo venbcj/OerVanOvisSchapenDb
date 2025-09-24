@@ -4,14 +4,14 @@ class PasswTest extends IntegrationCase {
 
     public function setup():void {
         require_once "autoload.php";
+        $GLOBALS['passw'] = '';
         $_SERVER['HTTP_HOST'] = 'basq';
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['REQUEST_SCHEME'] = 'http';
         $_SERVER['REQUEST_URI'] = '';
     }
 
-    // er blijft state hangen uit testPostWijzigWachtwoord. Maar wat?
-    public function PITA_testGet() {
+    public function testGet() {
         # GIVEN
         Auth::logout();
         # WHEN
@@ -19,12 +19,12 @@ class PasswTest extends IntegrationCase {
         include "passw.php";
         $res = ob_get_clean();
         # THEN
-        $this->assertEquals('', $passw);
+        $this->assertEquals('', $GLOBALS['passw']);
     }
 
     public function testValidateMissingPassword() {
         # GIVEN
-        # include "connect_db.php";
+        include "just_connect_db.php";
         $this->simulatePostRequest('/Wachtwoord.php', [
             'knpChange' => 1,
             'txtUser' => 'kobus',
@@ -35,7 +35,6 @@ class PasswTest extends IntegrationCase {
         $lid = 1; // aha, wij zijn een onderdeel van Gebruiker.
         # WHEN
         ob_start();
-        $db = $GLOBALS['db'];
         include "passw.php";
         $res = ob_get_clean();
         # THEN
@@ -44,7 +43,7 @@ class PasswTest extends IntegrationCase {
 
     public function testValidateWachtwoordVerschillend() {
         # GIVEN
-        include "connect_db.php";
+        include "just_connect_db.php";
         $this->simulatePostRequest('/Wachtwoord.php', [
             'knpChange' => 1,
             'txtUser' => 'kobus',
@@ -64,7 +63,7 @@ class PasswTest extends IntegrationCase {
 
     public function testValidateWachtwoordFout() {
         # GIVEN
-        include "connect_db.php";
+        include "just_connect_db.php";
         $this->simulatePostRequest('/Wachtwoord.php', [
             'knpChange' => 1,
             'txtUser' => 'kobus',
@@ -84,8 +83,8 @@ class PasswTest extends IntegrationCase {
 
     public function testValidateWachtwoordTekort() {
         # GIVEN
-        include "connect_db.php";
-        $passw = 'harpje';
+        include "just_connect_db.php";
+        $GLOBALS['passw'] = 'harpje';
         $this->simulatePostRequest('/Wachtwoord.php', [
             'knpChange' => 1,
             'txtUser' => 'kobus',
@@ -107,8 +106,8 @@ class PasswTest extends IntegrationCase {
         $this->runfixture('user-harm');
         $this->runfixture('user-kobus');
         # GIVEN
-        include "connect_db.php";
-        $passw = 'harpje';
+        include "just_connect_db.php";
+        $GLOBALS['passw'] = 'harpje';
         $this->simulatePostRequest('/Wachtwoord.php', [
             'knpChange' => 1,
             'txtUser' => 'kobus',
@@ -131,9 +130,9 @@ class PasswTest extends IntegrationCase {
         $this->runfixture('user-harm');
         $this->runfixture('user-kobus');
         # GIVEN
-        include "connect_db.php";
+        include "just_connect_db.php";
         $this->db = $db;
-        $passw = 'harpje';
+        $GLOBALS['passw'] = 'harpje';
         $this->simulatePostRequest('/Wachtwoord.php', [
             'knpChange' => 1,
             'txtUser' => 'krelis',
@@ -153,14 +152,13 @@ class PasswTest extends IntegrationCase {
         $this->assertTableWithPK('tblLeden', 'lidId', 42, ['login' => 'krelis']);
     }
 
-    // deze test laat state achter die testGet laat falen.
     public function testPostWijzigWachtwoord() {
         $this->runfixture('user-harm');
         $this->runfixture('user-kobus');
         # GIVEN
         include "just_connect_db.php";
         $this->db = $db;
-        $passw = 'harpje';
+        $GLOBALS['passw'] = 'harpje';
         $this->simulatePostRequest('/Wachtwoord.php', [
             'knpChange' => 1,
             'txtUser' => 'kobus',
@@ -175,7 +173,7 @@ class PasswTest extends IntegrationCase {
         include "passw.php";
         $res = ob_get_clean();
         # THEN
-        $this->assertFalse(isset($fout), $res);
+        $this->assertFalse(isset($fout), "Onverwachte fout: ".($fout ?? ''));
         $this->assertEquals('De inloggegevens zijn gewijzigd.', $goed);
         // TODO: deugdelijke assert maken voor het wachtwoord. Zoiets als "old password 'groente' (uit de fixture af te leiden) is niet meer geldig"
         $this->assertTableWithPK('tblLeden', 'lidId', 42, ['login' => 'kobus', 'passw' => 'e37fb031e454b9c9f4a4a46ebbc9ddb6']);

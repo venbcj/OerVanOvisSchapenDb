@@ -80,7 +80,7 @@ foreach ($multip_array as $recId => $id) {
         /* Eerste datum zoeken ter controle bij aanvoer bedrijf */
         $historie_gateway = new HistorieGateway($db);
         if ($code == 'AAN' || $code == 'GER') {
-            // TODO: deze variabelen zijn alleen nodig om de foutmelding wrong_dag te vormen. Verplaats naar HistorieGateway
+            // TODO: deze variabelen zijn alleen nodig om de foutmelding wrong_dag te vormen. Verplaats naar HistorieGateway? Nee, naar een Transactie
             [$first_day, $eerste_dag] = $historie_gateway->zoek_eerste_datum_stalop($recId);
         }
         /* Einde Eerste datum zoeken ter controle bij aanvoer bedrijf */
@@ -167,7 +167,7 @@ foreach ($multip_array as $recId => $id) {
         }
 
         // Wijzigen levensnummer
-        // TODO: wanneer kan dit waar zijn? Je zoekt een schaap op basis van fldLevnr, en db_levnr is het levensnummer van het schaap --BCB
+        // TODO: (BV) wanneer kan dit waar zijn? Je zoekt een schaap op basis van fldLevnr, en db_levnr is het levensnummer van het schaap --BCB
         if (isset($fldLevnr) && $fldLevnr <> $co['levensnummer'] && !isset($wrong_levnr)) {
             $schaap_gateway->changeLevensnummer($co['levensnummer'], $fldLevnr);
         }

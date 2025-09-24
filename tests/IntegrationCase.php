@@ -13,7 +13,6 @@ class IntegrationCase extends UnitCase {
         $_SERVER['REQUEST_SCHEME'] = 'http';
         $_SERVER['REQUEST_URI'] = $path;
         $_SERVER['REQUEST_METHOD'] = 'GET';
-        $_SERVER['PHP_SELF'] = $path; // TODO: (BCB) hier niet meer om vragen in HokAfleveren
         $_GET = [];
         $_POST = [];
         foreach ($data as $key => $value) {

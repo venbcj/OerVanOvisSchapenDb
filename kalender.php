@@ -1,22 +1,6 @@
 <?php
 
-/*
-<!--
- Toegepast in :
-    - Afvoerstal.php 1x
-    - HokOverpl.php 1x
-    - HokAfleveren.php 1x
-    - HokAfsluiten.php 3x
-    - Inkopen.php 1x
-    - invSchaap.php 3x
-    - Med_registratie.php 1x
-  - Readerversies.php 1x  per 22-10-2023
-    - UpdSchaap.php 6x
-
-    --> 
- */
-// TODO: (BV) dit bestand wordt binnen de <body> opgehaald, dat werkt zo niet.
-// TODO: (BV) die title lijkt me ongewenst.
+// TODO: (BV) die title en meta-tags lijken me ongewenst. Horen in html-head
 ?>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">

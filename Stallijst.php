@@ -262,7 +262,7 @@ else if($aantalRam_uitschaar > 1) { echo '- ' .$aantalRam_uitschaar. ' vaders'; 
 <?php
 
     $zoek_uitgeschaarden = $schaap_gateway->zoekUitgeschaarden($lidId, $Karwerk);
-// TODO overstappen op een object dat ->each_record() ondersteunt (BCB)
+// TODO: overstappen op een object dat ->each_record() ondersteunt (BCB)
 while($zu = mysqli_fetch_array($zoek_uitgeschaarden))
     {
     $transponder = $zu['transponder']; if(isset($transponder)) {$transp = 'Ja'; } else {$transp = 'Nee'; }
