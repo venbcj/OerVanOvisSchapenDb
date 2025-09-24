@@ -29,7 +29,7 @@ I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkend
 $versie = "10-11-2024"; /* Uitscharen toegevoegd */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '20-01-2025'; /* In subquery hg where clause gewijzigd van h.actId = 1 naar h.actId = 1 and h.skip = 0 */
-$versie = '23-02-2025'; /* $_SESSION["Fase"] = NULL toegevoegd */
+$versie = '23-02-2025'; /* Session::set("Fase", NULL) toegevoegd */
 $versie = '13-07-2025'; /* veld Ubn toegevoegd */
  Session::start();
  ?>
@@ -713,13 +713,13 @@ if($aanwezig1 == 0 && $aanwezig2 == 0 && $aanwezig3 == 0) { ?>
 <tr>
  <td rowspan = 9 width = 100 align = center>
      <?php echo $hoknr; ?><hr>
- <?php if(isset($aanwezig1) && $aanwezig1 > 0) { $_SESSION["DT1"] = NULL; $_SESSION["BST"] = NULL; ?>
+ <?php if(isset($aanwezig1) && $aanwezig1 > 0) { Session::set("DT1", NULL); Session::set("BST", NULL); ?>
      <a href='<?php echo $url; ?>HokSpenen.php?pstId=<?php echo $Id; ?>' style = "color : blue">   
     Spenen      
  </a> <?php } else { ?> <u style = "color : grey"> Spenen </u> <?php } ?>
  <br>
  <br>
- <?php if(isset($aanwezig2) && $aanwezig2 > 0) { $_SESSION["DT1"] = NULL; $_SESSION["BST"] = NULL; ?>
+ <?php if(isset($aanwezig2) && $aanwezig2 > 0) { Session::set("DT1", NULL); Session::set("BST", NULL); ?>
  <a href='<?php echo $url; ?>HokAfleveren.php?pstId=<?php echo $Id; ?>' style = "color : blue">   
     Afleveren     
  </a>  
@@ -736,28 +736,28 @@ if($aanwezig1 == 0 && $aanwezig2 == 0 && $aanwezig3 == 0) { ?>
  <br>
  <br>
  <?php 
-if ($aanwezig_geb_spn_aanw > 0) { $_SESSION["DT1"] = NULL; $_SESSION["BST"] = NULL; ?>
+if ($aanwezig_geb_spn_aanw > 0) { Session::set("DT1", NULL); Session::set("BST", NULL); ?>
  <a href='<?php echo $url; ?>HokOverpl.php?pstId=<?php echo $Id; ?>' style = "color : blue">    
     Overplaatsen
  </a> <?php } else { ?> <u style = "color : grey"> Overplaatsen </u> <?php } ?>
  <br>
  <br>
   <?php 
-if ($aanwezig3 > 0) { $_SESSION["DT1"] = NULL; $_SESSION["BST"] = NULL; ?>
+if ($aanwezig3 > 0) { Session::set("DT1", NULL); Session::set("BST", NULL); ?>
  <a href='<?php echo $url; ?>HokVerkopen.php?pstId=<?php echo $Id; ?>' style = "color : blue">    
     Verkopen
  </a> <?php } else { ?> <u style = "color : grey"> Verkopen </u> <?php } ?>
  <br>
  <br>
   <?php 
-if ($aanwezig3 > 0) { $_SESSION["DT1"] = NULL; $_SESSION["BST"] = NULL; ?>
+if ($aanwezig3 > 0) { Session::set("DT1", NULL); Session::set("BST", NULL); ?>
  <a href='<?php echo $url; ?>HokVerlaten.php?pstId=<?php echo $Id; ?>' style = "color : blue">    
     Uit verblijf halen
  </a> <?php } else { ?> <u style = "color : grey"> Uit verblijf halen </u> <?php } ?>
  <br>
  <br>
   <?php 
-if ($aanwezig3 > 0) { $_SESSION["DT1"] = NULL; $_SESSION["BST"] = NULL; $_SESSION["Fase"] = NULL ?>
+if ($aanwezig3 > 0) { Session::set("DT1", NULL); Session::set("BST", NULL); Session::set("Fase", NULL) ?>
  <a href='<?php echo $url; ?>HokUitscharen.php?pstId=<?php echo $Id; ?>' style = "color : blue">    
     Uitscharen
  </a> <?php } else { ?> <u style = "color : grey"> Uitscharen </u> <?php } ?>

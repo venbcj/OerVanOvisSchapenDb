@@ -12,7 +12,7 @@ $versie = "22-1-2017"; /* tblBezetting gewijzigd naar tblBezet */
 $versie = "5-2-2017"; /* Aanpassing n.a.v. verblijven met verschillende doelgroepen */
 $versie = "12-2-2017"; /* Bij historie lammeren H1.ACTID != 2 toegevegd. Bij aankoop moederdieren bestaat act 2 en act 3 waardoor dit dier in het hok heeft gezeten van aankoop t/m aanwas als dier 'zonder' aanwas datum. Wordt ooit een lam aangekocht maak dan een nieuwe actie hiervoor aan in tblActie !!!!!!!!!!!!!!!! */
 $versie = "29-12-2017"; /* Aantal aanwezige volwassen dieren toegevoegd */
-$versie = "13-05-2018"; /* $_SESSION["DT1"] = NULL; $_SESSION["BST"] = NULL;  toegevoegd */
+$versie = "13-05-2018"; /* Session::set("DT1", NULL); Session::set("BST", NULL);  toegevoegd */
 $versie = '28-09-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '18-05-2019'; /* Afleveren, spenen en Overplaatsen mogelijk gemaakt via Hoklijsten.php */
 $versie = '20-12-2019'; /* tabelnaam gewijzigd van UIT naar uit tabelnaam */

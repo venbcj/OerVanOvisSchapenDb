@@ -80,10 +80,10 @@ if (!empty($ubn) && !empty($pword) && !empty($ctr_p) && $pword == $ctr_p && (!em
         while ($row = mysqli_fetch_assoc($qrylidId)) {
             $lidId = $row['lidId'];
         }
-        $_SESSION["U1"] = $ubn;
-        $_SESSION["W1"] = $passw;
-        $_SESSION["I1"] = $lidId;
-        $_SESSION["UB"] = $ubn;
+        Session::set("U1", $ubn);
+        Session::set("W1", $passw);
+        Session::set("I1", $lidId);
+        Session::set("UB", $ubn);
         demo_table_insert($db, $lidId);
         header("location: ".$url."Home.php");
         exit();

@@ -30,9 +30,9 @@ if (Auth::is_logged_in()) {
 include "kalender.php";
 
 if(isset($_POST['knpVerder_']) && isset($_POST['kzlRelall_']))    { 
-    $datum = $_POST['txtDatumall_']; $_SESSION["DT1"] = $datum;
-    $bestkeuze = $_POST['kzlRelall_']; $_SESSION["BST"] = $bestkeuze; }
- else { $bestkeuze = $_SESSION["BST"] ?? 0; } $sess_dag = $_SESSION["DT1"] ?? 0; $sess_bestm = $_SESSION["BST"] ?? 0;
+    $datum = $_POST['txtDatumall_']; Session::set("DT1", $datum);
+    $bestkeuze = $_POST['kzlRelall_']; Session::set("BST", $bestkeuze); }
+ else { $bestkeuze = Session::get("BST") ?? 0; } $sess_dag = Session::get("DT1") ?? 0; $sess_bestm = Session::get("BST") ?? 0;
 
 if(isset($_POST['knpSave_'])) { $actId = 13; include "save_afleveren.php"; }
 

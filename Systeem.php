@@ -78,7 +78,7 @@ while ($row = mysqli_fetch_assoc($result))
     <tr><th colspan = 6 height="50"><hr></th></tr>
 <tr>
  <td width = 150><u><i>Inloggegevens :</i></u></td>
- <td width = 150 align = 'right'>Gebruikersnaam :</td><td width = 100><?php echo $_SESSION["U1"]; ?></td>
+ <td width = 150 align = 'right'>Gebruikersnaam :</td><td width = 100><?php echo Session::get("U1"); ?></td>
 
  <td width = 100 align = "right">Wachtwoord :</td><td> ************** </td>
  <td> <a href='<?php $url; ?>Wachtwoord.php' style = 'color : blue' > inloggegevens wijzigen </a> </td>

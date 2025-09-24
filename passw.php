@@ -13,11 +13,11 @@ if (isset($_POST['knpLogin']) || isset($_POST['knpBasis']) || isset($_POST['knpB
     $passw = md5($_POST['txtPassw'].'zfO3puW?Wod/UT<-|=)1VT]+{hgABEK(Yh^!Wv;5{ja{P~wX4t');
 } // wordt gebruikt bij login
 
-if (Auth::is_logged_in() && isset($_SESSION["A1"])) {
-    $lid = $_SESSION["I1"];
+if (Auth::is_logged_in() && (Session::isset("A1"))) {
+    $lid = Session::get("I1");
     # TODO: in login.php wordt $login (note: wordt niet gebruikt) ook al gezet op de U1-sleutel uit sessie. Waarom nu weer? --BCB
-    $login = $_SESSION["U1"];
-    $passw = md5($_SESSION["W1"].'zfO3puW?Wod/UT<-|=)1VT]+{hgABEK(Yh^!Wv;5{ja{P~wX4t'); // wordt gebruikt bij wachtwoordgegevens en is het wachtwoord van de klant
+    $login = Session::get("U1");
+    $passw = md5(Session::get("W1").'zfO3puW?Wod/UT<-|=)1VT]+{hgABEK(Yh^!Wv;5{ja{P~wX4t'); // wordt gebruikt bij wachtwoordgegevens en is het wachtwoord van de klant
     $ww = $passw; // tbv value in veld txtOld binnen wachtwoord.php
 }
 
@@ -26,8 +26,8 @@ if (Auth::is_logged_in() && isset($_SESSION["A1"])) {
 /*
 if (isset($_POST['knpLogin'])) {
     $username = $_POST['txtUser'];
-} else if (isset($_SESSION["U1"])) {
-    $username = $_SESSION["U1"];
+} else if ((Session::isset("U1"))) {
+    $username = Session::get("U1");
 }
 if (isset($_POST['knpLogin']) || Auth::is_logged_in()) ) {
     if ($db == false ) {
@@ -100,7 +100,7 @@ WHERE lidId = '".mysqli_real_escape_string($db, $lid)."'
                     $updateUS = "UPDATE tblLeden SET login = '".mysqli_real_escape_string($db, $txtuser)."' 
                         WHERE lidId = '".mysqli_real_escape_string($db, $lid)."' ";
                     mysqli_query($db, $updateUS) or die(mysqli_error($db));
-                    $_SESSION["U1"] = $txtuser; /* tbv de query $result in login.php*/
+                    Session::set("U1", $txtuser); /* tbv de query $result in login.php*/
                     $goed = "De inloggegevens zijn gewijzigd";
                     $veld = "hidden";
                 } elseif (isset($wwnew) && $passw_db <> $wwnew) {
@@ -109,7 +109,7 @@ WHERE lidId = '".mysqli_real_escape_string($db, $lid)."'
                         WHERE lidId = '".mysqli_real_escape_string($db, $lid)."' ";
                     /*echo $updateWW.'<br>';*/ mysqli_query($db, $updateWW) or die(mysqli_error($db));
                     $passw = $wwnew; /*tbv de query $result in login.php */
-                    $_SESSION["W1"] = $txtpassw; /* tbv (nieuwe) sessie gegevens */
+                    Session::set("W1", $txtpassw); /* tbv (nieuwe) sessie gegevens */
                     $goed = "De inloggegevens zijn gewijzigd." ;
                     $veld = "hidden";
                 }

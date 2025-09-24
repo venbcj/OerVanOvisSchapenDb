@@ -21,7 +21,7 @@ include "login.php"; ?>
 
         <TD valign = 'top'>
 <?php
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"])) {
+if ((Session::isset("U1")) && (Session::isset("W1"))) {
 
     $artId = 0;
 if (!empty($_GET['pst']))

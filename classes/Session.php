@@ -4,6 +4,11 @@ class Session {
 
     private static $instance;
 
+    public function isset($name) {
+        static::ensure_instance();
+        return static::$instance->issetkey($name);
+    }
+
     public static function get($name) {
         static::ensure_instance();
         return static::$instance->getkey($name);
@@ -17,6 +22,11 @@ class Session {
     public static function start() {
         static::ensure_instance();
         static::$instance->ensure_session();
+    }
+
+    public static function destroy() {
+        static::ensure_instance();
+        static::$instance->kill_session();
     }
 
     private static function ensure_instance() {
@@ -39,11 +49,20 @@ class Session {
         }
     }
 
+    protected function kill_session() {
+        unset($_SESSION);
+        session_destroy();
+    }
+
     public function getkey($name) {
-        if (array_key_exists($name, $_SESSION)) {
+        if ($this->issetkey($name)) {
             return $_SESSION[$name];
         }
         return null;
+    }
+
+    public function issetkey($name) {
+        return array_key_exists($name, $_SESSION);
     }
 
 }

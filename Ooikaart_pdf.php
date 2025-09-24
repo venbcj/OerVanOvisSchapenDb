@@ -26,7 +26,7 @@ if ($Afdrukstand == 'L') { $headerWidth = 277; $imageWidth = 256; }
 
 Session::start();
 
-    $lidId = $_SESSION["I1"];
+    $lidId = Session::get("I1");
 
 $zoek_karwerk = mysqli_query($db,"
 SELECT kar_werknr 

@@ -155,13 +155,13 @@ WHERE (isnull(b.hokId) or uit.hist is not null)
      <hr>
 
  <?php 
-if ($aanwezig_incl > 0) { $_SESSION["DT1"] = NULL; $_SESSION["BST"] = NULL; ?>
+if ($aanwezig_incl > 0) { Session::set("DT1", NULL); Session::set("BST", NULL); ?>
  <a href='<?php echo $url; ?>LoslopersPlaatsen.php?' style = "color : blue">    
     In verblijf plaatsen
  </a> <?php } ?>
  <br>
  <br>
- <?php if(isset($aanwezig3) && $aanwezig3 > 0) { $_SESSION["DT1"] = NULL; $_SESSION["BST"] = NULL; ?>
+ <?php if(isset($aanwezig3) && $aanwezig3 > 0) { Session::set("DT1", NULL); Session::set("BST", NULL); ?>
  <a href='<?php echo $url; ?>LoslopersVerkopen.php?' style = "color : blue">   
     Verkopen     
  </a> <?php } else { ?> <u style = "color : grey"> Verkopen </u> <?php } ?>

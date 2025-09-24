@@ -77,13 +77,13 @@ if (php_uname('n') == 'basq') {
     // twee sleutels, omdat de post_ includes veel werken met getIdFromKey, en die vraagt op alle sleutels een aanwezige underscore
    if (isset($_REQUEST['ingelogd']) || isset($_REQUEST['ingelogd_'])) {
      // met deze hack kan ik op mijn computer het ingelogd-zijn simuleren vanuit een unit test --BCB
-     $_SESSION['U1'] = 1; // moet eigenlijk username zijn, maar dan vallen alle approval-tests om. Niet nodig.
-     $_SESSION['W1'] = 1;
-     $_SESSION['I1'] = $_REQUEST['ingelogd'] ?? $_REQUEST['ingelogd_'];
-     $_SESSION['PA'] = 1;
-     $_SESSION['RPP'] = 30;
-     $_SESSION['ID'] = $_REQUEST['uid'] ?? $_REQUEST['uid_'] ?? 1;
-     $_SESSION['CNT'] = $_REQUEST['cnt_'] ?? 0; // cnt wordt gelezen in Contact
+     Session::set('U1', 1); // moet eigenlijk username zijn, maar dan vallen alle approval-tests om. Niet nodig.
+     Session::set('W1', 1);
+     Session::set('I1', $_REQUEST['ingelogd'] ?? $_REQUEST['ingelogd_']);
+     Session::set('PA', 1);
+     Session::set('RPP', 30);
+     Session::set('ID', $_REQUEST['uid'] ?? $_REQUEST['uid_'] ?? 1);
+     Session::set('CNT', $_REQUEST['cnt_'] ?? 0); // cnt wordt gelezen in Contact
      // dit ID is mede van invloed op HokSpenen HokOverpl HokAanwas HokVerlaten Uitval HokAfleveren HokVerkopen HokUitscharen
    }
    if (isset($_REQUEST['force_meld'])) {
@@ -116,12 +116,12 @@ if (!Auth::is_logged_in()) {
 } elseif (Auth::is_logged_in()) {
     // ***     ALS WEL IS INGELOGD    ***
     // TODO: variabele login wordt nergens gebruikt --BCB
-    $login = $_SESSION["U1"];
-    $lidId = $_SESSION["I1"];
+    $login = Session::get("U1");
+    $lidId = Session::get("I1");
     // TODO: (BV) is dit geplande nieuwbouw? dat het uit staat, bedoel ik?
-    //$alias = $_SESSION["A1"];
-    $pag = $_SESSION["PA"]; // paginanummer dat moet worden ontouden als de pagina wordt ververst
-    $RPP = $_SESSION["RPP"]; // standaard aantal regels per pagina
+    //$alias = Session::get("A1");
+    $pag = Session::get("PA"); // paginanummer dat moet worden ontouden als de pagina wordt ververst
+    $RPP = Session::get("RPP"); // standaard aantal regels per pagina
 
     date_default_timezone_set('Europe/Paris');
 

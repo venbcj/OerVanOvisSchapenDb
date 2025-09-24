@@ -24,7 +24,7 @@ include "login.php"; ?>
 <?php
 if (Auth::is_logged_in()) {
 
-$name = $_SESSION["U1"];  ?>
+$name = Session::get("U1");  ?>
 
 <form method="POST" action=" <?php echo $file; ?> ">
 <p>

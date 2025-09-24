@@ -39,11 +39,11 @@ include "login.php"; ?>
 <?php 
 if (Auth::is_logged_in()) {
 
-if(isset($_GET['pstId']))    { $_SESSION["ID"] = $_GET['pstId']; } $ID = $_SESSION["ID"]; /* zorgt het Id wordt onthouden bij het opnieuw laden van de pagina */
+if(isset($_GET['pstId']))    { Session::set("ID", $_GET['pstId']); } $ID = Session::get("ID"); /* zorgt het Id wordt onthouden bij het opnieuw laden van de pagina */
 if(isset($_POST['knpVerder_']) && isset($_POST['kzlHokall_']))    { 
-    $datum = $_POST['txtDatumall_']; $_SESSION["DT1"] = $datum;
-    $hokkeuze = $_POST['kzlHokall_']; $_SESSION["BST"] = $hokkeuze; } 
- else { $hokkeuze = $_SESSION["BST"] ?? '';  } $sess_dag = $_SESSION["DT1"] ?? ''; $sess_bestm = $_SESSION["BST"] ?? '';
+    $datum = $_POST['txtDatumall_']; Session::set("DT1", $datum);
+    $hokkeuze = $_POST['kzlHokall_']; Session::set("BST", $hokkeuze); } 
+ else { $hokkeuze = Session::get("BST") ?? '';  } $sess_dag = Session::get("DT1") ?? ''; $sess_bestm = Session::get("BST") ?? '';
 
 if(isset($_POST['knpSave_'])) { include "save_spenen.php"; }
 

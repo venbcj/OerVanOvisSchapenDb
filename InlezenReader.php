@@ -41,8 +41,8 @@ include "login.php"; ?>
 <?php
 if (Auth::is_logged_in()) {
 
-$_SESSION["RPP"] = 30; $RPP = $_SESSION["RPP"];
-$_SESSION["PA"] = 1; $pag = $_SESSION["PA"];
+Session::set("RPP", 30); $RPP = Session::get("RPP");
+Session::set("PA", 1); $pag = Session::get("PA");
 
 include "responscheck.php"; ?>
 

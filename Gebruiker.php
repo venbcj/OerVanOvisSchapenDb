@@ -30,9 +30,9 @@ include "login.php"; ?>
 if (Auth::is_logged_in()) {
 
     if(isset($_GET['pstId']))    {
-        $_SESSION["ID"] = $_GET['pstId']; 
+        Session::set("ID", $_GET['pstId']); 
     }
-    $ID = $_SESSION["ID"];
+    $ID = Session::get("ID");
     include "validate-gebruiker.js.php";
 
  // $ID is de gebruiker die op de pagina is opgeroepen

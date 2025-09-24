@@ -108,7 +108,7 @@ $goed = 'Het wachtwoord is gelijk gemaakt aan de inlognaam.';
 
 <tr style ="font-size:14px;" height = 25>
  <td> <?php echo $lid; ?> </td>
-     <?php $_SESSION["DT1"] = NULL; ?>
+     <?php Session::set("DT1", NULL); ?>
  <td> <a href='<?php echo $url; ?>Gebruiker.php?pstId=<?php echo $lid; ?>' style = 'color : blue'> <?php echo $alias; ?> </a> </td>
  <td> <?php echo $login; ?> </td>
  <td> <?php echo $naam; ?> </td>

@@ -6,20 +6,20 @@ class Auth {
         global $db, $dtb;
         Session::start();
 
-        $_SESSION["U1"] = "$_POST[txtUser]";
-        $_SESSION["W1"] = "$_POST[txtPassw]";
-        $_SESSION["I1"] = $row['lidId'];
-        $_SESSION["A1"] = $row['alias'];
-        $_SESSION["PA"] = 1;
-        $_SESSION["RPP"] = 30; // standaard aantal regels per pagina
-        $_SESSION["ID"] = 0; // het Id waarmee de pagina is geopend. Bijv. hokId 1559 bij HokAfleveren.php
-        $_SESSION["DT1"] = null; // Als (records per) pagina wordt ververst wordt datum onthouden. Zo kan pagin worden doorlopen zonder steeds opnieuw datum te kiezen. Zie HokAfleveren.php
-        $_SESSION["BST"] = null; // Als (records per) pagina wordt ververst wordt bestemming onthouden. Zo kan pagin worden doorlopen zonder steeds opnieuw bestemming te kiezen. Zie HokAfleveren.php
-        $_SESSION["Fase"] = null; // Als (records per) pagina wordt ververst wordt fase onthouden. Zo kan pagin worden doorlopen zonder steeds opnieuw bestemming te kiezen. Zie HokUitscharen.php (HokAfleveren.php)
-        $_SESSION['KZ'] = null; // Als pagina wordt ververst wordt de keuze (filter) onthouden. Zie HokOverpl.php
-        $_SESSION["CNT"] = null; // Gebruikt in Contact.php
+        Session::set("U1", "$_POST[txtUser]");
+        Session::set("W1", "$_POST[txtPassw]");
+        Session::set("I1", $row['lidId']);
+        Session::set("A1", $row['alias']);
+        Session::set("PA", 1);
+        Session::set("RPP", 30); // standaard aantal regels per pagina
+        Session::set("ID", 0); // het Id waarmee de pagina is geopend. Bijv. hokId 1559 bij HokAfleveren.php
+        Session::set("DT1", null); // Als (records per) pagina wordt ververst wordt datum onthouden. Zo kan pagin worden doorlopen zonder steeds opnieuw datum te kiezen. Zie HokAfleveren.php
+        Session::set("BST", null); // Als (records per) pagina wordt ververst wordt bestemming onthouden. Zo kan pagin worden doorlopen zonder steeds opnieuw bestemming te kiezen. Zie HokAfleveren.php
+        Session::set("Fase", null); // Als (records per) pagina wordt ververst wordt fase onthouden. Zo kan pagin worden doorlopen zonder steeds opnieuw bestemming te kiezen. Zie HokUitscharen.php (HokAfleveren.php)
+        Session::set('KZ', null); // Als pagina wordt ververst wordt de keuze (filter) onthouden. Zie HokOverpl.php
+        Session::set("CNT", null); // Gebruikt in Contact.php
         // TODO: (BCB) ik wil de global $lidId vervangen door getLidId(), als eerste stap
-        $lidId = $_SESSION["I1"];
+        $lidId = Session::get("I1");
         // In de demo omgeving worden de basis gegevens elke maand opnieuw vervangen.
         if ($dtb == "k36098_bvdvschapendbs" && $lidId > 1) {
             // Kijken of maand is verstreken o.b.v. createdatum in tabl tblSchapen
@@ -41,21 +41,11 @@ class Auth {
     }
 
     public static function logout() {
-        self::ensure_session();
-        unset($_SESSION);
-        session_destroy();
+        Session::destroy();
     }
 
     public static function is_logged_in() {
-        self::ensure_session();
-        return isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"]);
-    }
-
-    private static function ensure_session() {
-        if (session_status() != PHP_SESSION_ACTIVE) {
-            Session::start();
-
-        }
+        return (Session::isset("U1")) && (Session::isset("W1")) && (Session::isset("I1"));
     }
 
 }

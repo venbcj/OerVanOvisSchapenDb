@@ -30,13 +30,13 @@ if (Auth::is_logged_in()) {
     // TODO: FIXME: $hoknr wordt gebruikt, maar nergens? gezet
     $hoknr = 1;
 include "kalender.php";
-    if (!isset($_SESSION['BST'])) $_SESSION['BST'] = 1;
-    if (!isset($_SESSION['DT1'])) $_SESSION['DT1'] = 1;
+    if (!(Session::isset('BST'))) Session::set('BST', 1);
+    if (!(Session::isset('DT1'))) Session::set('DT1', 1);
 
 if(isset($_POST['knpVerder_']) && isset($_POST['kzlHokall_']))    {
-    $datum = $_POST['txtDatumall_']; $_SESSION["DT1"] = $datum;
-    $hokkeuze = $_POST['kzlHokall_']; $_SESSION["BST"] = $hokkeuze; } 
- else { $hokkeuze = $_SESSION["BST"];  } $sess_dag = $_SESSION["DT1"]; $sess_bestm = $_SESSION["BST"];
+    $datum = $_POST['txtDatumall_']; Session::set("DT1", $datum);
+    $hokkeuze = $_POST['kzlHokall_']; Session::set("BST", $hokkeuze); } 
+ else { $hokkeuze = Session::get("BST");  } $sess_dag = Session::get("DT1"); $sess_bestm = Session::get("BST");
 
 $zoek_nu_in_verblijf_geb_spn = mysqli_query($db,"
 SELECT count(hin.schaapId) aantin

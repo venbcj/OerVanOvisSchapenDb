@@ -20,7 +20,7 @@ join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.
 I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 */
 $versie = "10-11-2024"; /* Uitscharen toegevoegd  */
 $versie = '26-12-2024'; /* <TD width = 940 height = 400 valign = "top"> gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 include login voor include header gezet */
-$versie = '23-02-2025'; /* $_SESSION["Fase"] = NULL toegevoegd. In Hoklijsten.php wordt deze leeg gemaakt */
+$versie = '23-02-2025'; /* Session::set("Fase", NULL) toegevoegd. In Hoklijsten.php wordt deze leeg gemaakt */
 
  Session::start();
  ?>
@@ -46,17 +46,17 @@ include "login.php"; ?>
                 <TD align = "center" valign = "top">
 <?php
 if (Auth::is_logged_in()) {
-    if (!isset($_SESSION['BST'])) $_SESSION['BST'] = 1;
-    if (!isset($_SESSION['Fase'])) $_SESSION['Fase'] = 1;
-    if (!isset($_SESSION['DT1'])) $_SESSION['DT1'] = '1900-01-01';
+    if (!(Session::isset('BST'))) Session::set('BST', 1);
+    if (!(Session::isset('Fase'))) Session::set('Fase', 1);
+    if (!(Session::isset('DT1'))) Session::set('DT1', '1900-01-01');
 
-if(isset($_GET['pstId'])) { $_SESSION["ID"] = $_GET['pstId']; } $ID = $_SESSION["ID"]; /* zorgt het Id wordt onthouden bij het opnieuw laden van de pagina */
+if(isset($_GET['pstId'])) { Session::set("ID", $_GET['pstId']); } $ID = Session::get("ID"); /* zorgt het Id wordt onthouden bij het opnieuw laden van de pagina */
 if(isset($_POST['knpVerder_']) && isset($_POST['kzlRelall_']))    { 
-    $datum = $_POST['txtDatumall_']; $_SESSION["DT1"] = $datum;
-    $bestkeuze = $_POST['kzlRelall_']; $_SESSION["BST"] = $bestkeuze;
-    $radFase = $_POST['radFase_']; $_SESSION["Fase"] = $radFase; }
- else { $bestkeuze = $_SESSION["BST"]; $radFase = $_SESSION["Fase"]; }
- $sess_dag = $_SESSION["DT1"]; $sess_bestm = $_SESSION["BST"]; $radFase = $_SESSION["Fase"];
+    $datum = $_POST['txtDatumall_']; Session::set("DT1", $datum);
+    $bestkeuze = $_POST['kzlRelall_']; Session::set("BST", $bestkeuze);
+    $radFase = $_POST['radFase_']; Session::set("Fase", $radFase); }
+ else { $bestkeuze = Session::get("BST"); $radFase = Session::get("Fase"); }
+ $sess_dag = Session::get("DT1"); $sess_bestm = Session::get("BST"); $radFase = Session::get("Fase");
 
 
 if(isset($_POST['knpSave_'])) { if($pagina == 'Uitscharen') { $actId = 10; } else if($pagina == 'Afleveren') { $actId = 12; } else if($pagina == 'Verkopen') { $actId = 13; } include "save_afleveren.php"; }

@@ -3,12 +3,12 @@
 /********************   MEERDERE PAGINA'S  ********************/
 $page_nums = new Page_numbers($tabel, $WHERE, $db, $pag, $RPP, $_SERVER['PHP_SELF']);
 
-$_SESSION["RPP"] = $page_nums->rpp;
-$RPP = $_SESSION["RPP"]; // zorgt dat regels per pagina wordt onthouden bij het opnieuw laden van de pagina
+Session::set("RPP", $page_nums->rpp);
+$RPP = Session::get("RPP"); // zorgt dat regels per pagina wordt onthouden bij het opnieuw laden van de pagina
 
 $page_numbers = $page_nums->show_page_numbers(7);
-$_SESSION["PA"] = $page_nums->page;
-$pag = $_SESSION["PA"]; // zorgt dat paginanummer wordt onthouden bij het opnieuw laden van de pagina
+Session::set("PA", $page_nums->page);
+$pag = Session::get("PA"); // zorgt dat paginanummer wordt onthouden bij het opnieuw laden van de pagina
 
 $kzlRpp = $page_nums->show_rpp();
 /********************   EINDE   MEERDERE PAGINA'S  EINDE    ********************/

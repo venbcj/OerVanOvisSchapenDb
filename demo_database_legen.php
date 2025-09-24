@@ -23,7 +23,7 @@ $file = "demo_database_legen.php";
 include "login.php";
 if (Auth::is_logged_in()) {
 
-$name = $_SESSION["U1"];  
+$name = Session::get("U1");  
 
 /* Verwijderen rassen en redenen */
 if(isset($_POST['chbAlles'])) {

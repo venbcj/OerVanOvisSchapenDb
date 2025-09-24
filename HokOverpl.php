@@ -40,30 +40,30 @@ include "login.php"; ?>
 <?php
 if (Auth::is_logged_in()) {
 
-if(isset($_GET['pstId']))    { $_SESSION["ID"] = $_GET['pstId']; } $ID = $_SESSION["ID"]; /* zorgt het Id wordt onthouden bij het opnieuw laden van de pagina */
+if(isset($_GET['pstId']))    { Session::set("ID", $_GET['pstId']); } $ID = Session::get("ID"); /* zorgt het Id wordt onthouden bij het opnieuw laden van de pagina */
 
 switch ($_POST['radFase_'] ?? 'alles') {
 case 'lam':
- $_SESSION["KZ"] = 1; 
+ Session::set("KZ", 1); 
 break;
 case 'volw':
- $_SESSION["KZ"] = 2; 
+ Session::set("KZ", 2); 
 break;
 default:
- $_SESSION["KZ"] = NULL; 
+ Session::set("KZ", NULL); 
 }
-$KEUZE = $_SESSION["KZ"];
+$KEUZE = Session::get("KZ");
 
 
 ##echo '$KEUZE = '.$KEUZE.'<br>';
-    if (!isset($_SESSION['BST'])) $_SESSION['BST'] = 1;
-    if (!isset($_SESSION['DT1'])) $_SESSION['DT1'] = '1900-01-01';
+    if (!(Session::isset('BST'))) Session::set('BST', 1);
+    if (!(Session::isset('DT1'))) Session::set('DT1', '1900-01-01');
 
 
 if(isset($_POST['knpVerder_']) && isset($_POST['kzlHokall_']))    {
-    $datum = $_POST['txtDatumall_']; $_SESSION["DT1"] = $datum;
-    $hokkeuze = $_POST['kzlHokall_']; $_SESSION["BST"] = $hokkeuze; } 
- else { $hokkeuze = $_SESSION["BST"];  } $sess_dag = $_SESSION["DT1"]; $sess_bestm = $_SESSION["BST"];
+    $datum = $_POST['txtDatumall_']; Session::set("DT1", $datum);
+    $hokkeuze = $_POST['kzlHokall_']; Session::set("BST", $hokkeuze); } 
+ else { $hokkeuze = Session::get("BST");  } $sess_dag = Session::get("DT1"); $sess_bestm = Session::get("BST");
 
 $zoek_hok = mysqli_query ($db,"
 SELECT hoknr

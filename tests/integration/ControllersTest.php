@@ -300,7 +300,7 @@ TXT
     }
 
     public function testContact() {
-        $_SESSION['CNT'] = 0;
+        Session::set('CNT', 0);
         $this->get("/Contact.php");
         $this->assertNoNoise();
     }
