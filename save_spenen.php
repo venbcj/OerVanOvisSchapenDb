@@ -9,8 +9,6 @@
 
 include "url.php";
 
-
-
 $array = array();
 
 foreach($_POST as $key => $value) {
@@ -23,7 +21,8 @@ foreach($array as $recId => $id) {
 // Einde recId ophalen
    
  foreach($id as $key => $value) {
- if ($key == 'chbkies' && $value == 1 )     {   $box = $value ;
+     if ($key == 'chbkies' && $value == 1 )     {
+         $box = $value ;
 
     
   foreach($id as $key => $value) {

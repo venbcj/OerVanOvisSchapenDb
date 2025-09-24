@@ -205,7 +205,10 @@ if(isset($data)) {
         $prnt = $array['prnt']; if(isset($prnt)) { if($sekse == 'ooi') { $fase = 'moeder'; } else if($sekse == 'ram') { $fase = 'vader'; } } else { $fase = 'lam'; }
 
 
-if( (isset($_POST['knpVervers_']) || isset($_POST['knpSave_']) ) && !isset($_POST['txtDatumall_']) ) { $cbKies = $_POST["chbkies_$schaapId"]; $datum = $_POST["txtDatum_$schaapId"]; }
+        if( (isset($_POST['knpVervers_']) || isset($_POST['knpSave_']) ) && !isset($_POST['txtDatumall_']) ) {
+            $cbKies = $_POST["chbkies_$schaapId"];
+            $datum = $_POST["txtDatum_$schaapId"];
+        }
 // Bij de eerste keer openen van deze pagina bestaat als enigste keer het veld txtDatumall_ . knpVervers_ bestaat als hidden veld. txtDatum_$schaapId en txtGewicht_$schaapId bestaan dan nog niet. Variabalen $datum en $kg kunnen enkel worden gevuld als wordt voldaan aan (isset($_POST['knpVervers_']) && !isset($_POST['txtDatumall_']))  !!!
     if(!isset($datum) && isset($sess_dag)) { $datum = $sess_dag; }
     if(isset($datum))  { $makeday = date_create($datum); $day = date_format($makeday,'Y-m-d'); }

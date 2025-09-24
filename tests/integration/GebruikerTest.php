@@ -4,6 +4,11 @@ class GebruikerTest extends IntegrationCase {
 
     const AANTAL_REDENEN_IN_NEWREADER_KEUZELIJSTEN = 14;
 
+    public function tearDown() : void {
+        # zodat geen 9 blijft hangen in sessie
+        $this->get('/Home.php', ['ingelogd' => 1, 'uid' => 1]);
+    }
+
     // deze vier tests dekken de radioknop "melden: Ja"
 
     public function testGetNotMeld() {

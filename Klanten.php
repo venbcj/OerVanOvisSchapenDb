@@ -27,6 +27,7 @@ $file = "Klanten.php";
 include "login.php"; 
 if (Auth::is_logged_in()) {
 
+    // TODO: FIXME: save_klanten bestaat niet. Is dit misschien oude code?
 if (isset($_POST['knpSave_'])) { include "save_klanten.php"; }
 
 if (isset($_POST['knpInsert']))

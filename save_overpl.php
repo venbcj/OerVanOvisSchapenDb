@@ -39,7 +39,7 @@ FROM tblSchaap s
  join tblHistorie hm on (hm.hisId = hmax.hisId)
 WHERE s.schaapId = '".mysqli_real_escape_string($db,$recId)."'
  ") or die(mysqli_error($db));
-    
+$dmmin = '';
     while($row = mysqli_fetch_assoc($zoek_mindag)) {    $dmmin = $row['datum']; }
 
 

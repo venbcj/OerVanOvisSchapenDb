@@ -23,10 +23,10 @@ class ControllersTest extends IntegrationCase {
             ['InsMedicijn.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
             ['InsOmnummeren.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
             ['InsOverplaats.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
-            # ['InsSpenen.php', [], ['chbkies_1' => 1, ]],
             # deze checkt fldKies die nooit gezet wordt
-            # ['InsStallijstscan_controle.php', ['impagrident'], ['chbkies_1' => 1, 'kzlFase_1' => 1, 'chbDel_1' => 0, ]],
+            # ['InsSpenen.php', [], ['chbkies_1' => 1, ]],
             # deze veroorzaakt Unknown column s.rasId in ON, Page_numbers:43
+            # ['InsStallijstscan_controle.php', ['impagrident'], ['chbkies_1' => 1, 'kzlFase_1' => 1, 'chbDel_1' => 0, ]],
             ['InsStallijstscan_nieuwe_klant.php', [], ['chbkies_1' => 1, 'kzlFase_1' => 1, 'chbDel_1' => 0, ]],
             ['InsTvUitscharen.php', [], ['chbKies_1' => 1, 'chbDel_1' => 0, ]], // hoofdletter K ?!
             ['InsUitscharen.php', [], []],
@@ -37,48 +37,49 @@ class ControllersTest extends IntegrationCase {
     }
 
     public static function controllers_with_save_include() {
-        return self::txt2ar(<<<TXT
-HokAfleveren.php
-HokVerlaten.php
-Hok.php
-Uitval.php
-Componenten.php
-Afvoerstal.php
-Voer.php
-Deklijst.php
-Relaties.php
-HokOverpl.php
-HokSpenen.php
-Kostenopgaaf.php
-Voorraadcorrectie.php
-Klanten.php
-Saldoberekening.php
-Contact.php
-Dekkingen.php
-Zoeken.php
-HokAfsluiten.php
-Rubrieken.php
-MeldAfvoer.php
-Relatie.php
-LoslopersVerkopen.php
-InsVoerregistratie.php
-MeldAanvoer.php
-Ras.php
-InsGeboortes.php
-Medicijnen.php
-Kostenoverzicht.php
-MeldUitval.php
-MeldGeboortes.php
-MeldOmnummer.php
-OoilamSelectie.php
-Inkopen.php
-Liquiditeit.php
-HokAanwas.php
-LoslopersPlaatsen.php
-Ubn_toevoegen.php
-Voer_rapportage.php
-TXT
-        );
+        return [
+            ['Afvoerstal.php', [], []],
+            ['Componenten.php', [], []],
+            ['Contact.php', ['partij-1'], ['cnt_' => 1, ]],
+            ['Dekkingen.php', [], []],
+            ['Deklijst.php', [], ['kzlJaar_' => 2020, ]],
+            ['Hok.php', [], []],
+            ['HokAanwas.php', [], ['chbkies_1' => 1, ]],
+            ['HokAfleveren.php', ['schaap-4'], ['chbkies_4' => 1, 'txtDatum_4' => '01-01-2020', 'txtKg_4' => 7, ]],
+            ['HokAfsluiten.php', [], []],
+            # dit gaat af en toe mis, als $data gevuld wordt. Maar die query is nogal ... dik.
+            ['HokOverpl.php', ['schaap-4'], ['chbkies_4' => 1, 'txtDatum_4' => '02-02-2021', ]],
+            ['HokSpenen.php', ['schaap-4'], ['chbkies_4' => 1, 'txtDatum_4' => '01-02-2020', 'txtKg_4' => 2, ]],
+            ['HokVerlaten.php', ['schaap-4'], ['chbkies_4' => 1, 'txtDatum_4' => '01-01-2021', ]],
+            ['Inkopen.php', [], []],
+            ['InsGeboortes.php', [], []],
+            ['InsVoerregistratie.php', [], []],
+            # save_klanten bestaat niet. Kan niet werken.
+            # ['Klanten.php', [], []],
+            ['Kostenopgaaf.php', ['opgaaf-1'], ['chbLiq_1' => 0, 'kzlRubr_1' => 1, 'txtDatum_1' => '13-12-2021', 'txtBedrag_1' => 11, 'txtToel_1' => 'kennelijk', ]],
+            ['Kostenoverzicht.php', [], []],
+            ['Liquiditeit.php', [], []],
+            ['LoslopersPlaatsen.php', [], []],
+            ['LoslopersVerkopen.php', [], []],
+            ['Medicijnen.php', [], []],
+            ['MeldAanvoer.php', [], []],
+            ['MeldAfvoer.php', [], []],
+            ['MeldGeboortes.php', [], []],
+            ['MeldOmnummer.php', [], []],
+            ['MeldUitval.php', [], []],
+            ['OoilamSelectie.php', [], []],
+            ['Ras.php', [], []],
+            ['Relatie.php', ['partij-1'], ['txtpId_' => 1, 'txtNaam_' => 'nodig']],
+            ['Relaties.php', [], []],
+            ['Rubrieken.php', [], []],
+            ['Saldoberekening.php', [], []],
+            ['Ubn_toevoegen.php', [], []],
+            ['Uitval.php', [], []],
+            ['Voer.php', [], []],
+            ['Voer_rapportage.php', [], ['kzlVoer_' => 1, 'kzlDoel_' => 1, ]],
+            ['Voorraadcorrectie.php', ['artikelvoorraad'], ['inkid_1' => 1, ]],
+            ['Zoeken.php', [], ['radHis_' => 1, 'radOud_' => 1, 'txtComm_1' => 1]],
+        ];
     }
 
     public static function gettable_controllers() {
@@ -289,17 +290,14 @@ TXT
      * @dataProvider controllers_with_save_include
      * Dit is een beginnetje tbv coverage / storingsdetectie
      */
-    # public function testPostSave($controller, $fixtures, $postdata) {
-    public function fntestPostSave($controller) {
-        $postdata = [];
+    public function testPostSave($controller, $fixtures, $postdata) {
+        foreach ($fixtures as $fixture) {
+            $this->runfixture($fixture);
+        }
         $full_postdata = array_merge(['ingelogd_' => 1, 'knpSave_' => 1], $postdata);
         $this->post("/$controller", $full_postdata);
         $this->assertNoNoise();
     }
-
-    # geen centrale test voor post-routes met een knop;
-    # ten eerste moet daar ook postdata bij,
-    # ten tweede zitten er teveel verschillen tussen om dat leesbaar te bundelen
 
     public function testContact() {
         $_SESSION['CNT'] = 0;

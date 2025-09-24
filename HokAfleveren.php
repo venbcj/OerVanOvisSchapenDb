@@ -33,6 +33,7 @@ $versie = '23-02-2025'; /* $_SESSION["Fase"] = NULL toegevoegd. In Hoklijsten.ph
 
 <?php
 $paginanaam = $_SERVER['PHP_SELF']; 
+$pagina = '';
     if($paginanaam == '/HokAfleveren.php') { $pagina = 'Afleveren'; }
     if($paginanaam == '/HokVerkopen.php') { $pagina = 'Verkopen'; }
     if($paginanaam == '/HokUitscharen.php') { $pagina = 'Uitscharen'; }
@@ -90,6 +91,7 @@ unset($index);
 else if( $pagina == 'Verkopen')     { ?> <form action="HokVerkopen.php" method = "post"> <?php }
 else if( $pagina == 'Uitscharen') { ?> <form action="HokUitscharen.php" method = "post"> <?php }
 // Opbouwen paginanummering 
+$where = '';
     if( $pagina == 'Afleveren') {
     $where = "WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId) and h.skip = 0 and spn.schaapId is not null and isnull(prnt.schaapId)"; }
 

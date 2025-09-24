@@ -17,8 +17,12 @@ foreach($multip_array as $recId => $id) {
 if(isset($recId) && $recId > 0) {
 foreach($id as $key => $value) {
 
-    if ($key == 'txtComm' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $updComm = "'".$value."'"; } else if ($key == 'txtComm' && empty($value)) { $updComm = 'NULL'; }
+    if ($key == 'txtComm' && !empty($value)) {
+        $updComm = "'".$value."'";
+    } else if ($key == 'txtComm' && empty($value)) {
+        $updComm = 'NULL';
     }
+}
 
 
 

@@ -12,6 +12,7 @@ foreach($_POST as $fldname => $fldvalue) {  //  Voor elke post die wordt doorlop
     $multip_array[Url::getIdFromKey($fldname)][Url::getNameFromKey($fldname)] = $fldvalue;  // Opbouwen van een Multidimensional array met 2 indexen. [Id] [naamveld] en een waarde nl. de veldwaarde. 
 }
 foreach($multip_array as $recId => $id) {
+    if (!$recId) continue;
 
 unset($fldLiq);
 unset($fldArch);
@@ -23,7 +24,11 @@ unset($fldDel);
     if ($key == 'chbLiq') {  $fldLiq = $value; /*echo $key.'='.$value."<br/>";*/ } 
     
     if ($key == 'kzlRubr') {  $fldRubr = $value; /*echo $key.'='.$value."<br/>";*/  }    
-    if ($key == 'txtDatum') {  $fldDatum = $value; /*echo $key.'='.$value."<br/>"; */ $date = date_create($value); $fldDate = date_format($date, 'Y-m-d'); }     
+        if ($key == 'txtDatum') {
+            $fldDatum = $value;
+            $date = date_create($value);
+            $fldDate = date_format($date, 'Y-m-d');
+        }
     if ($key == 'txtBedrag') {  $fldBedrag = $value; /*echo $key.'='.$value."<br/>"; */ }      
     if ($key == 'txtToel') {  $fldToel = $value; /*echo $key.'='.$value."<br/>"; */ }       
 

@@ -31,6 +31,7 @@ else
 If (isset ($_POST['knpSave_']))
 {    
         if (empty($_POST['txtUbn_']))    {    $updUbn = "NULL";    }  else        {    $updUbn = " '$_POST[txtUbn_]' ";    }
+        // TODO: FIXME: ja grappenmaker, tblPartij.naam is verplicht
         if (empty($_POST['txtNaam_']))    {    $updNaam = "NULL";    }  else        {    $updNaam = " '$_POST[txtNaam_]' ";    }
         if (empty($_POST['txtBanknr_'])){    $updBank = "NULL";    }  else        {    $updBank = " '$_POST[txtBanknr_]' ";}
         
@@ -57,7 +58,7 @@ If (isset ($_POST['knpSave_']))
     $wijzigPartij = "
     update tblPartij p set ubn = ".$updUbn.", naam = ".$updNaam.", tel = ".$updTel.", fax = ".$updFax.", email = ".$updMail.", site = ".$updSite.", banknr = ".$updBank.", relnr = ".$updRelnr.", wachtw = ".$updWawo."
     where partId = $pId ";
-        mysqli_query($db,$wijzigPartij) or die (mysqli_error($db));
+        mysqli_query($db,$wijzigPartij) or Logger::error(mysqli_error($db));
 //echo $wijzigPartij.'<br>';
     
 
@@ -75,7 +76,7 @@ $insert_vervoer = "
     insert into tblVervoer
     set partId = ".mysqli_real_escape_string($db,$pId).", kenteken = ".$updKent.", aanhanger = ".$updHang."    
 ";
-        mysqli_query($db,$insert_vervoer) or die (mysqli_error($db));
+        mysqli_query($db,$insert_vervoer) or Logger::error(mysqli_error($db));
 //echo $insert_vervoer.'<br>';
 }
 // Einde Invoer vervoer als deze nog niet bestaat
@@ -85,7 +86,7 @@ else if(isset($vervId)) {
     set kenteken = ".$updKent.", aanhanger = ".$updHang."
     where partId = $pId
     ";
-        mysqli_query($db,$wijzigVervoer) or die (mysqli_error($db));
+        mysqli_query($db,$wijzigVervoer) or Logger::error(mysqli_error($db));
 //echo $wijzigVervoer.'<br>';
     }
 // Einde Wijzigen Vervoer
@@ -93,14 +94,17 @@ else if(isset($vervId)) {
 include "save_relatie.php";
 }
 
+# TODO: de left join met vervoer werkt niet zoals je verwacht in mysqli
 $Partij = mysqli_query($db,"
 select p.partId, r.relId, relatie, ubn, naam, tel, fax, email, site, banknr, p.relnr, p.wachtw, kenteken, aanhanger 
 from tblPartij p
  join tblRelatie r on (p.partId = r.partId)
  left join tblVervoer v on (p.partId = v.partId) 
-where p.partId = '$pId' ") or die (mysqli_error($db));
+where p.partId = '$pId'
+ ") or Logger::error(mysqli_error($db));
  while ($row = mysqli_fetch_assoc($Partij))
-    {    $pId = $row['partId'];
+ {
+     $pId = $row['partId'];
         $ubn = $row['ubn'];
         $relnr = $row['relnr'];
         $wawo = $row['wachtw'];
@@ -194,7 +198,7 @@ from tblPartij p
  left join tblAdres a on (r.relId = a.relId) 
 where p.partId = ".$pId." 
 order by actief desc, relatie desc
-") or die (mysqli_error($db));
+") or Logger::error(mysqli_error($db));
  while ($row = mysqli_fetch_assoc($Relatie))
     {    $rId = $row['relId'];
         $rela = $row['relatie']; if($rela == 'deb') { $relatie = 'debiteur'; } else if($rela == 'cred') { $relatie = 'crediteur'; }

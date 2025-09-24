@@ -82,7 +82,8 @@ if (php_uname('n') == 'basq') {
      $_SESSION['I1'] = $_REQUEST['ingelogd'] ?? $_REQUEST['ingelogd_'];
      $_SESSION['PA'] = 1;
      $_SESSION['RPP'] = 30;
-     $_SESSION['ID'] = $_REQUEST['uid'] ?? 1;
+     $_SESSION['ID'] = $_REQUEST['uid'] ?? $_REQUEST['uid_'] ?? 1;
+     $_SESSION['CNT'] = $_REQUEST['cnt_'] ?? 0; // cnt wordt gelezen in Contact
      // dit ID is mede van invloed op HokSpenen HokOverpl HokAanwas HokVerlaten Uitval HokAfleveren HokVerkopen HokUitscharen
    }
    if (isset($_REQUEST['force_meld'])) {

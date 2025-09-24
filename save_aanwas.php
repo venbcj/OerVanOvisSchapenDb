@@ -15,6 +15,7 @@ foreach($_POST as $fldname => $fldvalue) {
     $multip_array[Url::getIdFromKey($fldname)][Url::getNameFromKey($fldname)] = $fldvalue;
 }
 foreach($multip_array as $recId => $id) {
+    if (!$recId) continue;
 
 unset($fldKies);
 unset($updDag);

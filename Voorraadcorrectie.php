@@ -40,7 +40,7 @@ $zoek_artId = mysqli_query($db,"
 SELECT i.artId
 FROM  tblInkoop i 
 WHERE i.inkId = ".mysqli_real_escape_string($db,$ink_id)."
-") or die (mysqli_error($db));
+") or Logger::error(mysqli_error($db));
 
 while($za = mysqli_fetch_assoc($zoek_artId))
             { $artId = $za['artId']; }
@@ -51,7 +51,7 @@ $zoek_soort_artikel = mysqli_query($db,"
 SELECT a.soort
 FROM tblArtikel a
 WHERE a.artId = ".mysqli_real_escape_string($db,$artId)."
-") or die (mysqli_error($db));
+") or Logger::error(mysqli_error($db));
 $soort = 'pil';
 while ($srt = mysqli_fetch_assoc($zoek_soort_artikel))    { $soort = $srt['soort']; }
 
@@ -111,7 +111,7 @@ ORDER BY i.dmink desc, i.inkId
 ";
 }
 
-$result = mysqli_query($db,$query) or die (mysqli_error($db));
+$result = mysqli_query($db,$query) or Logger::error(mysqli_error($db));
 
 while($row = mysqli_fetch_assoc($result))
             {
@@ -138,7 +138,7 @@ Union all
      left join tblVoeding v on (v.inkId = i.inkId)
     WHERE v.inkId = ".mysqli_real_escape_string($db,$Id)." and correctie = 1
 ) tbl
-") or die (mysqli_error($db));
+") or Logger::error(mysqli_error($db));
 
 while($afb = mysqli_fetch_assoc($zoek_afgeboekt))
             { $afboek = $afb['af']; }

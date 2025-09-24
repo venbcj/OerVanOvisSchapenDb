@@ -26,6 +26,8 @@ include "login.php"; ?>
                 <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) {
+    // TODO: FIXME: $hoknr wordt gebruikt, maar nergens? gezet
+    $hoknr = 1;
 include "kalender.php";
     if (!isset($_SESSION['BST'])) $_SESSION['BST'] = 1;
     if (!isset($_SESSION['DT1'])) $_SESSION['DT1'] = 1;
@@ -36,7 +38,7 @@ if(isset($_POST['knpVerder_']) && isset($_POST['kzlHokall_']))    {
  else { $hokkeuze = $_SESSION["BST"];  } $sess_dag = $_SESSION["DT1"]; $sess_bestm = $_SESSION["BST"];
 
 $zoek_nu_in_verblijf_geb_spn = mysqli_query($db,"
-SELECT count(hin.schaapId) aant
+SELECT count(hin.schaapId) aantin
 FROM (
     SELECT st.schaapId, max(hisId) hisId
     FROM tblStal st 
@@ -70,7 +72,7 @@ WHERE (isnull(b.hokId) or uit.hist is not null) and isnull(prnt.schaapId)
         { $nu_lam = $nu_l['aantin']; }
         
 $zoek_nu_in_verblijf_parent = mysqli_query($db,"
-SELECT count(hin.schaapId) aant
+SELECT count(hin.schaapId) aantin
 FROM (
     SELECT st.schaapId, max(hisId) hisId
     FROM tblStal st 

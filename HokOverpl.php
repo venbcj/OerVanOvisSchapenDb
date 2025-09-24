@@ -351,7 +351,7 @@ if(isset($data)) {
         $sekse = $array['geslacht'];
         $prnt = $array['prnt']; if(isset($prnt)) { if($sekse == 'ooi') { $fase = 'moeder'; } else if($sekse == 'ram') { $fase = 'vader'; } } else { $fase = 'lam'; }
 
-
+        Logger::debug(print_r($_POST, 1));
         if( (isset($_POST['knpVervers_']) || isset($_POST['knpSave_']) ) && !isset($_POST['kzlHokall_']) ) {
             $cbKies = $_POST["chbkies_$schaapId"];
             $datum = $_POST["txtDatum_$schaapId"];
