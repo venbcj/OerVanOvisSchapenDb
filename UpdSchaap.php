@@ -1959,6 +1959,7 @@ if(isset($spndm) /*Speendatum uit historie van laatste stalId*/ && !isset($dmaan
 if($actie_afv != 'uitgeschaard' && !isset($Nextstal) && isset($dmaanw) /*isset($dmaanw) zorgt ervoor dat uitscharen lammmeren niet kan */ ) { $optie4 = 'Uitscharen'; }
 
 // OPTIE 5 = Afleveren, verkopen of afvoeren bij herstellen
+$new_afvoer = '';
 if( (($actie_afv == 'overleden' || $actie_afv == 'uitgeschaard' || $actie_afv == 'vermist') && !isset($dmaanw) && isset($spndm))        )                            { $new_afvoer = 'Afleveren'; $value = 12;} 
 else if( (($actie_afv == 'overleden' || $actie_afv == 'uitgeschaard' || $actie_afv == 'vermist') && isset($dmaanw)) || (isset($dmaanw) && !isset($afvhis)) ) { $new_afvoer = 'Verkopen'; $value = 13; }
 else if(($actie_afv == 'overleden' || $actie_afv == 'uitgeschaard' || $actie_afv == 'vermist') && !isset($dmaanw) && !isset($spndm) && $modtech == 0)          { $new_afvoer = 'Afvoeren'; $value = 12;}

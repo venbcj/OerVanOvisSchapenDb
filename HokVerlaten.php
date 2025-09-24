@@ -32,9 +32,9 @@ include "login.php"; ?>
 
                 <TD valign = "top">
 <?php 
-if (Auth::is_logged_in()) {
+if (!(Session::isset('DT1'))) Session::set('DT1', '1900-01-01');
 
-    if (!(Session::isset('DT1'))) Session::set('DT1', '1900-01-01');
+if (Auth::is_logged_in()) {
 
 if(isset($_GET['pstId']))    { Session::set("ID", $_GET['pstId']); } $ID = Session::get("ID"); /* zorgt het Id wordt onthouden bij het opnieuw laden van de pagina */
 

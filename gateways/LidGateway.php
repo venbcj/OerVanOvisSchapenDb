@@ -136,4 +136,24 @@ WHERE redId = '".mysqli_real_escape_string($this->db,$redId)."' and lidId = '".m
 return $vw->num_rows > 0;
     }
 
+    public function findReader($lidId) {
+        // Bepalen welke reader wordt gebruikt
+        $result = mysqli_query($this->db, "SELECT reader FROM tblLeden WHERE lidId = '".mysqli_real_escape_string($this->db, $lidId)."' ;") or die(mysqli_error($this->db));
+        while ($row = mysqli_fetch_assoc($result)) {
+            return $row['reader'];
+        }
+    }
+
+    public function findCrediteur($lidId) {
+    $qryRendac = mysqli_query($this->db, "
+    SELECT r.relId, p.ubn 
+    FROM tblPartij p
+     join tblRelatie r on (p.partId = r.partId)
+    WHERE p.lidId = '".mysqli_real_escape_string($this->db, $lidId)."' and r.uitval = 1;") or die(mysqli_error($this->db));
+    while ($ren = mysqli_fetch_assoc($qryRendac)) {
+        return $ren;
+    }
+    return [null, null];
+    }
+
 }

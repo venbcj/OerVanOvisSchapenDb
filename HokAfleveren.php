@@ -153,6 +153,7 @@ else { $width = 200; } ?>
     <table border = 0 > <!-- tabel2 -->
     <tr> 
      <td width = <?php echo $width; ?> rowspan = 2 style = "font-size : 18px;">
+<?php # $hoknr wordt nergens gezet. TODO: wat moet dit doen? # ?>
   <b> <?php echo $hoknr; ?></b>
      </td>
 

@@ -202,15 +202,22 @@ copy($dir.'/Readerversies/'.$setup_bestand , $persoonlijke_map.'/Readerversies/'
 copy($dir.'/Readerversies/'.$taken_bestand , $persoonlijke_map.'/Readerversies/'.$taken_bestand);
 
 // Naast login.php ook hier opnieuw controleren of bestand in persoonlijk map Readerversie staat zodat de rode tekst in het menu meteen blauw wordt
-if(isset($Readersetup_bestand)) {
-$appfile_exists = file_exists($persoonlijke_map.'/Readerversies/'.$Readersetup_bestand);
-} else { $appfile_exists = 1; }
+// BCB: dat hoeft niet. Het hoeft maar op 1 plek. TODO: goede plek vinden.
+if (isset($Readersetup_bestand)) {
+    $appfile_exists = file_exists($persoonlijke_map.'/Readerversies/'.$Readersetup_bestand);
+} else {
+    $appfile_exists = 1;
+}
 
-if(isset($Readertaken_bestand)) {
-$takenfile_exists = file_exists($persoonlijke_map.'/Readerversies/'.$Readertaken_bestand);
-} else { $takenfile_exists = 1; }
+if (isset($Readertaken_bestand)) {
+    $takenfile_exists = file_exists($persoonlijke_map.'/Readerversies/'.$Readertaken_bestand);
+} else {
+    $takenfile_exists = 1;
+}
 
-if ($appfile_exists == 1 && $takenfile_exists == 1) { $actuele_versie = 'Ja'; }
+if ($appfile_exists == 1 && $takenfile_exists == 1) {
+    $actuele_versie = 'Ja';
+}
 
  }
 
