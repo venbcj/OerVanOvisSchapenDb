@@ -34,7 +34,7 @@ echo <<<HTML
     <br>
     <br>
     <br>
-    <!-- Mijn eerste commentaar 25-09-25 -->
+    <br>
     <br>
 <img src="OER_van_OVIS.jpg" width=650 height=240 valign = "center"/>
     <br>
