@@ -46,11 +46,20 @@ $versie = '31-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 <?php
 $titel = 'Verblijven in gebruik';
 $file = "Bezet.php";
-include "login.php"; ?>
-
+include "login.php";
+?>
         <TD valign = "top">
 <?php
-if (Auth::is_logged_in()) { ?>
+if (Auth::is_logged_in()) {
+
+$bezet_gateway = new BezetGateway($db);
+$aantal_zonder_speendatum = $bezet_gateway->zoek_verblijven_ingebruik_zonder_speendm($lidId);
+$aantal_met_speendatum = $bezet_gateway->zoek_verblijven_ingebruik_met_speendm($lidId);
+$aantal_zonder_verblijf = $bezet_gateway->zoek_schapen_zonder_verblijf($lidId);
+$zoek_verblijven_in_gebruik = $bezet_gateway->zoek_verblijven_in_gebruik($lidId);
+$periode_gateway = new PeriodeGateway($db);
+
+?>
 
 <form action = "Bezet.php" method = "post">
 <table BORDER = 0 width = 960 align = "center">
@@ -60,28 +69,20 @@ if (Auth::is_logged_in()) { ?>
     <i style = "font-size : 13px;" > Verblijflijsten per doelgroep : &nbsp  
 <?php
 
-$bezet_gateway = new BezetGateway($db);
-$aantal = $bezet_gateway->zoek_verblijven_ingebruik_zonder_speendm($lidId);
-if( $aantal > 0 )
+if( $aantal_zonder_speendatum > 0 )
         { ?>
             <a href=' <?php echo $url; ?>Hoklijst.php?pstgroep=1' style = "color : blue"> Geboren </a>     
 <?php
         }
-$aantal = $bezet_gateway->zoek_verblijven_ingebruik_met_speendm($lidId);
-if($aantal)
+if($aantal_met_speendatum)
         { 
             echo "&nbsp &nbsp" ; ?>
             <a href=' <?php echo $url; ?>Hoklijst.php?pstgroep=2' style = "color : blue"> Gespeend </a>     
             </i>
 <?php    } ?>
 </td>
-<?php
-$zVerb = $bezet_gateway->zoek_schapen_zonder_verblijf($lidId);
-?>
-
 <td colspan = 8 align = "right">
-
-<?php    if( $zVerb > 0 )
+<?php    if( $aantal_zonder_verblijf > 0 )
         { ?>
     <a href=' <?php echo $url; ?>Loslopers.php?' style = "color : blue"> Schapen zonder verblijf </a>     
 <?php } ?>
@@ -112,27 +113,21 @@ $zVerb = $bezet_gateway->zoek_schapen_zonder_verblijf($lidId);
  <th width=60></th>
 </tr>
 <?php
-$zoek_verblijven_in_gebruik = $bezet_gateway->zoek_verblijven_in_gebruik($lidId);
-
-$periode_gateway = new PeriodeGateway($db);
 
 while ($row = mysqli_fetch_assoc($zoek_verblijven_in_gebruik)) {
     // Loop alle verblijven in gebruik
-        /*$periId = $row['periId'];*/
-        $hokId = $row['hokId'];
-        $hoknr = $row['hoknr'];
-        $maxgeb = $row['maxgeb'];
-        $maxspn = $row['maxspn'];
-        $maxprnt = $row['maxprnt'];
-        $dmeerst = $row['eerste_in'];
-        $dmlaatst = $row['laatste_uit'];
-        
-$dmstopgeb = $periode_gateway->zoek_laatste_afsluitdm_geb($hokId);
-if(!isset($dmstopgeb)) { $dmstopgeb = '1973-09-11'; }
-
-$dmstopspn = $periode_gateway->zoek_laatste_afsluitdm_spn($hokId);
-if(!isset($dmstopspn)) { $dmstopspn = '1973-09-11'; }
-        
+    /*$periId = $row['periId'];*/
+    $hokId = $row['hokId'];
+    $hoknr = $row['hoknr'];
+    $maxgeb = $row['maxgeb'];
+    $maxspn = $row['maxspn'];
+    $maxprnt = $row['maxprnt'];
+    $dmeerst = $row['eerste_in'];
+    $dmlaatst = $row['laatste_uit'];
+    $dmstopgeb = $periode_gateway->zoek_laatste_afsluitdm_geb($hokId);
+    if(!isset($dmstopgeb)) { $dmstopgeb = '1973-09-11'; }
+    $dmstopspn = $periode_gateway->zoek_laatste_afsluitdm_spn($hokId);
+    if(!isset($dmstopspn)) { $dmstopspn = '1973-09-11'; }
     $aanwezig1 = $bezet_gateway->zoek_nu_in_verblijf_geb($hokId);
     $aanwezig2 = $bezet_gateway->zoek_nu_in_verblijf_spn($hokId);
     $aanwezig = $aanwezig1 + $aanwezig2;
@@ -141,69 +136,60 @@ if(!isset($dmstopspn)) { $dmstopspn = '1973-09-11'; }
     $uit_geb = $bezet_gateway->zoek_verlaten_geb_excl_overpl_en_uitval($hokId, $dmstopgeb);
     $uit_spn = $bezet_gateway->zoek_verlaten_spn_excl_overpl_en_uitval($hokId, $dmstopspn);
     $uit = $uit_geb + $uit_spn;
-
     $overpl_geb = $bezet_gateway->zoek_overplaatsing_geb($hokId, $dmstopgeb);
     $overpl_spn = $bezet_gateway->zoek_overplaatsing_spn($hokId, $dmstopspn);
     $overpl = $overpl_geb + $overpl_spn;
-$uitval1 = $bezet_gateway->zoek_overleden_geb($hokId, $dmstopgeb);
-$uitval2 = $bezet_gateway->zoek_overleden_spn($hokId, $dmstopspn);
+    $uitval1 = $bezet_gateway->zoek_overleden_geb($hokId, $dmstopgeb);
+    $uitval2 = $bezet_gateway->zoek_overleden_spn($hokId, $dmstopspn);
     $uitval = $uitval1 + $uitval2;
-        
-$mdrs = $bezet_gateway->zoek_moeders_van_lam($hokId);
-        
-if (isset($dmeerst)) {
-$datum = date_create($dmeerst);
-$van = date_format($datum,'d-m-Y');
-$dmvan = date_format($datum,'Y-m-d');
-$today = date('Y-m-d');
-unset($dmeerst);
-}
-
-if (isset($dmlaatst)) {
-$datum = date_create($dmlaatst);
-$tot = date_format($datum,'d-m-Y');
-}
+    $mdrs = $bezet_gateway->zoek_moeders_van_lam($hokId);
+    unset($dmvan);
+    unset($tot);
+    if (isset($dmeerst)) {
+        $datum = date_create($dmeerst);
+        $van = date_format($datum,'d-m-Y');
+        $dmvan = date_format($datum,'Y-m-d');
+        $today = date('Y-m-d');
+        unset($dmeerst);
+    }
+    if (isset($dmlaatst)) {
+        $datum = date_create($dmlaatst);
+        $tot = date_format($datum,'d-m-Y');
+    }
 ?>
-
 <tr align = "center">    
-       <td width = 0> </td>            
-       
-<td width = 150 style = "font-size:15px;">     
- <a href=' <?php echo $url; ?>Hoklijsten.php?pst=<?php echo $hokId; ?>' style = "color : blue"> <?php echo $hoknr; ?>     </a> <br/>  
-</td>       
-       <td width = 110 style = "font-size:13px;"> <?php if(isset($van)) { echo $van; unset($van); } ?> </td>       
-       <td width = 110 style = "font-size:13px;"> <?php if(isset($tot)) { echo $tot; } ?> </td>
-       <td width = 60 style = "font-size:15px; color:grey; "> <?php if(isset($maxgeb) && $maxgeb > 0) { echo $maxgeb; } ?> </td>
-       <td width = 60 style = "font-size:15px; color:grey; "> <?php if(isset($maxspn) && $maxspn > 0) { echo $maxspn; } ?> </td>
-       <td width = 60 style = "font-size:15px; color:blue; "> <?php echo $aanwezig; ?> </td>
-       <td width = 60 style = "font-size:15px; color:grey; "> <?php echo $uit; ?> </td>
-       <td width = 60 style = "font-size:15px; color:grey; "> <?php echo $overpl; ?> </td>
-       <td width = 50 style = "font-size:15px; color:grey; "> <?php echo $uitval; ?> </td>
-       <td width = 60 style = "font-size:15px; color:grey; "> <?php echo $mdrs; ?> </td>
-       <td width = 60 style = "font-size:15px; color:blue; "> <?php if($aanwezig3 >0) { echo $aanwezig3; } ?> </td>
-       <td width = 60 style = "font-size:15px; color:grey; "> <?php if(isset($maxprnt) && $maxprnt >0) { echo $maxprnt; } ?> </td>
-</td>
-<td width = 200 style = "font-size:13px;">
-<?php if(isset($dmvan) && $dmvan < $today) { ?>
- <a href='<?php echo $url; ?>HokAfsluiten.php?pstId=<?php echo $hokId; ?>' style = "color : blue">   Periode sluiten  </a>    
-<?php }
- unset($dmvan); ?>
- </td>
+    <td width = 0> </td>            
+    <td width = 150 style = "font-size:15px;">     
+        <a href=' <?php echo $url; ?>Hoklijsten.php?pst=<?php echo $hokId; ?>' style = "color : blue"> <?php echo $hoknr; ?>     </a> <br/>  
+    </td>       
+    <td width = 110 style = "font-size:13px;"> <?php if(isset($van)) { echo $van; unset($van); } ?> </td>       
+    <td width = 110 style = "font-size:13px;"> <?php if(isset($tot)) { echo $tot; } ?> </td>
+    <td width = 60 style = "font-size:15px; color:grey; "> <?php if(isset($maxgeb) && $maxgeb > 0) { echo $maxgeb; } ?> </td>
+    <td width = 60 style = "font-size:15px; color:grey; "> <?php if(isset($maxspn) && $maxspn > 0) { echo $maxspn; } ?> </td>
+    <td width = 60 style = "font-size:15px; color:blue; "> <?php echo $aanwezig; ?> </td>
+    <td width = 60 style = "font-size:15px; color:grey; "> <?php echo $uit; ?> </td>
+    <td width = 60 style = "font-size:15px; color:grey; "> <?php echo $overpl; ?> </td>
+    <td width = 50 style = "font-size:15px; color:grey; "> <?php echo $uitval; ?> </td>
+    <td width = 60 style = "font-size:15px; color:grey; "> <?php echo $mdrs; ?> </td>
+    <td width = 60 style = "font-size:15px; color:blue; "> <?php if($aanwezig3 >0) { echo $aanwezig3; } ?> </td>
+    <td width = 60 style = "font-size:15px; color:grey; "> <?php if(isset($maxprnt) && $maxprnt >0) { echo $maxprnt; } ?> </td>
+    <td width = 200 style = "font-size:13px;">
+    <?php if(isset($dmvan) && $dmvan < $today) { ?>
+      <a href='<?php echo $url; ?>HokAfsluiten.php?pstId=<?php echo $hokId; ?>' style = "color : blue">   Periode sluiten  </a>    
+    <?php } ?>
+    </td>
 </tr>
 <?php
-unset($tot);
 } // Einde Loop alle verblijven in gebruik ?>
 </tr>            
 </table>
 </form>
 </TD>
 <?php
-include "menu1.php"; }
+include "menu1.php";
+}
 ?>
-
 </tr>
-
 </table>
-
 </body>
 </html>
