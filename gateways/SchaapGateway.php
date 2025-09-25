@@ -13,6 +13,42 @@ return $rec['schaapId'] ?? 0;
         # Dit wijst erop dat de code dingen doet die niet bij elkaar horen.
     }
 
+    public function zoek_stalid($lidId) {
+$vw = mysqli_query($this->db,"
+SELECT st.stalId
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join (
+     SELECT stalId
+     FROM tblHistorie
+     WHERE actId = 3
+ ) ouder on (ouder.stalId = st.stalId)
+WHERE s.geslacht = 'ram' and isnull(st.rel_best) and lidId = '".mysqli_real_escape_string($this->db,$lidId)."' 
+GROUP BY st.stalId  
+") or die (mysqli_error($this->db));
+if ($vw->num_rows == 0) {
+    return null;
+}
+return $vw->fetch_row()[0];
+    }
+
+    public function zoek_vaders($lidId, $Karwerk) {
+$vw = mysqli_query($this->db, "
+SELECT st.stalId, right(levensnummer, $Karwerk) werknr, concat(kleur, ' ', halsnr) halsnr
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join (
+     SELECT stalId
+     FROM tblHistorie
+     WHERE actId = 3
+ ) ouder on (ouder.stalId = st.stalId)
+WHERE s.geslacht = 'ram' and isnull(st.rel_best) and lidId = '".mysqli_real_escape_string($this->db, $lidId)."' 
+GROUP BY st.stalId, levensnummer
+ORDER BY right(levensnummer, $Karwerk)  
+") or die (mysqli_error($db));
+return $vw;
+    }
+
     public function count_levnr($fldLevnr, $schaapId) {
         $vw = mysqli_query($this->db, "
 SELECT count(*) aant

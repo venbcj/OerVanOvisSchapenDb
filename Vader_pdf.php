@@ -34,7 +34,7 @@ while ($krw = mysqli_fetch_assoc($zoek_karwerk)) { $Karwerk = $krw['kar_werknr']
 //default margin : 10mm each side
 //writable horizontal : 219-(10*2)=189mm
 
-$pdf = new PDF($Afdrukstand,'mm','A4'); //use new class
+$pdf = new VaderPdf($Afdrukstand,'mm','A4'); //use new class
 
 //define new alias for total page numbers
 $pdf->AliasNbPages('{pages}');
