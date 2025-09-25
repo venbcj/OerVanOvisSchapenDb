@@ -63,28 +63,23 @@ $periode_gateway = new PeriodeGateway($db);
 
 <form action = "Bezet.php" method = "post">
 <table BORDER = 0 width = 960 align = "center">
-<tr >
- <td colspan = 5> 
-
+<tr>
+  <td colspan = 5> 
     <i style = "font-size : 13px;" > Verblijflijsten per doelgroep : &nbsp  
 <?php
-
-if( $aantal_zonder_speendatum > 0 )
-        { ?>
-            <a href=' <?php echo $url; ?>Hoklijst.php?pstgroep=1' style = "color : blue"> Geboren </a>     
+if ($aantal_zonder_speendatum > 0) { ?>
+<a href="<?php echo $url; ?>Hoklijst.php?pstgroep=1" style = "color : blue"> Geboren </a>
 <?php
-        }
-if($aantal_met_speendatum)
-        { 
-            echo "&nbsp &nbsp" ; ?>
-            <a href=' <?php echo $url; ?>Hoklijst.php?pstgroep=2' style = "color : blue"> Gespeend </a>     
-            </i>
+}
+if ($aantal_met_speendatum) { ?>
+&nbsp &nbsp
+<a href="<?php echo $url; ?>Hoklijst.php?pstgroep=2" style = "color : blue"> Gespeend </a>
 <?php    } ?>
-</td>
-<td colspan = 8 align = "right">
-<?php    if( $aantal_zonder_verblijf > 0 )
-        { ?>
-    <a href=' <?php echo $url; ?>Loslopers.php?' style = "color : blue"> Schapen zonder verblijf </a>     
+    </i>
+  </td>
+  <td colspan = 8 align = "right">
+<?php if ($aantal_zonder_verblijf > 0) { ?>
+    <a href="<?php echo $url; ?>Loslopers.php?" style = "color : blue"> Schapen zonder verblijf </a>     
 <?php } ?>
 
 </td>
@@ -97,23 +92,22 @@ if($aantal_met_speendatum)
 </tr>
 <tr style = "font-size:12px;">
  <th width = 0 height = 30></th>
- <th style = "text-align:center;"valign="bottom"width= 150>Verblijf<hr></th>
- <th style = "text-align:center;"valign="bottom"width= 110>Eerste in<hr></th>
- <th style = "text-align:center;"valign="bottom"width= 110>Meest recente eruit<hr></th>
- <th style = "text-align:center;"valign="bottom"width= 60>voor spenen<hr></th>
- <th style = "text-align:center;"valign="bottom"width= 60>na spenen<hr></th>
- <th style = "text-align:center;"valign="bottom"width= 80>Lam aanwezig<hr></th>
- <th style = "text-align:center;"valign="bottom"width= 60>Doelgroep verlaten<hr></th>
- <th style = "text-align:center;"valign="bottom"width= 60>Overge- plaatst<hr></th>
- <th style = "text-align:center;"valign="bottom"width= 50>Uitval<hr></th>
- <th style = "text-align:center;"valign="bottom"width= 60>Moeders van lammeren<hr></th>
- <th style = "text-align:center;"valign="bottom"width= 60>Volwassen aanwezig<hr></th>
- <th style = "text-align:center;"valign="bottom"width= 60>Volwassen<br> totaal geteld<hr></th>
- <th style = "text-align:center;"valign="bottom"><hr></th>
+ <th style="text-align:center;" valign="bottom" width= 150>Verblijf<hr></th>
+ <th style="text-align:center;" valign="bottom" width= 110>Eerste in<hr></th>
+ <th style="text-align:center;" valign="bottom" width= 110>Meest recente eruit<hr></th>
+ <th style="text-align:center;" valign="bottom" width= 60>voor spenen<hr></th>
+ <th style="text-align:center;" valign="bottom" width= 60>na spenen<hr></th>
+ <th style="text-align:center;" valign="bottom" width= 80>Lam aanwezig<hr></th>
+ <th style="text-align:center;" valign="bottom" width= 60>Doelgroep verlaten<hr></th>
+ <th style="text-align:center;" valign="bottom" width= 60>Overge- plaatst<hr></th>
+ <th style="text-align:center;" valign="bottom" width= 50>Uitval<hr></th>
+ <th style="text-align:center;" valign="bottom" width= 60>Moeders van lammeren<hr></th>
+ <th style="text-align:center;" valign="bottom" width= 60>Volwassen aanwezig<hr></th>
+ <th style="text-align:center;" valign="bottom" width= 60>Volwassen<br> totaal geteld<hr></th>
+ <th style="text-align:center;" valign="bottom"><hr></th>
  <th width=60></th>
 </tr>
 <?php
-
 while ($row = mysqli_fetch_assoc($zoek_verblijven_in_gebruik)) {
     // Loop alle verblijven in gebruik
     /*$periId = $row['periId'];*/
