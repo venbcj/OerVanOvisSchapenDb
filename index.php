@@ -4,7 +4,7 @@ require_once("autoload.php");
 
 /* 29-8-2018 titel.php verwijderd. Zit in header.php samen met Style.css
 23-5-2020 logo aangepast
-11-7-2020  file = "index.php"; gewijzigd naar file = "Home.php";
+11-7-2025 jaar gewijzigd van 2020 naar 2025  file = "index.php"; gewijzigd naar file = "Home.php";
  */
 $versie = '26-12-2024';
 /* <TD width = 1390 height = 400 align = "center"> gewijzigd naar <TD align = "center">  */
