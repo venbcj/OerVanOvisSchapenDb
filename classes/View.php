@@ -42,4 +42,11 @@ class View {
         self::render('form/_radios', compact(array_keys(get_defined_vars())));
     }
 
+    public static function nonzero($value) {
+        // niet gezet, leeg, of 0? Dan zie je niks.
+        if (!empty($value)) {
+            echo $value;
+        }
+    }
+
 }

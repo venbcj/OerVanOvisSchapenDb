@@ -56,129 +56,56 @@ if (Auth::is_logged_in()) {
     $aantal_zonder_verblijf = $bezet_gateway->zoek_schapen_zonder_verblijf($lidId);
     $zoek_verblijven_in_gebruik = $bezet_gateway->zoek_verblijven_in_gebruik($lidId);
     $periode_gateway = new PeriodeGateway($db);
-?>
-<form action="Bezet.php" method="post">
-<table BORDER=0 width=960 align="center">
-<tr>
-  <td colspan=5> 
-    <i style="font-size : 13px;" > Verblijflijsten per doelgroep : &nbsp  
-<?php
-if ($aantal_zonder_speendatum > 0) { ?>
-<a href="<?php echo $url; ?>Hoklijst.php?pstgroep=1" style="color : blue"> Geboren </a>
-<?php
-}
-if ($aantal_met_speendatum) { ?>
-&nbsp &nbsp
-<a href="<?php echo $url; ?>Hoklijst.php?pstgroep=2" style="color : blue"> Gespeend </a>
-<?php    } ?>
-    </i>
-  </td>
-  <td colspan=8 align="right">
-<?php if ($aantal_zonder_verblijf > 0) { ?>
-    <a href="<?php echo $url; ?>Loslopers.php?" style="color : blue"> Schapen zonder verblijf </a>     
-<?php } ?>
 
-</td>
-<!--<td colspan=2> <a href= '< ?php echo $url;?>Bezet_pdf.php? ?>' style='color : blue'> print verblijven </a></td> -->
-</tr>
-<tr style="font-size:12px;">
-<th colspan=4 ></th>
-<th colspan=2 align =center valign=bottom style="text-align:center;" >Totaal</th>
-<th colspan=6 ></th>
-</tr>
-<tr style="font-size:12px;">
- <th width=0 height=30></th>
- <th style="text-align:center;" valign="bottom" width= 150>Verblijf<hr></th>
- <th style="text-align:center;" valign="bottom" width= 110>Eerste in<hr></th>
- <th style="text-align:center;" valign="bottom" width= 110>Meest recente eruit<hr></th>
- <th style="text-align:center;" valign="bottom" width= 60>voor spenen<hr></th>
- <th style="text-align:center;" valign="bottom" width= 60>na spenen<hr></th>
- <th style="text-align:center;" valign="bottom" width= 80>Lam aanwezig<hr></th>
- <th style="text-align:center;" valign="bottom" width= 60>Doelgroep verlaten<hr></th>
- <th style="text-align:center;" valign="bottom" width= 60>Overge- plaatst<hr></th>
- <th style="text-align:center;" valign="bottom" width= 50>Uitval<hr></th>
- <th style="text-align:center;" valign="bottom" width= 60>Moeders van lammeren<hr></th>
- <th style="text-align:center;" valign="bottom" width= 60>Volwassen aanwezig<hr></th>
- <th style="text-align:center;" valign="bottom" width= 60>Volwassen<br> totaal geteld<hr></th>
- <th style="text-align:center;" valign="bottom"><hr></th>
- <th width=60></th>
-</tr>
-<?php
-// TODO: (BCB) subqueries in closure verpakken en die doorsturen naar de view, zodat die een ->each_record() kan doen. Mogelijk zie je zo eerder uitvoer.
-// Alternatief: eerst alle rijen ophalen, en die set naar de view sturen --BCB
-    // Loop alle verblijven in gebruik
-while ($row = mysqli_fetch_assoc($zoek_verblijven_in_gebruik)) {
-    // BCB: da's 12 queries per rij. Dat kon wel eens langzaam zijn ja.
-    // TODO: (BV) grote datasets opstellen tbv test, en dan kijken of indexen het sneller maken
-    # rijdata gaat naar de view als $row, de extra berekeningen in $extra
-    $extra = [];
-    $dmstopgeb = $periode_gateway->zoek_laatste_afsluitdm_geb($row['hokId']);
-    if (!isset($dmstopgeb)) {
-        $dmstopgeb = '1973-09-11';
-    }
-    $dmstopspn = $periode_gateway->zoek_laatste_afsluitdm_spn($row['hokId']);
-    if (!isset($dmstopspn)) {
-        $dmstopspn = '1973-09-11';
-    }
-    $aanwezig1 = $bezet_gateway->zoek_nu_in_verblijf_geb($row['hokId']);
-    $aanwezig2 = $bezet_gateway->zoek_nu_in_verblijf_spn($row['hokId']);
-    $extra['aanwezig'] = $aanwezig1 + $aanwezig2;
-    $extra['aanwezig3'] = $bezet_gateway->zoek_nu_in_verblijf_prnt($row['hokId']);
-    $aanwezig_incl = $extra['aanwezig'] + $extra['aanwezig3']; // wordt niet gebruikt
-    $uit_geb = $bezet_gateway->zoek_verlaten_geb_excl_overpl_en_uitval($row['hokId'], $dmstopgeb);
-    $uit_spn = $bezet_gateway->zoek_verlaten_spn_excl_overpl_en_uitval($row['hokId'], $dmstopspn);
-    $extra['uit'] = $uit_geb + $uit_spn;
-    $overpl_geb = $bezet_gateway->zoek_overplaatsing_geb($row['hokId'], $dmstopgeb);
-    $overpl_spn = $bezet_gateway->zoek_overplaatsing_spn($row['hokId'], $dmstopspn);
-    $extra['overpl'] = $overpl_geb + $overpl_spn;
-    $uitval1 = $bezet_gateway->zoek_overleden_geb($row['hokId'], $dmstopgeb);
-    $uitval2 = $bezet_gateway->zoek_overleden_spn($row['hokId'], $dmstopspn);
-    $extra['uitval'] = $uitval1 + $uitval2;
-    $extra['mdrs'] = $bezet_gateway->zoek_moeders_van_lam($row['hokId']);
-    $extra['dmvan'] = '';
-    $extra['van'] = '';
-    $extra['tot'] = '';
-    if (isset($row['eerste_in'])) {
-        $datum = date_create($row['eerste_in']);
-        $extra['van'] = date_format($datum, 'd-m-Y');
-        $extra['dmvan'] = date_format($datum, 'Y-m-d');
-        $extra['today'] = date('Y-m-d');
-    }
-    if (isset($row['laatste_uit'])) {
-        $datum = date_create($row['laatste_uit']);
-        $extra['tot'] = date_format($datum, 'd-m-Y');
-    }
+    $closure = function ($row) use ($periode_gateway, $bezet_gateway) {
+        // BCB: da's 12 queries per rij. Dat kon wel eens langzaam zijn ja.
+        // TODO: (BV) grote datasets opstellen tbv test, en dan kijken of indexen het sneller maken
+        # rijdata gaat naar de view als $row, de extra berekeningen in $extra
+        $extra = [];
+        $dmstopgeb = $periode_gateway->zoek_laatste_afsluitdm_geb($row['hokId']);
+        if (!isset($dmstopgeb)) {
+            $dmstopgeb = '1973-09-11';
+        }
+        $dmstopspn = $periode_gateway->zoek_laatste_afsluitdm_spn($row['hokId']);
+        if (!isset($dmstopspn)) {
+            $dmstopspn = '1973-09-11';
+        }
+        $aanwezig1 = $bezet_gateway->zoek_nu_in_verblijf_geb($row['hokId']);
+        $aanwezig2 = $bezet_gateway->zoek_nu_in_verblijf_spn($row['hokId']);
+        $extra['aanwezig'] = $aanwezig1 + $aanwezig2;
+        $extra['aanwezig3'] = $bezet_gateway->zoek_nu_in_verblijf_prnt($row['hokId']);
+        $aanwezig_incl = $extra['aanwezig'] + $extra['aanwezig3']; // wordt niet gebruikt
+        $uit_geb = $bezet_gateway->zoek_verlaten_geb_excl_overpl_en_uitval($row['hokId'], $dmstopgeb);
+        $uit_spn = $bezet_gateway->zoek_verlaten_spn_excl_overpl_en_uitval($row['hokId'], $dmstopspn);
+        $extra['uit'] = $uit_geb + $uit_spn;
+        $overpl_geb = $bezet_gateway->zoek_overplaatsing_geb($row['hokId'], $dmstopgeb);
+        $overpl_spn = $bezet_gateway->zoek_overplaatsing_spn($row['hokId'], $dmstopspn);
+        $extra['overpl'] = $overpl_geb + $overpl_spn;
+        $uitval1 = $bezet_gateway->zoek_overleden_geb($row['hokId'], $dmstopgeb);
+        $uitval2 = $bezet_gateway->zoek_overleden_spn($row['hokId'], $dmstopspn);
+        $extra['uitval'] = $uitval1 + $uitval2;
+        $extra['mdrs'] = $bezet_gateway->zoek_moeders_van_lam($row['hokId']);
+        $extra['dmvan'] = '';
+        $extra['van'] = '';
+        $extra['tot'] = '';
+        if (isset($row['eerste_in'])) {
+            $datum = date_create($row['eerste_in']);
+            $extra['van'] = date_format($datum, 'd-m-Y');
+            $extra['dmvan'] = date_format($datum, 'Y-m-d');
+            $extra['today'] = date('Y-m-d');
+        }
+        if (isset($row['laatste_uit'])) {
+            $datum = date_create($row['laatste_uit']);
+            $extra['tot'] = date_format($datum, 'd-m-Y');
+        }
+        return $extra;
+    };
+
+    View::render('bezet/list', compact(explode(' ', 'aantal_zonder_verblijf aantal_met_speendatum aantal_zonder_speendatum zoek_verblijven_in_gebruik closure')));
 ?>
-<tr align="center">    
-    <td width=0> </td>            
-    <td width=150 style="font-size:15px;">     
-        <a href=" <?php echo $url; ?>Hoklijsten.php?pst=<?php echo $row['hokId']; ?>" style="color : blue"> <?php echo $row['hoknr']; ?>     </a> <br/>  
-    </td>       
-    <td width=110 style="font-size:13px;"> <?php echo $extra['van']; ?> </td>       
-    <td width=110 style="font-size:13px;"> <?php echo $extra['tot']; ?> </td>
-    <td width=60 style="font-size:15px; color:grey; "> <?php if (!empty($row['maxgeb'])) { echo $row['maxgeb']; } ?> </td>
-    <td width=60 style="font-size:15px; color:grey; "> <?php if (!empty($row['maxspn'])) { echo $row['maxspn']; } ?> </td>
-    <td width=60 style="font-size:15px; color:blue; "> <?php echo $extra['aanwezig']; ?> </td>
-    <td width=60 style="font-size:15px; color:grey; "> <?php echo $extra['uit']; ?> </td>
-    <td width=60 style="font-size:15px; color:grey; "> <?php echo $extra['overpl']; ?> </td>
-    <td width=50 style="font-size:15px; color:grey; "> <?php echo $extra['uitval']; ?> </td>
-    <td width=60 style="font-size:15px; color:grey; "> <?php echo $extra['mdrs']; ?> </td>
-    <td width=60 style="font-size:15px; color:blue; "> <?php if ($extra['aanwezig3'] >0) { echo $extra['aanwezig3']; } ?> </td>
-    <td width=60 style="font-size:15px; color:grey; "> <?php if (!empty($row['maxprnt'])) { echo $row['maxprnt']; } ?> </td>
-    <td width=200 style="font-size:13px;">
-    <?php if ($extra['dmvan'] && $extra['dmvan'] < $extra['today']) { ?>
-      <?php echo View::link_to('Periode sluiten', View::url_for("HokAfsluiten.php?pstId={$row['hokId']}"), ['style' => 'color: blue']); ?>
-    <?php } ?>
-    </td>
-</tr>
-<?php
-} // Einde Loop alle verblijven in gebruik ?>
-</tr>            
-</table>
-</form>
 </TD>
 <?php
-include "menu1.php";
+    include "menu1.php";
 }
 ?>
 </tr>
