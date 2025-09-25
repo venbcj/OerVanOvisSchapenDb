@@ -1,7 +1,8 @@
 <!-- 22-7-2017 gemaakt 
- 5-7-2020 : veld Perkg toegevoegd en wachtdagen gesplitst in vlees en melk
- 9-8-2020 : veld naamreader toegevoegd 
- 17-1-2022 : Sql beveiligd met quotes en Btw 0% toegevoegd -->
+05-07-2020 : veld Perkg toegevoegd en wachtdagen gesplitst in vlees en melk
+09-08-2020 : veld naamreader toegevoegd 
+17-01-2022 : Sql beveiligd met quotes en Btw 0% toegevoegd 
+21-02-2025 : Lege checkboxen gedefinieerd -->
 
 <?php
 /*Save_Artikel.php toegpast in :
@@ -20,15 +21,16 @@ function getIdFromKey($key) {
 
 $array = array();
 
-foreach($_POST as $key => $value) {
+foreach($_POST as $fldname => $fldvalue) {
     
-    $array[getIdFromKey($key)][getNameFromKey($key)] = $value;
+    $multip_array[getIdFromKey($fldname)][getNameFromKey($fldname)] = $fldvalue;
 }
-foreach($array as $recId => $id) {
+foreach($multip_array as $recId => $id) {
 //echo '<br>'.'$recId = '.$recId.'<br>';
 	
 unset($updNaam);
 unset($updEenheid);
+unset($updActief);
 
   foreach($id as $key => $value) {
 	
@@ -66,9 +68,11 @@ unset($updEenheid);
 	 else if ($key == 'kzlRubriek' && empty($value)) { $updRubriek = ''; }
 
 
-	if ($key == 'chkActief') { $updActief = $value; }						   else { $updActief = 0; }	
+	if ($key == 'chkActief') { $updActief = $value; }	
 	
 									}
+
+If(!isset($updActief)) { $updActief = 0; }
 
 if(isset($recId) and $recId > 0) {
 $zoek_in_database = mysqli_query($db, "

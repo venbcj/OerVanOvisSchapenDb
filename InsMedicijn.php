@@ -14,8 +14,11 @@ $versie = '14-11-2020'; /* Onderschied gemaakt tussen reader Agrident en Biocont
 $versie = '15-01-2021'; /* Toedien aantal uit tabel impAgrident gehaald */
 $versie = '07-09-2021'; /* In query's $zoek_afvoerdatum en $zoek_fase h.skip = 0 in where clause toegevoegd */
 $versie = '22-09-2021'; /* func_artikelnuttigen.php toegevoegd */
-
+$versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '15-01-2025'; /*  and isnull(st.rel_best) toegevoegd aan opvragen van gegevens uit tabel impAgrident zodat stalId's van uitgeschaarden niet worden getoond */
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -23,15 +26,13 @@ $versie = '22-09-2021'; /* func_artikelnuttigen.php toegevoegd */
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Inlezen Medicatie';
-$subtitel = ''; 
-Include "header.php"; ?>
-	<TD width = 960 height = 400 valign = "top">
-<?php 
 $file = "InsMedicijn.php";
-Include "login.php"; 
+Include "login.php"; ?>
+
+			<TD valign = "top">
+<?php 
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
 include "func_artikelnuttigen.php";
@@ -125,7 +126,7 @@ left join
 		FROM tblNuttig n
 		 join tblHistorie h on (n.hisId = h.hisId)
 		 join tblStal st on (h.stalId = st.stalId)
-		WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+		WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
 		GROUP BY n.inkId
 	 ) n on (i.inkId = n.inkId)
 	WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)/* deze query betreft min_inkId_met_vrd */."' and i.inkat-coalesce(n.vbrat,0) > 0 and a.soort = 'pil'
@@ -145,7 +146,7 @@ $data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.readId");
 <tr> <form action="InsMedicijn.php" method = "post">
  <td colspan = 2 style = "font-size : 13px;"> 
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
- <td colspan = 2 align = center style = "font-size : 14px;"><?php 
+ <td colspan = 2 align = "center" style = "font-size : 14px;"><?php 
 echo $page_numbers; ?></td>
  <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
  <td colspan = 2 align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
@@ -209,7 +210,7 @@ FROM tblSchaap s
 	SELECT st.schaapId
 	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 3
+	WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
  
@@ -285,7 +286,7 @@ FROM (
 				FROM tblStal st
 				 join tblHistorie h on (h.stalId = st.stalId)
 				 join tblNuttig n on (n.hisId = h.hisId)
-				WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+				WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
 				GROUP BY n.inkId
 			 ) n on (i.inkId = n.inkId)
 			WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."'
@@ -354,7 +355,7 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 		************************************** -->
 
 <tr style = "font-size:13px;">
- <td align = center> 
+ <td align = "center"> 
 
 	<input type = hidden size = 1 name = <?php echo "chbkies_$Id"; ?> value = 0 > <!-- hiddden -->
 	<input type = checkbox 		  name = <?php echo "chbkies_$Id"; ?> value = 1 
@@ -363,7 +364,7 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 	  if ($oke == 0) /*Als voorwaarde niet klopt */ { ?> disabled <?php } else { ?> class="checkall" <?php } /* class="checkall" zorgt dat alles kan worden uit- of aangevinkt*/ ?> >
 	<input type = hidden size = 1 name = <?php echo "laatsteOke_$Id"; ?> value = <?php echo $oke; ?> > <!-- hiddden -->
  </td>
- <td align = center>
+ <td align = "center">
 	<input type = hidden size = 1 name = <?php echo "chbDel_$Id"; ?> value = 0 >
 	<input type = checkbox class="delete" name = <?php echo "chbDel_$Id"; ?> value = 1 <?php if(isset($cbDel)) { echo $cbDel == 1 ? 'checked' : ''; } ?> >
  </td>
@@ -429,7 +430,7 @@ for ($i = 0; $i < $count; $i++){
 	<input type = "text" style = "font-size : 10px; text-align : right;" size = 1 name = <?php echo "txtAantal_$Id"; ?>  value = <?php echo $aantal; ?> >
  </td>
 
- <td align=center >
+ <td align="center" >
 <?php 
 if(!empty($kzlArt) || isset($_POST['knpVervers_'])) {echo $stdat;} ?>
  </td>
@@ -506,10 +507,9 @@ for ($i = 0; $i < $count; $i++){
 	
 	
 	
- <td><center><?php 
+ <td style = "color : red; font-size : 11px;" align="center">
 
-
-// Kijken of artikel voorradig is
+ <?php // Kijken of artikel voorradig is
  if (isset($artId_rd)){
  //Bestaat artikel? 
  $zoek_artikel = mysqli_query($db,"
@@ -541,13 +541,13 @@ WHERE artId = '".mysqli_real_escape_string($db,$artId_rd)."' and lidId = '".mysq
 	}
  }
 // Einde Kijken of artikel voorradig is
- 	if (isset($medicijn) && $pil_voorraad == 0 && !isset($_POST['knpVervers_'])){ ?> <center style = "color : red; font-size : 11px;"> <?php echo $naam. " is niet op voorraad."; }
-	else if (!empty($kzlArt) && $p_act <> 1) { ?> <center style = "color : red; font-size : 11px;"> <?php echo "Dit medicijn is niet meer beschikbaar."; }
-	else if (isset($reduId) && $r_act <> 1) { ?> <center style = "color : red; font-size : 11px;"> <?php echo "Deze reden is niet meer beschikbaar."; }
-	else if (isset($dmafv) && $dmafv <= $date) { ?> <center style = "color : red; font-size : 11px;"> <?php echo 'Datum moet voor afvoerdatum '.$afvdm.' liggen.'; }
+ 	if (isset($medicijn) && $pil_voorraad == 0 && !isset($_POST['knpVervers_'])){ echo $naam. " is niet op voorraad."; }
+	else if (!empty($kzlArt) && $p_act <> 1) { echo "Dit medicijn is niet meer beschikbaar."; }
+	else if (isset($reduId) && $r_act <> 1) { echo "Deze reden is niet meer beschikbaar."; }
+	else if (isset($dmafv) && $dmafv <= $date) { echo 'Datum moet voor afvoerdatum '.$afvdm.' liggen.'; }
 	
 	else if (empty($fase)) {echo "Levensnummer onbekend";} 
-	else { echo"$fase";} unset($fase); ?></center>
+	else { echo"$fase";} unset($fase); ?>
  </td>
 
 </tr>
@@ -567,7 +567,6 @@ Include "menu1.php"; } ?>
 </tr>
 
 </table>
-</center>
 
 </body>
 </html>

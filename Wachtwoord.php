@@ -1,24 +1,23 @@
 <?php 
 $versie = '19-3-2015'; /* bestand gemaakt*/
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "center" align = "center" > gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
 
-session_start(); ?>
+ session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Beheer</title>
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Wijzigen inloggegevens';
-$subtitel = '';
-Include "header.php"; ?>
-
-<TD width = 960 height = 400 valign = "center" align = "center" >
-<?php 
 $file = "Wachtwoord.php";
-Include "login.php";
+Include "login.php"; ?>
+
+		<TD valign = 'top' align = 'center'>
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
 $name = $_SESSION["U1"];  ?>
@@ -51,7 +50,6 @@ Include "menuBeheer.php"; } ?>
 </tr>
 
 </table>
-</center>
 
 </body>
 </html>

@@ -1,5 +1,8 @@
 <?php /* https://www.youtube.com/watch?v=CamDi3Syjy4
-31-7-2020; wdgn gewijzigd in wdgn_v */
+31-7-2020; wdgn gewijzigd in wdgn_v 
+30-12-2023 : and h.skip = 0 toegevoegd bij tblHistorie en sql beveiligd met quotes 
+07-07-2024 : Werknr oplopend gesorteerd 
+19-03-2025 : Gewicht toegevoegd */
 
 require('fpdf/fpdf.php');
 
@@ -26,7 +29,7 @@ FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
  join tblRelatie r on (st.rel_best = r.relId)
  join tblPartij p on (p.partId = r.partId)
-WHERE h.hisId = ".mysqli_real_escape_string($db,$his)." ") or die (mysqli_error($db));
+WHERE h.hisId = '".mysqli_real_escape_string($db,$his)."' ") or die (mysqli_error($db));
 While ($row = mysqli_fetch_assoc($zoek)) {
 	$lidId = $row['lidId'];
 	$afvDate = $row['date'];
@@ -39,7 +42,7 @@ While ($row = mysqli_fetch_assoc($zoek)) {
 $zoek_karwerk = mysqli_query($db,"
 SELECT kar_werknr 
 FROM tblLeden
-WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." 
+WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' 
 ") or die (mysqli_error($db));
 While ($krw = mysqli_fetch_assoc($zoek_karwerk)) { $Karwerk = $krw['kar_werknr']; }
 
@@ -48,7 +51,7 @@ SELECT count(distinct st.stalId) aant
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
  join tblActie a on (h.actId = a.actId)
-WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and h.datum = '".mysqli_real_escape_string($db,$afvDate)."' and st.rel_best = ".mysqli_real_escape_string($db,$relId)." and a.af = 1 
+WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.datum = '".mysqli_real_escape_string($db,$afvDate)."' and st.rel_best = '".mysqli_real_escape_string($db,$relId)."' and a.af = 1 and h.skip = 0
 ");
 while($rij = mysqli_fetch_array($aantal)){ $schpn = $rij['aant']; }
 
@@ -102,11 +105,13 @@ global $schpn;
 		$this->SetDrawColor(50,50,100);
 		$this->Cell(23,3,'','',0,'',false);
 		$this->Cell(15,3,'','',0,'',false);
+		$this->Cell(15,3,'','',0,'',false);
 		$this->Cell(30,3,'','',0,'',false);
 		$this->Cell(18,3,'Datum','',0,'',false);
 		 $this->Cell(20,3,'','',1,'',false);
 		$this->Cell(23,3,'Levensnummer','',0,'',false);
 		$this->Cell(15,3,'Werknr','',0,'C',false);
+		$this->Cell(15,3,'Gewicht','',0,'C',false);
 		$this->Cell(30,3,'Medicijn','',0,'',false);
 		$this->Cell(18,3,'toepassing','',0,'',false);
 		 $this->Cell(20,3,'Wachtdagen','',1,'',false);
@@ -139,7 +144,7 @@ $pdf->SetFont('Times','',6);
 $pdf->SetDrawColor(200,200,200); // Grijs
 
 $zoek_schaap = mysqli_query($db,"
-SELECT st.lidId, s.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr, pil.datum, pil.naam, pil.wdgn_v
+SELECT st.lidId, s.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr, h.kg, pil.datum, pil.naam, pil.wdgn_v
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
  join tblSchaap s on (s.schaapId = st.schaapId)
@@ -152,9 +157,10 @@ FROM tblHistorie h
 	 join tblNuttig n on (h.hisId = n.hisId)
 	 join tblInkoop i on (i.inkId = n.inkId)
 	 join tblArtikel art on (i.artId = art.artId) 
-	WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and h.actId = 8 and (h.datum + interval art.wdgn_v day) >= sysdate()
+	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 8 and h.skip = 0 and (h.datum + interval art.wdgn_v day) >= sysdate()
 ) pil on (st.schaapId = pil.schaapId)
-WHERE h.datum = '".mysqli_real_escape_string($db,$afvDate)."' and st.rel_best = ".mysqli_real_escape_string($db,$relId)." and a.af = 1
+WHERE h.datum = '".mysqli_real_escape_string($db,$afvDate)."' and st.rel_best = '".mysqli_real_escape_string($db,$relId)."' and a.af = 1 and h.skip = 0
+ORDER BY right(s.levensnummer,$Karwerk)
 ");
 while($data=mysqli_fetch_array($zoek_schaap)){
 	
@@ -165,10 +171,12 @@ $levnr_new = '';
   if(isset($levnr_new) && $levnr_new <> $data['levensnummer']) { $border = 'T'; 
 
   	$pdf->Cell(23,5,$data['levensnummer'],$border,0);
-  	$pdf->Cell(15,5,$data['werknr'],$border,0,'C');  }
+  	$pdf->Cell(15,5,$data['werknr'],$border,0,'C');  // C = center
+  	$pdf->Cell(15,5,$data['kg'],$border,0,'C');  }
   else { $border = ''; 
   	$pdf->Cell(23,5,'',$border,0); 
-  	$pdf->Cell(15,5,'',$border,0); }	
+  	$pdf->Cell(15,5,'',$border,0);
+  	$pdf->Cell(15,5,'',$border,0); }
 	
 	$pdf->Cell(30,5,$data['naam'],$border,0);
 	$pdf->Cell(18,5,$data['datum'],$border,0);

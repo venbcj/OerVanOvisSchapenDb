@@ -16,8 +16,11 @@ $versie = '24-4-2020'; /* url Javascript libary aangepast */
 $versie = '13-6-2020'; /* Onderschied gemaakt tussen reader Agrident en Biocontrol */
 $versie = '4-7-2020'; /* 1 tabel impAgrident gemaakt */
 $versie = '23-1-2021'; /* Alias readId bestond niet in query Agrident. Sql beveiligd met quotes */
+$versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
 
-session_start(); ?>
+ session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -25,17 +28,14 @@ session_start(); ?>
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Inlezen Uitval';
-$subtitel = ''; 
-Include "header.php"; ?>
-	<TD width = 960 height = 400 valign = "top">
-<?php 
 $file = "InsUitval.php";
-Include "login.php"; 
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
+Include "login.php"; ?>
 
+				<TD valign = "top">
+<?php
+if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
 if ($modmeld == 1 ) { include "maak_request_func.php"; }
 
@@ -67,6 +67,7 @@ impAgrident rd
 	SELECT h.hisId, a.actie, a.af
 	FROM tblHistorie h
 	 join tblActie a on (h.actId = a.actId)
+	WHERE h.skip = 0
  ) h on (h.hisId = s.hisId)
  left join (
 	SELECT st.schaapId, h.datum
@@ -90,8 +91,8 @@ impAgrident rd
 		 join tblVolwas v on (mdr.schaapId = v.mdrId)
 		 join tblSchaap lam on (v.volwId = lam.volwId)
 		 join tblStal st on (st.schaapId = lam.schaapId)
-		 join tblHistorie h on (st.stalId = h.stalId and h.actId = 1 and h.skip = 0)
-		WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)/* Eerste worp */."'
+		 join tblHistorie h on (st.stalId = h.stalId)
+		WHERE h.actId = 1 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)/* Eerste worp */."'
 		GROUP BY mdr.schaapId
 
 		Union
@@ -101,8 +102,8 @@ impAgrident rd
 		 join tblVolwas v on (mdr.schaapId = v.mdrId)
 		 join tblSchaap lam on (v.volwId = lam.volwId)
 		 join tblStal st on (st.schaapId = lam.schaapId)
-		 join tblHistorie h on (st.stalId = h.stalId and h.actId = 1 and h.skip = 0)
-		WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)/* Laatste worp */."'
+		 join tblHistorie h on (st.stalId = h.stalId)
+		WHERE h.actId = 1 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)/* Laatste worp */."'
 		GROUP BY mdr.schaapId, h.actId
 		HAVING (max(h.datum) > min(h.datum))
 
@@ -115,7 +116,7 @@ impAgrident rd
 		 join tblHistorie h on (h.hisId = b.hisId)
 		 join tblStal st on (st.stalId = h.stalId)
 		 join tblSchaap s on (s.schaapId = st.schaapId)
-		WHERE  st.lidId = '".mysqli_real_escape_string($db,$lidId)/* Gevoerd */."'
+		WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)/* Gevoerd */."'
 		GROUP BY s.schaapId, p.dmafsluit
 	) sd
 	GROUP BY sd.schaapId
@@ -152,6 +153,7 @@ impReader rd
 	SELECT h.hisId, a.actie, a.af
 	FROM tblHistorie h
 	 join tblActie a on (h.actId = a.actId)
+	WHERE h.skip = 0
  ) h on (h.hisId = s.hisId)
  left join (
 	SELECT st.schaapId, h.datum
@@ -175,8 +177,8 @@ impReader rd
 		 join tblVolwas v on (mdr.schaapId = v.mdrId)
 		 join tblSchaap lam on (v.volwId = lam.volwId)
 		 join tblStal st on (st.schaapId = lam.schaapId)
-		 join tblHistorie h on (st.stalId = h.stalId and h.actId = 1 and h.skip = 0)
-		WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)/* Eerste worp */."'
+		 join tblHistorie h on (st.stalId = h.stalId)
+		WHERE h.actId = 1 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)/* Eerste worp */."'
 		GROUP BY mdr.schaapId
 
 		Union
@@ -186,8 +188,8 @@ impReader rd
 		 join tblVolwas v on (mdr.schaapId = v.mdrId)
 		 join tblSchaap lam on (v.volwId = lam.volwId)
 		 join tblStal st on (st.schaapId = lam.schaapId)
-		 join tblHistorie h on (st.stalId = h.stalId and h.actId = 1 and h.skip = 0)
-		WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)/* Laatste worp */."'
+		 join tblHistorie h on (st.stalId = h.stalId)
+		WHERE h.actId = 1 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)/* Laatste worp */."'
 		GROUP BY mdr.schaapId, h.actId
 		HAVING (max(h.datum) > min(h.datum))
 
@@ -200,7 +202,7 @@ impReader rd
 		 join tblHistorie h on (h.hisId = b.hisId)
 		 join tblStal st on (st.stalId = h.stalId)
 		 join tblSchaap s on (s.schaapId = st.schaapId)
-		WHERE  st.lidId = '".mysqli_real_escape_string($db,$lidId)/* Gevoerd */."'
+		WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)/* Gevoerd */."'
 		GROUP BY s.schaapId, p.dmafsluit
 	) sd
 	GROUP BY sd.schaapId
@@ -218,7 +220,7 @@ $data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.readId");
 <tr> <form action="InsUitval.php" method = "post">
  <td colspan = 2 style = "font-size : 13px;">
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
- <td colspan = 2 align = center style = "font-size : 14px;"><?php 
+ <td colspan = 2 align = "center" style = "font-size : 14px;"><?php 
 echo $page_numbers; ?></td>
  <td colspan = 2 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
  <td align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
@@ -291,7 +293,7 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 		************************************** -->
 
 <tr style = "font-size:14px;">
- <td align = center>
+ <td align = "center">
 
 	<input type = hidden size = 1 name = <?php echo "chbkies_$Id"; ?> value = 0 > <!-- hiddden -->
 	<input type = checkbox 		  name = <?php echo "chbkies_$Id"; ?> value = 1 
@@ -300,7 +302,7 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 	  if ($oke == 0) /*Als voorwaarde niet klopt */ { ?> disabled <?php } else { ?> class="checkall" <?php } /* class="checkall" zorgt dat alles kan worden uit- of aangevinkt*/ ?> >
 	<input type = hidden size = 1 name = <?php echo "laatsteOke_$Id"; ?> value = <?php echo $oke; ?> > <!-- hiddden -->
  </td>
- <td align = center>
+ <td align = "center">
 	<input type = hidden size = 1 name = <?php echo "chbDel_$Id"; ?> value = 0 >
 	<input type = checkbox class="delete" name = <?php echo "chbDel_$Id"; ?> value = 1 <?php if(isset($cbDel)) { echo $cbDel == 1 ? 'checked' : ''; } ?> >
  </td>
@@ -308,13 +310,15 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
  <?php if (isset($_POST['knpVervers_'])) { $datum = $_POST["txtuitvdm_$Id"]; } ?>
 <input type = "text" size = 9 style = "font-size : 11px;" name = <?php echo "txtuitvdm_$Id"; ?> value = <?php echo $datum; ?> >
  </td>
- <?php if(isset($af) && $af == 0) { ?> <td align = center> <?php echo $levnr;} else { ?> <td align = center style = "color : red"> <?php echo $levnr;} ?>
+ <?php if(isset($af) && $af == 0) { ?> <td align = "center"> <?php } 
+ 														 else { ?> <td align = "center" style = "color : red"> <?php } 
+echo $levnr; ?>
 <input type = "hidden" name = <?php echo  "txtlevuitv_$Id"; ?> value = <?php echo $levnr; ?> size = 8 style = "font-size : 9px;">
  </td>
  </td>
 <input type = "hidden" name = <?php echo  "txtlevuitv_$Id"; ?> value = <?php echo $levnr; ?> size = 8 style = "font-size : 9px;">
  </td>
- <td align = center>
+ <td align = "center">
 <!-- KZLREDEN UITVAL -->
  <select style="width:150; font-size:12px;" name = <?php echo "kzlreden_$Id"; ?> >
   <option></option>
@@ -335,7 +339,7 @@ for ($i = 0; $i < $count; $i++){
 <?php if( $redenId <> NULL && empty($reden_exist) && empty($_POST["kzlreden_$Id"]) && empty($levnr)) {echo $redenId;?> <b style = "color : red;"> ! </b> <?php } ?></b>
 
  </td> <!-- EINDE KZLREDEN UITVAL -->
- <td align = center>
+ <td align = "center">
  <?php if(isset($af) && $af == 0) { echo $fase; } ?>
  </td>
  <td colspan = 2 align = 'left' style = "color : red"><?php 
@@ -361,7 +365,6 @@ Include "menu1.php"; } ?>
 </tr>
 
 </table>
-</center>
 
 </body>
 </html>

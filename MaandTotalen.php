@@ -5,25 +5,23 @@ $versie = '15-9-2017'/* Som van aanwasdatum gescheiden van aanvoerdatum. Kolomko
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '16-5-2021'; /* s.geslacht = 'ooi' toegevoegd in query $result_permaand, subquery aanw_m. Sql beveiligd met quotes */
 $versie = '22-1-2023'; /* query $result_permaand uitgebreid met vaderdieren. Verticale lijnen toegevoegd */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Rapport</title>
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Maandtotalen';
-$subtitel = '';
-Include "header.php"; ?>
-		<TD width = 960 height = 400 valign = "top" >
-<?php
 $file = "MaandTotalen.php";
-Include "login.php"; 
+Include "login.php"; ?>
+
+		<TD valign = "top">
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech ==1) { ?>
-
-
 
 <?php
 // Omdat jaartal en maanden aflopend zijn moet de cumulatieven aantal ooien aflopend zijn i.p.v. oplopend. Het aantal cumulatief begint dus niet bij 0 maar bij het huidig aantal ooien en rammen.
@@ -123,7 +121,7 @@ left join (
 
 // Verticale lijn toevoegen. Binnen de loop wordt de lijn meerdere malen getoond
 ?>
-<table Border = 0 align = center>
+<table Border = 0 align = "center">
 <tr style = "font-size:12px;">
  <th width = 0 ></th>
  <th colspan = 2 ></th>
@@ -164,7 +162,7 @@ $endjaar = date("Y");
 $endjrmnd = date("Ym");
 
 for($j = $endjaar; $j>=$startjaar; $j--) { ?>
-<tr style = "font-size:18px;" align = center>
+<tr style = "font-size:18px;" align = "center">
  <td ></td>
  <td><b>Jaar <?php echo $j; ?> </b></td>
 
@@ -406,7 +404,7 @@ $doo_v = $row['vdrs_doo'];	if(isset($totDoo_v)   && $m != 12) { $totDoo_v = $tot
 $aanw_v = $row['oudrs_v']; 		if(isset($totAanw_v)  && $m != 12) { $totAanw_v = $totAanw_v+$aanw_v; } 	 else { $totAanw_v = $aanw_v; }
 
 		?>
-<tr align = center>	
+<tr align = "center">	
  <td width = 0> </td>	   
  <td width = 100 style = "font-size:15px;" align = "right"> <?php echo $mndnaam[$m]; ?> <br> </td>	   
  <td width = 1> </td>
@@ -448,7 +446,7 @@ $aanw_v = $row['oudrs_v']; 		if(isset($totAanw_v)  && $m != 12) { $totAanw_v = $
 	}		 
 
 // Totalen ?>
-<tr align = center>	
+<tr align = "center">	
  <td width = 0> </td>	   
  <td width = 100 style = "font-size:15px;"> <hr><b> Totaal <?php echo $j; ?> </b><br> </td>	   
  <td width = 1> </td>

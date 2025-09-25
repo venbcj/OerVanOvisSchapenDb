@@ -1,21 +1,23 @@
 <?php 
 $versie = '1-2-2019'; /* gemaakt */
+$versie = '28-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie sql voorzien van enkele quotes */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = 'top' align = center > gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Rapport</title>
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Meerlingen per jaar';
-$subtitel = '';
-Include "header.php"; ?>
-<TD width = 960 height = 400 valign = 'top' align = center >
-<?php
 $file = "Meerlingen2.php";
-Include "login.php"; 
+Include "login.php"; ?>
+
+		<TD valign = 'top' align = 'center'>
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech ==1) {
 $huidigjaar = date("Y"); $begin_datum = '1-01-'.$huidigjaar; $eind_datum = '1-03-'.$huidigjaar;
 
@@ -38,7 +40,7 @@ FROM tblSchaap mdr
  join tblStal st on (st.schaapId = lam.schaapId)
  join tblHistorie h on (st.stalId = h.stalId)
  
-WHERE st.lidId = ".mysqli_real_escape_string($datb,$Lidid)." and mdr.schaapId = ".mysqli_real_escape_string($datb,$Ooiid)." and h.actId = 1 and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($datb,$Jaar)."' and date_format(h.datum,'%m') = '".mysqli_real_escape_string($datb,$Maand)."'
+WHERE st.lidId = ".mysqli_real_escape_string($datb,$Lidid)." and mdr.schaapId = ".mysqli_real_escape_string($datb,$Ooiid)." and h.actId = 1 and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($datb,$Jaar)."' and date_format(h.datum,'%m') = '".mysqli_real_escape_string($datb,$Maand)."' and h.skip = 0
 GROUP BY v.volwId
 ORDER BY date_format(h.datum,'%Y%m') desc
 ";
@@ -57,8 +59,7 @@ SELECT count(s.schaapId) aant
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
  join tblHistorie h on (st.stalId = h.stalId)
-WHERE s.volwId = ".mysqli_real_escape_string($datb,$Volwid)." and s.geslacht = '".mysqli_real_escape_string($datb,$Geslacht)."' and h.actId = 1 and date_format(h.datum,'%m') = ".mysqli_real_escape_string($datb,$Maand)." and date_format(h.datum,'%Y') = ".mysqli_real_escape_string($datb,$Jaar)."
-		
+WHERE s.volwId = ".mysqli_real_escape_string($datb,$Volwid)." and s.geslacht = '".mysqli_real_escape_string($datb,$Geslacht)."' and h.actId = 1 and date_format(h.datum,'%m') = ".mysqli_real_escape_string($datb,$Maand)." and date_format(h.datum,'%Y') = ".mysqli_real_escape_string($datb,$Jaar)." and h.skip = 0		
 ") or die(mysqli_error($datb));
 
 while($a = mysqli_fetch_assoc($zoek_aantal_geslacht)) { return $a['aant']; }
@@ -67,7 +68,7 @@ while($a = mysqli_fetch_assoc($zoek_aantal_geslacht)) { return $a['aant']; }
 
 <form action= "Meerlingen2.php" method="post">
 <table border = 0> 
-<tr align = center valign = 'top' ><td colspan = 10>	
+<tr align = "center" valign = 'top' ><td colspan = 10>	
 
 <table border = 0>
 <tr>
@@ -81,7 +82,7 @@ while($a = mysqli_fetch_assoc($zoek_aantal_geslacht)) { return $a['aant']; }
 
 </table>		</td></tr>	
 
-<tr><td colspan = 10 align = center><h3>lammeren per moederdier </td></tr>
+<tr><td colspan = 10 align = "center"><h3>lammeren per moederdier </td></tr>
 <tr><td colspan = 10 ><hr></td></tr>
 <tr><td></td></tr>
 <!--	Einde Gegevens tbv MOEDERDIER		-->
@@ -92,19 +93,19 @@ while($a = mysqli_fetch_assoc($zoek_aantal_geslacht)) { return $a['aant']; }
  	<input type = "submit" name="ascTotat"  value = "A" style= "font-size:7px";>
 	<input type = "submit" name="descTotat" value = "Z" style= "font-size:7px";>
  </td>
- <td align =center style = "font-size : 12px;" >
+ <td align ="center" style = "font-size : 12px;" >
  	<input type = "submit" name="ascJaar1"  value = "A" style= "font-size:7px";>
 	<input type = "submit" name="descJaar1" value = "Z" style= "font-size:7px";>
  </td>
- <td align =center style = "font-size : 12px;" >
+ <td align ="center" style = "font-size : 12px;" >
  	<input type = "submit" name="ascJaar2"  value = "A" style= "font-size:7px";>
 	<input type = "submit" name="descJaar2" value = "Z" style= "font-size:7px";>
  </td>
- <td align =center style = "font-size : 12px;" >
+ <td align ="center" style = "font-size : 12px;" >
  	<input type = "submit" name="ascJaar3"  value = "A" style= "font-size:7px";>
 	<input type = "submit" name="descJaar3" value = "Z" style= "font-size:7px";>
  </td>
- <td align =center style = "font-size : 12px;" >
+ <td align ="center" style = "font-size : 12px;" >
  	<input type = "submit" name="ascJaar4"  value = "A" style= "font-size:7px";>
 	<input type = "submit" name="descJaar4" value = "Z" style= "font-size:7px";>
  </td>
@@ -138,7 +139,7 @@ FROM (
 	 join tblSchaap lam on (v.volwId = lam.volwId)
 	 join tblStal st on (lam.schaapId = st.schaapId)
 	 join tblHistorie h on (h.stalId = st.stalId)
-	WHERE isnull(stm.rel_best) and stm.lidId = ".mysqli_real_escape_string($db,$lidId)." and st.lidId = ".mysqli_real_escape_string($db,$lidId)." and date_format(h.datum,'%Y') <= ".mysqli_real_escape_string($db,$jaar1)." and date_format(h.datum,'%Y') >= ".mysqli_real_escape_string($db,$jaar4)." and h.actId = 1
+	WHERE isnull(stm.rel_best) and stm.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(h.datum,'%Y') <= '".mysqli_real_escape_string($db,$jaar1)."' and date_format(h.datum,'%Y') >= '".mysqli_real_escape_string($db,$jaar4)."' and h.actId = 1 and h.skip = 0
 	GROUP BY mdr.schaapId, right(mdr.levensnummer,$Karwerk), v.volwId
 	HAVING count(v.volwId) > 0
  ) perWorp
@@ -150,8 +151,8 @@ left join (
 	 join tblSchaap lam on (v.volwId = lam.volwId)
 	 join tblStal st on (lam.schaapId = st.schaapId)
 	 join tblHistorie h on (h.stalId = st.stalId)
-	WHERE isnull(stm.rel_best) and stm.lidId = ".mysqli_real_escape_string($db,$lidId)." and st.lidId = ".mysqli_real_escape_string($db,$lidId)."
-	 and h.actId = 1 and date_format(h.datum,'%Y') = ".mysqli_real_escape_string($db,$jaar1)."
+	WHERE isnull(stm.rel_best) and stm.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+	 and h.actId = 1 and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar1)."' and h.skip = 0
 	GROUP BY mdr.schaapId, v.volwId
 	HAVING count(v.volwId) > 0
 ) perWorp_jr1  on (perWorp.volwId = perWorp_jr1.volwId)
@@ -163,8 +164,8 @@ left join (
 	 join tblSchaap lam on (v.volwId = lam.volwId)
 	 join tblStal st on (lam.schaapId = st.schaapId)
 	 join tblHistorie h on (h.stalId = st.stalId)
-	WHERE isnull(stm.rel_best) and stm.lidId = ".mysqli_real_escape_string($db,$lidId)." and st.lidId = ".mysqli_real_escape_string($db,$lidId)."
-	 and h.actId = 1 and date_format(h.datum,'%Y') = ".mysqli_real_escape_string($db,$jaar2)."
+	WHERE isnull(stm.rel_best) and stm.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+	 and h.actId = 1 and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar2)."' and h.skip = 0
 	GROUP BY mdr.schaapId, v.volwId
 	HAVING count(v.volwId) > 0
 ) perWorp_jr2 on (perWorp.volwId = perWorp_jr2.volwId)
@@ -176,8 +177,8 @@ left join (
 	 join tblSchaap lam on (v.volwId = lam.volwId)
 	 join tblStal st on (lam.schaapId = st.schaapId)
 	 join tblHistorie h on (h.stalId = st.stalId)
-	WHERE isnull(stm.rel_best) and stm.lidId = ".mysqli_real_escape_string($db,$lidId)." and st.lidId = ".mysqli_real_escape_string($db,$lidId)."
-	 and h.actId = 1 and date_format(h.datum,'%Y') = ".mysqli_real_escape_string($db,$jaar3)."
+	WHERE isnull(stm.rel_best) and stm.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+	 and h.actId = 1 and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar3)."' and h.skip = 0
 	GROUP BY mdr.schaapId, v.volwId
 	HAVING count(v.volwId) > 0
 ) perWorp_jr3 on (perWorp.volwId = perWorp_jr3.volwId)
@@ -189,8 +190,8 @@ left join (
 	 join tblSchaap lam on (v.volwId = lam.volwId)
 	 join tblStal st on (lam.schaapId = st.schaapId)
 	 join tblHistorie h on (h.stalId = st.stalId)
-	WHERE isnull(stm.rel_best) and stm.lidId = ".mysqli_real_escape_string($db,$lidId)." and st.lidId = ".mysqli_real_escape_string($db,$lidId)."
-	 and h.actId = 1 and date_format(h.datum,'%Y') = ".mysqli_real_escape_string($db,$jaar4)."
+	WHERE isnull(stm.rel_best) and stm.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+	 and h.actId = 1 and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar4)."' and h.skip = 0
 	GROUP BY mdr.schaapId, v.volwId
 	HAVING count(v.volwId) > 0
 ) perWorp_jr4 on (perWorp.volwId = perWorp_jr4.volwId)
@@ -212,7 +213,7 @@ while($jm = mysqli_fetch_assoc($ooien_met_meerlingworpen)) {
  </td>
 </tr>
 
-<tr align = center style = "font-size : 14px;"  >
+<tr align = "center" style = "font-size : 14px;"  >
  <td></td>
  <td width = 100><b> maand </b><hr></td>
  <td width = 50><b> <?php echo $jaar1; ?> </b><hr></td>
@@ -233,7 +234,7 @@ FROM tblSchaap mdr
  join tblStal st on (st.schaapId = lam.schaapId)
  join tblHistorie h on (st.stalId = h.stalId)
  
-WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and mdr.schaapId = ".mysqli_real_escape_string($db,$ooiId)." and h.actId = 1 and date_format(h.datum,'%Y') <= '".mysqli_real_escape_string($db,$jaar1)."' and date_format(h.datum,'%Y') >= '".mysqli_real_escape_string($db,$jaar4)."'
+WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and mdr.schaapId = '".mysqli_real_escape_string($db,$ooiId)."' and h.actId = 1 and date_format(h.datum,'%Y') <= '".mysqli_real_escape_string($db,$jaar1)."' and date_format(h.datum,'%Y') >= '".mysqli_real_escape_string($db,$jaar4)."' and h.skip = 0
 GROUP BY date_format(h.datum,'%m')
 ORDER BY date_format(h.datum,'%m')
 ";
@@ -308,7 +309,7 @@ unset($volwId);
 /* Einde Gegevens jaar 4 opvragen : meerling, aantal ooitjes en/of rammetjes */
 
 	?>	
-<tr align = center style = "font-size : 15px";>
+<tr align = "center" style = "font-size : 15px";>
  <td>  </td>
  <td> <?php echo $maand[$maandnr]; ?> </td>
 
@@ -368,7 +369,6 @@ unset($volwId);
 Include "menuRapport1.php"; } ?>
 </tr>
 </table>
-</center>
 
 </body>
 </html>

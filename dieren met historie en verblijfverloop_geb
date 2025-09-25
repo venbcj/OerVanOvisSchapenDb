@@ -1,0 +1,45 @@
+
+in tblBezet gelijk aan aanwasdatum
+SELECT h.hisId, h.stalId, h.datum, h.actId, a.actie, h.kg, b.hokId, p.sluit, prnt.datum dmaanw
+FROM tblHistorie h
+ join tblActie a on (h.actId = a.actId)
+ left join tblBezet b on (h.hisId = b.hisId)
+ left join (
+ 	SELECT hokId, min(dmafsluit) sluit
+ 	FROM tblPeriode
+ 	WHERE doelId = 3
+ 	GROUP BY hokId
+ ) p on (b.hokId = p.hokId)
+ join tblStal st on (h.stalId = st.stalId)
+ left join (
+		SELECT st.schaapId, h.datum
+		FROM tblStal st
+		 join tblHistorie h on (st.stalId = h.stalId)
+		WHERE h.actId = 3
+ ) prnt on (prnt.schaapId = st.schaapId)
+WHERE (a.aan = 1 or a.uit = 1 or h.actId = 3) and h.skip = 0 and st.stalId = 8376
+
+st.stalId = 13935
+b.hokId = 80
+
+
+hisId 	stalId 	datum 	actId 	actie 	kg 	hokId 	sluit 	dmaanw 	
+19840 	7133 	2017-05-01 	1 	Geboren 	NULL 	NULL 	NULL 	2018-08-07
+19841 	7133 	2018-08-07 	2 	Aangekocht 	NULL 	NULL 	NULL 	2018-08-07
+19842 	7133 	2018-08-07 	3 	Aanwas 	NULL 	NULL 	NULL 	2018-08-07
+23335 	7133 	2019-01-05 	6 	Geplaatst 	NULL 	80 	2019-04-06 	2018-08-07
+
+
+19842 gewijzigd van 2018-08-07 naar 2019-07-08
+59402 stalId gewijzigd van 7133 naar 71
+
+25712 (overlijden) stalId 7133 gewijzigd naar 71
+
+28506 gewijzigd van 2019-01-01 naar 2019-09-01
+
+10112 gewijzigd van 2017-07-03 naar 2020-04-01
+
+in tblBezet hisId 41555 hokId gewijzigd van 27 naar 16
+
+in tblPeriode 131 hokId gewijzigd van 27 naar 2727
+in tblPeriode 170 2020-03-01 gewijzigd naar 2022-03-01

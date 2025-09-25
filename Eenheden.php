@@ -2,26 +2,26 @@
 8-3-2015 : Login toegevoegd */
 $versie = '3-3-2017'; /* Alles m.b.t. invoer verwijderd */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Beheer</title>
 </head>
 <body>
 
-<center>
 <?php
 if (isset ($_POST['knpUpdate'])) {
 	Include "url.php";
 	header("Location: ".$url."Eenheden.php"); }
 
 $titel = 'Verbruikseenheden';
-$subtitel = '';
-Include "header.php"; ?>
-	<TD width = 960 height = 400 valign = "top">
-<?php
 $file = "Eenheden.php";
-Include "login.php"; 
+Include "login.php"; ?>
+
+			<TD align = "center" valign = "top">
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech ==1) { ?>
 
 <table border = 0 ><tr><td>
@@ -90,7 +90,6 @@ Include "menuBeheer.php"; } ?>
 
 	</tr>
 	</table>
-	</center>
 
 	</body>
 	</html>

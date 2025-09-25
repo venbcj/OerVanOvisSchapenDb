@@ -7,7 +7,9 @@
 	- Inkopen.php 1x
 	- invSchaap.php 3x
 	- Med_registratie.php 1x
-	- UpdSchaap.php 5x
+  - Readerversies.php 1x  per 22-10-2023
+	- UpdSchaap.php 6x
+
  --> 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -39,6 +41,7 @@ $(document).ready(function() {
     $('#datepicker3').datepicker(options);
     $('#datepicker4').datepicker(options);
     $('#datepicker5').datepicker(options);
+    $('#datepicker6').datepicker(options);
 
   	/*$('#datepicker2').datepicker({
   	dateFormat: "dd-mm-yy",

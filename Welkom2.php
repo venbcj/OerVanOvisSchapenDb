@@ -1,23 +1,23 @@
 <?php 
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '9-1-2020'; /* schapencentrum.. vervangen door Oer van Ovis */
+$versie = '26-12-2024'; /* <TD width = 1160 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> */
 
-
-session_start(); ?>  
+ session_start(); ?>  
+<!DOCTYPE html>
 <html>
 <head>
 <title>Welkom</title>
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Welkompagina';
-$subtitel = '';
+$file = "";
 Include "header.php"; ?>
-	<TD width = 1160 height = 400 valign = "top">
+
+				<TD valign = 'top'>
 <?php 
-$file = ""; 
 /*if ($_SERVER['REQUEST_METHOD'] == "POST") {
   header("location: http://www.jouwsite.nl/pagina.html"); }*/
 if(isset($_POST['knpCreate']))
@@ -41,7 +41,7 @@ include "demo_usercreate.php";
 }
 	?>
 <form action= "Welkom2.php" method= "post" >
-<table border = 0 valign = 'top' align = center>
+<table border = 0 valign = 'top' align = "center">
 <tr><td valign = top>
 	<table border = 0><tr><td height = 50></td></tr>
 	<tr><td>
@@ -54,20 +54,20 @@ include "demo_usercreate.php";
 	</td></tr>
 	</table></td>
 <td valign = 'top'>
-	<table border = 0 align = center>
-<tr height = 50 valign ='top' ><td colspan = 4 align = center>
+	<table border = 0 align = "center">
+<tr height = 50 valign ='top' ><td colspan = 4 align = "center">
 <h2>Aanmaken demo account </td></tr>
 <tr><td width = 150></td><td width = 150>Gebruikersnaam (Ubn) </td><td><input type = text name = 'txtUname' value = <?php if(isset($ubn)) { echo $ubn;} ?> >
  </td><td colspan = 2 width = 550 align = 'left'>Uw ubn is de gebruikersnaam en kan later worden gewijzigd</td><td></td></tr>
 
 <tr><td></td><td>Wachtwoord </td><td> <input type = password name = 'txtPassw' value = <?php if(isset($passw) && $passw == $ctr_p) { echo $passw;} ?> ></td>
- <td width = 150> (minimaal 6 tekens)</td><td rowspan = 6 width = 500 align = right valign = center><img src='meldingen.jpg' width='480' height='200' ></td></tr>
+ <td width = 150> (minimaal 6 tekens)</td><td rowspan = 6 width = 500 align = right valign = "center"><img src='meldingen.jpg' width='480' height='200' ></td></tr>
 
 <tr><td></td><td>Bevestig wachtwoord </td><td> <input type = password name = 'ctrPassw' value = <?php if(isset($ctr_p) && $ctr_p == $passw) { echo $ctr_p;} ?> >
  </td><td> </td></tr>
 <tr><td></td><td>Telefoonnummer  </td><td> <input type = text name = 'txtTel' value = <?php if(isset($tel)) { echo $tel;} ?> ></td><td> </td></tr>
 <tr><td></td><td>E-mail </td><td colspan = 2 > <input type = text name = 'txtMail' size = 45 value = <?php if(isset($mail)) { echo $mail;} ?> ></td><td></td></tr>
-<tr><td colspan = 2></td><td align = center><input type = submit name = 'knpCreate' value = "Aanmaken" >
+<tr><td colspan = 2></td><td align = "center"><input type = submit name = 'knpCreate' value = "Aanmaken" >
  </td><td><a href=' <?php echo $url; ?>Welkom.php' style = "color : blue"> Terug </a></td><td></td></tr>
 <tr><td colspan = 5 height = 100></td></tr>
 <tr>
@@ -79,9 +79,9 @@ info@oervanovis.nl<br/><br/></td><td colspan = 4 height = 250 align = right vali
 
 <td valign = top>
 	<table border = 0>
-	<tr><td height = 80 align = center valign = 'top' >
+	<tr><td height = 80 align = "center" valign = 'top' >
 	</td></tr>
-	<tr><td height = 400 valign = center>
+	<tr><td height = 400 valign = "center">
 	</td></tr>
 	<tr><td>
 	</td></tr>
@@ -98,7 +98,6 @@ info@oervanovis.nl<br/><br/></td><td colspan = 4 height = 250 align = right vali
 
 </table>
 </form>
-</center>
 
 </body>
 </html>

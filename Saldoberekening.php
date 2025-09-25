@@ -5,22 +5,24 @@ $versie = '23-03-2017'; /* : Aantal dieren naar boven afgerond dmv ceil()	26-3 :
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '11-7-2020'; /* € gewijzigd in &euro; 12-7-2020 ë uit database gewijzigd in echo htmlentities($string, ENT_COMPAT,'ISO-8859-1', true); bron https://www.php.net/htmlspecialchars via https://www.phphulp.nl/php/forum/topic/speciale-tekens-in-code-omzetten/50786/ */
 $versie = '17-01-2021'; /* Enkele quotes om variabele gezet*/
+$versie = '31-12-2023'; /* and h.skip = 0 aangevuld aan tblHistorie */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+
  session_start();  ?>  
+<!DOCTYPE html>
 <html>
 <head>
 <title>Financieel</title>
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Saldoberekening';
-$subtitel = '';
-Include "header.php"; ?>
-	<TD width = 960 height = 400 valign = "top">
-<?php 
 $file = "";
-Include "login.php"; 
+Include "login.php"; ?>
+
+			<TD valign = 'top'>
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modfin == 1) {
 
 include "func_euro.php";
@@ -69,8 +71,8 @@ $zoek_gebrn_in_jaar = mysqli_query($db,"
 SELECT count(s.schaapId) aant_geb
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
- join tblHistorie hg on (hg.stalId = st.stalId and hg.actId = 1)
- left join tblHistorie hkoop on (hkoop.stalId = st.stalId and hkoop.actId = 2)
+ join tblHistorie hg on (hg.stalId = st.stalId and hg.actId = 1 and hg.skip = 0)
+ left join tblHistorie hkoop on (hkoop.stalId = st.stalId and hkoop.actId = 2 and hkoop.skip = 0)
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(hg.datum,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and isnull(hkoop.hisId)
 ") or die (mysqli_error($db));
 	while ($geb = mysqli_fetch_assoc($zoek_gebrn_in_jaar)) { $gebrn = $geb['aant_geb']; }
@@ -83,13 +85,13 @@ FROM tblSchaap s
  join (
 	SELECT stalId, datum
 	FROM tblHistorie
-	WHERE actId = 3 and date_format(datum,'%Y') <= '".mysqli_real_escape_string($db,$kzlJaar)."'
+	WHERE actId = 3 and skip = 0 and date_format(datum,'%Y') <= '".mysqli_real_escape_string($db,$kzlJaar)."'
  ) ouder on (st.stalId = ouder.stalId)
  join (
 	SELECT st.stalId
 	FROM tblHistorie h
 	 join tblStal st on (h.stalId = st.stalId)
-	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 	GROUP BY h.stalId
 	HAVING (date_format(min(h.datum),'%Y') <= '".mysqli_real_escape_string($db,$kzlJaar)."')
  ) mindm on (st.stalId = mindm.stalId)
@@ -97,7 +99,7 @@ FROM tblSchaap s
 	SELECT st.stalId, st.rel_best
 	FROM tblHistorie h
 	 join tblStal st on (h.stalId = st.stalId)
-	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 	GROUP BY h.stalId, st.rel_best
 	HAVING (date_format(max(h.datum),'%Y') >= '".mysqli_real_escape_string($db,$kzlJaar)."' or isnull(st.rel_best))
  ) maxdm on (st.stalId = maxdm.stalId)
@@ -112,13 +114,13 @@ FROM tblSchaap s
  left join (
 	SELECT stalId, datum
 	FROM tblHistorie
-	WHERE actId = 3
+	WHERE actId = 3 and skip = 0
  ) ouder on (st.stalId = ouder.stalId)
  join (
 	SELECT st.stalId
 	FROM tblHistorie h
 	 join tblStal st on (h.stalId = st.stalId)
-	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 	GROUP BY h.stalId
 	HAVING (date_format(min(h.datum),'%Y') <= '".mysqli_real_escape_string($db,$kzlJaar)."')
  ) mindm on (st.stalId = mindm.stalId)
@@ -126,12 +128,12 @@ FROM tblSchaap s
 	SELECT st.stalId, st.rel_best
 	FROM tblHistorie h
 	 join tblStal st on (h.stalId = st.stalId)
-	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 	GROUP BY h.stalId, st.rel_best
 	HAVING (date_format(max(h.datum),'%Y') >= '".mysqli_real_escape_string($db,$kzlJaar)."' or isnull(st.rel_best))
  ) maxdm on (st.stalId = maxdm.stalId)
 
-WHERE (isnull(ouder.datum) or ouder.datum > '".$jan1."')
+WHERE (isnull(ouder.datum) or ouder.datum > '".mysqli_real_escape_string($db,$jan1)."')
 ") or die (mysqli_error($db));
 	while ($lmn = mysqli_fetch_assoc($zoek_lamrn_in_jaar)) { $lamrn = $lmn['aant_lam']; }
 	
@@ -142,18 +144,18 @@ FROM tblSchaap s
  join (
 	SELECT stalId, datum
 	FROM tblHistorie
-	WHERE actId = 14
+	WHERE actId = 14 and skip = 0
  ) dood on (st.stalId = dood.stalId)
  left join (
 	SELECT stalId, datum
 	FROM tblHistorie
-	WHERE actId = 3
+	WHERE actId = 3 and skip = 0
  ) ouder on (st.stalId = ouder.stalId)
  join (
 	SELECT st.stalId, min(h.datum) tempmin
 	FROM tblHistorie h
 	 join tblStal st on (h.stalId = st.stalId)
-	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 	GROUP BY h.stalId
 	HAVING (date_format(min(h.datum),'%Y') <= '".mysqli_real_escape_string($db,$kzlJaar)."')
  ) mindm on (st.stalId = mindm.stalId)
@@ -161,7 +163,7 @@ FROM tblSchaap s
 	SELECT st.stalId, max(h.datum) tempmax, st.rel_best
 	FROM tblHistorie h
 	 join tblStal st on (h.stalId = st.stalId)
-	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 	GROUP BY h.stalId, st.rel_best
 	HAVING (date_format(max(h.datum),'%Y') >= '".mysqli_real_escape_string($db,$kzlJaar)."' or isnull(st.rel_best))
  ) maxdm on (st.stalId = maxdm.stalId)
@@ -177,18 +179,18 @@ FROM tblSchaap s
  join (
 	SELECT stalId, datum
 	FROM tblHistorie
-	WHERE actId = 14
+	WHERE actId = 14 and skip = 0
  ) dood on (st.stalId = dood.stalId)
  join (
 	SELECT stalId, datum
 	FROM tblHistorie
-	WHERE actId = 3 and date_format(datum,'%Y') <= '".mysqli_real_escape_string($db,$kzlJaar)."'
+	WHERE actId = 3 and skip = 0 and date_format(datum,'%Y') <= '".mysqli_real_escape_string($db,$kzlJaar)."'
  ) ouder on (st.stalId = ouder.stalId)
  join (
 	SELECT st.stalId, min(h.datum) tempmin
 	FROM tblHistorie h
 	 join tblStal st on (h.stalId = st.stalId)
-	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 	GROUP BY h.stalId
 	HAVING (date_format(min(h.datum),'%Y') <= '".mysqli_real_escape_string($db,$kzlJaar)."')
  ) mindm on (st.stalId = mindm.stalId)
@@ -196,7 +198,7 @@ FROM tblSchaap s
 	SELECT st.stalId, max(h.datum) tempmax, st.rel_best
 	FROM tblHistorie h
 	 join tblStal st on (h.stalId = st.stalId)
-	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+	WHERE skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 	GROUP BY h.stalId, st.rel_best
 	HAVING (date_format(max(h.datum),'%Y') >= '".mysqli_real_escape_string($db,$kzlJaar)."' or isnull(st.rel_best))
  ) maxdm on (st.stalId = maxdm.stalId)
@@ -209,8 +211,8 @@ SELECT count(distinct v.mdrId) aant_worp
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join tblVolwas v on (s.volwId = v.volwId)
- join tblHistorie hg on (hg.stalId = st.stalId and hg.actId = 1)
- left join tblHistorie hkoop on (hkoop.stalId = st.stalId and hkoop.actId = 2)
+ join tblHistorie hg on (hg.stalId = st.stalId and hg.actId = 1 and hg.skip = 0)
+ left join tblHistorie hkoop on (hkoop.stalId = st.stalId and hkoop.actId = 2 and hkoop.skip = 0)
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(hg.datum,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and isnull(hkoop.hisId)
 ") or die (mysqli_error($db));
 	while ($wrp = mysqli_fetch_assoc($zoek_worpen_in_jaar)) { $worpn = $wrp['aant_worp']; }
@@ -522,9 +524,9 @@ ORDER BY hr.sort
 <tr>
  <td></td>
  <td> <?php if($rubhId == 6 /* voerkosten*/ ) { ?>kg/dier<?php } ?></td>
- <td align = center> <?php if($rubhId == 2 || $rubhId == 5 || $rubhId == 6 /* voerkosten*/ ) { ?>dieren<?php } ?> </td>
- <td align = center> <?php if($rubhId == 2 || $rubhId == 5 || $rubhId == 6 /* voerkosten*/ ) { ?>prijs/stuk<?php } else { ?>prijs<?php } ?> </td>
- <td align = center> Totaal </td>
+ <td align = "center"> <?php if($rubhId == 2 || $rubhId == 5 || $rubhId == 6 /* voerkosten*/ ) { ?>dieren<?php } ?> </td>
+ <td align = "center"> <?php if($rubhId == 2 || $rubhId == 5 || $rubhId == 6 /* voerkosten*/ ) { ?>prijs/stuk<?php } else { ?>prijs<?php } ?> </td>
+ <td align = "center"> Totaal </td>
 </tr>
 <?php // LOOP Rubrieken
 $zoek_Rubriek = mysqli_query($db,"
@@ -609,11 +611,11 @@ else if (isset($subreal_dc) && $credeb == 'd') { $subreal_dc = $subreal_dc+$rubr
 ?>
 <tr>
  <td><?php echo /*$rubId.'-'.*/ $rubriek /*.' - '.$optie*/ ?></td>
- <td align =center>
+ <td align ="center">
   <?php if($rubhId == 6) { ?>
  <input type = text name = <?php echo "txtRubat_$Id"; ?> size = 3 style= "font-size : 11px; text-align : right;" value = <?php if($hoev_ru > 0) { echo $hoev_ru; } ?> > <?php } ?>
  </td>
- <td align = center>
+ <td align = "center">
   <?php if($rubId == 51) { // aantal aankoop vaderdieren handmatig in te vullen ?>
  <input type = text name = <?php echo "txtRubat_$Id"; ?> size = 3 style= "font-size : 11px; text-align : center;" value = <?php if($hoev_ru > 0) { echo str_replace('.00', '', $hoev_ru); } ?> > <?php }
    if(isset($diern) && $diern > 0 ) { echo ceil($diern); } unset($diern); ?>
@@ -671,7 +673,6 @@ Include "menuFinance.php"; } ?>
 </tr>
 
 </table>
-</center>
 
 </body>
 </html>

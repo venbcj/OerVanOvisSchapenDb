@@ -20,11 +20,11 @@ function getIdFromKey($key) {
 
 $array = array();
 
-foreach($_POST as $key => $value) {
+foreach($_POST as $fldname => $fldvalue) {
     
-    $array[getIdFromKey($key)][getNameFromKey($key)] = $value;
+    $multip_array[getIdFromKey($fldname)][getNameFromKey($fldname)] = $fldvalue;
 }
-foreach($array as $recId => $id) {
+foreach($multip_array as $recId => $id) {
 //echo '<br>'.'$recId = '.$recId.'<br>';
 	
 unset($updPrijs);
@@ -40,7 +40,7 @@ unset($delRec);
 
 									}
 
-if(isset($recId) and $recId > 0) {
+if($recId > 0) {
 
 /*Wijzig prijs */
 $wijzig_prijs = "UPDATE tblInkoop set prijs = '".mysqli_real_escape_string($db,$updPrijs)."' WHERE inkId = '".mysqli_real_escape_string($db,$recId)."' 	";
@@ -49,7 +49,7 @@ $wijzig_prijs = "UPDATE tblInkoop set prijs = '".mysqli_real_escape_string($db,$
 
 if(isset($delRec)) {
 	$delete_inkoop = "DELETE FROM tblInkoop WHERE inkId = '".mysqli_real_escape_string($db,$recId)."' " ;
-	mysqli_query($db,$delete_inkoop) or die (mysqli_error($db));
+/*echo $delete_inkoop.'<br>';*/	mysqli_query($db,$delete_inkoop) or die (mysqli_error($db));
 
 	
 }

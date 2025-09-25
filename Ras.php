@@ -5,7 +5,11 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $versie = '30-5-2020'; /* Scannummer t.b.v. reader Agrident aangepast. Hidden velden scan en actief verwijderd */
 $versie = '30-5-2020'; /* function db_null_input toegevoegd en pagina opgebouwd/ingedeeld als Hok.php */
 $versie = '13-6-2020'; /* Mogelijkheid eigen rassen toevoegen */
-session_start(); ?>
+$versie = '20-4-2024'; /* Sortering rassen in gebruik */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+
+ session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -13,18 +17,14 @@ session_start(); ?>
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Invoer rassen';
-$subtitel = '';
-Include "header.php"; ?>
-
-			<TD width = 960 height = 400 valign = "top">
-<?php
 $file = "Ras.php";
-Include "login.php"; 
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { 
-?>
+Include "login.php"; ?>
+
+			<TD valign = 'top'>
+<?php
+if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { ?>
 
 	<script>
 function verplicht() {
@@ -89,29 +89,7 @@ UPDATE tblRas set eigen = 1 WHERE eigen = '".mysqli_real_escape_string($db,$lidI
 if (isset ($_POST['knpInsert_']))
 {
 
-/*if($reader == 'Agrident') { // Agrident scannr n.v.t.
-// Zoek naar sortnr op duplicaten
-$zoek_sort = mysqli_query($db,"
-SELECT count(sort) sort
-FROM tblRasuser
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and " . db_null_filter('sort', $_POST['insSort_']) . " and sort is not null
-");
-
-	while( $zs = mysqli_fetch_assoc($zoek_sort)) { $aantso = $zs['sort']; }
-}
-else*/ if($reader == 'Biocontrol') { // Biocontrol sortering n.v.t.
-// Zoek naar scannr op duplicaten	
-$zoek_scan = mysqli_query($db,"
-SELECT count(scan) scan
-FROM tblRasuser
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and ". db_null_filter('scan', $_POST['insScan_']) ." and scan is not null
-") or die (mysqli_error($db));
-	while( $zs = mysqli_fetch_assoc($zoek_scan)) { $aantsc = $zs['scan']; }
-} // Einde Biocontrol
-
-
 	if (empty($_POST['kzlRas_']))			{ $fout = "U heeft geen ras geselecteerd."; }	
-	else if( isset($aantsc) && $aantsc > 0)	{ $fout = "De scancode bestaat al."; }
 	//else if( isset($aantso) && $aantso > 0)	{ $fout = "Dit sorteringsnummer bestaat al."; }
 	else 
 	{
@@ -146,7 +124,7 @@ WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
 <tr>
  <td>
  	<?php if($reader == 'Agrident') { $kop = 'sortering reader'; } else { $kop = 'code tbv reader'; }  ?>
- 	<b> Nieuw ras :</b> <td align = center width = 10 style ="font-size:12px;"> <b> <?php echo $kop; ?> </b>
+ 	<b> Nieuw ras :</b> <td align = "center" width = 10 style ="font-size:12px;"> <b> <?php echo $kop; ?> </b>
  </td>
  <td colspan = 2>
  </td>
@@ -198,7 +176,7 @@ ORDER BY r.ras
 	<input type= "text" name= "insScan_" size = 1 title = "Leg hier de code vast die u tijdens het scannen met de reader gaat gebruiken." value = <?php if(isset($txtScan)) { echo $txtScan; } ?> >
 <?php } ?>
  </td>
- <td align = center><input type = "submit" name="knpInsert_" value = "Toevoegen" > </td>
+ <td align = "center"><input type = "submit" name="knpInsert_" value = "Toevoegen" > </td>
   <td width="125">
   </td>
   <td>
@@ -215,8 +193,8 @@ ORDER BY r.ras
 <table border = 0 align = 'left' >
 <tr>
  <td> <b> Rassen</b> </td>
- <td align = center style ="font-size:12px;"> <?php echo $kop; ?> </td>
- <td align = center style ="font-size:12px;"> in gebruik </td>
+ <td align = "center" style ="font-size:12px;"> <?php echo $kop; ?> </td>
+ <td align = "center" style ="font-size:12px;"> in gebruik </td>
  <td> <input type = "submit" name= "knpSave_" value = "Opslaan" style = "font-size:12px;"> </td>
  <td width= 100 align = "right">
  	<a href= '<?php echo $url;?>Ras_pdf.php?Id=<?php echo $pdf; ?>' style = 'color : blue'>
@@ -237,7 +215,7 @@ SELECT r.rasId, r.ras, ru.scan, ru.sort, ru.actief
 FROM tblRas r
  join tblRasuser ru on (r.rasId = ru.rasId)
 WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and r.actief = 1
-ORDER BY coalesce(sort,r.rasId + 500), ras ") or die (mysqli_error($db));
+ORDER BY actief desc, coalesce(sort,ras) asc ") or die (mysqli_error($db));
 	while($rij = mysqli_fetch_assoc($query))
 	{ 
 		$Id = $rij['rasId'];
@@ -249,7 +227,7 @@ ORDER BY coalesce(sort,r.rasId + 500), ras ") or die (mysqli_error($db));
 
 <tr>
  <td> <?php echo $ras; ?> </td>
- <td width = 100 align = center>
+ <td width = 100 align = "center">
 <?php if ($reader == 'Agrident') { ?>
 	<input type = text name = <?php echo "txtSort_$Id"; ?> size = 1 value = <?php echo $sort; ?>  >
 <?php } else { ?>
@@ -264,7 +242,10 @@ ORDER BY coalesce(sort,r.rasId + 500), ras ") or die (mysqli_error($db));
  </td>
 </tr>
 </table>
-</td></tr></table>
+
+</td>
+</tr>
+</table>
 
 
 </form>

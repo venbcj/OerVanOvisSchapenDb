@@ -3,7 +3,8 @@
 23-1-2021 : Transponder toegevoegd 
 20-6-2021 : Voerregistratie toegevoegd
 18-12-2021 : Dekken en Dracht toegevoegd 
-26-11-2022 : Taak Aanvoer, Afvoer, Spenen en Dracht anders ingericht (andere loop in reader) */
+26-11-2022 : Taak Aanvoer, Afvoer, Spenen en Dracht anders ingericht (andere loop in reader)
+05-08-2023 : Taak Stallijstscan toegevoegd */
 
 include"connect_db.php";
 $string = '';
@@ -57,7 +58,7 @@ switch ($_SERVER['REQUEST_METHOD']) { // Switch
 
 		$data = json_decode($input); 
 
-$taken = array('Worpregistratie', 'Doodgeboren', 'Groepsgeboorte', 'Verplaatsing', 'Spenen', 'Afvoer', 'Aanvoer', 'Omnummeren', 'Medicaties', 'Halsnummers', 'Groepsafvoer', 'Voerregistratie', 'Dekken', 'Dracht');
+$taken = array('Worpregistratie', 'Doodgeboren', 'Groepsgeboorte', 'Verplaatsing', 'Spenen', 'Afvoer', 'Aanvoer', 'Omnummeren', 'Medicaties', 'Halsnummers', 'Groepsafvoer', 'Voerregistratie', 'Dekken', 'Dracht', 'StallijstScan');
 
 
 foreach($data as $index => $item) {			 	
@@ -66,50 +67,52 @@ foreach($data as $index => $item) {
 // Inlezen record
 for($i = 0; $i<count($taken); $i++) { // Er zijn 7 elementen nl. zie array $velden
 
-if($i == 0) { $inhoud = $item -> {$taken[$i]} ; include "impWorpregistratie.php"; }
+if($i == 0) { $inhoud = $item -> {$taken[$i]}; include "impWorpregistratie.php"; }
 
-if($i == 1) { $inhoud = $item -> {$taken[$i]} ; include "impDoodgeboren.php"; }
+if($i == 1) { $inhoud = $item -> {$taken[$i]}; include "impDoodgeboren.php"; }
 
-if($i == 2) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum', 'Transponder', 'Levensnummer');
+if($i == 2) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'Transponder', 'Levensnummer');
 												include "impAgrident.php"; }
 
-if($i == 3) { $inhoud = $item -> {$taken[$i]} ; include "impVerplaatsing.php"; }
+if($i == 3) { $inhoud = $item -> {$taken[$i]}; include "impVerplaatsing.php"; }
 
-if($i == 4) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum', 'HokId', 'Levensnummer', 'Gewicht');
+if($i == 4) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'HokId', 'Levensnummer', 'Gewicht');
 												/*$velden_dieren = array('Levensnummer', 'Gewicht');
 												include "impAgrident_dieren.php";*/ 
 												include "impAgrident.php"; }
 
-if($i == 5) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum', 'Ubn', 'Reden', 'Transponder', 'Levensnummer', 'Gewicht');
+if($i == 5) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'Ubn', 'Reden', 'Transponder', 'Levensnummer', 'Gewicht');
 												/*$velden_dieren = array('Transponder', 'Levensnummer', 'Gewicht');
 												include "impAgrident_dieren.php";*/ 
 												include "impAgrident.php"; }
 
-if($i == 6) { $inhoud = $item -> {$taken[$i]} ; $velden = array('Datum', 'Ubn', 'RasId', 'HokId', 'Transponder', 'Levensnummer','Datumdier', 'Geslacht', 'ActId', 'Gewicht');
+if($i == 6) { $inhoud = $item -> {$taken[$i]}; $velden = array('Datum', 'Ubn', 'RasId', 'HokId', 'Transponder', 'Levensnummer','Datumdier', 'Geslacht', 'ActId', 'Gewicht');
 												/*$velden_dieren = array('Transponder', 'Levensnummer', 'Datumdier', 'ActId', 'Geslacht', 'Gewicht');*/
 												include "impAgrident.php"; }
 
-if($i == 7) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum', 'Transponder', 'Levensnummer', 														'Nieuw_Transponder', 'Nieuw_Nummer');
+if($i == 7) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'Transponder', 'Levensnummer', 														'Nieuw_Transponder', 'Nieuw_Nummer');
 												include "impAgrident.php"; }
 
-if($i == 8) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum', 'ArtId','Reden','Toedat','Transponder','Levensnummer');
+if($i == 8) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'ArtId','Reden','Toedat','Transponder','Levensnummer');
 												include "impAgrident.php"; }
 
-if($i == 9) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum', 'Transponder', 'Levensnummer', 'Kleur', 'Halsnr');
+if($i == 9) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'Transponder', 'Levensnummer', 'Kleur', 'Halsnr');
 										 		include "impAgrident.php"; }
 
-if($i == 10) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum', 'Ubn', 'Transponder', 'Levensnummer');
+if($i == 10) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'Ubn', 'Transponder', 'Levensnummer');
 												include "impAgrident.php"; }
 
-if($i == 11) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum', 'HokId', 'DoelId', 'ArtId', 'Toedat');
+if($i == 11) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'HokId', 'DoelId', 'ArtId', 'Toedat');
 												include "impAgrident.php"; }
 
-if($i == 12) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum', 'VdrId', 'MoederTransponder', 'Moeder');
+if($i == 12) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'VdrId', 'MoederTransponder', 'Moeder');
 												include "impAgrident.php"; }
 
-if($i == 13) { $inhoud = $item -> {$taken[$i]} ; $velden = array('ActId', 'Datum', 'MoederTransponder', 'Moeder', 'Drachtig', 'Grootte');
+if($i == 13) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'MoederTransponder', 'Moeder', 'Drachtig', 'Grootte');
 												/* $velden_dieren = array('MoederTransponder', 'Moeder', 'Drachtig', 'Grootte');
 												include "impAgrident_dieren.php";*/ 
+												include "impAgrident.php"; }
+if($i == 14) { $inhoud = $item -> {$taken[$i]}; $velden = array('ActId', 'Datum', 'RasId', 'DoelId', 'HokId', 'Transponder', 'Levensnummer', 'vdrId', 'Geslacht');
 												include "impAgrident.php"; }
 echo $i.'<br>';
 			 } 

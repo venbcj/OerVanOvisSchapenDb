@@ -4,32 +4,25 @@ $versie = '11-11-2014'; /*header("Location: http://localhost:8080/schapendb/Hok.
 $versie = '8-3-2015'; /*Login toegevoegd */
 $versie = '18-11-2015'; /* hok verandert in verblijf*/
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
-session_start(); ?>
+$versie = '30-12-2023'; /* Veld scan (tblStal) weggehaald en daarmee ook de knop Opslaan en het bestand save_vader.php. Ook sql beveiligd met quotes */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+
+ session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Beheer</title>
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Dekrammen';
-$subtitel = ''; 
- 
-Include "header.php";
-?>
-
-		<TD width = '960' height = '400' valign = 'top'>
-		 
-<?php
 $file = "Vader.php";
-Include "login.php"; 
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech ==1) {
+Include "login.php"; ?>
 
-	if (isset ($_POST['knpSave_']))
-{	
-include "save_vader.php";
-}
+		<TD valign = 'top'>
+<?php
+if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech ==1) {
 
 $zoek_stalId = mysqli_query($db,"
 SELECT st.stalId
@@ -40,7 +33,7 @@ FROM tblSchaap s
  	FROM tblHistorie
  	WHERE actId = 3
  ) ouder on (ouder.stalId = st.stalId)
-WHERE s.geslacht = 'ram' and isnull(st.rel_best) and lidId = ".mysqli_real_escape_string($db,$lidId)." 
+WHERE s.geslacht = 'ram' and isnull(st.rel_best) and lidId = '".mysqli_real_escape_string($db,$lidId)."' 
 GROUP BY st.stalId  
 ") or die (mysqli_error($db));
 
@@ -53,11 +46,10 @@ GROUP BY st.stalId
 <table border = 0>
 <tr>
  <td width = 300> </td>
- <td align = center> <b> Halsnr</b> </td>
- <td align = center> <b> Dekram</b> </td>
- <td align = center style ="font-size:12px;"> code tbv Reader </td>
+ <td align = "center"> <b> Halsnr</b> </td>
+ <td align = "center"> <b> Dekram</b> </td>
  <td></td>
- <td><input type = "submit" name= <?php echo "knpSave_"; ?> value = "Opslaan" ></td>
+ <td></td>
  <td width = 200 align="right">
 	<a href= '<?php echo $url;?>Vader_pdf.php?Id=<?php echo $pdf; ?>' style = 'color : blue'>
 	print pagina </a>
@@ -74,7 +66,7 @@ GROUP BY st.stalId
 	
 // START LOOP
 $loop = mysqli_query($db,"
-SELECT st.stalId, right(levensnummer, $Karwerk) werknr, concat(kleur,' ',halsnr) halsnr, scan 
+SELECT st.stalId, right(levensnummer, $Karwerk) werknr, concat(kleur,' ',halsnr) halsnr
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join (
@@ -82,8 +74,8 @@ FROM tblSchaap s
  	FROM tblHistorie
  	WHERE actId = 3
  ) ouder on (ouder.stalId = st.stalId)
-WHERE s.geslacht = 'ram' and isnull(st.rel_best) and lidId = ".mysqli_real_escape_string($db,$lidId)." 
-GROUP BY st.stalId, levensnummer, scan 
+WHERE s.geslacht = 'ram' and isnull(st.rel_best) and lidId = '".mysqli_real_escape_string($db,$lidId)."' 
+GROUP BY st.stalId, levensnummer
 ORDER BY right(levensnummer, $Karwerk)  
 ") or die (mysqli_error($db));
 
@@ -92,15 +84,12 @@ ORDER BY right(levensnummer, $Karwerk)
             $Id = $record['stalId'];
             $werknr = $record['werknr'];
             $halsnr = $record['halsnr'];
-            $scan = $record['scan'];
 ?>
 			<!-- <input type = \"text\" name = \"txtId\" value = \"$id\">". "rowid : $rowid"; -->
 <tr>
  <td> </td>
  <td align="right"> <?php echo $halsnr; ?> </td>
  <td align="center"> <?php echo $werknr; ?> </td>			
- <td width = 100 align = "center">
-	<input type = text name = <?php echo "txtScan_$Id"; ?> size = 1 value = <?php echo $scan; ?>  > </td>
  <td> </td>
 </tr>
 

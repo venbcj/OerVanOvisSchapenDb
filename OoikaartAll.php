@@ -15,22 +15,24 @@ $versie = '8-12-2016';  /* actId = 1 uit on clause gehaald en als sub query gene
 $versie = '10-3-2017';  /* join tblRas gewijzigd naar left join tblRas */
 $versie = '5-8-2017';  /* Gem groei bij spenen toegevoegd */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
+$versie = '28-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" align = "center"> gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Rapport</title>
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Ooikaart';
-$subtitel = '';
-Include "header.php";?>
-<TD width = 960 height = 400 valign = "top" align = "center">
-<?php
 $file = "OoikaartAll.php";
-Include "login.php"; 
+Include "login.php"; ?>
+
+		<TD valign = 'top' align = 'center'>
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech ==1) { ?>
 
 <form action= "OoikaartAll.php" method="post">
@@ -83,37 +85,37 @@ if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) 
 
 
 $result = mysqli_query($db,"
-select mdr.schaapId, mdr.levensnummer, right(mdr.levensnummer,$Karwerk) werknr, r.ras, hg.datum dmgebrn, date_format(hg.datum,'%d-%m-%Y') geb_datum, date_format(haf.datum,'%d-%m-%Y') afleverdm, date_format(hdo.datum,'%d-%m-%Y') uitvaldm,  
+SELECT mdr.schaapId, mdr.levensnummer, right(mdr.levensnummer,$Karwerk) werknr, r.ras, hg.datum dmgebrn, date_format(hg.datum,'%d-%m-%Y') geb_datum, date_format(haf.datum,'%d-%m-%Y') afleverdm, date_format(hdo.datum,'%d-%m-%Y') uitvaldm,  
  count(lam.schaapId) lammeren, count(lam.levensnummer) levend, round(((count(lam.levensnummer) / count(lam.schaapId)) * 100),2) percleven, count(ooi.schaapId) aantooi, count(ram.schaapId) aantram, round(avg(hg_lm.kg),2) gemgewicht, 
  count(hs_lm.datum) aantspn, ((count(hs_lm.datum)/count(lam.schaapId))*100) percspn, round(avg(hs_lm.kg),2) gemspnkg, round(avg(hs_lm.kg-hg_lm.kg),2) gemgr_spn,
  count(haf_lm.datum) aantafv, round(avg(haf_lm.kg),2) gemafvkg, round(avg(haf_lm.kg-hg_lm.kg),2) gemgr_afv 
-from tblSchaap mdr 
+FROM tblSchaap mdr 
  left join tblVolwas v on (mdr.schaapId = v.mdrId)
  left join tblSchaap lam on (v.volwId = lam.volwId)
  join tblStal st on (mdr.schaapId = st.schaapId)
  join (
-	select st.schaapId
-	from tblStal st
+	SELECT st.schaapId
+	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 3 and h.skip = 0
+	WHERE h.actId = 3 and h.skip = 0
  ) ouder on (mdr.schaapId = ouder.schaapId)
  left join (
-	select st.schaapId, datum
-	from tblStal st
+	SELECT st.schaapId, datum
+	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 1
+	WHERE h.actId = 1 and h.skip = 0
  ) hg on (st.schaapId = hg.schaapId)
- left join tblHistorie haf on (st.stalId = haf.stalId and haf.actId = 13)
- left join tblHistorie hdo on (st.stalId = hdo.stalId and hdo.actId = 14)
+ left join tblHistorie haf on (st.stalId = haf.stalId and haf.actId = 13 and haf.skip = 0)
+ left join tblHistorie hdo on (st.stalId = hdo.stalId and hdo.actId = 14 and hdo.skip = 0)
  left join tblRas r on (r.rasId = mdr.rasId)
  left join tblSchaap ooi on (lam.schaapId = ooi.schaapId and ooi.geslacht = 'ooi')
  left join tblSchaap ram on (lam.schaapId = ram.schaapId and ram.geslacht = 'ram')
  left join tblStal st_lm on (lam.schaapId = st_lm.schaapId)
- left join tblHistorie hg_lm on (st_lm.stalId = hg_lm.stalId and hg_lm.actId = 1)
- left join tblHistorie hs_lm on (st_lm.stalId = hs_lm.stalId and hs_lm.actId = 4)
- left join tblHistorie haf_lm on (st_lm.stalId = haf_lm.stalId and haf_lm.actId = 12)
-where st.lidId = ".mysqli_real_escape_string($db,$lidId)." and mdr.geslacht = 'ooi' and isnull(haf.datum) and isnull(hdo.datum)
-group by mdr.levensnummer, r.ras, hg.datum, date_format(haf.datum,'%d-%m-%Y'), date_format(hdo.datum,'%d-%m-%Y')
+ left join tblHistorie hg_lm on (st_lm.stalId = hg_lm.stalId and hg_lm.actId = 1 and hg_lm.skip = 0)
+ left join tblHistorie hs_lm on (st_lm.stalId = hs_lm.stalId and hs_lm.actId = 4 and hs_lm.skip = 0)
+ left join tblHistorie haf_lm on (st_lm.stalId = haf_lm.stalId and haf_lm.actId = 12 and haf_lm.skip = 0)
+WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and mdr.geslacht = 'ooi' and isnull(haf.datum) and isnull(hdo.datum)
+GROUP BY mdr.levensnummer, r.ras, hg.datum, date_format(haf.datum,'%d-%m-%Y'), date_format(hdo.datum,'%d-%m-%Y')
 ") or die (mysqli_error($db));	
 
 {	
@@ -141,7 +143,7 @@ while($row = mysqli_fetch_assoc($result))
 
 ?>
 
-<tr align = center>	
+<tr align = "center">	
  <td width = 0> </td>
  <td width = 1> </td>
  <td width = 100 style = "font-size:14px;"> <?php echo $levnr; ?> <br> </td>
@@ -197,7 +199,6 @@ Include "menuRapport1.php"; }
 include "table_sort.php"; ?>
 </tr>
 </table>
-</center>
 
 </body>
 </html>

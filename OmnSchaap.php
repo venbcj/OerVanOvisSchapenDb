@@ -1,23 +1,22 @@
 <?php 
 $versie = '27-9-2020'; /* Gekopieerd van insOmnummeren.php */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
 
  session_start(); ?>
+<!DOCTYPE html>
 <html>
-<head>
-	
+<head>	
 <title>Registratie</title>
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Omnummeren';
-$subtitel = '';
-Include "header.php"; ?>
-	<TD width = 960 height = 400 valign = "top">
-<?php
 $file = "OmnSchaap.php";
-Include "login.php"; 
+Include "login.php"; ?>
+
+		<TD valign = 'top'>
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { 
 
 include"kalender.php";
@@ -195,7 +194,6 @@ Include "menu1.php"; } ?>
 </tr>
 
 </table>
-</center>
 
 </body>
 </html>

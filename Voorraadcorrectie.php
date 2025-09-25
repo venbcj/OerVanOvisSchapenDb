@@ -1,21 +1,22 @@
 <?php
 $versie = '29-8-2020'; /* kopie gemaakt van MedOverzSchaap.php */
-session_start(); ?>
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+
+ session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Registratie</title>
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Voorraadcorrectie';
-$subtitel = '';
-Include "header.php"; ?>
-<TD width = 960 height = 400 valign = top >
-<?php
 $file = "Voorraad.php";
-Include "login.php";
+Include "login.php"; ?>
+
+		<TD valign = 'top'>
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"])) {
 
 if (!empty($_GET['pst']))
@@ -140,25 +141,25 @@ while($afb = mysqli_fetch_assoc($zoek_afgeboekt))
 
 <tr>
  <td width = 0> </td>
- <td width = 300 align = center style = "font-size:15px;"> <?php echo $naam; ?> <br> 
+ <td width = 300 align = "center" style = "font-size:15px;"> <?php echo $naam; ?> <br> 
 	<input type="hidden" name="txtArtId_" value= <?php echo $artId; ?> >
  </td>
 
  <td width = 1> </td>	   	   
- <td width = 100 align = center style = "font-size:15px;"> <?php echo $toedm; ?> <br> </td>
+ <td width = 100 align = "center" style = "font-size:15px;"> <?php echo $toedm; ?> <br> </td>
 <?php if($soort == 'pil') { ?> 
  <td width = 1> </td>
- <td width = 100 align = center style = "font-size:15px;"> <?php echo $charge; ?> <br> </td>
+ <td width = 100 align = "center" style = "font-size:15px;"> <?php echo $charge; ?> <br> </td>
 <?php } ?>
  <td width = 1> </td>
- <td width = 100 align = center style = "font-size:15px;"> <?php echo $totat.' '.$eenh; ?> </td>
+ <td width = 100 align = "center" style = "font-size:15px;"> <?php echo $totat.' '.$eenh; ?> </td>
   <td width = 1> </td>
- <td width = 100 align = center style = "font-size:13px;"> <?php if(isset($afboek)) { echo $afboek.' '.$eenh; } ?> </td>
+ <td width = 100 align = "center" style = "font-size:13px;"> <?php if(isset($afboek)) { echo $afboek.' '.$eenh; } ?> </td>
  <td width = 1> </td>
- <td width = 100 align = center style = "font-size:15px;"> <input type="text" size = 1 name="<?php echo "txtCorat_$Id"; ?>" >
+ <td width = 100 align = "center" style = "font-size:15px;"> <input type="text" size = 1 name="<?php echo "txtCorat_$Id"; ?>" >
  	<?php echo ' '.$eenh; ?> </td>
  <td width = 1> </td>
- <td width = 100 align = center style = "font-size:15px;"> 
+ <td width = 100 align = "center" style = "font-size:15px;"> 
 <select name= "<?php echo "kzlCorr_$Id"; ?>" style= "width:90;" > 
 <?php
 $opties = array('af' => 'Afboeken', 'bij' => 'Bijboeken');
@@ -188,7 +189,6 @@ Include "menuInkoop.php"; } ?>
 	</tr>
 
 </table>
-</center>
 
 </body>
 </html>

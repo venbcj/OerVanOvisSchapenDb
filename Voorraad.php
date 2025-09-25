@@ -4,29 +4,30 @@
 <?php
 $versie = '12-12-2015';
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
-session_start(); ?>
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+
+ session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Inkoop</title>
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Voorraad';
-$subtitel = '';
-Include "header.php";?>
-<TD width = 960 height = 400 valign = "top">
-<?php 
 $file = "Voorraad.php";
-Include "login.php"; 
+Include "login.php"; ?>
+
+		<TD valign = 'top'>
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech ==1) { ?>
 
 <table border = 0>
 <tr><td colspan = 5 style = "font-size : 18px;"><b> Voorraad Voer </b></td></tr>
 <tr valign = "bottom">
  <td><i><sub>Omschrijving</sub></i><hr></td>
- <td colspan = 2 width = 100 align = center><i><sub>Aantal nog toe te dienen</sub></i><hr></td>
+ <td colspan = 2 width = 100 align = "center"><i><sub>Aantal nog toe te dienen</sub></i><hr></td>
  <td colspan = 2 width = 80><i><sub>Totale hoeveelheid</sub></i><hr></td>
  <td width = 70><i><sub></sub></i><hr></td>
 </tr><?php 
@@ -84,7 +85,7 @@ while ($qryvr = mysqli_fetch_assoc($queryvoer))	{
 <tr><td colspan = 5 style = "font-size : 18px;"><b> Voorraad medicijn </b></td></tr>
 <tr valign = "bottom">
  <td><i><sub>Omschrijving</sub></i><hr></td>
- <td colspan = 2 width = 100 align = center><i><sub>Aantal nog toe te dienen</sub></i><hr></td>
+ <td colspan = 2 width = 100 align = "center"><i><sub>Aantal nog toe te dienen</sub></i><hr></td>
  <td colspan = 2 width = 80><i><sub>Totale hoeveelheid</sub></i><hr></td>
  <td width = 180><i><sub> &nbsp &nbsp Chargenummer</sub></i><hr></td>
 </tr><?php
@@ -146,7 +147,6 @@ while ($qryvr = mysqli_fetch_assoc($querypil))	{
 Include "menuInkoop.php"; } ?>
 </tr>
 </table>
-</center>
 
 </body>
 </html>

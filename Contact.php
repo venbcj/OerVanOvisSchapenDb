@@ -2,6 +2,9 @@
 $versie = '14-8-2014'; /*Menu (rechts) veranderd van menuInkoop naar menuBeheer en html buiten php geprogrammeerd */
 $versie = '8-3-2015'; /*Login toegevoegd*/
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '23-02-2025'; /* <input type= "hidden" name = <?php echo "txtPersId_$Id"; ?> verwijderd en <input  type= "hidden" name= "txtId_" vervangen door $_SESSION["CNT"] en alleen aanhef verplicht gemaakt */
+
 session_start(); ?>
 <html>
 <head>
@@ -9,27 +12,24 @@ session_start(); ?>
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Contactpersonen';
-$subtitel = '';
-Include "header.php";
-?>
-
-		<TD width = '960' height = '400' valign = 'top'><?php
 $file = "Beheer.php";
-Include "login.php"; 
+Include "login.php"; ?>
+
+			<TD valign = "top">
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { 
 
 If (empty($_GET['pstid']))
-{	$partId = $_POST['txtId_'];	}
-else {	$partId = $_GET['pstid'];	}
+{	$partId = $_SESSION["CNT"];	}
+else { $_SESSION["CNT"] = $_GET['pstid']; $partId = $_GET['pstid'];	}
 
 if (isset ($_POST['knpInsert_']))
 {
-	if ( empty($_POST['insRoep_']) || empty($_POST['insLetter_']) || empty($_POST['insNaam_']) 	)
+	if (empty($_POST['kzlSeskse_']) /*|| empty($_POST['insRoep_']) || empty($_POST['insLetter_']) || empty($_POST['insNaam_'])*/ 	)
 	{
-		 $fout = 'De naam is onvolledig.';
+		 
 		 if(!empty($_POST['insRoep_'])) { $txtRoep = $_POST['insRoep_']; }
 		 if(!empty($_POST['insLetter_'])) { $txtLetter = $_POST['insLetter_']; }
 		 if(!empty($_POST['insVgsl_'])) { $txtVgsl = $_POST['insVgsl_']; }
@@ -38,38 +38,25 @@ if (isset ($_POST['knpInsert_']))
 		 if(!empty($_POST['insGsm_'])) { $txtGsm = $_POST['insGsm_']; }
 		 if(!empty($_POST['insMail_'])) { $txtMail = $_POST['insMail_']; }
 		 if(!empty($_POST['insFunct_'])) { $txtFunct = $_POST['insFunct_']; }
-	}
-	else if (empty($_POST['kzlSeskse_'])) { $fout = 'Aanhef / geslacht is onbekend.';
+
+		 /*if ( empty($_POST['insRoep_']) || empty($_POST['insLetter_']) || empty($_POST['insNaam_']) ) { $fout = 'De naam is onvolledig.'; }
+		 else if (empty($_POST['kzlSeskse_'])) { */
+		$fout = 'De aanhef is verplicht.'; //}
 	}
 	else
 	{
   
-if (empty($_POST['insRoep_']))	{	$insVoor = "NULL";	}
-  else		{	$insVoor = " '$_POST[insRoep_]' ";	}
-  
-if (empty($_POST['insLetter_']))	{	$insLetr = "NULL";	}
-  else		{	$insLetr = " '$_POST[insLetter_]' ";	}
-
-if (empty($_POST['insVgsl_']))	{	$insVgsl = "NULL";	}
-  else	{	$insVgsl = "'$_POST[insVgsl_]'";	}
-  
-if (empty($_POST['insNaam_']))	{	$insNaam = "NULL";	}
-  else	{	$insNaam = "'$_POST[insNaam_]'";	} 
-
-if (empty($_POST['insTel_']))	{	$insTel = "NULL";	}
-  else	{	$insTel = "'$_POST[insTel_]'";	}
-
-if (empty($_POST['insGsm_']))	{	$insGsm = "NULL";	}
-  else	{	$insGsm = "'$_POST[insGsm_]'";	}
-
-if (empty($_POST['insMail_']))	{	$insMail = "NULL";	}
-  else	{	$insMail = "'$_POST[insMail_]'";	}
-
-if (empty($_POST['insFunct_']))	{	$insFunct = "NULL";	}
-  else	{	$insFunct = "'$_POST[insFunct_]'";	}
+$insVoor = $_POST['insRoep_'];
+$insLetr = $_POST['insLetter_'];
+$insVgsl = $_POST['insVgsl_'];
+$insNaam = $_POST['insNaam_'];
+$insTel = $_POST['insTel_'];
+$insGsm = $_POST['insGsm_'];
+$insMail = $_POST['insMail_'];
+$insFunct = $_POST['insFunct_'];
 	
 
-		$pers_invoegen = "INSERT INTO tblPersoon SET partId = ".mysqli_real_escape_string($db,$partId).", roep = ".$insVoor.", letter = ".$insLetr.", voeg = ".$insVgsl.", naam = ".$insNaam.", geslacht = '".$_POST['kzlSeskse_']."', tel = ".$insTel.", gsm = ".$insGsm.", mail = ".$insMail.", functie = ".$insFunct." ";
+		$pers_invoegen = "INSERT INTO tblPersoon SET partId = '".mysqli_real_escape_string($db,$partId)."', roep = ".db_null_input($insVoor).", letter = ".db_null_input($insLetr).", voeg = ".db_null_input($insVgsl).", naam = ".db_null_input($insNaam).", geslacht = '".$_POST['kzlSeskse_']."', tel = ".db_null_input($insTel).", gsm = ".db_null_input($insGsm).", mail = ".db_null_input($insMail).", functie = ".db_null_input($insFunct)." ";
 //echo $pers_invoegen;		
 				mysqli_query($db,$pers_invoegen) or die (mysqli_error($db));
 	}
@@ -87,7 +74,6 @@ $querybedrijf = mysqli_query($db,"SELECT naam FROM tblPartij WHERE partId = ".my
 <tr>
  <td colspan = 6 valign = "top" height = 45px>
 	Contactpersonen van : <b><?php echo "$bedrijf"; ?> </b>
-	<input  type= "hidden" name= "txtId_" size = 1 value = <?php echo $partId; ?> "width: 5px;"> <!-- hiddden -->
  </td>
  <td colspan = 15 align = right ><input type = "submit" name= "knpSave_" value = "Opslaan" ></td>
 </tr>
@@ -109,10 +95,10 @@ $querybedrijf = mysqli_query($db,"SELECT naam FROM tblPartij WHERE partId = ".my
 <?php		
 // START LOOP
 $loop = mysqli_query($db,"
-select persId
-from tblPersoon
-where partId = ".mysqli_real_escape_string($db,$partId)."
-order by actief desc
+SELECT persId
+FROM tblPersoon
+WHERE partId = ".mysqli_real_escape_string($db,$partId)."
+ORDER BY actief desc
 ") or die (mysqli_error($db));
 
 	while($record = mysqli_fetch_assoc($loop))
@@ -120,10 +106,10 @@ order by actief desc
             $Id = ("{$record['persId']}");  
 
 $query = mysqli_query($db,"
-select persId, partId, letter, roep, voeg, naam, geslacht, tel, gsm, mail, functie, actief
-from tblPersoon
-where persId = ".mysqli_real_escape_string($db,$Id)."
-order by naam
+SELECT persId, partId, letter, roep, voeg, naam, geslacht, tel, gsm, mail, functie, actief
+FROM tblPersoon
+WHERE persId = ".mysqli_real_escape_string($db,$Id)."
+ORDER BY naam
 ") or die (mysqli_error($db));
 
 	while($row = mysqli_fetch_assoc($query))
@@ -143,7 +129,7 @@ order by naam
 		$functie = "{$row['functie']}"; ?>
 
 <tr style = "font-size:12px;">
- <td align = center><input type= "hidden" name = <?php echo "txtPersId_$Id"; ?> value = <?php echo $Id; ?> style= "width: 60px;"> <!--hiddden--> 
+ <td align = center>
    <?php echo "$aanhef"; ?> </td>
  <td><input type= "text" name = <?php echo "txtRoep_$Id"; ?> value = <?php echo " \"$roep\" "; ?> style= "width: 100px;"></td>
  <td><input type= "text" name = <?php echo "txtLetter_$Id"; ?> value = <?php echo " \"$letter\" "; ?> style= "width: 50px; padding: 2px"></td>
@@ -151,8 +137,8 @@ order by naam
  <td><input type= "text" name = <?php echo "txtVgsl_$Id"; ?> value = <?php echo " \"$voeg\" "; ?> style= "width: 60px;"></td>
  <td><input type= "text" name = <?php echo "txtNaam_$Id"; ?> value = <?php echo " \"$naam\" "; ?>></td>
  <td width = 1></td>
- <td><input type= "text" name = <?php echo "txtTel_$Id"; ?> value = <?php echo " \"$tel\" "; ?> style= "width: 80px;"></td>
- <td><input type= "text" name = <?php echo "txtGsm_$Id"; ?> value = <?php echo " \"$gsm\" "; ?> style= "width: 80px;"></td>
+ <td><input type= "text" name = <?php echo "txtTel_$Id"; ?> value = <?php echo " \"$tel\" "; ?> style= "width: 90px;"></td>
+ <td><input type= "text" name = <?php echo "txtGsm_$Id"; ?> value = <?php echo " \"$gsm\" "; ?> style= "width: 90px;"></td>
  <td><input type= "text" name = <?php echo "txtMail_$Id"; ?> value = <?php echo " \"$email\" "; ?>></td>
  <td><input type= "text" name = <?php echo "txtFunct_$Id"; ?> value = <?php echo " \"$functie\" "; ?>></td>
  <td><input type = "checkbox" name = <?php echo "chkActief_$Id"; ?> id= "c1" value= "1" <?php echo $row['actief'] == 1 ? 'checked' : ''; ?> title = "Is contactpersoon te gebruiken ja/nee ?"> </td>

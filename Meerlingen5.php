@@ -1,24 +1,27 @@
 <?php 
 $versie = '4-8-2019'; /* gemaakt */
 $versie = '11-11-2019'; /* kolomkop worp gewijzigd in worpgrootte */
+$versie = '28-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = 'top' align = center > gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Rapport</title>
 </head>
 <body>
 
-<center>
 <?php
-include "kalender.php";
 $titel = 'Meerling in periode';
-$subtitel = '';
-Include "header.php"; ?>
-<TD width = 960 height = 400 valign = 'top' align = center >
-<?php
 $file = "Meerlingen5.php";
-Include "login.php"; 
+Include "login.php"; ?>
+
+		<TD valign = 'top' align = 'center'>
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech ==1) {
+include "kalender.php";
+
 $huidigjaar = date("Y"); $begin_datum = '1-01-'.$huidigjaar; $eind_datum = '1-03-'.$huidigjaar;
 
 $var1dag = 60*60*24;
@@ -40,16 +43,16 @@ FROM tblSchaap lam
  left join (
  	SELECT stalId, max(datum) mdm
  	FROM tblHistorie
-	WHERE kg is not null and actId > 1
+	WHERE kg is not null and actId > 1 and skip = 0
 	GROUP BY stalId
  ) mx on (mx.stalId = st.stalId)
  left join (
  	SELECT stalId, datum, max(kg) kg
  	FROM tblHistorie
-	WHERE kg is not null and actId > 1
+	WHERE kg is not null and actId > 1 and skip = 0
 	GROUP BY stalId, datum
  ) lstkg on (lstkg.stalId = st.stalId and lstkg.datum = mx.mdm)
-WHERE lam.levensnummer is not null and isnull(st.rel_best) and h.actId = 1 and st.lidId = ".mysqli_real_escape_string($db,$lidId)." and h.datum >= '".mysqli_real_escape_string($db,$van)."' and h.datum <= '".mysqli_real_escape_string($db,$tot)."'
+WHERE lam.levensnummer is not null and isnull(st.rel_best) and h.actId = 1 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.datum >= '".mysqli_real_escape_string($db,$van)."' and h.datum <= '".mysqli_real_escape_string($db,$tot)."' and h.skip = 0
 GROUP BY lam.levensnummer, lam.geslacht, h.datum, mdr.levensnummer, mx.mdm, st.stalId
 ORDER BY right(lam.levensnummer,$Karwerk)
 ";
@@ -66,7 +69,7 @@ while($mrl = mysqli_fetch_assoc($zoek_meerlingen))
 
 <form action= "Meerlingen5.php" method="post">
 <table border = 0> 
-<tr align = center valign = 'top' ><td colspan = 10>	
+<tr align = "center" valign = 'top' ><td colspan = 10>	
 
 <table border = 0>
 <tr>
@@ -103,7 +106,7 @@ while($mrl = mysqli_fetch_assoc($zoek_meerlingen))
 
 
 
-<tr align = center style = "font-size : 14px;"  >
+<tr align = "center" style = "font-size : 14px;"  >
  
  <td width = 80 align="center"><b> lammeren </b><hr></td> 
  <td width = 80 align="center"><b> geslacht </b><hr></td> 
@@ -140,7 +143,7 @@ $zoek_meerlingen = mysqli_query($db,$query) or die (mysqli_error($db));
 
 
 ?>
-<tr align = center style = "font-size : 14px;"  >
+<tr align = "center" style = "font-size : 14px;"  >
  <td> <?php echo $lam; ?> </td>
  <td> <?php echo $sek; ?> </td>
 
@@ -177,7 +180,6 @@ $zoek_meerlingen = mysqli_query($db,$query) or die (mysqli_error($db));
 Include "menuRapport1.php"; } ?>
 </tr>
 </table>
-</center>
 
 </body>
 </html>

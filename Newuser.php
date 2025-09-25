@@ -1,8 +1,12 @@
 <?php /* 3-3-2015 : Login toegevoegd */
 $versie = '12-12-2015'; /* : Ubn niet te wijzigen */
 $versie = '29-10-2016'; /* : Optie Administrator toegevoegd */
-$versie = '9-1-2017'; /* : Link naar teamviewer toegevoegd */
-$versie = '23-1-2019'; /* aanmaken persoonlijke map toegevoegd */
+$versie = '09-01-2017'; /* : Link naar teamviewer toegevoegd */
+$versie = '23-01-2019'; /* aanmaken persoonlijke map toegevoegd */
+$versie = '12-08-2023'; /* veld ingescand toegevoegd en functie db_null_input() gebruikt. Sql beveiligd met quotes */
+$versie = '16-10-2023'; /* Aanmaken map /Readerversies toegevoegd */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '29-08-2025'; /* Ubn wordt vanaf nu opgeslagen in tblUbn i.p.v. tblLeden. Tevens de keuze Biocontrol in het veld Reader verwijderd */
 
  session_start(); 
 
@@ -49,23 +53,21 @@ function getAlias($datb,$username,$vlgnr) {
 }
 
  ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Beheer</title>
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Nieuwe gebruiker';
-$subtitel = '';
-Include "header.php";?>
-<TD width = 960 height = 400 valign = "top" >
-<?php
 $file = "Systeem.php";
-Include "login.php";
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
-?>
+Include "login.php"; ?>
+
+			<TD valign = 'top'>
+<?php
+if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { ?>
 
 <script>
 function verplicht() {
@@ -88,6 +90,9 @@ else if(isNaN(relatnr_v))  	 relatnr.focus()  + alert("Relatienummer is niet num
 </script>
 
 <?php
+
+$ingescand = date_add_months($today,1); //zie basisfuncties.php
+
 If (isset ($_POST['knpSave']))
 {		
 	$txtRoep = $_POST['txtRoep'];
@@ -112,15 +117,7 @@ If (isset ($_POST['knpSave']))
 	$key = getApiKey($db);
 
 
-if (empty($txtVoeg)) 	{ $insVoeg = 'voegsel = NULL';}	else { $insVoeg  = "voegsel = "."'$txtVoeg'" ; }
-if (empty($txtRelnr)) 	{ $insRelnr = 'relnr = NULL';}  else { $insRelnr = "relnr = "."'$txtRelnr'" ; }
-if (empty($txtUrvo)) 	{ $insUrvo  = 'urvo = NULL';} 	else { $insUrvo  = "urvo = "."'$txtUrvo'" ; }
-if (empty($txtPrvo)) 	{ $insPrvo  = 'prvo = NULL';}	else { $insPrvo  = "prvo = "."'$txtPrvo'" ; }
-if (empty($kzlReader)) { $insReader = 'reader = NULL';}	else { $insReader = "reader = "."'$kzlReader'" ; }
-if (empty($txtTel)) 	{ $insTel   = 'tel = NULL';}	else { $insTel   = "tel = "."'$txtTel'" ; }
-if (empty($txtMail)) 	{ $insMail  = 'mail = NULL';}	else { $insMail  = "mail = "."'$txtMail'" ; }
-
-$zoek_ubn = mysqli_query($db,"SELECT ubn FROM tblLeden WHERE ubn = ".mysqli_real_escape_string($db,$txtUbn)." ;") or die (mysqli_error($db)); 
+$zoek_ubn = mysqli_query($db,"SELECT ubn FROM tblUbn WHERE ubn = '".mysqli_real_escape_string($db,$txtUbn)."' ;") or die (mysqli_error($db)); 
 
 		while ($zu = mysqli_fetch_assoc($zoek_ubn)) { $gevonden_ubn = $zu['ubn']; }
 
@@ -130,47 +127,66 @@ else {
 
 $insert_lid = "INSERT INTO tblLeden SET 
 	alias = '".mysqli_real_escape_string($db,$alias)."',
-	login = ".mysqli_real_escape_string($db,$txtUbn).",
+	login = '".mysqli_real_escape_string($db,$txtUbn)."',
 	passw = '".mysqli_real_escape_string($db,$ww)."',
 	roep = '".mysqli_real_escape_string($db,$txtRoep)."',
-	$insVoeg,
+	voegsel = ". db_null_input($txtVoeg) . ",
 	naam = '".mysqli_real_escape_string($db,$txtNaam)."',
-	$insRelnr,
-	ubn = ".mysqli_real_escape_string($db,$txtUbn).",
-	$insUrvo,
-	$insPrvo,
+	relnr = ". db_null_input($txtRelnr) . ",
+	urvo = ". db_null_input($txtUrvo) . ",
+	prvo = ". db_null_input($txtPrvo) . ",
+	mail = ". db_null_input($txtMail) . ",
+	tel = ". db_null_input($txtTel) . ",
 	kar_werknr = '5',
 	actief = 1,
-	root_files = 'c:/domains/schapencentrummaasenwaal.nl/subdomeinen/ovis/wwwroot',
+	ingescand = '".mysqli_real_escape_string($db,$ingescand)."',
 	beheer = 0,
 	histo = 1,
-	meld = ".mysqli_real_escape_string($db,$radMeld).",
-	tech = ".mysqli_real_escape_string($db,$radTech).",
-	fin = ".mysqli_real_escape_string($db,$radFin).",
-	$insTel,
-	$insMail,
-	$insReader,
+	meld = '".mysqli_real_escape_string($db,$radMeld)."',
+	tech = '".mysqli_real_escape_string($db,$radTech)."',
+	fin = '".mysqli_real_escape_string($db,$radFin)."',
+	
+	reader = ". db_null_input($kzlReader) . ",
 	readerkey = '".mysqli_real_escape_string($db,$key)."'
 	;";
 /*echo $insert_lid;*/		mysqli_query($db,$insert_lid) or die (mysqli_error($db));
 
 
 $zoek_gebruiker = mysqli_query($db,"
-	SELECT lidId, reader FROM tblLeden WHERE alias = '".mysqli_real_escape_string($db,$alias)."' ;") or die (mysqli_error($db)); 
+	SELECT lidId FROM tblLeden WHERE alias = '".mysqli_real_escape_string($db,$alias)."' ;") or die (mysqli_error($db)); 
 
 while ($zg = mysqli_fetch_assoc($zoek_gebruiker))
-		{ $newId = $zg['lidId']; 
-		  $newReader = $zg['reader']; }
+		{ $newId = $zg['lidId'];  }
 
+$insert_tblUbn = "INSERT INTO tblUbn SET lidId = '".mysqli_real_escape_string($db,$newId)."', ubn = '".mysqli_real_escape_string($db,$txtUbn)."' ";
+/*echo '<br>'.$insert_tblUbn.'<br>'.'<br>';*/		mysqli_query($db,$insert_tblUbn) or die (mysqli_error($db));
+	
 Include"Newuser_data.php";
 
-if($newReader == 'Agrident') {
+
 	$lidid = $newId;
 Include "Newreader_keuzelijsten.php";
-}
+
 
 $map = 'user_'.$newId;
 	mkdir("$map"); // Persoonlijk map voor user maken
+
+$map = 'user_'.$newId.'/Readerbestanden';
+	mkdir("$map"); // Persoonlijk map voor user maken t.b.v. readerbestanden die uit de reader komen als de reader wordt uitgelezen
+
+$map = 'user_'.$newId.'/Readerversies';
+	mkdir("$map"); // Persoonlijk map voor user maken t.b.v. readerversies
+
+
+
+$persoonlijke_map = $dir.'/user_'.$lidId;
+
+
+
+
+
+
+
 
 $goed = "De gebruiker is ingevoerd.";
 
@@ -232,7 +248,7 @@ $goed = "De gebruiker is ingevoerd.";
 <select <?php echo "name=\"kzlReader\" "; ?> style = "width:80; font-size:13px;">
 <option></option>
 <?php
-$opties = array('Agrident' => 'Agrident', 'Biocontrol' => 'Biocontrol');
+$opties = array('Agrident' => 'Agrident');
 foreach ( $opties as $key => $waarde)
 {
    if((isset($_POST["kzlReader"]) && $_POST["kzlReader"] == $key) ) {
@@ -291,7 +307,6 @@ Include "menuBeheer.php"; } ?>
 </tr>
 
 </table>
-</center>
 
 </body>
 </html>

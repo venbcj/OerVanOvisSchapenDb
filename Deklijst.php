@@ -2,22 +2,25 @@
 $versie = '5-11-2016'; /* include "func_euro.php"; toegevoegd */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */ 
 $versie = '06-02-2022'; /* SQL beveiligd met quotes */ 
+$versie = '07-05-2023'; /* De beide variabele $dek_bedrag) <> euro_format($liq_bedrag in de controle $letop was niet altijd 2 decimale. Dit is aangepast met de functie  euro_format() */ 
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '09-03-2025'; /* veld txtId_$Id verwijderd <input type = hidden name = <?php echo "txtId_$Id"; ?> size = 1 value = <?php echo $Id; ?> >*/
+
 session_start();  ?> 
+<!DOCTYPE html>
 <html>
 <head>
 <title>Financieel</title>
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Deklijst';
-$subtitel = ''; 
-Include "header.php"; ?>
-	<TD width = 960 height = 400 valign = "top">
+$file = "Deklijst.php";
+Include "login.php"; ?>
+
+		<TD align = "center" valign = "top">
 <?php
-$file = "";
-Include "login.php"; 
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modfin == 1) {
 
 include "func_euro.php";
@@ -36,20 +39,72 @@ WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die (mysqli_error($db));
 	
 	while ($lst = mysqli_fetch_assoc($zoek_laatste_jaar)) { $lastjaar = $lst['maxjaar']; }
-	
+
+if(isset($lastjaar)) { $new_jaar = $lastjaar+1; }
+else { $new_jaar = date('Y'); }
+
+
+
 if(isset($_POST['kzlJaar_'])) { $kzlJaar = $_POST['kzlJaar_']; } 
 else if(isset($lastjaar) && $lastjaar < date('Y')) { $kzlJaar = $lastjaar; } 
 else { $kzlJaar = date('Y'); }
 
 if (isset($_POST['knpCreate_']))	
 	{		
-		$year = $_POST['txtNewjaar_'];
+		$year = $new_jaar;
 		include "create_deklijst.php";
 	}
+
+//  3 Componenten ophalen : Prijs per lam, worpgrootte en sterfte
+/**************
+	Prognose
+***************/
+$zoek_prijs_lam = mysqli_query($db,"
+SELECT e.element, eu.waarde
+FROM tblElement e
+ join tblElementuser eu on (e.elemId = eu.elemId)
+WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and e.elemId = 10
+") or die (mysqli_error($db));
 	
+	while ($prl = mysqli_fetch_assoc($zoek_prijs_lam)) { 
+		$prijs_nm = $prl['element'];
+		$prijs_val = $prl['waarde'];
+	}
+
+$zoek_worpgrootte = mysqli_query($db,"
+SELECT e.element, eu.waarde
+FROM tblElement e
+ join tblElementuser eu on (e.elemId = eu.elemId)
+WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and e.elemId = 19
+") or die (mysqli_error($db));
+
+	while ($wrp = mysqli_fetch_assoc($zoek_worpgrootte)) {
+		$worp_nm = $wrp['element'];
+		$worp_val = $wrp['waarde'];
+	}
+
+$zoek_sterfte = mysqli_query($db,"
+SELECT e.element, eu.waarde
+FROM tblElement e
+ join tblElementuser eu on (e.elemId = eu.elemId)
+WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and e.elemId = 12
+") or die (mysqli_error($db));
+
+	while ($stf = mysqli_fetch_assoc($zoek_sterfte)) {
+		$sterf_nm = $stf['element'];
+		$sterf_val = $stf['waarde'];
+	}
+/********************
+	Einde Prognose
+*********************/
+// Einde 3 Componenten ophalen : Prijs per lam, worpgrootte en sterfte
+
 if(isset($_POST['knpSave_'])) { include "save_deklijst.php"; 
 	
-	$prijs = $_POST['txtPrijs_']; 	$worp = $_POST['txtWorp_'];		$sterf = $_POST['txtSterf_'];	$kzlJaar = $_POST['kzlJaar_'];
+	$prijs = $prijs_val;
+	$worp = $worp_val;
+	$sterf = $sterf_val;
+	$kzlJaar = $_POST['kzlJaar_'];
 
 // Toevoegen jaar in tblLiquiditeit indien noodzakelijk
 $zoek_maxDekjaar = mysqli_query($db,"
@@ -116,47 +171,6 @@ GROUP BY date_format((dmdek + interval 9 month),'%Y-%m')
 
 	
 //  3 Componenten ophalen : Prijs per lam, worpgrootte en sterfte
-/**************
-	Prognose
-***************/
-$zoek_prijs_lam = mysqli_query($db,"
-SELECT e.element, eu.waarde
-FROM tblElement e
- join tblElementuser eu on (e.elemId = eu.elemId)
-WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and e.elemId = 10
-") or die (mysqli_error($db));
-	
-	while ($prl = mysqli_fetch_assoc($zoek_prijs_lam)) { 
-		$prijs_nm = $prl['element'];
-		$prijs_val = $prl['waarde'];
-	}
-
-$zoek_sterfte = mysqli_query($db,"
-SELECT e.element, eu.waarde
-FROM tblElement e
- join tblElementuser eu on (e.elemId = eu.elemId)
-WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and e.elemId = 12
-") or die (mysqli_error($db));
-
-	while ($stf = mysqli_fetch_assoc($zoek_sterfte)) {
-		$sterf_nm = $stf['element'];
-		$sterf_val = $stf['waarde'];
-	}
-	
-$zoek_worpgrootte = mysqli_query($db,"
-SELECT e.element, eu.waarde
-FROM tblElement e
- join tblElementuser eu on (e.elemId = eu.elemId)
-WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and e.elemId = 19
-") or die (mysqli_error($db));
-
-	while ($wrp = mysqli_fetch_assoc($zoek_worpgrootte)) {
-		$worp_nm = $wrp['element'];
-		$worp_val = $wrp['waarde'];
-	}
-/********************
-	Einde Prognose
-*********************/
 
 /**************
 	Realiteit
@@ -278,23 +292,11 @@ GROUP BY liq.jrmnd, liq.bedrag
 			
 // Einde Controle of saldo deklijst gelijk is aan saldo Liquiditeit			
 
-if(($kzlJaar >= Date('Y') && $dek_bedrag <> $liq_bedrag) || ( $dtb == "k36098_bvdvschapendbs" && $lidId == 1 )) {	
+if(($kzlJaar >= Date('Y') && euro_format($dek_bedrag) <> euro_format($liq_bedrag)) || ( $dtb == "k36098_bvdvschapendbs" && $lidId == 1 )) {	
  $letop = "De Liquiditeit wijkt af van de prognose deklijst.".'<br>'."Klik op 'Opslaan' om liquiditeit bij te werken met deze deklijst.";
 }
 
 	}
-//laatste jaar zoeken t.b.v aanmaken nieuwe deklijst
-$zoek_laatste_jaar = mysqli_query($db,"
-SELECT year(max(dmdek)) jaar
-FROM tblDeklijst
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
-") or die (mysqli_error($db));
-		
-		while ( $lst = mysqli_fetch_assoc($zoek_laatste_jaar)) { $old_jaar = $lst['jaar']; }
-
-if(isset($old_jaar)) { $new_jaar = $old_jaar+1; } 
-else { $new_jaar = date('Y'); }
-		
 
 // Declaratie kzlJaar
 $kzl_jaar = mysqli_query($db,"
@@ -319,7 +321,6 @@ $index = 0;
 <tr>
  <td colspan="4">Deklijst aanmaken : </td>
  <td colspan="5">
- 	<input type = hidden name = "txtNewjaar_" size = 2 value = <?php echo $new_jaar; ?> >
 	<input type = submit name = 'knpCreate_' value = <?php echo $new_jaar ; ?> >
  </td>
  <td colspan="4" align= "center";><b style = "font-size:18px;" >Jaar</b>
@@ -347,7 +348,9 @@ $index = 0;
 </tr>
 <tr>
  <td colspan = 9 align = center valign = "top" style = "color : 'red'; " >
-	<?php if(isset($letop)) { echo $letop.'<br>'; } ?>
+<?php
+
+ if(isset($letop)) { echo $letop.'<br>'; } ?>
  </td>
 </tr>
 <tr>
@@ -366,9 +369,9 @@ echo "Voorgaande jaren zijn normaal gesproken niet te wijzigen. ";
  <td colspan="6" height="70" align="center" valign="center" style = "font-size:30px;"><b> Prognose </b>  
  </td>
  <td colspan="3"> <?php 
-echo $prijs_nm." &euro; ".$prijs_val."<br>"; ?> <input type = hidden name = 'txtPrijs_' size = 1 value = <?php echo $prijs_val; ?> > <!-- hiddden --> <?php
-echo $worp_nm.'  '.$worp_val."<br>"; 	?> <input type = hidden name = 'txtWorp_' size = 1 value = <?php echo $worp_val; ?> > <!-- hiddden --> <?php
-echo $sterf_nm.' '.$sterf_val.' % '."<br>";?> <input type = hidden name = 'txtSterf_' size = 1 value = <?php echo $sterf_val; ?> > <!-- hiddden -->
+echo $prijs_nm." &euro; ".$prijs_val."<br>";
+echo $worp_nm.'  '.$worp_val."<br>";
+echo $sterf_nm.' '.$sterf_val.' % '."<br>"; ?>
  </td>
 
  <td rowspan="120" style = "text-align:center; border-left: 2px solid;"></td> <!-- verticale scheidingslijn -->
@@ -608,7 +611,7 @@ WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and year(dmdek) = '".m
 		
 		
 <tr style = "font-size:13px;">  <!-- Start Regels prognose en realisatie per week-->
- <td align = center><input type = hidden name = <?php echo "txtId_$Id"; ?> size = 1 value = <?php echo $Id; ?> >  <!--hiddden-->
+ <td align = center>
  <?php echo $dweek_p; ?>
  </td>
 
@@ -616,7 +619,6 @@ WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and year(dmdek) = '".m
 
  <td align = center> 
  	<input type = text name = <?php echo "txtDekat_$Id"; ?> size = 1 style = "text-align : right;" value = <?php echo $dekat_p; ?> >
- 	<input type = hidden name = <?php echo "ctrDekat_$Id"; ?> size = 1 value = <?php echo $dekat_p; ?> >
  </td> <!--hiddden-->
 
  <td align = center><?php echo $wweek_p; ?></td>
@@ -970,7 +972,6 @@ Include "menuFinance.php"; } ?>
 </tr>
 
 </table>
-</center>
 
 </body>
 </html>

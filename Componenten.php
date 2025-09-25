@@ -3,28 +3,26 @@
 $versie = '29-10-2016';/* : in tblElement veldnaam 'kenmerk' gewijzigd naar 'eenheid'*/
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '11-7-2020'; /* € gewijzigd in &euro; */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+$versie = '07-03-2025'; /* <input type= "hidden" name= <?php echo "txtId_$Id"; ?> size = 1 value = <?php echo "$Id";?> > verwijderd */
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Financieel</title>
 </head>
 <body>
 
-<center>
 <?php
-if (isset($_POST['knpSave_']) ) { 
-	Include "url.php";
-	header("Location:  " . $url . "Componenten.php"); }
 $titel = 'Componenten';
-$subtitel = '';
-Include "header.php"; ?>
-
-		<TD width = 960 height = 400 valign = "top">
-<?php
 $file = "Componenten.php";
-Include "login.php";
+Include "login.php"; ?>
+
+		<TD align = "center" valign = "top">
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modfin == 1) {
 
+if (isset ($_POST['knpSave_'])) { include "save_component.php"; }
 
 //*****************************
 //** COMPONENTEN IN GEBRUIK
@@ -90,7 +88,7 @@ order by e.eenheid, e.element
 	$eenheid_achter = array(''=>'','euro'=>'','getal'=>'','procent'=>'%');
 ?>
 <tr style = "font-size:12px;">
-<td width = 180 style = "font-size : 14px;"><input type= "hidden" name= <?php echo "txtId_$Id"; ?> size = 1 value = <?php echo "$Id";?> > <!--hiddden-->
+<td width = 180 style = "font-size : 14px;">
 <!-- Veld Componentnaam -->
 	<?php echo $compo; ?>
 <!-- EINDE  Veld Componentnaam  -->
@@ -113,11 +111,7 @@ order by e.eenheid, e.element
 	</td>
 <?php		
 	}
-	}
-	if (isset ($_POST['knpSave_']))
-{
- include "save_component.php";	
-}	?>
+	} ?>
 
 <td></td></tr>
 </table>
@@ -203,7 +197,7 @@ order by element
 		$sal = "{$row['sal']}";
 ?>
 		<tr style = "font-size:12px;">
-		<td style = "font-size : 14px;"><input type= "hidden" name= <?php echo "txtId_$Id"; ?> size = 1 value = <?php echo "$Id";?> > <!-- hiddden -->
+		<td style = "font-size : 14px;">
 <?php
 // Veld Componentnaam
 echo $compo; 

@@ -10,9 +10,10 @@ $versie = '11-7-2020'; /* € gewijzigd in &euro; 1-8-2020 : kalender toegevoegd *
 $versie = '28-11-2020'; /* 28-11-2020 velde chkDel toegevoegd */
 $versie = '26-8-2021'; /* O.b.v. javascript inkopen per jaartal verborgen en zichtbaar gemaakt */
 $versie = '17-1-2022'; /* Btw 0% en javascript verplicht() toegevoegd. SQL beveiligd met quotes */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
 
-session_start();
- ?>
+ session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Inkoop</title>
@@ -31,18 +32,15 @@ session_start();
 </head>
 <body>
 
-<center>
 <?php
-include "kalender.php";
 $titel = 'Inkopen';
-$subtitel = '';
-Include "header.php"; ?>
-
-			<TD width = 960 height = 400 valign = "top">
-<?php
 $file = "Inkopen.php";
-Include "login.php"; 
+Include "login.php"; ?>
+
+			<TD align = "center" valign = "top">
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech ==1) {
+include "kalender.php";
 
 $newvoer = "
 SELECT artId, stdat, naam, concat(' ', eenheid) heid, soort, eenheid

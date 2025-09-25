@@ -1,8 +1,15 @@
 <?php 
 $versie = '21-5-2020'; /*Gekopieerd van insOverplaats.php*/
-$versie = '4-7-2020'; /* 1 tabel impAgrident gemaakt */
+$versie = '04-07-2020'; /* 1 tabel impAgrident gemaakt */
+$versie = '31-12-2023'; /* sql beveiligd met quotes */
+$versie = "11-03-2024"; /* Bij geneste query uit 
+join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
+join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
 
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -10,17 +17,14 @@ $versie = '4-7-2020'; /* 1 tabel impAgrident gemaakt */
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Inlezen Adoptie';
-$subtitel = '';
-Include "header.php"; ?>
-	<TD width = 960 height = 400 valign = "top">
-<?php
 $file = "InsAdoptie.php";
-Include "login.php"; 
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { 
+Include "login.php"; ?>
 
+				<TD valign = "top">
+<?php
+if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { 
 
 If (isset ($_POST['knpInsert_'])) {
 	// 	Include "url.php"; Zit al in header.php
@@ -32,7 +36,7 @@ If (isset ($_POST['knpInsert_'])) {
 $qryHoknummer = mysqli_query($db,"
 SELECT hokId, hoknr, lower(if(isnull(scan),'6karakters',scan)) scan
 FROM tblHok hb
-WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." and actief = 1
+WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief = 1
 ORDER BY hoknr
 ") or die (mysqli_error($db)); 
 
@@ -54,42 +58,42 @@ h.actie, h.af, spn.schaapId spn, prnt.schaapId prnt, date_format(h.datum,'%d-%m-
 $tabel = "
 impAgrident rd
  left join (
-	 select max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
-	 from tblSchaap s
+	 SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
+	 FROM tblSchaap s
 	  join tblStal st on (st.schaapId = s.schaapId)
 	  join tblHistorie h on (st.stalId = h.stalId)
-	 where st.lidId = ".mysqli_real_escape_string($db,$lidId)." and h.skip = 0
-	 group by s.schaapId, s.levensnummer, s.geslacht
+	 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
+	 GROUP BY s.schaapId, s.levensnummer, s.geslacht
  ) s on (rd.levensnummer = s.levensnummer)
  
  left join tblSchaap mdr on (rd.moeder = mdr.levensnummer)
- left join tblStal st on (st.schaapId = s.schaapId and st.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(st.rel_best))
+ left join tblStal st on (st.schaapId = s.schaapId and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best))
  left join (
-	select h.hisId, a.actie, a.af, h.datum
-	from tblHistorie h
+	SELECT h.hisId, a.actie, a.af, h.datum
+	FROM tblHistorie h
 	 join tblActie a on (h.actId = a.actId)
  ) h on (h.hisId = s.hisId)
  left join (
-	select st.schaapId
-	from tblStal st
+	SELECT st.schaapId
+	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 4 and h.skip = 0
+	WHERE h.actId = 4 and h.skip = 0
  ) spn on (spn.schaapId = s.schaapId)
  left join (
-	select st.schaapId
-	from tblStal st
+	SELECT st.schaapId
+	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 3 and h.skip = 0
+	WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = s.schaapId)
  left join (
-	select st.schaapId, h.datum
-	from tblStal st
+	SELECT st.schaapId, h.datum
+	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 14 and h.skip = 0
+	WHERE h.actId = 14 and h.skip = 0
  ) hu on (hu.schaapId = s.schaapId)
 ";
 
-$WHERE = "where rd.lidId = ".mysqli_real_escape_string($db,$lidId)." and rd.actId = 15 and isnull(rd.verwerkt) ";
+$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 15 and isnull(rd.verwerkt) ";
 
 include "paginas.php";
 
@@ -136,7 +140,7 @@ unset($stalId);
 $zoek_stalId = mysqli_query($db,"
 SELECT stalId
 FROM tblStal
-WHERE schaapId = ".mysqli_real_escape_string($db,$mdr_db)." and lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(rel_best)
+WHERE schaapId = '".mysqli_real_escape_string($db,$mdr_db)."' and lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(rel_best)
 ");
 
 while ($zs = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $zs['stalId']; }
@@ -150,7 +154,7 @@ FROM (
 	SELECT max(hisId) hisId
 	FROM tblHistorie h
 	 join tblActie a on (a.actId = h.actId)
-	WHERE stalId = ".mysqli_real_escape_string($db,$stalId)." and a.aan = 1
+	WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."' and a.aan = 1
  ) hin
  left join tblBezet b on (hin.hisId = b.hisId)
  left join (
@@ -158,10 +162,10 @@ FROM (
 	FROM tblBezet b
 	 join tblHistorie h1 on (b.hisId = h1.hisId)
 	 join tblActie a1 on (a1.actId = h1.actId)
-	 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
+	 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 	 join tblActie a2 on (a2.actId = h2.actId)
 	 join tblStal st on (h1.stalId = st.stalId)
-	WHERE st.stalId = ".mysqli_real_escape_string($db,$stalId)." and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+	WHERE st.stalId = '".mysqli_real_escape_string($db,$stalId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
 	GROUP BY b.bezId, h1.hisId
  ) uit on (uit.hisv = hin.hisId)
 WHERE isnull(uit.hist)
@@ -245,11 +249,11 @@ for ($i = 0; $i < $count; $i++){
 
  <!-- EINDE KZLVERBLIJF -->
 </td>
- <td style = "color : red"><center><?php 
+ <td style = "color : red" align="center"><?php 
  		 if (empty($status)) 		{ echo "Levensnummer onbekend"; }
  	else if (!isset($mdr_db)) 		{ echo "Moeder onbekend"; }
  	else if(isset($af) && $af == 1) { echo $status; } 
- ?> </center>
+ ?>
 	<input type = "hidden" size = 8 style = "font-size : 9px;" name = <?php echo "txtStatus_$Id"; ?> value = <?php echo $status; ?> > <!--hiddden-->
  </td>
  <td style = "color : red"> <?php 
@@ -274,7 +278,6 @@ Include "menu1.php"; } ?>
 </tr>
 
 </table>
-</center>
 
 </body>
 </html>

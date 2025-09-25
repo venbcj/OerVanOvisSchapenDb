@@ -1,7 +1,10 @@
 <?php 
 $versie = '4-7-2020'; /* Gekopieerd van insAdoptie.php */
+$versie = '31-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie en sql beveiligd met quotes */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
 
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -9,15 +12,13 @@ $versie = '4-7-2020'; /* Gekopieerd van insAdoptie.php */
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Inlezen Omnummeren';
-$subtitel = '';
-Include "header.php"; ?>
-	<TD width = 960 height = 400 valign = "top">
-<?php
 $file = "InsOmnummeren.php";
-Include "login.php"; 
+Include "login.php"; ?>
+
+			<TD valign = "top">
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { 
 
 if ($modmeld == 1 ) { include "maak_request_func.php"; }
@@ -40,16 +41,17 @@ impAgrident rd
 	 FROM tblSchaap s
 	  join tblStal st on (st.schaapId = s.schaapId)
 	  join tblHistorie h on (st.stalId = h.stalId)
-	 WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and h.skip = 0
+	 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
 	 GROUP BY s.schaapId, s.levensnummer, s.geslacht
  ) s on (rd.levensnummer = s.levensnummer)
  
  left join tblSchaap new on (rd.nieuw_nummer = new.levensnummer)
- left join tblStal st on (st.schaapId = s.schaapId and st.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(st.rel_best))
+ left join tblStal st on (st.schaapId = s.schaapId and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best))
  left join (
 	SELECT h.hisId, a.actie, a.af, h.datum
 	FROM tblHistorie h
 	 join tblActie a on (h.actId = a.actId)
+	WHERE h.skip = 0
  ) h on (h.hisId = s.hisId)
  left join (
 	SELECT st.schaapId, h.datum
@@ -59,7 +61,7 @@ impAgrident rd
  ) hu on (hu.schaapId = s.schaapId)
 ";
 
-$WHERE = "WHERE rd.lidId = ".mysqli_real_escape_string($db,$lidId)." and rd.actId = 17 and isnull(rd.verwerkt) ";
+$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 17 and isnull(rd.verwerkt) ";
 
 include "paginas.php";
 
@@ -69,7 +71,7 @@ $data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id");
 <tr> <form action="InsOmnummeren.php" method = "post">
  <td colspan = 2 style = "font-size : 13px;">
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
- <td colspan = 2 align = center style = "font-size : 14px;"><?php 
+ <td colspan = 2 align = "center" style = "font-size : 14px;"><?php 
 echo $page_numbers; ?></td>
  <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
  <td colspan = 3 align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
@@ -123,7 +125,7 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 		************************************** -->
 
 <tr style = "font-size:13px;">
- <td align = center>
+ <td align = "center">
 	<input type = hidden size = 1 name = <?php echo "chbkies_$Id"; ?> value = 0 > <!-- hiddden -->
 	<input type = checkbox 		  name = <?php echo "chbkies_$Id"; ?> value = 1 
 	  <?php echo $cbKies == 1 ? 'checked' : ''; /* Als voorwaarde goed zijn of checkbox is aangevinkt */
@@ -131,7 +133,7 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 	  if ($oke == 0) /*Als voorwaarde niet klopt */ { ?> disabled <?php } else { ?> class="checkall" <?php } /* class="checkall" zorgt dat alles kan worden uit- of aangevinkt*/ ?> >
 	<input type = hidden size = 1 name = <?php echo "laatsteOke_$Id"; ?> value = <?php echo $oke; ?> > <!-- hiddden -->
  </td>
- <td align = center>
+ <td align = "center">
 	<input type = hidden size = 1 name = <?php echo "chbDel_$Id"; ?> value = 0 >
 	<input type = checkbox class="delete" name = <?php echo "chbDel_$Id"; ?> value = 1 <?php if(isset($cbDel)) { echo $cbDel == 1 ? 'checked' : ''; } ?> >
  </td>
@@ -145,11 +147,11 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
  <td align="center"><?php echo $nieuw; ?>
  </td>	
 
- <td style = "color : red"><center><?php 
+ <td style = "color : red" align="center"><?php 
  		 if (empty($status)) 		{ echo "Oud levensnummer onbekend"; }
  	else if (isset($nieuw_db)) 		{ echo "Nieuw levensnummer bestaat al"; }
  	else if(isset($af) && $af == 1) { echo 'Dit dier is '. $status; } 
- ?> </center>
+ ?>
 	<input type = "hidden" size = 8 style = "font-size : 9px;" name = <?php echo "txtStatus_$Id"; ?> value = <?php echo $status; ?> > <!--hiddden-->
  </td>
  <td style = "color : red"> <?php 
@@ -174,7 +176,6 @@ Include "menu1.php"; } ?>
 </tr>
 
 </table>
-</center>
 
 </body>
 </html>

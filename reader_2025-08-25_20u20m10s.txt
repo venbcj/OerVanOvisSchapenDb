@@ -1,0 +1,140 @@
+[
+  {
+    "Worpregistratie": [],
+    "Doodgeboren": [],
+    "Groepsgeboorte": [
+      {
+        "ActId": "1",
+        "Datum": "2025-03-06T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100236566121"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-06T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100236466124"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-06T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100236166116"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-06T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100236866122"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-06T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100236266120"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-06T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100236866115"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-06T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100236466117"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-06T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100236066119"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-06T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100236766118"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-06T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100236166123"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-06T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100236966105"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-06T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100236666111"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-06T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100236566114"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-06T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100236966112"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-06T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100236166109"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-06T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100236366110"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-06T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100236866108"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-06T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100236266113"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-06T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100236266106"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-06T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100236566107"
+      }
+    ],
+    "Verplaatsing": [],
+    "Spenen": [],
+    "Afvoer": [],
+    "Aanvoer": [],
+    "Omnummeren": [],
+    "Medicaties": [],
+    "Halsnummers": [],
+    "Groepsafvoer": [],
+    "Voerregistratie": [],
+    "Dekken": [],
+    "Dracht": [],
+    "StallijstScan": []
+  }
+]

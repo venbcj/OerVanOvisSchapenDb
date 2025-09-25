@@ -4,23 +4,24 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $versie = '15-3-2020'; /* veld reader toegevoegd */
 $versie = '20-6-2020'; /* knop bewerken toegevoegd als reader = Agrident en bepaalde redenen en Lambar bestaan niet of redenen niet actief */
 $versie = '12-2-2021'; /* Redenen afvoer toegevoegd. Controle lambar verwijderd */
+$versie = '11-8-2023'; /* Veld ingescand toegevoed. Dit is de laatste dag dat een stallijst kan worden ingelezen bij een nieuwe klant. functie db_null_input() gebruikt. Sql beveiligd met quotes */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
  session_start(); 
  ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Beheer</title>
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Gebruiker';
-$subtitel = '';
-Include "header.php";?>
-<TD width = 960 height = 400 valign = "top" >
-<?php
 $file = "Systeem.php";
-Include "login.php";
+Include "login.php"; ?>
+
+			<TD valign = "top">
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
 	if(isset($_GET['pstId']))	{ $_SESSION["ID"] = $_GET['pstId']; } $ID = $_SESSION["ID"];
@@ -48,6 +49,15 @@ else if(isNaN(relatnr_v))  relatnr.focus()  + alert("Relatienummer is niet numer
 //echo '$lidId = '.$lidId.'<br>'; // $LidId is de gebruiker die is ingelogd
 if (isset ($_POST['knpSave']))
 {		
+	
+$zoek_ingescand = mysqli_query($db,"
+SELECT ingescand
+FROM tblLeden 
+WHERE lidId = '".mysqli_real_escape_string($db,$ID)."' ;
+") or die (mysqli_error($db)); 
+
+while ($zi = mysqli_fetch_assoc($zoek_ingescand)) 	{ $scanday = $zi['ingescand']; }
+
 	$txtRoep = $_POST['txtRoep'];
 	$txtVoeg = $_POST['txtVoeg'];
 	$txtNaam = $_POST['txtNaam'];
@@ -61,33 +71,31 @@ if (isset ($_POST['knpSave']))
 	$radTech = $_POST['radTech'];
 	$radFin = $_POST['radFin'];
 	$kzlAdm = $_POST['kzlAdm'];
+	$txtLstScan = $_POST['txtIngescand'];  $dag = date_create($txtLstScan); $lstScanDay =  date_format($dag, 'Y-m-d');
 
 	
 
-if (empty($txtVoeg)) 	{ $insVoeg  = 'voegsel = NULL';}	else { $insVoeg  = "voegsel = "."'$txtVoeg'" ; }
-if (empty($txtRelnr)) 	{ $insRelnr = 'relnr = NULL';}  else { $insRelnr = "relnr = "."'$txtRelnr'" ; }
-if (empty($txtUrvo)) 	{ $insUrvo  = 'urvo = NULL';} 	else { $insUrvo  = "urvo = "."'$txtUrvo'" ; }
-if (empty($txtPrvo)) 	{ $insPrvo  = 'prvo = NULL';}	else { $insPrvo  = "prvo = "."'$txtPrvo'" ; }
-if (empty($kzlReader)) 	{ $insReader= 'reader = NULL';}	else { $insReader= "reader = "."'$kzlReader'" ; }
-if (empty($txtTel)) 	{ $insTel   = 'tel = NULL';}	else { $insTel   = "tel = "."'$txtTel'" ; }
-if (empty($txtMail)) 	{ $insMail  = 'mail = NULL';}	else { $insMail  = "mail = "."'$txtMail'" ; }
+if (empty($txtLstScan)) { $lstScanDay =  $scanday; }
 	
 $update_lid = "UPDATE tblLeden SET 
 	
 	roep = '".mysqli_real_escape_string($db,$txtRoep)."',
-	$insVoeg,
+	voegsel = ". db_null_input($txtVoeg) . ",
 	naam = '".mysqli_real_escape_string($db,$txtNaam)."',
-	$insRelnr,
-	$insUrvo,
-	$insPrvo,
-	$insReader,	
-	beheer = ".mysqli_real_escape_string($db,$kzlAdm).",
-	meld = ".mysqli_real_escape_string($db,$radMeld).",
-	tech = ".mysqli_real_escape_string($db,$radTech).",
-	fin = ".mysqli_real_escape_string($db,$radFin).",
-	$insTel,
-	$insMail
-	WHERE lidId = ".mysqli_real_escape_string($db,$ID)."
+	relnr = ". db_null_input($txtRelnr) . ",
+	urvo = ". db_null_input($txtUrvo) . ",
+	prvo = ". db_null_input($txtPrvo) . ",
+	mail = ". db_null_input($txtMail) . ",
+	tel = ". db_null_input($txtTel) . ",
+	meld = '".mysqli_real_escape_string($db,$radMeld)."',
+	tech = '".mysqli_real_escape_string($db,$radTech)."',
+	fin = '".mysqli_real_escape_string($db,$radFin)."',
+	beheer = '".mysqli_real_escape_string($db,$kzlAdm)."',
+	ingescand = '".mysqli_real_escape_string($db,$lstScanDay)."',
+	reader = ". db_null_input($kzlReader) . "
+
+
+	WHERE lidId = '".mysqli_real_escape_string($db,$ID)."'
 	;";
 /*echo $update_lid;*/		mysqli_query($db,$update_lid) or die (mysqli_error($db));
 
@@ -102,9 +110,10 @@ include "Newreader_keuzelijsten.php";
 }
 
 $result = mysqli_query($db,"
-SELECT lidId, roep, voegsel, naam, relnr, ubn, urvo, prvo, meld, tech, fin, beheer, tel ,mail, reader, readerkey 
-FROM tblLeden 
-WHERE lidId = ".mysqli_real_escape_string($db,$ID)." ;
+SELECT l.lidId, l.roep, l.voegsel, l.naam, l.relnr, u.ubn, l.urvo, l.prvo, l.mail, l.tel, date_format(l.ingescand,'%d-%m-%Y') ingescand, l.meld, l.tech, l.fin, l.beheer, l.tel, l.reader, l.readerkey 
+FROM tblLeden l
+ join tblUbn u on (l.lidId = u.lidId)
+WHERE l.lidId = '".mysqli_real_escape_string($db,$ID)."' ;
 ") or die (mysqli_error($db)); 
 
 while ($row = mysqli_fetch_assoc($result))
@@ -116,12 +125,13 @@ while ($row = mysqli_fetch_assoc($result))
 		  $ubn = $row['ubn'];
 		  $urvo = $row['urvo'];
 		  $prvo = $row['prvo'];
+		  $mail = $row['mail'];
+		  $tel = $row['tel'];
+		  $ingescand = $row['ingescand'];
 		  $meld = $row['meld'];
 		  $tech = $row['tech'];
 		  $fin = $row['fin'];
 		  $admin = $row['beheer'];
-		  $tel = $row['tel'];
-		  $mail = $row['mail'];
 		  $reader = $row['reader'];
 		  $readerkey = $row['readerkey'];
 		   } ?>
@@ -194,21 +204,21 @@ if($reader == 'Agrident') {
 $zoek_redenen_uitval =  mysqli_query($db,"
 SELECT count(redId) aant
 FROM tblRedenuser
-WHERE redId in (8, 13, 22, 42, 43, 44) and uitval = 1 and lidId = ".mysqli_real_escape_string($db,$ID)."
+WHERE redId in (8, 13, 22, 42, 43, 44) and uitval = 1 and lidId = '".mysqli_real_escape_string($db,$ID)."'
 ") or die (mysqli_error($db));
 	while ( $zr = mysqli_fetch_assoc($zoek_redenen_uitval)) { $rd_db = $zr['aant']; }
 
 $zoek_redenen_afvoer =  mysqli_query($db,"
 SELECT count(redId) aant
 FROM tblRedenuser
-WHERE redId in (15, 45, 46, 47, 48, 49, 50, 51) and afvoer = 1 and lidId = ".mysqli_real_escape_string($db,$ID)."
+WHERE redId in (15, 45, 46, 47, 48, 49, 50, 51) and afvoer = 1 and lidId = '".mysqli_real_escape_string($db,$ID)."'
 ") or die (mysqli_error($db));
 	while ( $zr = mysqli_fetch_assoc($zoek_redenen_afvoer)) { $rd_db += $zr['aant']; }
 /*
 $zoek_Lambar = mysqli_query($db,"
 SELECT hokId
 FROM tblHok
-WHERE hoknr = 'Lambar' and lidId = ".mysqli_real_escape_string($db,$ID)."
+WHERE hoknr = 'Lambar' and lidId = '".mysqli_real_escape_string($db,$ID)."'
 ") or die (mysqli_error($db));
 while ($h = mysqli_fetch_assoc($zoek_Lambar)) {	$Lambar = $h['hokId'];	}*/
 
@@ -286,11 +296,24 @@ foreach ( $opties as $key => $waarde)
 </select> <!-- EINDE kzlBeheer ja/nee -->
  </td>
 </tr>
+<tr> <td colspan="4"> <hr></td></tr>
 
 </table>
 
 <table border = 0 width = 900>
-<tr><td colspan = 8><hr></hr></td></tr>
+
+<tr>
+ <td width = 105 >
+Laatste dag stallijst inlezen
+ </td>
+ 
+ <td >
+ 	<input type = "text" name = "txtIngescand" size = 8 value = <?php echo $ingescand; ?> >
+ </td>
+ <td> t.b.v. nieuwe klanten
+ </td>
+ <td width = 500 ></td>
+</tr>
 <tr height = 50 ></tr>
 <tr>
  <td colspan = 4 align =right><input type = "submit" name = "knpSave" onfocus = "verplicht()" value = "Opslaan"></td>
@@ -304,7 +327,6 @@ Include "menuBeheer.php"; } ?>
 </tr>
 
 </table>
-</center>
 
 </body>
 </html>

@@ -4,7 +4,11 @@
 11-6-2020 : onderscheid gemaakt tussen reader Agrident en Biocontrol 
 13-7-2020 : impVerplaatsing gewijzigd in impAgrident 
 27-2-2021 : Opslaan transponder bij schaap als deze niet bestaat 
-8-5-2021 : isset($verwerkt) toegevoegd om dubbele invoer te voorkomen. Verschil tussen kiezen of verwijderen herschreven. SQL beveiligd met quotes -->
+8-5-2021 : isset($verwerkt) toegevoegd om dubbele invoer te voorkomen. Verschil tussen kiezen of verwijderen herschreven. SQL beveiligd met quotes 
+11-03-2024 : Bij geneste query uit 
+join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
+join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 -->
 
 <?php
 include "url.php";
@@ -115,7 +119,7 @@ FROM impAgrident rd
 		SELECT h1.hisId hisv, min(h2.hisId) hist
 		FROM tblHistorie h1
 		 join tblActie a1 on (a1.actId = h1.actId)
-		 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
+		 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 		 join tblActie a2 on (a2.actId = h2.actId)
 		 join tblStal st on (h1.stalId = st.stalId)
 		WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
@@ -141,7 +145,7 @@ FROM impReader rd
 		SELECT h1.hisId hisv, min(h2.hisId) hist
 		FROM tblHistorie h1
 		 join tblActie a1 on (a1.actId = h1.actId)
-		 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
+		 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 		 join tblActie a2 on (a2.actId = h2.actId)
 		 join tblStal st on (h1.stalId = st.stalId)
 		WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0

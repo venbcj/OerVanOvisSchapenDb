@@ -2,7 +2,8 @@
 12-12-2015 :  $versie toegveoged 
 1-6-2020 : Uitval en redenen gewijzigd naar Redenen en momenten 
 12-02-2021 : Systeemgegevens gewijzigd naar Instellingen 
-29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.php -->
+29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.php 
+22-10-2023 : Readerversie toegevoegd -->
 <html>
 
 <body>
@@ -37,7 +38,12 @@ Eenheden</a>
 <hr/style ='color : #E2E2E2'>
 <a href='<?php echo $url; ?>Relaties.php' style = 'color : blue'>
 Relaties</a>
-<hr/style ='color : #E2E2E2'> <br/>
+<hr/style ='color : #E2E2E2'>
+<?php if($reader != 'Agrident')	  { ?> <a href='<?php echo $url; ?>Readerversies.php' style = 'color : grey'> <?php }
+ else if(isset($actuele_versie))  { ?> <a href='<?php echo $url; ?>Readerversies.php' style = 'color : blue'> <?php }
+							else  { ?> <a href='<?php echo $url; ?>Readerversies.php' style = 'color : red'>  <?php } ?>
+Readerversies</a>
+<br/>
 <?php if($modbeheer == 1 ) { ?>
 <hr/style ='color : #E2E2E2'>
 <a href='<?php echo $url; ?>Gebruikers.php' style = 'color : blue'>

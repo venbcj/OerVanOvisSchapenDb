@@ -2,42 +2,28 @@
 $versie = '22-11-2016'; /* actId = 3 uit on clause gehaald en als sub query genest */
 $versie = '4-2-2017'; /* kalender toegevoegd*/
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
+$versie = '28-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie */
+$versie = '31-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Registratie</title>
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Afvoerlijst';
-$subtitel = '';
-Include "header.php"; ?>
-		<TD width = 960 height = 400 valign = "top" >
-<?php
 $file = "Afvoerstal.php";
-Include "login.php"; 
+Include "login.php"; ?>
+
+				<TD valign = "top">
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
 include"kalender.php";
 if ($modmeld == 1 ) { include "maak_request_func.php"; }
-/*
-function aantal_fase($datb,$lidid,$Sekse,$Ouder) {
-$vw_aantalFase = mysqli_query($datb,"
-select count(*) aant 
-from tblSchaap s
- join tblStal st on (st.schaapId = s.schaapId)
- left join tblHistorie ouder on (st.stalId = ouder.stalId and ouder.actId = 3) 
-where st.lidId = ".mysqli_real_escape_string($datb,$lidid)." and isnull(st.rel_best) and ".$Sekse." and ".$Ouder." 
-");
-
-if($vw_aantalFase)
-		{	$row = mysqli_fetch_assoc($vw_aantalFase);
-				return $row['aant'];
-		}
-		return FALSE; // Foutafhandeling
-} */
 
 if(isset($_POST['knpAfvoer_'])) { include "save_afvoerstal.php"; } 
 $verder = 0;
@@ -59,10 +45,10 @@ while ($rel = mysqli_fetch_array($qryRelatiekeuze))
 unset($index);
 // EINDE Declaratie RELATIE
 $stapel = mysqli_query($db,"
-select count(*) aant
-from tblSchaap s
+SELECT count(*) aant
+FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
-where st.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(st.rel_best)
+WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(st.rel_best)
 ") or die (mysqli_error($db));
 
 	while($rij = mysqli_fetch_array($stapel))
@@ -116,35 +102,35 @@ if(isset($_POST['knpNext_']) || isset($_POST['knpAfvoer_'])) {
 </tr>
 
 <tr style = "font-size:12px;">
-<th width = 0 height = 30></th>
-<th style = "text-align:center;"valign="bottom";width= 100>Afvoeren<hr></th>
-<th width = 1></th>
-<th style = "text-align:center;"valign="bottom";width= 80>Levensnummer<hr></th>
-<th width = 1></th>
-<th style = "text-align:center;"valign="bottom";width= 80>Generatie<hr></th>
-<th width = 1></th>
-<th style = "text-align:center;"valign="bottom";width= 100>Datum<hr></th>
-<th width = 1></th>
-<th style = "text-align:center;"valign="bottom";width= 100>Bestemming<hr></th>
-<th width = 1></th>
-<th style = "text-align:center;"valign="bottom";width= 100>Uitval<hr></th>
-<th width = 1></th>
-<th width=60></th>
- </tr>
+ <th width = 0 height = 30></th>
+ <th style = "text-align:center;"valign="bottom";width= 100>Afvoeren<hr></th>
+ <th width = 1></th>
+ <th style = "text-align:center;"valign="bottom";width= 80>Levensnummer<hr></th>
+ <th width = 1></th>
+ <th style = "text-align:center;"valign="bottom";width= 80>Generatie<hr></th>
+ <th width = 1></th>
+ <th style = "text-align:center;"valign="bottom";width= 100>Datum<hr></th>
+ <th width = 1></th>
+ <th style = "text-align:center;"valign="bottom";width= 100>Bestemming<hr></th>
+ <th width = 1></th>
+ <th style = "text-align:center;"valign="bottom";width= 100>Uitval<hr></th>
+ <th width = 1></th>
+ <th width=60></th>
+</tr>
 
 <?php
 $result = mysqli_query($db,"
-select st.stalId, s.levensnummer, s.geslacht, h.actId
-from tblSchaap s
+SELECT st.stalId, s.levensnummer, s.geslacht, h.actId
+FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
  left join (
-	select schaapId, h.actId
-	from tblStal st
+	SELECT schaapId, h.actId
+	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
-	where h.actId = 3
+	WHERE h.actId = 3 and h.skip = 0
  ) h on (h.schaapId = st.schaapId)
-where st.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(st.rel_best)
-order by h.actId, s.geslacht, right(s.levensnummer,$Karwerk)
+WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(st.rel_best)
+ORDER BY h.actId, s.geslacht, right(s.levensnummer,$Karwerk)
 ") or die (mysqli_error($db));
 
 		while($row = mysqli_fetch_array($result))

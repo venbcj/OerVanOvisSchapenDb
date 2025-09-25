@@ -1,24 +1,26 @@
 <?php 
 $versie = '20-12-2020'; /* gemaakt */
+$versie = '31-12-2023'; /* and h.skip = 0 aangevuld aan tblHistorie */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = 'top' align = center > gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Rapport</title>
 </head>
 <body>
 
-<center>
 <?php
-include "kalender.php";
 $titel = 'Ooitjes uit meerlingen';
-$subtitel = '';
-Include "header.php"; ?>
-<TD width = 960 height = 400 valign = 'top' align = center >
-<?php
 $file = "OoilamSelectie.php";
-Include "login.php"; 
+Include "login.php"; ?>
+
+		<TD valign = 'top' align = 'center'>
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { if($modtech ==1) {
 
+include "kalender.php";
 
 if(isset($_POST['knpStuur_'])) { include "save_ooiselectie.php"; }
 
@@ -39,7 +41,7 @@ FROM tblSchaap s
 	WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
 	GROUP BY s.volwId
  ) w on (s.volwId = w.volwId)
-WHERE s.geslacht = 'ooi' and isnull(st.rel_best) and h.actId = 1 and h.datum >= '".mysqli_real_escape_string($db,$van)."' and h.datum <= '".mysqli_real_escape_string($db,$tot)."'
+WHERE s.geslacht = 'ooi' and isnull(st.rel_best) and h.actId = 1 and h.skip = 0 and h.datum >= '".mysqli_real_escape_string($db,$van)."' and h.datum <= '".mysqli_real_escape_string($db,$tot)."'
 GROUP BY aant
 ORDER BY aant desc
 ";
@@ -70,7 +72,7 @@ $toon_meerlingen = mysqli_query($db,$query) or die (mysqli_error($db));
 	<td colspan = 6>Kies de gewenste opties in 1 keer en klik daarna op de knop 'Verstuur'.<br> De lijst met schapen kan nl. maar 1 keer worden samengesteld per keer dat <br> op de knop 'Verstuur' wordt geklikt.</td>
 </tr>
 <?php } ?>
-<tr height = 75 align = center style = "font-size : 14px;"  >
+<tr height = 75 align = "center" style = "font-size : 14px;"  >
  <td></td>
  <td width = 80 align="center"><b> Naar reader </b><hr></td>
  <td width = 80 align="center"><b> lammeren </b><hr></td>
@@ -91,7 +93,7 @@ $toon_meerlingen = mysqli_query($db,$query) or die (mysqli_error($db));
 				$worp = $mrl['worp'];
 
 ?>
-<tr align = center style = "font-size : 14px;"  >
+<tr align = "center" style = "font-size : 14px;"  >
  <td></td>
  <td>
  	<?php if($worp <= 6) { ?>  <input type="checkbox" name= <?php echo "check_$worp"; ?> value = 1 > <?php } ?>
@@ -117,7 +119,6 @@ $toon_meerlingen = mysqli_query($db,$query) or die (mysqli_error($db));
 Include "menuAlerts.php"; } ?>
 </tr>
 </table>
-</center>
 
 </body>
 </html>

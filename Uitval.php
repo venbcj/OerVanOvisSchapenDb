@@ -7,22 +7,23 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $versie = '30-5-2020'; /* Scannummer bij reader Agrident verwijderd bij momenten. 1-6 veld afvoer toegevoegd */
 $versie = '20-6-2020'; /* Verschillende redenen disabled bij reader Agrident */
 $versie = '12-02-2021'; /* Uitval gesplitst in Doodgeboren en sterfte SQL beveiligd met quotes. Titel gewijzigd */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
+
  session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>beheer</title>
 </head>
 <body>
 
-<center>
 <?php
 $titel = 'Redenen en momenten';
-$subtitel = '';
-Include "header.php"; ?>
-	<TD width = 960 height = 400 valign = "top">
-<?php
 $file = "Uitval.php";
-Include "login.php"; 
+Include "login.php"; ?>
+
+		<TD valign = 'top'>
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { 
 
 if (isset($_POST['knpSaveUitv__']) || isset($_POST['knpSaveReden__'])) { include "save_uitvalredenen.php"; } ?>
@@ -75,9 +76,9 @@ if($modbeheer == 1 ) { ?>
 <table border = 0 >
 <th colspan = 5> Aanvullen Redenen <br><hr></th>
 
-<tr align = center>
+<tr align = "center">
  <td><input type="text" name="txtNaam__" ></td>
- <td colspan = 5 align = center><input type = "submit" name="knpNewReden__" value = "Aanvullen" >
+ <td colspan = 5 align = "center"><input type = "submit" name="knpNewReden__" value = "Aanvullen" >
 </td></tr>
 <tr height= 20><td></td></tr>
 </table>
@@ -95,7 +96,7 @@ $insert_tblReden = "INSERT into tblReden set reden = '".mysqli_real_escape_strin
 <th colspan = 5> Redenen tbv uitval en medicatie <br><hr></th>
 <tr style ="font-size:12px;"><td>Nieuwe reden</td><td>Dood-<br>geboren</td><td>Medicatie</td><td>Afvoer</td><td>Sterfte</td></tr>
 
-<tr align = center>
+<tr align = "center">
 <td>
 <!-- KZLREDEN -->
 <?php
@@ -140,11 +141,11 @@ ORDER BY r.reden
  <td></td>
  <td><input type="checkbox" name="boxSterfte__" id="c4" value="1" title = "Is reden tbv sterfte ja/nee ?"></td>
 </tr>
-<tr><td colspan = 5 align = center><input type = "submit" name="knpInsertReden__" value = "Toevoegen" ><hr>
+<tr><td colspan = 5 align = "center"><input type = "submit" name="knpInsertReden__" value = "Toevoegen" ><hr>
 </td></tr>
 
 <tr><td></td></tr>
-<tr align = center style ="font-size:12px;"> 
+<tr align = "center" style ="font-size:12px;"> 
  <td align="left"><b><i>&nbsp&nbspReden</i></b></td> 
  <td><b><i>Dood-<br>geboren</i></b></td> 
  <td><b><i>Medicatie</i></b></td>
@@ -178,14 +179,14 @@ ORDER BY if(uitval+pil = 2, 1 ,uitval+pil) desc, reden
  <td>
  <?php echo $rij['reden']; ?>
  </td>
- <td align = center>
+ <td align = "center">
 
 	
 	<input type = "hidden" name = <?php echo "chbUitval_$it"."_$Id"; ?> size = 1 value = 0 > <!-- hiddden --> 
 	<input type="checkbox" name= <?php echo "chbUitval_$it"."_$Id"; ?> id="c1" value= 1 
 		<?php echo $uitv == 1 ? 'checked' : ''; ?> title = "Is reden tbv uitval ja/nee ?">
  </td>
- <td align = center>
+ <td align = "center">
 	<input type = "hidden" name = <?php echo "chbPil_$it"."_$Id"; ?> size = 1 value = 0 > <!-- hiddden -->
  	<input type="checkbox" name= <?php echo "chbPil_$it"."_$Id"; ?> id="c1" value="1" <?php echo $pil == 1 ? 'checked' : ''; ?> title = "Is reden tbv medicatie ja/nee ?">
  </td>
@@ -217,9 +218,9 @@ ORDER BY if(uitval+pil = 2, 1 ,uitval+pil) desc, reden
 <tr height = 30 style ="font-size:12px;">
  <td></td>
 <?php if($reader != 'Agrident') { ?>
- <td width = 40 align = center ><b><i> scan code </i></b></td>
+ <td width = 40 align = "center" ><b><i> scan code </i></b></td>
 <?php } ?>
- <td align = center ><b><i>actief</i></b></td>
+ <td align = "center" ><b><i>actief</i></b></td>
 
 </td>
 
@@ -259,7 +260,7 @@ ORDER BY moment
  <input type="text" name= <?php echo "txtScan_$it"."_$Id"; ?> size = 1 value = <?php echo $lus['scan']; ?>	> 
  </td>
 <?php } ?> 
- <td align = center>
+ <td align = "center">
  <input type="hidden" name= <?php echo "chbActief_$it"."_$Id"; ?> size = 1 value = 0 > <!-- hiddden -->
  <input type="checkbox" name= <?php echo "chbActief_$it"."_$Id"; ?> id="c1" value="1"	<?php echo $actief == 1 ? 'checked' : ''; ?> title = "Is dit uitvalmoment te gebruiken ja/nee ?"/>
  </td>
@@ -282,7 +283,6 @@ ORDER BY moment
 Include "menuBeheer.php"; } ?>
 </tr>
 </table>
-</center>
 
 </body>
 </html>

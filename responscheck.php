@@ -3,7 +3,10 @@
 12-2-2017 : Response bestand in de map BRIGHT wordt gezocht o.b.v. def = N uit de tabel impRespons niet meer o.b.v. requestId zonder melddatum (dmmeld). Als een melding wordt vastgelegd wordt het response-bestand anders niet ingelezen 
 28-12-2018 : response bestand wordt ingelezen als requestbestand ook nog in de map BRIGHT staat. Als het response bestand (spontaan) nogmaals wordt aangeleverd wordt deze nu niet meer ingelezen 
 20-2-2020 locatie van bestanden gebaseerd op een functie 
-1-4-2022 sql beveiligd met quotes --> 
+1-4-2022 sql beveiligd met quotes 
+10-05-2023 : Als er definitieve melding om redenen opnieuw moet worden aangeboden aan RVO mag het veld impRespons.def niet de waarde J hebben bij het betreffende reqId. Anders wordt het response bestand van Bright niet meer verwerkt. De waarde J heb ik gewijzigd naar Y en de query $zoek_laatste_response hierop aangepast. rp.def = 'N' gewijzigd naar rp.def != 'J'  
+28-12-2023 : and h.skip = 0 toegevoegd bij tblHistorie 
+15-07-2025 : ubn uit bestandsnaam $requestfile en $responsfile (richting RVO) gehaald --> 
 <?php
 /* Toegepast in :
 - Home.php
@@ -25,30 +28,28 @@ $dir = dirname(__FILE__); // Locatie bestanden op FTP server
 
 // De gegevens van het request uit impResponse waarvan de laatste import een controle melding is
 $zoek_laatste_response = mysqli_query ($db,"
-SELECT r.reqId, r.code, l.ubn
+SELECT r.reqId, r.code
 FROM tblRequest r
  join tblMelding m on (r.reqId = m.reqId)
  join tblHistorie h on (h.hisId = m.hisId)
  join tblStal st on (st.stalId = h.stalId)
- join tblLeden l on (st.lidId = l.lidId)
  left join(
 	SELECT max(respId) respId, reqId
 	FROM impRespons 
 	GROUP BY reqId
 	) lr on (r.reqId = lr.reqId)
  left join impRespons rp on (rp.respId = lr.respId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (rp.def = 'N' or isnull(rp.def))
-GROUP BY r.reqId, l.ubn
+WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (rp.def != 'J' or isnull(rp.def)) and h.skip = 0
+GROUP BY r.reqId
 ORDER BY r.reqId
 ") or die (mysqli_error($db));
 	While ($req = mysqli_fetch_assoc($zoek_laatste_response))
 	{	$reqId = $req['reqId'];
 		$code = $req['code'];	// t.b.v. importRespons.php
-		$ubn = $req['ubn'];	
 // Einde De gegevens van het request
 
-$requestfile = $ubn."_".$alias."_".$reqId."_request.txt"; #echo $requestfile.' moet worden gezocht <br>'; // T.b.v. verplaatsen in importRespons.php
-$responsfile = $ubn."_".$alias."_".$reqId."_response.txt"; #echo $responsfile.' moet worden gezocht <br>';
+$requestfile = $alias."_".$reqId."_request.txt"; #echo $requestfile.' moet worden gezocht <br>'; // T.b.v. verplaatsen in importRespons.php
+$responsfile = $alias."_".$reqId."_response.txt"; #echo $responsfile.' moet worden gezocht <br>';
 
 $request_aanwezig = file_exists($dir.'/BRIGHT/'.$requestfile);
 $respons_aanwezig = file_exists($dir.'/BRIGHT/'.$responsfile);

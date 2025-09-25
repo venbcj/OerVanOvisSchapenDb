@@ -1,10 +1,13 @@
 <!-- 10-11-2014 gemaakt 
 5-12-2016 : kzlPartij gesplitst in kzlHerk en kzlBest 	9-2-2017 ctr-velden verwijderd 
-5-5-2017 : Controle bij wijzigen datum aangepast van $updDay < $last_day naar $updDay > $last_day
+5-5-2017 : Controle bij wijzigen datum aangepast van $fldDay < $last_day naar $fldDay > $last_day
 26-1-2018 : Bij verwijderen melding wordt kzlBest niet meer leeggemaakt 
 19-2-2022 : SQL beveiligd met quotes 
-4-4-2022 : Controle $zoek_laatste_datum_stalaf uitgezet want reden van deze controle onbekend -->
-
+4-4-2022 : Controle $zoek_laatste_datum_stalaf uitgezet want reden van deze controle onbekend 
+10-5-2023 : $eerste_dag keek niet naar een actie op stallijst (tblActie.op = 1). Dit is aangepast 
+19-01-2024 : Controle melding verplicht gemaakt 
+30-01-2024 : Controle of het veld kzlDef bestaat verplaatst. Zie isset($fldDef)
+27-03-2025 : else if ($key == 'kzlHerk' && empty($value))  { $fldHerk = 'leegkeuzelijst'; } verwijderd -->
 <?php
 /*Save_Melding.php toegpast in :
 	- MeldAanvoer.php
@@ -24,42 +27,49 @@ function getIdFromKey($key) {
 
 $array = array();
 
-foreach($_POST as $key => $value) {
+foreach($_POST as $fldname => $fldvalue) {
     
-    $array[getIdFromKey($key)][getNameFromKey($key)] = $value;
+    $multip_array[getIdFromKey($fldname)][getNameFromKey($fldname)] = $fldvalue;
 }
-foreach($array as $recId => $id) {
-#echo $recId.'<br>';
-	
 
-unset($updSkip);
+foreach($multip_array as $recId => $id) {
+#echo $recId.'<br>';
+
+//unset($fldDef); Deze variabele wordt maar 1x gevuld. Per melding mag deze variabele dus niet worden leeggemaakt.
+unset($fldLevnr);
+unset($fldSekse);
+unset($fldHerk);
+unset($fldBest);
+unset($fldSkip);
 
   foreach($id as $key => $value) {
 	//if ($key == 'txtRequest' ) { foreach($id as $key => $value) { echo $key .' = '. $value. "<br><br>";  } }
   
  // echo $key .' = '. $value. "<br><br>";
   
-	if ($key == 'kzlDef' ) { /*echo $key.'='.$value." &nbsp&nbsp  ";*/ $updDef = $value; }
+	if ($key == 'kzlDef' ) { /*echo $key.'='.$value." &nbsp&nbsp  ";*/ $fldDef = $value; }
 	
-	if ($key == 'txtSchaapdm' && !empty($value)) { /*echo $key.'='.$value.'<br>';*/ $txtDag = $value; $dag = date_create($value); $updDay =  date_format($dag,'Y-m-d');
+	if ($key == 'txtSchaapdm' && !empty($value)) { /*echo $key.'='.$value.'<br>';*/ $txtDag = $value; $dag = date_create($value); $fldDay =  date_format($dag,'Y-m-d');
 																				 $updDag =  date_format($dag,'d-m-Y');	}
 
-	if ($key == 'txtLevnr' && !empty($value)) { /*echo $key.'='.$value.'<br>';*/ $updLevnr = $value; } // in MeldGeboortes.php en mogelijk ook in MeldAanvoer.php
+	if ($key == 'txtLevnr' && !empty($value)) { /*echo $key.'='.$value.'<br>';*/ $fldLevnr = $value; } // in MeldGeboortes.php en mogelijk ook in MeldAanvoer.php
 	
-	if ($key == 'kzlSekse' && !empty($value)) { $updSekse = $value; }
+	if ($key == 'kzlSekse' && !empty($value)) { $fldSekse = $value; }
 
-	if ($key == 'kzlHerk' && !empty($value))  { $updHerk = $value; } else if ($key == 'kzlHerk' && empty($value))  { $updHerk = 'leegkeuzelijst'; }  // in MeldAanvoer.php
-	if ($key == 'kzlBest' && !empty($value))  { /*echo $key.'='.$value.'<br>';*/ $updBest = $value; }  // in MeldAfvoer.php dus niet voor MeldUitval.php !!!
+	if ($key == 'kzlHerk' && !empty($value))  { $fldHerk = $value; } // in MeldAanvoer.php
+	if ($key == 'kzlBest' && !empty($value))  { /*echo $key.'='.$value.'<br>';*/ $fldBest = $value; }  // in MeldAfvoer.php dus niet voor MeldUitval.php !!!
 	//else if ($key == 'kzlBest' && empty($value))  { $kzlBest = 'leeg'; }  // in MeldAfvoer.php dus niet voor MeldUitval.php !!!
 	
-	if ($key == 'chbSkip' ) { $updSkip = $value;  /*echo $key.'='.$value; echo "<br/>";*/  }  
+	if ($key == 'chbSkip' ) { $fldSkip = $value;  /*echo $key.'='.$value; echo "<br/>";*/  }  
 	
 									}
-if(!isset($updSkip)) { $updSkip = 0; }
+if(!isset($fldSkip)) { $fldSkip = 0; }
 
 if(isset($recId) and $recId > 0) {
 
-//echo '$updSkip ='.$updSkip; echo "<br/>"; #/#
+if(!isset($fldDef)) { $fldDef = 'N'; }
+
+//echo '$fldSkip ='.$fldSkip; echo "<br/>"; #/#
 
 /****** CONTROLE DATUM *******/
 
@@ -89,6 +99,7 @@ if($code == 'AAN' || $code == 'GER') {
 $zoek_eerste_datum_stalop = mysqli_query($db,"
 SELECT min(datum) date, date_format(min(datum),'%d-%m-%Y') datum
 FROM tblHistorie h
+ join tblActie a on (a.actId = h.actId)
  join (
 	SELECT st.stalId, h.hisId
 	FROM tblStal st
@@ -96,6 +107,7 @@ FROM tblHistorie h
 	 join tblMelding m on (m.hisId = h.hisId)
 	WHERE m.meldId = '".mysqli_real_escape_string($db,$recId)."'
  ) st on (st.stalId = h.stalId and st.hisId <> h.hisId)
+ WHERE a.op = 1
 ") or die (mysqli_error($db));
 	while( $mi = mysqli_fetch_assoc($zoek_eerste_datum_stalop)) { $first_day = $mi['date']; $eerste_dag = $mi['datum']; }
 }
@@ -111,15 +123,15 @@ if($nummer_van_datum == 0)
 {
 	$wrong_dag = "De datum is onjuist";
 }
-elseif (isset($first_day) && $updDay < $first_day)
+elseif (isset($first_day) && $fldDay < $first_day)
 {
 	$wrong_dag = "De datum (".$updDag.") kan niet voor ".$eerste_dag." liggen";
 }
-/*elseif (isset($last_day) && $updDay > $last_day)
+/*elseif (isset($last_day) && $fldDay > $last_day)
 {
 	$wrong_dag = "De datum (".$updDag.") kan niet na ".$laatste_dag." liggen";
 }*/
-elseif (isset($maxday_rvo) && $updDay > $maxday_rvo)
+elseif (isset($maxday_rvo) && $fldDay > $maxday_rvo)
 {
 	$wrong_dag = $txtDag." ligt voor RVO te ver in de toekomst";
 }
@@ -129,37 +141,37 @@ elseif (isset($maxday_rvo) && $updDay > $maxday_rvo)
 /****** EINDE CONTROLE DATUM *******/
 
 /****** CONTROLE LEVENSNUMMER *******/
-if(isset($updLevnr)) { // Bestaat alleen bij Geboortes en Aanvoer
+if(isset($fldLevnr)) { // Bestaat alleen bij Geboortes en Aanvoer
 // Controle op duplicaten
 $zoek_schaapId = mysqli_query($db,"
 SELECT schaapId
 FROM tblSchaap 
-WHERE levensnummer = '".mysqli_real_escape_string($db,$updLevnr)."' 
+WHERE levensnummer = '".mysqli_real_escape_string($db,$fldLevnr)."' 
 ") or die (mysqli_error($db));
 	$zs = mysqli_fetch_assoc($zoek_schaapId); $schaapId = $zs['schaapId'];
 
 $count_levnr = mysqli_query($db,"
 SELECT count(*) aant
 FROM tblSchaap 
-WHERE levensnummer = '".mysqli_real_escape_string($db,$updLevnr)."' and schaapId <> '".mysqli_real_escape_string($db,$schaapId)."'
+WHERE levensnummer = '".mysqli_real_escape_string($db,$fldLevnr)."' and schaapId <> '".mysqli_real_escape_string($db,$schaapId)."'
 ") or die (mysqli_error($db));
 	$row = mysqli_fetch_assoc($count_levnr); $levnr_exist = $row['aant'];
 // Einde Controle op duplicaten 
-if(intval($updLevnr) == 0 ) // levensnummer is 000000000000
+if(intval($fldLevnr) == 0 ) // levensnummer is 000000000000
 		{ if(isset($wrong_dag))		{ $wrong_levnr = $wrong_dag." en het levensnummer is onjuist";	}
 		  else				{	$wrong_levnr = "Het levensnummer is onjuist";	}
 		}
 else if ($levnr_exist > 0) 
-		{ if(isset($wrong_dag)) 	{ $wrong_levnr = $wrong_dag." en levensummer ".$updLevnr." bestaat al"; }
-		  else 				{ $wrong_levnr = "Levensummer ".$updLevnr." bestaat al";	}
+		{ if(isset($wrong_dag)) 	{ $wrong_levnr = $wrong_dag." en levensummer ".$fldLevnr." bestaat al"; }
+		  else 				{ $wrong_levnr = "Levensummer ".$fldLevnr." bestaat al";	}
 		}
-else if (strlen($updLevnr) <> 12)
-		{ if(isset($wrong_dag))  	{ $wrong_levnr = $wrong_dag." en ".$updLevnr." is geen 12 karakters lang";	} 
-		  else				{	$wrong_levnr = $updLevnr." is geen 12 karakters lang";	}
+else if (strlen($fldLevnr) <> 12)
+		{ if(isset($wrong_dag))  	{ $wrong_levnr = $wrong_dag." en ".$fldLevnr." is geen 12 karakters lang";	} 
+		  else				{	$wrong_levnr = $fldLevnr." is geen 12 karakters lang";	}
 		}
-else if (numeriek($updLevnr) == 1) 
-		{ if(isset($wrong_dag))		{ $wrong_levnr = $wrong_dag." en ".$updLevnr." bevat een letter";	}
-		  else				{	$wrong_levnr = $updLevnr." bevat een letter";	}
+else if (numeriek($fldLevnr) == 1) 
+		{ if(isset($wrong_dag))		{ $wrong_levnr = $wrong_dag." en ".$fldLevnr." bevat een letter";	}
+		  else				{	$wrong_levnr = $fldLevnr." bevat een letter";	}
 		}
 //if(isset($wrong_levnr)) { echo $wrong_levnr.'<br>'; } #/#
 }
@@ -191,9 +203,12 @@ WHERE m.meldId = '".mysqli_real_escape_string($db,$recId)."'
 		$best_db = $co['rel_best']; 
 	}
 
-// Als verwijderd wordt hersteld bestaat kzlBest niet maar de bestemming in de database mogelijk wel en dus $updBest dan ook !!
+/*echo '$fldDef = '.$fldDef.'<br>';
+echo '$def_db = '.$def_db.'<br>';*/
+
+// Als verwijderd wordt hersteld bestaat kzlBest niet maar de bestemming in de database mogelijk wel en dus $fldBest dan ook !!
 // Dit t.b.v. $wrong_partij
-if($updSkip == 0 && $skip_db == 1) {
+if($fldSkip == 0 && $skip_db == 1) {
 $zoek_bestemming_in_db = mysqli_query($db, "
 SELECT st.rel_best
 FROM tblMelding m
@@ -201,13 +216,13 @@ FROM tblMelding m
  join tblStal st on (h.stalId = st.stalId)
 WHERE m.meldId = '".mysqli_real_escape_string($db,$recId)."'
 ") or die (mysqli_error($db));
-	while( $zbid = mysqli_fetch_assoc($zoek_bestemming_in_db)) { $updBest = $zbid['rel_best']; }
+	while( $zbid = mysqli_fetch_assoc($zoek_bestemming_in_db)) { $fldBest = $zbid['rel_best']; }
 }
 
 
 // Wijzigen keuze 'controle' versus 'vastleggen'		
-	if(isset($updDef) && $updDef <> $def_db) { //echo $updDef." bij ".$reqId."<br>";
-		$upd_tblRequest = "UPDATE tblRequest SET def = '".mysqli_real_escape_string($db,$updDef)."' WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."' ";	
+	if(isset($fldDef) && $fldDef <> $def_db) { //echo $fldDef." bij ".$reqId."<br>";
+		$upd_tblRequest = "UPDATE tblRequest SET def = '".mysqli_real_escape_string($db,$fldDef)."' WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."' ";	
 /*echo $upd_tblRequest.'<br>';*/			mysqli_query($db,$upd_tblRequest) or die (mysqli_error($db));
 	}
 	//unset ($reqId); //Hiermee wordt het requestId maar 1x doorlopen en is t.b.v. wijzigen tblRequest i.p.v. elke regel uit tblMeldingen
@@ -218,13 +233,13 @@ WHERE m.meldId = '".mysqli_real_escape_string($db,$recId)."'
 // Wijzigen datum
 //if(!isset($first_day)) {$first_day = date_format(date_create('11-09-1973'), 'Y-m-d');} // tbv MeldGeboortes.php daar bestaat geen minDag
 	
-if (!empty($updDay) && $updDay <> $datum_db && !isset($wrong_dag))
+if (!empty($fldDay) && $fldDay <> $datum_db && !isset($wrong_dag))
 {
 
  $upd_tblHistorie = "
  UPDATE tblHistorie h
   join tblMelding m on (h.hisId = m.hisId)
- set   h.datum  = '".mysqli_real_escape_string($db,$updDay)."'
+ set   h.datum  = '".mysqli_real_escape_string($db,$fldDay)."'
  WHERE m.meldId = '".mysqli_real_escape_string($db,$recId)."' 
  ";
 		mysqli_query($db,$upd_tblHistorie) or die (mysqli_error($db));
@@ -232,68 +247,63 @@ if (!empty($updDay) && $updDay <> $datum_db && !isset($wrong_dag))
 
 
 // Wijzigen levensnummer
-if (isset($updLevnr) && $updLevnr <> $Levnr_db && !isset($wrong_levnr))
+if (isset($fldLevnr) && $fldLevnr <> $Levnr_db && !isset($wrong_levnr))
 {
 
-	$upd_tblSchaap = "UPDATE tblSchaap SET levensnummer = '".mysqli_real_escape_string($db,$updLevnr)."' WHERE levensnummer = '".mysqli_real_escape_string($db,$Levnr_db)."' ";	
+	$upd_tblSchaap = "UPDATE tblSchaap SET levensnummer = '".mysqli_real_escape_string($db,$fldLevnr)."' WHERE levensnummer = '".mysqli_real_escape_string($db,$Levnr_db)."' ";	
 /*echo $upd_tblSchaap.'<br>';	*/	mysqli_query($db,$upd_tblSchaap) or die (mysqli_error($db));
 		
 }
 
-unset($updLevnr); // Voor als kzlLevnr op de volgende regel (loop) leeg is en $updLevnr dus niet hoort te bestaan
-
 // Wijzigen geslacht
- if (isset($updSekse) && ($updSekse <> $sekse_db || !isset($sekse_db))) {
-	$upd_tblSchaap = "UPDATE tblSchaap SET geslacht = '".mysqli_real_escape_string($db,$updSekse)."' WHERE levensnummer = '".mysqli_real_escape_string($db,$Levnr_db)."' ";	
+ if (isset($fldSekse) && ($fldSekse <> $sekse_db || !isset($sekse_db))) {
+	$upd_tblSchaap = "UPDATE tblSchaap SET geslacht = '".mysqli_real_escape_string($db,$fldSekse)."' WHERE levensnummer = '".mysqli_real_escape_string($db,$Levnr_db)."' ";	
 		mysqli_query($db,$upd_tblSchaap) or die (mysqli_error($db));		
 }
-unset($updSekse); // Voor als kzlSekse op de volgende regel (loop) leeg is en $updSekse dus niet hoort te bestaan
 
 // Wijzigen herkomst
-if ((isset($updHerk) && $updHerk <> 'leegkeuzelijst' && (!isset($herk_db) || $updHerk <> $herk_db) )) {
+if (isset($fldHerk) && (!isset($herk_db) || $fldHerk <> $herk_db) ) {
  		
 $upd_tblStal = "
 UPDATE tblStal st
  join tblHistorie h on (h.stalId = st.stalId)
  join tblMelding m on (m.hisId = h.hisId)
-set st.rel_herk = '".mysqli_real_escape_string($db,$updHerk)."' 
+set st.rel_herk = '".mysqli_real_escape_string($db,$fldHerk)."' 
 WHERE m.meldId = '".mysqli_real_escape_string($db,$recId)."'
 ";	
 	mysqli_query($db,$upd_tblStal) or die (mysqli_error($db));
 }
-else if (isset($updHerk) && $updHerk == 'leegkeuzelijst' && isset($herk_db)) {
+else if (!isset($fldHerk) && $code == 'AAN') {
 	if(isset($wrong_levnr)) 							{ $wrong_partij = $wrong_levnr." en herkomst moet zijn gevuld."; }
 	else if(!isset($wrong_levnr) && isset($wrong_dag))  { $wrong_partij = $wrong_dag." en herkomst moet zijn gevuld."; }
 	else 												{ $wrong_partij = "Herkomst moet zijn gevuld."; }
 	  }
-unset($updHerk); // Voor als kzlHerk op de volgende regel (loop) leeg is en $updHerk dus niet hoort te bestaan
 
 // Wijzigen bestemming
-if ((isset($updBest) && (!isset($best_db) || $updBest <> $best_db) )) {
+if ((isset($fldBest) && (!isset($best_db) || $fldBest <> $best_db) )) {
 		
 $upd_tblStal = "
 UPDATE tblStal st
  join tblHistorie h on (h.stalId = st.stalId)
  join tblMelding m on (m.hisId = h.hisId)
-set st.rel_best = '".mysqli_real_escape_string($db,$updBest)."'
+set st.rel_best = '".mysqli_real_escape_string($db,$fldBest)."'
 WHERE m.meldId = '".mysqli_real_escape_string($db,$recId)."'
 ";	
 	mysqli_query($db,$upd_tblStal) or die (mysqli_error($db));
 }
-else if (!isset($updBest) && $code == 'AFV')
+else if (!isset($fldBest) && $code == 'AFV')
 {
   if(isset($wrong_levnr)) 		{ $wrong_partij = $wrong_levnr." en bestemming moet zijn gevuld."; }
   else if(isset($wrong_dag)) 	{ $wrong_partij = $wrong_dag." en bestemming moet zijn gevuld."; }
-  else if(!isset($updBest) )	{ $wrong_partij = "Bestemming moet zijn gevuld."; }
+  else if(!isset($fldBest) )	{ $wrong_partij = "Bestemming moet zijn gevuld."; }
 }
-unset($updBest); // Voor als kzlPartij op de volgende regel (loop) leeg is en $updBest dus niet hoort te bestaan
 // EINDE CONTROLE op gewijzigde velden
 
 
 // Veld skip vullen en veld fout ledigen. 
 //Als skip wordt gewijzigd naar 0 dan wordt het veld fout eventueel ingevuld bij Foutmelding opslaan
-if ($updSkip <> $skip_db) {
- $upd_tblMelding = "UPDATE tblMelding SET skip = '".mysqli_real_escape_string($db,$updSkip)."', fout = NULL WHERE meldId = '".mysqli_real_escape_string($db,$recId)."' ";	
+if ($fldSkip <> $skip_db) {
+ $upd_tblMelding = "UPDATE tblMelding SET skip = '".mysqli_real_escape_string($db,$fldSkip)."', fout = NULL WHERE meldId = '".mysqli_real_escape_string($db,$recId)."' ";	
 /*echo $upd_tblMelding.'<br>';*/	mysqli_query($db,$upd_tblMelding) or die (mysqli_error($db));
 		
 }
@@ -313,8 +323,10 @@ if((isset($wrong) && (!isset($fout_db) || ($wrong <> $fout_db) )) || (!isset($wr
 
 /*echo $upd_tblMelding.'<br>';*/	mysqli_query($db,$upd_tblMelding) or die (mysqli_error($db));
 }
-unset($wrong);		unset($wrong_dag);		unset($wrong_levnr);	unset($wrong_partij);	
-
+unset($wrong);
+unset($wrong_dag);
+unset($wrong_levnr);
+unset($wrong_partij);
 // Einde Foutmelding opslaan
 
 	
@@ -322,19 +334,4 @@ unset($wrong);		unset($wrong_dag);		unset($wrong_levnr);	unset($wrong_partij);
 
 	
 	
-	
-	
-	
-
-	
-	
-	}
-    //echo '<br />';
-
-
-					
-	
-	
-						
-
-?>
+	} ?>

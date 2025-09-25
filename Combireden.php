@@ -5,15 +5,16 @@ $versie = '28-12-2016';/* toevoegen en wijzigen mogelijk gemaakt. Combi's t.b.v.
 $versie = '7-1-2016';/* pdf-printen toegevoegd */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '28-9-2018'; /* Standaard aantal ($stdat) tonen in 2 decimalen  */
+$versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
 
  session_start(); ?> 
+<!DOCTYPE html>
 <html>
 <head>
 <title>Beheer</title>
 </head>
 <body>
 
-<center>
 <?php 
 if ( isset($_POST['knpSave_d']) || isset($_POST['knpDelete_d']) || isset($_POST['knpSave_p']) || isset($_POST['knpDelete_p']) ) { 
 	
@@ -22,13 +23,11 @@ if ( isset($_POST['knpSave_d']) || isset($_POST['knpDelete_d']) || isset($_POST[
  else 
 
 $titel = 'Combinaties met redenen';
-$subtitel = '';
-Include "header.php"; ?>
-
-		<TD width = 960 height = 400 valign = "top">
-<?php
 $file = "Combireden.php";
-Include "login.php"; 
+Include "login.php"; ?>
+
+			<TD valign = "top" align = "center">
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { 
 
 //***********************************
@@ -417,9 +416,9 @@ if($modtech == 1) {
 ** COMBINATIES IN GEBRUIK TONEN (HTML)
 ***************************************/
 $zoek_stalId = mysqli_query($db,"
-SELECT stalId
-FROM tblStal 
-WHERE lidId = ".mysqli_real_escape_string($db,$lidId)."  
+SELECT st.stalId
+FROM tblStal st
+WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)."  
 ") or die (mysqli_error($db));
 
 	while($record = mysqli_fetch_assoc($zoek_stalId)) { $pdf = $record['stalId']; }

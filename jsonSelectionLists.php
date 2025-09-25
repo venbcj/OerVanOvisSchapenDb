@@ -1,7 +1,9 @@
 <?php /* 9-8-2020 : gemaakt 
 12-02-2021 : keuzelijsten SterfteOorzaak en Doodgeboorte toegevoegd 
 19-06-2021 : Keuzelijst voer toegevoegd 
-18-12-2021 : Keuzelijst vaderdier toegevoegd */
+18-12-2021 : Keuzelijst vaderdier toegevoegd 
+31-12-2023 : nog enkele sql beveiligd met quotes 
+10-07-2025 : In de array $listname de optie SoortBloedonderzoek gewijzigd naar Ubn */
 
 include "connect_db.php";
 
@@ -63,7 +65,7 @@ WHERE lidId = '".mysqli_real_escape_string($db,$lidid)."'
 
 
 //$listname = array('Relatie', 'Worpverloop', 'lokatie');
-$listname = array('Relatie', 'Worpverloop', 'Afvoerreden', 'SterfteOorzaak', 'Doodgeboorte', 'Groepen', 'RedenMedicijn', 'Ziekten', 'Behandelingen', 'Medicijnlijst', 'Lokatie', 'SoortBloedonderzoek', 'Behandelplan', 'Dekinfo', 'Ramcode', 'Kleurblok', 'Status', 'Rassenlijst', 'Voer' );
+$listname = array('Relatie', 'Worpverloop', 'Afvoerreden', 'SterfteOorzaak', 'Doodgeboorte', 'Groepen', 'RedenMedicijn', 'Ziekten', 'Behandelingen', 'Medicijnlijst', 'Lokatie', 'Ubn', 'Behandelplan', 'Dekinfo', 'Ramcode', 'Kleurblok', 'Status', 'Rassenlijst', 'Voer' );
 $countLists = count($listname);
 
 for($i = 0; $i < $countLists; $i++) {
@@ -180,6 +182,19 @@ ORDER BY coalesce(sort, hokId + 500), hoknr
 
 }
 
+// Ubn
+if($i == 11) {
+$result = mysqli_query($db,"
+SELECT ubnId Id, ubn `name` 
+FROM tblUbn
+WHERE lidId = '".mysqli_real_escape_string($db,$lidid)."' and actief = 1
+ORDER BY Ubn
+") or die (mysqli_error($db)); 
+
+//$rows = mysqli_num_rows($result);
+
+}
+
 // Ramcode
 if($i == 14) { //ramcode of te wel vaderdieren op de stallijst
 $result = mysqli_query($db,"
@@ -187,13 +202,13 @@ SELECT s.schaapId Id, right(s.levensnummer,$karwerk) `name`
 FROM tblSchaap s 
  join tblStal st on (st.schaapId = s.schaapId)
  join tblHistorie h on (h.stalId = st.stalId)
-WHERE s.geslacht = 'ram' and h.actId = 3 and h.skip = 0 and lidId = ".mysqli_real_escape_string($db,$lidid)."
+WHERE s.geslacht = 'ram' and h.actId = 3 and h.skip = 0 and lidId = '".mysqli_real_escape_string($db,$lidid)."'
 and not exists (
 	SELECT st.schaapId
 	FROM tblStal stal 
 	 join tblHistorie h on (h.stalId = stal.stalId)
 	 join tblActie a on (a.actId = h.actId)
-	WHERE stal.schaapId = s.schaapId and a.af = 1 and h.datum < DATE_ADD(CURDATE(), interval -1 year) and h.skip = 0 and lidId = ".mysqli_real_escape_string($db,$lidid).")
+	WHERE stal.schaapId = s.schaapId and a.af = 1 and h.datum < DATE_ADD(CURDATE(), interval -1 year) and h.skip = 0 and lidId = '".mysqli_real_escape_string($db,$lidid)."')
 ORDER BY right(s.levensnummer,$karwerk)
 ") or die (mysqli_error($db)); 
 
@@ -207,7 +222,7 @@ $result = mysqli_query($db,"
 SELECT r.rasId Id, r.ras name
 FROM tblRas r
  join tblRasuser ru on (r.rasId = ru.rasId)
-WHERE ru.lidId = '" . mysqli_real_escape_string($db,$lidid) . "' and r.actief = 1 and ru.actief = 1
+WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidid)."' and r.actief = 1 and ru.actief = 1
 ORDER BY coalesce(ru.sort, r.rasId + 500), r.ras
 ") or die (mysqli_error($db)); 
 

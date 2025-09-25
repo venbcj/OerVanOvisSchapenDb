@@ -13,105 +13,65 @@ $versie = '30-9-2020'; /* Halsnummers toegevoegd */
 $versie = '14-11-2020'; /* Medicatie aangepast i.v.m. mogelijk vanuit reader Agrident */
 $versie = '20-06-2021'; /* Voerregistratie toegevoegd */
 $versie = '18-12-2021'; /* Dekken en Dracht toegevoegd */
-
-session_start(); ?>
+$versie = '05-08-2023'; /* Stallijstscan toegevoegd */
+$versie = '02-12-2023'; /* Tussenweging toegevoegd */
+$versie = '03-11-2024'; /* Uitscharen en terug van uitscharen toegevoegd */
+$versie = '21-12-2024'; /* Bestanden uploaden van raeder Biocontrol verwijderd */
+$versie = '31-12-2024'; /* Include "login.php"; voor Include "header.php" gezet */
+$versie = '28-02-2025'; /* Als de stallijst leeg is wordt de link inlezen stallijst nieuwe klant ook getoond */
+$versie = '30-08-2025'; /* Inlezen ubn wijziging toegevoegd. toelichting ActId = 12 en nieuw veld ubnId is not null. Als actId = 12 en ubnId is leeg dan is het een reguliere afvoer lam 
+ session_start(); ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>Registratie</title>
 </head>
 <body>
 
-<center>
 <?php 
 $titel = 'Inlezen reader';
-$subtitel = '';
-Include "header.php"; ?>
-<TD width = 960 height = 400 valign = "top">
-
-<?php
 $file = "InlezenReader.php";
-Include "login.php";
+Include "login.php"; ?>
+
+         <TD>
+<?php
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
 $_SESSION["RPP"] = 30; $RPP = $_SESSION["RPP"];
 $_SESSION["PA"] = 1; $pag = $_SESSION["PA"];
 
-Include "responscheck.php";
-	
-$result = mysqli_query($db,"
-SELECT lidId, root_reader
-FROM tblLeden
-WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." 
-") or die (mysqli_error($db)); 
+Include "responscheck.php"; ?>
 
-	while ($row = mysqli_fetch_assoc($result))
-		{ $userId = $row['lidId']; // Nummer van de map die per gebruiker verschillend is en daardoor uniek maakt
-		  $lokatie_reader = $row['root_reader'];
-		   }
+ <form action="#" method="post" enctype="multipart/form-data">
 
-$dir = dirname(__FILE__); // Locatie bestanden op FTP server
-  
-$input_file = "reader.txt";
-$end_dir_reader = $dir ."/". "user_" . $userId."/"; //Unieke mapnaam per klant. Bijv. user_1
-$end_file_reader = "reader_".$userId.".txt"; //Unieke bestandsnaam per klant. Bijv. reader_1.txt
-#$end_dir_reader = "G:/Databases/SchapenDb/usb_webserver/root/Schapendb/";
-$file_exists = file_exists($end_dir_reader.$input_file); 
+<?php Include "inlezenAgrident.php"; 
+$zoek_lege_stallijst = mysqli_query($db,"
+SELECT count(stalId) aant
+FROM tblStal
+WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' 
+") or die (mysqli_error($db));
 
-include "uploadReader.php"; ?>
+   while ( $zls = mysqli_fetch_assoc ($zoek_lege_stallijst)) { $stallijstaantal = $zls['aant']; } ?>
 
-       
-        <div id="info">
-            <!-- <p>PHP versie: &gt;= 4.1.0</p> -->
-        </div>
-                
-       
-            <p>
-                
-                
-                
-            </p>
-        
-        
-        <?php
-        // Weergeven van meldingen uit het phpscript.
-        if(isset($errors))
-        {
-            echo '<ul>';
-            foreach($errors as $error);
-            {
-                echo '<li>'.$error.'</li>';
-            }
-            echo '</ul>';
-        }
-        elseif(isset($content))
-        {
-            foreach($content as $line)
-            {
-                echo $line;
-            }
-        }
-        ?>
- <form action="#" method="post" id="upload" enctype="multipart/form-data">
-<table border = 0>
-<tr><td><h3>Uploaden reader</h3></td></tr>
-<tr><td><label class="field" for="bestand">Bestand:</label>
-		<input type="file" name="bestand" id="bestand" />	</td>
-		<td><input type="submit" name = "knpUpload" value="Uploaden" >  </td></tr>
-<?php if(isset($lokatie_reader)) { ?>
-<tr><td colspan = 2 style = "color : grey ";>Mijn reader lokatie </td></tr>
-<tr><td colspan = 2 style = "color : grey ";><i><?php echo $lokatie_reader ?></i></td></tr>
-<?php } else { ?> <tr height = 50 ><td> </td></tr> <?php } ?>
-</table>
-</form>
+<table border = 0 align="center" style = "font-size: 17px"; >
+   <h2 align="center" style="color:blue";>Hier kun je de gegevens uit de reader verwerken<br> in het managementprogramma.</h2>
+<tr height = 50 ><td></td> </tr>
 
-<?php 
-if( $reader == 'Agrident') { Include("inlezenAgrident.php"); } // $reader is gedeclareerd in login.php
-else if( $reader == 'Biocontrol') { Include("inlezenBiocontrol.php"); }
+<?php $leeg = "<a href=' ". $url . "InlezenReader.php' style = 'color : blue'>"; 
 
-?>
+if($aantNewLid > 0 || $stallijstaantal == 0) { ?>
+<tr height = 50 valign="top">
+ <td> <?php if (!empty($aantNewLid)){ ?> <a href='<?php echo $url;?>InsStallijstscan_nieuwe_klant.php' style = 'color : blue'><?php }
+            else { echo "$leeg"; } ?>
+inlezen stallijst nieuwe klant </a>
+ </td>
+ <td style = "font-size : 14px;">
+    <?php if (!empty($aantNewLid)){ echo "&nbsp $aantNewLid dieren in te lezen."; } ?>
+ </td>
+</tr>
 
-<table border = 0>
-<?php $leeg = "<a href=' ". $url . "InlezenReader.php' style = 'color : blue'>"; ?>
+<?php } ?>
+
 
 <tr>
  <td>
@@ -119,7 +79,7 @@ else if( $reader == 'Biocontrol') { Include("inlezenBiocontrol.php"); }
           else { echo "$leeg"; } ?>
 inlezen dekken </a>
  </td>
- <td style = "font-size : 12px;">
+ <td style = "font-size : 14px;">
     <?php if (!empty($aantdek)){ echo "&nbsp $aantdek dekkingen in te lezen.";   } ?>
  </td>
 </tr>
@@ -130,7 +90,7 @@ inlezen dekken </a>
           else { echo "$leeg"; } ?>
 inlezen dracht </a>
  </td>
- <td style = "font-size : 12px;">
+ <td style = "font-size : 14px;">
     <?php if (!empty($aantdra)){ echo "&nbsp $aantdra dracht in te lezen.";   } ?>
  </td>
 </tr>
@@ -141,7 +101,7 @@ inlezen dracht </a>
         else { echo "$leeg"; } ?>
 inlezen geboortes </a>
  </td>
- <td style = "font-size : 12px;">
+ <td style = "font-size : 14px;">
     <?php if (!empty($aantgeb)){ echo "&nbsp $aantgeb geboorte(s) in te lezen."; } ?>
  </td>
 </tr>
@@ -153,7 +113,7 @@ inlezen geboortes </a>
         else { echo "$leeg"; } ?>
 inlezen lambar </a>
  </td>
- <td style = "font-size : 12px;">
+ <td style = "font-size : 14px;">
     <?php if (!empty($aantLbar)){ echo "&nbsp $aantLbar lambar in te lezen."; } ?>
  </td>
 </tr>
@@ -165,8 +125,18 @@ inlezen lambar </a>
         else { echo "$leeg"; } ?>
 inlezen gespeenden </a>
  </td>
- <td style = "font-size : 12px;">
+ <td style = "font-size : 14px;">
     <?php if (!empty($aantspn)){ echo "&nbsp $aantspn gespeenden in te lezen.";	} ?>
+ </td>
+</tr>
+
+<tr>
+ <td> <?php if (!empty($aantwg)){ ?> <a href='<?php echo $url;?>InsWegen.php' style = 'color : blue' > <?php }
+            else { echo "$leeg"; } ?>
+inlezen wegingen </a>
+ </td>
+ <td style = "font-size : 14px;">
+    <?php if (!empty($aantwg)){ echo "&nbsp $aantwg wegingen in te lezen."; } ?>
  </td>
 </tr>
 
@@ -176,8 +146,19 @@ inlezen gespeenden </a>
         else { echo "$leeg"; } ?>
 inlezen afvoer </a>
  </td>
- <td style = "font-size : 12px;">
+ <td style = "font-size : 14px;">
     <?php if (!empty($aantafl)){ echo "&nbsp $aantafl afgeleverden in te lezen."; } ?>
+ </td>
+</tr>
+
+<tr>
+ <td>
+  <?php if (!empty($aantUitsch)){ ?><a href='<?php echo $url;?>InsUitscharen.php' style = 'color : blue'><?php }
+        else { echo "$leeg"; } ?>
+inlezen uitscharen </a>
+ </td>
+ <td style = "font-size : 14px;">
+    <?php if (!empty($aantUitsch)){ echo "&nbsp $aantUitsch afgeleverden in te lezen."; } ?>
  </td>
 </tr>
 
@@ -187,7 +168,7 @@ inlezen afvoer </a>
         else { echo "$leeg"; } ?>
 inlezen uitval </a>
  </td>
- <td style = "font-size : 12px;">
+ <td style = "font-size : 14px;">
     <?php if (!empty($aantuitv)){ echo "&nbsp $aantuitv uitval in te lezen."; } ?>
  </td>
 </tr>
@@ -197,8 +178,18 @@ inlezen uitval </a>
             else {echo "$leeg"; } ?>
 inlezen aanvoer </a>
  </td>
- <td style = "font-size : 12px;">
+ <td style = "font-size : 14px;">
     <?php if (!empty($aantaanw)){ echo "&nbsp $aantaanw aanwas in te lezen."; } ?>
+ </td>
+</tr>
+
+<tr>
+ <td> <?php if (!empty($aantTvUitsch)){ ?> <a href='<?php echo $url;?>InsTvUitscharen.php' style = 'color : blue'>  <?php }
+            else {echo "$leeg"; } ?>
+inlezen terug van uitscharen </a>
+ </td>
+ <td style = "font-size : 14px;">
+    <?php if (!empty($aantTvUitsch)){ echo "&nbsp $aantTvUitsch terug van uitscharen in te lezen."; } ?>
  </td>
 </tr>
 
@@ -207,7 +198,7 @@ inlezen aanvoer </a>
             else { echo "$leeg"; } ?>
 inlezen overplaatsen </a>
  </td>
- <td style = "font-size : 12px;">
+ <td style = "font-size : 14px;">
 	<?php if (!empty($aantovpl) && empty($speen_ovpl)){	echo "&nbsp $aantovpl overplaatsingen in te lezen.";	}
 	else if (!empty($aantovpl) && $speen_ovpl == 1)	{	echo "&nbsp $aantovpl overplaatsingen in te lezen waarvan er $speen_ovpl eerst moet worden gespeend. *";	}
 	else if (!empty($aantovpl) && $speen_ovpl > 1)	{	echo "&nbsp $aantovpl overplaatsingen in te lezen waarvan er $speen_ovpl eerst moeten worden gespeend. *";	} ?>
@@ -219,7 +210,7 @@ inlezen overplaatsen </a>
             else { echo "$leeg"; } ?>
 inlezen adoptie </a>
  </td>
- <td style = "font-size : 12px;">
+ <td style = "font-size : 14px;">
     <?php if (!empty($aantadop)){ echo "&nbsp $aantadop adoptie in te lezen."; } ?>
  </td>
 </tr>
@@ -229,18 +220,8 @@ inlezen adoptie </a>
             else { echo "$leeg"; } ?>
 inlezen medicatie </a>
  </td>
- <td style = "font-size : 12px;">
+ <td style = "font-size : 14px;">
     <?php if (!empty($aantpil)){ echo "&nbsp $aantpil medicatie in te lezen."; } ?>
- </td>
-</tr>
-
-<tr>
- <td> <?php if (!empty($aantwg)){ ?> <a href='<?php echo $url;?>InsWegen.php' style = 'color : blue' > <?php }
-            else { echo "$leeg"; } ?>
-inlezen wegingen </a>
- </td>
- <td style = "font-size : 12px;">
-    <?php if (!empty($aantwg)){ echo "&nbsp $aantwg wegingen in te lezen."; } ?>
  </td>
 </tr>
 
@@ -249,7 +230,7 @@ inlezen wegingen </a>
             else { echo "$leeg"; } ?>
 inlezen omnummeren </a>
  </td>
- <td style = "font-size : 12px;">
+ <td style = "font-size : 14px;">
     <?php if (!empty($aantomn)){ echo "&nbsp $aantomn omnummeren in te lezen."; } ?>
  </td>
 </tr>
@@ -259,7 +240,7 @@ inlezen omnummeren </a>
             else { echo "$leeg"; } ?>
 inlezen halsnummers </a>
  </td>
- <td style = "font-size : 12px;">
+ <td style = "font-size : 14px;">
     <?php if (!empty($aanthals)){ echo "&nbsp $aanthals halsnummers in te lezen."; } ?>
  </td>
 </tr>
@@ -269,8 +250,28 @@ inlezen halsnummers </a>
             else { echo "$leeg"; } ?>
 inlezen voerregistratie </a>
  </td>
- <td style = "font-size : 12px;">
+ <td style = "font-size : 14px;">
     <?php if (!empty($aantvoer)){ echo "&nbsp $aantvoer voerregistraties in te lezen."; } ?>
+ </td>
+</tr>
+
+<tr>
+ <td> <?php if (!empty($aantubn)){ ?> <a href='<?php echo $url;?>InsGrWijzigingUbn.php' style = 'color : blue'><?php }
+            else { echo "$leeg"; } ?>
+inlezen ubn wijziging </a>
+ </td>
+ <td style = "font-size : 14px;">
+    <?php if (!empty($aantubn)){ echo "&nbsp $aantubn ubn wijzigingen in te lezen."; } ?>
+ </td>
+</tr>
+
+<tr>
+ <td> <?php if (!empty($aantscan)){ ?> <a href='<?php echo $url;?>InsStallijstscan_controle.php' style = 'color : blue'><?php }
+            else { echo "$leeg"; } ?>
+inlezen stallijstscan </a>
+ </td>
+ <td style = "font-size : 14px;">
+    <?php if (!empty($aantscan)){ echo "&nbsp $aantscan stallijstscans in te lezen."; } ?>
  </td>
 </tr>
 
@@ -281,12 +282,13 @@ inlezen voerregistratie </a>
 </tr>
 </table>
 
+</form>
+
 	</TD>
 <?php
 Include "menu1.php"; } ?>
 </tr>
 </table>
-</center>
 
 </body>
 </html>

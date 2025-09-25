@@ -13,6 +13,8 @@ Toegepast in :
 */
 
 
+if (isset($info_beheer)) {$msg = $info_beheer;}
+
 if (isset($goed)) {$msg = $goed;}
 
 If (isset($fout))  {$msg = $fout;}
