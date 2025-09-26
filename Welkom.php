@@ -2,7 +2,7 @@
 
 require_once("autoload.php");
 
-// # TODO: waar komen de modules vandaan? in header.tpl.php wordt op hun aanwezigheid gerekend. --BCB
+// # TODO: #0004127 waar komen de modules vandaan? in header.tpl.php wordt op hun aanwezigheid gerekend. --BCB
 
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '9-1-2020'; /* schapencentrum.. vervangen door Oer van Ovis */

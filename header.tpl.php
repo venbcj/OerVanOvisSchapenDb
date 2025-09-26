@@ -69,7 +69,7 @@ include "back_to_top.js.php";
 
 <div id = "rechts_uitlijnen" class = 'header_breed'>
     <section style="text-align : center">
-<?php # TODO: waarom de spaties? # ?>
+<?php # TODO: #0004155 waarom de spaties? # ?>
         <?php echo $titel . str_repeat('&nbsp;', 28); ?>
     </section>
     <img src='OER_van_OVIS.jpg' />

@@ -16,7 +16,7 @@ if (isset($_POST['knpLogin']) || isset($_POST['knpBasis']) || isset($_POST['knpB
 
 if (Auth::is_logged_in() && (Session::isset("A1"))) {
     $lid = Session::get("I1");
-    # TODO: in login.php wordt $login (note: wordt niet gebruikt) ook al gezet op de U1-sleutel uit sessie. Waarom nu weer? --BCB
+    # TODO: #0004123 in login.php wordt $login (note: wordt niet gebruikt) ook al gezet op de U1-sleutel uit sessie. Waarom nu weer? --BCB
     $login = Session::get("U1");
     Logger::debug('*** passw uit sessie');
     $passw = md5(Session::get("W1").'zfO3puW?Wod/UT<-|=)1VT]+{hgABEK(Yh^!Wv;5{ja{P~wX4t'); // wordt gebruikt bij wachtwoordgegevens en is het wachtwoord van de klant
@@ -47,7 +47,7 @@ if (isset($_POST['knpLogin']) || Auth::is_logged_in()) ) {
  // Einde Ophalen gegevens om connectie te kunnen maken met de database van een klant LET OP Deze code zit ook in post_readerGeb.php Zie daar voor de reden !!
 // Einde Code tbv login.php EN post_readerGeb.pgp
 // CODE T.B.V. WIJZIGEN WACHTWOORD
-# TODO: (BV) als dit toch alleen mag in Wachtwoord... waarom dan niet opnemen in Wachtwoord? --BCB
+# TODO: (BV) #0004124 als dit toch alleen mag in Wachtwoord... waarom dan niet opnemen in Wachtwoord? --BCB
 if ($curr_url == $url."Wachtwoord.php") { // $curr_url gedeclareerd is url.php
     $veld = "submit";
     if (isset($_POST['knpChange'])) {

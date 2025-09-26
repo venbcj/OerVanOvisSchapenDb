@@ -39,7 +39,7 @@ if (isset($_POST['knpSaveUitv__']) || isset($_POST['knpSaveReden__'])) { include
 //    ** REDENEN UITVAL EN MEDICATIE **
 //    ****************************************
 
-    $redId = 0; // TODO: FIXME: variabele wordt alleen gezet met knpinsertreden, maar verderop klakkeloos gebruikt?
+    $redId = 0; // TODO: FIXME: #0004117 variabele wordt alleen gezet met knpinsertreden, maar verderop klakkeloos gebruikt?
 if (isset($_POST['knpInsertReden__'])) {
     $redId = $_POST['kzlReden__'];
     

@@ -175,7 +175,7 @@ class PasswTest extends IntegrationCase {
         # THEN
         $this->assertFalse(isset($fout), "Onverwachte fout: ".($fout ?? ''));
         $this->assertEquals('De inloggegevens zijn gewijzigd.', $goed);
-        // TODO: deugdelijke assert maken voor het wachtwoord. Zoiets als "old password 'groente' (uit de fixture af te leiden) is niet meer geldig"
+        // TODO: #0004115 deugdelijke assert maken voor het wachtwoord. Zoiets als "old password 'groente' (uit de fixture af te leiden) is niet meer geldig"
         $this->assertTableWithPK('tblLeden', 'lidId', 42, ['login' => 'kobus', 'passw' => 'e37fb031e454b9c9f4a4a46ebbc9ddb6']);
     }
 

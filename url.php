@@ -21,7 +21,7 @@ $url = Url::getWebroot();
 // strtok zorgt ervoor dat alles na de paginanaam wordt verwijderd. bron : http://stackoverflow.com/questions/6969645/how-to-remove-the-querystring-and-get-only-the-url
 global $curr_url;
 $curr_url = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].strtok($_SERVER["REQUEST_URI"], '?');
-// TODO: whitelisten is veiliger dan dit blacklisten
+// TODO: #0004152 whitelisten is veiliger dan dit blacklisten
 // TODO: dit wordt sowieso nog anders als je eenmaal een front controller hebt. --BCB
 $forbidden_files = [
     "connect_db.php",

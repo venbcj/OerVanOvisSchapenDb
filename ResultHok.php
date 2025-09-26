@@ -73,7 +73,7 @@ include "login.php"; ?>
                 <TD valign = 'top'>
 <?php
 if (Auth::is_logged_in()) { if($modtech ==1) {
-// TODO: (BV) sorteren.js zit niet in de repo!
+// TODO: #0004104 (BV) sorteren.js zit niet in de repo!
 ?>
 
 <script src="sorteren.js"></script>

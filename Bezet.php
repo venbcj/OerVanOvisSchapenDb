@@ -59,7 +59,7 @@ if (Auth::is_logged_in()) {
 
     $closure = function ($row) use ($periode_gateway, $bezet_gateway) {
         // BCB: da's 12 queries per rij. Dat kon wel eens langzaam zijn ja.
-        // TODO: (BV) grote datasets opstellen tbv test, en dan kijken of indexen het sneller maken
+        // TODO: (BV) #0004143 grote datasets opstellen tbv test, en dan kijken of indexen het sneller maken
         # rijdata gaat naar de view als $row, de extra berekeningen in $extra
         $extra = [];
         $dmstopgeb = $periode_gateway->zoek_laatste_afsluitdm_geb($row['hokId']);

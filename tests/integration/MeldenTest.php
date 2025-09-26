@@ -9,7 +9,6 @@ class MeldenTest extends IntegrationCase {
         // kobus heeft geen meld-module.
         $this->runfixture('user-kobus');
         $this->get('/Melden.php', ['ingelogd' => 42]);
-        // TODO consequent dubbelquote gebruiken in html
         $this->assertPresent('img src="Melden_php.jpg');
     }
 

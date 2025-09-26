@@ -15,7 +15,7 @@
   <td colspan=4><hr></td>
 </tr>
 <?php foreach ($records as $record) : ?>
-<?php // TODO: FIXME: html is stuk. Je stopt geen tr in een td.  ?>
+<?php // TODO: FIXME: #0004156 html is stuk. Je stopt geen tr in een td.  ?>
 <tr class="schaap">
   <td></td>
   <td align="right"> <?php echo $record['halsnr']; ?> </td>

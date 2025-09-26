@@ -68,7 +68,7 @@ if (Auth::is_logged_in()) {
         $oke = aantal_oke_aanv($db, $reqId);
         if ($aantMeld > 0 && $oke > 0) {
             // Bestand maken
-            // TODO: (BV) soms voegen variabelen iets toe. Hier vind ik van niet. Het kan in 1 regel, zie hieronder:
+            // TODO: (BV) #0004146 soms voegen variabelen iets toe. Hier vind ik van niet. Het kan in 1 regel, zie hieronder:
             $alias = alias_voor_lid($db, $lidId);
             $file_r = dirname(__FILE__); // Het pad naar alle php bestanden
             $input_file = $alias."_".$reqId."_request.txt"; // Bestandsnaam
@@ -84,7 +84,7 @@ if (Auth::is_logged_in()) {
             $qry_txtRequest_RVO = aanvoer_request_rvo_query($db, $reqId);
             /* Herkomst (ubn_herk) is niet verplicht te melden */
             while ($row = mysqli_fetch_array($qry_txtRequest_RVO)) {
-                // TODO: (BV) volgens mij is dit hele stuk ...
+                // TODO: (BV) #0004147 volgens mij is dit hele stuk ...
                 $num = mysqli_num_fields($qry_txtRequest_RVO) ;
                 $last = $num - 1;
                 for ($i = 0; $i < $num; $i++) {
@@ -134,7 +134,7 @@ if (Auth::is_logged_in()) {
     $zoekControle = zoek_controle_melding($db, $reqId);
     if (isset($zoekControle) && $zoekControle > 0 && $aantMeld > 0) {
         /* Als er een controlemelding is gedaan en er zijn schapen te melden */
-        // TODO: (BCB) dit uitvoeren met collection_select
+        // TODO: (BCB) #0004148 dit uitvoeren met collection_select
 ?>
     <!-- KZLDefinitief --> 
     <select <?php echo "name=\"kzlDef_\" "; ?> style = "width:100; font-size:13px;">
@@ -240,7 +240,7 @@ if (Auth::is_logged_in()) {
         } else {
             $fase = 'lam';
         }
-        // TODO: (BV) de namen 'schaapdm' en 'dmschaap' maken niet duidelijk waarom het er twee zijn, en wat het verschil is. Vertel?
+        // TODO: (BV) #0004149 de namen 'schaapdm' en 'dmschaap' maken niet duidelijk waarom het er twee zijn, en wat het verschil is. Vertel?
         $schaapdm = $row['schaapdm'];
         $dmschaap = $row['dmschaap'];
         $stalId = $row['stalId']; // Ter controle van eerdere stalId's
@@ -306,7 +306,7 @@ if (Auth::is_logged_in()) {
         while ($rnr = mysqli_fetch_array($relatienr)) {
             $relId[$index] = $rnr['relId'];
             $relnum[$index] = $rnr['naam'];
-            // TODO: (BV) wat is het nut van relRaak? Je kunt toch relId gebruiken?
+            // TODO: (BV) #0004150 wat is het nut van relRaak? Je kunt toch relId gebruiken?
             $relRaak[$index] = $rnr['relId'];
             $index++;
         }

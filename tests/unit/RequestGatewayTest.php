@@ -20,7 +20,7 @@ class RequestGatewayTest extends UnitCase {
 
     public function test_set_def() {
         $this->runfixture('request-gw-not-def');
-        $this->sut->setDef(1, 3); // TODO pk nog voorop zetten
+        $this->sut->setDef(1, 3); // TODO #0004111 pk nog voorop zetten
         $this->assertTableWithPK('tblRequest', 'reqId', 3, ['def' => 1]);
         $this->assertTableWithPK('tblRequest', 'reqId', 4, ['def' => 0]);
     }

@@ -64,7 +64,7 @@ $insert_tblEenheiduser = "INSERT INTO tblEenheiduser (lidId, eenhId)
     }
 
     public function createElementen($lidId) {
-        // TODO 'waarde' heeft geen default, en mag niet null zijn. Dit kan niet werken. Ik zet er 0. Wat moet het zijn?
+        // TODO: #0004134  'waarde' heeft geen default, en mag niet null zijn. Dit kan niet werken. Ik zet er 0. Wat moet het zijn?
         $insert_tblElementuser = "INSERT INTO tblElementuser (elemId, lidId, waarde)
             SELECT elemId, '".mysqli_real_escape_string($this->db,$lidId)."', 0
             FROM tblElement

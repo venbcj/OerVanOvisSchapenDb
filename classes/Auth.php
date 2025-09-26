@@ -18,7 +18,7 @@ class Auth {
         Session::set("Fase", null); // Als (records per) pagina wordt ververst wordt fase onthouden. Zo kan pagin worden doorlopen zonder steeds opnieuw bestemming te kiezen. Zie HokUitscharen.php (HokAfleveren.php)
         Session::set('KZ', null); // Als pagina wordt ververst wordt de keuze (filter) onthouden. Zie HokOverpl.php
         Session::set("CNT", null); // Gebruikt in Contact.php
-        // TODO: (BCB) ik wil de global $lidId vervangen door getLidId(), als eerste stap
+        // TODO: (BCB) #0004131 ik wil de global $lidId vervangen door getLidId(), als eerste stap
         $lidId = Session::get("I1");
         // In de demo omgeving worden de basis gegevens elke maand opnieuw vervangen.
         if ($dtb == "k36098_bvdvschapendbs" && $lidId > 1) {

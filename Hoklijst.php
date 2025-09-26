@@ -35,7 +35,7 @@ include "login.php"; ?>
 <?php
 if (Auth::is_logged_in()) {
 
-$pstId = $_GET['pstgroep'] ?? 1; // TODO: wat is een verstandige default?
+$pstId = $_GET['pstgroep'] ?? 1; // TODO: #0004153 wat is een verstandige default?
 
 $zoek_doel = mysqli_query($db,"
 SELECT doel

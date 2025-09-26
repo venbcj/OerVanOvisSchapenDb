@@ -171,7 +171,7 @@ else if(empty($_POST['kzlReden']))    {    $fout = "De reden is niet geselecteer
                             if(!empty($_POST['kzlArtikel']))    {    $knpInsert = "toonknpInsert";    }
                                     }
 
-// TODO: (BV) dit is dode code. Je komt alleen in deze tak als er wel een keuze is aangevinkt.
+// TODO: (BV) #0004158 dit is dode code. Je komt alleen in deze tak als er wel een keuze is aangevinkt.
 else if (empty($_POST['chbKeuze'])) {    $fout = "Er is geen schaap geselecteerd.";    
                             if(!empty($_POST['kzlArtikel']))    {    $knpInsert = "toonknpInsert";    }
                                     }
@@ -673,7 +673,7 @@ WHERE s.geslacht = 'ooi' and $where_mdr
     }
 }
 include "med-registratie-toggle.js.php";
-// TODO: onclick aanhangen met jquery, niet in html
+// TODO: #0004159 onclick aanhangen met event listener (jquery?), niet in html
 ?>
 <table border = 0>
 <tr height = 30><td></td></tr>

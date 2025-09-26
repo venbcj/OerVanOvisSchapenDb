@@ -20,7 +20,7 @@ Session::start();
 if (isset ($_POST['knpUpdate'])) { include "url.php"; header("Location: ".$url."Leveranciers.php"); }
 $titel = 'Crediteuren';
 $subtitel = '';
-# TODO: (BV) ik zie Leveranciers nergens in de navigatie. Is dit verlaten code? --BCB
+# TODO: #0004118 (BV) ik zie Leveranciers nergens in de navigatie. Is dit verlaten code? --BCB
 $file = "Leveranciers.php";
 include "login.php"; 
 if (Auth::is_logged_in()) { 

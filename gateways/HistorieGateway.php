@@ -22,7 +22,7 @@ FROM tblHistorie h
                 $first_day = $mi['date'];
                 $eerste_dag = $mi['datum'];
             }
-        // TODO: record teruggeven ipv anonieme array?
+        // TODO: #0004135 record teruggeven ipv anonieme array?
         // TODO in een veel later stadium: Tell, Don't Ask -> verplaats het gedrag op basis van deze data hierheen
         return [$first_day, $eerste_dag];
     }

@@ -44,7 +44,7 @@
             <?php echo View::link_to('Maandtotalen', 'MaandTotalen.php', ['class' => $tech_color]); ?>
             <?php echo View::link_to('Groeiresultaten per schaap', 'GroeiresultaatSchaap.php', ['class' => $tech_color]); ?>
             <?php echo View::link_to('Groeiresultaten per weging', 'GroeiresultaatWeging.php', ['class' => $tech_color]); ?>
-            <?php # TODO: omschrijving is anders dan in menu1! ?>
+            <?php # TODO: #0004121 omschrijving is anders dan in menu1! ?>
             <?php echo View::link_to('Periode resultaten', 'ResultHok.php', ['class' => $tech_color]); ?>
 
         <ul class="nested-dropdown">

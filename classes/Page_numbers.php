@@ -12,7 +12,7 @@ class Page_numbers {
     var $total_pages; // totaal aantal pagina's
     var $page; // Getoonde pagina nummer
     var $offset; // record waar vanaf getoond moet worden vb : 60 betekend tonen x records (per pagina) vanaf 61 (paginanr - 1 * records per pagina)
-    var $query_string = ''; // TODO: (BV) kan dit weg? Lijkt me dode code --BCB
+    var $query_string = ''; // TODO: (BV) #0004132 kan dit weg? Lijkt me dode code --BCB
 
     private $base_url;
 

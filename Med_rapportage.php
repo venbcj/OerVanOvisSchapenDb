@@ -105,7 +105,7 @@ If (isset($_POST['knpToon']) && !empty($_POST['kzlpil'])) {    $label = ""; }
 echo $label;
 
 //kzlMedicijn
-// TODO: (BCB) $kzl verder extraheren, zit nu half in artikegateway
+// TODO: (BCB) #0004170 $kzl verder extraheren, zit nu half in artikelgateway
 $name = "kzlpil";
 $width= 200 ; ?>
 <select name=<?php echo"$name";?> style="width:<?php echo "$width";?>;\" >

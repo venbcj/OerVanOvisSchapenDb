@@ -66,7 +66,7 @@ foreach ($multip_array as $recId => $id) {
         $fldSkip = 0;
     }
 
-    // TODO: deze conditie omkeren en gebruiken als guard clause -> early return.
+    // TODO: #0004164 deze conditie omkeren en gebruiken als guard clause -> early return.
     if (isset($recId) and $recId > 0) {
         $recId = (int) $recId;
         if (!isset($fldDef)) {
@@ -80,7 +80,7 @@ foreach ($multip_array as $recId => $id) {
         /* Eerste datum zoeken ter controle bij aanvoer bedrijf */
         $historie_gateway = new HistorieGateway($db);
         if ($code == 'AAN' || $code == 'GER') {
-            // TODO: deze variabelen zijn alleen nodig om de foutmelding wrong_dag te vormen. Verplaats naar HistorieGateway? Nee, naar een Transactie
+            // TODO: #0004165 deze variabelen zijn alleen nodig om de foutmelding wrong_dag te vormen. Verplaats naar HistorieGateway? Nee, naar een Transactie
             [$first_day, $eerste_dag] = $historie_gateway->zoek_eerste_datum_stalop($recId);
         }
         /* Einde Eerste datum zoeken ter controle bij aanvoer bedrijf */
@@ -167,7 +167,7 @@ foreach ($multip_array as $recId => $id) {
         }
 
         // Wijzigen levensnummer
-        // TODO: (BV) wanneer kan dit waar zijn? Je zoekt een schaap op basis van fldLevnr, en db_levnr is het levensnummer van het schaap --BCB
+        // TODO: (BV) #0004166 wanneer kan dit waar zijn? Je zoekt een schaap op basis van fldLevnr, en db_levnr is het levensnummer van het schaap --BCB
         if (isset($fldLevnr) && $fldLevnr <> $co['levensnummer'] && !isset($wrong_levnr)) {
             $schaap_gateway->changeLevensnummer($co['levensnummer'], $fldLevnr);
         }
@@ -219,7 +219,7 @@ foreach ($multip_array as $recId => $id) {
             $wrong = $wrong_dag;
         }
         if ((isset($wrong) && (!isset($co['fout']) || ($wrong <> $co['fout']) )) || (!isset($wrong) && isset($co['fout']))) {
-            // TODO: $wrong niet zomaar gebruiken, is soms niet gezet --BCB
+            // TODO: #0004167 $wrong niet zomaar gebruiken, is soms niet gezet --BCB
             $melding_gateway->updateFout($recId, $wrong ?? null);
         }
         unset($wrong);

@@ -15,7 +15,7 @@ if ($modtech == 1) {
     $tech_color = 'blue';
 }
 
-// TODO: moet deze logica ook zo werken in menu1?
+// TODO: #0004144 moet deze logica ook zo werken in menu1?
 $reader_color = 'grey';
 if ($reader == 'Agrident') {
     $reader_color = 'red';

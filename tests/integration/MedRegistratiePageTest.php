@@ -90,7 +90,7 @@ class MedRegistratiePageTest extends IntegrationCase {
         $this->assertOptieCount('kzlHalsnr', 2); // er is altijd een lege optie
     }
 
-    # TODO (BV) fixtures voor maken
+    # TODO: #0004116 (BV) fixtures voor maken
     # public function testToonMedregistratieKeuzelijstHok() {
     #     $this->markTestIncomplete('Dit leg je me maar een keer uit');
     #     $this->runfixture('hok');

@@ -27,7 +27,7 @@ include "login.php"; ?>
                 <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) {
-    // TODO: FIXME: $hoknr wordt gebruikt, maar nergens? gezet
+    // TODO: FIXME: #0004168 $hoknr wordt gebruikt, maar nergens? gezet
     $hoknr = 1;
 include "kalender.php";
     if (!(Session::isset('BST'))) Session::set('BST', 1);

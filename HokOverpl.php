@@ -422,7 +422,7 @@ for ($i = 0; $i < $count; $i++){
     
 <td align = center> <?php if(isset($fase)) { echo $fase; } ?> </td>
 <td colspan = 3 style = "color : red"> 
-<?php # TODO: FIXME: $datum hoeft niet per se gezet te zijn. Verbouw de logica zodat die er wel altijd is, of print hier iets anders --BCB # ?>
+<?php # TODO: FIXME: #0004120 $datum hoeft niet per se gezet te zijn. Verbouw de logica zodat die er wel altijd is, of print hier iets anders --BCB # ?>
 <?php if($day < $dmmax) { echo 'De datum '.($datum ?? '').' mag niet voor '.$maxdm.' liggen.';}
 ?>
 </td>    

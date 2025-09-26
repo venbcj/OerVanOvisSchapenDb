@@ -23,7 +23,7 @@ function first_field_from_result($SQL) {
 /*Toegepast in :
 - Dekkingen.php
  */
-// TODO: alle query-functies op deze manier herschrijven --BCB
+// TODO: #0004160 alle query-functies op deze manier herschrijven --BCB
 function startjaar_gebruiker($lidId) {
     global $db;
     $lidId = mysqli_real_escape_string($db, $lidId);
@@ -616,7 +616,7 @@ function setup_db() {
     if ($db == false) {
         throw new Exception('Connectie database niet gelukt');
     }
-    # TODO: (BCB) dit is de plek om db centraal te registreren, in een object dat op Session lijkt (bv Current)
+    # TODO: (BCB) #0004161 dit is de plek om db centraal te registreren, in een object dat op Session lijkt (bv Current)
     # Nu is dat precies in het geval van db waarschijnlijk niet nodig, omdat:
     # - db is voor database-operaties
     # - alle database-operaties verhuizen eerst naar Gateway-objecten
@@ -631,7 +631,7 @@ function setup_db() {
     ];
 }
 
-    // TODO: (BV) gaat onderstaand commentaar over de drie delen van de union? of over de drie "methoden" laatste-versie, readersetup, readertaken?
+    // TODO: (BV) #0004162 gaat onderstaand commentaar over de drie delen van de union? of over de drie "methoden" laatste-versie, readersetup, readertaken?
     /* Eerste query zoek alleen readerApp versies
     Tweede query zoek naar readerApp versie i.c.m. taakversies
     Derde query zoek naar alleen taakversies */

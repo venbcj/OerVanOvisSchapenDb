@@ -279,7 +279,7 @@ WHERE h.hisId = '".mysqli_real_escape_string($db,$uitgeschaard)."'
 
  }
 
- // TODO: (BV) verwacht array_vader_uit_koppel ... maar die wordt verderop pas gezet. Klopt dit?
+ // TODO: (BV) #0004122 verwacht array_vader_uit_koppel ... maar die wordt verderop pas gezet. Klopt dit?
 // ik heb het maar vast hier gezet, ipv op regel 54 of zo
  include "validate-invschaap.js.php";
 /***********************

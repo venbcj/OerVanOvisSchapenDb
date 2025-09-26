@@ -4,7 +4,7 @@
  29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.js.php -->
  */
 
-// TODO: dit is een kopie uit menu1. Moet een functie worden. --BCB
+// TODO: #0004138 dit is een kopie uit menu1. Moet een functie worden. --BCB
 $meld_color = 'grey';
 if ($modmeld != 0) {
     $meld_color = 'blue';

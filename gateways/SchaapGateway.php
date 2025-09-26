@@ -9,7 +9,7 @@ FROM tblSchaap
 WHERE levensnummer = '".mysqli_real_escape_string($this->db, $fldLevnr)."'");
 $rec = mysqli_fetch_assoc($vw);
 return $rec['schaapId'] ?? 0;
-            # TODO: nullcheck. Als fldLevnr niet voorkomt, is zs geen array, en dat geeft een warning.
+            # TODO: #0004137 nullcheck. Als fldLevnr niet voorkomt, is zs geen array, en dat geeft een warning.
         # Dit wijst erop dat de code dingen doet die niet bij elkaar horen.
     }
 
@@ -272,7 +272,7 @@ $stapel = null;
     return $stapel;
 }
 
-// todo: dit is de count-query bij zoekUitgeschaarden. Maak dat duidelijk.
+// TODO: #0004136 dit is de count-query bij zoekUitgeschaarden. Maak dat duidelijk.
 // Misschien de select parameteriseren?
 public function countUitgeschaarden($lidId) {
     $vw = mysqli_query($this->db,"

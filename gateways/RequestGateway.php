@@ -2,7 +2,7 @@
 
 class RequestGateway extends Gateway {
 
-    // TODO mogelijk misleidende naam, want haalt meer op dan alleen het kale record
+    // TODO #0004133 mogelijk misleidende naam, want haalt meer op dan alleen het kale record
     public function find($recId) {
         $vw = mysqli_query($this->db, "
 SELECT r.reqId, r.code, r.def, m.skip, m.fout, h.datum, s.levensnummer, s.geslacht, st.rel_herk, st.rel_best

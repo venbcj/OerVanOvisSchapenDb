@@ -5,7 +5,7 @@ require_once("autoload.php");
 /* https://www.youtube.com/watch?v=CamDi3Syjy4
 9-8-2019 www. weggehaald bij url */
 
-// TODO: (BV) dit samenvoegen met database.php?
+// TODO: (BV) #0004141 dit samenvoegen met database.php?
 if ($_SERVER['HTTP_HOST'] == 'localhost:8080') {
     $database = 'SchapenDb1';
     $username = 'root';

@@ -8,7 +8,7 @@ require_once("demo_functions.php");
 // BCB: kunstgreep om uitvoer te scheiden van berekening
 $output = [];
 
-// TODO: verder scheiden. Dit doet nu:
+// TODO: #0004171 verder scheiden. Dit doet nu:
 // - globale variabelen zetten
 // - redirecten
 // - uitvoer genereren
@@ -87,7 +87,7 @@ if (!Auth::is_logged_in()) {
         $output[] = "header_logout.tpl.php";
         $message = ' Gebruikersnaam of wachtwoord onjuist !';
         // NOTE: $file moet gezet zijn voor login_form
-        // TODO: $destination of $target zouden betere namen zijn voor deze variabele --BCB
+        // TODO: #0004172 $destination of $target zouden betere namen zijn voor deze variabele --BCB
         $output[] = "login_form.tpl.php";
     } else {
         $output[] = "header_logout.tpl.php";
@@ -96,10 +96,10 @@ if (!Auth::is_logged_in()) {
     // *** EINDE ALS NIET IS INGELOGD ***
 } elseif (Auth::is_logged_in()) {
     // ***     ALS WEL IS INGELOGD    ***
-    // TODO: variabele login wordt nergens gebruikt --BCB
+    // TODO: #0004173 variabele login wordt nergens gebruikt --BCB
     $login = Session::get("U1");
     $lidId = Session::get("I1");
-    // TODO: (BV) is dit geplande nieuwbouw? dat het uit staat, bedoel ik?
+    // TODO: (BV) #0004174 is dit geplande nieuwbouw? dat het uit staat, bedoel ik?
     //$alias = Session::get("A1");
     $pag = Session::get("PA"); // paginanummer dat moet worden ontouden als de pagina wordt ververst
     $RPP = Session::get("RPP"); // standaard aantal regels per pagina

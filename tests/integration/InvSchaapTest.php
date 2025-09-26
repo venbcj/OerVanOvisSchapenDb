@@ -9,7 +9,7 @@ class InvSchaapTest extends IntegrationCase {
     public function testPostInvSchaap() {
         $this->post("/InvSchaap.php", ['ingelogd' => 1, 'txtLevnr' => 1]);
         $this->assertNoNoise();
-        // TODO: case met uitgeschaard
+        // TODO: #0004113 case met uitgeschaard
     }
 
     public function testSaveInvSchaapZonderLevnr() {

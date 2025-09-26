@@ -13,7 +13,7 @@ class MeldingTest extends IntegrationCase {
         $_SERVER['REQUEST_URI'] = 'Meldingen.php';
     }
 
-    # TODO: testcases waar "datum" voor de eerst mogelijke, of na de laatst mogelijke ligt.
+    # TODO: #0004107 testcases waar "datum" voor de eerst mogelijke, of na de laatst mogelijke ligt.
     # Struikelblokken:
     # - bepaling van eerste moet uit een fixture volgen die "zoek_eerste_datum_stalop" goed laat werken
     # - bepaling van laatste volgt uit systeemdatum, dat is nog niet testbaar
@@ -201,7 +201,7 @@ class MeldingTest extends IntegrationCase {
     }
 
     public function testGeboorteLevnr0() {
-        # TODO deze case gecombineerd met verkeerde dag
+        # TODO #0004108 deze case gecombineerd met verkeerde dag
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
@@ -223,7 +223,7 @@ class MeldingTest extends IntegrationCase {
     }
 
     public function testGeboorteLevnrDuplicaat() {
-        # TODO deze case gecombineerd met verkeerde dag
+        # TODO #0004109 deze case gecombineerd met verkeerde dag
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()
@@ -248,7 +248,7 @@ class MeldingTest extends IntegrationCase {
     }
 
     public function testGeboorteLevnrSpelfout() {
-        # TODO deze case gecombineerd met verkeerde dag
+        # TODO #0004110 deze case gecombineerd met verkeerde dag
         # GIVEN
         # om het uberhaupt te laten werken
         # ... dit zet nog allemaal globals, dus kan helaas niet in setup()

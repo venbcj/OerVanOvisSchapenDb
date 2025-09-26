@@ -1,6 +1,6 @@
 <?php
 
-// TODO: (BV) die title en meta-tags lijken me ongewenst. Horen in html-head
+// TODO: #0004169 die title en meta-tags lijken me ongewenst. Horen in html-head
 ?>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">

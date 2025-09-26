@@ -213,7 +213,7 @@ If(isset($_POST['txtFokrnr']) && $_POST['txtFokrnr'] <> $dbFokrnr) {
 // Einde Wijzigen Fokkersnummer
 
 // Wijzigen Halsnummer
-# TODO: (BV) kzlKleur zetten moet niet binnen de if, omdat je het zometeen gebruikt zonder voorwaarden.
+# TODO: (BV) #0004126 kzlKleur zetten moet niet binnen de if, omdat je het zometeen gebruikt zonder voorwaarden.
 $kzlKleur = '';
 $txtHnr = '';
 if(isset($_POST['kzlKleur'])) { $kzlKleur = $_POST["kzlKleur"]; } 

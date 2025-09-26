@@ -7,7 +7,7 @@
 </tr>
 <?php
 $pagina_naam = strtok($_SERVER["REQUEST_URI"], '?');
-// TODO: moet dit toch alleen op 'index'? De 'true' is van mij --BCB
+// TODO: #0004154 moet dit toch alleen op 'index'? De 'true' is van mij --BCB
 if (true || $pagina_naam == '/index.php') : ?>
 <tr align = center>
  <td colspan = 3>

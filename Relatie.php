@@ -32,7 +32,7 @@ else
 If (isset ($_POST['knpSave_']))
 {    
         if (empty($_POST['txtUbn_']))    {    $updUbn = "NULL";    }  else        {    $updUbn = " '$_POST[txtUbn_]' ";    }
-        // TODO: FIXME: ja grappenmaker, tblPartij.naam is verplicht
+        // TODO: FIXME: #0004139 ja grappenmaker, tblPartij.naam is verplicht
         if (empty($_POST['txtNaam_']))    {    $updNaam = "NULL";    }  else        {    $updNaam = " '$_POST[txtNaam_]' ";    }
         if (empty($_POST['txtBanknr_'])){    $updBank = "NULL";    }  else        {    $updBank = " '$_POST[txtBanknr_]' ";}
         
@@ -95,7 +95,7 @@ else if(isset($vervId)) {
 include "save_relatie.php";
 }
 
-# TODO: de left join met vervoer werkt niet zoals je verwacht in mysqli
+# TODO: #0004140 de left join met vervoer werkt niet zoals je verwacht in mysqli
 $Partij = mysqli_query($db,"
 select p.partId, r.relId, relatie, ubn, naam, tel, fax, email, site, banknr, p.relnr, p.wachtw, kenteken, aanhanger 
 from tblPartij p
