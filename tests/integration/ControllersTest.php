@@ -184,7 +184,6 @@ Uitval.php
 Vader.php
 Voer.php
 Voer_rapportage.php
-Voorraadcorrectie.php
 Voorraad.php
 Wachtwoord.php
 Wegen.php

@@ -21,6 +21,7 @@ include "login.php"; ?>
 
         <TD valign = 'top'>
 <?php
+# 4176 is Auth::is_logged_in() ook goed?
 if ((Session::isset("U1")) && (Session::isset("W1"))) {
 
     $artId = 0;
@@ -37,25 +38,13 @@ if (!empty($_GET['pst']))
    $split = explode('_', $name) ;
     $ink_id = $split[1]; // Laatste veldnaam moet wel een recordId hebben in de naam
 }
-$zoek_artId = mysqli_query($db,"
-SELECT i.artId
-FROM  tblInkoop i 
-WHERE i.inkId = ".mysqli_real_escape_string($db,$ink_id)."
-") or Logger::error(mysqli_error($db));
-
-while($za = mysqli_fetch_assoc($zoek_artId))
-            { $artId = $za['artId']; }
+$inkoop_gateway = new InkoopGateway($db);
+$artikel_gateway = new ArtikelGateway($db);
+$artId = $inkoop_gateway->findArtikel($ink_id);
 
     }
 
-$zoek_soort_artikel = mysqli_query($db,"
-SELECT a.soort
-FROM tblArtikel a
-WHERE a.artId = ".mysqli_real_escape_string($db,$artId)."
-") or Logger::error(mysqli_error($db));
-$soort = 'pil';
-while ($srt = mysqli_fetch_assoc($zoek_soort_artikel))    { $soort = $srt['soort']; }
-
+    $soort = $artikel_gateway->zoek_soort($artId);
 
 if(isset($_POST['knpSave_'])) { include "save_voorraadcorrectie.php";  }
                 
@@ -85,37 +74,13 @@ if(isset($_POST['knpSave_'])) { include "save_voorraadcorrectie.php";  }
 </tr>
 <?php
 if($soort == 'pil') {
-$query = "
-SELECT i.inkId, a.naam, date_format(i.dmink,'%d-%m-%Y') toedm, i.charge, round(i.inkat - sum(coalesce(n.nutat*n.stdat,0)),0) totat, e.eenheid
-FROM tblArtikel a
- join tblInkoop i on (a.artId = i.artId)
- join tblEenheiduser eu on (eu.enhuId = i.enhuId)
- join tblEenheid e on (e.eenhId = eu.eenhId)
- left join tblNuttig n on (n.inkId = i.inkId) 
-WHERE a.artId = ".mysqli_real_escape_string($db,$artId)."
-GROUP BY i.inkId, a.naam, i.dmink, i.charge, i.inkat, e.eenheid
-ORDER BY i.dmink desc, i.inkId
-";
+    $result = $artikel_gateway->pilregels($artId);
 }
-
 if($soort == 'voer') {
-$query = "
-SELECT i.inkId, a.naam, date_format(i.dmink,'%d-%m-%Y') toedm, NULL charge, round(i.inkat - sum(coalesce(v.nutat*v.stdat,0)),0) totat, e.eenheid
-FROM tblArtikel a
- join tblInkoop i on (a.artId = i.artId)
- join tblEenheiduser eu on (eu.enhuId = i.enhuId)
- join tblEenheid e on (e.eenhId = eu.eenhId)
- left join tblVoeding v on (v.inkId = i.inkId) 
-WHERE a.artId = ".mysqli_real_escape_string($db,$artId)."
-GROUP BY i.inkId, a.naam, i.dmink, i.inkat, e.eenheid
-ORDER BY i.dmink desc, i.inkId
-";
+    $result = $artikel_gateway->voerregels($artId);
 }
 
-$result = mysqli_query($db,$query) or Logger::error(mysqli_error($db));
-
-while($row = mysqli_fetch_assoc($result))
-            {
+while($row = mysqli_fetch_assoc($result)) {
                 $Id = $row['inkId'];
                 $naam = $row['naam'];
                 $toedm = $row['toedm'];
@@ -124,26 +89,7 @@ while($row = mysqli_fetch_assoc($result))
                 $totat = $row['totat'];
                 $eenh = $row['eenheid'];
 
-$zoek_afgeboekt = mysqli_query($db,"
-SELECT sum(af) af
-FROM (
-    SELECT round(sum(coalesce(n.nutat*n.stdat,0)),0) af
-    FROM tblInkoop i
-     left join tblNuttig n on (n.inkId = i.inkId)
-    WHERE n.inkId = ".mysqli_real_escape_string($db,$Id)." and correctie = 1
-
-Union all
-
-    SELECT round(sum(coalesce(v.nutat*v.stdat,0)),0) af
-    FROM tblInkoop i
-     left join tblVoeding v on (v.inkId = i.inkId)
-    WHERE v.inkId = ".mysqli_real_escape_string($db,$Id)." and correctie = 1
-) tbl
-") or Logger::error(mysqli_error($db));
-
-while($afb = mysqli_fetch_assoc($zoek_afgeboekt))
-            { $afboek = $afb['af']; }
-
+$afboek = $inkoop_gateway->zoek_afgeboekt($Id);
 ?>
 
 <tr>
