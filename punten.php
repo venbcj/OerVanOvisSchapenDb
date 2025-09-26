@@ -35,7 +35,6 @@ worp - 149 dagen
 
 
 ***
-Bij worpen (geboortes) dracht 'Ja' regsitreren
 
 oke : post_readerGeb.php regel 373 : testen bij $modtech == 0
 
@@ -44,8 +43,48 @@ controle '"Bij overlijden moet datum t.b.v. uitval zijn ingevuld."' testen. ($kz
 testen aanvoer bestaand dier.
 testen aanvoer bestaand dier zonder volwId => dier aanvoeren incl. ouders registreren
 
-javascript velden verbergen
-- nieuwe invoer veld Drachting hidden bij dekking
-- Bij wijzigen Drachtig velden Drachtdatum en Worpgrootte zichtbaar maken / verbergen
+
+invSchaap : bij aanvoer rel herkomst registreren
+
+volwId weghalen in Dekkingen / Dracht
 
 ***
+
+
+UPDATE impAgrident SET verwerkt = NULL WHERE Id in (3717, 3718, 3719, 3720, 3721, 3722, 3723);
+DELETE FROM tblSchaap WHERE schaapId > 15503;
+DELETE FROM tblStal WHERE stalId > 15717;
+DELETE FROM tblVolwas WHERE volwId > 7706;
+UPDATE tblVolwas SET drachtig = NULL, verloop = NULL WHERE volwId > 7700;
+UPDATE tblVolwas SET grootte = NULL WHERE volwId > 7702;
+DELETE FROM tblHistorie WHERE hisId > 55600;
+DELETE FROM tblDracht WHERE draId > 5;
+DELETE FROM tblBezet WHERE bezId > 23460;
+DELETE FROM tblMelding WHERE meldId > 22610;
+
+
+SELECT * FROM impAgrident WHERE lidId = 13 AND actId = 1 AND verwerkt IS NULL 
+
+SELECT * FROM impAgrident WHERE lidId = 13 AND actId = 19 AND verwerkt IS NULL 
+
+100190702997
+
+Freija
+
+100213901521 moeder volwId 4707
+100138973409 moeder zonder geboorte datum zonder volwId
+
+100213501686 lam	volwId 6274
+
+100129038944 vader zonder geboorte datum zonder volwId
+
+
+
+SELECT * FROM impAgrident WHERE lidId = 13 AND actId = 19 AND verwerkt IS NULL 
+
+
+UPDATE impAgrident SET verwerkt = NULL WHERE Id in (3741, 3743, 3745, 3760);
+
+UPDATE tblVolwas SET grootte = NULL and drachtig = NULL WHERE volwId in (7715, 7716, 7691, 7693);
+DELETE FROM tblHistorie WHERE hisId > 55644;
+DELETE FROM tblDracht WHERE draId > 8;

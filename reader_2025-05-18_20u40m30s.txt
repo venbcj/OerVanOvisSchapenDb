@@ -1,0 +1,2131 @@
+[
+  {
+    "Worpregistratie": [],
+    "Doodgeboren": [],
+    "Groepsgeboorte": [
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209578807"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209278806"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209878808"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209678804"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209078802"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209378803"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209778801"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209978805"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209378810"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209178809"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209878815"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209778818"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209278820"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209278813"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209178816"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209078819"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209978812"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209478817"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209578814"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209678811"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209678828"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209378827"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209478824"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209178830"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209578821"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209878822"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209778825"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209078826"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209178823"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209978829"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209978836"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209278837"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209378834"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209078840"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209078833"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209678835"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209878839"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209578838"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209478831"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209778832"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209878846"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209578845"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209278844"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209778849"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209978850"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209378841"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209678842"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209178847"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209978843"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209478848"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209778856"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209878853"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209278851"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209078857"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209878860"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209378858"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209178854"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209578852"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209478855"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209678859"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209878891"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209778894"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209178900"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209978898"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209478893"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209078895"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209678897"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209578869"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209378896"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209178892"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209278899"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209778863"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209478862"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209378865"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209078864"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209978867"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209678866"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209178861"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209778870"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209278868"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209378889"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209578883"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209278882"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209478886"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209178885"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209878884"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209078888"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209978881"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209778887"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209578890"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209978874"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209478879"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209678880"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209878877"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209078871"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209578876"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209178878"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209678873"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209378872"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-18T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209278875"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209278907"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209978906"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209578908"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209378904"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209678905"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209478901"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209078910"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209778902"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209078903"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209878909"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209978951"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209378959"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209778957"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209578960"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209878954"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209078958"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209478956"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209178955"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209278952"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209578953"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209778971"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209178979"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209378973"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209378980"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209678974"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209878978"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209978975"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209278976"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209578977"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209078972"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209378966"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209878961"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209278969"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209178962"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209478963"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209978968"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209678967"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209078965"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209778964"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209478970"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209678981"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209478987"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209278990"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209078989"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209878985"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209578984"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209178986"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209978982"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209278983"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209778988"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209978937"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209478932"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209378935"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209178931"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209678936"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209278938"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209578939"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209078934"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209778940"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209778933"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209378911"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209778919"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209678912"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209278914"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209478918"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209978920"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209178917"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209978913"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209878916"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209578915"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209578922"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209878923"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209778926"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209278921"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209078927"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209378928"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209678929"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209878930"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209478925"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209178924"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209979000"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209978999"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209678998"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209478994"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209578991"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209078996"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209378997"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209878992"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209778995"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209178993"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209179011"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209079014"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209779013"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209279018"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209379015"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209479012"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209679016"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209779020"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209979017"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209579019"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209979024"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209679030"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209079021"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209279025"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209579026"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209379022"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209479029"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209879027"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209679023"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209179028"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209879010"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209479005"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209679009"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209379008"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209579002"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209279001"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209079007"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209779006"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209179004"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209879003"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209978944"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209278945"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209478949"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209078941"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209878947"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209178948"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209678950"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209378942"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209678943"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209578946"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209779037"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209879034"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209279032"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209979031"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209579033"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209479036"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209079038"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209579040"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209379039"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209179035"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209279049"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209979048"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209779044"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209379046"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209679047"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209479043"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209879041"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209179042"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209079045"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209479050"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209679085"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209279087"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209079090"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209079083"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209479081"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209879089"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209779082"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209979086"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209579088"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209379084"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209579095"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209179097"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209779099"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209279094"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209479098"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209679092"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209679100"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209879096"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209979093"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209379091"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209679061"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209479067"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209779068"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209979062"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209879065"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209279070"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209179066"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209279063"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209079069"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209579064"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209879072"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209079076"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209479074"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209679078"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209579071"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209979079"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209179080"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209779075"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209379077"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209179073"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209379053"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209379060"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209679054"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209079052"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209579057"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209179059"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209879058"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209979055"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209779051"
+      },
+      {
+        "ActId": "1",
+        "Datum": "2025-03-01T00:00:00",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209279056"
+      }
+    ],
+    "Verplaatsing": [],
+    "Spenen": [],
+    "Afvoer": [],
+    "Aanvoer": [],
+    "Omnummeren": [],
+    "Medicaties": [],
+    "Halsnummers": [],
+    "Groepsafvoer": [],
+    "Voerregistratie": [],
+    "Dekken": [],
+    "Dracht": [],
+    "StallijstScan": [
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100070308930",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100059356435",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100189166087",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100070518508",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100059056403",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100070118562",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100110767549",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100110767549",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100110767549",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100110767549",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100110167547",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100110367534",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100059456418",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100059556408",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100070909074",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100070318403",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100067099157",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100110267520",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100070108772",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100189766180",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100110967480",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100059756433",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100110267537",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100070109054",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100070518560",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100154467672",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100070218576",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100059856447",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100209278781",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100154067883",
+        "Geslacht": "ooi"
+      },
+      {
+        "ActId": "21",
+        "Datum": "2025-03-17T00:00:00",
+        "RasId": "92",
+        "DoelId": "2",
+        "HokId": "",
+        "Transponder": "A0000000528",
+        "Levensnummer": "100059056465",
+        "Geslacht": "ooi"
+      }
+    ]
+  }
+]

@@ -81,7 +81,7 @@ unset($index);
 
 
  <td style = "text-align:center;"valign= 'bottom'; width= 80 ><h3>Jaar</h3> </td>
- <td valign = "top" style = "font-size : 11px;">
+ <td style = "font-size : 11px;">
 <!-- KZLJAAR -->
 <?php $width = 65 ; ?>
  <select style= "width:<?php echo $width; ?>;" name = "kzlJaar___" style = "font-size:12px;">
@@ -100,7 +100,7 @@ for ($i = 0; $i < $count; $i++){
 }
 ?> </select>
 	<!-- EINDE KZLJAAR --> </td>
- <td valign = "top" ><input type = submit name = "knpToon___" value = 'Toon' ></td>
+ <td ><input type = submit name = "knpToon___" value = 'Toon' ></td>
  <td width = 400 valign = "top" align = 'right'><input type = <?php echo $knptype; ?> name = "knpSave___" value = 'Opslaan' ></td>
 </tr>
 </table>
@@ -129,6 +129,8 @@ ORDER BY hr.sort, hr.rubhId
  <td></td>
 <?php for ($i = 1; $i<=12; $i++)
 { ?>
+ <td width="10" ></td>
+
  <td align = "center" style = "color : <?php if(date('Yn') == $toon_jaar.$i) { echo 'blue'; } ?> " > <i> <?php echo $mndnr[$i]; ?> <hr></i></td>
 
 <?php } ?>
@@ -206,8 +208,8 @@ WHERE li.rubuId = '".mysqli_real_escape_string($db,$rubuId)."' and month(li.datu
  
  
  
- 
- <td width = 62 align = <?php echo $align; ?> style = "color : <?php echo $color; ?>" ><!-- MAANDEN --> 
+ <td width="10" ></td>
+ <td align = <?php echo $align; ?> style = "color : <?php echo $color; ?>" ><!-- MAANDEN --> 
  <?php if($tesktveld == 'tonen') { ?> 
  <input type = 'text' name = <?php echo "txtM_$Id"."_$i"; ?> size = 6 style = "font-size : 12px; text-align : right; color : <?php echo $color; ?>  " value = <?php echo $mndprijs; ?> >
  <?php }
@@ -226,11 +228,11 @@ if(isset($tota)) {$tota = $tota+$mndprijs; } else { $tota = $mndprijs; }
 <?php if(isset($totaal)) {$totaal = $totaal+$tota; } else {$totaal = $tota; } unset($tota); 
 	} // Einde rubrieken ?> </tr>
 <tr>
- <td colspan = 15><hr></td>
+ <td colspan = 27><hr></td>
 </tr>
 <!-- TOTALEN -->
 <tr>
- <td colspan = 15 align = 'right' style= "font-size : 14px;"><b> <?php echo 'Totale '.htmlentities($hrub, ENT_COMPAT,'ISO-8859-1', true).'&nbsp&nbsp '.euro_format($totaal); unset($totaal); ?> </b></td>
+ <td colspan = 27 align = 'right' style= "font-size : 14px;"><b> <?php echo 'Totale '.htmlentities($hrub, ENT_COMPAT,'ISO-8859-1', true).'&nbsp&nbsp '.euro_format($totaal); unset($totaal); ?> </b></td>
 </tr>
  <!-- Einde TOTALEN -->
  <?php } // Einde hoofdrubrieken ?>
@@ -337,33 +339,27 @@ FROM (
 
 <tr style = "font-size : 14px;">
  <td rowspan = 2>mutatie liquide middelen</td>
-<?php for ($i=0; $i<12; $i++)
-{ if ($i % 2 == 0) { ?> <td colspan = 2 align=right> <?php echo euro_format($mndtot[$i]); ?> </td> <?php } } ?>
-</tr>
-
-<tr style = "font-size : 14px;">
- <td colspan = 3 align=right> <?php echo euro_format($mndtot[1]); ?> </td>
-<?php for ($i=0; $i<12; $i++)
-{ if ($i > 1 && $i % 2 == 1) { ?> <td colspan = 2 align=right> <?php echo euro_format($mndtot[$i]); ?> </td> <?php } } ?>
+ <td></td>
+<?php for ($i=0; $i<24; $i+=2)
+{ ?> 
+ <td></td>
+ <td align=right> <?php echo euro_format($mndtot[$i]); ?> </td> <?php  } ?>
 </tr>
 
 <tr>
- <td colspan = 15><hr></td>
+ <td colspan = 27><hr></td>
 </tr>
 
 <tr style = "font-size : 14px;">
  <td rowspan = 2><b>Eindsaldo liquide middelen</b></td>
-<?php for ($i=0; $i<12; $i++)
-{ if ($i % 2 == 0) { ?> <td colspan = 2 align=right><b> <?php echo euro_format($cumtot[$i]); ?> </b></td> <?php } } ?>
-</tr>
-
-<tr style = "font-size : 14px;"> 
- <td colspan = 3 align=right><b> <?php echo euro_format($cumtot[1]); ?> </b></td>
-<?php for ($i=2; $i<12; $i++)
-{ if ($i > 1 && $i % 2 == 1) { ?> <td colspan = 2 align=right><b> <?php echo euro_format($cumtot[$i]); ?> </b></td> <?php } } ?>
+ <td></td>
+<?php for ($i=0; $i<24; $i+=2)
+{ ?> 
+ <td></td>
+ <td align=right><b> <?php echo euro_format($cumtot[$i]); ?> </b></td> <?php  } ?>
 </tr>
 <tr>
- <td colspan = 15><hr></td>
+ <td colspan = 27><hr></td>
 </tr>
 </table>
  <?php } ?>

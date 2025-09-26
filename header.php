@@ -1,4 +1,8 @@
-
+<!-- 
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+vervangen door 
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>. Aanleiding is dat selectie veld 'Alles selecteren' selectall en selectall_del in alle inlees bestanden van de reader (ins*.php) maar 1 x werkte. Er kon dus maar 1 x alles aan en uit worden gezet. 
+-->
 <link rel="stylesheet" type="text/css" href="style.css">
 
 <!-- BackToTop button javascript 
@@ -6,7 +10,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 <!-- Deze links komen uit Zoeken.php per 14-12-2024 -->
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>

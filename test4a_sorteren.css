@@ -1,0 +1,45 @@
+/* t.b.v. sortering tabellen */
+/*bron : BRON : https://www.youtube.com/watch?v=WbkPGesI-OY */
+
+
+
+
+
+
+
+thead th { /* Verwijzing naar html-element thead -> html element th en zorgt dat deze op 9% van de bovenkant van de pagina komt vast te staan*/
+    position: sticky;
+    top:  9%;
+    left: 0;
+    background-color: white;
+    cursor: pointer; /* handje */
+}
+
+
+thead th span.icon-arrow { /* Verwijzing naar html-element thead -> html element th -> html element span met class naam icon-arrow */
+    display: inline-block;
+    width: 1.3rem;
+    height: 1.3rem;
+    color: white;
+    border-radius: 50%; /*Afronding van de hoeken van een vierkant. 50% is tot een cirkel */
+    border: 1.4px solid transparent;
+
+    text-align: center;
+    font-size: 1rem;
+
+    margin-left: .5rem;
+   /* transition: .2s ease-in-out;*/
+}
+
+thead th.active span.icon-arrow { /* Verwijzing naar html-element thead -> html element th met class naam active en tevens Verwijzing naar html-element thead -> html element span met class naam icon-arrow */
+   border: 1.4px solid #9EB368;
+   color: #9EB368;
+
+}
+
+thead th.asc span.icon-arrow { /* Verwijzing naar html-element thead -> html element th -> html element span met class naam icon-arrow */
+   transform: rotate(180deg);
+
+}
+
+/* Einde t.b.v. sortering tabellen */

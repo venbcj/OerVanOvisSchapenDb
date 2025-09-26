@@ -1,0 +1,56 @@
+
+#balkOntw { background-color : #c0b6da; /*Blauw*/ }
+/*#balkTest { background-color : #E9EC4B; /*Geel*/ /*}*/
+#balkTest { background-color : #CCFF00; /*Neon geel-groen*/ }
+#balkDemo { background-color : #d0dab6; /*Licht groen*/ }
+#balkProd { background-color : #9EB368; /*Groen*/ }
+
+thead {
+    position: fixed;
+    top: 0;
+    left: 12%; right: 0; /* is nodig na position : sticky om element te centreren bron : https://stackoverflow.com/questions/2005954/center-a-positionsticky-element */
+}
+
+.vast_header_blauw {
+    top: 0%; /* is nodig na position : sticky om element te centreren bron : https://stackoverflow.com/questions/2005954/center-a-positionsticky-element */
+    /*margin: 0% auto;*/
+    left: 12%; right: 0; /* is nodig na position : sticky om element te centreren bron : https://stackoverflow.com/questions/2005954/center-a-positionsticky-element */
+    /*transform: translateX(-50%); /* is nodig na position : sticky om element te centreren bron : https://stackoverflow.com/questions/2005954/center-a-positionsticky-element */
+    width: 76%;
+    border: 0px solid black;
+    background-color: #A6C6EB;
+}
+
+#vast_header_groen {
+   /* position : sticky;
+    top: 0%; /* is nodig na position : sticky om element te centreren bron : https://stackoverflow.com/questions/2005954/center-a-positionsticky-element */
+    /*margin: 0% auto;*/
+    left: 0; right: 0; /* is nodig na position : sticky om element te centreren bron : https://stackoverflow.com/questions/2005954/center-a-positionsticky-element */
+    /*transform: translateX(-50%); /* is nodig na position : sticky om element te centreren bron : https://stackoverflow.com/questions/2005954/center-a-positionsticky-element */
+    
+    width: 76%;
+    height: 20px;
+    border: 0px solid black;
+    background-color : #9EB368;
+
+}
+
+
+
+#tekst_header_blauw {
+    width: 1390px;
+    text-align: center;
+    font-size: 30px;
+}
+
+.header_afbeelding {    
+    width: 175px;
+    height: 57px;
+    vertical-align: center;
+}
+
+#inhoud {
+    position: sticky;
+    margin: 4.5%;
+   /* background-color : #A6C6EB;*/
+}

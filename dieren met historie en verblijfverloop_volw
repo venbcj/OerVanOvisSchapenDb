@@ -1,0 +1,28 @@
+in tblBezet gelijk aan aanwasdatum
+SELECT h.hisId, h.stalId, h.datum, h.actId, a.actie, h.kg, h.skip, b.hokId, p.sluit, prnt.datum dmaanw
+FROM tblHistorie h
+ join tblActie a on (h.actId = a.actId)
+ left join tblBezet b on (h.hisId = b.hisId)
+ left join (
+ 	SELECT hokId, min(dmafsluit) sluit
+ 	FROM tblPeriode
+ 	WHERE doelId = 3
+ 	GROUP BY hokId
+ ) p on (b.hokId = p.hokId)
+ join tblStal st on (h.stalId = st.stalId)
+ join (
+		SELECT st.schaapId, h.datum
+		FROM tblStal st
+		 join tblHistorie h on (st.stalId = h.stalId)
+		WHERE h.actId = 3
+ ) prnt on (prnt.schaapId = st.schaapId)
+WHERE (a.aan = 1 or h.actId = 3) and st.stalId = 4170
+
+between 7082 and 7092
+
+
+b.hokId = 80
+
+stalId in (1759)
+
+

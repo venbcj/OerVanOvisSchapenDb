@@ -39,7 +39,7 @@ impAgrident rd
  	FROM tblUbn u
  	 left join tblPartij p on (p.ubn = u.ubn)
  	 left join tblRelatie r on (p.partId = r.partId)
- 	WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (r.relatie = 'deb' or isnull(r.relatie))
+ 	WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (r.relatie = 'deb' or isnull(r.relatie)) and r.actief = 1
   ) rel_best on (rd.ubnId = rel_best.ubnId)
  left join (
 	SELECT s.schaapId, s.levensnummer, s.geslacht
@@ -60,7 +60,7 @@ impAgrident rd
  SELECT p.ubn, p.naam, r.relId
  	FROM tblPartij p
  	 left join tblRelatie r on (p.partId = r.partId)
- 	WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (r.relatie = 'cred' or isnull(r.relatie))
+ 	WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (r.relatie = 'cred' or isnull(r.relatie)) and r.actief = 1
  ) rel_herk on (u_herk.ubn = rel_herk.ubn)
  left join (
 	SELECT st.schaapId, h.hisId, a.actie, a.af

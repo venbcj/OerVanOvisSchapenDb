@@ -19,7 +19,7 @@ $versie = '03-11-2024'; /* Uitscharen en terug van uitscharen toegevoegd */
 $versie = '21-12-2024'; /* Bestanden uploaden van raeder Biocontrol verwijderd */
 $versie = '31-12-2024'; /* Include "login.php"; voor Include "header.php" gezet */
 $versie = '28-02-2025'; /* Als de stallijst leeg is wordt de link inlezen stallijst nieuwe klant ook getoond */
-
+$versie = '30-08-2025'; /* Inlezen ubn wijziging toegevoegd. toelichting ActId = 12 en nieuw veld ubnId is not null. Als actId = 12 en ubnId is leeg dan is het een reguliere afvoer lam 
  session_start(); ?>
 <!DOCTYPE html>
 <html>

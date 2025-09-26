@@ -51,7 +51,7 @@ Groeiresultaten per weging</a>
 <hr style ='color : #E2E2E2'>
 <?php  if($modtech == 1) { ?> <a href='<?php echo $url;?>ResultHok.php' style = 'color : blue'> <?php }
 					else { ?> <a href='<?php echo $url;?>ResultHok.php' style = 'color : grey'> <?php } ?>
-Resultaten</a>
+Periode resultaten</a>
 <hr style ='color : #E2E2E2'> <br/>
 <hr style ='color : #E2E2E2'> <br/>
 <hr style ='color : #E2E2E2'>
