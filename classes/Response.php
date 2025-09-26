@@ -21,7 +21,6 @@ class Response {
     }
 
     public static function redirect($location) {
-        Logger::debug("redirect to $location, mode=".self::$mode);
         self::$redirected = true;
         if (self::$mode == self::PRODUCTION) {
             header("Location: $location");

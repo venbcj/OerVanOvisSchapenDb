@@ -256,6 +256,7 @@ TXT
      * @dataProvider gettable_controllers
      */
     public function testGetRouteGuest($controller) {
+        Auth::logout();
         $this->get("/$controller");
         $this->assertNoNoise();
     }
