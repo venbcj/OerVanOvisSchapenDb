@@ -184,7 +184,6 @@ Uitval.php
 Vader.php
 Voer.php
 Voer_rapportage.php
-Voorraad.php
 Wachtwoord.php
 Wegen.php
 Workload.php
@@ -193,6 +192,12 @@ ZoekAfldm.php
 Zoeken.php
 TXT
         );
+    }
+
+    public static function controllers_needing_fixtures() {
+        return [
+            ['Voorraad.php', ['voervoorraad']],
+        ];
     }
 
     public static function problematic_controllers() {
@@ -266,6 +271,19 @@ TXT
      * @dataProvider gettable_controllers
      */
     public function testGetRouteAuthenticated($controller) {
+        $this->get("/$controller", ['ingelogd' => 1]);
+        $this->assertNoNoise();
+    }
+
+    # php-8
+    # #[DataProvider('controllers_needing_fixtures')]
+    /**
+     * @dataProvider controllers_needing_fixtures
+     */
+    public function testGetRouteAuthenticatedWithData($controller, $fixtures) {
+        foreach ($fixtures as $fixture) {
+            $this->runfixture($fixture);
+        }
         $this->get("/$controller", ['ingelogd' => 1]);
         $this->assertNoNoise();
     }
