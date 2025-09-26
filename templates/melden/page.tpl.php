@@ -1,4 +1,3 @@
-<?php if ($authorized) : ?>
 <TD valign='top'>    
 <br><br>
 <h2 align="center" style="color:blue">Hier kun je meldingen bij RVO indienen.</h2>
@@ -14,6 +13,3 @@
 </table>
 <br><br><br>
 </TD>
-<?php else : ?>
-    <img src="Melden_php.jpg" width="970" height="550"/>
-<?php endif; ?>

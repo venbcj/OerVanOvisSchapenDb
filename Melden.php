@@ -33,9 +33,8 @@ $subtitel = 'Maximaal 60 per melding';
 $file = "Melden.php";
 include "login.php";
 if (Auth::is_logged_in()) {
-    $viewdata = ['authorized' => false];
+    $viewdata = [];
     if ($modmeld == 1) {
-        $viewdata['authorized'] = true;
         // TODO: dit nader uitzoeken. Doet geen uitvoer, maar zou wel $fout kunnen vullen. Dat heeft dan effect via menuMelden...
         include "responscheck.php";
         // Controleren of inloggevens bestaan
@@ -43,9 +42,11 @@ if (Auth::is_logged_in()) {
         if ($lid_gateway->hasCompleteRvo($lidId)) {
             $viewdata['links'] = Menu::melden($db, $lidId);
         }
+        View::render('melden/page', $viewdata);
+    } else {
+        View::render('melden/preview');
     }
     // de melden/page-template bevat een omliggende td, die waarschijnlijk naar de layout kan verhuizen
-    View::render('melden/page', $viewdata);
     include "menuMelden.php";
 }
 ?>
