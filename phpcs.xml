@@ -1,5 +1,37 @@
 <?xml version="1.0"?>
-<ruleset name="Clickhere" namespace="">
+<ruleset name="Alexander" namespace="">
     <description>Our custom coding standard based on PSR-2</description>
-    <rule ref="/usr/local/share/phpcs/Chi/native.xml"/>
+    <arg value="s"/> <!-- display sniff codes in report -->
+    <rule ref="PSR12">
+        <!-- uit PSR-1 te negeren -->
+        <exclude name="Generic.Files.LineLength.TooLong"/>
+        <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
+        <exclude name="PSR1.Methods.CamelCapsMethodName.NotCamelCaps"/>
+            <!-- uit PSR-2 te negeren -->
+        <exclude name="Squiz.Functions.MultiLineFunctionDeclaration.BraceOnSameLine"/>
+        <!-- mag dan wel PSR zijn, ik wil C-stijl-accolades om een class -->
+        <!-- TODO newline om methoden nog afdwingen; deze excludes verhinderen de psr-opmaak,
+        maar dwingen de "mijne" nog niet af -->
+        <exclude name="PSR2.Classes.ClassDeclaration.OpenBraceNewLine"/>
+        <exclude name="PSR2.Classes.ClassDeclaration.CloseBraceAfterBody"/>
+        <!-- TODO deze nog stapsgewijs introduceren -->
+        <exclude name="PSR1.Files.SideEffects.FoundWithSymbols"/>
+            <!-- dit zanikt over switch/case, wil de case indenten; het vi-commando = doet dat anders. Da's oorlog. -->
+            <!-- dit is dan te ruim, maar een beetje = lost dat wel op. Of phpcbf aan save hangen in ALE. -->
+        <exclude name="PSR2.ControlStructures.SwitchDeclaration.BreakIndent"/>
+        <!-- 
+        <exclude name="Generic.WhiteSpace.ScopeIndent.Incorrect"/>
+        <exclude name="Generic.WhiteSpace.ScopeIndent.IncorrectExact"/>
+        -->
+    </rule>
+    <rule ref="Generic.WhiteSpace.ScopeIndent">
+        <properties>
+            <property name="ignoreIndentationTokens" type="array" value="T_COMMENT,T_DOC_COMMENT_OPEN_TAG,T_CASE" />
+        </properties>
+    </rule>
+    <!-- 
+        dit zou ik graag aan het werk krijgen
+    <rule ref="ErickSkrauch.BlankLineAroundClassBody">
+    </rule>
+        -->
 </ruleset>
