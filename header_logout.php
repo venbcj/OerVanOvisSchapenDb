@@ -1,4 +1,3 @@
-==== BASE ====
 
 <link rel="stylesheet" type="text/css" href="style.css">
 
@@ -78,4 +77,3 @@ if($host == 'ovis.oervanovis.nl') 	{ $tagid = 'balkProd'; }  ?>
 <tr height = 90> </tr>
 <TR>
 	
-==== BASE ====

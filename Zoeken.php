@@ -1,4 +1,3 @@
-==== BASE ====
 <?php /* 8-8-2014 Aantal karakters werknr variabel gemaakt 
 11-8-2014 : veld type gewijzigd in fase 
 20-2-2015 : login toegevoegd 
@@ -1265,4 +1264,3 @@ Include "menu1.php"; }
 
 </body>
 </html>
-==== BASE ====

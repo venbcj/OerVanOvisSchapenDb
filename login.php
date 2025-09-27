@@ -1,4 +1,3 @@
-==== BASE ====
  <?php /* 8-4-2015 : sql beveiligd 
 23-11-2015 : Berekening breddte kzlWerknr toegevoegd en query en berekening kzlHoknr toegevoegd	13-2-2017 : breedte kan niet kleiner zijn dan 60
 3-12-2015 : $ubn aan sessie toegevoegd 
@@ -287,4 +286,3 @@ if ($appfile_exists == 1 && $takenfile_exists == 1) { $actuele_versie = 'Ja'; }
 // ***     EINDE ALS WEL IS INGELOGD     ***
 ?>
 
-==== BASE ====
