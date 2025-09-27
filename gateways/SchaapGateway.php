@@ -484,4 +484,168 @@ ORDER BY r.uitval, h.datum desc
 ");
 }
 
+public function zoek_ooien_in_jaar($lidId, $jaar) {
+    $vw = mysqli_query($this->db,"
+SELECT count(s.schaapId) aant_mdr
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join (
+    SELECT stalId, datum
+    FROM tblHistorie
+    WHERE actId = 3 and skip = 0 and date_format(datum,'%Y') <= '".mysqli_real_escape_string($this->db,$jaar)."'
+ ) ouder on (st.stalId = ouder.stalId)
+ join (
+    SELECT st.stalId
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+    WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+    GROUP BY h.stalId
+    HAVING (date_format(min(h.datum),'%Y') <= '".mysqli_real_escape_string($this->db,$jaar)."')
+ ) mindm on (st.stalId = mindm.stalId)
+ join (
+    SELECT st.stalId, st.rel_best
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+    WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+    GROUP BY h.stalId, st.rel_best
+    HAVING (date_format(max(h.datum),'%Y') >= '".mysqli_real_escape_string($this->db,$jaar)."' or isnull(st.rel_best))
+ ) maxdm on (st.stalId = maxdm.stalId)
+WHERE s.geslacht = 'ooi'
+");
+    if ($vw->num_rows > 0) {
+        return $vw->fetch_row()[0];
+    }
+    return null;
+    }
+
+public function zoek_lammeren_in_jaar($lidId, $jaar, $jan1) {
+   $vw = mysqli_query($this->db,"
+SELECT count(s.schaapId) aant_lam
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ left join (
+    SELECT stalId, datum
+    FROM tblHistorie
+    WHERE actId = 3 and skip = 0
+ ) ouder on (st.stalId = ouder.stalId)
+ join (
+    SELECT st.stalId
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+    WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+    GROUP BY h.stalId
+    HAVING (date_format(min(h.datum),'%Y') <= '".mysqli_real_escape_string($this->db,$jaar)."')
+ ) mindm on (st.stalId = mindm.stalId)
+ join (
+    SELECT st.stalId, st.rel_best
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+    WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+    GROUP BY h.stalId, st.rel_best
+    HAVING (date_format(max(h.datum),'%Y') >= '".mysqli_real_escape_string($this->db,$jaar)."' or isnull(st.rel_best))
+ ) maxdm on (st.stalId = maxdm.stalId)
+
+WHERE (isnull(ouder.datum) or ouder.datum > '".mysqli_real_escape_string($this->db,$jan1)."')
+");
+    if ($vw->num_rows > 0) {
+        return $vw->fetch_row()[0];
+    }
+    return null;
+}
+
+public function zoek_aantal_sterfte_lammeren_in_jaar($lidId, $jaar) {
+$vw = mysqli_query($this->db,"
+SELECT count(s.schaapId) aant_lam
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join (
+    SELECT stalId, datum
+    FROM tblHistorie
+    WHERE actId = 14 and skip = 0
+ ) dood on (st.stalId = dood.stalId)
+ left join (
+    SELECT stalId, datum
+    FROM tblHistorie
+    WHERE actId = 3 and skip = 0
+ ) ouder on (st.stalId = ouder.stalId)
+ join (
+    SELECT st.stalId, min(h.datum) tempmin
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+    WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+    GROUP BY h.stalId
+    HAVING (date_format(min(h.datum),'%Y') <= '".mysqli_real_escape_string($this->db,$jaar)."')
+ ) mindm on (st.stalId = mindm.stalId)
+ join (
+    SELECT st.stalId, max(h.datum) tempmax, st.rel_best
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+    WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+    GROUP BY h.stalId, st.rel_best
+    HAVING (date_format(max(h.datum),'%Y') >= '".mysqli_real_escape_string($this->db,$jaar)."' or isnull(st.rel_best))
+ ) maxdm on (st.stalId = maxdm.stalId)
+
+WHERE isnull(ouder.datum) and date_format(dood.datum,'%Y') = '".mysqli_real_escape_string($this->db,$jaar)."'
+");
+    if ($vw->num_rows > 0) {
+        return $vw->fetch_row()[0];
+    }
+    return null;
+}
+
+public function zoek_aantal_sterfte_moeder_in_jaar($lidId, $jaar) {
+   $vw = mysqli_query($this->db,"
+SELECT count(s.schaapId) aant_mdr
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join (
+    SELECT stalId, datum
+    FROM tblHistorie
+    WHERE actId = 14 and skip = 0
+ ) dood on (st.stalId = dood.stalId)
+ join (
+    SELECT stalId, datum
+    FROM tblHistorie
+    WHERE actId = 3 and skip = 0 and date_format(datum,'%Y') <= '".mysqli_real_escape_string($this->db,$jaar)."'
+ ) ouder on (st.stalId = ouder.stalId)
+ join (
+    SELECT st.stalId, min(h.datum) tempmin
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+    WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+    GROUP BY h.stalId
+    HAVING (date_format(min(h.datum),'%Y') <= '".mysqli_real_escape_string($this->db,$jaar)."')
+ ) mindm on (st.stalId = mindm.stalId)
+ join (
+    SELECT st.stalId, max(h.datum) tempmax, st.rel_best
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+    WHERE skip = 0 and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+    GROUP BY h.stalId, st.rel_best
+    HAVING (date_format(max(h.datum),'%Y') >= '".mysqli_real_escape_string($this->db,$jaar)."' or isnull(st.rel_best))
+ ) maxdm on (st.stalId = maxdm.stalId)
+WHERE s.geslacht = 'ooi' and date_format(dood.datum,'%Y') = '".mysqli_real_escape_string($this->db,$jaar)."'
+");
+    if ($vw->num_rows > 0) {
+        return $vw->fetch_row()[0];
+    }
+    return null;
+    }
+
+public function zoek_worpen_in_jaar($lidId, $jaar) {
+   $vw = mysqli_query($this->db,"
+SELECT count(distinct v.mdrId) aant_worp
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join tblVolwas v on (s.volwId = v.volwId)
+ join tblHistorie hg on (hg.stalId = st.stalId and hg.actId = 1 and hg.skip = 0)
+ left join tblHistorie hkoop on (hkoop.stalId = st.stalId and hkoop.actId = 2 and hkoop.skip = 0)
+WHERE st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and date_format(hg.datum,'%Y') = '".mysqli_real_escape_string($this->db,$jaar)."' and isnull(hkoop.hisId)
+");
+    if ($vw->num_rows > 0) {
+        return $vw->fetch_row()[0];
+    }
+    return null;
+}
+
 }
