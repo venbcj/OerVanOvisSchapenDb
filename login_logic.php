@@ -136,7 +136,8 @@ if (!Auth::is_logged_in()) {
 
     $lid_gateway = new LidGateway($db);
     // Bepalen Id van crediteur ophalen dode dieren (Rendac)
-    [$rendac_Id, $rendac_ubn] = $lid_gateway->findCrediteur($lidId);
+    $res = $lid_gateway->findCrediteur($lidId);
+    [$rendac_Id, $rendac_ubn] = $res;
 
     $reader = $lid_gateway->findReader($lidId);
 

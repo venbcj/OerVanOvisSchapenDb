@@ -35,18 +35,9 @@ if (Auth::is_logged_in()) { ?>
 <b> Kies een afleverdatum : </b><br/><br/>
 
 <?php
-$result = mysqli_query($db,"
-SELECT min(h.hisId) hisId, count(h.hisId) aantal, date_format(h.datum,'%d-%m-%Y') datum, r.relId, p.naam 
-FROM tblSchaap s
- join tblStal st on (s.schaapId = st.schaapId)
- join tblHistorie h on (st.stalId = h.stalId)
- join tblActie a on (a.actId = h.actId)
- join tblRelatie r on (r.relId = st.rel_best)
- join tblPartij p on (r.partId = p.partId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a.af = 1 and h.skip = 0
-GROUP BY h.datum, r.relId, p.naam
-ORDER BY r.uitval, h.datum desc
-") or die (mysqli_error($db)); ?>
+    $schaap_gateway = new SchaapGateway($db);
+$result = $schaap_gateway->afleverdatum($lidId);
+?>
  <select style="width:200;" name="kzlPost" >";
  <option></option>
 <?php        while($row = mysqli_fetch_array($result))

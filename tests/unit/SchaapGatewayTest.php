@@ -63,4 +63,10 @@ class SchaapGatewayTest extends UnitCase {
         $this->assertEquals(1, $this->sut->countUitgeschaarden(1));
     }
 
+    public function testAfleverdatum() {
+        $this->runfixture('schaap-afleverdatum');
+        $res = $this->sut->afleverdatum(1);
+        $this->assertEquals(1, $res->num_rows);
+    }
+
 }

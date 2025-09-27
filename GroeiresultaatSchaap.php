@@ -218,6 +218,7 @@ $result = mysqli_query($db,$result) or die (mysqli_error($db));
 <th width= 60 ></th>
  </tr>
 <?php
+$levnr = '';
         while($row = mysqli_fetch_array($result))
         { 
 unset($vorige_actie);

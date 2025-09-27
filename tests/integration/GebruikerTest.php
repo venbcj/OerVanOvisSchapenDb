@@ -4,7 +4,7 @@ class GebruikerTest extends IntegrationCase {
 
     const AANTAL_REDENEN_IN_NEWREADER_KEUZELIJSTEN = 14;
 
-    public function tearDown() : void {
+    public function tearDown(): void {
         # zodat geen 9 blijft hangen in sessie
         $this->get('/Home.php', ['ingelogd' => 1, 'uid' => 1]);
     }
@@ -12,39 +12,40 @@ class GebruikerTest extends IntegrationCase {
     // deze vier tests dekken de radioknop "melden: Ja"
 
     public function testGetNotMeld() {
-        $this->runfixture('user-kobus');
         $this->runfixture('hok');
+        include "just_connect_db.php";
+        $db->query("UPDATE tblLeden SET meld=0 WHERE lidId=42");
         $this->get('/Gebruiker.php', ['ingelogd' => 1, 'pstId' => 42]);
         $this->assertNoNoise();
         $this->assertAbsent('"radMeld" value="1" checked');
     }
 
     public function testGetMeld() {
-        $this->runfixture('user-harm');
-        $this->runfixture('user-kobus');
         include "just_connect_db.php";
+        $this->db = $db;
+        $this->assertTableWithPK('tblLeden', 'lidId', 42);
         $db->query("UPDATE tblLeden SET meld=1 WHERE lidId=42");
         $this->get('/Gebruiker.php', ['ingelogd' => 1, 'pstId' => 42]);
         $this->assertPresent('"radMeld" value="1" checked');
+        $db->query("UPDATE tblLeden SET meld=0 WHERE lidId=42");
     }
 
     public function testPostNotMeld() {
-        $this->runfixture('user-harm');
-        $this->runfixture('user-kobus');
         include "just_connect_db.php";
         $db->query("UPDATE tblLeden SET meld=1 WHERE lidId=42");
         $this->post('/Gebruiker.php', ['ingelogd' => 1, 'pstId' => 42, 'radMeld' => 0]);
         $this->assertAbsent('"radMeld" value="1" checked');
+        $db->query("UPDATE tblLeden SET meld=0 WHERE lidId=42");
     }
 
     public function testPostMeld() {
-        $this->runfixture('user-kobus');
+        include "just_connect_db.php";
+        $db->query("UPDATE tblLeden SET meld=0 WHERE lidId=42");
         $this->post('/Gebruiker.php', ['ingelogd' => 1, 'pstId' => 42, 'radMeld' => 1]);
         $this->assertPresent('"radMeld" value="1" checked');
     }
 
     public function testSaveGebruiker() {
-        $this->runfixture('user-kobus');
         include "just_connect_db.php";
         $this->db = $db;
         $this->post('/Gebruiker.php', [
@@ -67,20 +68,26 @@ class GebruikerTest extends IntegrationCase {
             'kzlAdm' => 1,
             'txtIngescand' => '01-01-2021',
         ]);
+            // lid 1 moet niet gewijzigd zijn
+        $this->assertTableWithPK('tblLeden', 'lidId', 1, ['prvo' => 22]);
         $this->assertTableWithPK('tblLeden', 'lidId', 42, ['prvo' => 995, 'meld' => 1, 'fin' => 0]);
+        // teardown
+        $this->db->query("DELETE FROM tblLeden WHERE lidId=42");
+        $this->runsetup('tblLeden');
     }
 
     public function testUpdateGebruiker() {
         include "just_connect_db.php";
         $this->db = $db;
-        $this->db->query("DELETE FROM tblRedenuser");
+        $this->db->query("DELETE FROM tblRedenuser WHERE lidId=42");
+        $this->expectNewRecordsInTables(['tblRedenuser' => self::AANTAL_REDENEN_IN_NEWREADER_KEUZELIJSTEN]);
         $this->post('/Gebruiker.php', [
             'ingelogd' => 1,
             'uid' => 42, // hack. login.php vangt dit op;
             'knpUpdate' => 1,
         ]);
         $this->assertNoNoise();
-        $this->assertTableRowcount('tblRedenuser', self::AANTAL_REDENEN_IN_NEWREADER_KEUZELIJSTEN);
+        $this->assertTablesGrew();
     }
 
 }

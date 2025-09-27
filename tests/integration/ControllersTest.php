@@ -4,9 +4,10 @@
 
 class ControllersTest extends IntegrationCase {
 
-    public static function setupBeforeClass() : void {
+    public static function setupBeforeClass(): void {
         self::runfixture('hok');
         self::runfixture('user-harm');
+        self::runfixture('partij-1');
         Response::setTest();
     }
 

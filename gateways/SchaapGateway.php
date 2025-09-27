@@ -469,4 +469,19 @@ WHERE s.volwId = ".mysqli_real_escape_string($this->db,$Volwid)." and s.geslacht
 while($a = mysqli_fetch_assoc($zoek_aantal_geslacht)) { return $a['aant']; }
 }
 
+public function afleverdatum($lidId) {
+    return mysqli_query($this->db,"
+SELECT min(h.hisId) hisId, count(h.hisId) aantal, date_format(h.datum,'%d-%m-%Y') datum, r.relId, p.naam 
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join tblHistorie h on (st.stalId = h.stalId)
+ join tblActie a on (a.actId = h.actId)
+ join tblRelatie r on (r.relId = st.rel_best)
+ join tblPartij p on (r.partId = p.partId)
+WHERE st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and a.af = 1 and h.skip = 0
+GROUP BY h.datum, r.relId, p.naam
+ORDER BY r.uitval, h.datum desc
+");
+}
+
 }

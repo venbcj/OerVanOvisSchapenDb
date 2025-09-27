@@ -2,6 +2,9 @@
 
 class NewUserTest extends IntegrationCase {
 
+    private const NEW_USER_ID = 43; // in fixtures is 42 de laatste user
+    private const NEW_USER_DIR = 'user_43'; // in fixtures is 42 de laatste user
+
     public function testGet() {
         $this->get('/Newuser.php', ['ingelogd' => 1]);
         $this->assertNoNoise();
@@ -12,19 +15,44 @@ class NewUserTest extends IntegrationCase {
         $this->db = $db;
         $this->runfixture('user-harm');
         $this->runfixture('newuser-pre');
-        if (is_dir('user_2')) {
-            rmdir('user_2/Readerbestanden');
-            rmdir('user_2/Readerversies');
-            rmdir('user_2/');
+        if (is_dir(self::NEW_USER_DIR)) {
+            rmdir(self::NEW_USER_DIR . '/Readerbestanden');
+            rmdir(self::NEW_USER_DIR . '/Readerversies');
+            rmdir(self::NEW_USER_DIR);
         }
         $count = [];
-        foreach (explode(' ', 'tblHok tblMomentuser tblEenheiduser tblElementuser tblRubriekuser') as $table) {
-            $count[$table] = $this->tableRowcount($table);
-        }
+        $this->expectNewRecordsInTables([
+            'tblLeden' => 1,
+            'tblHok' => 1,
+            'tblMomentuser' => 2,
+            'tblEenheiduser' => $this->tableRowcount('tblEenheid'),
+            'tblElementuser' => $this->tableRowcount('tblElement'),
+            'tblRubriekuser' => 55,
+            'tblPartij' => 2,
+            'tblRelatie' => 2,
+        ]);
 
-        $this->post('/Newuser.php', [
-            'ingelogd' => 1,
-            'knpSave' => 1,
+        $this->post(
+            '/Newuser.php',
+            array_merge(
+                [
+                    'ingelogd' => 1,
+                    'knpSave' => 1,
+                ],
+                $this->some_user_form()
+            )
+        );
+        $this->assertNoNoise();
+        # $this->assertNotFout();
+        # deze "fout"-detectie is een misnomer, omdat ook $goed eroverheen wordt gevouwen.
+        $this->assertFout('De gebruiker is ingevoerd.');
+        // zou nog de vulling van de volgtabellen kunnen assereren. Maar die hangt af van de rest van het schema :S
+        $this->assertTableWithPK('tblLeden', 'lidId', self::NEW_USER_ID);
+        $this->assertTablesGrew();
+    }
+
+    private function some_user_form() {
+        return [
             'txtRoep' => 'a',
             'txtVoeg' => 'v',
             'txtNaam' => 'n',
@@ -38,22 +66,7 @@ class NewUserTest extends IntegrationCase {
             'radMeld' => 1,
             'radTech' => 0,
             'radFin' => 0,
-        ]);
-        $this->assertNoNoise();
-        # $this->assertNotFout();
-        # deze "fout"-detectie is een misnomer, omdat ook $goed eroverheen wordt gevouwen.
-        $this->assertFout('De gebruiker is ingevoerd.');
-        // zou nog de vulling van de volgtabellen kunnen assereren. Maar die hangt af van de rest van het schema :S
-        $this->assertTableWithPK('tblLeden', 'lidId', 2);
-        $this->assertTableRowcount('tblLeden', 2);
-        $this->assertTableRowcount('tblHok', $count['tblHok'] + 1);
-        $this->assertTableRowcount('tblMomentuser', $count['tblMomentuser'] + 3);
-        $this->assertTableRowcount('tblEenheiduser', $count['tblEenheiduser'] + 2);
-        # dit doet het niet, want de query is kapot
-        # $this->assertTableRowcount('tblElementuser', $count['tblElementuser']+4);
-        $this->assertTableRowcount('tblPartij', 2); // twee per user
-        $this->assertTableRowcount('tblRelatie', 2);
-        $this->assertTableRowcount('tblRubriekuser', $count['tblRubriekuser'] + 1);
+        ];
     }
 
 }

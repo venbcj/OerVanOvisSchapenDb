@@ -27,12 +27,12 @@ class PasswTest extends IntegrationCase {
         include "just_connect_db.php";
         $this->simulatePostRequest('/Wachtwoord.php', [
             'knpChange' => 1,
-            'txtUser' => 'kobus',
-            'txtUserOld' => 'harm',
+            'txtUser' => 'gewijzigd',
+            'txtUserOld' => 'kobus',
             'txtOld' => '',
             'txtNew' => '',
         ]);
-        $lid = 1; // aha, wij zijn een onderdeel van Gebruiker.
+        $lid = 42; // aha, wij zijn een onderdeel van Gebruiker.
         # WHEN
         ob_start();
         include "passw.php";
@@ -52,7 +52,7 @@ class PasswTest extends IntegrationCase {
             'txtNew' => 'groente',
             'txtBevest' => 'groente-verschil',
         ]);
-        $lid = 1; // aha, wij zijn een onderdeel van Gebruiker.
+        $lid = 42; // aha, wij zijn een onderdeel van Gebruiker.
         # WHEN
         ob_start();
         include "passw.php";
@@ -72,7 +72,7 @@ class PasswTest extends IntegrationCase {
             'txtNew' => 'groente',
             'txtBevest' => 'groente',
         ]);
-        $lid = 1; // aha, wij zijn een onderdeel van Gebruiker.
+        $lid = 42; // aha, wij zijn een onderdeel van Gebruiker.
         # WHEN
         ob_start();
         include "passw.php";
@@ -93,7 +93,7 @@ class PasswTest extends IntegrationCase {
             'txtNew' => 'groen',
             'txtBevest' => 'groen',
         ]);
-        $lid = 1; // aha, wij zijn een onderdeel van Gebruiker.
+        $lid = 42; // aha, wij zijn een onderdeel van Gebruiker.
         # WHEN
         ob_start();
         include "passw.php";
@@ -116,7 +116,7 @@ class PasswTest extends IntegrationCase {
             'txtNew' => 'groente',
             'txtBevest' => 'groente',
         ]);
-        $lid = 1; // aha, wij zijn een onderdeel van Gebruiker.
+        $lid = 42; // aha, wij zijn een onderdeel van Gebruiker.
         # WHEN
         ob_start();
         include "passw.php";
@@ -150,6 +150,9 @@ class PasswTest extends IntegrationCase {
         $this->assertFalse(isset($fout), $res);
         $this->assertEquals('De inloggegevens zijn gewijzigd', $goed);
         $this->assertTableWithPK('tblLeden', 'lidId', 42, ['login' => 'krelis']);
+        // cleanup
+        $this->db->query("DELETE FROM tblLeden WHERE lidId=42");
+        $this->runsetup('tblLeden');
     }
 
     public function testPostWijzigWachtwoord() {
@@ -177,6 +180,9 @@ class PasswTest extends IntegrationCase {
         $this->assertEquals('De inloggegevens zijn gewijzigd.', $goed);
         // TODO: #0004115 deugdelijke assert maken voor het wachtwoord. Zoiets als "old password 'groente' (uit de fixture af te leiden) is niet meer geldig"
         $this->assertTableWithPK('tblLeden', 'lidId', 42, ['login' => 'kobus', 'passw' => 'e37fb031e454b9c9f4a4a46ebbc9ddb6']);
+        // cleanup
+        $this->db->query("DELETE FROM tblLeden WHERE lidId=42");
+        $this->runsetup('tblLeden');
     }
 
 }

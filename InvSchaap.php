@@ -383,7 +383,6 @@ if(!empty($_POST['txtGebdm']))     { $gebdm = date_create($_POST['txtGebdm']); $
     else { $gebdm = date_create($array_worp[$kzlOoi]); $txtGebdm = $array_worp[$kzlOoi]; }
         
     if(isset($txtGebdm)) { $txtDmgeb =  date_format($gebdm, 'Y-m-d'); } //echo 'gebdm is leeg dus '.$txtDmgeb.'<br>'; } #/#
-    
 if(!empty($_POST['txtAanv']))    {
     $aanvdm = date_create($_POST['txtAanv']);
     $txtAanvdm = $_POST['txtAanv'];

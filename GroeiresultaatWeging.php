@@ -183,6 +183,10 @@ else { $kolomkop = 'Gem groei per dag'; $kolomkopxls = 'G'; } ?>
 
 //$levnr = $row['levensnummer']; if($levnr_record == $levnr) { $levnr_toon = ''; unset($moeder); } else { $levnr_toon = $levnr; unset($kg1); unset($date1); unset($actie1); }
 
+    // ah, de doe-iets-als-dit-veld-verandert-logica --BCB
+    $datum = '';
+$actie = '';
+$moeder = '';
         while($row = mysqli_fetch_array($result))
         { 
 $datum_record = $datum;

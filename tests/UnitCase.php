@@ -18,8 +18,17 @@ class UnitCase extends TestCase {
         $_SERVER['REQUEST_URI'] = $path;
     }
 
+    // TODO: dit is herhaald in bootstrap. Uitbouwen in nieuw object Fixture?
     protected static function runfixture($name) {
         if (file_exists($file = getcwd()."/tests/fixtures/$name.sql")) {
+            system("cat $file | scripts/console");
+        } else {
+            throw new Exception("fixture $name not found as $file.");
+        }
+    }
+
+    protected static function runsetup($name) {
+        if (file_exists($file = getcwd()."/db/setup/$name.sql")) {
             system("cat $file | scripts/console");
         } else {
             throw new Exception("fixture $name not found as $file.");
@@ -31,7 +40,7 @@ class UnitCase extends TestCase {
         $this->assertEquals(1, $vw->num_rows);
         $row = $vw->fetch_assoc();
         foreach ($values as $key => $expected) {
-            $this->assertEquals($expected, $row[$key], "verwacht $expected voor $key");
+            $this->assertEquals($expected, $row[$key], "verwacht $table:$pk $key=$expected");
         }
     }
 
@@ -40,7 +49,9 @@ class UnitCase extends TestCase {
     }
 
     protected function tableRowcount($table) {
-        return $this->db->query("SELECT COUNT(*) FROM $table")->fetch_row()[0];
+        $vw = $this->db->query("SELECT COUNT(*) FROM $table");
+        $this->assertInstanceOf(mysqli_result::class, $vw, "vw is boolean " . ($vw ? 'true' : 'false') . " .  Error? " . $this->db->error);
+        return $vw->fetch_row()[0];
     }
 
 }

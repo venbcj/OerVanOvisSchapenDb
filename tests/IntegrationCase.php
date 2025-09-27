@@ -7,6 +7,8 @@ class IntegrationCase extends UnitCase {
     # protected bool $redirected = false;
     protected $output = '';
     protected $redirected = false;
+    protected $tablecounts = [];
+    protected $expectedincrements = [];
 
     protected function simulateGetRequest($path, $data = []) {
         $_SERVER['HTTP_HOST'] = 'oer-dev';
@@ -85,7 +87,10 @@ class IntegrationCase extends UnitCase {
     }
 
     protected function assertPresent($string) {
-        $this->assertStringContainsString($string, $this->output);
+        if (false === strpos($this->output, $string)) {
+            $this->fail("pagina moet $string bevatten");
+        }
+        $this->assertTrue(true);
     }
 
     protected function assertAbsent($string) {
@@ -118,6 +123,19 @@ class IntegrationCase extends UnitCase {
         $this->assertCount(1, $select, "kan select met name $name niet vinden");
         $options = $path->query('//select[@name="'.$name.'"]/option');
         $this->assertCount($count, $options, "select heeft niet de verwachte $count opties");
+    }
+
+    protected function expectNewRecordsInTables(array $tables) {
+        foreach ($tables as $table => $expected) {
+            $this->tablecounts[$table] = $this->tableRowcount($table);
+            $this->expectedincrements[$table] = $expected;
+        }
+    }
+
+    protected function assertTablesGrew() {
+        foreach ($this->tablecounts as $table => $count) {
+            $this->assertEquals($this->expectedincrements[$table], $this->tableRowcount($table) - $count, "Unexpected rowcount in $table.");
+        }
     }
 
 }

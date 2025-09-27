@@ -18,6 +18,7 @@ class MeldenTest extends IntegrationCase {
         $this->assertNoNoise();
         $this->assertPresent('Melden is niet mogelijk');
         $this->assertAbsent('href="Melden.php"');
+        $this->runfixture('restore-user-1');
     }
 
     public function testCompleteRvo() {

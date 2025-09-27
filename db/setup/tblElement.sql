@@ -1,42 +1,4 @@
--- phpMyAdmin SQL Dump
--- version 5.2.2
--- https://www.phpmyadmin.net/
---
--- Host: localhost:3306
--- Gegenereerd op: 26 sep 2025 om 14:54
--- Serverversie: 10.6.15-MariaDB-cll-lve
--- PHP-versie: 8.4.8
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `k36098_bvdvSchapenDbT`
---
-
--- --------------------------------------------------------
-
---
--- Tabelstructuur voor tabel `tblElement`
---
-
-CREATE TABLE `tblElement` (
-  `elemId` int(11) NOT NULL,
-  `element` varchar(25) NOT NULL,
-  `eenheid` varchar(10) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
---
--- Gegevens worden geëxporteerd voor tabel `tblElement`
---
-
+truncate tblElement;
 INSERT INTO `tblElement` (`elemId`, `element`, `eenheid`) VALUES
 (1, 'Aantal ooien', 'getal'),
 (2, 'Destructie', 'euro'),
@@ -57,29 +19,5 @@ INSERT INTO `tblElement` (`elemId`, `element`, `eenheid`) VALUES
 (17, 'Voer', 'euro'),
 (18, 'Worpen per jaar', 'getal'),
 (19, 'Worpgrootte', 'getal');
-
---
--- Indexen voor geëxporteerde tabellen
---
-
---
--- Indexen voor tabel `tblElement`
---
-ALTER TABLE `tblElement`
-  ADD PRIMARY KEY (`elemId`),
-  ADD KEY `eenheid` (`eenheid`);
-
---
--- AUTO_INCREMENT voor geëxporteerde tabellen
---
-
---
--- AUTO_INCREMENT voor een tabel `tblElement`
---
 ALTER TABLE `tblElement`
   MODIFY `elemId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

@@ -59,7 +59,7 @@ class MedRegistratiePageTest extends IntegrationCase {
     }
 
     public function testToonMedregistratieKeuzelijstReden() {
-        $this->runfixture('reden');
+        $this->runfixture('reden'); // zet 1 willekeurige reden op "pil"
         $this->post('/Med_registratie.php', [
             'ingelogd' => 1,
             'knpToon' => 1,

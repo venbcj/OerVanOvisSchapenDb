@@ -27,7 +27,7 @@ if (isset ($_POST['knpNieuw'])) {
 }
     
 $titel = 'Gebruikers';
-$file = "Eenheden.php";
+$file = "Gebruikers.php";
 include "login.php";
 ?>
         <TD valign = "top">
