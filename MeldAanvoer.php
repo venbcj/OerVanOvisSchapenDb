@@ -241,6 +241,26 @@ if (Auth::is_logged_in()) {
             $fase = 'lam';
         }
         // TODO: (BV) #0004149 de namen 'schaapdm' en 'dmschaap' maken niet duidelijk waarom het er twee zijn, en wat het verschil is. Vertel?
+        // BV:
+        // ......dm is bij mij de leesbare datumnotatie dd-mm-jjjj.
+        // dm...... is bij mij de database notatie jjjj-mm-dd
+        //
+        // BCB: Juist. Ik zie dat als volgt.
+        //
+        // Er is 1 bron voor het gegeven: de datum uit tblHistorie. Als je die ophaalt, kun je 'm vergelijken
+        //   met een andere datum (na vandaag, voor de "laatste datum van het vorige stalId").
+        //   Ik zou het nog schoner vinden om er een timestamp, of een Date-object van te maken, maar dat is iets voor later.
+        //
+        // schaapdm is een presentatie-gegeven, afgeleid van dmschaap. In plaats van daar een variabele voor te maken,
+        //   kun je de dmschaap ook opnieuw formatteren bij het afdrukken.
+        //   echo mensdatum($dmschaap);
+        //
+        //   function mensdatum($dmschaap) {
+        //     return date('d-m-Y', strtotime($dmschaap));
+        //   }
+        //
+        // De code doet ook *beslissingen* met schaapdm, maar die kunnen allemaal net zo goed met dmschaap gedaan worden.
+        // Als de een leeg is, is de ander ook leeg, bijvoorbeeld.
         $schaapdm = $row['schaapdm'];
         $dmschaap = $row['dmschaap'];
         $stalId = $row['stalId']; // Ter controle van eerdere stalId's
@@ -257,11 +277,13 @@ if (Auth::is_logged_in()) {
 
 // Controleren of de te melden gegevens de juiste voorwaarde hebben .
         // TODO: (BCB) Extract Method. $waarschuwing = getSkippable($row)
-        if (empty($schaapdm) || # datum is leeg
+        if (empty($schaapdm) || # datum is leeg  <<<BCB hier dus dmschaap in de conditie
             empty($levnr) || # levensnummer is leeg
             $dmschaap > $today || # datum ligt na vandaag
             (isset($dmlst) && $dmschaap < $dmlst) || # datum ligt voor de laatste datum van het vorige stalId van deze user
             intval(str_replace('-', '', $schaapdm)) == 0 # Van datum naar nummer is 0 of te wel datum = 00-00-0000. Als $dmlst niet bestaat !
+            //                          ^^^BCB hier dus dmschaap ... ? wat heeft $dmlst hier nu mee te maken?
+            // als de datum in de tabel niet is ingevuld, is dmschaap null. Dat vind ik eenvoudiger te lezen dan intval(str_replace).
         ) {
             $check = 1;
             $waarschuwing = ' Dit dier wordt niet gemeld.';
@@ -427,7 +449,7 @@ if ($check == 1) {
 <?php
 # <!-- Meldingen bij foutieve waardes wanneer deze niet zijn onstaan bij het invoeren binnen MeldGeboortes -->
     # TODO: (BV) $wrong wordt niet gebruikt! Wat is de bedoeling?
-        if (empty($schaapdm)) {
+        if (empty($schaapdm)) { // <<<BCB hier dus dmschaap controleren
             $wrong = "Datum moet zijn gevuld.";
         } elseif (empty($levnr)) {
             $wrong = "Levensnummer moet zijn gevuld.";
