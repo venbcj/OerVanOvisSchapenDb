@@ -1112,6 +1112,7 @@ $sekse = 'ram'; // anders probleem op regel 1944
 $fase = '';
 $mdr = '';
 $vdr = '';
+$rasId = '';
 
     while($record=mysqli_fetch_array($show))
     {    

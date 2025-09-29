@@ -13,7 +13,6 @@ class NewUserTest extends IntegrationCase {
     public function testSave() {
         include "just_connect_db.php";
         $this->db = $db;
-        $this->runfixture('user-harm');
         $this->runfixture('newuser-pre');
         if (is_dir(self::NEW_USER_DIR)) {
             rmdir(self::NEW_USER_DIR . '/Readerbestanden');

@@ -3,7 +3,6 @@
 class MenusTest extends IntegrationCase {
 
     public function setup() : void {
-        $this->runfixture('user-harm');
         $this->runfixture('request-none');
     }
 

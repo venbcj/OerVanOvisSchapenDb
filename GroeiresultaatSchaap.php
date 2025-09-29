@@ -300,7 +300,7 @@ if(isset($levnr_record) && $levnr_nu != '') { ?>
        <td width = 1> </td>
        <td width = 100 style = "font-size:15px;"> <?php echo $geslacht; ?> <br> </td>
        <td width = 1> </td>    
-       <td width = 100 style = "font-size:15px;"> <?php echo $fase; ?> <br> </td>
+       <td width = 100 style = "font-size:15px;"> <?php echo $fase ?? ''; ?> <br> </td>
        <td width = 1> </td>
 
        <td width = 80 style = "font-size:15px;"> <?php echo $kg; ?> <br> </td>
@@ -311,7 +311,7 @@ if(isset($levnr_record) && $levnr_nu != '') { ?>
        <td width = 150 style = "font-size:15px;"> <?php echo $actie; ?> <br> </td>
 
        <td width = 1> </td>
-       <td width = 600 style = "font-size:15px;" align="left"> <?php echo $berekening; ?> <br> </td>
+       <td width = 600 style = "font-size:15px;" align="left"> <?php echo $berekening ?? ''; ?> <br> </td>
 
        
 <!-- '$vorige_kg = '.$vorige_kg.' en $kg = '.$kg; -->       

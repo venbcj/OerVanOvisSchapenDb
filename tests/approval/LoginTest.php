@@ -3,7 +3,6 @@
 class LoginTest extends IntegrationCase {
 
     public static function setupBeforeClass(): void {
-        static::runfixture('user-harm');
         static::runfixture('versie-1');
     }
 

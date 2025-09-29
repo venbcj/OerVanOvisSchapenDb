@@ -103,7 +103,6 @@ class PasswTest extends IntegrationCase {
     }
 
     public function testPostBestaatAl() {
-        $this->runfixture('user-harm');
         $this->runfixture('user-kobus');
         # GIVEN
         include "just_connect_db.php";
@@ -127,7 +126,6 @@ class PasswTest extends IntegrationCase {
     }
 
     public function testPostWijzigUsername() {
-        $this->runfixture('user-harm');
         $this->runfixture('user-kobus');
         # GIVEN
         include "just_connect_db.php";
@@ -156,7 +154,6 @@ class PasswTest extends IntegrationCase {
     }
 
     public function testPostWijzigWachtwoord() {
-        $this->runfixture('user-harm');
         $this->runfixture('user-kobus');
         # GIVEN
         include "just_connect_db.php";

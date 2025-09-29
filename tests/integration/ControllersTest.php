@@ -6,7 +6,6 @@ class ControllersTest extends IntegrationCase {
 
     public static function setupBeforeClass(): void {
         self::runfixture('hok');
-        self::runfixture('user-harm');
         self::runfixture('partij-1');
         Response::setTest();
     }
@@ -215,21 +214,20 @@ TXT
     }
 
     // deze hebben allemaal fpdf nodig
-    public static function controllers_missing_libraries() {
-        return self::txt2ar(<<<TXT
-AfleverLijst_pdf.php
-Bezet_pdf.php
-Combireden_pdf.php
-Hok_pdf.php
-Hoklijst_pdf.php
-Loslopers_pdf.php
-Meerlingen5_pdf.php
-Ooikaart_pdf.php
-Ras_pdf.php
-Stallijst_pdf.php
-Vader_pdf.php
-TXT
-        );
+    public static function controllers_using_pdf() {
+        return [
+            'afleverlijst' => ['AfleverLijst_pdf.php', ['afleverlijst'], ['hisId' => 1]],
+            # ['Bezet_pdf.php', [], []], # er is al een integratietest voor deze pagina.
+            'combireden' => ['Combireden_pdf.php', ['combireden'], ['Id' => 1]],
+            'hok' => ['Hok_pdf.php', ['hok'], ['Id' => 1]],
+            'hoklijst' => ['Hoklijst_pdf.php', [], ['Id' => 1]],
+            'loslopers' => ['Loslopers_pdf.php', [], []],
+            'meerlingen5' => ['Meerlingen5_pdf.php', [], ['Id' => 1, 'd1' => 1, 'd2' => 1]],
+            'ooikaart' => ['Ooikaart_pdf.php', [], ['Id' => 1]],
+            'ras' => ['Ras_pdf.php', ['rasuser-1'], ['Id' => 1]],
+            'stallijst' => ['Stallijst_pdf.php', ['schaap-4'], []],
+            'vader' => ['Vader_pdf.php', [], ['Id' => 1]],
+        ];
     }
 
     public static function controllers_needing_database() {
@@ -286,6 +284,19 @@ TXT
             $this->runfixture($fixture);
         }
         $this->get("/$controller", ['ingelogd' => 1]);
+        $this->assertNoNoise();
+    }
+
+    /**
+     * @dataProvider controllers_using_pdf
+     */
+    public function testPdfControllers($controller, $fixtures, $postdata) {
+        Session::set('I1', 1);
+        foreach ($fixtures as $fixture) {
+            $this->runfixture($fixture);
+        }
+        $full_postdata = array_merge(['ingelogd_' => 1], $postdata);
+        $this->get("/$controller", $postdata);
         $this->assertNoNoise();
     }
 

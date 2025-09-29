@@ -7,7 +7,6 @@ class GebruikerPageTest extends IntegrationCase {
         $this->db = $db;
         $this->db->query("DELETE FROM tblLeden WHERE lidId=42");
         $this->runsetup("tblLeden");
-        $this->runfixture('user-harm');
         $this->runfixture('user-kobus');
         $this->runfixture('hok');
         $this->assertTableWithPK('tblLeden', 'lidId', 42, ['login' => 'kobus', 'alias' => 'koob']);
@@ -22,7 +21,6 @@ class GebruikerPageTest extends IntegrationCase {
         $this->db = $db;
         $this->db->query("DELETE FROM tblLeden WHERE lidId=42");
         $this->runsetup("tblLeden");
-        $this->runfixture('user-harm');
         $this->runfixture('user-kobus');
         $this->runfixture('user-kobus-agrident');
         $this->runfixture('hok');

@@ -220,6 +220,7 @@ WHERE st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and h.datum <
 while($zvw = mysqli_fetch_array($zoek_vorige_weging))
         { $vorige_weging = $zvw['vorige_weging']; }
 
+$vorige_date = '';
 if(isset($vorige_weging)) { 
 
 

@@ -14,10 +14,28 @@ $db_d = 'k36098_bvdvschapendbs';
 $db_t = 'k36098_bvdvSchapenDbT';
 
 $host = "localhost";
-$user = "root";
-$pw = "usbw";
-$dtb = "SchapenDb1";
-if (php_uname('n') == 'basq') {
+switch ($_SERVER['HTTP_HOST']) {
+case 'localhost:8080':
+    $dtb = 'SchapenDb1';
+    $user = 'root';
+    $pw = 'usbw';
+    break;
+case 'test.oervanovis.nl':
+    $dtb = 'k36098_bvdvSchapenDbT';
+    $user = 'bvdvschaapt';
+    $pw = 'MSenWL44';
+    break;
+case 'ovis.oervanovis.nl':
+    $dtb = 'k36098_bvdvSchapenDb';
+    $user = 'bvdvschaapovis';
+    $pw = 'MSenWL44';
+    break;
+case 'oer-dev':
+case 'basq':
+    $dtb = "SchapenDb1";
     $user = 'oer';
     $pw = 'schaapn';
+    break;
+default:
+    throw new Exception("No configuration for {$_SERVER['HTTP_HOST']}");
 }

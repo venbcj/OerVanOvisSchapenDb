@@ -70,33 +70,23 @@ for($i=0; $i<$max; $i++) { // doorloop een loop een aantal keer dat gelijk is aa
     if($i < $count_ar1) {             // zolang $i kleiner is dan het aantal records uit query1 
         $ar_d = $array_d[$i];        // Vul de variable met het recordnr $i van query1
         foreach ($ar_d as $value) { // doorloop de velden uit recordnr $i van query1
-            
             $temp_ar[] = $value;        // vul de array '$temp_ar' met de velden uit query1
         }
-    }
-    else {                             // Als $i niet kleiner is dan het aantal records uit query1
-
+    } else {                             // Als $i niet kleiner is dan het aantal records uit query1
         for($l=0;$l<2;$l++){        // doorloop een loop 2x
-
             $temp_ar[] = '';            // vul de array '$temp_ar' met lege waarden.
          }
     }
-
     if($i < $count_ar2) {            // zolang $i kleiner is dan het aantal records uit query2
         $ar_p = $array_p[$i];        // Vul de variable met het recordnr $i van query2
         foreach ($ar_p as $value) {    // doorloop de velden uit recordnr $i van query2
-
             $temp_ar[] = $value;        // vul de array '$temp_ar' met de velden uit query2
         }
-    }
-    else {                            // Als $i niet kleiner is dan het aantal records uit query2
-
+    } else {                            // Als $i niet kleiner is dan het aantal records uit query2
         for($l=0;$l<4;$l++){        // doorloop een loop 4x
-
             $temp_ar[] = '';            // vul de array '$temp_ar' met lege waarden.
         }
     }
-
     $new_ar[] = array($temp_ar[0],$temp_ar[1],$temp_ar[2],$temp_ar[3],$temp_ar[4],$temp_ar[5]);
     unset($temp_ar);
 }
