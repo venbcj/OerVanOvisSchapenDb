@@ -784,4 +784,87 @@ if ($vw->num_rows == 0) {
 return $vw->fetch_row()[0];
 }
 
+    public function aantal_laatste_dekkingen_van_moeders_uit_gekozen_verblijf_met_laatste_dekkingen_met_gekozen_vader($txtDay, $kzlHok, $kzlVdr) {
+       $vw = mysqli_query($this->db,"
+SELECT count(mdrs.mdrId) aant, datediff('".mysqli_real_escape_string($this->db,$txtDay)."', h.datum) verschil
+FROM (
+    SELECT st.schaapId mdrId
+    FROM tblBezet b
+     join tblHistorie h on (b.hisId = h.hisId)
+     join tblStal st on (st.stalId = h.stalId)
+     join tblSchaap s on (st.schaapId = s.schaapId)
+     left join 
+     (
+        SELECT b.bezId, min(h2.hisId) hist
+        FROM tblBezet b
+         join tblHistorie h1 on (b.hisId = h1.hisId)
+         join tblActie a1 on (a1.actId = h1.actId)
+         join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+         join tblActie a2 on (a2.actId = h2.actId)
+         join tblStal st on (h1.stalId = st.stalId)
+        WHERE b.hokId = '".mysqli_real_escape_string($this->db,$kzlHok)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+        GROUP BY b.bezId
+     ) uit on (uit.bezId = b.bezId)
+     join (
+        SELECT st.schaapId
+        FROM tblStal st
+         join tblHistorie h on (st.stalId = h.stalId)
+        WHERE h.actId = 3 and h.skip = 0
+     ) prnt on (prnt.schaapId = st.schaapId)
+    WHERE s.geslacht = 'ooi' and b.hokId = '".mysqli_real_escape_string($this->db,$kzlHok)."' and isnull(uit.bezId) and h.skip = 0
+ ) mdrs
+ join (
+    SELECT v.mdrId, max(v.volwId) mxvolwId
+    FROM tblVolwas v
+     join tblHistorie h on (v.hisId = h.hisId)
+    WHERE v.vdrId = '". mysqli_real_escape_string($this->db,$kzlVdr) ."' and h.skip = 0
+    GROUP BY v.mdrId
+ ) vmax_mdr_met_vdr on (mdrs.mdrId = vmax_mdr_met_vdr.mdrId)
+ join (
+    SELECT mdrId, max(volwId) mxvolwId
+    FROM tblVolwas
+    GROUP BY mdrId 
+ ) vmax_mdr on (vmax_mdr_met_vdr.mxvolwId = vmax_mdr.mxvolwId)
+ join tblVolwas v on (vmax_mdr.mxvolwId = v.volwId)
+ join tblHistorie h on (h.hisId = v.hisId)
+ GROUP BY h.datum
+ HAVING (count(mdrs.mdrId)) >= 5
+");
+    return $vw->fetch_row();
+    }
+
+public function zoek_moeders_in_verblijf($kzlHok) {
+   return mysqli_query($this->db,"
+SELECT st.schaapId mdrId
+    FROM tblBezet b
+     join tblHistorie h on (b.hisId = h.hisId)
+     join tblStal st on (st.stalId = h.stalId)
+     join tblSchaap s on (st.schaapId = s.schaapId)
+     left join 
+     (
+        SELECT b.bezId, min(h2.hisId) hist
+        FROM tblBezet b
+         join tblHistorie h1 on (b.hisId = h1.hisId)
+         join tblActie a1 on (a1.actId = h1.actId)
+         join tblHistorie h2 on (h1.stalId = h2.stalId
+             and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+         join tblActie a2 on (a2.actId = h2.actId)
+         join tblStal st on (h1.stalId = st.stalId)
+        WHERE b.hokId = '".mysqli_real_escape_string($this->db,$kzlHok)."'
+         and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+        GROUP BY b.bezId
+     ) uit on (uit.bezId = b.bezId)
+     join (
+        SELECT st.schaapId
+        FROM tblStal st
+         join tblHistorie h on (st.stalId = h.stalId)
+        WHERE h.actId = 3 and h.skip = 0
+     ) prnt on (prnt.schaapId = st.schaapId)
+    WHERE s.geslacht = 'ooi'
+ and b.hokId = '".mysqli_real_escape_string($this->db,$kzlHok)."'
+ and isnull(uit.bezId)
+ and h.skip = 0
+");
+}
+
 }

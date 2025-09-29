@@ -45,6 +45,13 @@ class DekkingenTest extends IntegrationCase {
         ]);
         $this->assertNoNoise();
         // datum komt uit fixture
+        // NOTE: dit faalt af en toe. Er mist nog iets in de setup van deze test. Er komt dan geen fout.
+        // Deductie. kennelijk is lst_mdr != kzlMdr?, dwz  != post[kzlOoi] ; lst_mdr komt uit zoek_moeder_vader_uit_laatste_koppel
+        // of dekmoment niet gezet, lst_vdr != kzlVdr, kzlVdr niet gezet?
+        // -- dekmoment komt uit zoek_moe...
+        // Is er nog een omliggende if() die zou kunnen falen?
+        // regel 123 txtDay [txtDatum1], registratie [post[kzlWat], kzlMdr: moeten allen gezet zijn.
+        //  (104) post[knpInsert1] moet ook gezet zijn. Dat zit allemaal in de test-setup
         $this->assertFout('Deze ram heeft deze ooi reeds als laatste gedekt en wel op 02-02-2013.');
     }
 
@@ -61,6 +68,7 @@ class DekkingenTest extends IntegrationCase {
         ]);
         $this->assertNoNoise();
         // datum komt uit fixture
+        // NOTE: dit faalt af en toe. Er mist nog iets in de setup van deze test. Er komt dan geen fout.
         $this->assertFout('Deze ooi is reeds drachtig per 02-02-2013.');
     }
 
@@ -95,6 +103,8 @@ class DekkingenTest extends IntegrationCase {
     }
 
     public function testNieuweInvoerHok() {
+        $this->uses_db();
+        $this->runSQL("DELETE FROM tblSchaap");
         $this->post('/Dekkingen.php', [
             'ingelogd' => 1,
             'knpInsert2_' => 1,
@@ -107,8 +117,36 @@ class DekkingenTest extends IntegrationCase {
         $this->assertFout('Dit verblijf heeft geen moederdieren.');
     }
 
-    // TODO: query aantal_laatste_dekkingen_van_moeders_uit_gekozen_verblijf_met_laatste_dekkingen_met_gekozen_vader
-    // TODO: deze naam wordt hergebruikt!
+    public function testNieuweInvoerHokMetMoeders() {
+        $this->runfixture('schaap-4');
+        $this->runfixture('moeders-in-verblijf');
+        $this->post('/Dekkingen.php', [
+            'ingelogd' => 1,
+            'knpInsert2_' => 1,
+            'txtDatum2_' => '13-01-2012',
+            'kzlWat_' => 1,
+            'kzlHok_' => '1',
+            'kzlRamNew2_' => 8,
+        ]);
+        $this->assertNoNoise();
+        $this->assertNotFout();
+    }
+
+    public function testNieuweInvoerHokMetMoedersEnDekkingen() {
+        $this->runfixture('schaap-4');
+        $this->runfixture('moeders-in-verblijf');
+        $this->runfixture('dekkingen'); // Slechte naam; er is ook al eentje 'dekking'
+        $this->post('/Dekkingen.php', [
+            'ingelogd' => 1,
+            'knpInsert2_' => 1,
+            'txtDatum2_' => '13-01-2012',
+            'kzlWat_' => 1,
+            'kzlHok_' => '1',
+            'kzlRamNew2_' => 8,
+        ]);
+        $this->assertNoNoise();
+        $this->assertNotFout();
+    }
 
         // $this->assertFout('De dekdatum mag niet voor de laatste dekking met dit vaderdier liggen. Dit geldt voor tenminste 1 moederdier uit dit verblijf.');
 

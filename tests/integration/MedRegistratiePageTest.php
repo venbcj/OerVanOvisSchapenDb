@@ -71,6 +71,7 @@ class MedRegistratiePageTest extends IntegrationCase {
         ]);
         $this->assertNoNoise();
         $this->assertNotFout();
+        // TODO: dit faalt af en toe. precondities?
         $this->assertOptieCount('kzlReden', 2); // er is altijd een lege optie
     }
 

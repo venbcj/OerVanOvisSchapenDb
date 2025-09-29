@@ -1,5 +1,8 @@
 <?php 
 
+# WERKBOEK
+# Deze pagina krijgt eenzelfde behandeling als Melden.
+#
 require_once("autoload.php");
 
 $versie = '10-4-2014'; /*vw_Reader_sp wordt gebruikt in InsSpenen*/
@@ -48,15 +51,21 @@ include "responscheck.php"; ?>
 
  <form action="#" method="post" enctype="multipart/form-data">
 
-<?php include "inlezenAgrident.php"; 
-$zoek_lege_stallijst = mysqli_query($db,"
-SELECT count(stalId) aant
-FROM tblStal
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' 
-") or die (mysqli_error($db));
+<?php
+include "inlezenAgrident.php"; 
+# NOTE: deze include brengt een armvol variabelen in scope.
+# Ik wil er een functie van maken, en dan een array teruggeven:
+# [A ] nu komt bijvoorbeeld $speen_ovpl terug,
+# [ Z] dan krijg je $aantallen['speen_ovpl']
+# In tweede instantie wil ik dat nog verder verkleinen, want 22 count-queries met vrijwel gelijke voorwaarden is
+#  - niet efficient
+#  - niet communicatief (ubn is anders; hoe, waarom?; twee soorten aanvoer; spenen en overplaatsen gaan kennelijk samen)
+#  Alle delen die wel op dezelfde manier werken, bundelen we in een GROUP BY actId. Dan krijg je vanzelf al een array.
+#  De actId-waarden vertalen naar betekenisvolle namen kan eenvoudig daarna.
 
-   while ( $zls = mysqli_fetch_assoc ($zoek_lege_stallijst)) { $stallijstaantal = $zls['aant']; } ?>
-
+$stal_gateway = new StalGateway($db);
+$stallijstaantal = $stal_gateway->zoek_lege_stallijst($lidId);
+?>
 <table border = 0 align="center" style = "font-size: 17px"; >
    <h2 align="center" style="color:blue";>Hier kun je de gegevens uit de reader verwerken<br> in het managementprogramma.</h2>
 <tr height = 50 ><td></td> </tr>

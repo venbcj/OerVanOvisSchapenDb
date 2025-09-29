@@ -35,6 +35,11 @@ class UnitCase extends TestCase {
         }
     }
 
+    protected function runSQL($SQL) {
+        $this->db->query($SQL);
+        $this->assertEquals('', $this->db->error, "$SQL\nFout in query");
+    }
+
     protected function assertTableWithPK($table, $pk, $id, $values = []) {
         $vw = $this->db->query("SELECT * FROM $table WHERE $pk=$id");
         $this->assertEquals(1, $vw->num_rows);

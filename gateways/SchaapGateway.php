@@ -53,6 +53,18 @@ ORDER BY right(levensnummer, $Karwerk)
         return $records;
     }
 
+    public function zoek_werknummer($mdrId, $Karwerk) {
+        $vw = mysqli_query($db,"
+SELECT right(levensnummer, $Karwerk) werknr
+FROM tblSchaap
+WHERE schaapId = '" . mysqli_real_escape_string($db,$mdrId) . "'
+");
+if ($vw->num_rows) {
+    return $vw->fetch_row()[0];
+}
+return null;
+    }
+
     public function levnr_exists_outside($fldLevnr, $schaapId): bool {
         $vw = mysqli_query($this->db, "
 SELECT count(*) aant
@@ -1331,5 +1343,48 @@ kg noodzakelijk eerst hok verlaten geboren en dan de(zelfde) datum van spenen
  Id noodzakelijk bij meerder overplaatsingen (recordes tblBezet) op dezelfde dag
   */
 }
+
+public function zoek_laatste_werpdatum($max_worp) {
+    $vw = mysqli_query($this->db,"
+SELECT date_add(max(h.datum),interval 60 day) werpdate
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join tblHistorie h on (h.stalId = st.stalId)
+WHERE h.actId = 1 and h.skip = 0 and s.volwId = '" . mysqli_real_escape_string($this->db,$max_worp) . "'
+") or die (mysqli_error($this->db));
+if ($vw->num_rows) {
+    return $vw->fetch_row()[0];
+}
+return null;
+    }
+
+public function resultvader($lidId, $Karwerk) {
+    return mysqli_query($this->db,"
+SELECT st.schaapId, right(s.levensnummer,$Karwerk) werknr
+FROM tblStal st
+ join tblSchaap s on (st.schaapId = s.schaapId)
+ join (
+     SELECT schaapId
+     FROM tblStal st
+      join tblHistorie h on (st.stalId = h.stalId)
+     WHERE h.actId = 3 and h.skip = 0
+ ) prnt on (s.schaapId = prnt.schaapId)
+ join (
+     SELECT schaapId, max(stalId) stalId
+     FROM tblStal st
+     WHERE st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+     GROUP BY schaapId
+ ) mst on (s.schaapId = mst.schaapId)
+ left join (
+     SELECT st.stalId
+     FROM tblStal st
+      join tblHistorie h on (st.stalId = h.stalId)
+      join tblActie a on (h.actId = a.actId)
+     WHERE a.af = 1 and h.skip = 0
+ ) afv on (afv.stalId = mst.stalId)
+WHERE s.geslacht = 'ram' and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and isnull(afv.stalId)
+ORDER BY right(s.levensnummer,$Karwerk)
+"); 
+    }
 
 }

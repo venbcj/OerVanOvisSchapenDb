@@ -52,44 +52,22 @@ include "login.php"; ?>
 // wordt in javascript gebruikt, dat buiten de if() wordt ingeclude.
 $array_drachtdatum = array();
 if (Auth::is_logged_in()) { if($modtech == 1) {
-
-    include "vw_kzlOoien.php";
+$volwas_gateway = new VolwasGateway($db);
+$historie_gateway = new HistorieGateway($db);
+$dracht_gateway = new DrachtGateway($db);
+$bezet_gateway = new BezetGateway($db);
+$schaap_gateway = new SchaapGateway($db);
+$stal_gateway = new StalGateway($db);
+$hok_gateway = new HokGateway($db);
 
     include "dekkingen.js.php";
 
 // Declaratie vaderdier
-$resultvader = mysqli_query($db,"
-SELECT st.schaapId, right(s.levensnummer,$Karwerk) werknr
-FROM tblStal st
- join tblSchaap s on (st.schaapId = s.schaapId)
- join (
-     SELECT schaapId
-     FROM tblStal st
-      join tblHistorie h on (st.stalId = h.stalId)
-     WHERE h.actId = 3 and h.skip = 0
- ) prnt on (s.schaapId = prnt.schaapId)
- join (
-     SELECT schaapId, max(stalId) stalId
-     FROM tblStal st
-     WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-     GROUP BY schaapId
- ) mst on (s.schaapId = mst.schaapId)
- left join (
-     SELECT st.stalId
-     FROM tblStal st
-      join tblHistorie h on (st.stalId = h.stalId)
-      join tblActie a on (h.actId = a.actId)
-     WHERE a.af = 1 and h.skip = 0
- ) afv on (afv.stalId = mst.stalId)
-WHERE s.geslacht = 'ram' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(afv.stalId)
-ORDER BY right(s.levensnummer,$Karwerk)
-") or die (mysqli_error($db)); 
-
+    $resultvader = $schaap_gateway->resultvader($lidId, $Karwerk);
 $index = 0; 
 $vawerknr = [];
 $vaRaak = [];
-while ($va = mysqli_fetch_array($resultvader)) 
-{ 
+while ($va = mysqli_fetch_array($resultvader)) { 
    $vawerknr[$index] = $va['werknr'];
    $vaRaak[$index] = $va['schaapId'];   
    $index++; 
@@ -117,123 +95,44 @@ unset($index);
     if(isset($_POST['txtWorp_'])) { $txtGrootte = $_POST['txtWorp_']; }  
     #echo 'Dracht : '.$dracht.'<br><br>';
 
-
-
-
 if (isset($txtDay) && isset($registratie) && isset($kzlMdr)) {
-
 $stalId = zoek_max_stalId($lidId,$kzlMdr);
-
 // Controle op dubbele invoer achter elkaar en dekking binnen 60 dagen
-
-$zoek_60dagen_na_laatste_worp = mysqli_query($db,"
-SELECT date_add(max(h.datum),interval 60 day) datum
-FROM tblVolwas v
- join tblSchaap lam on (lam.volwId = v.volwId)
- join tblStal st on (st.schaapId = lam.schaapId)
- join tblHistorie h on (h.stalId = st.stalId)
-WHERE mdrId = '".mysqli_real_escape_string($db,$kzlMdr)."' and h.actId = 1 and h.skip = 0
-") or die (mysqli_error($db));
-
-while ( $vw = mysqli_fetch_assoc ($zoek_60dagen_na_laatste_worp)) { $vroegst_volgende_dekdatum = $vw['datum']; } 
 // Datum dat moeder weer drachtig kan zijn
+$vroegst_volgende_dekdatum = $volwas_gateway->vroegst_volgende_dekdatum($kzlMdr);
 
-$zoek_laatste_koppel_na_laatste_worp_obv_moeder = mysqli_query($db,"
-SELECT max(v.volwId) volwId
-FROM tblVolwas v
- left join tblHistorie dek on (dek.hisId = v.hisId)
- left join tblSchaap lam on (lam.volwId = v.volwId)
-WHERE (isnull(dek.skip) or dek.skip = 0) and isnull(lam.volwId) and v.mdrId = '".mysqli_real_escape_string($db,$kzlMdr)."'
-") or die (mysqli_error($db));
-
-    while ( $lk = mysqli_fetch_assoc ($zoek_laatste_koppel_na_laatste_worp_obv_moeder)) { $koppel = $lk['volwId']; } 
 //Laatste_koppel_zonder_worp
+$koppel = $volwas_gateway->zoek_laatste_koppel_na_laatste_worp_obv_moeder($kzlMdr);
+[$lst_mdr, $lst_vdr, $dekMoment, $drachtMoment] = $volwas_gateway->zoek_moeder_vader_uit_laatste_koppel($koppel);
 
-$zoek_moeder_vader_uit_laatste_koppel = mysqli_query($db,"
-SELECT mdrId, vdrId, v.hisId his_dek, d.hisId his_dracht
-FROM tblVolwas v
- left join tblDracht d on (d.volwId = v.volwId) 
- left join tblHistorie hd on (hd.hisId = d.hisId)
-WHERE (isnull(hd.skip) or hd.skip = 0) and v.volwId = '".mysqli_real_escape_string($db,$koppel)."'
-") or die (mysqli_error($db));
-
-$lst_mdr = 0;
-$lst_vdr = 0;
-    while ( $v_m = mysqli_fetch_assoc ($zoek_moeder_vader_uit_laatste_koppel)) { 
-        $lst_mdr = $v_m['mdrId']; 
-        $lst_vdr = $v_m['vdrId']; 
-        $dekMoment = $v_m['his_dek']; 
-        $drachtMoment = $v_m['his_dracht']; }
-
-/*echo 'laatste koppel = '.$koppel.'<br>';
-echo '$lst_mdr = '.$lst_mdr.' keuze mdr = '.$kzlMdr.'<br>' ;
-echo '$lst_vdr = '.$lst_vdr.' keuze vdr = '.$kzlVdr.'<br>' ;*/
-
-
-if($lst_mdr == $kzlMdr) {
-    if(isset($dekMoment) && $lst_vdr == $kzlVdr && isset($kzlVdr)) {
-
-        $zoek_dekdatum = mysqli_query($db,"
-SELECT date_format(datum,'%d-%m-%Y') datum, year(datum) jaar
-FROM tblHistorie
-WHERE hisId = '".mysqli_real_escape_string($db,$dekMoment)."' and skip = 0
-    ") or die (mysqli_error($db));
-while ( $zd = mysqli_fetch_assoc($zoek_dekdatum)) {
-    $dekdm = $zd['datum']; $dekjaar = $zd['jaar']; 
-}
-    $fout = "Deze ram heeft deze ooi reeds als laatste gedekt en wel op ".$dekdm.". ";
-
-if($registratie == 'dracht') {
-    $fout .= " Wijzig de dekking uit ".$dekjaar.".";
-}
-}
-if(isset($drachtMoment)) {
-
-$zoek_drachtdatum = mysqli_query($db,"
-SELECT date_format(datum,'%d-%m-%Y') datum
-FROM tblHistorie
-WHERE hisId = '".mysqli_real_escape_string($db,$drachtMoment)."' and skip = 0
-") or die (mysqli_error($db));
-while ( $zd = mysqli_fetch_assoc($zoek_drachtdatum)) {
-    $drachtdm = $zd['datum']; 
-}
-
-    $fout = "Deze ooi is reeds drachtig per ".$drachtdm.". ";
-}
-
-
-}
-
-else if(isset($vroegst_volgende_dekdatum) && $vroegst_volgende_dekdatum > $txtDay) { $fout = "Deze ooi is heeft binnen de 2 maanden nog geworpen. "; }
+    if($lst_mdr == $kzlMdr) {
+        if(isset($dekMoment) && $lst_vdr == $kzlVdr && isset($kzlVdr)) {
+            [$dekdm, $dekjaar] = $historie_gateway->zoek_dekdatum($dekMoment);
+            $fout = "Deze ram heeft deze ooi reeds als laatste gedekt en wel op ".$dekdm.". ";
+            if($registratie == 'dracht') {
+                $fout .= " Wijzig de dekking uit ".$dekjaar.".";
+            }
+        }
+        if(isset($drachtMoment)) {
+            $fout = "Deze ooi is reeds drachtig per ".$historie_gateway->zoek_drachtDatum($drachtMoment).". ";
+        }
+    } elseif(isset($vroegst_volgende_dekdatum) && $vroegst_volgende_dekdatum > $txtDay) {
+        $fout = "Deze ooi is heeft binnen de 2 maanden nog geworpen. ";
+    }
 // Einde Controle op dubbele invoer achter elkaar en dekking binnen 60 dagen
 
-if(!isset($fout) && $registratie == 'dekking') {
-
-insert_tblHistorie($stalId,$txtDay,18);
-
-$hisId = zoek_max_hisId_stal($stalId,18);
-
-insert_dekking_mdr($hisId,$kzlMdr,$kzlVdr);
-
-      }
-
-else if(!isset($fout) && $registratie == 'dracht') {
-
-insert_dracht_mdr($kzlMdr,$kzlVdr,$txtGrootte);
-
-$volwId = zoek_max_volwId_mdr($kzlMdr,$kzlVdr);
-
-insert_tblHistorie($stalId,$txtDay,19);
-
-$hisId = zoek_max_hisId_stal($stalId,19);
-
-$insert_tblDracht = "INSERT INTO tblDracht SET volwId = '".mysqli_real_escape_string($db,$volwId)."', hisId = '".mysqli_real_escape_string($db,$hisId)."' ";    
-/*echo $insert_tblDracht.'<br>';*/
-mysqli_query($db,$insert_tblDracht) or die (mysqli_error($db));
-
-      }
-
-            } 
+    if(!isset($fout) && $registratie == 'dekking') {
+        insert_tblHistorie($stalId,$txtDay,18);
+        $hisId = zoek_max_hisId_stal($stalId,18);
+        insert_dekking_mdr($hisId,$kzlMdr,$kzlVdr);
+    } else if(!isset($fout) && $registratie == 'dracht') {
+        insert_dracht_mdr($kzlMdr,$kzlVdr,$txtGrootte);
+        $volwId = zoek_max_volwId_mdr($kzlMdr,$kzlVdr);
+        insert_tblHistorie($stalId,$txtDay,19);
+        $hisId = zoek_max_hisId_stal($stalId,19);
+        $dracht_gateway->insert_dracht($volwId, $hidId);
+    }
+} 
 // Einde if (isset($txtDay) && isset($registratie) && isset($kzlMdr))
 
             else if(!isset($txtDay))         { $fout = "De datum is onbekend."; }
@@ -273,57 +172,7 @@ if (isset($txtDay) && isset($registratie) && isset($kzlHok) && isset($kzlVdr)) {
 //Controle of vaderdier dit verblijf als laatste reeds heeft gedekt. Zie toelichting onder deze eerste query
 
     $dgn_verschil = 0;
-$aantal_laatste_dekkingen_van_moeders_uit_gekozen_verblijf_met_laatste_dekkingen_met_gekozen_vader = mysqli_query($db,"
-SELECT count(mdrs.mdrId) aant, datediff('".mysqli_real_escape_string($db,$txtDay)."', h.datum) verschil
-FROM (
-    SELECT st.schaapId mdrId
-    FROM tblBezet b
-     join tblHistorie h on (b.hisId = h.hisId)
-     join tblStal st on (st.stalId = h.stalId)
-     join tblSchaap s on (st.schaapId = s.schaapId)
-     left join 
-     (
-        SELECT b.bezId, min(h2.hisId) hist
-        FROM tblBezet b
-         join tblHistorie h1 on (b.hisId = h1.hisId)
-         join tblActie a1 on (a1.actId = h1.actId)
-         join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-         join tblActie a2 on (a2.actId = h2.actId)
-         join tblStal st on (h1.stalId = st.stalId)
-        WHERE b.hokId = '".mysqli_real_escape_string($db,$kzlHok)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-        GROUP BY b.bezId
-     ) uit on (uit.bezId = b.bezId)
-     join (
-        SELECT st.schaapId
-        FROM tblStal st
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 3 and h.skip = 0
-     ) prnt on (prnt.schaapId = st.schaapId)
-    WHERE s.geslacht = 'ooi' and b.hokId = '".mysqli_real_escape_string($db,$kzlHok)."' and isnull(uit.bezId) and h.skip = 0
- ) mdrs
- join (
-    SELECT v.mdrId, max(v.volwId) mxvolwId
-    FROM tblVolwas v
-     join tblHistorie h on (v.hisId = h.hisId)
-    WHERE v.vdrId = '". mysqli_real_escape_string($db,$kzlVdr) ."' and h.skip = 0
-    GROUP BY v.mdrId 
- ) vmax_mdr_met_vdr on (mdrs.mdrId = vmax_mdr_met_vdr.mdrId)
- join (
-    SELECT mdrId, max(volwId) mxvolwId
-    FROM tblVolwas
-    GROUP BY mdrId 
- ) vmax_mdr on (vmax_mdr_met_vdr.mxvolwId = vmax_mdr.mxvolwId)
- join tblVolwas v on (vmax_mdr.mxvolwId = v.volwId)
- join tblHistorie h on (h.hisId = v.hisId)
- GROUP BY h.datum
-
-") or die (mysqli_error($db));
-
-$aant_mdrs = 0;
-while ( $ald = mysqli_fetch_assoc($aantal_laatste_dekkingen_van_moeders_uit_gekozen_verblijf_met_laatste_dekkingen_met_gekozen_vader)) {
-    $aant_mdrs = $ald['aant'];  
-// aantal moeders uit verblijf waarvan laatste dekking van gekozen vaderdier is
-        $dgn_verschil = $ald['verschil']; } 
+    [$aant_mdrs, $dgn_verschil] = $bezet_gateway->aantal_laatste_dekkingen_van_moeders_uit_gekozen_verblijf_met_laatste_dekkingen_met_gekozen_vader($txtDay, $kzlHok, $kzlVdr);
 // aantal dagen tussen laatste dekking met dit vaderdier en de huidig gekozen datum
 
 /*
@@ -350,151 +199,46 @@ De gekozen dekdatum mag niet voor de laatste dekdatum liggen. Bij hoerveel diere
 Zijn de ooien binnen het verblijf als laatst gedekt door het gekozen vaderdier dan moeten er minimaal 5 moeders een koppels zijn met het gekozen vaderdier om te beoordelen dat dit verblijf de laatste keer reeds is gedekt door het gekozen vaderdier. Vandaar HAVING (count(mdrs.mdrId)) >= 5 in de query hieronder.
 De dekdatum van de eerste registratie mag niet binnen de 21 dagen liggen met de gekozen dekdatum van de tweede registratie
 */
-if($dgn_verschil < 0) { $fout = 'De dekdatum mag niet voor de laatste dekking met dit vaderdier liggen. Dit geldt voor tenminste 1 moederdier uit dit verblijf.'; }
-else {
-
-$aantal_laatste_dekkingen_van_moeders_uit_gekozen_verblijf_met_laatste_dekkingen_met_gekozen_vader = mysqli_query($db,"
-SELECT count(mdrs.mdrId) aant, datediff('".mysqli_real_escape_string($db,$txtDay)."', h.datum) verschil
-FROM (
-    SELECT st.schaapId mdrId
-    FROM tblBezet b
-     join tblHistorie h on (b.hisId = h.hisId)
-     join tblStal st on (st.stalId = h.stalId)
-     join tblSchaap s on (st.schaapId = s.schaapId)
-     left join 
-     (
-        SELECT b.bezId, min(h2.hisId) hist
-        FROM tblBezet b
-         join tblHistorie h1 on (b.hisId = h1.hisId)
-         join tblActie a1 on (a1.actId = h1.actId)
-         join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-         join tblActie a2 on (a2.actId = h2.actId)
-         join tblStal st on (h1.stalId = st.stalId)
-        WHERE b.hokId = '".mysqli_real_escape_string($db,$kzlHok)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-        GROUP BY b.bezId
-     ) uit on (uit.bezId = b.bezId)
-     join (
-        SELECT st.schaapId
-        FROM tblStal st
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 3 and h.skip = 0
-     ) prnt on (prnt.schaapId = st.schaapId)
-    WHERE s.geslacht = 'ooi' and b.hokId = '".mysqli_real_escape_string($db,$kzlHok)."' and isnull(uit.bezId) and h.skip = 0
- ) mdrs
- join (
-    SELECT v.mdrId, max(v.volwId) mxvolwId
-    FROM tblVolwas v
-     join tblHistorie h on (v.hisId = h.hisId)
-    WHERE v.vdrId = '". mysqli_real_escape_string($db,$kzlVdr) ."' and h.skip = 0
-    GROUP BY v.mdrId
- ) vmax_mdr_met_vdr on (mdrs.mdrId = vmax_mdr_met_vdr.mdrId)
- join (
-    SELECT mdrId, max(volwId) mxvolwId
-    FROM tblVolwas
-    GROUP BY mdrId 
- ) vmax_mdr on (vmax_mdr_met_vdr.mxvolwId = vmax_mdr.mxvolwId)
- join tblVolwas v on (vmax_mdr.mxvolwId = v.volwId)
- join tblHistorie h on (h.hisId = v.hisId)
- GROUP BY h.datum
- HAVING (count(mdrs.mdrId)) >= 5
-
-") or die (mysqli_error($db));
-
-    while ( $ald = mysqli_fetch_assoc($aantal_laatste_dekkingen_van_moeders_uit_gekozen_verblijf_met_laatste_dekkingen_met_gekozen_vader)) { $aant_mdrs = $ald['aant'];  
-// aantal moeders uit verblijf waarvan laatste dekking van gekozen vaderdier is
-        $dgn_verschil = $ald['verschil']; } 
+if($dgn_verschil < 0) {
+    $fout = 'De dekdatum mag niet voor de laatste dekking met dit vaderdier liggen. Dit geldt voor tenminste 1 moederdier uit dit verblijf.';
+} else {
+    [$aant_mdrs, $dgn_verschil] = $bezet_gateway->aantal_laatste_dekkingen_van_moeders_uit_gekozen_verblijf_met_laatste_dekkingen_met_gekozen_vader($txtDay, $kzlHok, $kzlVdr);
 // aantal dagen tussen laatste dekking met dit vaderdier en de huidig gekozen datum
 
 
-if($aant_mdrs >= 5 && $dgn_verschil <= 21) { $fout = 'Controle dubbele registratie: \nMinimaal 5 moederdieren uit dit verblijf zijn al als laatst gedekt door dit vaderdier binnen 21 dagen. \nEr wordt daarom niets ingelezen. '; }
+if($aant_mdrs >= 5 && $dgn_verschil <= 21) {
+    $fout = 'Controle dubbele registratie: \nMinimaal 5 moederdieren uit dit verblijf zijn al als laatst gedekt door dit vaderdier binnen 21 dagen. \nEr wordt daarom niets ingelezen. ';
+}
 }
 // Einde Controle of vaderdier dit verblijf als laatste reeds heeft gedekt. 
 
 if(!isset($fout)) {
 $foutaantal = 0;
 
-$zoek_moeders_in_verblijf = mysqli_query($db,"
-SELECT st.schaapId mdrId
-    FROM tblBezet b
-     join tblHistorie h on (b.hisId = h.hisId)
-     join tblStal st on (st.stalId = h.stalId)
-     join tblSchaap s on (st.schaapId = s.schaapId)
-     left join 
-     (
-        SELECT b.bezId, min(h2.hisId) hist
-        FROM tblBezet b
-         join tblHistorie h1 on (b.hisId = h1.hisId)
-         join tblActie a1 on (a1.actId = h1.actId)
-         join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-         join tblActie a2 on (a2.actId = h2.actId)
-         join tblStal st on (h1.stalId = st.stalId)
-        WHERE b.hokId = '".mysqli_real_escape_string($db,$kzlHok)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-        GROUP BY b.bezId
-     ) uit on (uit.bezId = b.bezId)
-     join (
-        SELECT st.schaapId
-        FROM tblStal st
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 3 and h.skip = 0
-     ) prnt on (prnt.schaapId = st.schaapId)
-    WHERE s.geslacht = 'ooi' and b.hokId = '".mysqli_real_escape_string($db,$kzlHok)."' and isnull(uit.bezId) and h.skip = 0
-") or die (mysqli_error($db));
-
+$zoek_moeders_in_verblijf = $bezet_gateway->zoek_moeders_in_verblijf($kzlHok);
 $num_rows = mysqli_num_rows($zoek_moeders_in_verblijf);
 
-if($num_rows == 0) { $fout = 'Dit verblijf heeft geen moederdieren.'; }
-else {
-
+if($num_rows == 0) {
+    $fout = 'Dit verblijf heeft geen moederdieren.';
+} else {
     while ( $zmv = mysqli_fetch_assoc($zoek_moeders_in_verblijf)) {
         $mdrId = $zmv['mdrId']; 
-
-
-
-unset($max_worp);
-unset($dmwerp_plus_60dgn);
-// Controle dekking binnen 60 dagen na laatste worp per moeder
-$zoek_laatste_worp_moeder = mysqli_query($db,"
-SELECT max(v.volwId) max_worp
-FROM tblVolwas v
- join tblSchaap s on (v.volwId = s.volwId)
-WHERE v.mdrId = '" . mysqli_real_escape_string($db,$mdrId) . "'
-") or die (mysqli_error($db));
-    while ($zlw = mysqli_fetch_assoc($zoek_laatste_worp_moeder)) { $max_worp = $zlw['max_worp']; }
-
-
-/*
-1323 1 stuks
-1326 5 stuks
-1333 9 stuks
-*/
-
+        unset($max_worp);
+        unset($dmwerp_plus_60dgn);
+        // Controle dekking binnen 60 dagen na laatste worp per moeder
+        $max_worp = $volwas_gateway->zoek_laatste_worp_moeder($mdrId);
 if(isset($max_worp)) {
-$zoek_laatste_werpdatum = mysqli_query($db,"
-SELECT date_add(max(h.datum),interval 60 day) werpdate
-FROM tblSchaap s
- join tblStal st on (s.schaapId = st.schaapId)
- join tblHistorie h on (h.stalId = st.stalId)
-WHERE h.actId = 1 and h.skip = 0 and s.volwId = '" . mysqli_real_escape_string($db,$max_worp) . "'
-") or die (mysqli_error($db));
-    while ($zlw = mysqli_fetch_assoc($zoek_laatste_werpdatum)) { $dmwerp_plus_60dgn = $zlw['werpdate']; }
-
+    $dmwerp_plus_60dgn = $schaap_gateway->zoek_laatste_werpdatum($max_worp);
 if($dmwerp_plus_60dgn > $txtDay) { 
 
-$zoek_werknr_ooi = mysqli_query($db,"
-SELECT right(levensnummer, $Karwerk) werknr
-FROM tblSchaap
-WHERE schaapId = '" . mysqli_real_escape_string($db,$mdrId) . "'
-") or die (mysqli_error($db));
-
-    while ($zw = mysqli_fetch_assoc($zoek_werknr_ooi)) { $werknr_ooi = $zw['werknr']; }
-
+    $werknr_ooi = $schaap_gateway->zoek_werknummer($mdrId, $Karwerk);
     $foutaantal ++;
 
     if($foutaantal > 5) { 
-    $fout = $foutaantal." ooien hebben binnen de 2 maanden nog geworpen. ".'\n'."Deze ".$foutaantal." dieren zijn daarom niet gedekt.";
+        $fout = $foutaantal." ooien hebben binnen de 2 maanden nog geworpen. ".'\n'."Deze ".$foutaantal." dieren zijn daarom niet gedekt.";
     }
     else {
-    $fout .= 'De ooi ' .$werknr_ooi. ' heeft binnen de 2 maanden nog geworpen en is daarom niet gedekt. \n'; 
+        $fout .= 'De ooi ' .$werknr_ooi. ' heeft binnen de 2 maanden nog geworpen en is daarom niet gedekt. \n'; 
     }
 
 }
@@ -578,11 +322,9 @@ if(isset($_POST['knpSave_'])) {
 <select name= "kzlWat_" style= "width:80;" > 
 <?php
 $opties = array('' => '', 'dekking' => 'Dekking', 'dracht' => 'Dracht');
-foreach ( $opties as $key => $waarde)
-{
+foreach ($opties as $key => $waarde) {
    $keuze = '';
-   if(isset($_POST['kzlWat_']) && $_POST['kzlWat_'] == $key)
-   {
+   if (isset($_POST['kzlWat_']) && $_POST['kzlWat_'] == $key) {
         $keuze = ' selected ';
    }
    echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
@@ -591,45 +333,41 @@ foreach ( $opties as $key => $waarde)
  </td>
  <td align="center"> 
 <?php
-$result = mysqli_query($db,"(".$vw_kzlOoien.")  ") or die (mysqli_error($db)); ?>
+    $result = $stal_gateway->kzlOoien($lidId, $Karwerk);
+?>
      <select name= "kzlOoi_" style= "width:65;" >
  <option></option>    
-<?php    while($row = mysqli_fetch_array($result))
-        {
-            $opties= array($row['schaapId']=>$row['werknr'].'&nbsp &nbsp '.$row['lamrn'].'&nbsp &nbsp '.$row['halsnr']);
-            foreach ( $opties as $key => $waarde)
-            {
-                        $keuze = '';
-        
-        if(isset($_POST['kzlOoi_']) && $_POST['kzlOoi_'] == $key)
-        {
+<?php
+while($row = mysqli_fetch_array($result)) {
+    $opties= array($row['schaapId']=>$row['werknr'].'&nbsp &nbsp '.$row['lamrn'].'&nbsp &nbsp '.$row['halsnr']);
+    foreach ($opties as $key => $waarde) {
+        $keuze = '';
+        if (isset($_POST['kzlOoi_']) && $_POST['kzlOoi_'] == $key) {
             $keuze = ' selected ';
         }
-                
         echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
-            }
-        
-        } ?>
+    }
+
+}
+?>
  </select>
  </td>
 <td align="center"> 
  <select name= "kzlRamNew1_" style= "width:65;" >
  <option></option>    
-<?php    $count = count($vawerknr);
-for ($i = 0; $i < $count; $i++){
-        
-    $opties= array($vaRaak[$i]=>$vawerknr[$i]);
-            foreach ( $opties as $key => $waarde)
-            {
-    if((isset($_POST['kzlRamNew1_']) && $_POST['kzlRamNew1_'] == $key)) {
-        echo '<option value="'. $key .'" selected>' . $waarde . '</option>'; }
-        else
-        {
+<?php
+$count = count($vawerknr);
+for ($i = 0; $i < $count; $i++) {
+    $opties = array($vaRaak[$i] => $vawerknr[$i]);
+    foreach ($opties as $key => $waarde) {
+        if ((isset($_POST['kzlRamNew1_']) && $_POST['kzlRamNew1_'] == $key)) {
+            echo '<option value="'. $key .'" selected>' . $waarde . '</option>';
+        } else {
             echo '<option value="' . $key . '" >' . $waarde . '</option>';
         }
-            }
-        
-        } ?>
+    }
+}
+?>
  </select>
  </td>
 
@@ -666,50 +404,40 @@ for ($i = 0; $i < $count; $i++){
  </td>
  <td align="center"> 
 <?php
-$result = mysqli_query($db,"
-SELECT hokId, hoknr
-FROM tblHok
-WHERE actief = 1 and lidId = '" . mysqli_real_escape_string($db,$lidId) . "' 
-ORDER BY hoknr 
-") or die (mysqli_error($db)); ?>
+$result = $hok_gateway->kzlHok($lidId);
+?>
      <select name= "kzlHok_" style= "width:65;" >
  <option></option>    
-<?php    while($row = mysqli_fetch_array($result))
-        {
-            $opties= array($row['hokId']=>$row['hoknr']);
-            foreach ( $opties as $key => $waarde)
-            {
-                        $keuze = '';
-        
-        if(isset($_POST['kzlHok_']) && $_POST['kzlHok_'] == $key)
-        {
+<?php
+while ($row = mysqli_fetch_array($result)) {
+    $opties = array($row['hokId']=>$row['hoknr']);
+    foreach ( $opties as $key => $waarde) {
+        $keuze = '';
+        if (isset($_POST['kzlHok_']) && $_POST['kzlHok_'] == $key) {
             $keuze = ' selected ';
         }
-                
         echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
-            }
-        
-        } ?>
+    }
+}
+?>
  </select>
  </td>
 <td align="center"> 
  <select name= "kzlRamNew2_" style= "width:65;" >
  <option></option>    
-<?php    $count = count($vawerknr);
-for ($i = 0; $i < $count; $i++){
-        
+<?php
+$count = count($vawerknr);
+for ($i = 0; $i < $count; $i++) {
     $opties= array($vaRaak[$i]=>$vawerknr[$i]);
-            foreach ( $opties as $key => $waarde)
-            {
-    if((isset($_POST['kzlRamNew2_']) && $_POST['kzlRamNew2_'] == $key)) {
-        echo '<option value="'. $key .'" selected>' . $waarde . '</option>'; }
-        else
-        {
+    foreach ( $opties as $key => $waarde) {
+        if ((isset($_POST['kzlRamNew2_']) && $_POST['kzlRamNew2_'] == $key)) {
+            echo '<option value="'. $key .'" selected>' . $waarde . '</option>'; 
+        } else {
             echo '<option value="' . $key . '" >' . $waarde . '</option>';
         }
-            }
-        
-        } ?>
+    }
+}
+?>
  </select>
  </td>
  <td colspan = 2><input type = "submit" name = "knpInsert2_" value = "Toevoegen" style = "font-size:10px;">
@@ -730,8 +458,12 @@ for ($i = 0; $i < $count; $i++){
     ********************************* -->
 
 <?php 
-if(isset($_POST['txtJaar_'])) { $hisJaar = $_POST['txtJaar_']; } 
-else { $hisJaar = 2; } ?>
+if (isset($_POST['txtJaar_'])) {
+    $hisJaar = $_POST['txtJaar_'];
+} else {
+    $hisJaar = 2;
+}
+?>
 
 <tr><td align="right">
 <!--*****************************
@@ -762,8 +494,6 @@ else { $hisJaar = 2; } ?>
  </td>
 </tr>
 
-
-
 <?php        
 $current_year = date("Y");
 $first_year = date("Y")-$hisJaar+1;
@@ -776,16 +506,9 @@ $start_datum_historie = date_add_months($today,-12); /* Oude dekkingen zijn tot 
 
 $array_drachtdatum = array();
 
-// Historie jaren mogen niet verder in het verleden liggen dan het eerst dek- of drachtjaar. Het getoonde jaar moet dus altijd recenter of gelijk zijn aan het eerst dek- of drachtjaar
-$zoek_jaartal_eerste_dekking_dracht = mysqli_query($db,"
-SELECT year(min(h.datum)) jaar
-FROM tblHistorie h
- join tblStal st on (st.stalId = h.stalId)
-WHERE (actId = 18 or actId = 19) and skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and year(h.datum) >= '".mysqli_real_escape_string($db,$een_startjaar_eerder_gebruiker)."'
-") or die (mysqli_error($db));
-
-    while($zj = mysqli_fetch_assoc($zoek_jaartal_eerste_dekking_dracht)) { $first_year_db = $zj['jaar']; }
-
+// Historie jaren mogen niet verder in het verleden liggen dan het eerst dek- of drachtjaar.
+// Het getoonde jaar moet dus altijd recenter of gelijk zijn aan het eerst dek- of drachtjaar
+$first_year_db = $historie_gateway->zoek_jaartal_eerste_dekking_dracht($lidId, $een_startjaar_eerder_gebruiker);
 
 if(!isset($first_year_db)) { $first_year = $current_year; }    
 // Als er geen dekking of dracht bestaat
@@ -822,87 +545,25 @@ for($jaar = $current_year; $jaar >= $first_year; $jaar--) { ?>
 <?php
 if(!isset($_POST['radAllDekkingen']) || $_POST['radAllDekkingen'] == '0') { $alle_dekkingen = 'Nee'; } else { $alle_dekkingen = 'Ja'; }
 
-$zoek_dekkingen = "
-SELECT v.volwId, v.hisId, dekdate, dekdatum, v.mdrId, right(mdr.levensnummer,$Karwerk) mdr, v.vdrId, count(lam.schaapId) lamrn, drachtdatum, v.grootte, werpdatum,
-lst_volwId
-FROM tblVolwas v
- join tblSchaap mdr on (v.mdrId = mdr.schaapId)
- join tblStal stm on (stm.schaapId = mdr.schaapId)
- join tblHistorie h on (stm.stalId = h.stalId and v.hisId = h.hisId)
- left join (
-     SELECT hisId, h.datum dekdate, date_format(h.datum,'%d-%m-%Y') dekdatum, year(h.datum) dekjaar, skip
-     FROM tblHistorie h
-      join tblStal st on (st.stalId = h.stalId)
-     WHERE actId = 18 and skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
- ) dek on (v.hisId = dek.hisId)
- left join tblSchaap vdr on (v.vdrId = vdr.schaapId)
- left join (
-    SELECT d.volwId, date_format(h.datum,'%d-%m-%Y') drachtdatum, year(h.datum) drachtjaar
-     FROM tblDracht d 
-     join tblHistorie h on (h.hisId = d.hisId)
-     join tblStal st on (st.stalId = h.stalId)
-    WHERE actId = 19 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
- ) dra on (dra.volwId = v.volwId)
- left join tblSchaap lam on (lam.volwId = v.volwId)
- left join tblStal stl on (stl.schaapId = lam.schaapId)
- left join (
-     SELECT stalId, date_format(datum,'%d-%m-%Y') werpdatum, year(date_add(datum,interval -145 day)) dekjaar_obv_worp
-     FROM tblHistorie
-     WHERE actId = 1 and skip = 0
- ) hl on (stl.stalId = hl.stalId)
- join (
-    SELECT v.mdrId, max(v.volwId) lst_volwId
-   FROM tblVolwas v
-    left join (
-       SELECT hisId
-      FROM tblHistorie
-      WHERE actId = 18 and skip = 0
-    ) dek on (v.hisId = dek.hisId)
-    left join ( 
-       SELECT volwId
-      FROM tblDracht d
-       join tblHistorie hd on (hd.hisId = d.hisId)
-      WHERE skip = 0
-    ) dra on (dra.volwId = v.volwId)
-    left join tblSchaap k on (k.volwId = v.volwId)
-    left join (
-       SELECT s.schaapId
-      FROM tblSchaap s
-       join tblStal st on (s.schaapId = st.schaapId)
-       join tblHistorie h on (st.stalId = h.stalId)
-       WHERE h.actId = 3 and h.skip = 0
-    ) ha on (k.schaapId = ha.schaapId)
-    WHERE (dek.hisId is not null or dra.volwId is not null) and isnull(ha.schaapId)
-    GROUP BY mdrId
- ) lst_v on (lst_v.mdrId = v.mdrId)
-WHERE stm.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (isnull(stl.lidId) or stl.lidId = '".mysqli_real_escape_string($db,$lidId)."') and (dekdatum is not null or drachtdatum is not null) and coalesce(dekjaar, dekjaar_obv_worp, drachtjaar) = '".mysqli_real_escape_string($db,$jaar)."' and isnull(stm.rel_best)
-GROUP BY v.volwId, v.hisId, dekdatum, v.mdrId, mdr.levensnummer, v.vdrId, drachtdatum, werpdatum, v.grootte
-ORDER BY right(mdr.levensnummer,$Karwerk), dekdate desc
-";
-
-$zoek_dekkingen1 = mysqli_query($db,$zoek_dekkingen) or die (mysqli_error($db));
-$zoek_dekkingen2 = mysqli_query($db,$zoek_dekkingen) or die (mysqli_error($db));
+// TODO: (BV) #0004179 waarom maak je twee recordsets? Kan ook met ->data_seek(0) toch?
+$zoek_dekkingen1 = $volwas_gateway->zoek_dekkingen($lidId, $Karwerk, $jaar);
+$zoek_dekkingen2 = $volwas_gateway->zoek_dekkingen($lidId, $Karwerk, $jaar);
 
 /**********************************
  **     DUBBELE DEKKING ZOEKEN        **
  **********************************/ 
 $array_dub = array();
 
-
-if(isset($zoek_dekkingen1))  { foreach($zoek_dekkingen1 as $key => $array)
-    {
-    
-    $worpgrootte = $array['lamrn'];
-
-    if($worpgrootte > 0) { 
-// Vul de array alleen als er een worp bestaat
-    $array_dub[] = $array['mdrId']; 
-// schaapId van moeder
+if(isset($zoek_dekkingen1))  {
+    foreach($zoek_dekkingen1 as $key => $array) {
+        $worpgrootte = $array['lamrn'];
+        if($worpgrootte > 0) { 
+            // Vul de array alleen als er een worp bestaat
+            $array_dub[] = $array['mdrId']; 
+            // schaapId van moeder
+        }
     }
 }
-}
-
-
 
 /*$array = array(12,43,66,21,56,43,43,78,78,100,43,43,43,21);*/
 $vals = array_count_values($array_dub);
@@ -945,55 +606,11 @@ echo $cnt_ooien.'<br>';*/
 /* Zoek het verblijf tijdens het dekken */
 unset($verblijf);
 
-$zoek_datum_verblijf_tijdens_dekking = mysqli_query($db,"
-SELECT max(h.datum) datum
-FROM tblHistorie h
- join tblBezet b on (h.hisId = b.hisId)
- join tblStal st on (h.stalId = st.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$mdrId)."' and h.datum <= '".mysqli_real_escape_string($db,$dmdek)."'
-") or die (mysqli_error($db)); 
-
-while ($zdvtd = mysqli_fetch_array($zoek_datum_verblijf_tijdens_dekking)) 
-{ $date_verblijf = $zdvtd['datum']; }
-
-
-$zoek_hisId_verblijf_tijdens_dekking = mysqli_query($db,"
-SELECT max(h.hisId) hisId
-FROM tblHistorie h
- join tblBezet b on (h.hisId = b.hisId)
- join tblStal st on (h.stalId = st.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$mdrId)."' and h.datum = '".mysqli_real_escape_string($db,$date_verblijf)."'
-") or die (mysqli_error($db)); 
-
-while ($zhvtd = mysqli_fetch_array($zoek_hisId_verblijf_tijdens_dekking)) 
-{ $hisId_verblijf = $zhvtd['hisId']; }
-
-
-$zoek_verblijf_tijdens_dekking = mysqli_query($db,"
-SELECT ho.hoknr
-FROM tblBezet b
- join tblHok ho on (b.hokId = ho.hokId)
- left join
- (
-    SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-    GROUP BY b.bezId, st.schaapId, h1.hisId
- ) uit on (b.hisId = uit.hisv)
- left join tblHistorie ht on (ht.hisId = uit.hist)
-WHERE b.hisId = '".mysqli_real_escape_string($db,$hisId_verblijf)."' and (isnull(uit.bezId) or ht.datum > '".mysqli_real_escape_string($db,$dmdek)."')
-") or die (mysqli_error($db)); 
-
-while ($zvtd = mysqli_fetch_array($zoek_verblijf_tijdens_dekking)) 
-{ $verblijf = $zvtd['hoknr']; }
+$date_verblijf = $historie_gateway->zoek_datum_verblijf_tijdens_dekking($lidId, $mdrId, $dmdek);
+$hisId_verblijf = $historie_gateway->zoek_hisId_verblijf_tijdens_dekking($lidId, $mdrId, $date_verblijf);
+$verblijf = $historie_gateway->zoek_verblijf_tijdens_dekking($lidId, $hisId_verblijf, $dmdek);
 
 /* Einde Zoek het verblijf tijdens het dekken */
-
 
 if($Id <> $lst_volwId && !isset($lamrn) && (!isset($_POST['radAllDekkingen']) || $_POST['radAllDekkingen'] == '0') )
 /* Eerdere dekkingen en dekkingen zonder worp en keuze Eerdere dekkingen niet tonen */

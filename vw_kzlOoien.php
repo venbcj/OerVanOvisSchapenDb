@@ -19,8 +19,8 @@ Toegepast in :
 */
 
 
-$vw_kzlOoien =
-("
+// @DEPRECATED gebruik StalGateway->kzlOoien()
+$vw_kzlOoien = ("
 SELECT st.stalId, st.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr, count(lam.schaapId) lamrn, concat(st.kleur,' ',st.halsnr) halsnr
 FROM (
     SELECT max(stalId) stalId, schaapId
@@ -49,5 +49,4 @@ WHERE s.geslacht = 'ooi' and (isnull(afv.stalId) or afv.datum > date_add(curdate
 
 GROUP BY st.stalId, st.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk)
 ORDER BY right(s.levensnummer,$Karwerk), count(lam.schaapId)
-")
-?>
+");

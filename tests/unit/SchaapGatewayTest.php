@@ -16,11 +16,6 @@ class SchaapGatewayTest extends UnitCase {
         $this->sut = new SchaapGateway($this->db);
     }
 
-    protected function runSQL($SQL) {
-        $this->db->query($SQL);
-        $this->assertEquals('', $this->db->error, "$SQL\nFout in query");
-    }
-
     // deze tests zijn inhoudelijk nog zwak. Er kan van alles varieren.
 
     public function testMedAantalFase() {
@@ -139,6 +134,7 @@ class SchaapGatewayTest extends UnitCase {
     public function testZoekVaders() {
         $this->runSQL("DELETE FROM tblHistorie WHERE stalId=1");
         $Karwerk = 5;
+        # er is een preconditie waar de methode [0,0] geeft. Soms fout, dus
         $this->assertEquals([], $this->sut->zoek_vaders(self::LIDID, $Karwerk));
     }
 
