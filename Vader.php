@@ -29,13 +29,9 @@ if (Auth::is_logged_in()) {
         $schaap_gateway = new SchaapGateway($db);
         $pdf = $schaap_gateway->zoek_stalid($lidId);
         $vaders = $schaap_gateway->zoek_vaders($lidId, $Karwerk);
-        $records = [];
-        while ($record = mysqli_fetch_assoc($vaders)) {
-            $records[] = $record;
-        }
         View::render('vader/list', [
             'pdf' => $pdf,
-            'records' => $records,
+            'records' => $vaders,
         ]);
 ?>
     </TD>

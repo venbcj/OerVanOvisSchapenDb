@@ -9,8 +9,12 @@ class Gateway {
         $this->db = $db;
     }
 
+    protected function run_query($SQL, $args = []) {
+        return mysqli_query($this->db, $this->expand($SQL, $args));
+    }
+
     protected function first_field($SQL, $args = [], $default = null) {
-        $view = mysqli_query($this->db, $this->expand($SQL, $args));
+        $view = $this->run_query($SQL, $args);
         if ($this->view_has_rows($view)) {
             return $view->fetch_row()[0];
         }
@@ -60,6 +64,7 @@ class Gateway {
             }
             $SQL = str_replace($key, $value, $SQL);
         }
+        Logger::debug($SQL);
         return $SQL;
     }
 

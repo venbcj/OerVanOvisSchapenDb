@@ -112,7 +112,7 @@ foreach ($multip_array as $recId => $id) {
         if (isset($fldLevnr)) {
             // Controle op duplicaten
             $schaapId = $schaap_gateway->zoek_schaapid($fldLevnr);
-            $levnr_exist = $schaap_gateway->count_levnr($fldLevnr, $schaapId);
+            $levnr_exist = $schaap_gateway->levnr_exists_outside($fldLevnr, $schaapId);
             // Einde Controle op duplicaten
             if (intval($fldLevnr) == 0) { // levensnummer is 000000000000
                 if (isset($wrong_dag)) {
@@ -120,7 +120,7 @@ foreach ($multip_array as $recId => $id) {
                 } else {
                     $wrong_levnr = "Het levensnummer is onjuist";
                 }
-            } elseif ($levnr_exist > 0) {
+            } elseif ($levnr_exist) {
                 if (isset($wrong_dag)) {
                     $wrong_levnr = $wrong_dag." en levensummer ".$fldLevnr." bestaat al";
                 } else {

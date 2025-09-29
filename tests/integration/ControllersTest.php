@@ -190,14 +190,14 @@ Wegen.php
 Workload.php
 Worpindex.php
 ZoekAfldm.php
-Zoeken.php
 TXT
         );
     }
 
     public static function controllers_needing_fixtures() {
         return [
-            ['Voorraad.php', ['voervoorraad']],
+            'Voorraad' => ['Voorraad.php', ['voervoorraad']],
+            'Zoeken' => ['Zoeken.php', ['schaap-met-ouders']],
         ];
     }
 

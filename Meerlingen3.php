@@ -108,8 +108,7 @@ while($jm = mysqli_fetch_assoc($ooien_met_meerlingworpen)) {
 
 <?php
     $schaap_gateway = new SchaapGateway($db);
-$mling2 = $schaap_gateway->aantal_meerlingen_perOoi($lidId,$ooiId,2); // Deze functie geeft een querystring
-$mling2 = mysqli_query($db,$mling2) or die (mysqli_error($db));    
+$mling2 = $schaap_gateway->aantal_meerlingen_perOoi($lidId,$ooiId,2);
     while($mrl = mysqli_fetch_assoc($mling2))
             {
                 $vw = $mrl['volwId']; 
@@ -152,8 +151,7 @@ $lam_mrl2 = $schaap_gateway->de_lammeren($vw,$Karwerk);
 <table border = 0>
 
 <?php
-$mling3 = $schaap_gateway->aantal_meerlingen_perOoi($lidId,$ooiId,3); // Deze functie geeft een querystring
-$mling3 = mysqli_query($db,$mling3) or die (mysqli_error($db));    
+$mling3 = $schaap_gateway->aantal_meerlingen_perOoi($lidId,$ooiId,3);
     while($mrl = mysqli_fetch_assoc($mling3))
             {
                 $vw = $mrl['volwId']; 
@@ -195,8 +193,7 @@ $lam_mrl2 = $schaap_gateway->de_lammeren($vw,$Karwerk);
 <table border = 0>
 
 <?php
-$mling4 = $schaap_gateway->aantal_meerlingen_perOoi($lidId,$ooiId,4); // Deze functie geeft een querystring
-$mling4 = mysqli_query($db,$mling4) or die (mysqli_error($db));    
+$mling4 = $schaap_gateway->aantal_meerlingen_perOoi($lidId,$ooiId,4);
     while($mrl = mysqli_fetch_assoc($mling4))
             {
                 $vw = $mrl['volwId']; 
@@ -238,8 +235,7 @@ $lam_mrl2 = $schaap_gateway->de_lammeren($vw,$Karwerk);
 <table border = 0>
 
 <?php
-$mling5 = $schaap_gateway->aantal_meerlingen_perOoi($lidId,$ooiId,5); // Deze functie geeft een querystring
-$mling5 = mysqli_query($db,$mling5) or die (mysqli_error($db));    
+$mling5 = $schaap_gateway->aantal_meerlingen_perOoi($lidId,$ooiId,5);
     while($mrl = mysqli_fetch_assoc($mling5))
             {
                 $vw = $mrl['volwId']; 
@@ -280,8 +276,7 @@ $lam_mrl2 = $schaap_gateway->de_lammeren($vw,$Karwerk);
 <table border = 0>
 
 <?php
-$mling5 = $schaap_gateway->aantal_meerlingen_perOoi($lidId,$ooiId,'6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30'); // Deze functie geeft een querystring
-$mling5 = mysqli_query($db,$mling5) or die (mysqli_error($db));    
+$mling5 = $schaap_gateway->aantal_meerlingen_perOoi($lidId,$ooiId,'6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30');
     while($mrl = mysqli_fetch_assoc($mling5))
             {
                 $vw = $mrl['volwId']; 
