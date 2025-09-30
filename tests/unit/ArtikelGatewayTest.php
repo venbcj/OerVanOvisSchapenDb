@@ -1,13 +1,8 @@
 <?php
 
-class ArtikelGatewayTest extends UnitCase {
+class ArtikelGatewayTest extends GatewayCase {
 
-    private $sut;
-
-    public function setup(): void {
-        $this->uses_db();
-        $this->sut = new ArtikelGateway($this->db);
-    }
+    protected static $sutname = 'ArtikelGateway';
 
     public function test_voer() {
         $this->runfixture('voervoorraad');

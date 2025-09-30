@@ -1,11 +1,8 @@
 <?php
 
-class RequestGatewayTest extends UnitCase {
+class RequestGatewayTest extends GatewayCase {
 
-    public function setup() : void {
-        $this->uses_db();
-        $this->sut = new RequestGateway($this->db);
-    }
+    protected static $sutname = 'RequestGateway';
 
     public function test_find_nothing() {
         // ja maar dit moet niet zo blijven. Liskov draait in haar graf man. Geef een leeg record terug.

@@ -1,6 +1,6 @@
 <?php
 
-class SchaapGatewayTest extends UnitCase {
+class SchaapGatewayTest extends GatewayCase {
 
     private const SCHAAP4_ID = 4;
     private const SCHAAP4_LEVENSNUMMER = '4';
@@ -11,10 +11,7 @@ class SchaapGatewayTest extends UnitCase {
     private const NEWSCHAAPID = 7;
     private const VOLWID = 1;
 
-    public function setup(): void {
-        $this->uses_db();
-        $this->sut = new SchaapGateway($this->db);
-    }
+    protected static $sutname = 'SchaapGateway';
 
     // deze tests zijn inhoudelijk nog zwak. Er kan van alles varieren.
 
@@ -340,6 +337,7 @@ class SchaapGatewayTest extends UnitCase {
     }
 
     public function testGeenOoienInJaar() {
+        $this->runSQL("DELETE FROM tblSchaap");
         $this->assertEquals(0, $this->sut->zoek_ooien_in_jaar(self::LIDID, 2020));
     }
 

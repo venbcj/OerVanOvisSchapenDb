@@ -1,13 +1,8 @@
 <?php
 
-class LidGatewayTest extends UnitCase {
+class LidGatewayTest extends GatewayCase {
 
-    private $sut;
-
-    public function setup() : void {
-        require_once "just_connect_db.php";
-        $this->sut = new LidGateway($GLOBALS['db']);
-    }
+    protected static $sutname = 'LidGateway';
 
     public function testFindCrediteur() {
         $this->runfixture('crediteur');

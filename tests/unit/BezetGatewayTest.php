@@ -1,13 +1,8 @@
 <?php
 
-class BezetGatewayTest extends UnitCase {
+class BezetGatewayTest extends GatewayCase {
 
-    protected $sut;
-
-    public function setup(): void {
-        $this->uses_db();
-        $this->sut = new BezetGateway($this->db);
-    }
+    protected static $sutname = 'BezetGateway';
 
     public function testGeenMoedersInVerblijf() {
         $this->runSQL("DELETE FROM tblBezet");

@@ -1,14 +1,10 @@
 <?php
 
-class VolwasGatewayTest extends UnitCase {
+class VolwasGatewayTest extends GatewayCase {
 
     private const LIDID = 1;
-    private $sut;
 
-    public function setup(): void {
-        $this->uses_db();
-        $this->sut = new VolwasGateway($this->db);
-    }
+    protected static $sutname = 'VolwasGateway';
 
     public function testGeenDekkingen() {
         $Karwerk = 5;
