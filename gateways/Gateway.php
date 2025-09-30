@@ -4,6 +4,7 @@ class Gateway {
 
     const TXT = 'txt';
     const INT = 'int';
+    const BOOL = 'bool';
 
     public function __construct($db) {
         $this->db = $db;
@@ -35,19 +36,19 @@ class Gateway {
     // parameter is een [naam, waarde, formaat]
     // naam is bijvoorbeeld :id
     // waarde is bijvoorbeeld 4
-    // formaat kan zijn self::INT, self::TXT
+    // formaat kan zijn self::INT, self::TXT, self::BOOL
     // TODO meer formaten
     private function expand($SQL, $args = []) {
         foreach ($args as $arg) {
             if (!is_array($arg)) {
-                throw new Exception("Verwacht een array van arrays");
+                throw new Exception("Query-parameters: verwacht een array van arrays.");
             }
             // default formaat is TXT
             if (count($arg) == 2) {
                 $arg[] = self::TXT;
             }
             if (count($arg) != 3) {
-                throw new Exception("Query-parameters hebben niet de juiste opmaak.");
+                throw new Exception("Query-parameters: een parameter moet twee of drie onderdelen bevatten.");
             }
             [$key, $value, $format] = $arg;
             if (is_null($value)) {
@@ -55,10 +56,13 @@ class Gateway {
             } else {
                 switch ($arg[2]) {
                 case self::TXT:
-                    $value = "'".mysqli_real_escape_string($this->db, $value) . "'";
+                    $value = "'" . $this->db->real_escape_string($value) . "'";
                     break;
                 case self::INT:
                     $value = (int) $value;
+                    break;
+                case self::BOOL:
+                    $value = $value ? 'true' : 'false';
                     break;
                 }
             }

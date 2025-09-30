@@ -47,6 +47,24 @@ SQL
         , [[':lidId', $lidId, self::INT]]);
     }
 
+    public function zoek_op_id_met_plaats($ubnId) {
+        $vw = $this->run_query(<<<SQL
+SELECT adres, plaats, actief
+FROM tblUbn
+WHERE ubnId = :ubnId
+ORDER BY actief desc, ubn
+SQL
+        , [[':ubnId', $ubnId, self::INT]]);
+        if ($vw->num_rows) {
+            return $vw->fetch_assoc();
+        }
+        return [
+            'adres' => '',
+            'plaats' => '',
+            'actief' => '',
+        ];
+    }
+
     public function zoek_relatie($ubnId) {
         return $this->first_field(<<<SQL
 SELECT u.ubnId
@@ -56,6 +74,26 @@ WHERE u.ubnId = :ubnId
  and isnull(st.stalId)
 SQL
         , [[':ubnId', $ubnId, self::INT]]);
+    }
+
+    public function delete_by_id($ubnId) {
+        $this->run_query("DELETE FROM tblUbn WHERE ubnId = :ubnId", [[':ubnId', $ubnId, self::INT]]);
+    }
+
+    # NOTE deze drie methoden kunnen gebundeld, als er een object is dat weet hoe de tabel in elkaar zit.
+    # Ik wil niet klakkeloos alles als strings updaten namelijk.
+
+    public function update_adres($ubnId, $adres) {
+        $this->run_query("UPDATE tblUbn SET adres = :adres WHERE ubnId = :ubnId", [[':ubnId', $ubnId, self::INT], [':adres', $adres]]);
+    }
+
+    public function update_plaats($ubnId, $plaats) {
+        $this->run_query("UPDATE tblUbn SET plaats = :plaats WHERE ubnId = :ubnId", [[':ubnId', $ubnId, self::INT], [':plaats', $plaats]]);
+    }
+
+    public function update_actief($ubnId, $actief) {
+        // actief is tinyint in de tabel. Daar mag een bool in.
+        $this->run_query("UPDATE tblUbn SET actief = :actief WHERE ubnId = :ubnId", [[':ubnId', $ubnId, self::INT], [':actief', $actief, self::BOOL]]);
     }
 
 }
