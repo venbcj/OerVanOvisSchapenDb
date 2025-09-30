@@ -303,6 +303,7 @@ if(isset($_POST["radSchaap_$Id"]) && $_POST["radSchaap_$Id"]==1 ) {
         $dagkg = $kilo/$dgn;
     }
         unset($kilo); 
+    $bezet_gateway = new BezetGateway($db);
     $schaap_gegevens = $bezet_gateway->schaap_gegevens($lidId, $hokId, $dmbegin, $dmeind, $dagkg, $filterDoel);
 ?>
 <tr height = 10><td>    </td></tr>
