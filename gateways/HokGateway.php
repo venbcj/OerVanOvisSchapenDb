@@ -30,4 +30,30 @@ ORDER BY hoknr
 ");
 }
 
+public function countVerblijven($lidId, $artId, $doelId) {
+    $vw = $this->db->query("
+SELECT count(p.periId) aant
+FROM tblHok h
+ join tblPeriode p on (p.hokId = h.hokId)
+ left join tblVoeding v on (p.periId = v.periId)
+ left join tblInkoop i on (i.inkId = v.inkId)
+WHERE h.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+ and ".db_null_filter('i.artId', $artId)."
+ and p.doelId = $doelId
+");
+return $vw->fetch_row()[0];
+}
+
+public function kzlHokVoer($lidId, $artId) {
+    return $this->db->query("
+SELECT h.hokId, h.hoknr
+FROM tblHok h
+ join tblPeriode p on (p.hokId = h.hokId)
+ left join tblVoeding v on (p.periId = v.periId)
+ left join tblInkoop i on (i.inkId = v.inkId)
+WHERE h.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and ".db_null_filter('i.artId', $artId)."
+GROUP BY h.hoknr
+");
+}
+
 }

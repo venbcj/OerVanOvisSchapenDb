@@ -867,4 +867,73 @@ SELECT st.schaapId mdrId
 ");
 }
 
+public function schaap_gegevens($lidId, $hokId, $dmbegin, $dmeind, $dagkg, $filterDoel) {
+    return $this->db->query("
+SELECT s.levensnummer, his_in.datum dmin, date_format(his_in.datum,'%d-%m-%Y') indm,
+ coalesce(his_uit.datum,'".mysqli_real_escape_string($this->db,$dmeind)."') dmuit,
+ date_format(coalesce(his_uit.datum,'".mysqli_real_escape_string($this->db,$dmeind)."'),'%d-%m-%Y') uitdm,
+datediff(coalesce(his_uit.datum,'".mysqli_real_escape_string($this->db,$dmeind)."'),his_in.datum) dgn,
+round(datediff(coalesce(his_uit.datum,'".mysqli_real_escape_string($this->db,$dmeind)."'),his_in.datum)*".mysqli_real_escape_string($this->db,$dagkg).",2) kg
+FROM tblBezet b
+ join (
+     SELECT h.hisId, h.stalId, '".mysqli_real_escape_string($this->db,$dmbegin)."' datum
+     FROM tblHistorie h
+      join tblStal st on (st.stalId = h.stalId)
+      join tblBezet alleen_his_uit_bez on (alleen_his_uit_bez.hisId = h.hisId)
+     WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and h.datum < '".mysqli_real_escape_string($this->db,$dmbegin)."'
+     union 
+     SELECT h.hisId, h.stalId, h.datum
+     FROM tblHistorie h
+      join tblStal st on (st.stalId = h.stalId)
+      join tblBezet alleen_his_uit_bez on (alleen_his_uit_bez.hisId = h.hisId)
+     WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and h.datum >= '".mysqli_real_escape_string($this->db,$dmbegin)."'
+ ) his_in on (his_in.hisId = b.hisId)
+
+ join tblStal st on (st.stalId = his_in.stalId)
+ join tblSchaap s on (st.schaapId = s.schaapId)
+ left join 
+     (
+        SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
+        FROM tblBezet b
+         join tblHistorie h1 on (b.hisId = h1.hisId)
+         join tblActie a1 on (a1.actId = h1.actId)
+         join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+         join tblActie a2 on (a2.actId = h2.actId)
+         join tblStal st on (h1.stalId = st.stalId)
+        WHERE st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+        GROUP BY b.bezId, st.schaapId, h1.hisId
+     ) uit on (uit.hisv = b.hisId)
+ left join (
+     SELECT h.hisId, h.stalId, '".mysqli_real_escape_string($this->db,$dmeind)."' datum
+     FROM tblHistorie h
+      join tblStal st on (st.stalId = h.stalId)
+     WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and h.datum > '".mysqli_real_escape_string($this->db,$dmeind)."'
+     union 
+     SELECT h.hisId, h.stalId, h.datum
+     FROM tblHistorie h
+      join tblStal st on (st.stalId = h.stalId)
+     WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and h.datum <= '".mysqli_real_escape_string($this->db,$dmeind)."'
+ ) his_uit on (his_uit.hisId = uit.hist)
+
+ left join (
+    SELECT st.schaapId, h.datum
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 4 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+ ) spn on (spn.schaapId = st.schaapId)
+  left join (
+    SELECT st.schaapId, h.datum
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+ ) prn on (prn.schaapId = st.schaapId)
+ join tblPeriode p on (p.hokId = b.hokId and p.dmafsluit = '".mysqli_real_escape_string($this->db,$dmeind)."')
+WHERE b.hokId = '".mysqli_real_escape_string($this->db,$hokId)."'
+ and his_in.datum < '".mysqli_real_escape_string($this->db,$dmeind)."'
+ and (isnull(uit.bezId) or his_uit.datum > '".mysqli_real_escape_string($this->db,$dmbegin)."')
+ and p.doelId = $_POST[kzlDoel_] ".mysqli_real_escape_string($this->db,$filterDoel)."
+ORDER BY dmin, dmuit
+");
+    }
+
 }

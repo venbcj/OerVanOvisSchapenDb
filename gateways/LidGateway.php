@@ -156,4 +156,13 @@ return $vw->num_rows > 0;
     return [null, null];
     }
 
+    public function zoek_startdatum($lidId) {
+        $vw = $this->db->query(" 
+            SELECT date_format(dmcreate,'%Y-%m-01') dmstart
+            FROM tblLeden
+            WHERE lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+            ");
+        return $vw->fetch_row()[0];
+    }
+
 }

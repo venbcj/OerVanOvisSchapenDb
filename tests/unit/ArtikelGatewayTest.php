@@ -4,9 +4,9 @@ class ArtikelGatewayTest extends UnitCase {
 
     private $sut;
 
-    public function setup() : void {
-        require_once "just_connect_db.php";
-        $this->sut = new ArtikelGateway($GLOBALS['db']);
+    public function setup(): void {
+        $this->uses_db();
+        $this->sut = new ArtikelGateway($this->db);
     }
 
     public function test_voer() {

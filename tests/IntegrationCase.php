@@ -63,6 +63,13 @@ class IntegrationCase extends UnitCase {
         $this->assertStringNotContainsString('Error', $this->output);
     }
 
+    protected function assertWhiteBody() {
+        $matches = [];
+        // NOTE de s-modifier van het patroon zorgt ervoor dat . ook newlines matcht.
+        $this->assertEquals(1, preg_match('#<body>(.*)</body>#s', $this->output, $matches), 'Geen body in pagina?'.$this->output);
+        $this->assertEquals('', $matches[1]);
+    }
+
     protected function approve() {
         # phpunit 8:
         $file = getcwd().'/tests/approval/'.$this->getName();

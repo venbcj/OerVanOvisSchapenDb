@@ -116,4 +116,17 @@ ORDER BY a.naam, i.inkId
  ");
     }
 
+public function zoek_voer($lidId) {
+   return mysqli_query($this->db,"
+SELECT a.artId, a.naam
+FROM tblEenheid e
+ join tblEenheiduser eu on (e.eenhId = eu.eenhId)
+ join tblArtikel a on (a.enhuId = eu.enhuId)
+ join tblInkoop i on (a.artId = i.artId)
+WHERE a.soort = 'voer' and eu.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+GROUP BY a.artId, a.naam 
+ORDER BY a.naam
+");
+}
+
 }

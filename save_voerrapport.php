@@ -349,6 +349,3 @@ if(isset($fldDelPeri)) {
     }
                         
 }
-?>
-                    
-    

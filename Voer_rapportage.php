@@ -31,9 +31,11 @@ $file = "Voer_rapportage.php";
 
                 <TD valign = 'top' align = 'center'>
 <?php
-if (Auth::is_logged_in()) { if($modtech == 1) { 
+if (Auth::is_logged_in()) {
+    if($modtech == 1) { 
  
-if(isset($_POST['knpSave_'])) { include "save_voerrapport.php";  
+        if(isset($_POST['knpSave_'])) {
+            include "save_voerrapport.php";  
         //header("Location: ".$url."Voer_rapportage.php"); 
     }
     ?>
@@ -67,35 +69,20 @@ $name = "kzlVoer_"; ?>
 <select name= <?php echo"$name";?> width = 60 >
  <option></option>
 <?php        
-$zoek_voer = mysqli_query($db,"
-SELECT a.artId, a.naam
-FROM tblEenheid e
- join tblEenheiduser eu on (e.eenhId = eu.eenhId)
- join tblArtikel a on (a.enhuId = eu.enhuId)
- join tblInkoop i on (a.artId = i.artId)
-WHERE a.soort = 'voer' and eu.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-GROUP BY a.artId, a.naam 
-ORDER BY a.naam
-") or die (mysqli_error($db));
-    while($row = mysqli_fetch_array($zoek_voer))
-        {
-$kzlkey="$row[artId]";
-$kzlvalue="$row[naam]";
-
-            $opties= array($kzlkey=>$kzlvalue);
-            foreach ( $opties as $key => $waarde)
-            {
-                        $keuze = '';
-        
-        if(isset($_POST[$name]) && $_POST[$name] == $key)
-        {
+$artikel_gateway = new ArtikelGateway($db);
+$zoek_voer = $artikel_gateway->zoek_voer($lidId);
+while($row = mysqli_fetch_array($zoek_voer)) {
+    $kzlkey="$row[artId]";
+    $kzlvalue="$row[naam]";
+    $opties= array($kzlkey=>$kzlvalue);
+    foreach ( $opties as $key => $waarde) {
+        $keuze = '';
+        if(isset($_POST[$name]) && $_POST[$name] == $key) {
             $keuze = ' selected ';
         }
-                
         echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
-            }
-
-        }
+    }
+}
 // EINDE kzlVoer
 ?>
 </select> 
@@ -106,89 +93,57 @@ If ((isset($_POST['knpToon_']) || isset($_POST['knpSave_'])) ) {
 
 /*** Opbouw keuzelijst maand of verblijf als er meerdere maanden of verblijven zijn ***/
 
-
-if(isset($_POST['radVoer_']) && $_POST['radVoer_']==1 ) { $metVoer = 'ja'; } else { $metVoer = 'nee';  }
+    if(isset($_POST['radVoer_']) && $_POST['radVoer_']==1 ) {
+        $metVoer = 'ja';
+    } else {
+        $metVoer = 'nee';
+    }
 
 $fldVoer = $_POST['kzlVoer_'];
 
-
 // Controle meerdere maanden om keuzelijst kzlJaarMaand te laten zien bij meer dan 1 maand.
-// $aantjaarmaanden zoekt het aantal jaarmaanden in tblPeriode o.b.v. lidId, al dan niet het voer en de doelgroep
-$aantjaarmaanden = " 
-SELECT count(date_format(p.dmafsluit,'%Y%m')) jrmnd
-FROM tblPeriode p
- join tblHok h on (p.hokId = h.hokId)
- left join tblVoeding v on (p.periId = v.periId)
- left join tblInkoop i on (i.inkId = v.inkId) 
-WHERE h.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ".db_null_filter('i.artId', $fldVoer)." and p.doelId = $_POST[kzlDoel_]
-";
-
-$aantjaarmaanden = mysqli_query($db,$aantjaarmaanden) or die (mysqli_error($db));
-   $row = mysqli_fetch_assoc($aantjaarmaanden);
-        $rows_jrmnd = $row['jrmnd'];
-        
-    if ($rows_jrmnd >1) { ?>
+$periode_gateway = new PeriodeGateway($db);
+$rows_jrmnd = $periode_gateway->aantal_jaarmaanden($lidId, $fldVoer, $_POST['kzlDoel_']);
+if ($rows_jrmnd >1) {
+?>
  Maand
  
 <?php //kzlJaarMaand
-$kzljrmnd = mysqli_query($db,"
-SELECT date_format(p.dmafsluit,'%Y%m') jrmnd, month(p.dmafsluit) maand, date_format(p.dmafsluit,'%Y') jaar 
-FROM tblPeriode p 
- left join tblVoeding v  on (p.periId = v.periId)
- left join tblInkoop i on (i.inkId = v.inkId)
- left join tblArtikel a on (a.artId = i.artId)
- left join tblEenheiduser eu on (a.enhuId = eu.enhuId)
- left join tblEenheid e on (e.eenhId = eu.eenhId)
-WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ".db_null_filter('i.artId', $fldVoer)."
-GROUP BY date_format(p.dmafsluit,'%Y%m')
-") or die (mysqli_error($db)); 
+$kzljrmnd = $periode_gateway->kzlJaarmaand($lidId, $fldVoer);
 
 $name = 'kzlMdjr_'; ?>
-<select name= <?php echo"$name";?>  style="font-size : 13px" width= 108 >
+<select name="<?php echo $name;?>" style="font-size : 13px" width= 108 >
  <option></option>    
-<?php        while($row = mysqli_fetch_array($kzljrmnd))
-          { $maand = $row['maand']; 
-                $mndname = array('','januari', 'februari', 'maart','april','mei','juni','juli','augustus','september','oktober','november','december');
-$kzlkey="$row[jrmnd]";
-$kzlvalue="$mndname[$maand] $row[jaar]";
+<?php
+while($row = mysqli_fetch_array($kzljrmnd)) {
+    $maand = $row['maand']; 
+    $mndname = array('','januari', 'februari', 'maart','april','mei','juni','juli','augustus','september','oktober','november','december');
+    $kzlkey="$row[jrmnd]";
+    $kzlvalue="$mndname[$maand] $row[jaar]";
 
 include "kzl.php";
         }
-?></select> <?php //Einde kzlJaarMaand
+?>
+</select>
+<?php //Einde kzlJaarMaand
 }
 //Einde Controle meerdere maanden om keuzelijst kzlJaarMaand te laten zien bij meer dan 1 maand.
 // Controle meerdere verblijven om keuzelijst kzlHok_ te laten zien bij meer dan 1 verblijf.
-$aantverblijven = mysqli_query($db,"
-SELECT count(p.periId) aant
-FROM tblHok h
- join tblPeriode p on (p.hokId = h.hokId)
- left join tblVoeding v on (p.periId = v.periId)
- left join tblInkoop i on (i.inkId = v.inkId)
-WHERE h.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ".db_null_filter('i.artId', $fldVoer)." and p.doelId = $_POST[kzlDoel_]
-") or die (mysqli_error($db));
+$hok_gateway = new HokGateway($db);
+$rows_hok = $hok_gateway->countVerblijven($lidId, $fldVoer, $_POST['kzlDoel_']);
 
-    $row = mysqli_fetch_assoc($aantverblijven);
-        $rows_hok = $row['aant'];
-
-        if($rows_hok > 1) { echo "&nbsp Verblijf ";
+if($rows_hok > 1) {
+    echo "&nbsp Verblijf ";
 //kzlHok
-$kzlHok = mysqli_query($db,"
-SELECT h.hokId, h.hoknr
-FROM tblHok h
- join tblPeriode p on (p.hokId = h.hokId)
- left join tblVoeding v on (p.periId = v.periId)
- left join tblInkoop i on (i.inkId = v.inkId)
-WHERE h.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ".db_null_filter('i.artId', $fldVoer)."
-GROUP BY h.hoknr
-") or die (mysqli_error($db));
 
+$kzlHok = $hok_gateway->kzlHokVoer($lidId, $fldVoer);
 $name = 'kzlHok_';?>
 <select name = <?php echo"$name";?> style = "font-size : 13px" width = 100 >
  <option></option>
-<?php        while($row = mysqli_fetch_assoc($kzlHok)) {
+<?php
+while($row = mysqli_fetch_assoc($kzlHok)) {
 $kzlkey = "$row[hokId]";
 $kzlvalue="$row[hoknr]";
-
 include "kzl.php";
 }
 } // Einde Controle meerdere verblijven om keuzelijst kzlHok_ te laten zien bij meer dan 1 verblijf.
@@ -219,41 +174,29 @@ Alleen met voer
 <td> </td>
 <td>
 <?php
-If (isset($_POST['knpToon_']) || isset($_POST['knpSave_']) ) {
-    if ($rows_jrmnd <= 1 || empty($_POST['kzlMdjr_'])) { $resJrmnd = "( date_format(p.dmafsluit,'%Y%m') is not null )"; }
-    else if ($rows_jrmnd > 1 && !empty($_POST['kzlMdjr_'])) { $resJrmnd = "( date_format(p.dmafsluit,'%Y%m') = $_POST[kzlMdjr_] )"; }
-    if ($rows_hok <= 1 || empty($_POST['kzlHok_'])) { $resHok = "( ho.hokId is not null )"; }
-    else if ($rows_hok > 1 && !empty($_POST['kzlHok_'])) { $value = "$_POST[kzlHok_]"; $resHok = "( ho.hokId = $value )"; }
+If (isset($_POST['knpToon_']) || isset($_POST['knpSave_'])) {
+// TODO: resjrmnd en reshok migreren naar gateway.
+    if ($rows_jrmnd <= 1 || empty($_POST['kzlMdjr_'])) {
+        $resJrmnd = "( date_format(p.dmafsluit,'%Y%m') is not null )";
+    }
+    else if ($rows_jrmnd > 1 && !empty($_POST['kzlMdjr_'])) {
+        $resJrmnd = "( date_format(p.dmafsluit,'%Y%m') = {$_POST['kzlMdjr_']})";
+    }
+    if ($rows_hok <= 1 || empty($_POST['kzlHok_'])) {
+        $resHok = "( ho.hokId is not null )";
+    }
+    else if ($rows_hok > 1 && !empty($_POST['kzlHok_'])) {
+        $resHok = "( ho.hokId = {$_POST['kzlHok_']} )";
+    }
 
 //$maandjaren toont de maand(en) uit tblPeriode binnen het gekozen voer en eventueel gekozen hok. T.b.v. de loop maand jaar
-$maandjaren = "
-SELECT month(p.dmafsluit) maand, date_format(p.dmafsluit,'%Y') jaar, date_format(p.dmafsluit,'%Y%m') jrmnd
-FROM tblHok ho
- join tblPeriode p on (p.hokId = ho.hokId)
- left join tblVoeding v on (v.periId = p.periId)
- left join tblInkoop i on (i.inkId = v.inkId)
- left join tblArtikel a on (a.artId = i.artId) 
-WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = $_POST[kzlDoel_] and ".db_null_filter('i.artId', $fldVoer)." and ".$resJrmnd." and ".$resHok."
-GROUP BY month(p.dmafsluit), date_format(p.dmafsluit,'%Y')
-ORDER BY jaar desc, month(p.dmafsluit) desc
-";
-
-//echo '$maandjaren = '.$maandjaren.'<br>';
-$maandjaren = mysqli_query($db,$maandjaren) or die (mysqli_error($db));
-  while ($rij = mysqli_fetch_assoc($maandjaren))
-        {  // START LOOP maandnaam jaartal
+$maandjaren = $periode_gateway->maandjaren_hok_voer($lidId, $fldVoer, $_POST['kzlDoel_'], $resJrmnd, $resHok);
+while ($rij = mysqli_fetch_assoc($maandjaren)) {
+    // START LOOP maandnaam jaartal
         $mndnr = $rij['maand'];
         $jaar = $rij['jaar'];
         $jrmnd = $rij['jrmnd'];
-
-$mndnaam = array('','januari', 'februari', 'maart','april','mei','juni','juli','augustus','september','oktober','november','december'); 
-        
-//$tot =          date("Ym");
-//$maand =      date("m");
-//$jaarstart = date("Y")-2;
-
-    
-//$vanaf = "$jaarstart$maand";
+        $mndnaam = array('','januari', 'februari', 'maart','april','mei','juni','juli','augustus','september','oktober','november','december'); 
 ?>
 <tr height = 30><td></td></tr>
 <tr style = "font-size:18px;" ><td colspan = 3><b><?php echo "$mndnaam[$mndnr] &nbsp $jaar"; ?></b></td></tr>
@@ -273,69 +216,10 @@ $mndnaam = array('','januari', 'februari', 'maart','april','mei','juni','juli','
 </tr>
 
 <?php // $zoek_startdatum zoekt eerste van de maand en het jaar dat een gebruiker is begonnen met het programma
-$zoek_startdatum = mysqli_query($db," 
-SELECT date_format(dmcreate,'%Y-%m-01') dmstart
-FROM tblLeden
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
-") or die(mysql_error($db));
-    while ($st = mysqli_fetch_assoc($zoek_startdatum)) { $dmstart = $st['dmstart']; }
+$lid_gateway = new LidGateway($db);
+$dmstart = $lid_gateway->zoek_startdatum($lidId);
 
-
-// subquery v binnen $allePeriodes_met_BeginEnEindDatum_inlc_Voer = Artikel met voeraantal per periode
-$allePeriodes_met_BeginEnEindDatum_inlc_Voer = "
-SELECT p2.periId, p2.hokId, p1.doelId, max(p1.dmafsluit) dmbegin, p2.dmafsluit dmeind, v.artId, v.nutat
-FROM tblPeriode p1
- join tblPeriode p2 on (p1.hokId = p2.hokId and p1.doelId = p2.doelId and p1.dmafsluit < p2.dmafsluit)
- join tblHok ho on (ho.hokId = p1.hokId) 
- left join ( 
-         SELECT v.periId, i.artId, sum(v.nutat) nutat
-        FROM tblVoeding v
-         join tblPeriode p on (v.periId = p.periId)
-         join tblHok ho on (ho.hokId = p.hokId)
-         join tblInkoop i on (v.inkId = i.inkId)
-        WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = $_POST[kzlDoel_]
-        GROUP BY v.periId, i.artId
- ) v on (p2.periId = v.periId)
-WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p1.doelId = $_POST[kzlDoel_]
-GROUP BY p2.periId, p2.hokId, p1.doelId, p2.dmafsluit, v.nutat
-";
-
-// subquery p1 binnen $begin_eind_periode = Eerste periode met_fictieve startdatum
-// subquery v binnen $begin_eind_periode = Artikel met voeraantal per periode
-$begin_eind_periode = "
-SELECT p.periId, ho.hokId, ho.hoknr, date_format(p.dmeind,'%Y%m') jrmnd, p.dmbegin, p.dmeind, p.artId, p.nutat
-FROM (
-    SELECT p.periId, p1.hokId, p1.doelId, p1.dmbegin, p1.dmeind, v.artId, v.nutat 
-    FROM (
-         SELECT p.hokId, p.doelId, l.dmcreate dmbegin, min(p.dmafsluit) dmeind
-        FROM tblPeriode p
-         join tblHok ho on (p.hokId = ho.hokId)
-         join tblLeden l on (ho.lidId = l.lidId)
-        WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = $_POST[kzlDoel_]
-        GROUP BY p.hokId, p.doelId
-     ) p1
-     join tblPeriode p on (p1.hokId = p.hokId and p1.doelId = p.doelId and p1.dmeind = p.dmafsluit)
-     left join (
-         SELECT v.periId, i.artId, sum(v.nutat) nutat
-        FROM tblVoeding v
-         join tblPeriode p on (v.periId = p.periId)
-         join tblHok ho on (ho.hokId = p.hokId)
-         join tblInkoop i on (v.inkId = i.inkId)
-        WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = $_POST[kzlDoel_]
-        GROUP BY v.periId, i.artId
-     ) v on (p.periId = v.periId)
-
-    union
-
-    $allePeriodes_met_BeginEnEindDatum_inlc_Voer
- ) p
- join tblHok ho on (ho.hokId = p.hokId)
- left join tblArtikel i on (i.artId = p.artId)
-WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = $_POST[kzlDoel_] and ".db_null_filter('i.artId', $fldVoer)." and date_format(p.dmeind,'%Y%m') = '".mysqli_real_escape_string($db,$jrmnd)."'
-";
-
-# if( $mndnr == 6) { echo $begin_eind_periode.'<br>'; }
-$begin_eind_periode = mysqli_query($db,$begin_eind_periode) or die (mysqli_error($db));
+$begin_eind_periode = $periode_gateway->begin_eind_periode($lidId, $_POST['kzlDoel_'], $fldVoer, $jrmnd);
   while ($mld = mysqli_fetch_assoc($begin_eind_periode))
         {  // START LOOP $begin_eind_periode
             $hokId = $mld['hokId'];
@@ -350,189 +234,13 @@ if($_POST['kzlDoel_'] == 1) { $filterDoel = ' and (his_in.datum < spn.datum or (
 if($_POST['kzlDoel_'] == 2) { $filterDoel = ' and (his_in.datum >= spn.datum and (his_in.datum < prn.datum or isnull(prn.schaapId)) )'; }
 if($_POST['kzlDoel_'] == 3) { $filterDoel = ' and (his_in.datum >= spn.datum)'; }
 
-$periode_totalen = "
-SELECT p.periId, ho.hokId, ho.hoknr, p.dmbegin, date_format(p.dmbegin,'%d-%m-%Y') begindm, min(his_in.datum) dmschaap1, date_format(min(his_in.datum),'%d-%m-%Y') schaap1dm,
- p.dmeind, date_format(p.dmeind,'%d-%m-%Y') einddm, max(coalesce(his_uit.datum,p.dmeind)) dmschaapend, 
- date_format(max(coalesce(his_uit.datum,p.dmeind)),'%d-%m-%Y') schaapenddm,
- p.nutat, count(distinct st.schaapId) schpn, 
- sum(datediff(coalesce(his_uit.datum,p.dmeind),his_in.datum)) dagen,
- round(sum(datediff(coalesce(his_uit.datum,p.dmeind),his_in.datum))/count(st.schaapId),2) gemdgn,
- count(v.voedId) voedId
-FROM tblHok ho
- join (
-     SELECT p.periId, p1.hokId, p1.doelId, p1.dmbegin, p1.dmeind, v.nutat 
-     FROM (
-         SELECT p.hokId, p.doelId, '".mysqli_real_escape_string($db,$dmstart)."' dmbegin, min(p.dmafsluit) dmeind
-        FROM tblPeriode p
-         join tblHok ho on (p.hokId = ho.hokId)
-        WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = $_POST[kzlDoel_]
-        GROUP BY p.hokId, p.doelId
-     ) p1
-     join tblPeriode p on (p1.hokId = p.hokId and p1.doelId = p.doelId and p1.dmeind = p.dmafsluit)
-     left join (
-         SELECT v.periId, i.artId, sum(v.nutat) nutat
-         FROM tblVoeding v
-          join tblPeriode p on (v.periId = p.periId)
-          join tblHok ho on (ho.hokId = p.hokId)
-          join tblInkoop i on (v.inkId = i.inkId)
-         WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = $_POST[kzlDoel_]
-         GROUP BY v.periId, i.artId
-     ) v on (p.periId = v.periId)
-
-    union
-
-    SELECT p2.periId, p2.hokId, p1.doelId, max(p1.dmafsluit) dmbegin, p2.dmafsluit dmeind, v.nutat 
-    FROM tblPeriode p1
-     join tblPeriode p2 on (p1.hokId = p2.hokId and p1.doelId = p2.doelId and p1.dmafsluit < p2.dmafsluit)
-     join tblHok ho on (ho.hokId = p1.hokId)
-     left join (
-         SELECT v.periId, i.artId, sum(v.nutat) nutat
-         FROM tblVoeding v
-          join tblPeriode p on (v.periId = p.periId)
-          join tblHok ho on (ho.hokId = p.hokId)
-          join tblInkoop i on (v.inkId = i.inkId)
-         WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = $_POST[kzlDoel_]
-         GROUP BY v.periId, i.artId
-     ) v on (p2.periId = v.periId)
-    WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p1.doelId = $_POST[kzlDoel_]
-    GROUP BY p2.periId, p2.hokId, p1.doelId, p2.dmafsluit, v.nutat
- ) p  on (p.hokId = ho.hokId)
- left join tblVoeding v on (p.periId = v.periId)
- left join tblInkoop i on (i.inkId = v.inkId)
-
- left join tblBezet b on (b.hokId = p.hokId)
- left join (
-    SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and b.hokId = '".mysqli_real_escape_string($db,$hokId)."'
-    GROUP BY b.bezId, st.schaapId, h1.hisId
- ) uit on (uit.hisv = b.hisId)
- left join (
-     SELECT hisId, '".mysqli_real_escape_string($db,$dmbegin)."' datum, h.stalId
-     FROM tblHistorie h
-      join tblStal st on (h.stalId = st.stalId)
-     WHERE h.skip = 0 and datum <= '".mysqli_real_escape_string($db,$dmbegin)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
- 
- union
-
-     SELECT hisId, datum, h.stalId
-     FROM tblHistorie h
-      join tblStal st on (h.stalId = st.stalId)
-     WHERE h.skip = 0 and datum > '".mysqli_real_escape_string($db,$dmbegin)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-
- ) his_in on (b.hisId = his_in.hisId)
- left join (
-    SELECT hisId, '".mysqli_real_escape_string($db,$dmeind)."' datum
-     FROM tblHistorie h
-      join tblStal st on (h.stalId = st.stalId)
-     WHERE h.skip = 0 and datum >= '".mysqli_real_escape_string($db,$dmeind)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
- 
- union
-
-     SELECT hisId, datum
-     FROM tblHistorie h
-      join tblStal st on (h.stalId = st.stalId)
-     WHERE h.skip = 0 and datum < '".mysqli_real_escape_string($db,$dmeind)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
- ) his_uit on (uit.hist = his_uit.hisId)
- left join tblStal st on (st.stalId = his_in.stalId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
- ) spn on (spn.schaapId = st.schaapId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
- ) prn on (prn.schaapId = st.schaapId)
-WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ho.hokId = '".mysqli_real_escape_string($db,$hokId)."' and p.doelId = $_POST[kzlDoel_] and ".db_null_filter('i.artId', $fldVoer)." 
- and date_format(p.dmeind,'%Y%m') = $jrmnd and his_in.datum < p.dmeind and coalesce(his_uit.datum,CURDATE()) > p.dmbegin ".mysqli_real_escape_string($db,$filterDoel)."
- and ".mysqli_real_escape_string($db,$resHok)."
- 
-GROUP BY p.periId, ho.hokId, ho.hoknr, p.dmbegin, p.dmeind, p.nutat
-ORDER BY ho.hokId, p.dmeind
-";
-
-//if($mndnr == 6) { echo $periode_totalen.'<br>'.'<br>'; }
-$periode_totalen = mysqli_query($db,$periode_totalen) or die (mysqli_error($db));
-
+$periode_totalen = $periode_gateway->periode_totalen($lidId, $hokId, $fldVoer, $_POST['kzlDoel_'], $filterDoel, $resHok, $dmstart, $dmbegin, $dmeind, $jrmnd);
 
 if (mysqli_num_rows($periode_totalen) == 0) { 
-
-$periode_totalen_met_voer_zonder_schapen = "
-SELECT p.periId, ho.hokId, ho.hoknr, p.dmbegin, date_format(p.dmbegin,'%d-%m-%Y') begindm, NULL dmschaap1, NULL schaap1dm,
- p.dmeind, date_format(p.dmeind,'%d-%m-%Y') einddm, NULL dmschaapend, NULL schaapenddm,
- p.nutat, NULL schpn, NULL dagen, NULL gemdgn, count(v.voedId) voedId
-FROM tblHok ho
- join (
-     SELECT p.periId, p1.hokId, p1.doelId, p1.dmbegin, p1.dmeind, v.nutat 
-     FROM (
-         SELECT p.hokId, p.doelId, '".mysqli_real_escape_string($db,$dmstart)."' dmbegin, min(p.dmafsluit) dmeind
-        FROM tblPeriode p
-         join tblHok ho on (p.hokId = ho.hokId)
-        WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = $_POST[kzlDoel_]
-        GROUP BY p.hokId, p.doelId
-     ) p1
-     join tblPeriode p on (p1.hokId = p.hokId and p1.doelId = p.doelId and p1.dmeind = p.dmafsluit)
-     left join (
-         SELECT v.periId, i.artId, sum(v.nutat) nutat
-         FROM tblVoeding v
-          join tblPeriode p on (v.periId = p.periId)
-          join tblHok ho on (ho.hokId = p.hokId)
-          join tblInkoop i on (v.inkId = i.inkId)
-         WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = $_POST[kzlDoel_]
-         GROUP BY v.periId, i.artId
-     ) v on (p.periId = v.periId)
-
-    union
-
-    SELECT p2.periId, p2.hokId, p1.doelId, max(p1.dmafsluit) dmbegin, p2.dmafsluit dmeind, v.nutat 
-    FROM tblPeriode p1
-     join tblPeriode p2 on (p1.hokId = p2.hokId and p1.doelId = p2.doelId and p1.dmafsluit < p2.dmafsluit)
-     join tblHok ho on (ho.hokId = p1.hokId)
-     left join (
-         SELECT v.periId, i.artId, sum(v.nutat) nutat
-         FROM tblVoeding v
-          join tblPeriode p on (v.periId = p.periId)
-          join tblHok ho on (ho.hokId = p.hokId)
-          join tblInkoop i on (v.inkId = i.inkId)
-         WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = $_POST[kzlDoel_]
-         GROUP BY v.periId, i.artId
-     ) v on (p2.periId = v.periId)
-    WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p1.doelId = $_POST[kzlDoel_]
-    GROUP BY p2.periId, p2.hokId, p1.doelId, p2.dmafsluit, v.nutat
- ) p  on (p.hokId = ho.hokId)
- left join tblVoeding v on (p.periId = v.periId)
- left join tblInkoop i on (i.inkId = v.inkId)
- 
-WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ho.hokId = '".mysqli_real_escape_string($db,$hokId)."' and p.doelId = $_POST[kzlDoel_] and ".db_null_filter('i.artId', $fldVoer)." 
- and date_format(p.dmeind,'%Y%m') = $jrmnd
- and '".mysqli_real_escape_string($db,$resHok)."'
- 
-GROUP BY p.periId, ho.hokId, ho.hoknr, p.dmbegin, p.dmeind, p.nutat
-ORDER BY ho.hokId, p.dmeind
-";
-
-# echo $periode_totalen_met_voer_zonder_schapen.'<br>';
-
-$periode_totalen = $periode_totalen_met_voer_zonder_schapen;
-//echo '<br>'.'<br>'.'<br>'.'<br>'.$periode_totalen.'<br>'.'<br>'.'<br>'.'<br>';
-
-
-$periode_totalen = mysqli_query($db,$periode_totalen) or die (mysqli_error($db));
-
+    $periode_totalen = $periode_gateway->periode_totalen_met_voer_zonder_schapen($lidId, $hokId, $fldVoer, $_POST['kzlDoel_'], $resHok, $dmstart, $jrmnd);
 }
 
-
-  while ($mld = mysqli_fetch_assoc($periode_totalen))
-        {
+  while ($mld = mysqli_fetch_assoc($periode_totalen)) {
         $Id = $mld['periId'];
         $hokId = $mld['hokId'];  
         $hoknr = $mld['hoknr'];
@@ -554,16 +262,9 @@ $periode_totalen = mysqli_query($db,$periode_totalen) or die (mysqli_error($db))
  ?>
 <tr ><td colspan = 25></td></tr>
 <?php
-
 if($_POST['kzlDoel_'] == 1) { $filterDoel = ' and (his_in.datum < spn.datum or (isnull(spn.schaapId) and isnull(prn.schaapId)) )'; }
 if($_POST['kzlDoel_'] == 2) { $filterDoel = ' and (his_in.datum >= spn.datum or (isnull(spn.schaapId) and prn.schaapId is not null))'; }
-
-
-
-/* and  ".$resDel." and ".$resHok." */ ?>
-
-
-        
+?>
 <tr align = "center" style = "font-size:15px;">    
  <td><?php echo $hoknr; ?></td>
  <td width = 90 > <?php echo $begindm; ?>  </td>
@@ -594,80 +295,18 @@ if($_POST['kzlDoel_'] == 2) { $filterDoel = ' and (his_in.datum >= spn.datum or 
 </tr>
 
 <?php
-
-
 // CODE M.B.T. DETAIL SCHAAPGEGEVENS
 if(isset($_POST["radSchaap_$Id"]) && $_POST["radSchaap_$Id"]==1 ) { 
-
-    if($gemdgn == 0) { $dagkg = 0; } else { $dagkg = $kilo/$dgn; }  unset($kilo); 
-
-$schaap_gegevens = "
-SELECT s.levensnummer, his_in.datum dmin, date_format(his_in.datum,'%d-%m-%Y') indm, coalesce(his_uit.datum,'".mysqli_real_escape_string($db,$dmeind)."') dmuit, date_format(coalesce(his_uit.datum,'".mysqli_real_escape_string($db,$dmeind)."'),'%d-%m-%Y') uitdm, datediff(coalesce(his_uit.datum,'".mysqli_real_escape_string($db,$dmeind)."'),his_in.datum) dgn, round(datediff(coalesce(his_uit.datum,'".mysqli_real_escape_string($db,$dmeind)."'),his_in.datum)*".mysqli_real_escape_string($db,$dagkg).",2) kg
-FROM tblBezet b
- join (
-     SELECT h.hisId, h.stalId, '".mysqli_real_escape_string($db,$dmbegin)."' datum
-     FROM tblHistorie h
-      join tblStal st on (st.stalId = h.stalId)
-      join tblBezet alleen_his_uit_bez on (alleen_his_uit_bez.hisId = h.hisId)
-     WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.datum < '".mysqli_real_escape_string($db,$dmbegin)."'
-     union 
-     SELECT h.hisId, h.stalId, h.datum
-     FROM tblHistorie h
-      join tblStal st on (st.stalId = h.stalId)
-      join tblBezet alleen_his_uit_bez on (alleen_his_uit_bez.hisId = h.hisId)
-     WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.datum >= '".mysqli_real_escape_string($db,$dmbegin)."'
- ) his_in on (his_in.hisId = b.hisId)
-
- join tblStal st on (st.stalId = his_in.stalId)
- join tblSchaap s on (st.schaapId = s.schaapId)
- left join 
-     (
-        SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
-        FROM tblBezet b
-         join tblHistorie h1 on (b.hisId = h1.hisId)
-         join tblActie a1 on (a1.actId = h1.actId)
-         join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-         join tblActie a2 on (a2.actId = h2.actId)
-         join tblStal st on (h1.stalId = st.stalId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-        GROUP BY b.bezId, st.schaapId, h1.hisId
-     ) uit on (uit.hisv = b.hisId)
- left join (
-     SELECT h.hisId, h.stalId, '".mysqli_real_escape_string($db,$dmeind)."' datum
-     FROM tblHistorie h
-      join tblStal st on (st.stalId = h.stalId)
-     WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.datum > '".mysqli_real_escape_string($db,$dmeind)."'
-     union 
-     SELECT h.hisId, h.stalId, h.datum
-     FROM tblHistorie h
-      join tblStal st on (st.stalId = h.stalId)
-     WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.datum <= '".mysqli_real_escape_string($db,$dmeind)."'
- ) his_uit on (his_uit.hisId = uit.hist)
-
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
- ) spn on (spn.schaapId = st.schaapId)
-  left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
- ) prn on (prn.schaapId = st.schaapId)
- join tblPeriode p on (p.hokId = b.hokId and p.dmafsluit = '".mysqli_real_escape_string($db,$dmeind)."')
-WHERE b.hokId = '".mysqli_real_escape_string($db,$hokId)."'
- and his_in.datum < '".mysqli_real_escape_string($db,$dmeind)."' and (isnull(uit.bezId) or his_uit.datum > '".mysqli_real_escape_string($db,$dmbegin)."') and p.doelId = $_POST[kzlDoel_] ".mysqli_real_escape_string($db,$filterDoel)."
-ORDER BY dmin, dmuit
-"; ?>
-
+    if($gemdgn == 0) {
+        $dagkg = 0;
+    } else {
+        $dagkg = $kilo/$dgn;
+    }
+        unset($kilo); 
+    $schaap_gegevens = $bezet_gateway->schaap_gegevens($lidId, $hokId, $dmbegin, $dmeind, $dagkg, $filterDoel);
+?>
 <tr height = 10><td>    </td></tr>
-
-<?php #echo $schaap_gegevens.'<br>'; 
-
-$schaap_gegevens = mysqli_query($db,$schaap_gegevens) or die (mysqli_error($db));
-
+<?php
     while($sch = mysqli_fetch_array($schaap_gegevens)) { 
         $levnr = $sch['levensnummer']; 
         $dmin = $sch['dmin']; 
@@ -676,14 +315,7 @@ $schaap_gegevens = mysqli_query($db,$schaap_gegevens) or die (mysqli_error($db))
         $uitdm = $sch['uitdm']; if($dmuit > $dmeind) { $uitdm = $einddm; }
         $dgn = $sch['dgn']; 
         $kg = $sch['kg'];
-
-
-
-
-
-
-
-        ?> 
+?> 
 <tr align = "center" style = "font-size:15px;"> 
 <td></td>
 <td width = 80 >  <?php echo $indm; ?> </td>
@@ -697,44 +329,37 @@ $schaap_gegevens = mysqli_query($db,$schaap_gegevens) or die (mysqli_error($db))
 <td> </td>
 
 </tr>
- <?php 
-  } unset($aant); unset($dagen);  unset($begindm); unset($einddm);
- // EINDE CODE M.B.T. DETAIL SCHAAPGEGEVENS ?>
+<?php 
+    }
+    unset($aant);
+ unset($dagen);
+  unset($begindm);
+ unset($einddm);
 
-<?php  } ?>
-
+    // EINDE CODE M.B.T. DETAIL SCHAAPGEGEVENS
+ } ?>
 <tr><td colspan = 25><hr></td></tr>
 
 <?php
-} unset($periode_totalen); // Einde $periode_totalen ?>
-
-
-
-
-<?php
-unset($begindm); unset($einddm); } // Einde $begin_eind_periode
-#echo /*$_POST["radSchaap_$Id"]*/$hoknr.' - '. $Id; ?>
-            
-
-
-
-
-
-
-
-<?php 
-
-
-
-
-
+  }
+unset($periode_totalen);
+// Einde $periode_totalen
+unset($begindm);
+unset($einddm);
+  } // Einde $begin_eind_periode
 }  // EINDE LOOP maandnaam jaartal
-    
 } //  Einde knop toon ?>            
 </table>
 </form>
         </TD>
-<?php } else { ?> <img src='Voer_rapportage_php.jpg'  width='970' height='550'/> <?php }
-include "menuRapport.php"; } ?>
+<?php 
+    } else {
+?>
+    <img src="Voer_rapportage_php.jpg"  width="970" height="550"/>
+<?php
+    }
+    include "menuRapport.php";
+}
+?>
 </body>
 </html>
