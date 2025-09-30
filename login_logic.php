@@ -106,43 +106,35 @@ if (!Auth::is_logged_in()) {
 
     date_default_timezone_set('Europe/Paris');
 
+    $lid_gateway = new LidGateway($db);
+    $hok_gateway = new HokGateway($db);
+
     // Bepalen modules ja of nee
-    $module = mysqli_query($db, "SELECT beheer, tech, fin, meld FROM tblLeden WHERE lidId = '".mysqli_real_escape_string($db, $lidId)."'; ") or die(mysqli_error($db));
-    while ($mod = mysqli_fetch_assoc($module)) {
-        $modbeheer = $mod['beheer'];
-        $modtech = $mod['tech'];
-        $modfin = $mod['fin'];
-        $modmeld = $mod['meld'];
-    }
+    $rechten = $lid_gateway->rechten($lidId);
+    $modbeheer = $rechten->beheer;
+    $modtech = $rechten->tech;
+    $modfin = $rechten->fin;
+    $modmeld = $rechten->meld;
 
     // Bepalen aantal karakters werknr
-    $result = mysqli_query($db, "SELECT kar_werknr FROM tblLeden WHERE lidId = '".mysqli_real_escape_string($db, $lidId)."';") or die(mysqli_error($db));
-    while ($row = mysqli_fetch_assoc($result)) {
-        $Karwerk = $row['kar_werknr'];
-        App::register('Karwerk', $Karwerk);
-    }
+    $Karwerk = $lid_gateway->zoek_karwerk($lidId);
+    App::register('Karwerk', $Karwerk);
 
     # gebruikt in GroeiresultaatSchaap, en Zoeken
     $w_werknr = 25 + (8 * App::Karwerk());
 
     // Bepalen aantal karakter verblijf
-    $max_lengte = mysqli_query($db, "SELECT max(length(hoknr)) lengte FROM`tblHok`WHERE lidId ='".mysqli_real_escape_string($db, $lidId)."' ") or die(mysqli_error($db));
-    while ($max = mysqli_fetch_assoc($max_lengte)) {
-        $lengte = $max['lengte'];
-    }
-    $w_hok = 15+(9*$lengte);
-    if ($w_hok < 60) {
-        $w_hok = 60;
-    }
+    $w_hok = max(60, 15 + 9 * $hok_gateway->findLongestHoknr($lidId));
 
-    $lid_gateway = new LidGateway($db);
     // Bepalen Id van crediteur ophalen dode dieren (Rendac)
     $res = $lid_gateway->findCrediteur($lidId);
     [$rendac_Id, $rendac_ubn] = $res;
 
     $reader = $lid_gateway->findReader($lidId);
 
-    // Bepalen welke versie de laatste is. Wanneer deze nog niet is geinstalleerd wordt Beheer in menu1.php rood en ook Readerversies in menuBeheer.php
+    // Bepalen welke versie de laatste is.
+    //  Wanneer deze nog niet is geinstalleerd wordt Beheer in menu1.php rood,
+    //  en ook Readerversies in menuBeheer.php
     $dir = dirname(__FILE__); // Locatie bestanden op FTP server
     $persoonlijke_map = $dir.'/user_'.$lidId;
     foreach (setup_versies($db, $persoonlijke_map) as $name => $value) {

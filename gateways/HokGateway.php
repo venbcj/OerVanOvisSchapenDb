@@ -2,6 +2,12 @@
 
 class HokGateway extends Gateway {
 
+    public function findLongestHoknr($lidId) {
+        return $this->db
+                    ->query("SELECT max(length(hoknr)) lengte FROM`tblHok`WHERE lidId ='".mysqli_real_escape_string($this->db, $lidId)."' ")
+                    ->fetch_row()[0];
+    }
+
     public function kzlHok($lidId) {
         return $this->db->query("
 SELECT hokId, hoknr

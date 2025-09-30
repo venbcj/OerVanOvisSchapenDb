@@ -11,6 +11,19 @@ SQL
         , [[':lidId', $lidId, self::INT]]);
     }
 
+    public function rechten($lidId) {
+        $vw = $this->db->query("SELECT beheer, tech, fin, meld FROM tblLeden WHERE lidId = '".mysqli_real_escape_string($this->db, $lidId)."'; ");
+        if ($vw->num_rows) {
+            return $vw->fetch_object();
+        }
+        return (object) [
+            'beheer' => false,
+            'tech' => false,
+            'fin' => false,
+            'meld' => false,
+        ];
+    }
+
     public function hasCompleteRvo($lidId) {
         $vw = mysqli_query($this->db, "
 SELECT 1
