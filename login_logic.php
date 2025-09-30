@@ -119,10 +119,11 @@ if (!Auth::is_logged_in()) {
     $result = mysqli_query($db, "SELECT kar_werknr FROM tblLeden WHERE lidId = '".mysqli_real_escape_string($db, $lidId)."';") or die(mysqli_error($db));
     while ($row = mysqli_fetch_assoc($result)) {
         $Karwerk = $row['kar_werknr'];
+        App::register('Karwerk', $Karwerk);
     }
 
     # gebruikt in GroeiresultaatSchaap, en Zoeken
-    $w_werknr = 25+(8*$Karwerk);
+    $w_werknr = 25 + (8 * App::Karwerk());
 
     // Bepalen aantal karakter verblijf
     $max_lengte = mysqli_query($db, "SELECT max(length(hoknr)) lengte FROM`tblHok`WHERE lidId ='".mysqli_real_escape_string($db, $lidId)."' ") or die(mysqli_error($db));

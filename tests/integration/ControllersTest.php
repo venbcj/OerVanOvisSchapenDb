@@ -222,7 +222,7 @@ TXT
             'hok' => ['Hok_pdf.php', ['hok'], ['Id' => 1]],
             'hoklijst' => ['Hoklijst_pdf.php', [], ['Id' => 1]],
             'loslopers' => ['Loslopers_pdf.php', [], []],
-            'meerlingen5' => ['Meerlingen5_pdf.php', [], ['Id' => 1, 'd1' => 1, 'd2' => 1]],
+            'meerlingen5' => ['Meerlingen5_pdf.php', ['stal'], ['Id' => 1, 'd1' => 1, 'd2' => 1]],
             'ooikaart' => ['Ooikaart_pdf.php', [], ['Id' => 1]],
             'ras' => ['Ras_pdf.php', ['rasuser-1'], ['Id' => 1]],
             'stallijst' => ['Stallijst_pdf.php', ['schaap-4'], []],

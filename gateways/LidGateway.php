@@ -2,6 +2,15 @@
 
 class LidGateway extends Gateway {
 
+    public function zoek_karwerk($lidId) {
+        return $this->first_field(<<<SQL
+SELECT kar_werknr 
+FROM tblLeden
+WHERE lidId = :lidId
+SQL
+        , [[':lidId', $lidId, self::INT]]);
+    }
+
     public function hasCompleteRvo($lidId) {
         $vw = mysqli_query($this->db, "
 SELECT 1

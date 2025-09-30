@@ -17,7 +17,7 @@ $rec = mysqli_fetch_assoc($vw);
 return $rec;
     }
 
-    public function setDef($def, $reqId) {
+    public function setDef($reqId, $def) {
         mysqli_query($this->db, "
 UPDATE tblRequest SET def = '".mysqli_real_escape_string($this->db, $def)."'
 WHERE reqId = '".mysqli_real_escape_string($this->db, $reqId)."' ");

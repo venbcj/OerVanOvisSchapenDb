@@ -154,7 +154,7 @@ foreach ($multip_array as $recId => $id) {
         // Wijzigen keuze 'controle' versus 'vastleggen'
         // fldDef is hierboven op 'N' gezet, dus die isset() kan weg --BCB
         if (isset($fldDef) && $fldDef <> $co['def']) {
-            $request_gateway->setDef($fldDef, $co['reqId']);
+            $request_gateway->setDef($co['reqId'], $fldDef);
         }
         //Hiermee wordt het requestId maar 1x doorlopen en is t.b.v. wijzigen tblRequest i.p.v. elke regel uit tblMeldingen
 

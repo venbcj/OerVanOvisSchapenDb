@@ -376,6 +376,7 @@ class SchaapGatewayTest extends GatewayCase {
     }
 
     public function testGeenSterfteMoeders() {
+        $this->runSQL("DELETE FROM tblSchaap");
         $this->assertEquals(0, $this->sut->zoek_aantal_sterfte_moeder_in_jaar(self::LIDID, 2020));
     }
 

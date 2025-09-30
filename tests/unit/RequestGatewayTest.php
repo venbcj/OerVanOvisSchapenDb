@@ -17,7 +17,7 @@ class RequestGatewayTest extends GatewayCase {
 
     public function test_set_def() {
         $this->runfixture('request-gw-not-def');
-        $this->sut->setDef(1, 3); // TODO #0004111 pk nog voorop zetten
+        $this->sut->setDef(3, 1);
         $this->assertTableWithPK('tblRequest', 'reqId', 3, ['def' => 1]);
         $this->assertTableWithPK('tblRequest', 'reqId', 4, ['def' => 0]);
     }
