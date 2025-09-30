@@ -22,14 +22,16 @@ include "login.php"; ?>
 <?php 
 if (Auth::is_logged_in()) {
 
-if (isset($_POST['knpSave_'])) { include "save_ubn.php"; }
+    $ubn_gateway = new UbnGateway($db);
+    if (isset($_POST['knpSave_'])) {
+        include "save_ubn.php";
+    }
 
 if (isset($_POST['knpInsert_'])) {
     $new_ubn = $_POST['insUbn_'];
     $new_adres = $_POST['insAdres_'];
     $new_plaats = $_POST['insPlaats_'];
 
-    $ubn_gateway = new UbnGateway($db);
 // Zoek naar ubn op duplicaten
     $dubbel = $ubn_gateway->exists_for_lid($new_ubn, $lidId);
     
