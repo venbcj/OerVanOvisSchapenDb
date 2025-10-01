@@ -55,7 +55,7 @@ if (($url == 'https://test.oervanovis.nl/' || $url == 'https://demo.oervanovis.n
     $output[] = 'pasop.tpl.php';
 }
 if (php_uname('n') == 'basq') {
-    // twee sleutels, omdat de post_ includes veel werken met getIdFromKey, en die vraagt op alle sleutels een aanwezige underscore
+    // twee sleutels, omdat de post_* includes veel werken met getIdFromKey, en die vraagt op alle sleutels een aanwezige underscore
    if (isset($_REQUEST['ingelogd']) || isset($_REQUEST['ingelogd_'])) {
      // met deze hack kan ik op mijn computer het ingelogd-zijn simuleren vanuit een unit test --BCB
      Session::set('U1', 1); // moet eigenlijk username zijn, maar dan vallen alle approval-tests om. Niet nodig.
@@ -67,9 +67,6 @@ if (php_uname('n') == 'basq') {
      Session::set('ID', $_REQUEST['uid'] ?? $_REQUEST['uid_'] ?? 1);
      Session::set('CNT', $_REQUEST['cnt_'] ?? 0); // cnt wordt gelezen in Contact
      // dit ID is mede van invloed op HokSpenen HokOverpl HokAanwas HokVerlaten Uitval HokAfleveren HokVerkopen HokUitscharen
-   }
-   if (isset($_REQUEST['force_meld'])) {
-       $modmeld = 1;
    }
 }
 
@@ -119,10 +116,10 @@ if (!Auth::is_logged_in()) {
 
     // Bepalen aantal karakters werknr
     $Karwerk = $lid_gateway->zoek_karwerk($lidId);
-    App::register('Karwerk', $Karwerk);
+    User::register('Karwerk', $Karwerk);
 
     # gebruikt in GroeiresultaatSchaap, en Zoeken
-    $w_werknr = 25 + (8 * App::Karwerk());
+    $w_werknr = 25 + (8 * User::Karwerk());
 
     // Bepalen aantal karakter verblijf
     $w_hok = max(60, 15 + 9 * $hok_gateway->findLongestHoknr($lidId));

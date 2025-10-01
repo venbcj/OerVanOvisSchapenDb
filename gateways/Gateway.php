@@ -6,8 +6,15 @@ class Gateway {
     const INT = 'int';
     const BOOL = 'bool';
 
-    public function __construct($db) {
-        $this->db = $db;
+    public function __construct($db = null) {
+        if (is_null($db)) {
+            $db = Db::instance();
+        }
+        if (is_a($db, Db::class) || is_a($db, Mysqli::class)) {
+            $this->db = $db;
+        } else {
+            throw new Exception("Parameter is not usable to set up database connection");
+        }
     }
 
     protected function run_query($SQL, $args = []) {

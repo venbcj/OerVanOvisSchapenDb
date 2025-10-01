@@ -1,6 +1,6 @@
 <?php
 
-class App {
+class User {
 
     private static $instance;
     private $space = [];
@@ -17,7 +17,12 @@ class App {
     }
 
     // publiceer alle sleutels als statische methoden.
-    // App::Karwerk() geeft terug wat er via register() [of straks door setup()] in is gezet
+    // voorbeeld: App::Karwerk() geeft terug wat er via register() [of straks door setup()] in is gezet
+    // Twee bedenkingen:
+    // - Dit is lekker magisch en lui, maar onduidelijk: de interface van het object is niet expliciet.
+    // - Wil ik echt allerlei objecten aan App lijmen?
+    //   -> dit object laat zich wel in unit-tests gebruiken; je kunt setup() niet aanroepen, en met set_space je eigen register opslaan.
+    // Ik doe het eerst met statische App-koppelingen. Wordt dat irritant, dan lossen we het op dat moment wel op.
     public static function __callStatic($name, $args) {
         static::ensure_instance();
         if (static::$instance->exists($name)) {
