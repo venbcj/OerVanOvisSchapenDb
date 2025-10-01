@@ -1,3 +1,5 @@
+<?php
+/*
 <!-- 17-11-2014 include Maak_Request toegevoegd 
 28-2-2017 :  Ras en gewicht niet veplicht gemaakt 
 20-4-2017 : gezorgd dat fldKg bestaat als module technisch nvt is 
@@ -9,13 +11,7 @@
 31-12-2023 : and skip = 0 toegevoegd aan zoek_aanwas 
 23-03-2024 : Alleen gewicht registreren (tussenweging) mogelijk gemaakt -->
 
-<?php /*
-include "url.php";
-
-include "passw.php";
-include "connect_db.php";*/ //Deze include zit ook in login.php maar binnen InsAfvoeren.php is include login nog niet gepasseerd. Hier laten staan dus.
-
-
+*/
 
 $array = array();
 

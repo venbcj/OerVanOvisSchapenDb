@@ -587,12 +587,6 @@ function zoek_request_definitief($db, $reqId) {
     return $def;
 }
 
-function noteer_inlogtijd($lidId) {
-    global $db;
-    global $nu;
-    $update_tblLeden = " UPDATE tblLeden set laatste_inlog = '".mysqli_real_escape_string($db, $nu)."' WHERE lidId = '".mysqli_real_escape_string($db, $lidId)."' ";
-    mysqli_query($db, $update_tblLeden) or die(mysqli_error($db));
-}
 
 function zoek_eerste_stalrecord($lidId) {
     global $db;

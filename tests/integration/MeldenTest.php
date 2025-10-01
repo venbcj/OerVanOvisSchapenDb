@@ -53,8 +53,9 @@ class MeldenTest extends IntegrationCase {
         $this->runfixture('request-lid-codes');
         $this->runfixture('response');
         $dir = 'BRIGHT/';
-        $reqfile = '_1_request.txt';
-        $respfile = '_1_response.txt';
+        // gebruikt alias uit db/setup/user-1. Momenteel is dat 'harm'
+        $reqfile = 'harm_1_request.txt';
+        $respfile = 'harm_1_response.txt';
         $userdir = 'user_1/';
         if (!is_dir($dir)) mkdir($dir);
         if (!is_dir($userdir)) mkdir($userdir);

@@ -214,7 +214,9 @@ $zoek_vorige_weging = mysqli_query($db,"
 SELECT max(hisId) vorige_weging
 FROM tblHistorie h
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and h.datum < '".mysqli_real_escape_string($db,$date)."' and h.kg is not null
+WHERE st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+ and h.datum < '".mysqli_real_escape_string($db,$date)."'
+ and h.kg is not null
 ") or die (mysqli_error($db));
 
 while($zvw = mysqli_fetch_array($zoek_vorige_weging))
@@ -248,7 +250,9 @@ $dagen = round($datediff / (60 * 60 * 24));
 if( (!isset($_POST['radGroei_']) && $groei == 0) || (isset($_POST['radGroei_']) && $_POST['radGroei_'] == 0) ) { $factor = $dagen/$dagen; }
 else if( (!isset($_POST['radGroei_']) && $groei == 1) || (isset($_POST['radGroei_']) && $_POST['radGroei_'] == 1) ) { $factor = $dagen; }
 
-if(isset($vorige_weging)) { $berekening = round((($kg - $vorige_kg) / $factor),2).' kg in '.$dagen.' dagen vanaf '.strtolower($vorige_actie); }
+if(isset($vorige_weging)) {
+    $berekening = round((($kg - $vorige_kg) / $factor),2).' kg in '.$dagen.' dagen vanaf '.strtolower($vorige_actie);
+}
 
 // Einde Zoek vorige weging
 

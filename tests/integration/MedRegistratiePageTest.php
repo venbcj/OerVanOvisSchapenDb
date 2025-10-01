@@ -59,6 +59,7 @@ class MedRegistratiePageTest extends IntegrationCase {
     }
 
     public function testToonMedregistratieKeuzelijstReden() {
+        $this->runsetup('user-1'); // in de hoop dat de test nu niet meer af en toe faalt
         $this->runfixture('reden'); // zet 1 willekeurige reden op "pil"
         $this->post('/Med_registratie.php', [
             'ingelogd' => 1,

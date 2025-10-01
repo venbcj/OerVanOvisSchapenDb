@@ -2,8 +2,6 @@
 
 class PeriodeGatewayTest extends GatewayCase {
 
-    private const LIDID = 1;
-
     protected static $sutname = 'PeriodeGateway';
 
     public function testGeenJaarmaanden() {

@@ -17,7 +17,7 @@ if ($Afdrukstand == 'L') { $headerWidth = 277; $imageWidth = 256; }
 
 Session::start();
 
-    $lidId = Session::get("I1");
+    $lidId = Session::get('I1');
 
 $zoek_doel = mysqli_query($db,"select doel from tblDoel where doelId = ".mysqli_real_escape_string($db,$groep)." ") or die (mysqli_error($db));
 while($dl = mysqli_fetch_array($zoek_doel)){ $dgroep = $dl['doel']; }

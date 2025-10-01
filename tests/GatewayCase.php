@@ -2,6 +2,8 @@
 
 class GatewayCase extends UnitCase {
 
+    protected const LIDID = 1;
+
     protected $sut;
     protected static $sutname = '';
 

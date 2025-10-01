@@ -60,6 +60,7 @@ if (php_uname('n') == 'basq') {
      // met deze hack kan ik op mijn computer het ingelogd-zijn simuleren vanuit een unit test --BCB
      Session::set('U1', 1); // moet eigenlijk username zijn, maar dan vallen alle approval-tests om. Niet nodig.
      Session::set('W1', 1);
+     Session::set('A1', 1);
      Session::set('I1', $_REQUEST['ingelogd'] ?? $_REQUEST['ingelogd_']);
      Session::set('PA', 1);
      Session::set('RPP', 30);
@@ -97,12 +98,12 @@ if (!Auth::is_logged_in()) {
 } elseif (Auth::is_logged_in()) {
     // ***     ALS WEL IS INGELOGD    ***
     // TODO: #0004173 variabele login wordt nergens gebruikt --BCB
-    $login = Session::get("U1");
-    $lidId = Session::get("I1");
+    $login = Session::get('U1');
+    $lidId = Session::get('I1');
     // TODO: (BV) #0004174 is dit geplande nieuwbouw? dat het uit staat, bedoel ik?
-    //$alias = Session::get("A1");
-    $pag = Session::get("PA"); // paginanummer dat moet worden ontouden als de pagina wordt ververst
-    $RPP = Session::get("RPP"); // standaard aantal regels per pagina
+    //$alias = Session::get('A1');
+    $pag = Session::get('PA'); // paginanummer dat moet worden ontouden als de pagina wordt ververst
+    $RPP = Session::get('RPP'); // standaard aantal regels per pagina
 
     date_default_timezone_set('Europe/Paris');
 

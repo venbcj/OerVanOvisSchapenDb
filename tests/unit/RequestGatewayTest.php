@@ -24,7 +24,7 @@ class RequestGatewayTest extends GatewayCase {
 
     public function test_countpercode() {
         $this->runfixture('request-gw-lid');
-        $actual = $this->sut->countPerCode(1, 'v42');
+        $actual = $this->sut->countPerCode(self::LIDID, 'v42');
         $this->assertEquals(1, $actual);
     }
 

@@ -14,7 +14,6 @@
     - Voer.php
  */
 
-
 global $url;
 $url = Url::getWebroot();
 

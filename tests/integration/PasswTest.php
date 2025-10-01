@@ -2,13 +2,18 @@
 
 class PasswTest extends IntegrationCase {
 
-    public function setup():void {
+    public static function setupBeforeClass(): void {
+        self::runsetup('user-1');
+    }
+
+    public function setup(): void {
         require_once "autoload.php";
         $GLOBALS['passw'] = '';
         $_SERVER['HTTP_HOST'] = 'basq';
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['REQUEST_SCHEME'] = 'http';
         $_SERVER['REQUEST_URI'] = '';
+        $this->uses_db();
     }
 
     public function testGet() {
@@ -16,170 +21,11 @@ class PasswTest extends IntegrationCase {
         Auth::logout();
         # WHEN
         ob_start();
+        $db = $this->db;
         include "passw.php";
         $res = ob_get_clean();
         # THEN
         $this->assertEquals('', $GLOBALS['passw']);
-    }
-
-    public function testValidateMissingPassword() {
-        # GIVEN
-        include "just_connect_db.php";
-        $this->simulatePostRequest('/Wachtwoord.php', [
-            'knpChange' => 1,
-            'txtUser' => 'gewijzigd',
-            'txtUserOld' => 'kobus',
-            'txtOld' => '',
-            'txtNew' => '',
-        ]);
-        $lid = 42; // aha, wij zijn een onderdeel van Gebruiker.
-        # WHEN
-        ob_start();
-        include "passw.php";
-        $res = ob_get_clean();
-        # THEN
-        $this->assertEquals('Gebruikersnaam of wachtwoord is onbekend.', $fout);
-    }
-
-    public function testValidateWachtwoordVerschillend() {
-        # GIVEN
-        include "just_connect_db.php";
-        $this->simulatePostRequest('/Wachtwoord.php', [
-            'knpChange' => 1,
-            'txtUser' => 'kobus',
-            'txtUserOld' => 'harm',
-            'txtOld' => 'fruit',
-            'txtNew' => 'groente',
-            'txtBevest' => 'groente-verschil',
-        ]);
-        $lid = 42; // aha, wij zijn een onderdeel van Gebruiker.
-        # WHEN
-        ob_start();
-        include "passw.php";
-        $res = ob_get_clean();
-        # THEN
-        $this->assertEquals('Het nieuwe wachtwoord komt niet overeen met de bevestiging.', $fout);
-    }
-
-    public function testValidateWachtwoordFout() {
-        # GIVEN
-        include "just_connect_db.php";
-        $this->simulatePostRequest('/Wachtwoord.php', [
-            'knpChange' => 1,
-            'txtUser' => 'kobus',
-            'txtUserOld' => 'harm',
-            'txtOld' => 'fruit',
-            'txtNew' => 'groente',
-            'txtBevest' => 'groente',
-        ]);
-        $lid = 42; // aha, wij zijn een onderdeel van Gebruiker.
-        # WHEN
-        ob_start();
-        include "passw.php";
-        $res = ob_get_clean();
-        # THEN
-        $this->assertEquals('Het oude wachtwoord is onjuist.', $fout);
-    }
-
-    public function testValidateWachtwoordTekort() {
-        # GIVEN
-        include "just_connect_db.php";
-        $GLOBALS['passw'] = 'harpje';
-        $this->simulatePostRequest('/Wachtwoord.php', [
-            'knpChange' => 1,
-            'txtUser' => 'kobus',
-            'txtUserOld' => 'harm',
-            'txtOld' => 'harpje',
-            'txtNew' => 'groen',
-            'txtBevest' => 'groen',
-        ]);
-        $lid = 42; // aha, wij zijn een onderdeel van Gebruiker.
-        # WHEN
-        ob_start();
-        include "passw.php";
-        $res = ob_get_clean();
-        # THEN
-        $this->assertEquals('Het wachtwoord moet uit minstens 6 karakters bestaan.', $fout);
-    }
-
-    public function testPostBestaatAl() {
-        $this->runfixture('user-kobus');
-        # GIVEN
-        include "just_connect_db.php";
-        $GLOBALS['passw'] = 'harpje';
-        $this->simulatePostRequest('/Wachtwoord.php', [
-            'knpChange' => 1,
-            'txtUser' => 'kobus',
-            'txtUserOld' => 'harm',
-            'txtOld' => 'harpje',
-            'txtNew' => 'groente',
-            'txtBevest' => 'groente',
-        ]);
-        $lid = 42; // aha, wij zijn een onderdeel van Gebruiker.
-        # WHEN
-        ob_start();
-        include "passw.php";
-        $res = ob_get_clean();
-        # THEN
-        # $this->assertTrue(isset($fout), $res);
-        $this->assertEquals('Deze combinatie tussen gebruikersnaam en wachtwoord bestaat al. Kies een andere combinatie.', $fout);
-    }
-
-    public function testPostWijzigUsername() {
-        $this->runfixture('user-kobus');
-        # GIVEN
-        include "just_connect_db.php";
-        $this->db = $db;
-        $GLOBALS['passw'] = 'harpje';
-        $this->simulatePostRequest('/Wachtwoord.php', [
-            'knpChange' => 1,
-            'txtUser' => 'krelis',
-            'txtUserOld' => 'kobus',
-            'txtOld' => 'harpje',
-            'txtNew' => 'groente',
-            'txtBevest' => 'groente',
-        ]);
-        $lid = 42; // aha, wij zijn een onderdeel van Gebruiker.
-        # WHEN
-        ob_start();
-        include "passw.php";
-        $res = ob_get_clean();
-        # THEN
-        $this->assertFalse(isset($fout), $res);
-        $this->assertEquals('De inloggegevens zijn gewijzigd', $goed);
-        $this->assertTableWithPK('tblLeden', 'lidId', 42, ['login' => 'krelis']);
-        // cleanup
-        $this->db->query("DELETE FROM tblLeden WHERE lidId=42");
-        $this->runsetup('tblLeden');
-    }
-
-    public function testPostWijzigWachtwoord() {
-        $this->runfixture('user-kobus');
-        # GIVEN
-        include "just_connect_db.php";
-        $this->db = $db;
-        $GLOBALS['passw'] = 'harpje';
-        $this->simulatePostRequest('/Wachtwoord.php', [
-            'knpChange' => 1,
-            'txtUser' => 'kobus',
-            'txtUserOld' => 'kobus',
-            'txtOld' => 'harpje',
-            'txtNew' => 'mmuismat',
-            'txtBevest' => 'mmuismat',
-        ]);
-        $lid = 42; // aha, wij zijn een onderdeel van Gebruiker.
-        # WHEN
-        ob_start();
-        include "passw.php";
-        $res = ob_get_clean();
-        # THEN
-        $this->assertFalse(isset($fout), "Onverwachte fout: ".($fout ?? ''));
-        $this->assertEquals('De inloggegevens zijn gewijzigd.', $goed);
-        // TODO: #0004115 deugdelijke assert maken voor het wachtwoord. Zoiets als "old password 'groente' (uit de fixture af te leiden) is niet meer geldig"
-        $this->assertTableWithPK('tblLeden', 'lidId', 42, ['login' => 'kobus', 'passw' => 'e37fb031e454b9c9f4a4a46ebbc9ddb6']);
-        // cleanup
-        $this->db->query("DELETE FROM tblLeden WHERE lidId=42");
-        $this->runsetup('tblLeden');
     }
 
 }

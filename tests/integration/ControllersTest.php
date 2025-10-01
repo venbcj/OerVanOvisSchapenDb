@@ -100,7 +100,6 @@ Gebruiker.php
 Gebruikers.php
 Groeiresultaat.php
 GroeiresultaatSchaap.php
-GroeiresultaatWeging.php
 HokAanwas.php
 HokAfleveren.php
 HokAfsluiten.php
@@ -197,6 +196,7 @@ TXT
         return [
             'Voorraad' => ['Voorraad.php', ['voervoorraad']],
             'Zoeken' => ['Zoeken.php', ['schaap-met-ouders']],
+            'GroeiresultaatWeging' => ['GroeiresultaatWeging.php', []], // TODO uitzoeken welke fixture dan
         ];
     }
 

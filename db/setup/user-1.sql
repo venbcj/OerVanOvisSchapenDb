@@ -3,13 +3,13 @@ truncate tblUbn;
 truncate tblRedenuser;
 truncate tblEenheiduser;
 
-INSERT INTO tblLeden(login,passw,lidId,
+INSERT INTO tblLeden(login,passw,lidId,alias,
     meld,tech,fin,beheer,
     relnr, urvo, prvo,
     kar_werknr
 ) 
 -- harms wachtwoord is 'harpje'
-VALUES('harm', '6edffa2b54fe663ac77c316115a0e44a',1,
+VALUES('harm', '6edffa2b54fe663ac77c316115a0e44a',1,'harm',
     1,1,1,1,
     13,18,22,
     5

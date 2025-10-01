@@ -113,6 +113,7 @@ class IntegrationCase extends UnitCase {
             }
             $this->fail("Verwacht '$str' in de 'foutmelding'. $complaint");
         }
+        $this->assertTrue(true); // anders krijg ik een Risky Test
     }
 
     protected function assertNotFout() {

@@ -9,45 +9,49 @@ class GebruikerTest extends IntegrationCase {
         $this->get('/Home.php', ['ingelogd' => 1, 'uid' => 1]);
     }
 
+    public static function teardownAfterClass(): void {
+        self::runsetup('tblLeden');
+    }
+
     // deze vier tests dekken de radioknop "melden: Ja"
 
     public function testGetNotMeld() {
         $this->runfixture('hok');
-        include "just_connect_db.php";
-        $db->query("UPDATE tblLeden SET meld=0 WHERE lidId=42");
+        $this->uses_db();
+        $this->db->query("UPDATE tblLeden SET meld=0 WHERE lidId=42");
         $this->get('/Gebruiker.php', ['ingelogd' => 1, 'pstId' => 42]);
         $this->assertNoNoise();
         $this->assertAbsent('"radMeld" value="1" checked');
+        $this->assertPresent('"radMeld" value="0" checked');
     }
 
     public function testGetMeld() {
-        include "just_connect_db.php";
-        $this->db = $db;
+        $this->uses_db();
+        $this->runsetup('tblLeden');
         $this->assertTableWithPK('tblLeden', 'lidId', 42);
-        $db->query("UPDATE tblLeden SET meld=1 WHERE lidId=42");
+        $this->db->query("UPDATE tblLeden SET meld=1 WHERE lidId=42");
         $this->get('/Gebruiker.php', ['ingelogd' => 1, 'pstId' => 42]);
         $this->assertPresent('"radMeld" value="1" checked');
-        $db->query("UPDATE tblLeden SET meld=0 WHERE lidId=42");
+        $this->db->query("UPDATE tblLeden SET meld=0 WHERE lidId=42");
     }
 
     public function testPostNotMeld() {
-        include "just_connect_db.php";
-        $db->query("UPDATE tblLeden SET meld=1 WHERE lidId=42");
+        $this->uses_db();
+        $this->db->query("UPDATE tblLeden SET meld=1 WHERE lidId=42");
         $this->post('/Gebruiker.php', ['ingelogd' => 1, 'pstId' => 42, 'radMeld' => 0]);
         $this->assertAbsent('"radMeld" value="1" checked');
-        $db->query("UPDATE tblLeden SET meld=0 WHERE lidId=42");
+        $this->db->query("UPDATE tblLeden SET meld=0 WHERE lidId=42");
     }
 
     public function testPostMeld() {
-        include "just_connect_db.php";
-        $db->query("UPDATE tblLeden SET meld=0 WHERE lidId=42");
+        $this->uses_db();
+        $this->db->query("UPDATE tblLeden SET meld=0 WHERE lidId=42");
         $this->post('/Gebruiker.php', ['ingelogd' => 1, 'pstId' => 42, 'radMeld' => 1]);
         $this->assertPresent('"radMeld" value="1" checked');
     }
 
     public function testSaveGebruiker() {
-        include "just_connect_db.php";
-        $this->db = $db;
+        $this->uses_db();
         $this->post('/Gebruiker.php', [
             'ingelogd' => 1,
             'uid' => 42, // hack. login.php vangt dit op;
@@ -71,14 +75,10 @@ class GebruikerTest extends IntegrationCase {
             // lid 1 moet niet gewijzigd zijn
         $this->assertTableWithPK('tblLeden', 'lidId', 1, ['prvo' => 22]);
         $this->assertTableWithPK('tblLeden', 'lidId', 42, ['prvo' => 995, 'meld' => 1, 'fin' => 0]);
-        // teardown
-        $this->db->query("DELETE FROM tblLeden WHERE lidId=42");
-        $this->runsetup('tblLeden');
     }
 
     public function testUpdateGebruiker() {
-        include "just_connect_db.php";
-        $this->db = $db;
+        $this->uses_db();
         $this->db->query("DELETE FROM tblRedenuser WHERE lidId=42");
         $this->expectNewRecordsInTables(['tblRedenuser' => self::AANTAL_REDENEN_IN_NEWREADER_KEUZELIJSTEN]);
         $this->post('/Gebruiker.php', [

@@ -1,12 +1,6 @@
-<!-- 30-08-2025 Kopie gemaakt van post_readerAfv.php  -->
+<?php
 
-<?php /*
-include "url.php";
-
-include "passw.php";
-include "connect_db.php";*/ //Deze include zit ook in login.php maar binnen InsAfvoeren.php is include login nog niet gepasseerd. Hier laten staan dus.
-
-
+# <!-- 30-08-2025 Kopie gemaakt van post_readerAfv.php  -->
 
 $array = array();
 

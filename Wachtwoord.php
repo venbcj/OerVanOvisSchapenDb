@@ -18,11 +18,89 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "center" align 
 <?php
 $titel = 'Wijzigen inloggegevens';
 $file = "Wachtwoord.php";
-include "login.php"; ?>
-
+include "login.php";
+?>
         <TD valign = 'top' align = 'center'>
 <?php
 if (Auth::is_logged_in()) {
+// CODE T.B.V. WIJZIGEN WACHTWOORD
+# TODO: (BV) #0004124 als dit toch alleen mag in Wachtwoord... waarom dan niet opnemen in Wachtwoord? --BCB
+if ($curr_url == $url."Wachtwoord.php") {
+    // $curr_url gedeclareerd is url.php
+    $veld = "submit";
+    if (isset($_POST['knpChange'])) {
+        $zoek_login = mysqli_query($db, "
+SELECT login, passw
+FROM tblLeden
+WHERE lidId = '".mysqli_real_escape_string($db, $lid)."'
+");
+        while ($li = mysqli_fetch_assoc($zoek_login)) {
+            $user_db = $li['login'];
+            $passw_db = $li['passw'];
+        }
+        $txtuser = $_POST['txtUser'];
+        $txtuserold = $_POST['txtUserOld'];
+        $wwold = $_POST['txtOld'];
+        $ww = md5($_POST['txtOld'].'zfO3puW?Wod/UT<-|=)1VT]+{hgABEK(Yh^!Wv;5{ja{P~wX4t');
+        $txtpassw = $_POST['txtNew'];
+        $wwnew = md5($txtpassw.'zfO3puW?Wod/UT<-|=)1VT]+{hgABEK(Yh^!Wv;5{ja{P~wX4t');
+        if (empty($txtuser) || empty($_POST['txtOld'])) {
+            $fout = "Gebruikersnaam of wachtwoord is onbekend.";
+            unset($ww);
+        //} elseif (empty($txtpassw)) {
+        // $fout = "Nieuw wachtwoord is leeg";
+        } elseif ($txtpassw <> $_POST['txtBevest']) {
+            $fout = "Het nieuwe wachtwoord komt niet overeen met de bevestiging.";
+            unset($ww);
+        } elseif ($ww <> $passw && $_POST['txtOld'] <> $passw) {
+            $fout = "Het oude wachtwoord is onjuist.";
+            unset($ww);
+        } elseif (!empty($txtpassw) && strlen($txtpassw)< 6) {
+            $fout = "Het wachtwoord moet uit minstens 6 karakters bestaan.";
+            unset($ww);
+        //} elseif ($txtuser == $txtuserold && $wwold == $passw) {
+        //  unset($ww);
+        } else {
+            // controle of combinatie tussen user en passw al bestaat
+            if (empty($txtpassw)) {
+                $wwnew = $ww;
+            }
+            echo "user $txtuser password $wwnew";
+            $count = mysqli_query($db, "SELECT login, passw FROM tblLeden 
+                WHERE login = '".mysqli_real_escape_string($db, $txtuser)."' 
+                and passw = '".mysqli_real_escape_string($db, $wwnew)."' ");
+            $num_rows = mysqli_num_rows($count);
+            if ($num_rows > 0) {
+                $fout = "Deze combinatie tussen gebruikersnaam en wachtwoord bestaat al. Kies een andere combinatie.";
+            } else {
+            // EINDE controle of combinatie tussen user en passw al bestaat
+                // username en wachtwoord wijzigen
+                if ($txtuser <> $user_db) {
+                // username wijzigen
+                    $updateUS = "UPDATE tblLeden SET login = '".mysqli_real_escape_string($db, $txtuser)."' 
+                        WHERE lidId = '".mysqli_real_escape_string($db, $lid)."' ";
+                    mysqli_query($db, $updateUS);
+                    Session::set("U1", $txtuser); /* tbv de query $result in login.php*/
+                    $goed = "De inloggegevens zijn gewijzigd";
+                    $veld = "hidden";
+                } elseif (isset($wwnew) && $passw_db <> $wwnew) {
+                    // wachtwoord wijzigen
+                    $updateWW = "UPDATE tblLeden SET passw = '".mysqli_real_escape_string($db, $wwnew)."' 
+                        WHERE lidId = '".mysqli_real_escape_string($db, $lid)."' ";
+                    /*echo $updateWW.'<br>';*/ mysqli_query($db, $updateWW);
+                    $passw = $wwnew; /*tbv de query $result in login.php */
+                    Session::set("W1", $txtpassw); /* tbv (nieuwe) sessie gegevens */
+                    $goed = "De inloggegevens zijn gewijzigd." ;
+                    $veld = "hidden";
+                }
+            }
+        }
+        if (isset($fout)) {
+            unset($ww);
+        }
+    }
+}
+// EINDE CODE T.B.V. WIJZIGEN WACHTWOORD
 
 $name = Session::get("U1");  ?>
 
@@ -34,7 +112,7 @@ $name = Session::get("U1");  ?>
     <td> <input type="hidden" name="txtUserOld" size="20" value = <?php echo $name; ?> ></td> <!-- hiddden -->
 </tr>
  <tr><td> Oud wachtwoord : </td>
-    <td> <input type="password" name="txtOld"       size="20" value = <?php if (isset($ww)) { echo $ww;} // $ww gedeclareerd in wachtwoord ?> ></td> 
+    <td> <input type="password" name="txtOld"       size="20" value = <?php if (isset($ww)) { echo $ww;} // $ww gedeclareerd in passw ?> ></td> 
     <td> <input type="hidden" name="txtOldcntr" size="20" value = <?php echo $passw; ?> ></td> <!-- hiddden -->
  </tr>
  <tr><td> Nieuw wachtwoord : </td>

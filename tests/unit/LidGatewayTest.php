@@ -6,7 +6,7 @@ class LidGatewayTest extends GatewayCase {
 
     public function testFindCrediteur() {
         $this->runfixture('crediteur');
-        $res = $this->sut->findCrediteur(1);
+        $res = $this->sut->findCrediteur(self::LIDID);
         $this->assertEquals([4, 13], $res);
     }
 

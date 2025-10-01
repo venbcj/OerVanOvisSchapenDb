@@ -2,8 +2,6 @@
 
 class VolwasGatewayTest extends GatewayCase {
 
-    private const LIDID = 1;
-
     protected static $sutname = 'VolwasGateway';
 
     public function testGeenDekkingen() {

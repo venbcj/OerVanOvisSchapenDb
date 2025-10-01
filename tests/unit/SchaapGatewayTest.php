@@ -4,7 +4,6 @@ class SchaapGatewayTest extends GatewayCase {
 
     private const SCHAAP4_ID = 4;
     private const SCHAAP4_LEVENSNUMMER = '4';
-    private const LIDID = 1;
     private const STALID = 1;
     private const NEW_GESLACHT = 'ooi';
     private const NEW_LEVENSNUMMER = '9990303';
@@ -71,12 +70,12 @@ class SchaapGatewayTest extends GatewayCase {
 
     public function testZoekStapel() {
         $this->runfixture('schaap-4');
-        $this->assertEquals(1, $this->sut->zoekStapel(1));
+        $this->assertEquals(1, $this->sut->zoekStapel(self::LIDID));
     }
 
     public function testAfleverdatum() {
         $this->runfixture('schaap-afleverdatum');
-        $res = $this->sut->afleverdatum(1);
+        $res = $this->sut->afleverdatum(self::LIDID);
         $this->assertEquals(1, $res->num_rows);
     }
 
@@ -90,7 +89,7 @@ class SchaapGatewayTest extends GatewayCase {
             'kzlRam_' => '',
         ];
         $where = $this->sut->getZoekWhere($postdata);
-        $this->assertEquals(1, $this->sut->zoekSchaap($where));
+        $this->assertEquals($expected_schaapid = 1, $this->sut->zoekSchaap($where));
     }
 
     public function testZoekresultaat() {
