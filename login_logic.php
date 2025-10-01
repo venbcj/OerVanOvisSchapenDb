@@ -75,7 +75,7 @@ if (!Auth::is_logged_in()) {
     Auth::logout();
 
     if (isset($_POST['knpLogin']) || isset($_POST['knpBasis'])) {
-        $lid_gateway = new LidGateway($db);
+        $lid_gateway = new LidGateway();
         $row = $lid_gateway->findByUserPassword($_POST['txtUser'], $passw);
         if ($row) {
             Auth::login($row);
@@ -104,8 +104,8 @@ if (!Auth::is_logged_in()) {
 
     date_default_timezone_set('Europe/Paris');
 
-    $lid_gateway = new LidGateway($db);
-    $hok_gateway = new HokGateway($db);
+    $lid_gateway = new LidGateway();
+    $hok_gateway = new HokGateway();
 
     // Bepalen modules ja of nee
     $rechten = $lid_gateway->rechten($lidId);

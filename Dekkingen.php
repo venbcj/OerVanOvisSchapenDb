@@ -52,13 +52,13 @@ include "login.php"; ?>
 // wordt in javascript gebruikt, dat buiten de if() wordt ingeclude.
 $array_drachtdatum = array();
 if (Auth::is_logged_in()) { if($modtech == 1) {
-$volwas_gateway = new VolwasGateway($db);
-$historie_gateway = new HistorieGateway($db);
-$dracht_gateway = new DrachtGateway($db);
-$bezet_gateway = new BezetGateway($db);
-$schaap_gateway = new SchaapGateway($db);
-$stal_gateway = new StalGateway($db);
-$hok_gateway = new HokGateway($db);
+$volwas_gateway = new VolwasGateway();
+$historie_gateway = new HistorieGateway();
+$dracht_gateway = new DrachtGateway();
+$bezet_gateway = new BezetGateway();
+$schaap_gateway = new SchaapGateway();
+$stal_gateway = new StalGateway();
+$hok_gateway = new HokGateway();
 
     include "dekkingen.js.php";
 

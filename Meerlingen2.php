@@ -210,7 +210,7 @@ GROUP BY date_format(h.datum,'%m')
 ORDER BY date_format(h.datum,'%m')
 ";
 //echo $zoek_maanden_per_ooi; 
-$schaap_gateway = new SchaapGateway($db);
+$schaap_gateway = new SchaapGateway();
 $zoek_maanden_per_ooi = mysqli_query($db,$zoek_maanden_per_ooi) or die (mysqli_error($db));    
     while($mrl = mysqli_fetch_assoc($zoek_maanden_per_ooi))
             { $maandtxt = $mrl['mndtxt']; 

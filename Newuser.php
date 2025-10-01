@@ -60,7 +60,7 @@ if (isset ($_POST['knpSave'])) {
     $alias = getAlias($db,$login,0);
 
     $key = getApiKey($db);
-$ubn_gateway = new UbnGateway($db);
+$ubn_gateway = new UbnGateway();
 if ($ubn_gateway->exists($txtUbn)) {
     $fout = "Dit ubn bestaat al."; 
 } else {
@@ -94,7 +94,7 @@ $insert_lid = "INSERT INTO tblLeden SET
         # alias is nu de primaire sleutel; uniek door de aanpak in "getAlias" (die we "createAlias" gaan noemen).
         # Rest van de db gebruikt lidId, dus die halen we even op.
         # Na verbouwing kan een insert-query direct het aangemaakte nummer teruggeven --BCB
-        $lid_gateway = new LidGateway($db);
+        $lid_gateway = new LidGateway();
         $newId = $lid_gateway->findIdByAlias($alias);
 
         $ubn_gateway->insert($newId, $txtUbn);

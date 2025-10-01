@@ -35,7 +35,7 @@ if (Auth::is_logged_in()) { ?>
 <b> Kies een afleverdatum : </b><br/><br/>
 
 <?php
-    $schaap_gateway = new SchaapGateway($db);
+    $schaap_gateway = new SchaapGateway();
 $result = $schaap_gateway->afleverdatum($lidId);
 ?>
  <select style="width:200;" name="kzlPost" >";

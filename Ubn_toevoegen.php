@@ -22,7 +22,7 @@ include "login.php"; ?>
 <?php 
 if (Auth::is_logged_in()) {
 
-    $ubn_gateway = new UbnGateway($db);
+    $ubn_gateway = new UbnGateway();
     if (isset($_POST['knpSave_'])) {
         include "save_ubn.php";
     }

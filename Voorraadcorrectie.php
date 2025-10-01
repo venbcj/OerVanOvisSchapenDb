@@ -38,8 +38,8 @@ if (!empty($_GET['pst']))
    $split = explode('_', $name) ;
     $ink_id = $split[1]; // Laatste veldnaam moet wel een recordId hebben in de naam
 }
-$inkoop_gateway = new InkoopGateway($db);
-$artikel_gateway = new ArtikelGateway($db);
+$inkoop_gateway = new InkoopGateway();
+$artikel_gateway = new ArtikelGateway();
 $artId = $inkoop_gateway->findArtikel($ink_id);
 
     }

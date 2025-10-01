@@ -78,7 +78,7 @@ foreach ($multip_array as $recId => $id) {
         $nummer_van_datum = intval(str_replace('-', '', $txtDag));
 
         /* Eerste datum zoeken ter controle bij aanvoer bedrijf */
-        $historie_gateway = new HistorieGateway($db);
+        $historie_gateway = new HistorieGateway();
         if ($code == 'AAN' || $code == 'GER') {
             // TODO: #0004165 deze variabelen zijn alleen nodig om de foutmelding wrong_dag te vormen. Verplaats naar HistorieGateway? Nee, naar een Transactie
             [$first_day, $eerste_dag] = $historie_gateway->zoek_eerste_datum_stalop($recId);
@@ -105,7 +105,7 @@ foreach ($multip_array as $recId => $id) {
 
         /****** EINDE CONTROLE DATUM *******/
 
-        $schaap_gateway = new SchaapGateway($db);
+        $schaap_gateway = new SchaapGateway();
         /****** CONTROLE LEVENSNUMMER *******/
         // Bestaat alleen bij Geboortes en Aanvoer
         // BCB: en bij omnummeren. Commentaar loopt zo snel achter...
@@ -142,12 +142,12 @@ foreach ($multip_array as $recId => $id) {
         }
         /****** EINDE CONTROLE LEVENSNUMMER *******/
 
-        $request_gateway = new RequestGateway($db);
+        $request_gateway = new RequestGateway();
         $co = $request_gateway->find($recId);
 
         // Als verwijderd wordt hersteld bestaat kzlBest niet maar de bestemming in de database mogelijk wel en dus $fldBest dan ook !!
         // Dit t.b.v. $wrong_partij
-        $melding_gateway = new MeldingGateway($db);
+        $melding_gateway = new MeldingGateway();
         if ($fldSkip == 0 && $co['skip'] == 1) {
             $fldBest = $melding_gateway->zoek_bestemming($recId);
         }
@@ -177,7 +177,7 @@ foreach ($multip_array as $recId => $id) {
             $schaap_gateway->updateGeslacht($co['levensnummer'], $fldSekse);
         }
 
-        $stal_gateway = new StalGateway($db);
+        $stal_gateway = new StalGateway();
         // Wijzigen herkomst
         if (isset($fldHerk) && (!isset($co['rel_herk']) || $fldHerk <> $co['rel_herk'])) {
             $stal_gateway->updateHerkomstByMelding($recId, $fldHerk);

@@ -43,7 +43,7 @@ WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(st.rel_bes
 
 /* Totalen lammeren, ooien en rammen */
 
-    $schaap_gateway = new SchaapGateway($db);
+    $schaap_gateway = new SchaapGateway();
 $lammer = $schaap_gateway->aantalLamOpStal($lidId);
 $moeders = $schaap_gateway->aantalOoiOpStal($lidId);
 $vaders = $schaap_gateway->aantalRamOpStal($lidId);

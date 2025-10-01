@@ -3,11 +3,11 @@
 class PeriodeGateway extends Gateway {
 
     public function zoek_laatste_afsluitdm_geb($hokId) {
-$vw = mysqli_query($this->db,"
+$vw = $this->db->query("
 SELECT max(dmafsluit) dmstop
 FROM tblPeriode
-WHERE hokId = '".mysqli_real_escape_string($this->db,$hokId)."' and doelId = 1 and dmafsluit is not null
-") or die (mysqli_error($this->db));
+WHERE hokId = '".$this->db->real_escape_string($hokId)."' and doelId = 1 and dmafsluit is not null
+");
 if ($vw->num_rows == 0) {
     return null;
 }
@@ -15,11 +15,11 @@ return $vw->fetch_row()[0];
     }
 
     public function zoek_laatste_afsluitdm_spn($hokId) {
-$vw = mysqli_query($this->db,"
+$vw = $this->db->query("
 SELECT max(dmafsluit) dmstop
 FROM tblPeriode
-WHERE hokId = '".mysqli_real_escape_string($this->db,$hokId)."' and doelId = 2 and dmafsluit is not null
-") or die (mysqli_error($this->db));
+WHERE hokId = '".$this->db->real_escape_string($hokId)."' and doelId = 2 and dmafsluit is not null
+");
 if ($vw->num_rows == 0) {
     return null;
 }
@@ -34,7 +34,7 @@ FROM tblPeriode p
  join tblHok h on (p.hokId = h.hokId)
  left join tblVoeding v on (p.periId = v.periId)
  left join tblInkoop i on (i.inkId = v.inkId) 
-WHERE h.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+WHERE h.lidId = '".$this->db->real_escape_string($lidId)."'
  and ".db_null_filter('i.artId', $artId)."
  and p.doelId = $doelId
 ");
@@ -50,7 +50,7 @@ FROM tblPeriode p
  left join tblArtikel a on (a.artId = i.artId)
  left join tblEenheiduser eu on (a.enhuId = eu.enhuId)
  left join tblEenheid e on (e.eenhId = eu.eenhId)
-WHERE eu.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and ".db_null_filter('i.artId', $fldVoer)."
+WHERE eu.lidId = '".$this->db->real_escape_string($lidId)."' and ".db_null_filter('i.artId', $fldVoer)."
 GROUP BY date_format(p.dmafsluit,'%Y%m')
 "); 
 }
@@ -63,7 +63,7 @@ FROM tblHok ho
  left join tblVoeding v on (v.periId = p.periId)
  left join tblInkoop i on (i.inkId = v.inkId)
  left join tblArtikel a on (a.artId = i.artId) 
-WHERE ho.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+WHERE ho.lidId = '".$this->db->real_escape_string($lidId)."'
  and p.doelId = $doelId
  and ".db_null_filter('i.artId', $artId)."
  and ".$resJrmnd."
@@ -86,10 +86,10 @@ FROM tblPeriode p1
          join tblPeriode p on (v.periId = p.periId)
          join tblHok ho on (ho.hokId = p.hokId)
          join tblInkoop i on (v.inkId = i.inkId)
-        WHERE ho.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and p.doelId = $doelId
+        WHERE ho.lidId = '".$this->db->real_escape_string($lidId)."' and p.doelId = $doelId
         GROUP BY v.periId, i.artId
  ) v on (p2.periId = v.periId)
-WHERE ho.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and p1.doelId = $doelId
+WHERE ho.lidId = '".$this->db->real_escape_string($lidId)."' and p1.doelId = $doelId
 GROUP BY p2.periId, p2.hokId, p1.doelId, p2.dmafsluit, v.nutat
 ";
 }
@@ -107,7 +107,7 @@ FROM (
         FROM tblPeriode p
          join tblHok ho on (p.hokId = ho.hokId)
          join tblLeden l on (ho.lidId = l.lidId)
-        WHERE ho.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and p.doelId = $doelId
+        WHERE ho.lidId = '".$this->db->real_escape_string($lidId)."' and p.doelId = $doelId
         GROUP BY p.hokId, p.doelId
      ) p1
      join tblPeriode p on (p1.hokId = p.hokId and p1.doelId = p.doelId and p1.dmeind = p.dmafsluit)
@@ -117,7 +117,7 @@ FROM (
          join tblPeriode p on (v.periId = p.periId)
          join tblHok ho on (ho.hokId = p.hokId)
          join tblInkoop i on (v.inkId = i.inkId)
-        WHERE ho.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and p.doelId = $doelId
+        WHERE ho.lidId = '".$this->db->real_escape_string($lidId)."' and p.doelId = $doelId
         GROUP BY v.periId, i.artId
      ) v on (p.periId = v.periId)
 
@@ -127,10 +127,10 @@ FROM (
  ) p
  join tblHok ho on (ho.hokId = p.hokId)
  left join tblArtikel i on (i.artId = p.artId)
-WHERE ho.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+WHERE ho.lidId = '".$this->db->real_escape_string($lidId)."'
  and p.doelId = $doelId
  and ".db_null_filter('i.artId', $artId)."
- and date_format(p.dmeind,'%Y%m') = '".mysqli_real_escape_string($this->db,$jrmnd)."'
+ and date_format(p.dmeind,'%Y%m') = '".$this->db->real_escape_string($jrmnd)."'
     ");
 }
 
@@ -147,10 +147,10 @@ FROM tblHok ho
  join (
      SELECT p.periId, p1.hokId, p1.doelId, p1.dmbegin, p1.dmeind, v.nutat 
      FROM (
-         SELECT p.hokId, p.doelId, '".mysqli_real_escape_string($this->db,$dmstart)."' dmbegin, min(p.dmafsluit) dmeind
+         SELECT p.hokId, p.doelId, '".$this->db->real_escape_string($dmstart)."' dmbegin, min(p.dmafsluit) dmeind
         FROM tblPeriode p
          join tblHok ho on (p.hokId = ho.hokId)
-        WHERE ho.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and p.doelId = $doelId
+        WHERE ho.lidId = '".$this->db->real_escape_string($lidId)."' and p.doelId = $doelId
         GROUP BY p.hokId, p.doelId
      ) p1
      join tblPeriode p on (p1.hokId = p.hokId and p1.doelId = p.doelId and p1.dmeind = p.dmafsluit)
@@ -160,7 +160,7 @@ FROM tblHok ho
           join tblPeriode p on (v.periId = p.periId)
           join tblHok ho on (ho.hokId = p.hokId)
           join tblInkoop i on (v.inkId = i.inkId)
-         WHERE ho.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and p.doelId = $doelId
+         WHERE ho.lidId = '".$this->db->real_escape_string($lidId)."' and p.doelId = $doelId
          GROUP BY v.periId, i.artId
      ) v on (p.periId = v.periId)
 
@@ -176,10 +176,10 @@ FROM tblHok ho
           join tblPeriode p on (v.periId = p.periId)
           join tblHok ho on (ho.hokId = p.hokId)
           join tblInkoop i on (v.inkId = i.inkId)
-         WHERE ho.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and p.doelId = $doelId
+         WHERE ho.lidId = '".$this->db->real_escape_string($lidId)."' and p.doelId = $doelId
          GROUP BY v.periId, i.artId
      ) v on (p2.periId = v.periId)
-    WHERE ho.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and p1.doelId = $doelId
+    WHERE ho.lidId = '".$this->db->real_escape_string($lidId)."' and p1.doelId = $doelId
     GROUP BY p2.periId, p2.hokId, p1.doelId, p2.dmafsluit, v.nutat
  ) p  on (p.hokId = ho.hokId)
  left join tblVoeding v on (p.periId = v.periId)
@@ -194,33 +194,33 @@ FROM tblHok ho
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+    WHERE st.lidId = '".$this->db->real_escape_string($lidId)."'
  and a1.aan = 1
  and a2.uit = 1
  and h1.skip = 0
  and h2.skip = 0
- and b.hokId = '".mysqli_real_escape_string($this->db,$hokId)."'
+ and b.hokId = '".$this->db->real_escape_string($hokId)."'
     GROUP BY b.bezId, st.schaapId, h1.hisId
  ) uit on (uit.hisv = b.hisId)
  left join (
-     SELECT hisId, '".mysqli_real_escape_string($this->db,$dmbegin)."' datum, h.stalId
+     SELECT hisId, '".$this->db->real_escape_string($dmbegin)."' datum, h.stalId
      FROM tblHistorie h
       join tblStal st on (h.stalId = st.stalId)
-     WHERE h.skip = 0 and datum <= '".mysqli_real_escape_string($this->db,$dmbegin)."' and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+     WHERE h.skip = 0 and datum <= '".$this->db->real_escape_string($dmbegin)."' and st.lidId = '".$this->db->real_escape_string($lidId)."'
  
  union
 
      SELECT hisId, datum, h.stalId
      FROM tblHistorie h
       join tblStal st on (h.stalId = st.stalId)
-     WHERE h.skip = 0 and datum > '".mysqli_real_escape_string($this->db,$dmbegin)."' and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+     WHERE h.skip = 0 and datum > '".$this->db->real_escape_string($dmbegin)."' and st.lidId = '".$this->db->real_escape_string($lidId)."'
 
  ) his_in on (b.hisId = his_in.hisId)
  left join (
-    SELECT hisId, '".mysqli_real_escape_string($this->db,$dmeind)."' datum
+    SELECT hisId, '".$this->db->real_escape_string($dmeind)."' datum
      FROM tblHistorie h
       join tblStal st on (h.stalId = st.stalId)
-     WHERE h.skip = 0 and datum >= '".mysqli_real_escape_string($this->db,$dmeind)."' and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+     WHERE h.skip = 0 and datum >= '".$this->db->real_escape_string($dmeind)."' and st.lidId = '".$this->db->real_escape_string($lidId)."'
  
  union
 
@@ -228,31 +228,31 @@ FROM tblHok ho
      FROM tblHistorie h
       join tblStal st on (h.stalId = st.stalId)
      WHERE h.skip = 0
- and datum < '".mysqli_real_escape_string($this->db,$dmeind)."'
- and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+ and datum < '".$this->db->real_escape_string($dmeind)."'
+ and st.lidId = '".$this->db->real_escape_string($lidId)."'
  ) his_uit on (uit.hist = his_uit.hisId)
  left join tblStal st on (st.stalId = his_in.stalId)
  left join (
     SELECT st.schaapId, h.datum
     FROM tblStal st
      join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+    WHERE h.actId = 4 and h.skip = 0 and st.lidId = '".$this->db->real_escape_string($lidId)."'
  ) spn on (spn.schaapId = st.schaapId)
  left join (
     SELECT st.schaapId, h.datum
     FROM tblStal st
      join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+    WHERE h.actId = 3 and h.skip = 0 and st.lidId = '".$this->db->real_escape_string($lidId)."'
  ) prn on (prn.schaapId = st.schaapId)
-WHERE ho.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
- and ho.hokId = '".mysqli_real_escape_string($this->db,$hokId)."'
+WHERE ho.lidId = '".$this->db->real_escape_string($lidId)."'
+ and ho.hokId = '".$this->db->real_escape_string($hokId)."'
  and p.doelId = $doelId
  and ".db_null_filter('i.artId', $fldVoer)." 
 
  and date_format(p.dmeind,'%Y%m') = $jrmnd
  and his_in.datum < p.dmeind
- and coalesce(his_uit.datum,CURDATE()) > p.dmbegin ".mysqli_real_escape_string($this->db,$filterDoel)."
- and ".mysqli_real_escape_string($this->db,$resHok)."
+ and coalesce(his_uit.datum,CURDATE()) > p.dmbegin ".$this->db->real_escape_string($filterDoel)."
+ and ".$this->db->real_escape_string($resHok)."
  
 GROUP BY p.periId, ho.hokId, ho.hoknr, p.dmbegin, p.dmeind, p.nutat
 ORDER BY ho.hokId, p.dmeind
@@ -268,10 +268,10 @@ FROM tblHok ho
  join (
      SELECT p.periId, p1.hokId, p1.doelId, p1.dmbegin, p1.dmeind, v.nutat 
      FROM (
-         SELECT p.hokId, p.doelId, '".mysqli_real_escape_string($this->db,$dmstart)."' dmbegin, min(p.dmafsluit) dmeind
+         SELECT p.hokId, p.doelId, '".$this->db->real_escape_string($dmstart)."' dmbegin, min(p.dmafsluit) dmeind
         FROM tblPeriode p
          join tblHok ho on (p.hokId = ho.hokId)
-        WHERE ho.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and p.doelId = $doelId
+        WHERE ho.lidId = '".$this->db->real_escape_string($lidId)."' and p.doelId = $doelId
         GROUP BY p.hokId, p.doelId
      ) p1
      join tblPeriode p on (p1.hokId = p.hokId and p1.doelId = p.doelId and p1.dmeind = p.dmafsluit)
@@ -281,7 +281,7 @@ FROM tblHok ho
           join tblPeriode p on (v.periId = p.periId)
           join tblHok ho on (ho.hokId = p.hokId)
           join tblInkoop i on (v.inkId = i.inkId)
-         WHERE ho.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and p.doelId = $doelId
+         WHERE ho.lidId = '".$this->db->real_escape_string($lidId)."' and p.doelId = $doelId
          GROUP BY v.periId, i.artId
      ) v on (p.periId = v.periId)
 
@@ -297,21 +297,21 @@ FROM tblHok ho
           join tblPeriode p on (v.periId = p.periId)
           join tblHok ho on (ho.hokId = p.hokId)
           join tblInkoop i on (v.inkId = i.inkId)
-         WHERE ho.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and p.doelId = $doelId
+         WHERE ho.lidId = '".$this->db->real_escape_string($lidId)."' and p.doelId = $doelId
          GROUP BY v.periId, i.artId
      ) v on (p2.periId = v.periId)
-    WHERE ho.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and p1.doelId = $doelId
+    WHERE ho.lidId = '".$this->db->real_escape_string($lidId)."' and p1.doelId = $doelId
     GROUP BY p2.periId, p2.hokId, p1.doelId, p2.dmafsluit, v.nutat
  ) p  on (p.hokId = ho.hokId)
  left join tblVoeding v on (p.periId = v.periId)
  left join tblInkoop i on (i.inkId = v.inkId)
  
-WHERE ho.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
- and ho.hokId = '".mysqli_real_escape_string($this->db,$hokId)."'
+WHERE ho.lidId = '".$this->db->real_escape_string($lidId)."'
+ and ho.hokId = '".$this->db->real_escape_string($hokId)."'
  and p.doelId = $doelId
  and ".db_null_filter('i.artId', $artId)." 
  and date_format(p.dmeind,'%Y%m') = $jrmnd
- and '".mysqli_real_escape_string($this->db,$resHok)."'
+ and '".$this->db->real_escape_string($resHok)."'
  
 GROUP BY p.periId, ho.hokId, ho.hoknr, p.dmbegin, p.dmeind, p.nutat
 ORDER BY ho.hokId, p.dmeind

@@ -69,7 +69,7 @@ GROUP BY l.relnr
 
 $aantMeld = aantal_melden($db,$reqId); // Aantal dieren te melden functie gedeclareerd in basisfuncties.php
 
-$melding_gateway = new MeldingGateway($db);
+$melding_gateway = new MeldingGateway();
 
 
 $oke = $melding_gateway->aantal_oke_uitv($lidId,$reqId,$vw_HistorieDm);

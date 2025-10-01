@@ -3,7 +3,7 @@
 class MeldingGateway extends Gateway {
 
     public function zoek_bestemming($recId) {
-    $vw = mysqli_query($this->db, "
+    $vw = $this->db->query("
 SELECT st.rel_best
 FROM tblMelding m
  join tblHistorie h on (m.hisId = h.hisId)
@@ -11,27 +11,27 @@ FROM tblMelding m
 WHERE m.meldId = '$recId'
 ");
 $fldBest = null;
-            while ($zbid = mysqli_fetch_assoc($vw)) {
+            while ($zbid = $vw->fetch_assoc()) {
                 $fldBest = $zbid['rel_best'];
             }
 return $fldBest;
     }
 
     public function updateSkip($recId, $fldSkip) {
-        mysqli_query($this->db, "
-UPDATE tblMelding SET skip = '".mysqli_real_escape_string($this->db, $fldSkip)."', fout = NULL
+        $this->db->query("
+UPDATE tblMelding SET skip = '".$this->db->real_escape_string($fldSkip)."', fout = NULL
 WHERE meldId = '$recId' ");
     }
 
     public function updateFout($recId, $wrong) {
-        mysqli_query($this->db, "
+        $this->db->query("
 UPDATE tblMelding SET fout = " . db_null_input($wrong ?? null) . "
 WHERE meldId = '$recId' and skip <> 1");
     }
 
     // Aantal dieren goed geregistreerd om automatisch te kunnen melden. De datum mag hier niet liggen na de afvoerdatum.
     public function aantal_oke_Omnum($fldReqId) {
-        $juistaantal = mysqli_query ($this->db,"
+        $vw = $this->db->query("
 SELECT count(*) aant 
 FROM tblMelding m
  join tblHistorie h on (h.hisId = m.hisId)
@@ -45,15 +45,15 @@ FROM tblMelding m
     WHERE a.af = 1 and h.skip = 0
     GROUP BY schaapId
  ) afv on (st.schaapId = afv.schaapId)
-WHERE m.reqId = '".mysqli_real_escape_string($this->db,$fldReqId)."'
+WHERE m.reqId = '".$this->db->real_escape_string($fldReqId)."'
  and h.skip = 0
  and h.datum is not null
  and (h.datum <= afv.datum or isnull(afv.datum))
  and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12 
  and m.skip <> 1
 ");
-    if($juistaantal)
-    {    $row = mysqli_fetch_assoc($juistaantal);
+    if($vw)
+    {    $row = $vw->fetch_assoc();
             return $row['aant'];
     }
     return FALSE;
@@ -61,7 +61,7 @@ WHERE m.reqId = '".mysqli_real_escape_string($this->db,$fldReqId)."'
 
 // Aantal dieren goed geregistreerd om automatisch te kunnen melden.
 public function aantal_oke_uitv($lidid,$fldReqId,$nestHistorieDm) {
-$juistaantal = mysqli_query ($this->db,"
+$vw = $this->db->query("
 SELECT count(*) aant
 FROM tblMelding m
  join tblHistorie h on (h.hisId = m.hisId)
@@ -75,7 +75,7 @@ FROM tblMelding m
  ) mhd on (st.schaapId = mhd.schaapId)
  join tblRelatie r on (r.relId = st.rel_best)
  join tblPartij p on (r.partId = p.partId)
-WHERE m.reqId = '".mysqli_real_escape_string($this->db,$fldReqId)."'
+WHERE m.reqId = '".$this->db->real_escape_string($fldReqId)."'
  and h.datum is not null
  and h.datum >= mhd.lastdatum
  and h.datum <= curdate()
@@ -84,15 +84,15 @@ WHERE m.reqId = '".mysqli_real_escape_string($this->db,$fldReqId)."'
  and m.skip <> 1
  and h.skip = 0                            
 ");
-    if($juistaantal)
-    {    $row = mysqli_fetch_assoc($juistaantal);
+    if($vw)
+    {    $row = $vw->fetch_assoc();
             return $row['aant'];
     }
     return FALSE;
 }
 
 public function aantal_oke_afv($lidid,$fldReqId,$nestHistorieDm) {
-$juistaantal = mysqli_query ($this->db,"
+$vw = $this->db->query("
 SELECT count(*) aant
 FROM tblMelding m
  join tblHistorie h on (m.hisId = h.hisId)
@@ -105,7 +105,7 @@ FROM tblMelding m
     WHERE (a.af = 0 or isnull(a.af)) and hd.actie != 'Gevoerd' and hd.actie not like '% gemeld'
     GROUP BY schaapId
  ) mhd on (s.schaapId = mhd.schaapId)
-WHERE m.reqId = '".mysqli_real_escape_string($this->db,$fldReqId)."' 
+WHERE m.reqId = '".$this->db->real_escape_string($fldReqId)."' 
  and h.datum is not null
  and h.datum >= mhd.lastdatum
  and h.datum <= (curdate() + interval 3 day)
@@ -114,8 +114,8 @@ WHERE m.reqId = '".mysqli_real_escape_string($this->db,$fldReqId)."'
  and m.skip <> 1
  and h.skip = 0
 ");
-    if($juistaantal)
-    {    $row = mysqli_fetch_assoc($juistaantal);
+    if($vw)
+    {    $row = $vw->fetch_assoc();
             return $row['aant'];
     }
     return FALSE;

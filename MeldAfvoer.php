@@ -68,7 +68,7 @@ FROM tblRequest rq
  join tblLeden l on (l.lidId = st.lidId)
 WHERE h.skip = 0 and l.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(rq.dmmeld) and rq.code = 'AFV' 
 GROUP BY l.relnr
-") or die (mysqli_error($db));
+");
     While ($req = mysqli_fetch_assoc($zoek_oudste_request_niet_definitief_gemeld))
     {    $reqId = $req['reqId']; }
 // Einde De gegevens van het request
@@ -76,7 +76,7 @@ GROUP BY l.relnr
 
 $aantMeld = aantal_melden($db,$reqId); // Aantal dieren te melden functie gedeclareerd in basisfuncties.php
 
-$melding_gateway = new MeldingGateway($db);
+$melding_gateway = new MeldingGateway();
 
 // Aantal dieren goed geregistreerd om automatisch te kunnen melden.
 $oke = $melding_gateway->aantal_oke_afv($lidId,$reqId,$vw_HistorieDm);
@@ -90,7 +90,7 @@ $qry_Leden = mysqli_query($db,"
 SELECT alias
 FROM tblLeden
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
-") or die (mysqli_error($db));
+");
 
     while ($row = mysqli_fetch_assoc($qry_Leden))
         {    $alias = $row['alias']; }
@@ -129,7 +129,7 @@ WHERE rq.reqId = '".mysqli_real_escape_string($db,$reqId)."'
  and p.ubn is not null
  and m.skip <> 1 and h.skip = 0
  and isnull(m.fout)
-") or die (mysqli_error($db));   
+");   
   
     while ($row = mysqli_fetch_array($qry_txtRequest_RVO)) {
         $num = mysqli_num_fields($qry_txtRequest_RVO) ;    
@@ -146,7 +146,7 @@ WHERE rq.reqId = '".mysqli_real_escape_string($db,$reqId)."'
 
 // Melddatum registreren in tblRequest bij > 0 te melden en definitieve melding
  $upd_tblRequest = "UPDATE tblRequest SET dmmeld = now() WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."' and def = 'J' ";
-    mysqli_query($db,$upd_tblRequest) or die (mysqli_error($db));
+    mysqli_query($db,$upd_tblRequest);
     
         if($_POST['kzlDef_'] == 'J'){
     $knptype = "hidden"; }
@@ -156,7 +156,7 @@ WHERE rq.reqId = '".mysqli_real_escape_string($db,$reqId)."'
 else if ( $aantMeld == 0 || $oke == 0) {
 // Melddatum registreren in tblRequest bij 0 te melden
  $upd_tblRequest = "UPDATE tblRequest SET dmmeld = now(), def = 'J' WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."' ";
-    mysqli_query($db,$upd_tblRequest) or die (mysqli_error($db));
+    mysqli_query($db,$upd_tblRequest);
     
         if($_POST['kzlDef_'] == 'J' || $aantMeld == 0){
     $knptype = "hidden"; 
@@ -172,7 +172,7 @@ $definitief = mysqli_query($db, "
 SELECT r.def 
 FROM tblRequest r 
 WHERE r.reqId = '".mysqli_real_escape_string($db,$reqId)."' 
-") or die (mysqli_error($db));
+");
 
     while($defi = mysqli_fetch_assoc($definitief))
     {    $def = $defi['def'];    }
@@ -289,7 +289,7 @@ FROM tblMelding m
  left join impRespons rs on (lrs.respId = rs.respId)
 WHERE h.skip = 0 and m.reqId = '".mysqli_real_escape_string($db,$reqId)."' and isnull(hide.meldId)
 ORDER BY u.ubn, m.skip, if (h.datum < mhd.datum, 1, if(h.datum > (curdate() + interval 3 day),1,0 )) desc, right(s.levensnummer,".$Karwerk.")
-" ) or die (mysqli_error($db));
+" );
 
     while($row = mysqli_fetch_assoc($zoek_meldregels))
     {
@@ -365,7 +365,7 @@ FROM tblPartij p
 WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and r.relatie = 'deb' and p.actief = 1 and r.actief = 1
 ORDER BY naam
 "; 
-$relatienr = mysqli_query ($db,$qryRelatie) or die (mysqli_error($db)); 
+$relatienr = mysqli_query ($db,$qryRelatie); 
 
 $index = 0; 
 while ($rnr = mysqli_fetch_array($relatienr)) 

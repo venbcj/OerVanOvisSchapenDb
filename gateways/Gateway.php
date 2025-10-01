@@ -18,7 +18,7 @@ class Gateway {
     }
 
     protected function run_query($SQL, $args = []) {
-        return mysqli_query($this->db, $this->expand($SQL, $args));
+        return $this->db->query($this->expand($SQL, $args));
     }
 
     protected function first_field($SQL, $args = [], $default = null) {

@@ -3,29 +3,29 @@
 class VolwasGateway extends Gateway {
 
     public function zoek_laatste_koppel_na_laatste_worp_obv_moeder($kzlMdr) {
-        $vw = mysqli_query($this->db,"
+        $vw = $this->db->query("
 SELECT max(v.volwId) volwId
 FROM tblVolwas v
  left join tblHistorie dek on (dek.hisId = v.hisId)
  left join tblSchaap lam on (lam.volwId = v.volwId)
-WHERE (isnull(dek.skip) or dek.skip = 0) and isnull(lam.volwId) and v.mdrId = '".mysqli_real_escape_string($this->db,$kzlMdr)."'
+WHERE (isnull(dek.skip) or dek.skip = 0) and isnull(lam.volwId) and v.mdrId = '".$this->db->real_escape_string($kzlMdr)."'
 ");
 return $vw->fetch_row()[0];
     }
 
     public function zoek_moeder_vader_uit_laatste_koppel($koppel) {
-        $zoek_moeder_vader_uit_laatste_koppel = mysqli_query($this->db,"
+        $vw = $this->db->query("
 SELECT mdrId, vdrId, v.hisId his_dek, d.hisId his_dracht
 FROM tblVolwas v
  left join tblDracht d on (d.volwId = v.volwId) 
  left join tblHistorie hd on (hd.hisId = d.hisId)
-WHERE (isnull(hd.skip) or hd.skip = 0) and v.volwId = '".mysqli_real_escape_string($this->db,$koppel)."'
+WHERE (isnull(hd.skip) or hd.skip = 0) and v.volwId = '".$this->db->real_escape_string($koppel)."'
 ");
 $lst_mdr = 0;
 $lst_vdr = 0;
 $dekMoment = 0;
 $drachtMoment = 0;
-    while ( $v_m = mysqli_fetch_assoc ($zoek_moeder_vader_uit_laatste_koppel)) { 
+    while ( $v_m = $vw->fetch_assoc()) { 
         $lst_mdr = $v_m['mdrId']; 
         $lst_vdr = $v_m['vdrId']; 
         $dekMoment = $v_m['his_dek']; 
@@ -34,25 +34,25 @@ return [$lst_mdr, $lst_vdr, $dekMoment, $drachtMoment];
 }
 
 public function vroegst_volgende_dekdatum($kzlMdr) {
-    $zoek_60dagen_na_laatste_worp = mysqli_query($this->db,"
+    $vw = $this->db->query("
 SELECT date_add(max(h.datum),interval 60 day) datum
 FROM tblVolwas v
  join tblSchaap lam on (lam.volwId = v.volwId)
  join tblStal st on (st.schaapId = lam.schaapId)
  join tblHistorie h on (h.stalId = st.stalId)
-WHERE mdrId = '".mysqli_real_escape_string($this->db,$kzlMdr)."' and h.actId = 1 and h.skip = 0
-") or die (mysqli_error($this->db));
+WHERE mdrId = '".$this->db->real_escape_string($kzlMdr)."' and h.actId = 1 and h.skip = 0
+");
 
-while ( $vw = mysqli_fetch_assoc ($zoek_60dagen_na_laatste_worp)) { $vroegst_volgende_dekdatum = $vw['datum']; } 
+while ( $row = $vw->fetch_assoc()) { $vroegst_volgende_dekdatum = $row['datum']; } 
 return $vroegst_volgende_dekdatum ?? null;
 }
 
 public function zoek_laatste_worp_moeder($mdrId) {
-   $vw = mysqli_query($this->db,"
+   $vw = $this->db->query("
 SELECT max(v.volwId) max_worp
 FROM tblVolwas v
  join tblSchaap s on (v.volwId = s.volwId)
-WHERE v.mdrId = '" . mysqli_real_escape_string($this->db,$mdrId) . "'
+WHERE v.mdrId = '" . $this->db->real_escape_string($mdrId) . "'
 ");
 return $vw->fetch_row()[0];
 }
@@ -70,7 +70,7 @@ FROM tblVolwas v
      SELECT hisId, h.datum dekdate, date_format(h.datum,'%d-%m-%Y') dekdatum, year(h.datum) dekjaar, skip
      FROM tblHistorie h
       join tblStal st on (st.stalId = h.stalId)
-     WHERE actId = 18 and skip = 0 and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+     WHERE actId = 18 and skip = 0 and st.lidId = '".$this->db->real_escape_string($lidId)."'
  ) dek on (v.hisId = dek.hisId)
  left join tblSchaap vdr on (v.vdrId = vdr.schaapId)
  left join (
@@ -78,7 +78,7 @@ FROM tblVolwas v
      FROM tblDracht d 
      join tblHistorie h on (h.hisId = d.hisId)
      join tblStal st on (st.stalId = h.stalId)
-    WHERE actId = 19 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+    WHERE actId = 19 and h.skip = 0 and st.lidId = '".$this->db->real_escape_string($lidId)."'
  ) dra on (dra.volwId = v.volwId)
  left join tblSchaap lam on (lam.volwId = v.volwId)
  left join tblStal stl on (stl.schaapId = lam.schaapId)
@@ -112,10 +112,10 @@ FROM tblVolwas v
     WHERE (dek.hisId is not null or dra.volwId is not null) and isnull(ha.schaapId)
     GROUP BY mdrId
  ) lst_v on (lst_v.mdrId = v.mdrId)
-WHERE stm.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
- and (isnull(stl.lidId) or stl.lidId = '".mysqli_real_escape_string($this->db,$lidId)."')
+WHERE stm.lidId = '".$this->db->real_escape_string($lidId)."'
+ and (isnull(stl.lidId) or stl.lidId = '".$this->db->real_escape_string($lidId)."')
  and (dekdatum is not null or drachtdatum is not null)
- and coalesce(dekjaar, dekjaar_obv_worp, drachtjaar) = '".mysqli_real_escape_string($this->db,$jaar)."'
+ and coalesce(dekjaar, dekjaar_obv_worp, drachtjaar) = '".$this->db->real_escape_string($jaar)."'
  and isnull(stm.rel_best)
 GROUP BY v.volwId, v.hisId, dekdatum, v.mdrId, mdr.levensnummer, v.vdrId, drachtdatum, werpdatum, v.grootte
 ORDER BY right(mdr.levensnummer,$Karwerk), dekdate desc
