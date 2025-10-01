@@ -2,6 +2,10 @@
 
 class UbnToevoegenTest extends IntegrationCase {
 
+    public static function teardownAfterClass(): void {
+        self::runfixture('ubn-reset'); // anders gaan allerlei andere tests dood die op een ubn-record rekenen
+    }
+
     public function testSave_zet_inactief() {
         $this->runfixture('ubn-reset');
         $this->uses_db();
