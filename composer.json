@@ -7,9 +7,15 @@
         }
     },
     "autoload-dev": {
-        "psr-4": {"Test\\": "tests/"}
+        "psr-4": {
+            "Test\\": "tests/",
+            "Utils\\Rector\\": "utils/rector/src",
+            "Utils\\Rector\\Tests\\": "utils/rector/tests"
+        }
     },
     "require-dev": {
-        "phpunit/phpunit": "^8"
+        "phpunit/phpunit": "^8",
+        "rector/rector": "^1.2",
+        "nikic/php-parser": "^4.19"
     }
 }

@@ -8,6 +8,9 @@
       <file>tests/approval/GebruikerPageTest.php</file>
       <file>tests/integration/GebruikerTest.php</file>
     </testsuite>
+    <testsuite name="rector">
+      <directory>utils/rector/tests</directory>
+    </testsuite>
   </testsuites>
   <filter>
     <whitelist processUncoveredFilesFromWhitelist="false">
