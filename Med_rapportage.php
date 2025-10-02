@@ -28,7 +28,7 @@ include "login.php"; ?>
                 <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) { if($modtech ==1) {
-$schaap_gateway = new SchaapGateway($db);
+$schaap_gateway = new SchaapGateway();
 
 $minjaar = date("Y")-8;
 $maxjaar = date("Y");
@@ -53,7 +53,7 @@ ORDER BY date_format(h.datum,'%Y%m') desc
 <table Border = 0 align = "center">
 
 <?php
-    $artikel_gateway = new ArtikelGateway($db);
+    $artikel_gateway = new ArtikelGateway();
 $kzl = $artikel_gateway->pilForLid($lidId);
 ?>
 <form action = "Med_rapportage.php" method = "post">

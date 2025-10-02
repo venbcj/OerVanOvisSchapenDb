@@ -88,7 +88,7 @@ If (empty($_POST['kzlWerknr_'])) {$pstwerknr = NULL;} else {$pstwerknr = $_POST[
 
 <!-- kzlLevensnummer -->
 <?php
-$schaap_gateway = new SchaapGateway($db);
+$schaap_gateway = new SchaapGateway();
 $kzlLam = $schaap_gateway->eigen_schapen($lidId);
 ?> 
  <td>

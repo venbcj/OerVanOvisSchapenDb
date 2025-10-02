@@ -14,7 +14,7 @@ return $vw->fetch_row()[0];
     }
 
     public function zoek_moeder_vader_uit_laatste_koppel($koppel) {
-        $zoek_moeder_vader_uit_laatste_koppel = $this->db->query("
+        $vw = $this->db->query("
 SELECT mdrId, vdrId, v.hisId his_dek, d.hisId his_dracht
 FROM tblVolwas v
  left join tblDracht d on (d.volwId = v.volwId) 
@@ -25,7 +25,7 @@ $lst_mdr = 0;
 $lst_vdr = 0;
 $dekMoment = 0;
 $drachtMoment = 0;
-    while ( $v_m = $zoek_moeder_vader_uit_laatste_koppel->fetch_assoc()) { 
+    while ( $v_m = $vw->fetch_assoc()) { 
         $lst_mdr = $v_m['mdrId']; 
         $lst_vdr = $v_m['vdrId']; 
         $dekMoment = $v_m['his_dek']; 
@@ -34,7 +34,7 @@ return [$lst_mdr, $lst_vdr, $dekMoment, $drachtMoment];
 }
 
 public function vroegst_volgende_dekdatum($kzlMdr) {
-    $zoek_60dagen_na_laatste_worp = $this->db->query("
+    $vw = $this->db->query("
 SELECT date_add(max(h.datum),interval 60 day) datum
 FROM tblVolwas v
  join tblSchaap lam on (lam.volwId = v.volwId)
@@ -43,7 +43,7 @@ FROM tblVolwas v
 WHERE mdrId = '".$this->db->real_escape_string($kzlMdr)."' and h.actId = 1 and h.skip = 0
 ");
 
-while ( $vw = $zoek_60dagen_na_laatste_worp->fetch_assoc()) { $vroegst_volgende_dekdatum = $vw['datum']; } 
+while ( $row = $vw->fetch_assoc()) { $vroegst_volgende_dekdatum = $row['datum']; } 
 return $vroegst_volgende_dekdatum ?? null;
 }
 

@@ -29,7 +29,7 @@ include "login.php"; ?>
             <TD valign = 'top'>
 <?php
 if (Auth::is_logged_in()) { if($modfin == 1) {
-    $salber_gateway = new SalberGateway($db);
+    $salber_gateway = new SalberGateway();
 
 require_once "func_euro.php";
 
@@ -57,7 +57,7 @@ if(isset($_POST['knpSave_'])) { include "save_saldoberekening.php"; }
 $gebrn = $salber_gateway->countGeborenInJaar($lidId, $kzlJaar);
 /********    einde     JAARTOTALEN T.B.V. PROGNOSE    einde    ********/ 
 /********    JAARTOTALEN T.B.V. REALITEIT    ********/
-$schaap_gateway = new SchaapGateway($db);
+$schaap_gateway = new SchaapGateway();
     $moe = $schaap_gateway->zoek_ooien_in_jaar($lidId, $kzlJaar);
 # NOTE jan1 kun je ook ter plekke berekenen uit kzlJaar
 # TODO geldt "op 1 januari" niet? Query doet > jan1
@@ -282,7 +282,7 @@ if(isset($oud_eenh) && $oud_eenh <> $eenh) { ?>
 
 <?php
   // TODO uit de loop tillen
-  $rubriek_gateway = new RubriekGateway($db);
+  $rubriek_gateway = new RubriekGateway();
   $zoek_HfdRubriek = $rubriek_gateway->zoekHoofdrubriek($lidId);
     while ($rh = mysqli_fetch_assoc($zoek_HfdRubriek)) { $rubhId = $rh['rubhId']; $rubriek_h = $rh['rubriek']; ?>
 

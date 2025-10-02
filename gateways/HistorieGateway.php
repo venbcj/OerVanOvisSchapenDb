@@ -37,26 +37,26 @@ FROM tblHistorie h
     }
 
     public function zoek_dekdatum($dekMoment) {
-        $zoek_dekdatum = $this->db->query("
+        $vw = $this->db->query("
 SELECT date_format(datum,'%d-%m-%Y') datum, year(datum) jaar
 FROM tblHistorie
 WHERE hisId = '".$this->db->real_escape_string($dekMoment)."' and skip = 0
     ");
         $dekdm = 0;
         $dekjaar = 0;
-        while ( $zd = $zoek_dekdatum->fetch_assoc()) {
+        while ( $zd = $vw->fetch_assoc()) {
             $dekdm = $zd['datum']; $dekjaar = $zd['jaar']; 
         }
         return [$dekdm, $dekjaar];
         }
 
     public function zoek_drachtdatum($drachtMoment) {
-        $zoek_drachtdatum = $this->db->query("
+        $vw = $this->db->query("
 SELECT date_format(datum,'%d-%m-%Y') datum
 FROM tblHistorie
 WHERE hisId = '".$this->db->real_escape_string($drachtMoment)."' and skip = 0
 ");
-while ( $zd = $zoek_drachtdatum->fetch_assoc()) {
+while ( $zd = $vw->fetch_assoc()) {
     $drachtdm = $zd['datum']; 
 }
 return $drachtdm ?? 0;
@@ -101,7 +101,7 @@ WHERE st.lidId = '".$this->db->real_escape_string($lidId)."'
  and st.schaapId = '".$this->db->real_escape_string($mdrId)."'
  and h.datum = '".$this->db->real_escape_string($date_verblijf)."'
 "); 
-while ($zhvtd = $zoek_hisId_verblijf_tijdens_dekking->fetch_array()) 
+while ($zhvtd = $vw->fetch_array()) 
 { $hisId_verblijf = $zhvtd['hisId']; }
 return $hisId_verblijf ?? null;
 }

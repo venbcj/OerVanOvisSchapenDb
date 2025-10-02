@@ -18,12 +18,12 @@ ORDER BY hoknr
     }
 
 public function lidIdByHokId($hok) {
-$zoek_lid = $this->db->query("
+$vw = $this->db->query("
 SELECT lidId
 FROM tblHok
 WHERE hokId = ".$this->db->real_escape_string($hok)." 
 ");
-while ($row = $zoek_lid->fetch_assoc()) { $lidId = $row['lidId']; }
+while ($row = $vw->fetch_assoc()) { $lidId = $row['lidId']; }
 return $lidId;
 }
 

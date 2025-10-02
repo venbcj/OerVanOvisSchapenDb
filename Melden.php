@@ -38,7 +38,7 @@ if (Auth::is_logged_in()) {
         // TODO: dit nader uitzoeken. Doet geen uitvoer, maar zou wel $fout kunnen vullen. Dat heeft dan effect via menuMelden...
         include "responscheck.php";
         // Controleren of inloggevens bestaan
-        $lid_gateway = new LidGateway($db);
+        $lid_gateway = new LidGateway();
         if ($lid_gateway->hasCompleteRvo($lidId)) {
             $viewdata['links'] = Menu::melden($db, $lidId);
         }

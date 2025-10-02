@@ -107,7 +107,7 @@ while($jm = mysqli_fetch_assoc($ooien_met_meerlingworpen)) {
 <table border = 0>
 
 <?php
-    $schaap_gateway = new SchaapGateway($db);
+    $schaap_gateway = new SchaapGateway();
 $mling2 = $schaap_gateway->aantal_meerlingen_perOoi($lidId,$ooiId,2);
     while($mrl = mysqli_fetch_assoc($mling2))
             {

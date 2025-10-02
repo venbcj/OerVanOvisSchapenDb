@@ -46,7 +46,7 @@ FROM tblBezet b
     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
 WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(uit.bezId) and isnull(spn.schaapId) and isnull(prnt.schaapId) and h.skip = 0
-") or Logger::error(mysqli_error($this->db));
+");
 if ($vw->num_rows == 0) {
     return 0;
 }
@@ -295,7 +295,9 @@ FROM (
         WHERE h.lidId = '".$this->db->real_escape_string($lidId)."' and p.doelId = 2 and dmafsluit is not null
         GROUP BY p.hokId
      ) endspn on (endspn.hokId = b.hokId)
-    WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and ht.datum > coalesce(dmstop,'1973-09-11') 
+    WHERE st.lidId = '".$this->db->real_escape_string($lidId)."'
+    -- 9-1-2019 weggehaald and (isnull(prnt.schaapId) or prnt.datum > coalesce(dmstop,'1973-09-11'))
+     and ht.datum > coalesce(dmstop,'1973-09-11') 
      and (h.datum > spn.datum || (h.datum = spn.datum && h.hisId >= spn.hisId) )
      and (isnull(prnt.schaapId) or h.datum < prnt.datum)
      and h.skip = 0
@@ -645,7 +647,7 @@ FROM tblBezet b
     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
 WHERE b.hokId = '".$this->db->real_escape_string($hokId)."' and ht.actId = 5
- and (ht.datum > '".$this->db->real_escape_string($dmstopspn)."' or (ht.datum = '".$this->db->real_escape_string($dmstopspn)."' and h.datum = '".$this->db->real_escape_string($dmstopspn)."' and h.hisId < ht.hisId))
+ and (ht.datum > '".$this->db->real_escape_string($dmstopspn)."' or (ht.datum = '".$this->db->real_escape_string($dmstopspn)."' and h.datum = '".$this->db->real_escape_string($dmstopspn /* or (ht.datum = spn.datum and his_spn < hist) is voor als speendatum == overplaatsing en overplaatsing heeft eerder plaatsgevonden */)."' and h.hisId < ht.hisId))
 and (ht.datum > spn.datum or (ht.datum = spn.datum and his_spn < hist))
 and (isnull(prnt.schaapId) or h.datum < prnt.datum)
 and h.skip = 0

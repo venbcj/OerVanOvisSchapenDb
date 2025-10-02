@@ -630,7 +630,7 @@ function setup_db() {
     Tweede query zoek naar readerApp versie i.c.m. taakversies
     Derde query zoek naar alleen taakversies */
 function setup_versies($db, $persoonlijke_map) {
-    $versie_gateway = new VersieGateway($db);
+    $versie_gateway = new VersieGateway();
     $last_versieId = $versie_gateway->zoek_laatste_versie();
     $Readersetup_bestand = $versie_gateway->zoek_readersetup_in($last_versieId);
     $Readertaken_bestand = $versie_gateway->zoek_readertaken_in($last_versieId);

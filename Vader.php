@@ -26,7 +26,7 @@ include "login.php"; ?>
 <?php
 if (Auth::is_logged_in()) {
     if ($modtech == 1) {
-        $schaap_gateway = new SchaapGateway($db);
+        $schaap_gateway = new SchaapGateway();
         $pdf = $schaap_gateway->zoek_stalid($lidId);
         $vaders = $schaap_gateway->zoek_vaders($lidId, $Karwerk);
         View::render('vader/list', [

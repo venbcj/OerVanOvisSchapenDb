@@ -7,7 +7,7 @@ require_once("autoload.php");
 
 require_once "just_connect_db.php";
 
-$hok_gateway = new HokGateway($db);
+$hok_gateway = new HokGateway();
 $rapport = 'Verblijven';
 $Afdrukstand = 'P';
 if ($Afdrukstand == 'P') { $headerWidth = 190; $imageWidth = 169; }

@@ -19,7 +19,7 @@ WHERE sb.tbl = 'ru' and ru.lidId = '".$this->db->real_escape_string($lidId)."'
 }
 
         public function insertJaar($lidId, $nextjaar) {
-$this->db->query("
+            $this->db->query("
 INSERT INTO tblSalber (datum, tbl, tblId, waarde)
     SELECT '".$nextjaar."-01-01', 'eu', elemuId, waarde
     FROM tblElementuser

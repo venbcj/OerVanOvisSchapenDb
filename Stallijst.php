@@ -79,7 +79,7 @@ include "login.php"; ?>
 <?php
 if (Auth::is_logged_in()) {
 
-    $schaap_gateway = new SchaapGateway($db);
+    $schaap_gateway = new SchaapGateway();
     $stapel = $schaap_gateway->zoekStapel($lidId);
 
     $aantalLam_opStal = $schaap_gateway->aantalLamOpStal($lidId);

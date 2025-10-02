@@ -63,7 +63,7 @@ GROUP BY l.relnr
 $aantMeld = aantal_melden($db,$reqId); // Aantal dieren te melden functie gedeclareerd in basisfuncties.php
 // Einde Aantal dieren te melden
 
-$melding_gateway = new MeldingGateway($db);
+$melding_gateway = new MeldingGateway();
 
 $oke = $melding_gateway->aantal_oke_Omnum($reqId);
 // Einde Aantal dieren goed geregistreerd om automatisch te kunnen melden.

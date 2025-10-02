@@ -20,12 +20,12 @@ include "url.php";
 
 /*** Script ter controle van het bestaan van Response.txt bestanden afkomstig van RVO ***/
 // Lokatie en klant gegegevens Responsbestand ophalen
-$lid_gateway = new LidGateway($db);
+$lid_gateway = new LidGateway();
 $alias = $lid_gateway->findAlias($lidId);
 $dir = dirname(__FILE__); // Locatie bestanden op FTP server
 
 // De gegevens van het request uit impResponse waarvan de laatste import een controle melding is
-$request_gateway = new RequestGateway($db);
+$request_gateway = new RequestGateway();
 $zoek_laatste_response = $request_gateway->zoekLaatsteResponse($lidId);
 // is dit terecht een while(), of is er hoogstens 1 regel?
 while ($req = mysqli_fetch_assoc($zoek_laatste_response)) {

@@ -4,18 +4,22 @@ define('APP', '/usr/local/var/chi/proj/OerVanOvisSchapenDb/');
 
 class Logger {
 
-    public static function error($msg) {
+    public static function instance() {
+        return new self();
+    }
+
+    public function error($msg) {
         error_log('ERROR: '.$msg.PHP_EOL, 3, APP.'log/development.log');
-        error_log(self::trace(), 3, APP.'log/development.log');
+        error_log($this->trace(), 3, APP.'log/development.log');
         # throw new Exception($msg);
     }
 
-    public static function debug($msg) {
+    public function debug($msg) {
         error_log('DEBUG: '.$msg.PHP_EOL, 3, APP.'log/development.log');
         # throw new Exception($msg);
     }
 
-    private static function trace() {
+    private function trace() {
         $tr = debug_backtrace();
         array_shift($tr);
         #array_shift($tr);
@@ -23,7 +27,7 @@ class Logger {
         return PHP_EOL . implode(PHP_EOL, $el) . PHP_EOL;
     }
 
-    private static function line($el) {
+    private function line($el) {
         $res = '';
         extract($el);
         if (isset($class)) {

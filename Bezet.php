@@ -50,12 +50,12 @@ include "login.php";
         <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) {
-    $bezet_gateway = new BezetGateway($db);
+    $bezet_gateway = new BezetGateway();
     $aantal_zonder_speendatum = $bezet_gateway->zoek_verblijven_ingebruik_zonder_speendm($lidId);
     $aantal_met_speendatum = $bezet_gateway->zoek_verblijven_ingebruik_met_speendm($lidId);
     $aantal_zonder_verblijf = $bezet_gateway->zoek_schapen_zonder_verblijf($lidId);
     $zoek_verblijven_in_gebruik = $bezet_gateway->zoek_verblijven_in_gebruik($lidId);
-    $periode_gateway = new PeriodeGateway($db);
+    $periode_gateway = new PeriodeGateway();
 
     $closure = function ($row) use ($periode_gateway, $bezet_gateway) {
         // BCB: da's 12 queries per rij. Dat kon wel eens langzaam zijn ja.

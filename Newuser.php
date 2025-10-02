@@ -60,7 +60,7 @@ if (isset ($_POST['knpSave'])) {
     $alias = getAlias($db,$login,0);
 
     $key = getApiKey($db);
-$ubn_gateway = new UbnGateway($db);
+$ubn_gateway = new UbnGateway();
 if ($ubn_gateway->exists($txtUbn)) {
     $fout = "Dit ubn bestaat al."; 
 } else {
@@ -89,12 +89,12 @@ $insert_lid = "INSERT INTO tblLeden SET
     reader = ". db_null_input($kzlReader) . ",
     readerkey = '".mysqli_real_escape_string($db,$key)."'
     ;";
-        mysqli_query($db,$insert_lid) or Logger::error(mysqli_error($db));
+        mysqli_query($db,$insert_lid);
 
         # alias is nu de primaire sleutel; uniek door de aanpak in "getAlias" (die we "createAlias" gaan noemen).
         # Rest van de db gebruikt lidId, dus die halen we even op.
         # Na verbouwing kan een insert-query direct het aangemaakte nummer teruggeven --BCB
-        $lid_gateway = new LidGateway($db);
+        $lid_gateway = new LidGateway();
         $newId = $lid_gateway->findIdByAlias($alias);
 
         $ubn_gateway->insert($newId, $txtUbn);
@@ -120,7 +120,7 @@ $map = 'user_'.$newId;
     mkdir("$map"); // Persoonlijk map voor user maken
 
 $map = 'user_'.$newId.'/Readerbestanden';
-    mkdir("$map"); // Persoonlijk map voor user maken t.b.v. readerbestanden Logger::erroruit de reader komen als de reader wordt uitgelezen
+    mkdir("$map"); // Persoonlijk map voor user maken t.b.v. readerbestanden erroruit de reader komen als de reader wordt uitgelezen
 
 $map = 'user_'.$newId.'/Readerversies';
     mkdir("$map"); // Persoonlijk map voor user maken t.b.v. readerversies

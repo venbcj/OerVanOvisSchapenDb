@@ -31,7 +31,7 @@ WHERE meldId = '$recId' and skip <> 1");
 
     // Aantal dieren goed geregistreerd om automatisch te kunnen melden. De datum mag hier niet liggen na de afvoerdatum.
     public function aantal_oke_Omnum($fldReqId) {
-        $juistaantal = $this->db->query("
+        $vw = $this->db->query("
 SELECT count(*) aant 
 FROM tblMelding m
  join tblHistorie h on (h.hisId = m.hisId)
@@ -52,8 +52,8 @@ WHERE m.reqId = '".$this->db->real_escape_string($fldReqId)."'
  and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12 
  and m.skip <> 1
 ");
-    if($juistaantal)
-    {    $row = $juistaantal->fetch_assoc();
+    if($vw)
+    {    $row = $vw->fetch_assoc();
             return $row['aant'];
     }
     return FALSE;
@@ -61,7 +61,7 @@ WHERE m.reqId = '".$this->db->real_escape_string($fldReqId)."'
 
 // Aantal dieren goed geregistreerd om automatisch te kunnen melden.
 public function aantal_oke_uitv($lidid,$fldReqId,$nestHistorieDm) {
-$juistaantal = $this->db->query("
+$vw = $this->db->query("
 SELECT count(*) aant
 FROM tblMelding m
  join tblHistorie h on (h.hisId = m.hisId)
@@ -84,15 +84,15 @@ WHERE m.reqId = '".$this->db->real_escape_string($fldReqId)."'
  and m.skip <> 1
  and h.skip = 0                            
 ");
-    if($juistaantal)
-    {    $row = $juistaantal->fetch_assoc();
+    if($vw)
+    {    $row = $vw->fetch_assoc();
             return $row['aant'];
     }
     return FALSE;
 }
 
 public function aantal_oke_afv($lidid,$fldReqId,$nestHistorieDm) {
-$juistaantal = $this->db->query("
+$vw = $this->db->query("
 SELECT count(*) aant
 FROM tblMelding m
  join tblHistorie h on (m.hisId = h.hisId)
@@ -114,8 +114,8 @@ WHERE m.reqId = '".$this->db->real_escape_string($fldReqId)."'
  and m.skip <> 1
  and h.skip = 0
 ");
-    if($juistaantal)
-    {    $row = $juistaantal->fetch_assoc();
+    if($vw)
+    {    $row = $vw->fetch_assoc();
             return $row['aant'];
     }
     return FALSE;

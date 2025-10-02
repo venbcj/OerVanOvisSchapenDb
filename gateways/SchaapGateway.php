@@ -172,7 +172,7 @@ WHERE mst.lidId = '".$this->db->real_escape_string($lidid)."' and ".$Sekse." and
 
     // Functie die het aantal lammeren, moederdieren of vaders telt
     public function med_aantal_fase($lidid,$M,$J,$V,$Sekse,$Ouder) {
-        $vw_totaalFase = $this->db->query("
+        $vw = $this->db->query("
 SELECT count(distinct s.levensnummer) werknrs
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
@@ -196,13 +196,13 @@ WHERE true
   AND h.actId = 8
 GROUP BY date_format(h.datum,'%Y%m')
 ");
-            $row = $vw_totaalFase->fetch_assoc();
+            $row = $vw->fetch_assoc();
             return $row['werknrs'];
     }
 
     // Functie die de hoeveelheid voer berekend per lammeren, moederdieren of vaders
     public function voer_fase($lidid,$M,$J,$V,$Sekse,$Ouder) { 
-        $vw_totaalFase = $this->db->query("
+        $vw = $this->db->query("
         SELECT round(sum(n.nutat*n.stdat),2) totats
         FROM tblSchaap s
          join tblStal st on (s.schaapId = st.schaapId)
@@ -225,14 +225,14 @@ GROUP BY date_format(h.datum,'%Y%m')
   AND st.lidId = '".$this->db->real_escape_string($lidid)."'
         GROUP BY concat(date_format(h.datum,'%Y'),month(h.datum))
         ");
-            $row = $vw_totaalFase->fetch_assoc();
+            $row = $vw->fetch_assoc();
                         return $row['totats'];
     }
 
     // zou dit in EenheidGateway horen?
     // Functie die de eenheid ophaalt per lammeren, moederdieren of vaders
     public function eenheid_fase($lidid,$M,$J,$V,$Sekse,$Ouder) {
-        $vw_totaalFase = $this->db->query("
+        $vw = $this->db->query("
 SELECT e.eenheid 
 FROM tblEenheid e
  join tblEenheiduser eu on (e.eenhId = eu.eenhId)
@@ -258,22 +258,22 @@ WHERE true
   AND eu.lidId = '".$this->db->real_escape_string($lidid)."'
 GROUP BY e.eenheid
 ");
-if($vw_totaalFase->num_rows) {
-    $row = $vw_totaalFase->fetch_assoc();
+if($vw->num_rows) {
+    $row = $vw->fetch_assoc();
                 return $row['eenheid'];
         }
         return FALSE; // Foutafhandeling
 }
 
 public function zoekStapel($lidId) {
-    $zoek_stapel = $this->db->query("
+    $vw = $this->db->query("
 SELECT count(distinct(s.schaapId)) aant
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
 WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(st.rel_best)
 ");
 $stapel = null;
-    while($zs = $zoek_stapel->fetch_array())
+    while($zs = $vw->fetch_assoc())
         { $stapel = $zs['aant']; }
     return $stapel;
 }
@@ -1130,7 +1130,7 @@ FROM tblRequest r
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
      ) ouder on (ouder.schaapId = s.schaapId)
-
+ 
 WHERE r.dmmeld is not null and r.code = 'GER' and st.lidId = '".$this->db->real_escape_string($lidId)."' and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and h.skip = 0 and m.skip = 0
 
 UNION 
@@ -1164,7 +1164,7 @@ FROM tblRequest r
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
      ) ouder on (ouder.schaapId = s.schaapId)
-
+ 
 WHERE r.dmmeld is not null and r.code = 'AAN' and st.lidId = '".$this->db->real_escape_string($lidId)."' and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and h.skip = 0 and m.skip = 0
 
 UNION 
@@ -1198,7 +1198,7 @@ FROM tblRequest r
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
      ) ouder on (ouder.schaapId = s.schaapId)
-
+ 
 WHERE r.dmmeld is not null and r.code = 'AFV' and st.lidId = '".$this->db->real_escape_string($lidId)."' and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and h.skip = 0 and m.skip = 0
 
 UNION 
@@ -1223,7 +1223,7 @@ FROM tblRequest r
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
      ) ouder on (ouder.schaapId = s.schaapId)
-
+ 
 WHERE r.dmmeld is not null and r.code = 'DOO' and st.lidId = '".$this->db->real_escape_string($lidId)."' and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and h.skip = 0 and m.skip = 0
 
 UNION
@@ -1248,7 +1248,7 @@ FROM tblRequest r
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
      ) ouder on (ouder.schaapId = s.schaapId)
-
+ 
 WHERE r.dmmeld is not null and r.code = 'VMD' and st.lidId = '".$this->db->real_escape_string($lidId)."' and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and h.skip = 0 and m.skip = 0
 
 UNION
@@ -1320,7 +1320,7 @@ FROM
         WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and hl.actId = 1 and hl.skip = 0 and moe.schaapId = '".$this->db->real_escape_string($schaapId)."'
         GROUP BY moe.levensnummer, moe.geslacht
      ) lam1 on (lam1.levensnummer = s.levensnummer and lam1.worp1 = hl.datum)
-
+    
     WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and sl.lidId = '".$this->db->real_escape_string($lidId)."' and hl.actId = 1 and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and isnull(lam1.worp1)
     GROUP BY s.levensnummer, s.geslacht, ouder.datum
  ) mdr

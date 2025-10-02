@@ -75,7 +75,7 @@ class Gateway {
             }
             $SQL = str_replace($key, $value, $SQL);
         }
-        Logger::debug($SQL);
+        Logger::instance()->debug($SQL);
         return $SQL;
     }
 

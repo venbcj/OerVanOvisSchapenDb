@@ -29,7 +29,7 @@ include "login.php";
 <?php
 if (Auth::is_logged_in()) {
     if($modtech == 1) {
-        $artikel_gateway = new ArtikelGateway($db);
+        $artikel_gateway = new ArtikelGateway();
         // 1-8-2016 : Er is geen rekening gehouden met de inkoopeenheden bij sommatie alle inkoophoeveelheden.
         // Reden : te complex t.o.v. de kans dat eenheden veranderen. Mogelijk in de toekomst noodzakelijk
         $voer = $artikel_gateway->voer($lidId);

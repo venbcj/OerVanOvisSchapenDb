@@ -69,7 +69,7 @@ $name = "kzlVoer_"; ?>
 <select name= <?php echo"$name";?> width = 60 >
  <option></option>
 <?php        
-$artikel_gateway = new ArtikelGateway($db);
+$artikel_gateway = new ArtikelGateway();
 $zoek_voer = $artikel_gateway->zoek_voer($lidId);
 while($row = mysqli_fetch_array($zoek_voer)) {
     $kzlkey="$row[artId]";
@@ -102,7 +102,7 @@ If ((isset($_POST['knpToon_']) || isset($_POST['knpSave_'])) ) {
 $fldVoer = $_POST['kzlVoer_'];
 
 // Controle meerdere maanden om keuzelijst kzlJaarMaand te laten zien bij meer dan 1 maand.
-$periode_gateway = new PeriodeGateway($db);
+$periode_gateway = new PeriodeGateway();
 $rows_jrmnd = $periode_gateway->aantal_jaarmaanden($lidId, $fldVoer, $_POST['kzlDoel_']);
 if ($rows_jrmnd >1) {
 ?>
@@ -129,7 +129,7 @@ include "kzl.php";
 }
 //Einde Controle meerdere maanden om keuzelijst kzlJaarMaand te laten zien bij meer dan 1 maand.
 // Controle meerdere verblijven om keuzelijst kzlHok_ te laten zien bij meer dan 1 verblijf.
-$hok_gateway = new HokGateway($db);
+$hok_gateway = new HokGateway();
 $rows_hok = $hok_gateway->countVerblijven($lidId, $fldVoer, $_POST['kzlDoel_']);
 
 if($rows_hok > 1) {
@@ -216,7 +216,7 @@ while ($rij = mysqli_fetch_assoc($maandjaren)) {
 </tr>
 
 <?php // $zoek_startdatum zoekt eerste van de maand en het jaar dat een gebruiker is begonnen met het programma
-$lid_gateway = new LidGateway($db);
+$lid_gateway = new LidGateway();
 $dmstart = $lid_gateway->zoek_startdatum($lidId);
 
 $begin_eind_periode = $periode_gateway->begin_eind_periode($lidId, $_POST['kzlDoel_'], $fldVoer, $jrmnd);
@@ -303,7 +303,7 @@ if(isset($_POST["radSchaap_$Id"]) && $_POST["radSchaap_$Id"]==1 ) {
         $dagkg = $kilo/$dgn;
     }
         unset($kilo); 
-    $bezet_gateway = new BezetGateway($db);
+    $bezet_gateway = new BezetGateway();
     $schaap_gegevens = $bezet_gateway->schaap_gegevens($lidId, $hokId, $dmbegin, $dmeind, $dagkg, $filterDoel);
 ?>
 <tr height = 10><td>    </td></tr>
