@@ -19,7 +19,7 @@ WHERE sb.tbl = 'ru' and ru.lidId = '".mysqli_real_escape_string($this->db,$lidId
 }
 
         public function insertJaar($lidId, $nextjaar) {
-mysqli_query("
+mysqli_query($db,"
 INSERT INTO tblSalber (datum, tbl, tblId, waarde)
     SELECT '".$nextjaar."-01-01', 'eu', elemuId, waarde
     FROM tblElementuser
