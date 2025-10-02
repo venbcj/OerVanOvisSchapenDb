@@ -23,7 +23,7 @@ FROM (
     FROM tblVersiebeheer 
     WHERE app = 'Reader' and isnull(versieId)
 ) a
-    ") or Logger::error(mysqli_error($this->db));
+    ");
     while ($zlv = $vw->fetch_assoc()) {
          return $zlv['lstId'];
     }
@@ -35,7 +35,7 @@ FROM (
 SELECT bestand
 FROM tblVersiebeheer 
 WHERE app = 'App' and Id = '".$this->db->real_escape_string($last_versieId)."'
-") or die(mysqli_error($this->db));
+");
     while ($zrv = $vw->fetch_assoc()) {
          return $zrv['bestand'];
     }
@@ -47,7 +47,7 @@ WHERE app = 'App' and Id = '".$this->db->real_escape_string($last_versieId)."'
 SELECT bestand
 FROM tblVersiebeheer 
 WHERE app = 'Reader' and (Id = '".$this->db->real_escape_string($last_versieId)."' or versieId = '".$this->db->real_escape_string($last_versieId)."')
-") or die(mysqli_error($this->db));
+");
     while ($zrv = $vw->fetch_assoc()) {
          return $zrv['bestand'];
     }

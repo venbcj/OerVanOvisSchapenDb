@@ -4,6 +4,7 @@ class Db {
 
     private static $instance = null;
     private $connection = null;
+    private $logger;
 
     public static function instance() {
         if (is_null(self::$instance)) {
@@ -12,7 +13,11 @@ class Db {
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct($logger = null) {
+        if (is_null($logger)) {
+            $logger = Logger::instance();
+        }
+        $this->logger = $logger;
         include "database.php";
         $db = mysqli_connect($host, $user, $pw, $dtb);
         if ($db == false) {
@@ -74,7 +79,7 @@ class Db {
             }
             $SQL = str_replace($key, $value, $SQL);
         }
-        Logger::debug($SQL);
+        $this->logger->debug($SQL);
         return $SQL;
     }
 

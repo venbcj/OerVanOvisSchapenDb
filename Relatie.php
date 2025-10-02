@@ -59,7 +59,7 @@ If (isset ($_POST['knpSave_']))
     $wijzigPartij = "
     update tblPartij p set ubn = ".$updUbn.", naam = ".$updNaam.", tel = ".$updTel.", fax = ".$updFax.", email = ".$updMail.", site = ".$updSite.", banknr = ".$updBank.", relnr = ".$updRelnr.", wachtw = ".$updWawo."
     where partId = $pId ";
-        mysqli_query($db,$wijzigPartij) or Logger::error(mysqli_error($db));
+        mysqli_query($db,$wijzigPartij);
 //echo $wijzigPartij.'<br>';
     
 
@@ -69,7 +69,7 @@ $zoek_vervoer = mysqli_query($db,"
     from tblVervoer v
      join tblPartij p on (v.partId = p.partId)
     where p.partId = ".mysqli_real_escape_string($db,$pId)."
-") or die(mysqli_error($db));
+");
     while( $ve = mysqli_fetch_assoc($zoek_vervoer)) { $vervId = $ve['vervId']; }
 // Invoer vervoer als deze nog niet bestaat
 if(!isset($vervId) && ( !empty($_POST['txtKent_']) || !empty($_POST['txtHang_']) )) {
@@ -77,7 +77,7 @@ $insert_vervoer = "
     insert into tblVervoer
     set partId = ".mysqli_real_escape_string($db,$pId).", kenteken = ".$updKent.", aanhanger = ".$updHang."    
 ";
-        mysqli_query($db,$insert_vervoer) or Logger::error(mysqli_error($db));
+        mysqli_query($db,$insert_vervoer);
 //echo $insert_vervoer.'<br>';
 }
 // Einde Invoer vervoer als deze nog niet bestaat
@@ -87,7 +87,7 @@ else if(isset($vervId)) {
     set kenteken = ".$updKent.", aanhanger = ".$updHang."
     where partId = $pId
     ";
-        mysqli_query($db,$wijzigVervoer) or Logger::error(mysqli_error($db));
+        mysqli_query($db,$wijzigVervoer);
 //echo $wijzigVervoer.'<br>';
     }
 // Einde Wijzigen Vervoer
@@ -102,7 +102,7 @@ from tblPartij p
  join tblRelatie r on (p.partId = r.partId)
  left join tblVervoer v on (p.partId = v.partId) 
 where p.partId = '$pId'
- ") or Logger::error(mysqli_error($db));
+ ");
  while ($row = mysqli_fetch_assoc($Partij))
  {
      $pId = $row['partId'];
@@ -199,7 +199,7 @@ from tblPartij p
  left join tblAdres a on (r.relId = a.relId) 
 where p.partId = ".$pId." 
 order by actief desc, relatie desc
-") or Logger::error(mysqli_error($db));
+");
  while ($row = mysqli_fetch_assoc($Relatie))
     {    $rId = $row['relId'];
         $rela = $row['relatie']; if($rela == 'deb') { $relatie = 'debiteur'; } else if($rela == 'cred') { $relatie = 'crediteur'; }
