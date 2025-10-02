@@ -3,47 +3,47 @@
 class SalberGateway extends Gateway {
 
     public function zoek_jaar($lidId) {
-        return mysqli_query($this->db,"
+        return $this->db->query("
 SELECT year(max(sb.datum)) jaar
 FROM tblSalber sb
  join tblElementuser eu on (sb.tblId = eu.elemuId)
-WHERE sb.tbl = 'eu' and eu.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+WHERE sb.tbl = 'eu' and eu.lidId = '".$this->db->real_escape_string($lidId)."'
 
 Union
 
 SELECT year(max(sb.datum)) jaar
 FROM tblSalber sb
  join tblRubriekuser ru on (sb.tblId = ru.rubuId)
-WHERE sb.tbl = 'ru' and ru.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+WHERE sb.tbl = 'ru' and ru.lidId = '".$this->db->real_escape_string($lidId)."'
 ");
 }
 
         public function insertJaar($lidId, $nextjaar) {
-mysqli_query($db,"
+$this->db->query("
 INSERT INTO tblSalber (datum, tbl, tblId, waarde)
     SELECT '".$nextjaar."-01-01', 'eu', elemuId, waarde
     FROM tblElementuser
-    WHERE lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+    WHERE lidId = '".$this->db->real_escape_string($lidId)."'
     
     union all
     
     SELECT '".$nextjaar."-01-01', 'ru', rubuId, NULL
     FROM tblRubriekuser
-    WHERE lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+    WHERE lidId = '".$this->db->real_escape_string($lidId)."'
     
     ORDER BY elemuId;
 ");
         }
 
     public function countGeborenInJaar($lidId, $jaar) {
-$vw = mysqli_query($this->db,"
+$vw = $this->db->query("
 SELECT count(s.schaapId) aant_geb
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join tblHistorie hg on (hg.stalId = st.stalId and hg.actId = 1 and hg.skip = 0)
  left join tblHistorie hkoop on (hkoop.stalId = st.stalId and hkoop.actId = 2 and hkoop.skip = 0)
-WHERE st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
- and date_format(hg.datum,'%Y') = '".mysqli_real_escape_string($this->db,$jaar)."'
+WHERE st.lidId = '".$this->db->real_escape_string($lidId)."'
+ and date_format(hg.datum,'%Y') = '".$this->db->real_escape_string($jaar)."'
  and isnull(hkoop.hisId)
 ");
     if ($vw->num_rows > 0) {
@@ -53,11 +53,11 @@ WHERE st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
     }
 
     public function jaren($lidId) {
-        return mysqli_query($this->db, "
+        return $this->db->query("
 SELECT year(sb.datum) jaar
 FROM tblSalber sb
  join tblElementuser eu on (sb.tblId = eu.elemuId)
-WHERE sb.tbl = 'eu' and eu.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+WHERE sb.tbl = 'eu' and eu.lidId = '".$this->db->real_escape_string($lidId)."'
 GROUP BY year(sb.datum)
 
 Union
@@ -65,42 +65,42 @@ Union
 SELECT year(sb.datum) jaar
 FROM tblSalber sb
  join tblRubriekuser ru on (sb.tblId = ru.rubuId)
-WHERE sb.tbl = 'ru' and ru.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+WHERE sb.tbl = 'ru' and ru.lidId = '".$this->db->real_escape_string($lidId)."'
 GROUP BY year(sb.datum)
 ORDER BY  jaar desc
 ");
     }
 
     public function zoek_rekencomponenten($lidId, $jaar) {
-       $vw = mysqli_query($this->db,"
+       $vw = $this->db->query("
 SELECT max(elem1) ooital, max(elem12) dooperc, max(elem18) worptal, max(elem19) worpgr
 FROM (
     SELECT sb.waarde elem1, 0 elem12, 0 elem18, 0 elem19
     FROM tblElement e
      join tblElementuser eu on (e.elemId = eu.elemId)
      join tblSalber sb on (eu.elemuId = sb.tblId)
-    WHERE eu.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and year(sb.datum) = '".mysqli_real_escape_string($this->db,$jaar)."' and sb.tbl = 'eu' and eu.sal = 1
+    WHERE eu.lidId = '".$this->db->real_escape_string($lidId)."' and year(sb.datum) = '".$this->db->real_escape_string($jaar)."' and sb.tbl = 'eu' and eu.sal = 1
     and e.elemId = 1
   union
     SELECT 0, sb.waarde/100 elem12, 0 elem18, 0 elem19
     FROM tblElement e
      join tblElementuser eu on (e.elemId = eu.elemId)
      join tblSalber sb on (eu.elemuId = sb.tblId)
-    WHERE eu.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and year(sb.datum) = '".mysqli_real_escape_string($this->db,$jaar)."' and sb.tbl = 'eu' and eu.sal = 1
+    WHERE eu.lidId = '".$this->db->real_escape_string($lidId)."' and year(sb.datum) = '".$this->db->real_escape_string($jaar)."' and sb.tbl = 'eu' and eu.sal = 1
     and e.elemId = 12
   union
     SELECT 0, 0 elem12, sb.waarde elem18, 0 elem19
     FROM tblElement e
      join tblElementuser eu on (e.elemId = eu.elemId)
      join tblSalber sb on (eu.elemuId = sb.tblId)
-    WHERE eu.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and year(sb.datum) = '".mysqli_real_escape_string($this->db,$jaar)."' and sb.tbl = 'eu' and eu.sal = 1
+    WHERE eu.lidId = '".$this->db->real_escape_string($lidId)."' and year(sb.datum) = '".$this->db->real_escape_string($jaar)."' and sb.tbl = 'eu' and eu.sal = 1
     and e.elemId = 18
   union
     SELECT 0, 0, 0, sb.waarde elem19
     FROM tblElement e
      join tblElementuser eu on (e.elemId = eu.elemId)
      join tblSalber sb on (eu.elemuId = sb.tblId)
-    WHERE eu.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and year(sb.datum) = '".mysqli_real_escape_string($this->db,$jaar)."' and sb.tbl = 'eu' and eu.sal = 1
+    WHERE eu.lidId = '".$this->db->real_escape_string($lidId)."' and year(sb.datum) = '".$this->db->real_escape_string($jaar)."' and sb.tbl = 'eu' and eu.sal = 1
     and e.elemId = 19
 ) reken
 ");
@@ -108,11 +108,11 @@ return $vw;
     }
 
     public function zoek_element_vervanging_ooi($lidId, $jaar) {
-       $vw = mysqli_query($this->db,"
+       $vw = $this->db->query("
 SELECT sb.waarde
 FROM tblSalber sb
  join tblElementuser eu on (eu.elemuId = sb.tblId)
-WHERE tbl = 'eu' and eu.elemId = 16 and eu.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and year(datum) = '".mysqli_real_escape_string($this->db,$jaar)."'
+WHERE tbl = 'eu' and eu.elemId = 16 and eu.lidId = '".$this->db->real_escape_string($lidId)."' and year(datum) = '".$this->db->real_escape_string($jaar)."'
 "); 
     if ($vw->num_rows > 0) {
         return $vw->fetch_row()[0];
@@ -121,12 +121,12 @@ WHERE tbl = 'eu' and eu.elemId = 16 and eu.lidId = '".mysqli_real_escape_string(
     }
 
     public function zoek_element($lidId, $jaar) {
-$vw= mysqli_query($this->db,"
+$vw= $this->db->query("
 SELECT sb.salbId, e.elemId, e.element, sb.waarde, e.eenheid, 1 sort
 FROM tblElement e
  join tblElementuser eu on (e.elemId = eu.elemId)
  join tblSalber sb on (eu.elemuId = sb.tblId)
-WHERE eu.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and year(sb.datum) = '".mysqli_real_escape_string($this->db,$jaar)."'
+WHERE eu.lidId = '".$this->db->real_escape_string($lidId)."' and year(sb.datum) = '".$this->db->real_escape_string($jaar)."'
  and sb.tbl = 'eu' and eu.sal = 1
  and eenheid = 'getal'
 
@@ -136,7 +136,7 @@ SELECT sb.salbId, e.elemId, e.element, sb.waarde, e.eenheid, 2 sort
 FROM tblElement e
  join tblElementuser eu on (e.elemId = eu.elemId)
  join tblSalber sb on (eu.elemuId = sb.tblId)
-WHERE eu.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and year(sb.datum) = '".mysqli_real_escape_string($this->db,$jaar)."'
+WHERE eu.lidId = '".$this->db->real_escape_string($lidId)."' and year(sb.datum) = '".$this->db->real_escape_string($jaar)."'
  and sb.tbl = 'eu' and eu.sal = 1
  and eenheid = 'procent'
 
@@ -146,7 +146,7 @@ SELECT sb.salbId, e.elemId, e.element, sb.waarde, e.eenheid, 3 sort
 FROM tblElement e
  join tblElementuser eu on (e.elemId = eu.elemId)
  join tblSalber sb on (eu.elemuId = sb.tblId)
-WHERE eu.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and year(sb.datum) = '".mysqli_real_escape_string($this->db,$jaar)."'
+WHERE eu.lidId = '".$this->db->real_escape_string($lidId)."' and year(sb.datum) = '".$this->db->real_escape_string($jaar)."'
  and sb.tbl = 'eu' and eu.sal = 1
  and eenheid = 'euro'
 ORDER BY sort, element
@@ -173,7 +173,7 @@ Binnen de Opbrengsten en de Kosten is onderscheid gemaakt in 7 mogelijkheden
  17-1-2021 : enkele quotes om variabele gezet */
 
     public function jaarbasis($lidId, $kzlJaar, $p_ooital, $p_afv, $verv_ooi) {
-return mysqli_query($this->db, "
+return $this->db->query("
 SELECT sum(bedrag_slb) bedrag_slb, sum(bedrag_liq) bedrag_liq, sum(bedrag_real) bedrag_real
 FROM (
     -- opbrengst met dieren n.v.t. zonder aantallen
@@ -184,19 +184,19 @@ FROM (
      left join (
         SELECT l.rubuId, date_format(l.datum,'%Y') jaar, sum(coalesce(l.bedrag,0)) bedrag
         FROM tblLiquiditeit l
-        WHERE year(l.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."'
+        WHERE year(l.datum) = '". $this->db->real_escape_string($kzlJaar) ."'
         GROUP BY l.rubuId, date_format(l.datum,'%Y')
      ) l on (l.rubuId = ru.rubuId and date_format(sb.datum,'%Y') = l.jaar)
      left join (
         SELECT o.rubuId, date_format(o.datum,'%Y') jaar, sum(coalesce(o.bedrag,0)) bedrag
         FROM tblOpgaaf o
          join tblRubriekuser ru on (o.rubuId = ru.rubuId)
-        WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."' and year(o.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."'
+        WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."' and year(o.datum) = '". $this->db->real_escape_string($kzlJaar) ."'
         GROUP BY o.rubuId, date_format(o.datum,'%Y')
      ) o on (o.rubuId = ru.rubuId)
-    WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."'
+    WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."'
  and sb.tbl = 'ru'
-and year(sb.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."'
+and year(sb.datum) = '". $this->db->real_escape_string($kzlJaar) ."'
  and r.actief = 1
  and ru.sal = 1
       and r.rubhId = 5 and r.rubId != 39 and r.rubId != 40 and r.rubId != 46
@@ -205,7 +205,7 @@ and year(sb.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."'
     union
 
     -- opbrengst o.b.v. moederdieren => $p_ooital zonder aantallen
-    SELECT r.credeb, sum(coalesce( '". mysqli_real_escape_string($this->db,$p_ooital) ."' *sb.waarde,0)) bedrag_slb,
+    SELECT r.credeb, sum(coalesce( '". $this->db->real_escape_string($p_ooital) ."' *sb.waarde,0)) bedrag_slb,
  sum(l.bedrag) bedrag_liq, sum(coalesce(o.bedrag,0)) bedrag_real
     FROM tblRubriek r
      join tblRubriekuser ru on (r.rubId = ru.rubId)
@@ -213,26 +213,26 @@ and year(sb.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."'
      left join (
         SELECT l.rubuId, date_format(l.datum,'%Y') jaar, sum(coalesce(l.bedrag,0)) bedrag
         FROM tblLiquiditeit l
-        WHERE year(l.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."'
+        WHERE year(l.datum) = '". $this->db->real_escape_string($kzlJaar) ."'
         GROUP BY l.rubuId, date_format(l.datum,'%Y')
      ) l on (l.rubuId = ru.rubuId and date_format(sb.datum,'%Y') = l.jaar)
      left join (
         SELECT o.rubuId, date_format(o.datum,'%Y') jaar, sum(coalesce(o.bedrag,0)) bedrag
         FROM tblOpgaaf o
          join tblRubriekuser ru on (o.rubuId = ru.rubuId)
-        WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."' and year(o.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."'
+        WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."' and year(o.datum) = '". $this->db->real_escape_string($kzlJaar) ."'
         GROUP BY o.rubuId, date_format(o.datum,'%Y')
      ) o on (o.rubuId = ru.rubuId and o.jaar = l.jaar)
-    WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."'
+    WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."'
  and sb.tbl = 'ru'
- and year(sb.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and r.actief = 1 and ru.sal = 1
+ and year(sb.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and r.actief = 1 and ru.sal = 1
       and r.rubId = 46
     GROUP BY r.credeb
 
     union
 
     -- opbrengst o.b.v. lammeren => $p_afv zonder aantallen
-    SELECT r.credeb, sum(coalesce( '". mysqli_real_escape_string($this->db,$p_afv) ."' * sb.waarde,0)) bedrag_slb,
+    SELECT r.credeb, sum(coalesce( '". $this->db->real_escape_string($p_afv) ."' * sb.waarde,0)) bedrag_slb,
 sum(l.bedrag) bedrag_liq, sum(coalesce(o.bedrag,0)) bedrag_real
     FROM tblRubriek r
      join tblRubriekuser ru on (r.rubId = ru.rubId)
@@ -240,25 +240,25 @@ sum(l.bedrag) bedrag_liq, sum(coalesce(o.bedrag,0)) bedrag_real
      left join (
         SELECT l.rubuId, date_format(l.datum,'%Y') jaar, sum(coalesce(l.bedrag,0)) bedrag
         FROM tblLiquiditeit l
-        WHERE year(l.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."'
+        WHERE year(l.datum) = '". $this->db->real_escape_string($kzlJaar) ."'
         GROUP BY l.rubuId, date_format(l.datum,'%Y')
      ) l on (l.rubuId = ru.rubuId and date_format(sb.datum,'%Y') = l.jaar)
      left join (
         SELECT o.rubuId, date_format(o.datum,'%Y') jaar, sum(coalesce(o.bedrag,0)) bedrag
         FROM tblOpgaaf o
          join tblRubriekuser ru on (o.rubuId = ru.rubuId)
-        WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."' and year(o.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."'
+        WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."' and year(o.datum) = '". $this->db->real_escape_string($kzlJaar) ."'
         GROUP BY o.rubuId, date_format(o.datum,'%Y')
      ) o on (o.rubuId = ru.rubuId and o.jaar = l.jaar)
-    WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."' and sb.tbl = 'ru'
-and year(sb.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and r.actief = 1 and ru.sal = 1
+    WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."' and sb.tbl = 'ru'
+and year(sb.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and r.actief = 1 and ru.sal = 1
       and r.rubId = 39
     GROUP BY r.credeb
 
     union
 
     -- opbrengst o.b.v. vervanging moederdieren => $verv_ooi*$p_ooital/100 zonder aantallen
-    SELECT r.credeb, sum(coalesce( '". mysqli_real_escape_string($this->db,$verv_ooi*$p_ooital/100) ."' *sb.waarde,0)) bedrag_slb,
+    SELECT r.credeb, sum(coalesce( '". $this->db->real_escape_string($verv_ooi*$p_ooital/100) ."' *sb.waarde,0)) bedrag_slb,
  sum(l.bedrag) bedrag_liq, sum(coalesce(o.bedrag,0)) bedrag_real
     FROM tblRubriek r
      join tblRubriekuser ru on (r.rubId = ru.rubId)
@@ -266,18 +266,18 @@ and year(sb.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and r
      left join (
         SELECT l.rubuId, date_format(l.datum,'%Y') jaar, sum(coalesce(l.bedrag,0)) bedrag
         FROM tblLiquiditeit l
-        WHERE year(l.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."'
+        WHERE year(l.datum) = '". $this->db->real_escape_string($kzlJaar) ."'
         GROUP BY l.rubuId, date_format(l.datum,'%Y')
      ) l on (l.rubuId = ru.rubuId and date_format(sb.datum,'%Y') = l.jaar)
      left join (
         SELECT o.rubuId, date_format(o.datum,'%Y') jaar, sum(coalesce(o.bedrag,0)) bedrag
         FROM tblOpgaaf o
          join tblRubriekuser ru on (o.rubuId = ru.rubuId)
-        WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."' and year(o.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."'
+        WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."' and year(o.datum) = '". $this->db->real_escape_string($kzlJaar) ."'
         GROUP BY o.rubuId, date_format(o.datum,'%Y')
      ) o on (o.rubuId = ru.rubuId and o.jaar = l.jaar)
-    WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."' and sb.tbl = 'ru'
-and year(sb.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and r.actief = 1 and ru.sal = 1
+    WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."' and sb.tbl = 'ru'
+and year(sb.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and r.actief = 1 and ru.sal = 1
       and r.rubId = 40
     GROUP BY r.credeb
 
@@ -293,20 +293,20 @@ and year(sb.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and r
         SELECT date_format(l.datum,'%Y') jaar, l.rubuId, sum(l.bedrag) bedrag
         FROM tblLiquiditeit l
          join tblRubriekuser ru on (l.rubuId = ru.rubuId)
-        WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."'
-and year(l.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and ru.sal = 1
+        WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."'
+and year(l.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and ru.sal = 1
         GROUP BY date_format(l.datum,'%Y'), rubuId
      ) l on (l.rubuId = ru.rubuId and date_format(sb.datum,'%Y') = l.jaar)
      left join (
         SELECT date_format(o.datum,'%Y') jaar, o.rubuId, sum(o.bedrag) bedrag
         FROM tblOpgaaf o
          join tblRubriekuser ru on (o.rubuId = ru.rubuId)
-        WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."'
-and year(o.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and ru.sal = 1
+        WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."'
+and year(o.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and ru.sal = 1
         GROUP BY date_format(o.datum,'%Y'), rubuId
      ) o on (o.rubuId = ru.rubuId and o.jaar = l.jaar)
-    WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."' and sb.tbl = 'ru'
-and year(sb.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and r.actief = 1 and ru.sal = 1
+    WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."' and sb.tbl = 'ru'
+and year(sb.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and r.actief = 1 and ru.sal = 1
      and (r.rubhId = 1 or r.rubhId = 3 or r.rubhId = 4 or r.rubId = 12)
     GROUP BY r.credeb
 
@@ -322,27 +322,27 @@ and year(sb.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and r
         SELECT date_format(l.datum,'%Y') jaar, l.rubuId, sum(l.bedrag) bedrag
         FROM tblLiquiditeit l
          join tblRubriekuser ru on (l.rubuId = ru.rubuId)
-        WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."'
-and year(l.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and ru.sal = 1
+        WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."'
+and year(l.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and ru.sal = 1
         GROUP BY date_format(l.datum,'%Y'), rubuId
      ) l on (l.rubuId = ru.rubuId and date_format(sb.datum,'%Y') = l.jaar)
      left join (
         SELECT date_format(o.datum,'%Y') jaar, o.rubuId, sum(o.bedrag) bedrag
         FROM tblOpgaaf o
          join tblRubriekuser ru on (o.rubuId = ru.rubuId)
-        WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."'
-and year(o.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and ru.sal = 1
+        WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."'
+and year(o.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and ru.sal = 1
         GROUP BY date_format(o.datum,'%Y'), rubuId
      ) o on (o.rubuId = ru.rubuId and o.jaar = l.jaar)
-    WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."' and sb.tbl = 'ru'
-and year(sb.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and r.actief = 1 and ru.sal = 1
+    WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."' and sb.tbl = 'ru'
+and year(sb.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and r.actief = 1 and ru.sal = 1
      and r.rubId = 51
     GROUP BY r.credeb
 
     union
 
     -- kosten o.b.v. moederdieren => $p_ooital zonder aantallen
-    SELECT r.credeb, -sum( '". mysqli_real_escape_string($this->db,$p_ooital) ."' * coalesce(sb.waarde,0)) bedrag_slb,
+    SELECT r.credeb, -sum( '". $this->db->real_escape_string($p_ooital) ."' * coalesce(sb.waarde,0)) bedrag_slb,
  -sum(coalesce(l.bedrag,0)) bedrag_liq, -sum(coalesce(o.bedrag,0)) bedrag_real
     FROM tblRubriek r
      join tblRubriekuser ru on (r.rubId = ru.rubId)
@@ -351,27 +351,27 @@ and year(sb.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and r
         SELECT date_format(l.datum,'%Y') jaar, l.rubuId, sum(l.bedrag) bedrag
         FROM tblLiquiditeit l
          join tblRubriekuser ru on (l.rubuId = ru.rubuId)
-        WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."'
- and year(l.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and ru.sal = 1
+        WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."'
+ and year(l.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and ru.sal = 1
         GROUP BY date_format(l.datum,'%Y'), rubuId
      ) l on (l.rubuId = ru.rubuId and date_format(sb.datum,'%Y') = l.jaar)
      left join (
         SELECT date_format(o.datum,'%Y') jaar, o.rubuId, sum(o.bedrag) bedrag
         FROM tblOpgaaf o
          join tblRubriekuser ru on (o.rubuId = ru.rubuId)
-        WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."'
- and year(o.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and ru.sal = 1
+        WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."'
+ and year(o.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and ru.sal = 1
         GROUP BY date_format(o.datum,'%Y'), rubuId
      ) o on (o.rubuId = ru.rubuId and o.jaar = l.jaar)
-    WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."' and sb.tbl = 'ru'
- and year(sb.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and r.actief = 1 and ru.sal = 1
+    WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."' and sb.tbl = 'ru'
+ and year(sb.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and r.actief = 1 and ru.sal = 1
      and (r.rubId = 10 or r.rubId = 11 or r.rubId = 18 or r.rubId = 25 or r.rubId = 32 or r.rubId = 49 or r.rubId = 50)
     GROUP BY r.credeb
 
     union
 
     -- kosten o.b.v. moederdieren => $p_ooital met aantallen
-    SELECT r.credeb, -sum(coalesce( '". mysqli_real_escape_string($this->db,$p_ooital) ."' * sb.aantal,0)*coalesce(sb.waarde,0)) bedrag_slb,
+    SELECT r.credeb, -sum(coalesce( '". $this->db->real_escape_string($p_ooital) ."' * sb.aantal,0)*coalesce(sb.waarde,0)) bedrag_slb,
  -sum(coalesce(l.bedrag,0)) bedrag_liq, -sum(coalesce(o.bedrag,0)) bedrag_real
     FROM tblRubriek r
      join tblRubriekuser ru on (r.rubId = ru.rubId)
@@ -380,27 +380,27 @@ and year(sb.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and r
         SELECT date_format(l.datum,'%Y') jaar, l.rubuId, sum(l.bedrag) bedrag
         FROM tblLiquiditeit l
          join tblRubriekuser ru on (l.rubuId = ru.rubuId)
-        WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."'
- and year(l.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and ru.sal = 1
+        WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."'
+ and year(l.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and ru.sal = 1
         GROUP BY date_format(l.datum,'%Y'), rubuId
      ) l on (l.rubuId = ru.rubuId and date_format(sb.datum,'%Y') = l.jaar)
      left join (
         SELECT date_format(o.datum,'%Y') jaar, o.rubuId, sum(o.bedrag) bedrag
         FROM tblOpgaaf o
          join tblRubriekuser ru on (o.rubuId = ru.rubuId)
-        WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."'
- and year(o.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and ru.sal = 1
+        WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."'
+ and year(o.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and ru.sal = 1
         GROUP BY date_format(o.datum,'%Y'), rubuId
      ) o on (o.rubuId = ru.rubuId and o.jaar = l.jaar)
-    WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."' and sb.tbl = 'ru'
- and year(sb.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and r.actief = 1 and ru.sal = 1
+    WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."' and sb.tbl = 'ru'
+ and year(sb.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and r.actief = 1 and ru.sal = 1
      and (r.rubId = 16 or r.rubId = 19 or r.rubId = 44)
     GROUP BY r.credeb
 
     union
 
     -- kosten o.b.v. lammeren => $p_afv zonder aantallen
-    SELECT r.credeb, -sum( '". mysqli_real_escape_string($this->db,$p_afv) ."' * coalesce(sb.waarde,0)) bedrag_slb, -sum(coalesce(l.bedrag,0)) bedrag_liq, -sum(coalesce(o.bedrag,0)) bedrag_real
+    SELECT r.credeb, -sum( '". $this->db->real_escape_string($p_afv) ."' * coalesce(sb.waarde,0)) bedrag_slb, -sum(coalesce(l.bedrag,0)) bedrag_liq, -sum(coalesce(o.bedrag,0)) bedrag_real
     FROM tblRubriek r
      join tblRubriekuser ru on (r.rubId = ru.rubId)
      join tblSalber sb on (sb.tblId = ru.rubuId)
@@ -408,27 +408,27 @@ and year(sb.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and r
         SELECT date_format(l.datum,'%Y') jaar, l.rubuId, sum(l.bedrag) bedrag
         FROM tblLiquiditeit l
          join tblRubriekuser ru on (l.rubuId = ru.rubuId)
-        WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."'
- and year(l.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and ru.sal = 1
+        WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."'
+ and year(l.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and ru.sal = 1
         GROUP BY date_format(l.datum,'%Y'), rubuId
      ) l on (l.rubuId = ru.rubuId and date_format(sb.datum,'%Y') = l.jaar)
      left join (
         SELECT date_format(o.datum,'%Y') jaar, o.rubuId, sum(o.bedrag) bedrag
         FROM tblOpgaaf o
          join tblRubriekuser ru on (o.rubuId = ru.rubuId)
-        WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."'
- and year(o.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and ru.sal = 1
+        WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."'
+ and year(o.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and ru.sal = 1
         GROUP BY date_format(o.datum,'%Y'), rubuId
      ) o on (o.rubuId = ru.rubuId and o.jaar = l.jaar)
-    WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."' and sb.tbl = 'ru'
- and year(sb.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and r.actief = 1 and ru.sal = 1
+    WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."' and sb.tbl = 'ru'
+ and year(sb.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and r.actief = 1 and ru.sal = 1
      and (r.rubId = 13 or r.rubId = 36)
     GROUP BY r.credeb
 
     union
 
     -- kosten o.b.v. lammeren => $p_afv met aantallen
-    SELECT r.credeb, -sum(coalesce( '". mysqli_real_escape_string($this->db,$p_afv) ."' * sb.aantal,0)*coalesce(sb.waarde,0)) bedrag_slb,
+    SELECT r.credeb, -sum(coalesce( '". $this->db->real_escape_string($p_afv) ."' * sb.aantal,0)*coalesce(sb.waarde,0)) bedrag_slb,
  -sum(coalesce(l.bedrag,0)) bedrag_liq, -sum(coalesce(o.bedrag,0)) bedrag_real
     FROM tblRubriek r
      join tblRubriekuser ru on (r.rubId = ru.rubId)
@@ -437,27 +437,27 @@ and year(sb.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and r
         SELECT date_format(l.datum,'%Y') jaar, l.rubuId, sum(l.bedrag) bedrag
         FROM tblLiquiditeit l
          join tblRubriekuser ru on (l.rubuId = ru.rubuId)
-        WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."'
- and year(l.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and ru.sal = 1
+        WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."'
+ and year(l.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and ru.sal = 1
         GROUP BY date_format(l.datum,'%Y'), rubuId
      ) l on (l.rubuId = ru.rubuId and date_format(sb.datum,'%Y') = l.jaar)
      left join (
         SELECT date_format(o.datum,'%Y') jaar, o.rubuId, sum(o.bedrag) bedrag
         FROM tblOpgaaf o
          join tblRubriekuser ru on (o.rubuId = ru.rubuId)
-        WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."'
- and year(o.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and ru.sal = 1
+        WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."'
+ and year(o.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and ru.sal = 1
         GROUP BY date_format(o.datum,'%Y'), rubuId
      ) o on (o.rubuId = ru.rubuId and o.jaar = l.jaar)
-    WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."' and sb.tbl = 'ru'
- and year(sb.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and r.actief = 1 and ru.sal = 1
+    WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."' and sb.tbl = 'ru'
+ and year(sb.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and r.actief = 1 and ru.sal = 1
      and (r.rubId = 15 or r.rubId = 17 or r.rubId = 48)
     GROUP BY r.credeb
 
     union
 
     -- kosten o.b.v. vervanging moederdieren => $verv_ooi*$p_ooital/100 zonder aantallen
-    SELECT r.credeb, -sum( '". mysqli_real_escape_string($this->db,$verv_ooi*$p_ooital/100) ."' * coalesce(sb.waarde,0)) bedrag_slb,
+    SELECT r.credeb, -sum( '". $this->db->real_escape_string($verv_ooi*$p_ooital/100) ."' * coalesce(sb.waarde,0)) bedrag_slb,
  -sum(coalesce(l.bedrag,0)) bedrag_liq, -sum(coalesce(o.bedrag,0)) bedrag_real
     FROM tblRubriek r
      join tblRubriekuser ru on (r.rubId = ru.rubId)
@@ -466,20 +466,20 @@ and year(sb.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and r
         SELECT date_format(l.datum,'%Y') jaar, l.rubuId, sum(l.bedrag) bedrag
         FROM tblLiquiditeit l
          join tblRubriekuser ru on (l.rubuId = ru.rubuId)
-        WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."'
- and year(l.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and ru.sal = 1
+        WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."'
+ and year(l.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and ru.sal = 1
         GROUP BY date_format(l.datum,'%Y'), rubuId
      ) l on (l.rubuId = ru.rubuId and date_format(sb.datum,'%Y') = l.jaar)
      left join (
         SELECT date_format(o.datum,'%Y') jaar, o.rubuId, sum(o.bedrag) bedrag
         FROM tblOpgaaf o
          join tblRubriekuser ru on (o.rubuId = ru.rubuId)
-        WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."'
- and year(o.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and ru.sal = 1
+        WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."'
+ and year(o.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and ru.sal = 1
         GROUP BY date_format(o.datum,'%Y'), rubuId
      ) o on (o.rubuId = ru.rubuId and o.jaar = l.jaar)
-    WHERE ru.lidId = '". mysqli_real_escape_string($this->db,$lidId) ."' and sb.tbl = 'ru'
- and year(sb.datum) = '". mysqli_real_escape_string($this->db,$kzlJaar) ."' and r.actief = 1 and ru.sal = 1
+    WHERE ru.lidId = '". $this->db->real_escape_string($lidId) ."' and sb.tbl = 'ru'
+ and year(sb.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and r.actief = 1 and ru.sal = 1
      and r.rubId = 1
     GROUP BY r.credeb
  ) som

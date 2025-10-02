@@ -3,7 +3,7 @@
 class VersieGateway extends Gateway {
 
     public function zoek_laatste_versie() {
-    $zoek_laatste_versie = mysqli_query($this->db, "
+    $zoek_laatste_versie = $this->db->query("
 SELECT max(Id) lstId
 FROM (
     SELECT a.Id
@@ -24,31 +24,31 @@ FROM (
     WHERE app = 'Reader' and isnull(versieId)
 ) a
     ") or Logger::error(mysqli_error($this->db));
-    while ($zlv = mysqli_fetch_assoc($zoek_laatste_versie)) {
+    while ($zlv = $zoek_laatste_versie->fetch_assoc()) {
          return $zlv['lstId'];
     }
     return null;
     }
 
     public function zoek_readersetup_in($last_versieId) {
-        $zoek_readersetup_in_laatste_versie =  mysqli_query($this->db, "
+        $zoek_readersetup_in_laatste_versie =  $this->db->query("
 SELECT bestand
 FROM tblVersiebeheer 
-WHERE app = 'App' and Id = '".mysqli_real_escape_string($this->db, $last_versieId)."'
-") or die(mysqli_error($this->db));
-    while ($zrv = mysqli_fetch_assoc($zoek_readersetup_in_laatste_versie)) {
+WHERE app = 'App' and Id = '".$this->db->real_escape_string($last_versieId)."'
+");
+    while ($zrv = $zoek_readersetup_in_laatste_versie->fetch_assoc()) {
          return $zrv['bestand'];
     }
     return null;
     }
 
     public function zoek_readertaken_in($last_versieId) {
-        $zoek_readertaken_in_laatste_versie =  mysqli_query($this->db, "
+        $zoek_readertaken_in_laatste_versie =  $this->db->query("
 SELECT bestand
 FROM tblVersiebeheer 
-WHERE app = 'Reader' and (Id = '".mysqli_real_escape_string($this->db, $last_versieId)."' or versieId = '".mysqli_real_escape_string($this->db, $last_versieId)."')
-") or die(mysqli_error($this->db));
-    while ($zrv = mysqli_fetch_assoc($zoek_readertaken_in_laatste_versie)) {
+WHERE app = 'Reader' and (Id = '".$this->db->real_escape_string($last_versieId)."' or versieId = '".$this->db->real_escape_string($last_versieId)."')
+");
+    while ($zrv = $zoek_readertaken_in_laatste_versie->fetch_assoc()) {
          return $zrv['bestand'];
     }
     return null;

@@ -5,7 +5,7 @@ class HistorieGateway extends Gateway {
     public function zoek_eerste_datum_stalop($recId) {
         $first_day = null;
         $eerste_dag = null;
-        $vw = mysqli_query($this->db, "
+        $vw = $this->db->query("
 SELECT min(datum) date, date_format(min(datum),'%d-%m-%Y') datum
 FROM tblHistorie h
  join tblActie a on (a.actId = h.actId)
@@ -18,7 +18,7 @@ FROM tblHistorie h
  ) st on (st.stalId = h.stalId and st.hisId <> h.hisId)
  WHERE a.op = 1
 ");
-            while ($mi = mysqli_fetch_assoc($vw)) {
+            while ($mi = $vw->fetch_assoc()) {
                 $first_day = $mi['date'];
                 $eerste_dag = $mi['datum'];
             }
@@ -28,86 +28,86 @@ FROM tblHistorie h
     }
 
     public function setDatum($day, $recId) {
-        mysqli_query($this->db, "
+        $this->db->query("
  UPDATE tblHistorie h
   join tblMelding m on (h.hisId = m.hisId)
- set   h.datum  = '".mysqli_real_escape_string($this->db, $day)."'
+ set   h.datum  = '".$this->db->real_escape_string($day)."'
  WHERE m.meldId = '$recId' 
  ");
     }
 
     public function zoek_dekdatum($dekMoment) {
-        $zoek_dekdatum = mysqli_query($this->db,"
+        $zoek_dekdatum = $this->db->query("
 SELECT date_format(datum,'%d-%m-%Y') datum, year(datum) jaar
 FROM tblHistorie
-WHERE hisId = '".mysqli_real_escape_string($this->db,$dekMoment)."' and skip = 0
+WHERE hisId = '".$this->db->real_escape_string($dekMoment)."' and skip = 0
     ");
         $dekdm = 0;
         $dekjaar = 0;
-        while ( $zd = mysqli_fetch_assoc($zoek_dekdatum)) {
+        while ( $zd = $zoek_dekdatum->fetch_assoc()) {
             $dekdm = $zd['datum']; $dekjaar = $zd['jaar']; 
         }
         return [$dekdm, $dekjaar];
         }
 
     public function zoek_drachtdatum($drachtMoment) {
-        $zoek_drachtdatum = mysqli_query($this->db,"
+        $zoek_drachtdatum = $this->db->query("
 SELECT date_format(datum,'%d-%m-%Y') datum
 FROM tblHistorie
-WHERE hisId = '".mysqli_real_escape_string($this->db,$drachtMoment)."' and skip = 0
-") or die (mysqli_error($this->db));
-while ( $zd = mysqli_fetch_assoc($zoek_drachtdatum)) {
+WHERE hisId = '".$this->db->real_escape_string($drachtMoment)."' and skip = 0
+");
+while ( $zd = $zoek_drachtdatum->fetch_assoc()) {
     $drachtdm = $zd['datum']; 
 }
 return $drachtdm ?? 0;
 }
 
 public function zoek_jaartal_eerste_dekking_dracht($lidId, $een_startjaar_eerder_gebruiker) {
-   $vw = mysqli_query($this->db,"
+   $vw = $this->db->query("
 SELECT year(min(h.datum)) jaar
 FROM tblHistorie h
  join tblStal st on (st.stalId = h.stalId)
 WHERE (actId = 18 or actId = 19)
  and skip = 0
- and st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
- and year(h.datum) >= '".mysqli_real_escape_string($this->db,$een_startjaar_eerder_gebruiker)."'
+ and st.lidId = '".$this->db->real_escape_string($lidId)."'
+ and year(h.datum) >= '".$this->db->real_escape_string($een_startjaar_eerder_gebruiker)."'
 ");
-    while($zj = mysqli_fetch_assoc($vw)) { $first_year_db = $zj['jaar']; }
+    while($zj = $vw->fetch_assoc()) { $first_year_db = $zj['jaar']; }
 return $first_year_db;
 }
 
 public function zoek_datum_verblijf_tijdens_dekking($lidId, $mdrId, $dmdek) {
-   $vw = mysqli_query($this->db,"
+   $vw = $this->db->query("
 SELECT max(h.datum) datum
 FROM tblHistorie h
  join tblBezet b on (h.hisId = b.hisId)
  join tblStal st on (h.stalId = st.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
- and st.schaapId = '".mysqli_real_escape_string($this->db,$mdrId)."'
- and h.datum <= '".mysqli_real_escape_string($this->db,$dmdek)."'
+WHERE st.lidId = '".$this->db->real_escape_string($lidId)."'
+ and st.schaapId = '".$this->db->real_escape_string($mdrId)."'
+ and h.datum <= '".$this->db->real_escape_string($dmdek)."'
 "); 
-while ($zdvtd = mysqli_fetch_array($vw)) 
+while ($zdvtd = $vw->fetch_array()) 
 { $date_verblijf = $zdvtd['datum']; }
 return $date_verblijf ?? null;
     }
 
 public function zoek_hisId_verblijf_tijdens_dekking($lidId, $mdrId, $date_verblijf) {
-   $vw = mysqli_query($this->db,"
+   $vw = $this->db->query("
 SELECT max(h.hisId) hisId
 FROM tblHistorie h
  join tblBezet b on (h.hisId = b.hisId)
  join tblStal st on (h.stalId = st.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
- and st.schaapId = '".mysqli_real_escape_string($this->db,$mdrId)."'
- and h.datum = '".mysqli_real_escape_string($this->db,$date_verblijf)."'
+WHERE st.lidId = '".$this->db->real_escape_string($lidId)."'
+ and st.schaapId = '".$this->db->real_escape_string($mdrId)."'
+ and h.datum = '".$this->db->real_escape_string($date_verblijf)."'
 "); 
-while ($zhvtd = mysqli_fetch_array($zoek_hisId_verblijf_tijdens_dekking)) 
+while ($zhvtd = $zoek_hisId_verblijf_tijdens_dekking->fetch_array()) 
 { $hisId_verblijf = $zhvtd['hisId']; }
 return $hisId_verblijf ?? null;
 }
 
 public function zoek_verblijf_tijdens_dekking($lidId, $hisId_verblijf, $dmdek) {
-    $vw = mysqli_query($this->db,"
+    $vw = $this->db->query("
 SELECT ho.hoknr
 FROM tblBezet b
  join tblHok ho on (b.hokId = ho.hokId)
@@ -120,14 +120,14 @@ FROM tblBezet b
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = '".mysqli_real_escape_string($this->db,$lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+    WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
     GROUP BY b.bezId, st.schaapId, h1.hisId
  ) uit on (b.hisId = uit.hisv)
  left join tblHistorie ht on (ht.hisId = uit.hist)
-WHERE b.hisId = '".mysqli_real_escape_string($this->db,$hisId_verblijf)."'
- and (isnull(uit.bezId) or ht.datum > '".mysqli_real_escape_string($this->db,$dmdek)."')
+WHERE b.hisId = '".$this->db->real_escape_string($hisId_verblijf)."'
+ and (isnull(uit.bezId) or ht.datum > '".$this->db->real_escape_string($dmdek)."')
 "); 
-while ($zvtd = mysqli_fetch_array($vw)) 
+while ($zvtd = $vw->fetch_array()) 
 { $verblijf = $zvtd['hoknr']; }
 return $verblijf ?? null;
 }

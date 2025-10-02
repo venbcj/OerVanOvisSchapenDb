@@ -3,21 +3,21 @@
 class StalGateway extends Gateway {
 
     public function updateHerkomstByMelding($recId, $fldHerk) {
-        mysqli_query($this->db, "
+        $this->db->query("
             UPDATE tblStal st
              join tblHistorie h on (h.stalId = st.stalId)
              join tblMelding m on (m.hisId = h.hisId)
-            set st.rel_herk = '".mysqli_real_escape_string($this->db, $fldHerk)."' 
+            set st.rel_herk = '".$this->db->real_escape_string($fldHerk)."' 
             WHERE m.meldId = '$recId'
             ");
     }
 
     public function updateBestemmingByMelding($recId, $fldBest) {
-            mysqli_query($this->db, "
+            $this->db->query("
             UPDATE tblStal st
              join tblHistorie h on (h.stalId = st.stalId)
              join tblMelding m on (m.hisId = h.hisId)
-            set st.rel_best = '".mysqli_real_escape_string($this->db, $fldBest)."'
+            set st.rel_best = '".$this->db->real_escape_string($fldBest)."'
             WHERE m.meldId = '$recId'
             ");
     }
@@ -37,7 +37,7 @@ SELECT st.stalId, st.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) we
 FROM (
     SELECT max(stalId) stalId, schaapId
     FROM tblStal
-    WHERE lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+    WHERE lidId = '".$this->db->real_escape_string($lidId)."'
     GROUP BY schaapId
  ) stm
  join tblStal st on (stm.stalId = st.stalId)
@@ -55,7 +55,7 @@ FROM (
      FROM tblStal st
       join tblHistorie h on (st.stalId = h.stalId)
       join tblActie a on (h.actId = a.actId)
-     WHERE a.af = 1 and h.actId <> 10 and lidId = '".mysqli_real_escape_string($this->db,$lidId)."'
+     WHERE a.af = 1 and h.actId <> 10 and lidId = '".$this->db->real_escape_string($lidId)."'
      ) afv on (afv.stalId = st.stalId)
 WHERE s.geslacht = 'ooi' and (isnull(afv.stalId) or afv.datum > date_add(curdate(), interval -2 month) )
 
