@@ -649,6 +649,7 @@ function setup_versies($db, $persoonlijke_map) {
         $takenfile_exists = 1;
     }
 
+    $actuele_versie = null;
     if ($appfile_exists == 1 && $takenfile_exists == 1) {
         // deze variabele komt terug in menu1 en menubeheer, maar ook aangeroepen vanuit header.tpl. Daarom moet-ie er nu al zijn.
         $actuele_versie = 'Ja';

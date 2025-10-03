@@ -4,7 +4,7 @@ class Session {
 
     private static $instance;
 
-    public function isset($name) {
+    public static function isset($name) {
         static::ensure_instance();
         return static::$instance->issetkey($name);
     }

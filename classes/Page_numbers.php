@@ -19,7 +19,7 @@ class Page_numbers {
     /********
     *    Constructor, setting some vars
     ********/
-    function Page_numbers($table, $condition="", $link_id=null, $paginasessie = null, $rpp = 60, $base_url = '') {
+    function __construct($table, $condition="", $link_id=null, $paginasessie = null, $rpp = 60, $base_url = '') {
         $this->table = $table;
         $this->condition = $condition;
         $this->link_id = $link_id;

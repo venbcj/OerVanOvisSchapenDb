@@ -48,7 +48,7 @@ class Auth {
         return (Session::isset('U1')) && (Session::isset('W1')) && (Session::isset('I1'));
     }
 
-    private function noteer_inlogtijd($db, $lidId) {
+    private static function noteer_inlogtijd($db, $lidId) {
         $nu = date('Y-m-d H:i:s'); // Gebruikt in login.php
         $update_tblLeden = " UPDATE tblLeden set laatste_inlog = '".mysqli_real_escape_string($db, $nu)."' WHERE lidId = '".mysqli_real_escape_string($db, $lidId)."' ";
         mysqli_query($db, $update_tblLeden) or die(mysqli_error($db));

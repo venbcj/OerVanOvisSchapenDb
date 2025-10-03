@@ -532,7 +532,7 @@ if (!isset($totDood))
  <td width = 1> </td>
  <td width = 100 style = "font-size:15px;"> <hr /><b> </b><br> </td>
  <td width = 1> </td> 
-<?php if(!isset($totVoer)) {    $totVoer = "<br>";    } ?>
+<?php if(!isset($totVoer)) {    $totVoer = null;    } ?>
  <td width = 80 style = "font-size:15px;"> <hr/><b> <?php echo $totVoer; ?> </b> </td>
  <td width = 1> </td>
  <td width = 50> </td>
