@@ -60,7 +60,7 @@ WHERE lidId = '".mysqli_real_escape_string($db,$lidid)."';
     while ($row = mysqli_fetch_assoc($result))     { $Karwerk = $row['kar_werknr']; }
 
 $zoek_info = mysqli_query($db,"
-SELECT concat(transponder,levensnummer) tran, coalesce(s.geslacht,'Onbekend') geslacht, coalesce(r.ras,'Onbekend') ras, coalesce(ldek.dekdm_max,'n.v.t.') lastdek, coalesce(dram.werknr,'n.v.t.') dekram, coalesce(lw.worp,'n.v.t.') lastworp, coalesce(lw.werpdm,'n.v.t.') lastwerpdm,
+SELECT concat(transponder,levensnummer) tran, coalesce(s.geslacht,'Onbekend') geslacht, coalesce(r.ras,'Onbekend') ras, coalesce(ldek.dekdm_max,'n.v.t.') lastdekdm, coalesce(dram.werknr,'n.v.t.') dekram, coalesce(dram.ras,'n.v.t.') ras_dekram, coalesce(lw.worp,'n.v.t.') lastworp, coalesce(lw.werpdm,'n.v.t.') lastwerpdm,
     coalesce(aant_d, 0) aant_d,
     coalesce(aant_w, 0) aant_w,
     coalesce(round(aant_lam/aant_w,2),0) gemWorp, 
@@ -81,18 +81,19 @@ FROM tblSchaap s
      GROUP BY st.schaapId
  ) ldek on (ldek.schaapId = s.schaapId)
  left join (
-     SELECT max(volwId) mvolwId, h.datum
+     SELECT max(volwId) mvolwId, st.schaapId, h.datum
      FROM tblVolwas v
       join tblHistorie h on (v.hisId = h.hisId)
       join tblStal st on (h.stalId = st.stalId)
      WHERE h.skip = 0 and lidId = '".mysqli_real_escape_string($db,$lidid)."'
-     GROUP BY h.datum
- ) lstVId on (lstVId.datum = ldek.datum)
+     GROUP BY st.schaapId, h.datum
+ ) lstVId on (lstVId.schaapId = ldek.schaapId and lstVId.datum = ldek.datum)
  left join (
-     SELECT v.volwId, right(levensnummer, $Karwerk) werknr
+     SELECT v.volwId, right(levensnummer, $Karwerk) werknr, r.ras
      FROM tblSchaap s
       join tblStal st on (s.schaapId = st.schaapId)
       join tblVolwas v on (v.vdrId = s.schaapId) 
+      join tblRas r on (r.rasId = s.rasId) 
      WHERE lidId = '".mysqli_real_escape_string($db,$lidid)."'
  ) dram on (dram.volwId = lstVId.mvolwId)
  left join (
@@ -175,6 +176,7 @@ FROM tblSchaap s
  ) amw on (w.mdrId = amw.mdrId)
 
 WHERE isnull(st.rel_best) and lidId = '".mysqli_real_escape_string($db,$lidid)."' and s.transponder is not null
+ and s.schaapId = 9590
 ") or die (mysqli_error($db)); 
 
 $rows = mysqli_num_rows($zoek_info);
@@ -185,8 +187,9 @@ if(isset($zoek_info) && $rows > 0) {
     while($zi = mysqli_fetch_array($zoek_info))
         {
             $geslacht = $zi['geslacht'];
-            $lastdek = $zi['lastdek']; if($geslacht == 'ram') { $lastdek = 'n.v.t.'; }
-            $lastdekram = $zi['dekram']; if($geslacht == 'ram') { $lastdek = 'n.v.t.'; }
+            $lastdekdm = $zi['lastdekdm']; if($geslacht == 'ram') { $lastdekdm = 'n.v.t.'; }
+            $lastdekram = $zi['dekram']; if($geslacht == 'ram') { $lastdekram = 'n.v.t.'; }
+            $lastras_dekram = $zi['ras_dekram']; if($geslacht == 'ram') { $lastras_dekram = 'n.v.t.'; }
             $lastworp = $zi['lastworp']; if($geslacht == 'ram') { $lastworp = 'n.v.t.'; }
             $lastwerpdm = $zi['lastwerpdm']; if($geslacht == 'ram') { $lastwerpdm = '00-00-0000'; }
 
@@ -201,7 +204,7 @@ if(isset($zoek_info) && $rows > 0) {
             $aantMaxWorp = $zi['aantalmaxworp']; if($geslacht == 'ram') { $aantMaxWorp = 'n.v.t.'; }    
 
 
-            $opties[] = array('Transponder' => $zi['tran'], 'Geslacht' => $geslacht, 'Ras' => $zi['ras'], 'Laatstedek' => $lastdek, 'Laatstedekram' => $lastdekram, 'Laatsteworp' => $lastworp, 'Laatstewerpdm' => $lastwerpdm, 'Dekaantal' => $aantDek, 'Worpaantal' => $aantWorp, 'Gemiddeldeworp' => $gemWorp, 'Lamaantal' => $aantLam, 'PercLevend' => $PercLevend, 'Maxworp' => $maxWorp, 'Aantmaxworp' => $aantMaxWorp);
+            $opties[] = array('Transponder' => $zi['tran'], 'Geslacht' => $geslacht, 'Ras' => $zi['ras'], 'Laatstedekdm' => $lastdekdm, 'Laatste_dekram_werknr' => $lastdekram, 'Laatste_dekram_ras' => $lastras_dekram, 'Laatsteworp' => $lastworp, 'Laatstewerpdm' => $lastwerpdm, 'Dekaantal' => $aantDek, 'Worpaantal' => $aantWorp, 'Gemiddeldeworp' => $gemWorp, 'Lamaantal' => $aantLam, 'PercLevend' => $PercLevend, 'Maxworp' => $maxWorp, 'Aantmaxworp' => $aantMaxWorp);
 
             }
 }
