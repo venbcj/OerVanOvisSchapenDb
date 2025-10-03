@@ -13,15 +13,7 @@
 23-08-2025 : ubn uit bestandsnaam responsfile_rename en requestfile_rename gehaald -->
  */
 
-// OBSERVATIES
-// - wij worden alleen in responscheck opgevraagd
-// - responsecheck doet al een include van url.php -> hier weg
-// - $dir is in responsecheck al gezet
-// - $requestfile en $responsefile bestaan allebei op schijf, anders worden wij niet geinclude; die hele riedel rond $fout is onnodig
-include "url.php";
-
-$dir = dirname(__FILE__); // Locatie bestanden op FTP server
-$bright_map = $dir.'/BRIGHT/';
+$bright_map = $dir.'/BRIGHT/'; // $dir is in responsecheck gedeclareerd
 $persoonlijke_map = $dir.'/user_'.$lidId.'/';
 copy($bright_map.$responsfile, $dir."/".$responsfile); // $responsfile is gedeclareerd in responscheck.php
 
@@ -31,25 +23,6 @@ if ($code == 'VMD') {
 } else {
     $velden = array('reqId','prod','def','urvo','prvo','melding','relnr','ubn','schaapdm','land','levensnummer','soort','ubn_herk','ubn_best','land_herk','gebdm','sucind','foutind','foutcode','foutmeld','meldnr','respId');
 }
-
-if (!isset($dir) or empty($dir)) {
-    $fout = "De oorspronkelijke locatie wordt niet gevonden.";
-}
-if (!isset($responsfile) or empty($responsfile)) {
-    if (isset($fout)) {
-        $fout .= "en het responsbestand wordt niet gevonden.";
-    } else {
-        $fout  =     "Het responsbestand wordt niet gevonden.";
-    }
-}
-if (!isset($requestfile) or empty($requestfile)) {
-    if (isset($fout)) {
-        $fout .= " en het requestbestand wordt niet gevonden.";
-    } else {
-        $fout  =      "Het requestbestand wordt niet gevonden.";
-    }
-}
-// $requestfile is gedeclareerd in responscheck.php
 
 if (!isset($fout)) {
     // Als controles zijn doorstaan
