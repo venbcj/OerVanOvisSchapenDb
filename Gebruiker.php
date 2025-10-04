@@ -28,6 +28,7 @@ include "login.php"; ?>
             <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) {
+    $lid_gateway = new LidGateway();
 
     if(isset($_GET['pstId']))    {
         Session::set("ID", $_GET['pstId']); 
@@ -37,53 +38,13 @@ if (Auth::is_logged_in()) {
 
  // $ID is de gebruiker die op de pagina is opgeroepen
  // $lidId is de gebruiker die is ingelogd
-if (isset ($_POST['knpSave'])) {
-    $zoek_ingescand = mysqli_query($db,"
-    SELECT ingescand
-    FROM tblLeden 
-    WHERE lidId = '".mysqli_real_escape_string($db,$ID)."' ;
-    ") or die (mysqli_error($db)); 
-    while ($zi = mysqli_fetch_assoc($zoek_ingescand))     {
-        $scanday = $zi['ingescand']; 
+if (isset($_POST['knpSave'])) {
+    $data = $_POST;
+    $data['lstScanDay'] =  date_format(date_create($_POST['txtIngescand']), 'Y-m-d');
+    if (empty($_POST['txtIngescand'])) {
+        $data['lstScanDay'] = $lid_gateway->zoek_ingescand($ID);
     }
-    $txtRoep = $_POST['txtRoep'];
-    $txtVoeg = $_POST['txtVoeg'];
-    $txtNaam = $_POST['txtNaam'];
-    $txtTel = $_POST['txtTel'];
-    $txtMail = $_POST['txtMail'];
-    $txtRelnr = $_POST['txtRelnr'];
-    $txtUrvo = $_POST['txtUrvo'];
-    $txtPrvo = $_POST['txtPrvo'];
-    $kzlReader = $_POST['kzlReader'];
-    $radMeld = $_POST['radMeld'];
-    $radTech = $_POST['radTech'];
-    $radFin = $_POST['radFin'];
-    $kzlAdm = $_POST['kzlAdm'];
-    $txtLstScan = $_POST['txtIngescand'];
-    $dag = date_create($txtLstScan);
-    $lstScanDay =  date_format($dag, 'Y-m-d');
-    if (empty($txtLstScan)) {
-        $lstScanDay =  $scanday;
-    }
-    
-$update_lid = "UPDATE tblLeden SET 
-    roep = '".mysqli_real_escape_string($db,$txtRoep)."',
-    voegsel = ". db_null_input($txtVoeg) . ",
-    naam = '".mysqli_real_escape_string($db,$txtNaam)."',
-    relnr = ". db_null_input($txtRelnr) . ",
-    urvo = ". db_null_input($txtUrvo) . ",
-    prvo = ". db_null_input($txtPrvo) . ",
-    mail = ". db_null_input($txtMail) . ",
-    tel = ". db_null_input($txtTel) . ",
-    meld = '".mysqli_real_escape_string($db,$radMeld)."',
-    tech = '".mysqli_real_escape_string($db,$radTech)."',
-    fin = '".mysqli_real_escape_string($db,$radFin)."',
-    beheer = '".mysqli_real_escape_string($db,$kzlAdm)."',
-    ingescand = '".mysqli_real_escape_string($db,$lstScanDay)."',
-    reader = ". db_null_input($kzlReader) . "
-    WHERE lidId = '".mysqli_real_escape_string($db,$ID)."'
-    ;";
-        mysqli_query($db,$update_lid) or die (mysqli_error($db));
+    $lid_gateway->update_details($ID, $data);
 }
 
 if (isset ($_POST['knpUpdate'])) {
@@ -91,20 +52,7 @@ if (isset ($_POST['knpUpdate'])) {
     include "newreader_keuzelijsten.php";
 }
 
-$result = mysqli_query($db,"
-SELECT l.lidId, l.roep, l.voegsel, l.naam, l.relnr, u.ubn, l.urvo, l.prvo, l.mail, l.tel,
-date_format(l.ingescand,'%d-%m-%Y') ingescand, l.meld, l.tech, l.fin, l.beheer, l.reader, l.readerkey 
-FROM tblLeden l
- join tblUbn u on (l.lidId = u.lidId)
-WHERE l.lidId = '".mysqli_real_escape_string($db,$ID)."' ;
-") or die (mysqli_error($db)); 
-
-$columns = explode(' ', 'lidId roep voegsel naam relnr ubn urvo prvo mail tel ingescand meld tech fin beheer reader readerkey');
-
-$row = array_fill_keys($columns, '');
-if ($result->num_rows) {
-    $row = mysqli_fetch_assoc($result);
-}
+$row = $lid_gateway->get_data($ID);
 ?>
 
 <form action = "Gebruiker.php" method = "post" >
@@ -175,24 +123,9 @@ foreach ( $opties as $key => $waarde)
  </td>
  <?php // knpUpdate hoeft alleen te worden getoond als er iets valt bij te werken bij reader Agrident 
 if ($row['reader'] == 'Agrident') {
-$zoek_redenen_uitval =  mysqli_query($db,"
-SELECT count(redId) aant
-FROM tblRedenuser
-WHERE redId in (8, 13, 22, 42, 43, 44) and uitval = 1 and lidId = '".mysqli_real_escape_string($db,$ID)."'
-") or die (mysqli_error($db));
-while ( $zr = mysqli_fetch_assoc($zoek_redenen_uitval)) {
-    $rd_db = $zr['aant'];
-}
-
-$zoek_redenen_afvoer =  mysqli_query($db,"
-SELECT count(redId) aant
-FROM tblRedenuser
-WHERE redId in (15, 45, 46, 47, 48, 49, 50, 51) and afvoer = 1 and lidId = '".mysqli_real_escape_string($db,$ID)."'
-") or die (mysqli_error($db));
-while ( $zr = mysqli_fetch_assoc($zoek_redenen_afvoer)) {
-    $rd_db += $zr['aant']; 
-}
- ?>
+    $rd_db = $lid_gateway->zoek_redenen_uitval($ID);
+    $rd_db += $lid_gateway->zoek_redenen_afvoer($ID);
+?>
  <td>
      <?php if($rd_db < 14 ) { ?>
      <input type = "submit" name ="knpUpdate" value="Bijwerken">

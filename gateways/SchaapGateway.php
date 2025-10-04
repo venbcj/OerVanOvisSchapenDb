@@ -1572,4 +1572,19 @@ public function zoek_geslacht($schaapId) {
     return $this->first_field("SELECT geslacht FROM tblSchaap WHERE schaapId = '".$this->db->real_escape_string($schaapId)."'");
 }
 
+public function zoek_halsnr_db($lidId, $kleur, $halsnr) {
+    $zoek_halsnr_db = $this->db->query("
+SELECT schaapId
+FROM tblStal
+WHERE lidId = '".$this->db->real_escape_string($lidId)."'
+ and kleur = '".$this->db->real_escape_string($kleur)."'
+ and halsnr = '".$this->db->real_escape_string($halsnr)."'
+ and isnull(rel_best)
+");
+if ($vw->num_rows) {
+    return $vw->fetch_row()[0];
+}
+return null;
+}
+
 }

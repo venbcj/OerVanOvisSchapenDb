@@ -2,7 +2,6 @@
 
 require_once("autoload.php");
 
-
 $versie = '17-5-2019'; /* gemaakt als kopie van HokAfleveren */
 $versie = '20-12-2019'; /* tabelnaam gewijzigd van UIT naar uit tabelnaam */
 $versie = '14-08-2020'; /* geslacht toegevoegd */
@@ -44,13 +43,14 @@ if(isset($_POST['knpVerder_']) )    {
 
 if(isset($_POST['knpSave_'])) { include "save_aanwas.php"; }
 
-$zoek_hok = mysqli_query ($db,"
-SELECT hoknr FROM tblHok WHERE hokId = ".mysqli_real_escape_string($db,$ID)."
-") or die (mysqli_error($db));
-    while ($h = mysqli_fetch_assoc($zoek_hok)) { $hoknr = $h['hoknr']; } ?>
+$hok_gateway = new HokGateway();
+$hoknr = $hok_gateway->findHoknrById($ID);
+?>
 
-<form action="HokAanwas.php" method = "post"><?php
+    <form action="HokAanwas.php" method = "post">
+<?php
 // Opbouwen paginanummering 
+// TODO: Pagineren verbouwen, en/of hier een (database-)view van maken. Ja, nou zit er nog een vracht SQL tussen de PHP. 
 $velden = "s.schaapId, s.levensnummer, s.geslacht, date_format(max(h.datum),'%Y-%m-%d') dmlst, date_format(max(h.datum),'%d-%m-%Y') lstdm";
 
 $tabel = "tblSchaap s 

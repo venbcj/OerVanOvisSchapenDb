@@ -26,7 +26,7 @@ include "login.php"; ?>
         <TD align = "center" valign = "top">
 <?php
 if (Auth::is_logged_in()) { if($modfin == 1) {
-
+$lid_gateway = new LidGateway();
 if (isset ($_POST['knpSave_'])) { include "save_component.php"; }
 
 //*****************************
@@ -41,7 +41,6 @@ if (isset ($_POST['knpSave_'])) { include "save_component.php"; }
  <b>Componenten in gebruik :</b> 
  </td></tr> 
 
-
  <tr style =  "font-size:12px;" valign =  "bottom"> 
          <th width = 180>Component</th>
          <th></th>
@@ -52,45 +51,28 @@ if (isset ($_POST['knpSave_'])) { include "save_component.php"; }
  </tr> 
 <?php
 // START LOOP Eenheid
-$loopEenh = mysqli_query($db,"
-select e.eenheid
-from tblElement e
- join tblElementuser eu on (e.elemId = eu.elemId)
-where eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and (actief = 1 or eu.sal = 1)
-group by e.eenheid
-order by e.eenheid
-") or die (mysqli_error($db));
-
-    while($rij = mysqli_fetch_assoc($loopEenh))
-    {
-        $eenh = "{$rij['eenheid']}"; 
-    
+$loopEenh = $lid_gateway->user_eenheden($lidId);
+while($rij = mysqli_fetch_assoc($loopEenh)) {
+    $eenh = "{$rij['eenheid']}"; 
     if($eenh == 'euro')     { $eenheid = 'Bedragen'; }
     if($eenh == 'getal')     { $eenheid = 'Getallen'; }
     if($eenh == 'procent')     { $eenheid = 'Percentages'; } ?>
-    
+
 <tr><th height = 52 align = left valign = bottom><?php echo $eenheid; ?><hr></th></tr>    
 <?php        
-// START LOOP Componenten
-$loopCom = mysqli_query($db,"
-select eu.elemuId, e.element, eu.waarde, e.eenheid, eu.actief, eu.sal
-from tblElement e
- join tblElementuser eu on (e.elemId = eu.elemId)
-where eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and e.eenheid = '".mysqli_real_escape_string($db,$eenh)."' and (actief = 1 or eu.sal = 1)
-order by e.eenheid, e.element
-") or die (mysqli_error($db));
+        // START LOOP Componenten
+        $loopCom = $lid_gateway->user_componenten($lidId, $eenhd);
 
-    while($row = mysqli_fetch_assoc($loopCom))
-    {
+    while($row = mysqli_fetch_assoc($loopCom)) {
         $Id = "{$row['elemuId']}";
         $compo = "{$row['element']}";
         $waarde = "{$row['waarde']}";
         $eenh = "{$row['eenheid']}";
         $actief = "{$row['actief']}";
         $sal = "{$row['sal']}";
-        
-    $eenheid_voor = array(''=>'','euro'=>'&euro;','getal'=>'','procent'=>'');
-    $eenheid_achter = array(''=>'','euro'=>'','getal'=>'','procent'=>'%');
+
+        $eenheid_voor = array(''=>'','euro'=>'&euro;','getal'=>'','procent'=>'');
+        $eenheid_achter = array(''=>'','euro'=>'','getal'=>'','procent'=>'%');
 ?>
 <tr style = "font-size:12px;">
 <td width = 180 style = "font-size : 14px;">
@@ -114,9 +96,10 @@ order by e.eenheid, e.element
 </tr>
 
     </td>
-<?php        
+<?php
     }
-    } ?>
+}
+?>
 
 <td></td></tr>
 </table>
@@ -125,25 +108,17 @@ order by e.eenheid, e.element
 ** EINDE COMPONENTEN IN GEBRUIK
 *************************************
 -->
-
-</td> <!-- Ruimte tussen de twee tabellen--> <td width = 200 align = center valign = 'top'> 
+</td>
+<!-- Ruimte tussen de twee tabellen-->
+<td width = 200 align = center valign = 'top'> 
 <input type = "submit" name="knpSave_" value = "Opslaan" >
 </td>
-    
-
 <?php
-
 //*****************************
 //** COMPONENTEN NIET IN GEBRUIK
 //***************************** 
 // Aantal componenten niet in gebruik 
-$Aantal_uit = mysqli_query($db,"
-select count(elemuId) aant
-from tblElementuser
-where lidId = ".mysqli_real_escape_string($db,$lidId)." and actief = 0 and sal = 0
-") or die (mysqli_error($db));
-    while ($uit = mysqli_fetch_assoc($Aantal_uit))
-    {    $niet_actief = $uit['aant'];    }
+    $niet_actief = $lid_gateway->countInactiveComponents($lidId);
 if ($niet_actief > 0) {
 ?>
 <td width = 350 align = 'right' valign = 'top'> <!--betreft cel van overkoepelende tabel -->
@@ -152,7 +127,6 @@ if ($niet_actief > 0) {
  <td colspan =  4 valign = "bottom"> 
  <b>Componenten niet in gebruik:</b> 
  </td></tr> 
-
 
  <tr style =  "font-size:12px;" valign =  "bottom"> 
          <th align = "left" >Component</th>
@@ -164,49 +138,33 @@ if ($niet_actief > 0) {
  </tr> 
 <?php        
 // START LOOP Eenheid
-$loopEenh = mysqli_query($db,"
-select e.eenheid
-from tblElement e
- join tblElementuser eu on (e.elemId = eu.elemId)
-where eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and eu.actief = 0 and sal = 0
-group by e.eenheid
-order by e.eenheid
-") or die (mysqli_error($db));
-
-    while($rij = mysqli_fetch_assoc($loopEenh))
-    {
+    $loopEenh = $lid_gateway->zoek_inactieve_componenten($lidId);
+    while($rij = mysqli_fetch_assoc($loopEenh)) {
         $eenh = "{$rij['eenheid']}"; 
-    
-    if($eenh == 'euro')     { $eenheid = 'Bedragen'; }
-    if($eenh == 'getal')     { $eenheid = 'Getallen'; }
-    if($eenh == 'procent')     { $eenheid = 'Percentages'; } ?>
-    
+
+        if($eenh == 'euro')     { $eenheid = 'Bedragen'; }
+        if($eenh == 'getal')     { $eenheid = 'Getallen'; }
+        if($eenh == 'procent')     { $eenheid = 'Percentages'; }
+?>
+
 <tr><th height = 52 align = left valign = bottom><?php echo $eenheid; ?><hr></th></tr>    
 <?php        
-// START LOOP Componenten
-$loopCom = mysqli_query($db,"
-select eu.elemuId, e.element, eu.waarde, eu.actief, eu.sal
-from tblElement e
- join tblElementuser eu on (e.elemId = eu.elemId)
-where eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and e.eenheid = '".mysqli_real_escape_string($db,$eenh)."' and actief = 0 and sal = 0
-order by element
-") or die (mysqli_error($db));
+            // START LOOP Componenten
+            $loopCom = $lid_gateway->user_inactieve_componenten($lidId, $eenh);
 
-
-    while($row = mysqli_fetch_assoc($loopCom))
-    {
-        $Id = "{$row['elemuId']}";
-        $compo = "{$row['element']}";
-        $waarde = "{$row['waarde']}";
-        $actief = "{$row['actief']}";
-        $sal = "{$row['sal']}";
+        while($row = mysqli_fetch_assoc($loopCom)) {
+            $Id = "{$row['elemuId']}";
+            $compo = "{$row['element']}";
+            $waarde = "{$row['waarde']}";
+            $actief = "{$row['actief']}";
+            $sal = "{$row['sal']}";
 ?>
         <tr style = "font-size:12px;">
         <td style = "font-size : 14px;">
 <?php
-// Veld Componentnaam
-echo $compo; 
-// EINDE  Veld Componentnaam
+            // Veld Componentnaam
+            echo $compo; 
+            // EINDE  Veld Componentnaam
 ?></td>
 <td width = 1></td>
 <td><!--Registratienummer -->
@@ -224,7 +182,7 @@ echo $compo;
 <input type = "hidden" name = <?php echo "chkSalber_$Id"; ?> size = 1 value =0 >
 <input type = "checkbox" name = <?php echo "chkSalber_$Id"; ?> id="c1" value="1" <?php echo $row['sal'] == 1 ? 'checked' : ''; ?>         title = "te gebruiken bij saldoberekening ja/nee ?"> </td>
 <?php        
-    }
+        }
     }
 ?>
 
@@ -232,19 +190,13 @@ echo $compo;
 </td></tr></table> <!-- Einde Deze tabel bevat twee tabellen -->
 <?php    } ?> 
 </td></tr>
-
-
 <!--
 *************************************
 ** EINDE COMPONENTEN NIET IN GEBRUIK
 ************************************* -->
 <?php  // EINDE Aantal componenten niet in gebruik  ?>
-
-
 </table>
 </form> 
-
-
     </TD>
 <?php } else { ?> <img src='componenten_php.jpg'  width='970' height='550'/> <?php }
 include "menuFinance.php"; } ?>
