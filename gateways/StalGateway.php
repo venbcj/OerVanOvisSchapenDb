@@ -64,4 +64,14 @@ ORDER BY right(s.levensnummer,$Karwerk), count(lam.schaapId)
 ");
     }
 
+    public function zoek_laatste_stalId($lidId, $schaapId) {
+        $vw = $this->db->query("
+SELECT max(stalId) stalId
+FROM tblStal
+WHERE lidId = '".$this->db->real_escape_string($lidId)."' and schaapId = '".$this->db->real_escape_string($schaapId)."' 
+");
+
+return $vw->fetch_row()[0];
+}
+
 }

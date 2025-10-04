@@ -1130,7 +1130,7 @@ FROM tblRequest r
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
      ) ouder on (ouder.schaapId = s.schaapId)
- 
+
 WHERE r.dmmeld is not null and r.code = 'GER' and st.lidId = '".$this->db->real_escape_string($lidId)."' and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and h.skip = 0 and m.skip = 0
 
 UNION 
@@ -1164,7 +1164,7 @@ FROM tblRequest r
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
      ) ouder on (ouder.schaapId = s.schaapId)
- 
+
 WHERE r.dmmeld is not null and r.code = 'AAN' and st.lidId = '".$this->db->real_escape_string($lidId)."' and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and h.skip = 0 and m.skip = 0
 
 UNION 
@@ -1198,7 +1198,7 @@ FROM tblRequest r
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
      ) ouder on (ouder.schaapId = s.schaapId)
- 
+
 WHERE r.dmmeld is not null and r.code = 'AFV' and st.lidId = '".$this->db->real_escape_string($lidId)."' and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and h.skip = 0 and m.skip = 0
 
 UNION 
@@ -1223,7 +1223,7 @@ FROM tblRequest r
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
      ) ouder on (ouder.schaapId = s.schaapId)
- 
+
 WHERE r.dmmeld is not null and r.code = 'DOO' and st.lidId = '".$this->db->real_escape_string($lidId)."' and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and h.skip = 0 and m.skip = 0
 
 UNION
@@ -1248,7 +1248,7 @@ FROM tblRequest r
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
      ) ouder on (ouder.schaapId = s.schaapId)
- 
+
 WHERE r.dmmeld is not null and r.code = 'VMD' and st.lidId = '".$this->db->real_escape_string($lidId)."' and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and h.skip = 0 and m.skip = 0
 
 UNION
@@ -1320,7 +1320,7 @@ FROM
         WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and hl.actId = 1 and hl.skip = 0 and moe.schaapId = '".$this->db->real_escape_string($schaapId)."'
         GROUP BY moe.levensnummer, moe.geslacht
      ) lam1 on (lam1.levensnummer = s.levensnummer and lam1.worp1 = hl.datum)
-    
+
     WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and sl.lidId = '".$this->db->real_escape_string($lidId)."' and hl.actId = 1 and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and isnull(lam1.worp1)
     GROUP BY s.levensnummer, s.geslacht, ouder.datum
  ) mdr
@@ -1386,5 +1386,56 @@ WHERE s.geslacht = 'ram' and st.lidId = '".$this->db->real_escape_string($lidId)
 ORDER BY right(s.levensnummer,$Karwerk)
 "); 
     }
+
+// TODO: #0004183 hier gebruik je 5 ipv Karwerk, is dat expres?
+public function ouders($schaapId) {
+return $this->db->query("
+with recursive sheep (schaapId, levnr, geslacht, ras, volwId_s, mdrId, levnr_ma, ras_ma, vdrId, levnr_pa, ras_pa) as (
+   SELECT s.schaapId, right(s.levensnummer,5) levnr, s.geslacht, r.ras, s.volwId, v.mdrId, right(ma.levensnummer,5) levnr_ma, rm.ras ras_ma, v.vdrId, right(pa.levensnummer,5) levnr_pa, rv.ras ras_pa
+     FROM tblVolwas v
+     left join tblSchaap s on s.volwId = v.volwId
+     left join tblRas r on s.rasId = r.rasId
+     left join tblSchaap ma on ma.schaapId = v.mdrId
+     left join tblRas rm on ma.rasId = rm.rasId
+     left join tblSchaap pa on pa.schaapId = v.vdrId
+     left join tblRas rv on pa.rasId = rv.rasId
+    WHERE s.schaapId = '".$this->db->real_escape_string($schaapId)."'
+    union all
+   SELECT sm.schaapId, right(sm.levensnummer,5) levnr, sm.geslacht, r.ras, sm.volwId, vm.mdrId, right(ma.levensnummer,5) levnr_ma, rm.ras ras_ma, vm.vdrId, right(pa.levensnummer,5) levnr_pa, rv.ras ras_pa
+     FROM tblVolwas vm
+     left join tblSchaap sm on sm.volwId = vm.volwId
+     left join tblRas r on sm.rasId = r.rasId
+     left join tblSchaap ma on ma.schaapId = vm.mdrId
+     left join tblRas rm on ma.rasId = rm.rasId
+     left join tblSchaap pa on pa.schaapId = vm.vdrId
+     left join tblRas rv on pa.rasId = rv.rasId
+     join sheep on sm.schaapId = sheep.mdrId
+    union all
+   SELECT sv.schaapId, right(sv.levensnummer,5) levnr, sv.geslacht, r.ras, sv.volwId, vv.mdrId, right(ma.levensnummer,5) levnr_ma, rm.ras ras_ma, vv.vdrId, right(pa.levensnummer,5) levnr_pa, rv.ras ras_pa
+     FROM tblVolwas vv
+     left join tblSchaap sv on sv.volwId = vv.volwId
+     left join tblRas r on sv.rasId = r.rasId
+     left join tblSchaap ma on ma.schaapId = vv.mdrId
+     left join tblRas rm on ma.rasId = rm.rasId
+     left join tblSchaap pa on pa.schaapId = vv.vdrId
+     left join tblRas rv on pa.rasId = rv.rasId
+     join sheep on sv.schaapId = sheep.vdrId
+) SELECT s.schaapId, levnr, s.geslacht, ras, volwId_s, levnr_ma, ras_ma, levnr_pa, ras_pa, count(worp.schaapId) grootte
+  FROM sheep s
+   join tblSchaap worp on (s.volwId_s = worp.volwId)
+GROUP BY s.schaapId, levnr, geslacht, ras, volwId_s, levnr_ma, ras_ma, levnr_pa, ras_pa
+ORDER BY s.schaapId
+");
+}
+
+# LET OP er is een weeg() in Historie en Schaap
+public function weeg($lidId, $schaapId) {
+    return $this->db->query("
+SELECT s.schaapId, s.levensnummer 
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId) 
+WHERE st . lidId = '" . $this->db->real_escape_string($lidId) . "' and st . schaapId = '" . $this->db->real_escape_string($schaapId) . "'
+");
+}
 
 }

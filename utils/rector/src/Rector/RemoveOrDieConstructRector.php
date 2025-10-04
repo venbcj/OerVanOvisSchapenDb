@@ -9,10 +9,6 @@ use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use PhpParser\Node\Name;
-use PhpParser\Node\Identifier;
-use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\PropertyFetch;
-use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Expr\BinaryOp\LogicalOr;
 use PhpParser\Node\Expr\Exit_;
 
@@ -41,7 +37,7 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [\PhpParser\Node\Stmt\Expression::class];
+        return [\PhpParser\Node\Expr\BinaryOp\LogicalOr::class];
         # return [\PhpParser\Node\Expr\BinaryOp_LogicalOr::class];
     }
 
@@ -50,14 +46,9 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?Node
     {
-        if (!$node->expr instanceof LogicalOr) {
-            return null;
-        }
-        if (!$node->expr->right instanceof Exit_) {
-            return null;
-        }
-        $node->expr = $node->expr->left;
-
-        return $node;
+        # if (!$node->right instanceof Exit_) {
+        #     return null;
+        # }
+        return $node->left;
     }
 }

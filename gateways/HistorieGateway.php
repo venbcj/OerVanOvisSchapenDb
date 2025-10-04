@@ -132,4 +132,71 @@ while ($zvtd = $vw->fetch_array())
 return $verblijf ?? null;
 }
 
+public function dagwegingen($lidId, $schaapId, $datum) {
+    $vw = $this->db->query("
+SELECT count(hisId) aant
+FROM tblHistorie h
+ join tblStal st on (h.stalId = st.stalId)
+WHERE lidId = '".$this->db->real_escape_string($lidId)."'
+ and schaapId = '".$this->db->real_escape_string($schaapId)."'
+ and datum = '".$this->db->real_escape_string($datum)."'
+ and h.actId = 9
+ and h.skip = 0
+");
+return $vw->fetch_row()[0];
+}
+
+public function eerste_datum_schaap($stalId) {
+    $vw = $this->db->query(" 
+        SELECT max(datum) datumfirst, date_format(max(datum),'%d-%m-%Y') datum1
+        FROM tblHistorie h
+        join tblStal st on (h.stalId = st.stalId)
+        WHERE st.stalId = '".$this->db->real_escape_string($stalId)."' and (h.actId = 1 or h.actId = 2 or h.actId = 11) and h.skip = 0
+        ");
+    return $vw->fetch_row()[0];
+}
+
+public function laatste_datum_schaap($stalId) {
+   $vw = $this->db->query("
+SELECT max(datum) datumend, date_format(max(datum),'%d-%m-%Y') enddatum
+FROM tblHistorie h
+ join tblStal st on (h.stalId = st.stalId)
+WHERE st.stalId = '".$this->db->real_escape_string($stalId)."' and (h.actId = 10 or h.actId = 12 or h.actId = 13 or h.actId = 14) and h.skip = 0
+");
+return $vw->fetch_row()[0];
+}
+
+public function wegen_invoeren($stalId, $datum, $newkg) {
+    $this->db->query("INSERT INTO tblHistorie SET stalId = '".$this->db->real_escape_string($stalId)."', datum = '".$this->db->real_escape_string($datum)."', kg = '".$this->db->real_escape_string($newkg)."', actId = 9 ");
+}
+
+public function weegaantal($lidId, $schaapId) {
+    $vw = $this->db->query("
+SELECT count(hisId) aant
+FROM tblHistorie h
+ join tblStal st on (h.stalId = st.stalId)
+ join tblSchaap s on (s.schaapId = st.schaapId)
+WHERE st.lidId = '".$this->db->real_escape_string($lidId)."'
+ and st.schaapId = '".$this->db->real_escape_string($schaapId)."'
+ and h.actId = 9
+ and h.skip = 0
+");
+return $vw->fetch_row()[0];
+        }
+
+# LET OP er is een weeg() in Historie en Schaap
+public function weeg($lidId, $schaapId) {
+    return $this->db->query("
+SELECT datum, kg
+FROM tblHistorie h
+ join tblStal st on (h.stalId = st.stalId)
+ join tblSchaap s on (s.schaapId = st.schaapId)
+WHERE st.lidId = '".$this->db->real_escape_string($lidId)."'
+ and st.schaapId = '".$this->db->real_escape_string($schaapId)."'
+ and h.actId = 9
+ and h.skip = 0
+ORDER BY datum desc
+");
+        }
+
 }

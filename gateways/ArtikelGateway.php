@@ -129,4 +129,85 @@ ORDER BY a.naam
 ");
 }
 
+public function countVoerByName($lidId, $naam) {
+    $vw = $this->db->query("
+SELECT count(naam) aantal
+FROM tblEenheid e
+ join tblEenheiduser eu on (e.eenhId = eu.eenhId)
+ join tblArtikel a on (eu.enhuId = a.enhuId)
+WHERE eu.lidId = '".$this->db->real_escape_string($lidId)."' and a.naam = '".$naam."' and a.soort = 'voer'
+GROUP BY a.naam
+");
+return $vw->fetch_row()[0];
+    }
+
+public function store($insNaam, $insStdat, $indNhd, $indBtw, $insRelatie, $insRubriek) {
+    $this->db->query("INSERT INTO tblArtikel SET soort = 'voer', naam = '".$this->db->real_escape_string($insNaam)."',
+        stdat = '".$this->db->real_escape_string($insStdat)."',
+        enhuId = '".$this->db->real_escape_string($insNhd)."',
+        btw = '".$this->db->real_escape_string($insBtw)."',
+        relId=  " . db_null_input($insRelatie) . ",
+        rubuId=  " . db_null_input($insRubriek));
+}
+
+public function findVoerByUser($lidId) {
+return $this->db->query("
+SELECT a.artId
+FROM tblEenheid e
+ join tblEenheiduser eu on (e.eenhId = eu.eenhId)
+ join tblArtikel a on (a.enhuId = eu.enhuId)
+WHERE eu.lidId = '".$this->db->real_escape_string($lidId)."' and a.soort = 'voer' and a.actief = 1
+ORDER BY a.actief desc, a.naam
+");
+}
+
+public function details($artId) {
+    return $this->db->query("
+SELECT a.soort, a.naam, a.stdat, a.enhuId, e.eenheid, a.btw, a.relId, a.rubuId, a.actief
+FROM tblEenheid e
+ join tblEenheiduser eu on (e.eenhId = eu.eenhId)
+ join tblArtikel a on (a.enhuId = eu.enhuId)
+WHERE a.artId = '".$this->db->real_escape_string($artId)."'
+");
+            }
+
+public function details_met_partij($artId) {
+    return $this->db->query("
+SELECT a.soort, a.naam, a.stdat, a.enhuId, e.eenheid, a.btw, p.naam relatie, r.rubriek, a.actief
+FROM tblEenheid e
+ join tblEenheiduser eu on (e.eenhId = eu.eenhId)
+ join tblArtikel a on (a.enhuId = eu.enhuId)
+ left join tblRelatie rl on (rl.relId = a.relId)
+ left join tblPartij p on (p.partId = rl.partId)
+ left join tblRubriekuser ru on (a.rubuId = ru.rubuId)
+ left join tblRubriek r on (r.rubId = ru.rubId)
+WHERE a.artId = '".$this->db->real_escape_string($artId)."'
+ORDER BY a.naam 
+");
+}
+
+public function tel_niet_in_gebruik($lidId) {
+$vw = $this->db->query("
+SELECT count(artId) aant 
+FROM tblEenheid e
+ join tblEenheiduser eu on (e.eenhId = eu.eenhId)
+ join tblArtikel a on (a.enhuId = eu.enhuId)
+WHERE eu.lidId = '".$this->db->real_escape_string($lidId)."' and a.soort = 'voer' and a.actief = 0 ");
+return $vw->fetch_row()[0];
+}
+
+public function zoek_niet_in_gebruik($lidId) {
+    return $this->db->query("
+SELECT artId, naam 
+FROM tblEenheid e
+ join tblEenheiduser eu on (e.eenhId = eu.eenhId)
+ join tblArtikel a on (a.enhuId = eu.enhuId)
+WHERE eu.lidId = '".$this->db->real_escape_string($lidId)."' and a.soort = 'voer' and a.actief = 0
+ORDER BY a.actief desc, a.naam  ");
+}
+
+public function activeer($artId) {
+$this->db->query("Update tblArtikel set actief = 1 WHERE artId = '".$this->db->real_escape_string($artId)."' ");
+}
+
 }

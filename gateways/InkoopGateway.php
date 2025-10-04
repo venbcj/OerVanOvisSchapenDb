@@ -31,4 +31,15 @@ SQL
         , [[':inkId', $Id, self::INT]]);
     }
 
+    public function countArtikel($artId) {
+        $voer_ingekocht = $this->db->query("
+SELECT count(artId) aant
+FROM tblInkoop
+WHERE artId = '".$this->db->real_escape_string($artId)."'
+");
+$ing = $voer_ingekocht->fetch_assoc();
+$rows_inkoop = $ing['aant'];
+return $rows_inkoop;
+        }
+
 }

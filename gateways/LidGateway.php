@@ -47,6 +47,35 @@ return $vw->num_rows > 0;
         return $vw->fetch_assoc();
     }
 
+    public function countUserByLoginPassw($login, $passw) {
+        $count = $this->db->query("SELECT login, passw FROM tblLeden 
+            WHERE login = '".$this->db->real_escape_string($login)."' 
+            and passw = '".$this->db->real_escape_string($passw)."' ");
+        return $count->num_rows;
+    }
+
+    public function update_username($lidId, $login) {
+        $this->db->query("UPDATE tblLeden SET login = '".$this->db->real_escape_string($login)."' 
+            WHERE lidId = '".$this->db->real_escape_string($lidId)."' ");
+    }
+
+    public function update_password($lidId, $passw) {
+        $this->db->query("UPDATE tblLeden SET passw = '".$this->db->real_escape_string($passw)."' 
+            WHERE lidId = '".$this->db->real_escape_string($lidId)."' ");
+    }
+
+    public function findLoginPasswById($lidId) {
+        $vw = $this->db->query("
+SELECT login AS user, passw AS passw
+FROM tblLeden
+WHERE lidId = '".$this->db->real_escape_string($lidId)."'
+");
+if ($vw->num_rows) {
+        return $vw->fetch_assoc();
+}
+return ['user' => null, 'passw' => null];
+    }
+
     public function findAlias($lidId) {
         $vw = $this->db->query("SELECT alias FROM tblLeden WHERE lidId = '".$this->db->real_escape_string($lidId)."' ");
         while ($row = $vw->fetch_assoc()) {
@@ -185,6 +214,14 @@ return $vw->num_rows > 0;
             WHERE lidId = '".$this->db->real_escape_string($lidId)."'
             ");
         return $vw->fetch_row()[0];
+    }
+
+    public function toon_historie($lidId) {
+        $vw = $this->db->query("SELECT histo FROM tblLeden WHERE lidId = '".$this->db->real_escape_string($lidId)."' ");
+        if ($vw->num_rows) {
+            return $vw->fetch_row()[0];
+        }
+        return null;
     }
 
 }

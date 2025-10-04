@@ -24,20 +24,14 @@ include "login.php";
 <?php
 if (Auth::is_logged_in()) {
 // CODE T.B.V. WIJZIGEN WACHTWOORD
-# TODO: (BV) #0004124 als dit toch alleen mag in Wachtwoord... waarom dan niet opnemen in Wachtwoord? --BCB
+# #0004124 als dit toch alleen mag in Wachtwoord... waarom dan niet opnemen in Wachtwoord? --BCB
 if ($curr_url == $url."Wachtwoord.php") {
     // $curr_url gedeclareerd is url.php
     $veld = "submit";
     if (isset($_POST['knpChange'])) {
-        $zoek_login = mysqli_query($db, "
-SELECT login, passw
-FROM tblLeden
-WHERE lidId = '".mysqli_real_escape_string($db, $lid)."'
-");
-        while ($li = mysqli_fetch_assoc($zoek_login)) {
-            $user_db = $li['login'];
-            $passw_db = $li['passw'];
-        }
+        $lid_gateway = new LidGateway();
+        // TODO: #0004184 inline temp
+        $stored_user = $lid_gateway->findLoginPasswById($lid);
         $txtuser = $_POST['txtUser'];
         $txtuserold = $_POST['txtUserOld'];
         $wwold = $_POST['txtOld'];
@@ -66,28 +60,21 @@ WHERE lidId = '".mysqli_real_escape_string($db, $lid)."'
                 $wwnew = $ww;
             }
             echo "user $txtuser password $wwnew";
-            $count = mysqli_query($db, "SELECT login, passw FROM tblLeden 
-                WHERE login = '".mysqli_real_escape_string($db, $txtuser)."' 
-                and passw = '".mysqli_real_escape_string($db, $wwnew)."' ");
-            $num_rows = mysqli_num_rows($count);
+            $num_rows = $lid_gateway->countUserByLoginPassw($txtuser, $wwnew);
             if ($num_rows > 0) {
                 $fout = "Deze combinatie tussen gebruikersnaam en wachtwoord bestaat al. Kies een andere combinatie.";
             } else {
             // EINDE controle of combinatie tussen user en passw al bestaat
                 // username en wachtwoord wijzigen
-                if ($txtuser <> $user_db) {
+                if ($txtuser <> $stored_user['user']) {
                 // username wijzigen
-                    $updateUS = "UPDATE tblLeden SET login = '".mysqli_real_escape_string($db, $txtuser)."' 
-                        WHERE lidId = '".mysqli_real_escape_string($db, $lid)."' ";
-                    mysqli_query($db, $updateUS);
+                    $lid_gateway->update_username($lid, $txtuser);
                     Session::set("U1", $txtuser); /* tbv de query $result in login.php*/
                     $goed = "De inloggegevens zijn gewijzigd";
                     $veld = "hidden";
-                } elseif (isset($wwnew) && $passw_db <> $wwnew) {
+                } elseif (isset($wwnew) && $stored_user['passw'] <> $wwnew) {
                     // wachtwoord wijzigen
-                    $updateWW = "UPDATE tblLeden SET passw = '".mysqli_real_escape_string($db, $wwnew)."' 
-                        WHERE lidId = '".mysqli_real_escape_string($db, $lid)."' ";
-                    /*echo $updateWW.'<br>';*/ mysqli_query($db, $updateWW);
+                    $lid_gateway->update_password($lid, $wwnew);
                     $passw = $wwnew; /*tbv de query $result in login.php */
                     Session::set("W1", $txtpassw); /* tbv (nieuwe) sessie gegevens */
                     $goed = "De inloggegevens zijn gewijzigd." ;
