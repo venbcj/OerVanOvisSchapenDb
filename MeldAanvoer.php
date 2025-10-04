@@ -255,13 +255,12 @@ if (Auth::is_logged_in()) {
         //   kun je de dmschaap ook opnieuw formatteren bij het afdrukken.
         //   echo mensdatum($dmschaap);
         //
-        //   function mensdatum($dmschaap) {
-        //     return date('d-m-Y', strtotime($dmschaap));
+        //   function leesdatum($dmschaap) {
+        //     return date('d-m-Y', strtotime($dmschaap)); BV Deze functie heb ik in basisfunctie gemaakt
         //   }
         //
         // De code doet ook *beslissingen* met schaapdm, maar die kunnen allemaal net zo goed met dmschaap gedaan worden.
         // Als de een leeg is, is de ander ook leeg, bijvoorbeeld.
-        $schaapdm = $row['schaapdm'];
         $dmschaap = $row['dmschaap'];
         $stalId = $row['stalId']; // Ter controle van eerdere stalId's
         $rel_hrk = $row['rel_herk'];
@@ -271,18 +270,17 @@ if (Auth::is_logged_in()) {
         $foutmeld = $row['foutmeld'];
         $respId = $row['respId'];
         $sucind = $row['sucind'];
-        // TODO: (BV) ook hier: Vertel?
         $dmlst = $row['dmlst']; // Laatste datum van het vorige stalId van deze user
-        $lstdm = $row['lstdm']; // t.b.v. commentaar
 
 // Controleren of de te melden gegevens de juiste voorwaarde hebben .
         // TODO: (BCB) Extract Method. $waarschuwing = getSkippable($row)
-        if (empty($schaapdm) || # datum is leeg  <<<BCB hier dus dmschaap in de conditie
+        if (empty($dmschaap) || # datum is leeg  
             empty($levnr) || # levensnummer is leeg
             $dmschaap > $today || # datum ligt na vandaag
             (isset($dmlst) && $dmschaap < $dmlst) || # datum ligt voor de laatste datum van het vorige stalId van deze user
-            intval(str_replace('-', '', $schaapdm)) == 0 # Van datum naar nummer is 0 of te wel datum = 00-00-0000. Als $dmlst niet bestaat !
-            //                          ^^^BCB hier dus dmschaap ... ? wat heeft $dmlst hier nu mee te maken?
+            intval(str_replace('-', '', $dmschaap)) == 0 # Van datum naar nummer is 0 of te wel datum = 00-00-0000. Als $dmschaap niet bestaat !
+            //                          ^^^BCB wat heeft $dmlst hier nu mee te maken? 
+            // BV $dmlst moest $dmschaap volgens mij
             // als de datum in de tabel niet is ingevuld, is dmschaap null. Dat vind ik eenvoudiger te lezen dan intval(str_replace).
         ) {
             $check = 1;
@@ -364,10 +362,10 @@ if (isset($vorig_ubn) && $vorig_ubn != $ubn) { ?>
 <?php
         echo $dmlst;
         if ($skip == 1) {
-            echo $schaapdm;
+            echo leesdatum($dmschaap);
         } else {
 ?>
-    <input type = text size = 9 style = "font-size : 12px;" name = <?php echo " \"txtSchaapdm_$Id\" ;"?> value = <?php echo $schaapdm; ?> > 
+    <input type = text size = 9 style = "font-size : 12px;" name = <?php echo " \"txtSchaapdm_$Id\" ;"?> value = <?php echo leesdatum($dmschaap); ?> > 
 <?php
         }
 ?>
@@ -449,14 +447,14 @@ if ($check == 1) {
 <?php
 # <!-- Meldingen bij foutieve waardes wanneer deze niet zijn onstaan bij het invoeren binnen MeldGeboortes -->
     # TODO: (BV) $wrong wordt niet gebruikt! Wat is de bedoeling?
-        if (empty($schaapdm)) { // <<<BCB hier dus dmschaap controleren
+        if (empty($dmschaap)) {
             $wrong = "Datum moet zijn gevuld.";
         } elseif (empty($levnr)) {
             $wrong = "Levensnummer moet zijn gevuld.";
         } elseif ($dmschaap > $today) {
             $wrong = "De datum mag niet in de toekomst liggen.";
         } elseif (isset($dmlst) && $dmschaap < $dmlst) {
-            $wrong = "De datum mag niet voor ".$lstdm." liggen.";
+            $wrong = "De datum mag niet voor ".leesdatum($dmlst)." liggen.";
         }
     # <!-- EINDE Meldingen bij foutieve waardes wanneer deze niet zijn onstaan bij het invoeren binnen MeldGeboortes -->
 

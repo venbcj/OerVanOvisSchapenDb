@@ -11,6 +11,10 @@ $nu = date('Y-m-d H:i:s'); // Gebruikt in login.php
 $ditjaar = date('Y');
 $vorigjaar = date('Y')-1;
 
+function leesdatum($date) {
+             return date('d-m-Y', strtotime($date));
+           }
+
 function first_field_from_result($SQL) {
     global $db;
     $view = mysqli_query($db, $SQL);
@@ -495,9 +499,9 @@ function aanvoer_request_rvo_query($db, $reqId) {
 
 function aanvoer_zoek_meldregels_query($db, $reqId, $lidId) {
     return mysqli_query($db, "
-SELECT m.meldId, u.ubn ubn_gebruiker, date_format(h.datum,'%d-%m-%Y') schaapdm, h.datum dmschaap, s.levensnummer, s.geslacht,
+SELECT m.meldId, u.ubn ubn_gebruiker, h.datum dmschaap, s.levensnummer, s.geslacht,
   ouder.datum dmaanw, st.stalId, st.rel_herk, p.naam, p.ubn ubn_herk, m.skip, m.fout, rs.respId, rs.sucind, rs.foutmeld,
- lastdm.datum dmlst, date_format(lastdm.datum,'%d-%m-%Y') lstdm
+ lastdm.datum dmlst
 FROM tblMelding m
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (h.stalId = st.stalId)
