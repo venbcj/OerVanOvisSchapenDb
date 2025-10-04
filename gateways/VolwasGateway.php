@@ -122,4 +122,16 @@ ORDER BY right(mdr.levensnummer,$Karwerk), dekdate desc
 ");
 }
 
+public function insert_ouders($mdrId, $vdrId) {
+    $this->db->query("INSERT INTO tblVolwas set mdrId = ".db_null_input($mdrId).", vdrId = ".db_null_input($vdrId));
+    }
+
+public function zoek_ouders($mdrId, $vdrId) {
+    $vw = $this->db->query("
+        SELECT max(volwId) volwId
+        FROM tblVolwas
+        WHERE ".db_null_filter('mdrId', $mdrId) . " and " . db_null_filter('vdrId', $vdrId));
+    return $vw->fetch_row()[0];
+}
+
 }

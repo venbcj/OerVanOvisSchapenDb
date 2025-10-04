@@ -32,6 +32,22 @@ if ($vw->num_rows == 0) {
 return $vw->fetch_row()[0];
     }
 
+    public function zoek_staldetails($lidId, $Karwerk) {
+        return $this->db->query("
+SELECT st.stalId, right(levensnummer, $Karwerk) werknr, concat(kleur,' ',halsnr) halsnr, scan 
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join (
+     SELECT stalId
+     FROM tblHistorie
+     WHERE actId = 3
+ ) ouder on (ouder.stalId = st.stalId)
+WHERE s.geslacht = 'ram' and isnull(st.rel_best) and lidId = ".$this->db->real_escape_string($lidId)." 
+GROUP BY st.stalId, levensnummer, scan 
+ORDER BY right(levensnummer, $Karwerk)
+");
+    }
+
     public function zoek_vaders($lidId, $Karwerk) {
 $vw = $this->db->query("
 SELECT st.stalId, right(levensnummer, $Karwerk) werknr, concat(kleur, ' ', halsnr) halsnr
@@ -1436,6 +1452,124 @@ FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId) 
 WHERE st . lidId = '" . $this->db->real_escape_string($lidId) . "' and st . schaapId = '" . $this->db->real_escape_string($schaapId) . "'
 ");
+}
+
+public function zoek_bestaand_levensnummer($schaapId) {
+$vw = $this->db->query("
+SELECT levensnummer
+FROM tblSchaap s
+WHERE s.schaapId = '".$this->db->real_escape_string($schaapId)."'
+");
+if ($vw->num_rows) {
+    return $vw->fetch_row()[0];
+}
+return null;
+}
+
+public function zoek_op_levensnummer($levensnummer) {
+$vw = $this->db->query("
+SELECT schaapId
+FROM tblSchaap s
+WHERE s.levensnummer = '".$this->db->real_escape_string($levensnummer)."'
+");
+if ($vw->num_rows) {
+    return $vw->fetch_row()[0];
+}
+return null;
+}
+
+public function updateLevensnummer($schaapId, $levensnummer) {
+    $this->db->query(" UPDATE tblSchaap set levensnummer = '".$this->db->real_escape_string($levensnummer)."' WHERE schaapId = '".$this->db->real_escape_string($schaapId)."' ");
+}
+
+public function zoek_fokkernr($schaapId) {
+    $vw = $this->db->query("
+SELECT fokkernr
+FROM tblSchaap
+WHERE schaapId = '".$this->db->real_escape_string($schaapId)."'
+");
+if ($vw->num_rows) {
+    return $vw->fetch_row()[0];
+}
+return null;
+}
+
+public function updateFokkernr($schaapId, $newfokrnr) {
+    $this->db->query("UPDATE tblSchaap set fokkernr = ".db_null_input($newfokrnr)." WHERE schaapId = '".$this->db->real_escape_string($schaapId)."' ");
+}
+
+public function update_geslacht($schaapId, $newsekse) {
+    $update_Geslacht = "UPDATE tblSchaap set geslacht = '".$this->db->real_escape_string($newsekse)."' WHERE schaapId = '".$this->db->real_escape_string($schaapId)."' ";
+    $this->db->query($update_Geslacht);
+}
+
+public function zoek_ras($schaapId) {
+$zoek_ras = $this->db->query("
+SELECT rasId
+FROM tblSchaap
+WHERE schaapId = '".$this->db->real_escape_string($schaapId)."'
+");
+    while( $ra = $zoek_ras->fetch_assoc()) { $dbRasId = $ra['rasId']; }
+return $dbRasId ?? null;
+}
+
+public function update_ras($schaapId, $rasId) {
+    $update_Ras = "UPDATE tblSchaap set rasId = ".db_null_input($rasId)." WHERE schaapId = '".$this->db->real_escape_string($schaapId)."' ";
+    $this->db->query($update_Ras);
+}
+
+public function zoek_moeder($schaapId) {
+    $vw = $this->db->query("
+SELECT v.volwId, v.mdrId
+FROM tblVolwas v
+ join tblSchaap s on (v.volwId = s.volwId)
+WHERE s.schaapId = '".$this->db->real_escape_string($schaapId)."'
+");
+if ($vw->num_rows) {
+    return $vw->fetch_row();
+}
+return [null, null];
+}
+
+public function update_moeder($schaapId, $mdrId) {
+    $this->db->query("
+    UPDATE tblVolwas v 
+     join tblSchaap s on (v.volwId = s.volwId)
+    set v.mdrId = '".$this->db->real_escape_string($mdrId)."'
+    WHERE s.schaapId = '".$this->db->real_escape_string($schaapId)."' ");
+}
+
+public function update_vader($schaapId, $newvdrId) {
+    $this->db->query("
+    UPDATE tblVolwas v
+     join tblSchaap s on (v.volwId = s.volwId)
+    set v.vdrId = '".$this->db->real_escape_string($newvdrId)."'
+    WHERE s.schaapId = '".$this->db->real_escape_string($schaapId)."'
+    ");
+    }
+
+public function update_volw($schaapId, $volwId) {
+    $this->db->query("UPDATE tblSchaap set volwId = '".$this->db->real_escape_string($volwId)."' WHERE schaapId = '".$this->db->real_escape_string($schaapId)."' ");
+}
+
+public function zoek_reden($schaapId) {
+    $vw = $this->db->query("
+SELECT redId
+FROM tblSchaap
+WHERE schaapId = '".$this->db->real_escape_string($schaapId)."'
+");
+if ($vw->num_rows) {
+    return $vw->fetch_row()[0];
+}
+return null;
+}
+
+public function update_reden($schaapId, $redId) {
+    $this->db->query("UPDATE tblSchaap set redId = ".db_null_input($redId)." WHERE schaapId = '".$this->db->real_escape_string($schaapId)."' ");
+}
+
+public function zoek_geslacht($schaapId) {
+    return $this->first_field("SELECT geslacht FROM tblSchaap WHERE schaapId = '".$this->db->real_escape_string($schaapId)."'");
 }
 
 }

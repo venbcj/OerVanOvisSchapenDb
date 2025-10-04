@@ -224,4 +224,43 @@ return $vw->num_rows > 0;
         return null;
     }
 
+    public function kzlRas($lidId) {
+        return $this->db->query("
+SELECT r.rasId, r.ras
+FROM tblRas r
+ join tblRasuser ru on (r.rasId = ru.rasId)
+WHERE ru.lidId = '".$this->db->real_escape_string($lidId)."' and r.actief = 1 and ru.actief = 1
+ORDER BY r.ras
+");
+    }
+
+public function kzlBestemming($lidId) {
+    return $this->db->query("
+SELECT r.relId, p.naam
+FROM tblPartij p
+ join tblRelatie r on (p.partId = r.partId)
+WHERE p.lidId = '".$this->db->real_escape_string($lidId)."' and r.relatie = 'deb' and p.actief = 1 and r.actief = 1
+ORDER BY p.naam
+");
+}
+
+public function kzlHokkeuze($lidId) {
+    return $this->db->query("
+SELECT hokId, hoknr
+FROM tblHok h
+WHERE lidId = '".$this->db->real_escape_string($lidId)."' and actief = 1
+ORDER BY hoknr
+");
+}
+
+public function kzlReden($lidId) {
+    return $this->db->query("
+SELECT r.redId, r.reden
+FROM tblReden r
+ join tblRedenuser ru on (r.redId = ru.redId)
+WHERE ru.lidId = '".$this->db->real_escape_string($lidId)."' and ru.sterfte = 1
+ORDER BY r.reden
+");
+}
+
 }

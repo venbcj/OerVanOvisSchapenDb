@@ -70,8 +70,55 @@ SELECT max(stalId) stalId
 FROM tblStal
 WHERE lidId = '".$this->db->real_escape_string($lidId)."' and schaapId = '".$this->db->real_escape_string($schaapId)."' 
 ");
-
 return $vw->fetch_row()[0];
+}
+
+public function findLidByStal($stalId) {
+    $vw = $this->db->query("
+SELECT lidId
+FROM tblStal
+WHERE stalId = ".$this->db->real_escape_string($stalId)." 
+");
+if ($vw->num_rows) {
+    return $vw->fetch_row()[0];
+}
+return null;
+}
+
+public function zoekKleurHalsnr($lidId, $schaapId) {
+    $vw = $this->db->query("
+SELECT stalId, kleur, halsnr
+FROM tblStal st
+WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and st.schaapId = '".$this->db->real_escape_string($schaapId)."' and isnull(st.rel_best)
+");
+if ($vw->num_rows) {
+    return $vw->fetch_assoc();
+}
+return ['stalId' => null, 'kleur' => null, 'halsnr' => null];
+}
+
+public function updateKleurHalsnr($stalId, $kleur, $halsnr) {
+    $this->db->query("UPDATE tblStal set kleur = ". db_null_input($kleur) .", halsnr = ". db_null_input($halsnr)." WHERE stalId = '".$this->db->real_escape_string($stalId)."' ");
+}
+
+public function zoek_relid($lidId, $schaapId) {
+    $vw = $this->db->query("
+SELECT st.stalId, st.rel_best
+FROM (
+    SELECT max(stalId) stalId
+    FROM tblStal
+    WHERE lidId = '".$this->db->real_escape_string($lidId)."' and schaapId = '".$this->db->real_escape_string($schaapId)."'
+ ) mst
+ join tblStal st on (mst.stalId = st.stalId)
+");
+if ($vw->num_rows) {
+    return $vw->fetch_row();
+}
+return [null, null];
+}
+
+public function update_relbest($stalId, $rel_best) {
+    $this->db->query("UPDATE tblStal set rel_best = '".$this->db->real_escape_string($rel_best)."' WHERE stalId = '".$this->db->real_escape_string($stalId)."' ");
 }
 
 }
