@@ -63,4 +63,26 @@ ORDER BY r.reqId
 ");
     }
 
+    public function zoek_definitieve_afvoermelding($stalId) {
+        $vw = $this->db->query("
+SELECT count(h.hisId) defat
+FROM tblRequest rq
+ join tblMelding m on (rq.reqId = m.reqId)
+ join tblHistorie h on (m.hisId = h.hisId)
+WHERE stalId = '".$this->db->real_escape_string($stalId)."' and h.skip = 1 and rq.def = 1 and m.skip = 0
+");
+return $vw->fetch_row()[0];
+}
+
+public function hasOpenRequests($lidId) {
+    $vw = $this->db->query("
+SELECT count(*) aant
+FROM tblRequest r
+ join tblMelding m on (r.reqId = m.reqId)
+ join tblHistorie h on (h.hisId = m.hisId)
+ join tblStal st on (st.stalId = h.stalId)
+WHERE st.lidId = ".$this->db->real_escape_string($lidId)." and h.skip = 0 and isnull(r.dmmeld) and m.skip <> 1 ");
+return $vw->fetch_row()[0] > 0;
+    }
+
 }

@@ -8,6 +8,10 @@ class HokGateway extends Gateway {
                     ->fetch_row()[0];
     }
 
+    public function findHoknrById($hokId) {
+        return $this->first_field("SELECT hoknr FROM tblHok WHERE hokId = ".((int)$hokId));
+    }
+
     public function kzlHok($lidId) {
         return $this->db->query("
 SELECT hokId, hoknr
@@ -34,6 +38,14 @@ FROM tblHok
 WHERE actief = 1 and lidId = ".$this->db->real_escape_string($lidId)."
 ORDER BY hoknr
 ");
+}
+
+public function hoknummer($lidId) {
+    return $this->db->query("
+SELECT hokId, hoknr, lower(if(isnull(scan),'6karakters',scan)) scan
+FROM tblHok
+WHERE lidId = '" . $this->db->real_escape_string($lidId) . "' and actief = 1
+ORDER BY hoknr");
 }
 
 public function countVerblijven($lidId, $artId, $doelId) {

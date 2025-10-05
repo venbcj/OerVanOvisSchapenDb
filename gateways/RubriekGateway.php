@@ -32,4 +32,15 @@ ORDER BY r.rubriek
 return $vw;
 }
 
+public function zoek_hoofdrubriek_6($lidId) {
+    return $this->db->query("
+SELECT ru.rubuId, r.rubriek
+FROM tblRubriekuser ru 
+ join tblRubriek r on (ru.rubId = r.rubId)
+ join tblRubriekhfd hr on (r.rubhId = hr.rubhId)
+WHERE ru.lidId = '".$this->db->real_escape_string($lidId)."' and r.rubhId = 6 and r.actief = 1 and hr.actief = 1
+ORDER BY r.rubriek
+");
+}
+
 }

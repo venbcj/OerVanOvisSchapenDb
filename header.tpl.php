@@ -40,15 +40,8 @@ if ($modmeld ?? 0 != 0) {
     // NOTE: kleur is hier zwart, in menu1 (en zo) blauw. Misschien stijlen hernoemen naar 'inactief', 'actief', 'attentie' --BCB
     $meld_color = 'black';
     // Kijken of er nog meldingen openstaan
-    $req_open = mysqli_query($db, "
-SELECT count(*) aant
-FROM tblRequest r
- join tblMelding m on (r.reqId = m.reqId)
- join tblHistorie h on (h.hisId = m.hisId)
- join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = ".mysqli_real_escape_string($db, $lidId)." and h.skip = 0 and isnull(r.dmmeld) and m.skip <> 1 ");
-    $row = mysqli_fetch_assoc($req_open);
-    if ($row['aant'] > 0) {
+    $request_gateway = new RequestGateway();
+    if ($request_gateway->hasOpenRequests($lidId)) {
         $meld_color = 'red';
     }
 }

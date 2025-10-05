@@ -32,6 +32,22 @@ if ($vw->num_rows == 0) {
 return $vw->fetch_row()[0];
     }
 
+    public function zoek_staldetails($lidId, $Karwerk) {
+        return $this->db->query("
+SELECT st.stalId, right(levensnummer, $Karwerk) werknr, concat(kleur,' ',halsnr) halsnr, scan 
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join (
+     SELECT stalId
+     FROM tblHistorie
+     WHERE actId = 3
+ ) ouder on (ouder.stalId = st.stalId)
+WHERE s.geslacht = 'ram' and isnull(st.rel_best) and lidId = ".$this->db->real_escape_string($lidId)." 
+GROUP BY st.stalId, levensnummer, scan 
+ORDER BY right(levensnummer, $Karwerk)
+");
+    }
+
     public function zoek_vaders($lidId, $Karwerk) {
 $vw = $this->db->query("
 SELECT st.stalId, right(levensnummer, $Karwerk) werknr, concat(kleur, ' ', halsnr) halsnr
@@ -1130,7 +1146,7 @@ FROM tblRequest r
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
      ) ouder on (ouder.schaapId = s.schaapId)
- 
+
 WHERE r.dmmeld is not null and r.code = 'GER' and st.lidId = '".$this->db->real_escape_string($lidId)."' and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and h.skip = 0 and m.skip = 0
 
 UNION 
@@ -1164,7 +1180,7 @@ FROM tblRequest r
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
      ) ouder on (ouder.schaapId = s.schaapId)
- 
+
 WHERE r.dmmeld is not null and r.code = 'AAN' and st.lidId = '".$this->db->real_escape_string($lidId)."' and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and h.skip = 0 and m.skip = 0
 
 UNION 
@@ -1198,7 +1214,7 @@ FROM tblRequest r
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
      ) ouder on (ouder.schaapId = s.schaapId)
- 
+
 WHERE r.dmmeld is not null and r.code = 'AFV' and st.lidId = '".$this->db->real_escape_string($lidId)."' and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and h.skip = 0 and m.skip = 0
 
 UNION 
@@ -1223,7 +1239,7 @@ FROM tblRequest r
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
      ) ouder on (ouder.schaapId = s.schaapId)
- 
+
 WHERE r.dmmeld is not null and r.code = 'DOO' and st.lidId = '".$this->db->real_escape_string($lidId)."' and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and h.skip = 0 and m.skip = 0
 
 UNION
@@ -1248,7 +1264,7 @@ FROM tblRequest r
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
      ) ouder on (ouder.schaapId = s.schaapId)
- 
+
 WHERE r.dmmeld is not null and r.code = 'VMD' and st.lidId = '".$this->db->real_escape_string($lidId)."' and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and h.skip = 0 and m.skip = 0
 
 UNION
@@ -1320,7 +1336,7 @@ FROM
         WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and hl.actId = 1 and hl.skip = 0 and moe.schaapId = '".$this->db->real_escape_string($schaapId)."'
         GROUP BY moe.levensnummer, moe.geslacht
      ) lam1 on (lam1.levensnummer = s.levensnummer and lam1.worp1 = hl.datum)
-    
+
     WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and sl.lidId = '".$this->db->real_escape_string($lidId)."' and hl.actId = 1 and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and isnull(lam1.worp1)
     GROUP BY s.levensnummer, s.geslacht, ouder.datum
  ) mdr
@@ -1386,5 +1402,189 @@ WHERE s.geslacht = 'ram' and st.lidId = '".$this->db->real_escape_string($lidId)
 ORDER BY right(s.levensnummer,$Karwerk)
 "); 
     }
+
+// TODO: #0004183 hier gebruik je 5 ipv Karwerk, is dat expres?
+public function ouders($schaapId) {
+return $this->db->query("
+with recursive sheep (schaapId, levnr, geslacht, ras, volwId_s, mdrId, levnr_ma, ras_ma, vdrId, levnr_pa, ras_pa) as (
+   SELECT s.schaapId, right(s.levensnummer,5) levnr, s.geslacht, r.ras, s.volwId, v.mdrId, right(ma.levensnummer,5) levnr_ma, rm.ras ras_ma, v.vdrId, right(pa.levensnummer,5) levnr_pa, rv.ras ras_pa
+     FROM tblVolwas v
+     left join tblSchaap s on s.volwId = v.volwId
+     left join tblRas r on s.rasId = r.rasId
+     left join tblSchaap ma on ma.schaapId = v.mdrId
+     left join tblRas rm on ma.rasId = rm.rasId
+     left join tblSchaap pa on pa.schaapId = v.vdrId
+     left join tblRas rv on pa.rasId = rv.rasId
+    WHERE s.schaapId = '".$this->db->real_escape_string($schaapId)."'
+    union all
+   SELECT sm.schaapId, right(sm.levensnummer,5) levnr, sm.geslacht, r.ras, sm.volwId, vm.mdrId, right(ma.levensnummer,5) levnr_ma, rm.ras ras_ma, vm.vdrId, right(pa.levensnummer,5) levnr_pa, rv.ras ras_pa
+     FROM tblVolwas vm
+     left join tblSchaap sm on sm.volwId = vm.volwId
+     left join tblRas r on sm.rasId = r.rasId
+     left join tblSchaap ma on ma.schaapId = vm.mdrId
+     left join tblRas rm on ma.rasId = rm.rasId
+     left join tblSchaap pa on pa.schaapId = vm.vdrId
+     left join tblRas rv on pa.rasId = rv.rasId
+     join sheep on sm.schaapId = sheep.mdrId
+    union all
+   SELECT sv.schaapId, right(sv.levensnummer,5) levnr, sv.geslacht, r.ras, sv.volwId, vv.mdrId, right(ma.levensnummer,5) levnr_ma, rm.ras ras_ma, vv.vdrId, right(pa.levensnummer,5) levnr_pa, rv.ras ras_pa
+     FROM tblVolwas vv
+     left join tblSchaap sv on sv.volwId = vv.volwId
+     left join tblRas r on sv.rasId = r.rasId
+     left join tblSchaap ma on ma.schaapId = vv.mdrId
+     left join tblRas rm on ma.rasId = rm.rasId
+     left join tblSchaap pa on pa.schaapId = vv.vdrId
+     left join tblRas rv on pa.rasId = rv.rasId
+     join sheep on sv.schaapId = sheep.vdrId
+) SELECT s.schaapId, levnr, s.geslacht, ras, volwId_s, levnr_ma, ras_ma, levnr_pa, ras_pa, count(worp.schaapId) grootte
+  FROM sheep s
+   join tblSchaap worp on (s.volwId_s = worp.volwId)
+GROUP BY s.schaapId, levnr, geslacht, ras, volwId_s, levnr_ma, ras_ma, levnr_pa, ras_pa
+ORDER BY s.schaapId
+");
+}
+
+# LET OP er is een weeg() in Historie en Schaap
+public function weeg($lidId, $schaapId) {
+    return $this->db->query("
+SELECT s.schaapId, s.levensnummer 
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId) 
+WHERE st . lidId = '" . $this->db->real_escape_string($lidId) . "' and st . schaapId = '" . $this->db->real_escape_string($schaapId) . "'
+");
+}
+
+public function zoek_bestaand_levensnummer($schaapId) {
+$vw = $this->db->query("
+SELECT levensnummer
+FROM tblSchaap s
+WHERE s.schaapId = '".$this->db->real_escape_string($schaapId)."'
+");
+if ($vw->num_rows) {
+    return $vw->fetch_row()[0];
+}
+return null;
+}
+
+public function zoek_op_levensnummer($levensnummer) {
+$vw = $this->db->query("
+SELECT schaapId
+FROM tblSchaap s
+WHERE s.levensnummer = '".$this->db->real_escape_string($levensnummer)."'
+");
+if ($vw->num_rows) {
+    return $vw->fetch_row()[0];
+}
+return null;
+}
+
+public function updateLevensnummer($schaapId, $levensnummer) {
+    $this->db->query(" UPDATE tblSchaap set levensnummer = '".$this->db->real_escape_string($levensnummer)."' WHERE schaapId = '".$this->db->real_escape_string($schaapId)."' ");
+}
+
+public function zoek_fokkernr($schaapId) {
+    $vw = $this->db->query("
+SELECT fokkernr
+FROM tblSchaap
+WHERE schaapId = '".$this->db->real_escape_string($schaapId)."'
+");
+if ($vw->num_rows) {
+    return $vw->fetch_row()[0];
+}
+return null;
+}
+
+public function updateFokkernr($schaapId, $newfokrnr) {
+    $this->db->query("UPDATE tblSchaap set fokkernr = ".db_null_input($newfokrnr)." WHERE schaapId = '".$this->db->real_escape_string($schaapId)."' ");
+}
+
+public function update_geslacht($schaapId, $newsekse) {
+    $update_Geslacht = "UPDATE tblSchaap set geslacht = '".$this->db->real_escape_string($newsekse)."' WHERE schaapId = '".$this->db->real_escape_string($schaapId)."' ";
+    $this->db->query($update_Geslacht);
+}
+
+public function zoek_ras($schaapId) {
+$zoek_ras = $this->db->query("
+SELECT rasId
+FROM tblSchaap
+WHERE schaapId = '".$this->db->real_escape_string($schaapId)."'
+");
+    while( $ra = $zoek_ras->fetch_assoc()) { $dbRasId = $ra['rasId']; }
+return $dbRasId ?? null;
+}
+
+public function update_ras($schaapId, $rasId) {
+    $update_Ras = "UPDATE tblSchaap set rasId = ".db_null_input($rasId)." WHERE schaapId = '".$this->db->real_escape_string($schaapId)."' ";
+    $this->db->query($update_Ras);
+}
+
+public function zoek_moeder($schaapId) {
+    $vw = $this->db->query("
+SELECT v.volwId, v.mdrId
+FROM tblVolwas v
+ join tblSchaap s on (v.volwId = s.volwId)
+WHERE s.schaapId = '".$this->db->real_escape_string($schaapId)."'
+");
+if ($vw->num_rows) {
+    return $vw->fetch_row();
+}
+return [null, null];
+}
+
+public function update_moeder($schaapId, $mdrId) {
+    $this->db->query("
+    UPDATE tblVolwas v 
+     join tblSchaap s on (v.volwId = s.volwId)
+    set v.mdrId = '".$this->db->real_escape_string($mdrId)."'
+    WHERE s.schaapId = '".$this->db->real_escape_string($schaapId)."' ");
+}
+
+public function update_vader($schaapId, $newvdrId) {
+    $this->db->query("
+    UPDATE tblVolwas v
+     join tblSchaap s on (v.volwId = s.volwId)
+    set v.vdrId = '".$this->db->real_escape_string($newvdrId)."'
+    WHERE s.schaapId = '".$this->db->real_escape_string($schaapId)."'
+    ");
+    }
+
+public function update_volw($schaapId, $volwId) {
+    $this->db->query("UPDATE tblSchaap set volwId = '".$this->db->real_escape_string($volwId)."' WHERE schaapId = '".$this->db->real_escape_string($schaapId)."' ");
+}
+
+public function zoek_reden($schaapId) {
+    $vw = $this->db->query("
+SELECT redId
+FROM tblSchaap
+WHERE schaapId = '".$this->db->real_escape_string($schaapId)."'
+");
+if ($vw->num_rows) {
+    return $vw->fetch_row()[0];
+}
+return null;
+}
+
+public function update_reden($schaapId, $redId) {
+    $this->db->query("UPDATE tblSchaap set redId = ".db_null_input($redId)." WHERE schaapId = '".$this->db->real_escape_string($schaapId)."' ");
+}
+
+public function zoek_geslacht($schaapId) {
+    return $this->first_field("SELECT geslacht FROM tblSchaap WHERE schaapId = '".$this->db->real_escape_string($schaapId)."'");
+}
+
+public function zoek_halsnr_db($lidId, $kleur, $halsnr) {
+    $zoek_halsnr_db = $this->db->query("
+SELECT schaapId
+FROM tblStal
+WHERE lidId = '".$this->db->real_escape_string($lidId)."'
+ and kleur = '".$this->db->real_escape_string($kleur)."'
+ and halsnr = '".$this->db->real_escape_string($halsnr)."'
+ and isnull(rel_best)
+");
+if ($vw->num_rows) {
+    return $vw->fetch_row()[0];
+}
+return null;
+}
 
 }

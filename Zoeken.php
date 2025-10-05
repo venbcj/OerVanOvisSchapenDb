@@ -231,8 +231,9 @@ $kzlWerknr = $schaap_gateway->werknummers($lidId, $Karwerk);
  </select> </td>
 
 <?php
-        $toon_historie = mysqli_query($db,"SELECT histo FROM tblLeden WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' ") or die (mysqli_error($db));
-    while ( $hi = mysqli_fetch_assoc($toon_historie)) { $histo = $hi['histo'];} ?>
+        $lid_gateway = new LidGateway();
+        $histo = $lid_gateway->toon_historie($lidId);
+?>
     
  <td width = 50></td>
  <td> Historie tonen : <input type = radio name = 'radHis_' value = 0 
@@ -494,54 +495,11 @@ while ($his = mysqli_fetch_assoc($geschiedenis)) {
 <?php //   '".mysqli_real_escape_string($db,$schaapId)."'
 
 
-$ouders = mysqli_query($db,"
-with recursive sheep (schaapId, levnr, geslacht, ras, volwId_s, mdrId, levnr_ma, ras_ma, vdrId, levnr_pa, ras_pa) as (
-   SELECT s.schaapId, right(s.levensnummer,5) levnr, s.geslacht, r.ras, s.volwId, v.mdrId, right(ma.levensnummer,5) levnr_ma, rm.ras ras_ma, v.vdrId, right(pa.levensnummer,5) levnr_pa, rv.ras ras_pa
-     FROM tblVolwas v
-     left join tblSchaap s on s.volwId = v.volwId
-     left join tblRas r on s.rasId = r.rasId
-     left join tblSchaap ma on ma.schaapId = v.mdrId
-     left join tblRas rm on ma.rasId = rm.rasId
-     left join tblSchaap pa on pa.schaapId = v.vdrId
-     left join tblRas rv on pa.rasId = rv.rasId
-    WHERE s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-    union all
-   SELECT sm.schaapId, right(sm.levensnummer,5) levnr, sm.geslacht, r.ras, sm.volwId, vm.mdrId, right(ma.levensnummer,5) levnr_ma, rm.ras ras_ma, vm.vdrId, right(pa.levensnummer,5) levnr_pa, rv.ras ras_pa
-     FROM tblVolwas vm
-     left join tblSchaap sm on sm.volwId = vm.volwId
-     left join tblRas r on sm.rasId = r.rasId
-     left join tblSchaap ma on ma.schaapId = vm.mdrId
-     left join tblRas rm on ma.rasId = rm.rasId
-     left join tblSchaap pa on pa.schaapId = vm.vdrId
-     left join tblRas rv on pa.rasId = rv.rasId
-     join sheep on sm.schaapId = sheep.mdrId
-    union all
-   SELECT sv.schaapId, right(sv.levensnummer,5) levnr, sv.geslacht, r.ras, sv.volwId, vv.mdrId, right(ma.levensnummer,5) levnr_ma, rm.ras ras_ma, vv.vdrId, right(pa.levensnummer,5) levnr_pa, rv.ras ras_pa
-     FROM tblVolwas vv
-     left join tblSchaap sv on sv.volwId = vv.volwId
-     left join tblRas r on sv.rasId = r.rasId
-     left join tblSchaap ma on ma.schaapId = vv.mdrId
-     left join tblRas rm on ma.rasId = rm.rasId
-     left join tblSchaap pa on pa.schaapId = vv.vdrId
-     left join tblRas rv on pa.rasId = rv.rasId
-     join sheep on sv.schaapId = sheep.vdrId
-)
-
-
-SELECT s.schaapId, levnr, s.geslacht, ras, volwId_s, levnr_ma, ras_ma, levnr_pa, ras_pa, count(worp.schaapId) grootte
-  FROM sheep s
-   join tblSchaap worp on (s.volwId_s = worp.volwId)
-GROUP BY s.schaapId, levnr, geslacht, ras, volwId_s, levnr_ma, ras_ma, levnr_pa, ras_pa
-ORDER BY s.schaapId
-") or die (mysqli_error($db));
-
-if(mysqli_num_rows($ouders) == 0)  { ?>
+$ouders = $schaap_gateway->ouders($schaapId);
+if(mysqli_num_rows($ouders) == 0)  {
+?>
  <td style = "font-size:13px;"> Van dit dier zijn geen voorouders bekend. </td>
-
-
-<?php }
-
-else { ?>
+<?php } else { ?>
 
 <tr style = "font-size:13px;" >
 <th> Werknr<hr></th>

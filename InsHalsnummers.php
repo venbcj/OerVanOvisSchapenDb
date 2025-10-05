@@ -115,23 +115,20 @@ if (isset($_POST['knpVervers_'])) { $dag = $_POST["txtDag_$Id"];
     $halsnr = $_POST["txtHalsnr_$Id"];
 }
 
-$zoek_halsnr_db = mysqli_query($db,"
-SELECT schaapId
-FROM tblStal
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and kleur = '".mysqli_real_escape_string($db,$kleur)."' and halsnr = '".mysqli_real_escape_string($db,$halsnr)."' and isnull(rel_best)
-") or die (mysqli_error($db));
-    while ($zh = mysqli_fetch_assoc($zoek_halsnr_db)) { $halsnummer_db = $zh['schaapId']; }
+$schaap_gateway = new SchaapGateway();
+$halsnummer_db = $schaap_gateway->zoek_halsnr_db($lidId, $kleur, $halsnr);
 
-     If     
-     ( ((isset($af) && $af == 1) || !isset($status))    || /*levensnummer moet bestaan*/    
+     If ( ((isset($af) && $af == 1) || !isset($status))    || /*levensnummer moet bestaan*/    
          empty($dag)                || # of datum is leeg
          empty($kleur)                || # of kleur is leeg
          empty($halsnr)                || # of halsnr is leeg
          isset($halsnummer_db)        || # halsnummer is al ingebruik
          $dmdag < $dmmax             # of datum ligt voor de laatst geregistreerde datum van het schaap
-                                                 
-     )
-     {    $oke = 0;    } else {    $oke = 1;    } // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
+     ) {
+         $oke = 0;    
+     } else {
+         $oke = 1;    
+     } // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
 // EINDE Controleren of ingelezen waardes worden gevonden .  
 
      if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1) /* Als onvolledig is gewijzigd naar volledig juist */ {$cbKies = 1; $cbDel = $_POST["chbDel_$Id"]; }

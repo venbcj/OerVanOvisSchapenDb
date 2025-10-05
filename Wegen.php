@@ -26,6 +26,9 @@ include "login.php"; ?>
         <TD valign = 'top'>
 <?php
 if (Auth::is_logged_in()) {
+$historie_gateway = new HistorieGateway();
+$stal_gateway = new StalGateway();
+$schaap_gateway = new SchaapGateway();
 
 If(empty($_GET['pstId']))  { $schaapId = $_POST['txtlevnr'] ?? ''; } else { $schaapId = "$_GET[pstId]"; }
 
@@ -37,42 +40,16 @@ if (isset($_POST['knpSave']))
 $date = date_create($_POST['txtdatum']);
         $datum = date_format($date, 'Y-m-d');
         
-$dagwegingen = mysqli_query($db,"
-SELECT count(hisId) aant
-FROM tblHistorie h
- join tblStal st on (h.stalId = st.stalId)
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and datum = '".mysqli_real_escape_string($db,$datum)."' and h.actId = 9 and h.skip = 0
-") or die (mysqli_error($db));
+$rows_dag = $historie_gateway->dagwegingen($lidId, $schaapId, $datum);
 
-    $row = mysqli_fetch_assoc($dagwegingen);  $rows_dag = $row['aant'];
+$stalId = $stal_gateway->zoek_laatste_stalId($lidId, $schaapId);
 
-$zoek_laatste_stalId = mysqli_query($db,"
-SELECT max(stalId) stalId
-FROM tblStal
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and schaapId = '".mysqli_real_escape_string($db,$schaapId)."' 
-") or die (mysqli_error($db));
+    /*Is maxdatum van laatste stalId !! bijv. als aangekocht én geboortedatum bestaat !!*/
+$day1 = $historie_gateway->eerste_datum_schaap($stalId);
+$dag1 = mens_datum($day1);
 
-while ($rij = mysqli_fetch_array($zoek_laatste_stalId))
-        { $stalId =  "$rij[stalId]"; }
-
-$eerste_datum_schaap = /*Is maxdatum van laatste stalId !! bijv. als aangekocht én geboortedatum bestaat !!*/ mysqli_query($db," 
-SELECT max(datum) datumfirst, date_format(max(datum),'%d-%m-%Y') datum1
-FROM tblHistorie h
- join tblStal st on (h.stalId = st.stalId)
-WHERE st.stalId = '".mysqli_real_escape_string($db,$stalId)."' and (h.actId = 1 or h.actId = 2 or h.actId = 11) and h.skip = 0
-") or die (mysqli_error($db));
-
-    $lijn = mysqli_fetch_assoc($eerste_datum_schaap);  $day1 = $lijn['datumfirst']; $dag1 = $lijn['datum1'];
-
-$laatste_datum_schaap = mysqli_query($db,"
-SELECT max(datum) datumend, date_format(max(datum),'%d-%m-%Y') enddatum
-FROM tblHistorie h
- join tblStal st on (h.stalId = st.stalId)
-WHERE st.stalId = '".mysqli_real_escape_string($db,$stalId)."' and (h.actId = 10 or h.actId = 12 or h.actId = 13 or h.actId = 14) and h.skip = 0
-") or die (mysqli_error($db));
-
-    $lst = mysqli_fetch_assoc($laatste_datum_schaap);  $endday = $lst['datumend']; $enddag = $lst['enddatum'];    
-
+$endday = $historie_gateway->laatste_datum_schaap($stalId);
+$enddag = mens_datum($endday);
 
      if(empty($_POST['txtdatum']) && !empty($_POST['txtgram']))    { $fout = "De weegdatum is niet ingevuld"; 
     $kg = $_POST['txtgram']; }
@@ -93,8 +70,7 @@ else if(isset($endday) && $datum > $endday)        { $fout = "De datum mag niet 
 else {
 $newkg = $_POST["txtgram"];
 
-$query_wegen_invoeren = "INSERT INTO tblHistorie SET stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$datum)."', kg = '".mysqli_real_escape_string($db,$newkg)."', actId = 9 ";
-/*echo $query_wegen_invoeren.'<br>';*/        mysqli_query($db,$query_wegen_invoeren) or die (mysqli_error($db));
+$historie_gateway->wegen_invoeren($stalId, $datum, $newkg);
     }
         }
 } ?>
@@ -103,12 +79,7 @@ $query_wegen_invoeren = "INSERT INTO tblHistorie SET stalId = '".mysqli_real_esc
 <tr>
  <td valign = "top">
     <table border = 0 valign = "top"> <?php // table 2
-$weeg = mysqli_query($db,"
-SELECT s.schaapId, s.levensnummer 
-FROM tblSchaap s
- join tblStal st on (s.schaapId = st.schaapId) 
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-") or die (mysqli_error($db));
+    $weeg = $schaap_gateway->weeg($lidId, $schaapId);
 
         while ($row = mysqli_fetch_array($weeg))
         {
@@ -153,25 +124,9 @@ WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '
      <th width = 0></th>
     </tr>
 <?php
-$weegaantal = mysqli_query($db,"
-SELECT count(hisId) aant
-FROM tblHistorie h
- join tblStal st on (h.stalId = st.stalId)
- join tblSchaap s on (s.schaapId = st.schaapId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and h.actId = 9 and h.skip = 0
-") or die (mysqli_error($db));
+        $aantal = $historie_gateway->weegaantal($lidId, $schaapId);
 
-        while ($aa = mysqli_fetch_array($weegaantal))
-        { $aantal = "$aa[aant]"; }
-
-$weeg = mysqli_query($db,"
-SELECT datum, kg
-FROM tblHistorie h
- join tblStal st on (h.stalId = st.stalId)
- join tblSchaap s on (s.schaapId = st.schaapId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and h.actId = 9 and h.skip = 0
-ORDER BY datum desc
-") or die (mysqli_error($db));
+        $weeg = $historie_gateway->weeg($lidId, $schaapId);
 
         while ($row = mysqli_fetch_array($weeg))
         {

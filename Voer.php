@@ -30,29 +30,21 @@ include "login.php"; ?>
             <TD valign = 'top'>
 <?php
 if (Auth::is_logged_in()) { if($modtech ==1) {
-include "validate-voer.js.php";
+    $artikel_gateway = new ArtikelGateway();
+    $eenheid_gateway = new EenheidGateway();
+    $inkoop_gateway = new InkoopGateway();
+    $partij_gateway = new PartijGateway();
+    $rubriek_gateway = new RubriekGateway();
+    include "validate-voer.js.php";
 
 if (isset($_POST['knpSave_'])) { include "save_artikel.php"; }
 
 //*******************
 // NIEUWE INVOER POSTEN
 //*******************
-if (isset ($_POST['knpInsert_']))
-{    
+if (isset ($_POST['knpInsert_'])) {    
 
-$controle = mysqli_query($db,"
-SELECT count(naam) aantal
-FROM tblEenheid e
- join tblEenheiduser eu on (e.eenhId = eu.eenhId)
- join tblArtikel a on (eu.enhuId = a.enhuId)
-WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a.naam = '".$_POST['insNaam_']."' and a.soort = 'voer'
-GROUP BY a.naam
-") or die (mysqli_error($db));
-        while ($rij = mysqli_fetch_assoc($controle))
-        {
-            $dubbel = ($rij['aantal']);
-        }
-
+    $dubbel = $artikel_gateway->countVoerByName($lidId, $_POST['insNaam_']);
 
     if (!empty($dubbel) && $dubbel >= 1 )
     {
@@ -72,10 +64,7 @@ if (!empty($_POST['insRelatie_']))    {    $insRelatie = $_POST['insRelatie_']; 
 
 if ($modfin == 1  && !empty($_POST['insRubriek_']))    {    $insRubriek = $_POST['insRubriek_'];    }
 
-
-$insert_tblArtikel = "INSERT INTO tblArtikel SET soort = 'voer', naam = '".mysqli_real_escape_string($db,$insNaam)."', stdat = '".mysqli_real_escape_string($db,$insStdat)."', enhuId = '".mysqli_real_escape_string($db,$insNhd)."', btw = '".mysqli_real_escape_string($db,$insBtw)."', relId=  " . db_null_input($insRelatie) . ", rubuId=  " . db_null_input($insRubriek);
-        
-                mysqli_query($db,$insert_tblArtikel) or die (mysqli_error($db));
+$artikel_gateway->store($insNaam, $insStdat, $indNhd, $indBtw, $insRelatie, $insRubriek);
     }
 }
 
@@ -106,30 +95,15 @@ $insert_tblArtikel = "INSERT INTO tblArtikel SET soort = 'voer', naam = '".mysql
  </tr> 
 <?php        
 // START LOOP
-$loop = mysqli_query($db,"
-SELECT a.artId
-FROM tblEenheid e
- join tblEenheiduser eu on (e.eenhId = eu.eenhId)
- join tblArtikel a on (a.enhuId = eu.enhuId)
-WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a.soort = 'voer' and a.actief = 1
-ORDER BY a.actief desc, a.naam
-") or die (mysqli_error($db));
+$loop = $artikel_gateway->findVoerByUser($lidId);
 
-    while($lus = mysqli_fetch_assoc($loop))
-    {
+// TODO kan dit in 1 query?
+    while($lus = mysqli_fetch_assoc($loop)) {
             $Id = $lus['artId'];  
+            $qryArtikel = $artikel_gateway->details($Id);
 
-
-$qryArtikel = mysqli_query($db,"
-SELECT a.soort, a.naam, a.stdat, a.enhuId, e.eenheid, a.btw, a.relId, a.rubuId, a.actief
-FROM tblEenheid e
- join tblEenheiduser eu on (e.eenhId = eu.eenhId)
- join tblArtikel a on (a.enhuId = eu.enhuId)
-WHERE a.artId = '".mysqli_real_escape_string($db,$Id)."'
-") or die (mysqli_error($db));
-
-    while($row = mysqli_fetch_assoc($qryArtikel))
-    {
+// TODO: Inline Temp
+    while($row = mysqli_fetch_assoc($qryArtikel)) {
         $soort = "{$row['soort']}";
         $voer = "{$row['naam']}";
         $stdat = "{$row['stdat']}";
@@ -141,12 +115,7 @@ WHERE a.artId = '".mysqli_real_escape_string($db,$Id)."'
         $actief = "{$row['actief']}";
 
 // Bepalen of artikel al is ingekocht
-$voer_ingekocht = mysqli_query($db,"
-SELECT count(artId) aant
-FROM tblInkoop
-WHERE artId = '".mysqli_real_escape_string($db,$Id)."'
-") or die (mysqli_error($db));
- $ing = mysqli_fetch_assoc($voer_ingekocht);  $rows_inkoop = $ing['aant'];
+        $rows_inkoop = $inkoop_gateway->countArtikel($Id);
 // EINDE Bepalen of artikel al is ingekocht
 
 ?>
@@ -166,48 +135,7 @@ else     { ?>
 
 <input type= "text" name= <?php echo "txtStdat_$Id"; ?> size = 4 style = "font-size:12px; text-align : right;" title = "Standaard verbruikshoeveelheid" value = <?php echo $stdat; ?> >
 
- </td>
- <td><?php
-// kzlVerbruikseenheid (al dan niet te wijzigen)
-if ($rows_inkoop > 0) { echo $eenhd; }
-else     { 
-// DECLARATIE EENHEID
-$qryEenheid = mysqli_query($db,"
-SELECT e.eenheid, eu.enhuId 
-FROM tblEenheid e
- join tblEenheiduser eu on (e.eenhId = eu.eenhId)
-WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and eu.actief = 1
-ORDER BY e.eenheid
-") or die (mysqli_error($db));
 
-$index = 0; 
-while ($eh = mysqli_fetch_array($qryEenheid)) 
-{ 
-   $eenhId[$index] = $eh['enhuId']; 
-   $eenhnm[$index] = $eh['eenheid'];
-   $index++; 
-} 
-unset($index);
-
-// EINDE DECLARATIE EENHEID
-?>
- <select style="width:50;" name= <?php echo "kzlNhd_$Id"; ?> value = "" style = "font-size:12px;">
-  <option></option>
-<?php $count = count($eenhId);
-for ($i = 0; $i < $count; $i++){
-
-            $opties= array($eenhId[$i]=>$eenhnm[$i]);
-            foreach ( $opties as $key => $waarde)
-            {
-
-  if ((!isset($_POST['knpSave_']) && $enhuId == $eenhId[$i]) || (isset($_POST["kzlNhd_$Id"]) && $_POST["kzlNhd_$Id"] == $key)){
-    echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
-  } else { 
-    echo '<option value="' . $key . '" >' . $waarde . '</option>';
-  }    
-            }
-            
-        }
 ?></select>
 
 <?php }    ?>
@@ -233,30 +161,7 @@ foreach ( $opties as $key => $waarde)
 
 } ?>
     </select> </td>
-<!-- EINDE kzlBtw bij wijzigen -->
-<?php
-// Declaratie LEVERANCIER
-$qryLevcier = mysqli_query($db,"
-SELECT r.relId, p.naam
-FROM tblPartij p
- join tblRelatie r on (p.partId = r.partId)
-WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and relatie = 'cred' and p.actief = 1 and r.actief = 1
-ORDER BY p.naam
-") or die (mysqli_error($db)); 
 
-$index = 0; 
-while ($rel = mysqli_fetch_array($qryLevcier)) 
-{ 
-   $rel_Id[$index] = $rel['relId']; 
-   $relnm[$index] = $rel['naam'];
-   $index++; 
-} 
-unset($index);
-// EINDE Declaratie LEVERANCIER
-?>
-
-<!-- kzlLeverancier bij wijzigen -->
- <td>
  <select style= "width:110;" name= <?php echo "kzlRelatie_$Id"; ?> value = "" style = "font-size:12px;">
   <option></option>
 <?php $count = count($relnm);
@@ -280,26 +185,7 @@ for ($i = 0; $i < $count; $i++){
 <?php      
 if($modfin == 1 ) {
 
-// Declaratie RUBRIEK
-$qryRubriek = mysqli_query($db,"
-SELECT ru.rubuId, r.rubriek
-FROM tblRubriekuser ru 
- join tblRubriek r on (ru.rubId = r.rubId)
- join tblRubriekhfd hr on (r.rubhId = hr.rubhId)
-WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and r.rubhId = 6 and r.actief = 1 and hr.actief = 1
-ORDER BY r.rubriek
- ") or die (mysqli_error($db));
 
-$index = 0; 
-while ($rub = mysqli_fetch_array($qryRubriek)) 
-{ 
-   $rubId[$index] = $rub['rubuId']; 
-   $rubnm[$index] = $rub['rubriek'];
-   $index++; 
-} 
-unset($index);
-// EINDE Declaratie RUBRIEK
-?>
 
 <!-- KZLRUBRIEK bij wijzigen-->
 <td>
@@ -362,13 +248,8 @@ for ($i = 0; $i < $count; $i++){
 <td>
 <?php
 // kzlverbruikseenheid bij nieuwe invoer
-$newvrb = mysqli_query($db,"
-SELECT e.eenheid, eu.enhuId
-FROM tblEenheid e
- join tblEenheiduser eu on (e.eenhId = eu.eenhId) 
-WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and eu.actief = 1
-ORDER BY e.eenheid
-") or die (mysqli_error($db)); ?>
+$newvrb = $eenheid_gateway->findByLid($lidId);
+?>
  <select style= "width:50;" id ="eenheid" name= "insNhd_" >
  <option></option> <?php
          while($lijn = mysqli_fetch_array($newvrb))
@@ -415,13 +296,7 @@ foreach ( $opties as $key => $waarde)
 <td>
 <?php
 // kzlLeverancier bij nieuwe invoer
-$newcrediteur = mysqli_query($db,"
-SELECT r.relId, p.naam
-FROM tblPartij p
- join tblRelatie r on (p.partId = r.partId)
-WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and relatie = 'cred' and p.actief = 1 and r.actief = 1
-ORDER BY p.naam
-") or die (mysqli_error($db));
+    $newcrediteur = $partij_gateway->findLeverancier($lidId);
 ?>
  <select name= "insRelatie_" style= "width:110;" >
  <option> </option>    
@@ -449,14 +324,8 @@ ORDER BY p.naam
 <td>
 <!-- KZLRUBRIEK bij nieuwe invoer -->
 <?php
-$newRubriek = mysqli_query($db,"
-SELECT ru.rubuId, r.rubriek
-FROM tblRubriekuser ru 
- join tblRubriek r on (ru.rubId = r.rubId)
- join tblRubriekhfd hr on (r.rubhId = hr.rubhId)
-WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and r.rubhId = 6 and r.actief = 1 and hr.actief = 1
-ORDER BY r.rubriek
-") or die (mysqli_error($db));?>
+        $newRubriek = $rubriek_gateway->zoek_hoofdrubriek_6($lidId);
+?>
  <select style="width:180;" name= "insRubriek_" value = "" style = "font-size:12px;">
   <option></option>
 <?php        while($nwrub = mysqli_fetch_array($newRubriek))
@@ -499,14 +368,7 @@ ORDER BY r.rubriek
 //** ARTIKELEN NIET IN GEBRUIK
 //***************************** 
 // Aantal artikelen niet in gebruik 
-$Niet_in_gebruik = mysqli_query($db,"
-SELECT count(artId) aant 
-FROM tblEenheid e
- join tblEenheiduser eu on (e.eenhId = eu.eenhId)
- join tblArtikel a on (a.enhuId = eu.enhuId)
-WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a.soort = 'voer' and a.actief = 0 ") or die (mysqli_error($db));
-    while ($uit = mysqli_fetch_assoc($Niet_in_gebruik))
-    {    $niet_actief = $uit['aant'];    }
+    $niet_actief = $artikel_gateway->tel_niet_in_gebruik($lidId);
 if ($niet_actief > 0) {
 ?>
  <tr> 
@@ -529,34 +391,13 @@ if ($niet_actief > 0) {
  </tr> 
 <?php        
 // START LOOP
-$loop = mysqli_query($db,"
-SELECT artId, naam 
-FROM tblEenheid e
- join tblEenheiduser eu on (e.eenhId = eu.eenhId)
- join tblArtikel a on (a.enhuId = eu.enhuId)
-WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a.soort = 'voer' and a.actief = 0
-ORDER BY a.actief desc, a.naam  ") or die (mysqli_error($db));
+    $loop = $artikel_gateway->zoek_niet_in_gebruik($lidId);
 
-    while($lus = mysqli_fetch_assoc($loop))
-    {
+    while($lus = mysqli_fetch_assoc($loop)) {
             $Id = $lus['artId'];  
 
-
-$qryArtikel = mysqli_query($db,"
-SELECT a.soort, a.naam, a.stdat, a.enhuId, e.eenheid, a.btw, p.naam relatie, r.rubriek, a.actief
-FROM tblEenheid e
- join tblEenheiduser eu on (e.eenhId = eu.eenhId)
- join tblArtikel a on (a.enhuId = eu.enhuId)
- left join tblRelatie rl on (rl.relId = a.relId)
- left join tblPartij p on (p.partId = rl.partId)
- left join tblRubriekuser ru on (a.rubuId = ru.rubuId)
- left join tblRubriek r on (r.rubId = ru.rubId)
-WHERE a.artId = '".mysqli_real_escape_string($db,$Id)."'
-ORDER BY a.naam 
-") or die (mysqli_error($db));
-
-    while($row = mysqli_fetch_assoc($qryArtikel))
-    {
+            $qryArtikel = $artikel_gateway->details_met_partij($Id);
+    while($row = mysqli_fetch_assoc($qryArtikel)) {
         $soort = "{$row['soort']}";
         $voer = "{$row['naam']}";
         $stdat = "{$row['stdat']}";
@@ -611,8 +452,8 @@ echo $btw;  ?>
  </td>
 <?php if (isset ($_POST['knpActive_'])) {
 
-$activeer = "Update tblArtikel set actief = 1 WHERE artId = '".mysqli_real_escape_string($db,$Id)."' ";
-echo $activeer.'<br>';    mysqli_query($db,$activeer) or die (mysqli_error($db));
+echo $activeer.'<br>';
+$artikel_gateway->activeer($Id);
         //header("Location:  " .  echo $url;  . "Medicijnen.php");
     } ?>
 <td></td></tr>
