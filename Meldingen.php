@@ -177,7 +177,6 @@ while ($zfm = mysqli_fetch_assoc($zoek_foute_meldingen))
    $requId[$index] = $zfm['reqId'];
    $reqCode[$index] = $zfm['code'];
    $reqAant[$index] = $zfm['aant'];
-   $reqRaak[$index] = $zfm['reqId'];
    $index++; 
 }
 // Einde Declaratie keuzelijst foute meldingen

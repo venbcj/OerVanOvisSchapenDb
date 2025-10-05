@@ -11,8 +11,7 @@ $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Styl
 $versie = '11-7-2020'; /* € gewijzigd in &euro; */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" align = center> gewijzigd naar <TD valign = "top" align = center> 31-12-24 include login voor include header gezet */
 
- Session::start();
-  ?>
+ Session::start();  ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -57,11 +56,9 @@ ORDER BY year(datum) desc
 
 $index = 0;
 $jaarnr = [];
-$jaarRaak = [];
     while($kzljr = mysqli_fetch_array($kzlJaar))
         {
        $jaarnr[$index] = $kzljr['jaar'];
-       $jaarRaak[$index] = $toon_jaar;
        $index++; 
     }
 // Einde Declaratie kzlJaar ?>
@@ -81,7 +78,7 @@ for ($i = 0; $i < $count; $i++){
     $opties = array($jaarnr[$i]=>$jaarnr[$i]);
             foreach($opties as $key => $waarde)
             {
-  if ((!isset($_POST['knpToon_']) && $jaarRaak[$i] == $key) || (isset($_POST["kzlJaar_"]) && $_POST["kzlJaar_"] == $key)){
+  if ($toon_jaar == $key){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  

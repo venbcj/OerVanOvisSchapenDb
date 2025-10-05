@@ -194,7 +194,6 @@ while ($du = mysqli_fetch_array($declaratie_kzlUbn))
 {
    $ubnId[$index] = $du['ubnId']; 
    $ubnnm[$index] = $du['ubn'];
-   $ubnRaak[$index] = $du['ubnId'];
    $index++; 
 }
 unset($index);
@@ -215,7 +214,6 @@ while ($ras = mysqli_fetch_array($RAS))
 {
    $rasId[$index] = $ras['rasId']; 
    $rasnm[$index] = $ras['ras'];
-   $rasRaak[$index] = $ras['scan'];   if($reader == 'Agrident') { $rasRaak[$index] = $ras['rasId']; }
    $index++; 
 }
 unset($index);
@@ -246,7 +244,6 @@ while ($hknr = mysqli_fetch_assoc($qryHoknummer))
 { 
    $hoknId[$index] = $hknr['hokId']; 
    $hoknum[$index] = $hknr['hoknr'];
-   $hokRaak[$index] = $hknr['scan'];   if($reader == 'Agrident') { $hokRaak[$index] = $hknr['hokId']; }
    $index++; 
 } 
 unset($index);
@@ -267,7 +264,6 @@ while ($qa = mysqli_fetch_assoc($qryActie))
 { 
    $actieId[$index] = $qa['actId']; 
    $actnm[$index] = $qa['actie'];
-   $actRaak[$index] = $qa['actId'];
    $index++; 
 } 
 unset($index);
@@ -418,7 +414,7 @@ for ($i = 0; $i < $count; $i++){
     $opties = array($ubnId[$i]=>$ubnnm[$i]);
             foreach($opties as $key => $waarde)
             {
-  if ((!isset($_POST['knpVervers_']) && $ubnId_rd == $ubnRaak[$i]) || (isset($_POST["kzlUbn_$Id"]) && $_POST["kzlUbn_$Id"] == $key)){
+  if ((!isset($_POST['knpVervers_']) && $ubnId_rd == $ubnId[$i]) || (isset($_POST["kzlUbn_$Id"]) && $_POST["kzlUbn_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
@@ -495,7 +491,7 @@ for ($i = 0; $i < $count; $i++){
     $opties = array($rasId[$i]=>$rasnm[$i]);
             foreach($opties as $key => $waarde)
             {
-  if ((!isset($_POST['knpVervers_']) && $ras_rd == $rasRaak[$i]) || (isset($_POST["kzlRas_$Id"]) && $_POST["kzlRas_$Id"] == $key)){
+  if ((!isset($_POST['knpVervers_']) && $ras_rd == $rasId[$i]) || (isset($_POST["kzlRas_$Id"]) && $_POST["kzlRas_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
@@ -523,7 +519,7 @@ for ($i = 0; $i < $count; $i++){
     $opties = array($hoknId[$i]=>$hoknum[$i]);
             foreach($opties as $key => $waarde)
             {
-  if ((!isset($_POST['knpVervers_']) && $hok_rd == $hokRaak[$i]) || (isset($_POST["kzlHok_$Id"]) && $_POST["kzlHok_$Id"] == $key)){
+  if ((!isset($_POST['knpVervers_']) && $hok_rd == $hoknId[$i]) || (isset($_POST["kzlHok_$Id"]) && $_POST["kzlHok_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  

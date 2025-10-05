@@ -104,29 +104,37 @@ $insert_tblReden = "INSERT into tblReden set reden = '".mysqli_real_escape_strin
 
 <tr align = "center">
 <td>
-<!-- KZLREDEN -->
-<?php
 
-$qryreden = mysqli_query($db,"
+<?php
+// DECLARATIE REDEN
+$qryReden = mysqli_query($db,"
 SELECT r.redId, r.reden
 FROM tblReden r 
  left join tblRedenuser ru on (ru.redId = r.redId and ru.lidId = '".mysqli_real_escape_string($db,$lidId)."')
 WHERE isnull(ru.redId) and r.actief = 1
 ORDER BY r.reden
- ") or die (mysqli_error($db));?>
+ ") or die (mysqli_error($db));
+
+   $index = 0; 
+while ($qr = mysqli_fetch_assoc($qryReden)) 
+{ 
+   $red_Id[$index] = $qr['redId'];
+   $rednm[$index] = $qr['reden'];
+   $index++; 
+}
+// EINDE DECLARATIE REDEN ?>
+
+<!-- KZLREDEN -->
  <select style="width:180;" name="kzlReden__" value = "" style = "font-size:12px;">
   <option></option>
-<?php        while($rd = mysqli_fetch_array($qryreden))
-        {
-            $raak = $rd['redId'];
+<?php $count = count($red_Id);
+for ($i = 0; $i < $count; $i++) {
 
-
-            $opties= array($rd['redId']=>$rd['reden']);
+            $opties= array($red_Id[$i]=>$rednm[$i]);
             foreach ( $opties as $key => $waarde)
             {
-                        $keuze = '';
         
-        if( (!isset($_POST['knpInsert__']) && $redId == $raak) || (isset($_POST['kzlReden__']) && $_POST['kzlReden__'] == $key) )
+        if( (!isset($_POST['knpInsert__']) && $redId == $red_Id[$i]) || (isset($_POST['kzlReden__']) && $_POST['kzlReden__'] == $key) )
         {
             echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
         }

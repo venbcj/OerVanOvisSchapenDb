@@ -78,7 +78,6 @@ $jaar = [];
 while ($jr = mysqli_fetch_assoc($qryJaar)) 
 { 
    $jaar[$index] = $jr['jaar'];
-   $jaarRaak[$index] = $toon_jaar;
    $index++; 
 }
 unset($index); 
@@ -96,7 +95,7 @@ for ($i = 0; $i < $count; $i++){
     $opties = array($jaar[$i]=>$jaar[$i]);
             foreach($opties as $key => $waarde)
             {
-  if ((!isset($_POST['knpToon___']) && $jaarRaak[$i] == $key) || (isset($_POST['kzlJaar___']) && $_POST['kzlJaar___'] == $key)){
+  if ($toon_jaar == $key) {
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  

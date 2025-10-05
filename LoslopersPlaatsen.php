@@ -124,7 +124,6 @@ while ($hnr = mysqli_fetch_array($qryHokkeuze))
 { 
    $hoknId[$index] = $hnr['hokId']; 
    $hoknum[$index] = $hnr['hoknr'];
-   $hokRaak[$index] = $hnr['hokId']; 
    $index++; 
 } 
 unset($index);
@@ -311,7 +310,7 @@ for ($i = 0; $i < $count; $i++){
     $opties = array($hoknId[$i]=>$hoknum[$i]);
             foreach($opties as $key => $waarde)
             {
-  if (($hokkeuze == $hokRaak[$i]) || (isset($_POST["kzlHok_$schaapId"]) && $_POST["kzlHok_$schaapId"] == $key)){
+  if (($hokkeuze == $hoknId[$i]) || (isset($_POST["kzlHok_$schaapId"]) && $_POST["kzlHok_$schaapId"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  

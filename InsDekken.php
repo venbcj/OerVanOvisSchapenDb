@@ -138,7 +138,6 @@ while ($vdr = mysqli_fetch_assoc($zoek_vaderdieren))
 { 
    $vdrkey[$index] = $vdr['schaapId'];
    $wrknrRam[$index] = $vdr['werknr'];
-   $vdrRaak[$index] = $vdr['schaapId'];
    $index++; 
 } 
 unset($index); 
@@ -437,7 +436,7 @@ for ($i = 0; $i < $count; $i++){
     $opties= array($vdrkey[$i]=>$wrknrRam[$i]);
             foreach ($opties as $key => $waarde)
             {
-  if ((!isset($_POST['knpVervers_']) && $vdrId_rd == $vdrRaak[$i]) || (isset($_POST["kzlRam_$Id"]) && $_POST["kzlRam_$Id"] == $key)){
+  if ((!isset($_POST['knpVervers_']) && $vdrId_rd == $vdrkey[$i]) || (isset($_POST["kzlRam_$Id"]) && $_POST["kzlRam_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  

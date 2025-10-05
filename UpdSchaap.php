@@ -87,7 +87,6 @@ while ($rs = mysqli_fetch_array($qry_Ras))
 { 
    $rsId[$index] = $rs['rasId']; 
    $rsnum[$index] = $rs['ras'];
-   $rsRaak[$index] = $rs['rasId'];
    $index++; 
 } 
 unset($index); 
@@ -1601,7 +1600,7 @@ for ($i = 0; $i < $count; $i++){
             foreach ( $opties as $key => $waarde)
             {
                         
-        if((!isset($_POST['kzlRas']) && $rsRaak[$i] == $rasId) || (isset($_POST['kzlRas']) && $_POST['kzlRas'] == $key))
+        if((!isset($_POST['kzlRas']) && $rsId[$i] == $rasId) || (isset($_POST['kzlRas']) && $_POST['kzlRas'] == $key))
         {
             echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
         } else { 

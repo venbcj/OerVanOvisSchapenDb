@@ -133,7 +133,7 @@ $zoek_inboekingen = mysqli_query($db,"
 SELECT op.opgId, op.rubuId, date_format(op.datum,'%d-%m-%Y') datum, op.bedrag, op.toel, op.liq, op.his
 FROM tblOpgaaf op
  join tblRubriekuser ru on (op.rubuId = ru.rubuId)
-WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (isnull(op.his) or op.his =0)
+WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (isnull(op.his) or op.his = 0)
 ") or die (mysqli_error($db));
     while ( $zi = mysqli_fetch_assoc($zoek_inboekingen)) {
         $Id = $zi['opgId'];
@@ -161,7 +161,6 @@ $index = 0;
     {
        $rub_Id[$index] = $sub['rubuId'];
        $rubri[$index] = $sub['rubriek'];
-       $rubRaak[$index] = $rubuId;
        $index++; 
     }
 
@@ -177,7 +176,7 @@ for ($i = 0; $i < $count; $i++){
             {
                         $keuze = '';
         
-        if( (!isset($_POST['knpSave_']) && $rubRaak[$i] == $key) || ( isset($_POST["kzlRubr_$Id"]) && $_POST["kzlRubr_$Id"] == $key) )
+        if( (!isset($_POST['knpSave_']) && $rubuId == $rub_Id[$i]) || ( isset($_POST["kzlRubr_$Id"]) && $_POST["kzlRubr_$Id"] == $key) )
         {
             echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
         }

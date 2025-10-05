@@ -357,7 +357,7 @@ if ($skip == 1) { echo $schaapdm; $vldtype = "hidden"; } else { $vldtype = "text
  <td align = "center" style = "color : <?php echo $color; ?>;" >    <?php echo $fase; ?>  </td>
 
 <?php
-// Declaratie BESTEMMING            // lower(if(isnull(ubn),'6karakters',ubn)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen tblRelaties.
+// Declaratie BESTEMMING            // lower(if(isnull(ubn),'6karakters',ubn)) zorgt ervoor dat $relId nooit leeg is. Anders worden legen velden gevonden in legen velden binnen tblRelaties.
 $qryRelatie = "
 SELECT relId, lower(if(isnull(p.ubn),'6karakters',p.ubn)) ubn, p.naam
 FROM tblPartij p
@@ -372,7 +372,6 @@ while ($rnr = mysqli_fetch_array($relatienr))
 { 
    $relId[$index] = $rnr['relId']; 
    $relnum[$index] = $rnr['naam'];
-   $relRaak[$index] = $rnr['relId'];   
    $index++; 
 } 
 unset($index);
@@ -389,7 +388,7 @@ for ($i = 0; $i < $count; $i++){
     $opties = array($relId[$i]=>$relnum[$i]);
             foreach ($opties as $key => $waarde)
             {
-  if ((!isset($_POST["kzlBest_$Id"]) && $rel_best == $relRaak[$i]) || (isset($_POST["kzlBest_$Id"]) && $_POST["kzlBest_$Id"] == $key) ) {
+  if ((!isset($_POST["kzlBest_$Id"]) && $rel_best == $relId[$i]) || (isset($_POST["kzlBest_$Id"]) && $_POST["kzlBest_$Id"] == $key) ) {
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  

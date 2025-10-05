@@ -256,25 +256,36 @@ else     { ?>
 // kzlVerbruikseenheid (al dan niet te wijzigen)
 if ($rows_inkoop > 0) { echo $eenhd; }
 else     { 
-
-$result = mysqli_query($db,"
+// DECLARATIE EENHEID
+$qryEenheid = mysqli_query($db,"
 SELECT e.eenheid, eu.enhuId 
 FROM tblEenheid e
  join tblEenheiduser eu on (e.eenhId = eu.eenhId)
 WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and eu.actief = 1
 ORDER BY e.eenheid
-") or die (mysqli_error($db));?>
+") or die (mysqli_error($db));
+
+$index = 0; 
+while ($eh = mysqli_fetch_array($qryEenheid)) 
+{ 
+   $eenhId[$index] = $eh['enhuId']; 
+   $eenhnm[$index] = $eh['eenheid'];
+   $index++; 
+} 
+unset($index);
+
+// EINDE DECLARATIE EENHEID
+?>
  <select style="width:50;" name= <?php echo "kzlNhd_$Id"; ?> value = "" style = "font-size:12px;">
   <option></option>
-<?php        while($lijn = mysqli_fetch_array($result))
-        {
-            $raak = $lijn['enhuId'];
+<?php $count = count($eenhId);
+for ($i = 0; $i < $count; $i++){
 
-            $opties= array($lijn['enhuId']=>$lijn['eenheid']);
+            $opties= array($eenhId[$i]=>$eenhnm[$i]);
             foreach ( $opties as $key => $waarde)
             {
 
-  if ((!isset($_POST['knpSave_']) && $enhuId == $raak) || (isset($_POST["kzlNhd_$Id"]) && $_POST["kzlNhd_$Id"] == $key)){
+  if ((!isset($_POST['knpSave_']) && $enhuId == $eenhId[$i]) || (isset($_POST["kzlNhd_$Id"]) && $_POST["kzlNhd_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';
@@ -306,37 +317,48 @@ foreach ( $opties as $key => $waarde)
 } ?>
     </select>
  </td>
-<!-- EINDE kzlBtw bij wijzigen
-    kzlLeverancier bij wijzigen -->
- <td> <?php
+<!-- EINDE kzlBtw bij wijzigen -->
+<?php
+// Declaratie LEVERANCIER
 $qryLevcier = mysqli_query($db,"
 SELECT r.relId, p.naam
 FROM tblPartij p
  join tblRelatie r on (p.partId = r.partId)
 WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and relatie = 'cred' and p.actief = 1 and r.actief = 1
 ORDER BY p.naam
-") or die (mysqli_error($db)); ?>
+") or die (mysqli_error($db)); 
+
+$index = 0; 
+while ($rel = mysqli_fetch_array($qryLevcier)) 
+{ 
+   $rel_Id[$index] = $rel['relId']; 
+   $relnm[$index] = $rel['naam'];
+   $index++; 
+} 
+unset($index);
+// EINDE Declaratie LEVERANCIER
+?>
+
+<!-- kzlLeverancier bij wijzigen -->
+ <td>
  <select style= "width:110;" name= <?php echo "kzlRelatie_$Id"; ?> value = "" style = "font-size:12px;">
   <option></option>
-<?php        while($lijn = mysqli_fetch_array($qryLevcier))
-        {
-            $raak = $lijn['relId'];
+<?php $count = count($relnm);
+for ($i = 0; $i < $count; $i++){
 
-            $opties= array($lijn['relId']=>$lijn['naam']);
-            foreach ( $opties as $key => $waarde)
+    $opties = array($rel_Id[$i]=>$relnm[$i]);
+            foreach($opties as $key => $waarde)
             {
-  if ((!isset($_POST['knpSave_']) && $relId == $raak) || (isset($_POST["kzlRelatie_$Id"]) && $_POST["kzlRelatie_$Id"] == $key)){
+
+   if ((!isset($_POST['knpSave_']) && $relId == $rel_Id[$i]) || (isset($_POST["kzlRelatie_$Id"]) && $_POST["kzlRelatie_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';
-  }    
+  }               
             }
-
-        }
-?>
+} ?>
 </select>
  </td>
-
 <!-- EINDE kzlLeverancier bij wijzigen
 
 wachtdagen vlees bij wijzigen -->
@@ -350,12 +372,9 @@ wachtdagen melk bij wijzigen -->
 <!--EINDE wachtdagen melk bij wijzigen -->
  </td>    
 <?php        
-if($modfin == 1 ) { ?>
+if($modfin == 1 ) {
 
- <td>
-<!-- KZLRUBRIEK bij wijzigen-->
-<?php
-
+// Declaratie RUBRIEK
 $qryRubriek = mysqli_query($db,"
 SELECT ru.rubuId, r.rubriek
 FROM tblRubriekuser ru 
@@ -363,20 +382,32 @@ FROM tblRubriekuser ru
  join tblRubriekhfd hr on (r.rubhId = hr.rubhId)
 WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and r.rubId = 10 and r.actief = 1 and hr.actief = 1
 ORDER BY r.rubriek
- ") or die (mysqli_error($db));?>
+ ") or die (mysqli_error($db));
+
+$index = 0; 
+while ($rub = mysqli_fetch_array($qryRubriek)) 
+{ 
+   $rubId[$index] = $rub['rubuId']; 
+   $rubnm[$index] = $rub['rubriek'];
+   $index++; 
+} 
+unset($index);
+// EINDE Declaratie RUBRIEK
+?>
+
+<!-- KZLRUBRIEK bij wijzigen-->
+<td>
  <select style="width:140;" name= <?php echo "kzlRubriek_$Id"; ?> value = "" style = "font-size:12px;">
   <option></option>
-<?php        while($rub = mysqli_fetch_array($qryRubriek))
-        {
-            $raak = $rub['rubuId'];
+<?php 
+$count = count($rubnm);
+for ($i = 0; $i < $count; $i++){
 
-
-            $opties = array($rub['rubuId']=>$rub['rubriek']);
-            foreach ( $opties as $key => $waarde)
+            $opties = array($rubId[$i]=>$rubnm[$i]);
+            foreach ($opties as $key => $waarde)
             {
-                        $keuze = '';
-        
-        if( (!isset($_POST['knpSave_']) && $rubuId == $raak) || (isset($_POST["kzlRubriek_$Id"]) && $_POST["kzlRubriek_$Id"] == $key) )
+                        
+        if( (!isset($_POST['knpSave_']) && $rubuId == $rubId[$i]) || (isset($_POST["kzlRubriek_$Id"]) && $_POST["kzlRubriek_$Id"] == $key) )
         {
             echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
         }

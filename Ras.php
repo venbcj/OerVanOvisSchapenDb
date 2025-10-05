@@ -129,25 +129,35 @@ $pdf = 0;
       <b> Eigen Ras</b>
  </td>
 </tr>
-<tr>
-  <td>
-<!-- KZLRAS -->
-<?php
 
+<?php
+// DECLARATIE RAS
 $qryRas = mysqli_query($db,"
 SELECT r.rasId, r.ras
 FROM tblRas r 
  left join tblRasuser ru on (ru.rasId = r.rasId and ru.lidId = '".mysqli_real_escape_string($db,$lidId)."')
 WHERE isnull(ru.rasId) and r.actief = 1 and eigen = 0
 ORDER BY r.ras
- ") or die (mysqli_error($db));?>
+ ") or die (mysqli_error($db));
+
+   $index = 0; 
+while ($qr = mysqli_fetch_assoc($qryRas)) 
+{ 
+   $rasId[$index] = $qr['rasId'];
+   $rasnm[$index] = $qr['ras'];
+   $index++; 
+}
+// EINDE DECLARATIE RAS
+ ?>
+<tr>
+ <td>
+<!-- KZLRAS -->
  <select style="width:180;" name="kzlRas_" value = "" style = "font-size:12px;">
   <option></option>
-<?php        while($rs = mysqli_fetch_array($qryRas))
-        {
-            $raak = $rs['rasId'];
+<?php   $count = count($relnum);
+for ($i = 0; $i < $count; $i++) {
 
-            $opties= array($rs['rasId']=>$rs['ras']);
+            $opties= array($rasId[$i]=>$rasnm[$i]);
             foreach ( $opties as $key => $waarde)
             {
                         $keuze = '';

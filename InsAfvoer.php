@@ -286,7 +286,7 @@ while ($rnr = mysqli_fetch_array($relatienr))
 { 
    $relnId[$index] = $rnr['relId']; 
    $relnum[$index] = $rnr['naam'];
-   $relRaak[$index] = $rnr['ubn'];   
+   $relUbn[$index] = $rnr['ubn'];   
    $index++; 
 } 
 unset($index);
@@ -306,8 +306,7 @@ $index = 0;
 while ($rdn = mysqli_fetch_array($reden)) 
 { 
    $reduId[$index] = $rdn['reduId']; 
-   $rednm[$index] = $rdn['reden'];
-   $redRaak[$index] = $rdn['reduId'];   
+   $rednm[$index] = $rdn['reden']; 
    $index++; 
 } 
 unset($index);
@@ -441,7 +440,7 @@ for ($i = 0; $i < $count; $i++){
     $opties = array($relnId[$i]=>$relnum[$i]);
             foreach($opties as $key => $waarde)
             {
-  if ((!isset($_POST['knpVervers_']) && $ubnbest == $relRaak[$i]) || (isset($_POST["kzlBest_$Id"]) && $_POST["kzlBest_$Id"] == $key)){
+  if ((!isset($_POST['knpVervers_']) && $ubnbest == $relUbn[$i]) || (isset($_POST["kzlBest_$Id"]) && $_POST["kzlBest_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
@@ -463,7 +462,7 @@ for ($i = 0; $i < $count; $i++){
     $opties = array($reduId[$i]=>$rednm[$i]);
             foreach($opties as $key => $waarde)
             {
-  if ((!isset($_POST['knpVervers_']) && $reduId_db == $redRaak[$i]) || (isset($_POST["kzlReden_$Id"]) && $_POST["kzlReden_$Id"] == $key)){
+  if ((!isset($_POST['knpVervers_']) && $reduId_db == $reduId[$i]) || (isset($_POST["kzlReden_$Id"]) && $_POST["kzlReden_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  

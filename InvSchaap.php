@@ -1123,7 +1123,6 @@ while ($ubn = mysqli_fetch_assoc($qryUbn))
 { 
    $ubnId[$index] = $ubn['ubnId']; 
    $ubnnm[$index] = $ubn['ubn'];
-   //$ubnRaak[$index] = $ubn['ubnId'];
    $index++; 
 } 
 unset($index);

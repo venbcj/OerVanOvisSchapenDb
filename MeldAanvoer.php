@@ -311,7 +311,7 @@ if (Auth::is_logged_in()) {
 <?php
         // Declaratie HERKOMST
         // TODO: (BCB) Extract Method. Eerst met BV duidelijk krijgen of relRaak nodig is
-        // lower(if(isnull(ubn),'6karakters',ubn)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen tblPartij.
+        // lower(if(isnull(ubn),'6karakters',ubn)) zorgt ervoor dat $relId nooit leeg is. Anders worden legen velden gevonden in legen velden binnen tblPartij.
         $qryRelatie = ("
         SELECT relId, lower(coalesce(ubn,999999)) ubn, naam
         FROM tblRelatie r
@@ -326,8 +326,6 @@ if (Auth::is_logged_in()) {
         while ($rnr = mysqli_fetch_array($relatienr)) {
             $relId[$index] = $rnr['relId'];
             $relnum[$index] = $rnr['naam'];
-            // TODO: (BV) #0004150 wat is het nut van relRaak? Je kunt toch relId gebruiken?
-            $relRaak[$index] = $rnr['relId'];
             $index++;
         }
         unset($index);
@@ -420,7 +418,7 @@ if (isset($vorig_ubn) && $vorig_ubn != $ubn) { ?>
                 foreach ($opties as $key => $waarde) {
                     // TODO: (BCB) $selected direct toewijzen, hoeft niet met if()
                     $selected = false;
-                    if ((!isset($_POST['knpSave_']) && $rel_hrk == $relRaak[$i]) || (isset($_POST["kzlHerk_$Id"]) && $_POST["kzlHerk_$Id"] == $key)) {
+                    if ((!isset($_POST['knpSave_']) && $rel_hrk == $relId[$i]) || (isset($_POST["kzlHerk_$Id"]) && $_POST["kzlHerk_$Id"] == $key)) {
                         $selected = true;
                     }
                     echo '<option value="' . $key . '" ' . ($selected ? 'selected' : '') . '>' . $waarde . '</option>';

@@ -210,12 +210,10 @@ ORDER BY r.ras
 $index = 0; 
 $rasId = [];
 $rasnm = [];
-$rasRaak = [];
 while ($ras = mysqli_fetch_assoc($qryRassen)) 
 { 
    $rasId[$index] = $ras['rasId']; 
    $rasnm[$index] = $ras['ras'];
-   $rasRaak[$index] = $ras['scan'];   if($reader == 'Agrident') { $rasRaak[$index] = $ras['rasId']; }
    $index++; 
 } 
 unset($index);
@@ -240,7 +238,6 @@ while ($mdr = mysqli_fetch_assoc($moederdier))
 { 
    $mdrStalId[$index] = $mdr['stalId']; // 10-07-2025 gewijzigd van $mdr['schaapId']; naar $mdr['stalId'];
    $wnrOoi[$index] = $mdr['werknr'];
-   $mdrRaak[$index] = $mdr['stalId']; // 10-07-2025 gewijzigd van $mdr['schaapId']; naar $mdr['stalId'];
    $index++; 
 } 
 unset($index); 
@@ -259,7 +256,6 @@ while ($hnr = mysqli_fetch_assoc($qryHoknummer))
 { 
    $hoknId[$index] = $hnr['hokId']; 
    $hoknum[$index] = $hnr['hoknr'];
-   $hokRaak[$index] = $hnr['scan'];   if($reader == 'Agrident') { $hokRaak[$index] = $hnr['hokId']; }
    $index++; 
 } 
 unset($index);
@@ -286,8 +282,6 @@ while ($mom = mysqli_fetch_assoc($moment))
 { 
    $momId[$index] = $mom['momId'];
    $momnt[$index] = $mom['moment'];
-  if($reader == 'Biocontrol')  { $momRaak[$index] = $mom['scan']; }
-  if($reader == 'Agrident')  { $momRaak[$index] = $mom['momId']; }
    $index++; 
 } 
 unset($index); 
@@ -309,7 +303,6 @@ while ($red = mysqli_fetch_assoc($redenen))
 { 
    $redId[$index] = $red['redId'];
    $reden[$index] = $red['reden'];
-   $redRaak[$index] = $red['redId'];
    $index++; 
 } 
 unset($index); 
@@ -711,7 +704,7 @@ for ($i = 0; $i < $count; $i++){
     $opties = array($rasId[$i]=>$rasnm[$i]);
             foreach($opties as $key => $waarde)
             {
-  if ((!isset($_POST['knpVervers_']) && $ras_rd == $rasRaak[$i]) || (isset($_POST["kzlRas_$Id"]) && $_POST["kzlRas_$Id"] == $key)){
+  if ((!isset($_POST['knpVervers_']) && $ras_rd == $rasId[$i]) || (isset($_POST["kzlRas_$Id"]) && $_POST["kzlRas_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
@@ -756,7 +749,7 @@ for ($i = 0; $i < $count; $i++){
     $opties = array($mdrStalId[$i]=>$wnrOoi[$i]);
             foreach($opties as $key => $waarde)
             {
-  if ((!isset($_POST['knpVervers_']) && $ooi_db == $mdrRaak[$i]) || (isset($_POST["kzlOoi_$Id"]) && $_POST["kzlOoi_$Id"] == $key)){
+  if ((!isset($_POST['knpVervers_']) && $ooi_db == $mdrStalId[$i]) || (isset($_POST["kzlOoi_$Id"]) && $_POST["kzlOoi_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
@@ -779,7 +772,7 @@ for ($i = 0; $i < $count; $i++){
     $opties = array($hoknId[$i]=>$hoknum[$i]);
             foreach($opties as $key => $waarde)
             {
-  if ((!isset($_POST['knpVervers_']) && $hok_rd == $hokRaak[$i]) || (isset($_POST["kzlHok_$Id"]) && $_POST["kzlHok_$Id"] == $key)){
+  if ((!isset($_POST['knpVervers_']) && $hok_rd == $hoknId[$i]) || (isset($_POST["kzlHok_$Id"]) && $_POST["kzlHok_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
@@ -811,7 +804,7 @@ for ($i = 0; $i < $count; $i++){
             foreach($opties as $key => $waarde)
             {
 
-  if ((!isset($_POST['knpVervers_']) && $mom_rd == $momRaak[$i]) || (isset($_POST["kzlMom_$Id"]) && $_POST["kzlMom_$Id"] == $key)){
+  if ((!isset($_POST['knpVervers_']) && $mom_rd == $momId[$i]) || (isset($_POST["kzlMom_$Id"]) && $_POST["kzlMom_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
@@ -836,7 +829,7 @@ for ($i = 0; $i < $count; $i++){
     $opties = array($redId[$i]=>$reden[$i]);
             foreach($opties as $key => $waarde)
             {
-  if ((!isset($_POST['knpVervers_']) && $red_rd == $redRaak[$i]) || (isset($_POST["kzlRed_$Id"]) && $_POST["kzlRed_$Id"] == $key)){
+  if ((!isset($_POST['knpVervers_']) && $red_rd == $redId[$i]) || (isset($_POST["kzlRed_$Id"]) && $_POST["kzlRed_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
