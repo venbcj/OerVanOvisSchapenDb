@@ -2,7 +2,6 @@
 
 require_once("autoload.php");
 
-
 $versie = '29-09-2024'; /* Gekopieerd van GroeiresultaatSchaap.php */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD align = "center" valign = "top"> 31-12-24 include login voor include header gezet */
 
@@ -29,31 +28,25 @@ include "login.php"; ?>
             <TD align = "center" valign = "top">
 <?php
 if (Auth::is_logged_in()) { if($modtech ==1) {
+    $historie_gateway = new HistorieGateway();
+    $lid_gateway = new LidGateway();
+    $schaap_gateway = new SchaapGateway();
 
 include "kalender.php";
 
 if(isset($_POST['knpZoek_'])) { 
     $kzlActie = $_POST['kzlActie_'];
-
-    $wegingvan = $_POST['txtWegingVan_']; $dmWegingvan = date_format(date_create($wegingvan), 'Y-m-d');
-    $wegingtot = $_POST['txtWegingTot_']; $dmWegingtot = date_format(date_create($wegingtot), 'Y-m-d');
+    $wegingvan = $_POST['txtWegingVan_'];
+    $dmWegingvan = date_format(date_create($wegingvan), 'Y-m-d');
+    $wegingtot = $_POST['txtWegingTot_'];
+    $dmWegingtot = date_format(date_create($wegingtot), 'Y-m-d');
 }
 
-
 /* Declaratie keuzelijst Acties */
-$zoek_acties = mysqli_query($db,"
-SELECT h.actId, a.actie
-FROM tblHistorie h
- join tblActie a on (h.actId = a.actId)
- join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.kg is not null
-GROUP BY h.actId, a.actie
-ORDER BY h.actId
-") or die (mysqli_error($db));
+$zoek_acties = $historie_gateway->zoek_acties($lidId);
 /* Einde Declaratie keuzelijst Acties */
 
-$zoek_groei = mysqli_query($db,"SELECT groei FROM tblLeden WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' ") or die (mysqli_error($db));
-    while ( $gr = mysqli_fetch_assoc($zoek_groei)) { $groei = $gr['groei']; }
+$groei = $lid_gateway->zoek_groei($lidId);
 ?> 
 
 <form action="GroeiresultaatWeging.php" method="post">
@@ -121,39 +114,23 @@ $zoek_groei = mysqli_query($db,"SELECT groei FROM tblLeden WHERE lidId = '".mysq
 <?php
 /*unset($where_actie);*/
 
-if(isset($kzlActie) && !empty($kzlActie)) { $where_actie = " and h.actId = ". mysqli_real_escape_string($db,$kzlActie) . " "; }
-if(!empty($wegingvan) && !empty($wegingtot)) { $where_weging = " and h.datum >= '". mysqli_real_escape_string($db,$dmWegingvan) . "' and h.datum <= '". mysqli_real_escape_string($db,$dmWegingtot) . "' "; }
-
 $where = '';
+if(isset($kzlActie) && !empty($kzlActie)) { $where .= " and h.actId = ". mysqli_real_escape_string($db,$kzlActie) . " "; }
+if(!empty($wegingvan) && !empty($wegingtot)) { $where .= " and h.datum >= '". mysqli_real_escape_string($db,$dmWegingvan) . "' and h.datum <= '". mysqli_real_escape_string($db,$dmWegingtot) . "' "; }
 
-if(isset($where_actie)) { $where .= $where_actie; }
-if(isset($where_weging))   { $where .= $where_weging; }
+$result = $schaap_gateway->zoek_groeiresultaat_weging($lidId, $Karwerk, $where);
 
-$result = "
-SELECT date_format(h.datum,'%d-%m-%Y') datum, h.datum date, a.actie, right(mdr.levensnummer, $Karwerk) moeder, s.schaapId, right(s.levensnummer, $Karwerk) werknum, s.geslacht, prnt.datum aanw, h.kg
-FROM tblSchaap s
- join tblStal st on (st.schaapId = s.schaapId)
- join tblHistorie h on (st.stalId = h.stalId) 
- join tblActie a on (h.actId = a.actId)
- left join (
-    SELECT st.schaapId, datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = s.schaapId) 
- left join tblVolwas v on (v.volwId = s.volwId)
- left join tblSchaap mdr on (v.mdrId = mdr.schaapId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best) and h.kg is not null and h.skip = 0 ".$where. "
-ORDER BY h.datum desc, h.actId, right(mdr.levensnummer, $Karwerk), right(s.levensnummer, $Karwerk), h.hisId
-";
-
-#echo $result;
-
-$result = mysqli_query($db,$result) or die (mysqli_error($db));
-
-if( (!isset($_POST['radGroei_']) && $groei == 0) || (isset($_POST['radGroei_']) && $_POST['radGroei_'] == 0) ) { $kolomkop = 'Totale groei'; $kolomkopxls = 'T'; }
-else if(isset($_POST['radGroei_']) && $_POST['radGroei_'] == 1 ) { $kolomkop = 'Gem groei per dag'; $kolomkopxls = 'G';} 
-else { $kolomkop = 'Gem groei per dag'; $kolomkopxls = 'G'; } ?>
+if( (!isset($_POST['radGroei_']) && $groei == 0) || (isset($_POST['radGroei_']) && $_POST['radGroei_'] == 0) ) {
+    $kolomkop = 'Totale groei';
+    $kolomkopxls = 'T';
+} else if(isset($_POST['radGroei_']) && $_POST['radGroei_'] == 1 ) {
+    $kolomkop = 'Gem groei per dag';
+    $kolomkopxls = 'G';
+} else {
+    $kolomkop = 'Gem groei per dag';
+    $kolomkopxls = 'G';
+}
+?>
  
 <tr style = "font-size:12px;">
 <th width = 0 height = 30></th>
@@ -209,44 +186,23 @@ $date_2 = strtotime($date); // Betreft $datum_toon
 
 // Zoek vorige weging
 unset($vorige_weging);
-
-$zoek_vorige_weging = mysqli_query($db,"
-SELECT max(hisId) vorige_weging
-FROM tblHistorie h
- join tblStal st on (st.stalId = h.stalId)
-WHERE st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
- and h.datum < '".mysqli_real_escape_string($db,$date)."'
- and h.kg is not null
-") or die (mysqli_error($db));
-
-while($zvw = mysqli_fetch_array($zoek_vorige_weging))
-        { $vorige_weging = $zvw['vorige_weging']; }
+$vorige_weging = $historie_gateway->zoek_vorige_weging($schaapId, $date);
 
 $vorige_date = '';
 if(isset($vorige_weging)) { 
-
-
-$zoek_actie_vorige_weging = mysqli_query($db,"
-SELECT h.actId, actie, h.datum, kg
-FROM tblHistorie h
- join tblStal st on (st.stalId = h.stalId)
- join tblActie a on (h.actId = a.actId)
-WHERE h.hisId = '".mysqli_real_escape_string($db,$vorige_weging)."'
-") or die (mysqli_error($db));
-
-while($zavw = mysqli_fetch_array($zoek_actie_vorige_weging))
-        { $vorige_actId = $zavw['actId']; 
-          $vorige_actie = $zavw['actie']; if($vorige_actId == 9) { $vorige_actie = 'vorige tussenweging'; }
-          $vorige_date = $zavw['datum']; 
-          $vorige_kg = $zavw['kg']; }
+    $row = $historie_gateway->zoek_actie_vorige_weging($vorige_weging);
+    $vorige_actId = $row['actId']; 
+    $vorige_actie = $row['actie'];
+    if($vorige_actId == 9) {
+        $vorige_actie = 'vorige tussenweging';
+    }
+    $vorige_date = $row['datum']; 
+    $vorige_kg = $row['kg']; 
 }
 
-$date_1 = strtotime($vorige_date); //time(); // or your date as well. Betreft vorige weegdatum
+$date_1 = strtotime($vorige_date);
 $datediff = $date_2 - $date_1;
-
 $dagen = round($datediff / (60 * 60 * 24));
-
-
 if( (!isset($_POST['radGroei_']) && $groei == 0) || (isset($_POST['radGroei_']) && $_POST['radGroei_'] == 0) ) { $factor = $dagen/$dagen; }
 else if( (!isset($_POST['radGroei_']) && $groei == 1) || (isset($_POST['radGroei_']) && $_POST['radGroei_'] == 1) ) { $factor = $dagen; }
 

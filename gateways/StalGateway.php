@@ -3,11 +3,11 @@
 class StalGateway extends Gateway {
 
     public function updateHerkomstByMelding($recId, $fldHerk) {
-        $this->db->query("
+        $this->run_query("
             UPDATE tblStal st
              join tblHistorie h on (h.stalId = st.stalId)
              join tblMelding m on (m.hisId = h.hisId)
-            set st.rel_herk = '".$this->db->real_escape_string($fldHerk)."' 
+            set st.rel_herk = '" . $this->db->real_escape_string($fldHerk) . "' 
             WHERE m.meldId = '$recId'
             ");
     }
@@ -17,7 +17,7 @@ class StalGateway extends Gateway {
             UPDATE tblStal st
              join tblHistorie h on (h.stalId = st.stalId)
              join tblMelding m on (m.hisId = h.hisId)
-            set st.rel_best = '".$this->db->real_escape_string($fldBest)."'
+            set st.rel_best = '" . $this->db->real_escape_string($fldBest) . "'
             WHERE m.meldId = '$recId'
             ");
     }
@@ -31,13 +31,28 @@ SQL
         , [[':lidId', $lidId, self::INT]]);
     }
 
+    public function tel_stallijsten($lidId, $schaapId) {
+        return $this->first_field("
+SELECT count(stalId) stalId
+FROM tblStal
+WHERE schaapId = '" . $this->db->real_escape_string($schaapId) . "' and lidId <> '" . $this->db->real_escape_string($lidId) . "'");
+    }
+
     public function kzlOoien($lidId, $Karwerk) {
-return $this->db->query("
-SELECT st.stalId, st.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr, count(lam.schaapId) lamrn, concat(st.kleur,' ',st.halsnr) halsnr
+        return $this->run_query(
+            $this->kzl_ooien_statement(),
+            [[':lidId', $lidId, self::INT], [':Karwerk', $Karwerk, self::INT]]
+        );
+    }
+
+    private function kzl_ooien_statement() {
+        return <<<SQL
+SELECT st.stalId, st.schaapId, s.levensnummer, right(s.levensnummer,:Karwerk) werknr, count(lam.schaapId) lamrn,
+ concat(st.kleur,' ',st.halsnr) halsnr
 FROM (
     SELECT max(stalId) stalId, schaapId
     FROM tblStal
-    WHERE lidId = '".$this->db->real_escape_string($lidId)."'
+    WHERE lidId = :lidId
     GROUP BY schaapId
  ) stm
  join tblStal st on (stm.stalId = st.stalId)
@@ -55,13 +70,13 @@ FROM (
      FROM tblStal st
       join tblHistorie h on (st.stalId = h.stalId)
       join tblActie a on (h.actId = a.actId)
-     WHERE a.af = 1 and h.actId <> 10 and lidId = '".$this->db->real_escape_string($lidId)."'
+     WHERE a.af = 1 and h.actId <> 10 and lidId = :lidId
      ) afv on (afv.stalId = st.stalId)
 WHERE s.geslacht = 'ooi' and (isnull(afv.stalId) or afv.datum > date_add(curdate(), interval -2 month) )
-
-GROUP BY st.stalId, st.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk)
-ORDER BY right(s.levensnummer,$Karwerk), count(lam.schaapId)
-");
+GROUP BY st.stalId, st.schaapId, s.levensnummer, right(s.levensnummer,:Karwerk)
+ORDER BY right(s.levensnummer,:Karwerk), count(lam.schaapId)
+SQL
+        ;
     }
 
     public function zoek_laatste_stalId($lidId, $schaapId) {
@@ -89,7 +104,9 @@ public function zoekKleurHalsnr($lidId, $schaapId) {
     $vw = $this->db->query("
 SELECT stalId, kleur, halsnr
 FROM tblStal st
-WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and st.schaapId = '".$this->db->real_escape_string($schaapId)."' and isnull(st.rel_best)
+WHERE st.lidId = '".$this->db->real_escape_string($lidId)."'
+ and st.schaapId = '".$this->db->real_escape_string($schaapId)."'
+ and isnull(st.rel_best)
 ");
 if ($vw->num_rows) {
     return $vw->fetch_assoc();
@@ -118,11 +135,36 @@ return [null, null];
 }
 
 public function update_relbest($stalId, $rel_best) {
-    $this->db->query("UPDATE tblStal set rel_best = '".$this->db->real_escape_string($rel_best)."' WHERE stalId = '".$this->db->real_escape_string($stalId)."' ");
+    $this->run_query($this->update_relbest_statement(),
+     [[':stalId', $stalId, self::INT], [':rel_best', $rel_best]]
+    );
 }
 
-public function countHisHok1324($lidId, $date) {
-    $vw = $this->db->query(" select count(h.hisId) aant
+private function update_relbest_statement() {
+    return <<<SQL
+UPDATE tblStal
+SET rel_best = :rel_best
+WHERE stalId = :stalId
+SQL;
+    }
+
+    public function update_relbest_by_his($hisId, $rel_best) {
+        $this->run_query(
+            $this->update_relbest_by_his_statement(),
+            [[':hisId', $hisId, self::INT], [':rel_best', $rel_best]]
+        );
+    }
+
+    private function update_relbest_by_his_statement() {
+        return <<<SQL
+UPDATE tblStal st join tblHistorie h on (st.stalId = h.stalId)
+SET st.rel_best = :rel_best
+WHERE hisId = :hisId
+SQL;
+    }
+
+    public function countHisHok1324($lidId, $date) {
+        $vw = $this->db->query(" select count(h.hisId) aant
         from tblStal st
         join tblHistorie h on (h.stalId = st.stalId)
         join tblBezetting b on (h.hisId = b.hisId)
@@ -138,7 +180,7 @@ public function countHisHok1324($lidId, $date) {
             join tblActie a2 on (a2.actId = h2.actId)
             join tblStal st on (h1.stalId = st.stalId)
             join tblPeriode p on (p.periId = b.periId)
-            where st.lidId = ".$this->db->real_escape_string($lidId)." and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+            where st.lidId = " . $this->db->real_escape_string($lidId) . " and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
             group by b.bezId, h1.hisId
     ) uit
     on (uit.bezId = b.bezId)
@@ -151,7 +193,13 @@ public function countHisHok1324($lidId, $date) {
     ) hs on (hs.schaapId = st.schaapId)
     where hk.hokId = 1324 and h.datum <= '$date' and (ht.datum > '$date' or isnull(ht.datum)) and hs.datum <= '$date'
     ");
-    return $vw->fetch_row()[0];
-}
+        return $vw->fetch_row()[0];
+    }
+
+    public function insert($lidId, $schaapId, $rel_herk) {
+        $this->db->query("INSERT INTO tblStal set lidId = '" . $this->db->real_escape_string($lidId) . "',
+        schaapId = '" . $this->db->real_escape_string($schaapId) . "',
+        rel_herk = '" . $this->db->real_escape_string($rel_herk) . "' ");
+    }
 
 }

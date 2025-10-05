@@ -938,4 +938,9 @@ ORDER BY dmin, dmuit
 ");
     }
 
+public function insert($hisId, $hokId) {
+    $this->db->query("INSERT INTO tblBezet
+ set hisId = '".$this->db->real_escape_string($hisId)."', hokId = '".$this->db->real_escape_string($hokId). "' ");
+}
+
 }

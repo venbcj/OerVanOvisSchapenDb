@@ -154,7 +154,7 @@ while ($qr = mysqli_fetch_assoc($qryRas))
 <!-- KZLRAS -->
  <select style="width:180;" name="kzlRas_" value = "" style = "font-size:12px;">
   <option></option>
-<?php   $count = count($relnum);
+<?php   $count = count($rasId);
 for ($i = 0; $i < $count; $i++) {
 
             $opties= array($rasId[$i]=>$rasnm[$i]);

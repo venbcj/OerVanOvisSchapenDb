@@ -2,7 +2,6 @@
 
 require_once("autoload.php");
 
-
 $versie = "16-12-2017"; /* Rapport gemaakt */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
 $versie = '30-12-2023'; /* sql beveiligd */
@@ -27,11 +26,14 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 <?php
 $titel = 'Groeiresultaten per schaap';
 $file = "GroeiresultaatSchaap.php";
-include "login.php"; ?>
+include "login.php";
+?>
 
             <TD align = "center" valign = "top">
 <?php
 if (Auth::is_logged_in()) { if($modtech ==1) {
+    $schaap_gateway = new SchaapGateway();
+    $historie_gateway = new HistorieGateway();
 
 include "kalender.php";
 
@@ -42,31 +44,11 @@ if(isset($_POST['knpZoek_'])) {
     $worptot = $_POST['txtWorpTot_']; $dmWorptot = date_format(date_create($worptot), 'Y-m-d');
 }
 
-
 /* Declaratie keuzelijst Levensnummer */
-$zoek_schapen = mysqli_query($db,"
-SELECT s.schaapId,  s.levensnummer
-FROM tblSchaap s
- join tblStal st on (s.schaapId = st.schaapId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.levensnummer is not null
-GROUP BY s.schaapId, s.levensnummer
-ORDER BY s.levensnummer
-") or die (mysqli_error($db));
-/* Einde Declaratie keuzelijst Levensnummer */
-
+$zoek_schapen = $schaap_gateway->zoek_schapen($lidId);
 
 /* Declaratie keuzelijst moeder */
-$zoek_moeders = mysqli_query($db,"
-SELECT mdr.schaapId, right(mdr.levensnummer,$Karwerk) werknr_ooi
-FROM tblSchaap s
- join tblStal st on (s.schaapId = st.schaapId)
- join tblVolwas v on (v.volwId = s.volwId)
- join tblSchaap mdr on (v.mdrId = mdr.schaapId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and mdr.levensnummer is not null
-GROUP BY mdr.schaapId, right(mdr.levensnummer,$Karwerk)
-ORDER BY right(mdr.levensnummer,$Karwerk)
-") or die (mysqli_error($db));
-/* Einde Declaratie keuzelijst moeder */
+$zoek_moeders = $schaap_gateway->zoek_moeders($lidId, $Karwerk);
 
 ?> 
 
@@ -91,47 +73,37 @@ ORDER BY right(mdr.levensnummer,$Karwerk)
   <td> 
     <select name= "kzlOoi_" style= "width:<?php echo $w_werknr;?> " >
  <option></option>
-<?php        while($row = mysqli_fetch_array($zoek_moeders))
-        {
-        
-            $opties= array($row['schaapId']=>$row['werknr_ooi']);
-            foreach ( $opties as $key => $waarde)
-            {
-                        $keuze = '';
-        
-        if(isset($_POST['kzlOoi_']) && $_POST['kzlOoi_'] == $key)
-        {
+<?php
+while($row = mysqli_fetch_array($zoek_moeders)) {
+    $opties= array($row['schaapId']=>$row['werknr_ooi']);
+    foreach ( $opties as $key => $waarde) {
+        $keuze = '';
+        if(isset($_POST['kzlOoi_']) && $_POST['kzlOoi_'] == $key) {
             $keuze = ' selected ';
         }
-                
         echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
-            }
-        
-        } ?>
+    }
+}
+?>
      </select> 
   </td>
   <td> </td>
   <td> 
     <select name= "kzlLevnr_" style= "width:130; height: 20px" class="search-select">
  <option></option>
-<?php        while($row = mysqli_fetch_array($zoek_schapen))
-        {
-        
-            $opties= array($row['schaapId']=>$row['levensnummer']);
-            foreach ( $opties as $key => $waarde)
-            {
-                        $keuze = '';
-        
-        if(isset($_POST['kzlLevnr_']) && $_POST['kzlLevnr_'] == $key)
-        {
+<?php
+while($row = mysqli_fetch_array($zoek_schapen)) {
+    $opties= array($row['schaapId']=>$row['levensnummer']);
+    foreach ( $opties as $key => $waarde) {
+        $keuze = '';
+        if(isset($_POST['kzlLevnr_']) && $_POST['kzlLevnr_'] == $key) {
             $keuze = ' selected ';
         }
-                
         echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
-            }
-        
-        }
-?> </select>
+    }
+}
+?>
+ </select>
  </td>
  <td></td>
  <td></td>
@@ -147,48 +119,19 @@ ORDER BY right(mdr.levensnummer,$Karwerk)
 <tr height = 35 ></tr>
 
 <?php
-/*unset($where_moeder);
-unset($where_schaap);*/
-
-if(isset($kzlMoeder) && !empty($kzlMoeder)) { $where_moeder = " and mdr.schaapId = ". mysqli_real_escape_string($db,$kzlMoeder) . " "; }
-if(isset($kzlSchaap) && !empty($kzlSchaap)) { $where_schaap = " and s.schaapId = ". mysqli_real_escape_string($db,$kzlSchaap) . " "; }
-if(!empty($worpvan) && !empty($worptot)) { $where_worp = " and hg.datum >= '". mysqli_real_escape_string($db,$dmWorpvan) . "' and hg.datum <= '". mysqli_real_escape_string($db,$dmWorptot) . "' "; }
 
 $where = '';
-
-if(isset($where_moeder)) { $where .= $where_moeder; }
-if(isset($where_schaap)) { $where .= $where_schaap; }
-if(isset($where_worp))   { $where .= $where_worp; }
-
-$result = "
-SELECT right(mdr.levensnummer, $Karwerk) moeder, s.schaapId, s.levensnummer, right(s.levensnummer, $Karwerk) werknum, s.geslacht, prnt.datum aanw, h.kg, h.datum date, date_format(h.datum,'%d-%m-%Y') datum, h.actId, a.actie
-FROM tblSchaap s
- join tblStal st on (st.schaapId = s.schaapId)
- join tblHistorie h on (st.stalId = h.stalId) 
- join tblActie a on (h.actId = a.actId)
- left join (
-    SELECT st.schaapId, datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 1 and h.skip = 0
- ) hg on (hg.schaapId = s.schaapId)
- left join (
-    SELECT st.schaapId, datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = s.schaapId) 
- left join tblVolwas v on (v.volwId = s.volwId)
- left join tblSchaap mdr on (v.mdrId = mdr.schaapId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best) and h.kg is not null and h.skip = 0 ".$where. "
-ORDER BY right(mdr.levensnummer, $Karwerk), right(s.levensnummer, $Karwerk), h.hisId
-";
-
-#echo $result;
-
-$result = mysqli_query($db,$result) or die (mysqli_error($db));
+if(isset($kzlMoeder) && !empty($kzlMoeder)) {
+    $where .= " and mdr.schaapId = ". mysqli_real_escape_string($db,$kzlMoeder) . " ";
+}
+if(isset($kzlSchaap) && !empty($kzlSchaap)) {
+    $where .= " and s.schaapId = ". mysqli_real_escape_string($db,$kzlSchaap) . " ";
+}
+if(!empty($worpvan) && !empty($worptot)) {
+    $where .= " and hg.datum >= '". mysqli_real_escape_string($db,$dmWorpvan) . "' and hg.datum <= '". mysqli_real_escape_string($db,$dmWorptot) . "' ";
+}
+$result = $schaap_gateway->zoek_groeiresultaat_schaap($lidId, $Karwerk, $where);
 ?>
- 
 <tr style = "font-size:12px;">
 <th width = 0 height = 30></th>
 <th style = "text-align:center;"valign="bottom";width= 50>Moeder<hr></th>
@@ -206,80 +149,70 @@ $result = mysqli_query($db,$result) or die (mysqli_error($db));
 <th style = "text-align:center;"valign="bottom";width= 150>Datum<hr></th>
 <th width = 1></th>
 <th style = "text-align:center;"valign="bottom";width= 150>Actie<hr></th>
-
 <th width = 1></th>
 <th style = "text-align:center;"valign="bottom";width= 700>Gem groei per dag<hr></th>
-
 <th style = "text-align:center;"valign="bottom";width= 80></th>
 <th width = 100> <a href="exportGroeiSchaap.php?pst=<?php echo $lidId; ?>&where=<?php echo $where; ?> "> Export-xlsx </a> </th>
-
-    
-
 <th width= 60 ></th>
  </tr>
 <?php
 $levnr = '';
-        while($row = mysqli_fetch_array($result))
-        { 
+        while($row = mysqli_fetch_array($result)) { 
 unset($vorige_actie);
 $levnr_record = $levnr;
 
-    $moeder = $row['moeder'];
-    $schaapId = $row['schaapId'];
-    $levnr = $row['levensnummer']; if($levnr_record == $levnr) { $levnr_nu = ''; unset($moeder); } else { $levnr_nu = $levnr; unset($vorige_kg); unset($vorige_date);  }
-    $werknr = $row['werknum'];
-    $geslacht = $row['geslacht']; 
-    $aanw = $row['aanw']; 
-    $kg = $row['kg'];                //if(!isset($vorige_kg)) { $vorige_kg = $kg; }
-    $date = $row['date'];              // if(!isset($vorige_date)) { $vorige_date = $date; }
-    $datum = $row['datum'];        
-    $actId = $row['actId'];        //if(!isset($vorige_actId)) { $vorige_actId = $actId; }
-    $actie = $row['actie'];       // if(!isset($vorige_actie)) { $vorige_actie = $actie; }
-    if(isset($aanw)) {if($geslacht == 'ooi') { $fase = 'moeder'; } else if($geslacht == 'ram') { $fase = 'vader'; } } else {$fase = 'lam'; } 
-
+$moeder = $row['moeder'];
+$schaapId = $row['schaapId'];
+$levnr = $row['levensnummer'];
+// TODO: dit is altijd zo; net hierboven zet je ze namelijk gelijk.
+// Was dit de bedoeling?
+if($levnr_record == $levnr) {
+    $levnr_nu = '';
+    unset($moeder);
+} else {
+    $levnr_nu = $levnr;
+    unset($vorige_kg);
+    unset($vorige_date);  
+}
+$werknr = $row['werknum'];
+$geslacht = $row['geslacht']; 
+$aanw = $row['aanw']; 
+$kg = $row['kg'];                //if(!isset($vorige_kg)) { $vorige_kg = $kg; }
+$date = $row['date'];              // if(!isset($vorige_date)) { $vorige_date = $date; }
+$datum = $row['datum'];        
+$actId = $row['actId'];        //if(!isset($vorige_actId)) { $vorige_actId = $actId; }
+$actie = $row['actie'];       // if(!isset($vorige_actie)) { $vorige_actie = $actie; }
+if(isset($aanw)) {
+    if($geslacht == 'ooi') {
+        $fase = 'moeder';
+    } else if($geslacht == 'ram') {
+        $fase = 'vader';
+    }
+} else {
+    $fase = 'lam';
+} 
 
 // Zoek vorige weging
 unset($vorige_weging);
 unset($berekening);
 
-$zoek_vorige_weging = mysqli_query($db,"
-SELECT max(hisId) vorige_weging
-FROM tblHistorie h
- join tblStal st on (st.stalId = h.stalId)
-WHERE st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and h.datum < '".mysqli_real_escape_string($db,$date)."' and h.kg is not null
-") or die (mysqli_error($db));
-
-while($zvw = mysqli_fetch_array($zoek_vorige_weging))
-        { $vorige_weging = $zvw['vorige_weging']; }
-
+$vorige_weging = $historie_gateway->zoek_vorige_weging($schaapId, $date);
 $vorige_date = null;
-if(isset($vorige_weging)) { 
-
-
-$zoek_actie_vorige_weging = mysqli_query($db,"
-SELECT h.actId, actie, h.datum, kg
-FROM tblHistorie h
- join tblStal st on (st.stalId = h.stalId)
- join tblActie a on (h.actId = a.actId)
-WHERE h.hisId = '".mysqli_real_escape_string($db,$vorige_weging)."'
-") or die (mysqli_error($db));
-
-while($zavw = mysqli_fetch_array($zoek_actie_vorige_weging))
-        { $vorige_actId = $zavw['actId']; 
-          $vorige_actie = $zavw['actie']; if($vorige_actId == 9) { $vorige_actie = 'vorige tussenweging'; }
-          $vorige_date = $zavw['datum']; 
-          $vorige_kg = $zavw['kg']; }
+if(isset($vorige_weging)) {
+    $row = $historie_gateway->zoek_actie_vorige_weging($vorige_weging);
+    if ($row) {
+        $vorige_actie = $row['actie'];
+        if($row['actId'] == 9) {
+            $vorige_actie = 'vorige tussenweging';
+        }
+        $vorige_date = $row['datum']; 
+        $vorige_kg = $row['kg'];
+    }
+    $datediff = strtotime($date) - strtotime($vorige_date);
+    $dagen = round($datediff / (60 * 60 * 24)); // TODO: >-( doorrekenen met een afgeronde waarde
+    $berekening = round((($kg - $vorige_kg) / $dagen),2).' kg in '.$dagen.' dagen vanaf '.strtolower($vorige_actie);
 }
 
-
-$date_1 = strtotime($vorige_date); //time(); // or your date as well
-$date_2 = strtotime($date);
-$datediff = $date_2 - $date_1;
-
-$dagen = round($datediff / (60 * 60 * 24));
-
-if(isset($vorige_weging)) { $berekening = round((($kg - $vorige_kg) / $dagen),2).' kg in '.$dagen.' dagen vanaf '.strtolower($vorige_actie); }
-    
 // Einde Zoek vorige weging
 
 if(isset($levnr_record) && $levnr_nu != '') { ?>
@@ -287,7 +220,6 @@ if(isset($levnr_record) && $levnr_nu != '') { ?>
  <td colspan="18"><hr></td>
 </tr>    
 <?php } ?>
-
 
 <tr align = "center">    
        <td width = 0> </td>            
@@ -312,21 +244,20 @@ if(isset($levnr_record) && $levnr_nu != '') { ?>
 
        <td width = 1> </td>
        <td width = 600 style = "font-size:15px;" align="left"> <?php echo $berekening ?? ''; ?> <br> </td>
-
-       
 <!-- '$vorige_kg = '.$vorige_kg.' en $kg = '.$kg; -->       
 </tr>                
 <?php 
-
-        } ?>
+        }
+?>
 </tr>                
 </table>
 </form>
-
-
         </TD>
-
-<?php } else { ?> <img src='resultHok_php.jpg'  width='970' height='550'/> <?php }
+<?php
+} else {
+?>
+ <img src='resultHok_php.jpg'  width='970' height='550'/>
+<?php }
 include "menuRapport.php"; }
 
 include "zoeken.js.php";

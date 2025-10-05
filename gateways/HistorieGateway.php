@@ -167,7 +167,18 @@ return $vw->fetch_row()[0];
 }
 
 public function wegen_invoeren($stalId, $datum, $newkg) {
-    $this->db->query("INSERT INTO tblHistorie SET stalId = '".$this->db->real_escape_string($stalId)."', datum = '".$this->db->real_escape_string($datum)."', kg = '".$this->db->real_escape_string($newkg)."', actId = 9 ");
+    $this->db->query("INSERT INTO tblHistorie
+        SET stalId = '".$this->db->real_escape_string($stalId)."',
+ datum = '".$this->db->real_escape_string($datum)."',
+ kg = '".$this->db->real_escape_string($newkg)."',
+ actId = 9 ");
+}
+
+public function herstel_invoeren($stalId, $datum, $kg, $actId) {
+    $this->db->query("INSERT INTO tblHistorie SET stalId = '".$this->db->real_escape_string($stalId)."', 
+    datum = '".$this->db->real_escape_string($datum)."',
+ kg = ".db_null_input($kg).",
+ actId = '".$this->db->real_escape_string($actId)."' ");
 }
 
 public function weegaantal($lidId, $schaapId) {
@@ -266,6 +277,33 @@ WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and st.schaapId = '
 return $vw->fetch__row()[0];
 }
 
+public function zoek_afvoer_nietvoor_datum($lidId, $schaapId) {
+    $vw = $this->db->query("
+SELECT max(datum) date
+From (
+    SELECT h.datum, a.actie
+    FROM tblActie a 
+     join tblHistorie h on (a.actId = h.actId)
+     join tblStal st on (st.stalId = h.stalId)
+    WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and st.schaapId = '".$this->db->real_escape_string($schaapId)."' and 
+     a.af != 1 and h.skip = 0
+
+    union
+
+    SELECT max(h.datum) datum, 'Laatste worp' actie
+    FROM tblSchaap mdr
+     join tblVolwas v on (mdr.schaapId = v.mdrId)
+     join tblSchaap lam on (v.volwId = lam.volwId)
+     join tblStal st on (st.schaapId = lam.schaapId)
+     join tblHistorie h on (st.stalId = h.stalId and h.actId = 1 and h.skip = 0)
+    WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and mdr.schaapId = '".$this->db->real_escape_string($schaapId)."'
+    GROUP BY mdr.schaapId, h.actId
+    HAVING (max(h.datum) > min(h.datum))
+) datum
+");
+return $vw->fetch_row()[0];
+  }
+
 public function zoek_nietna_datum($lidId, $schaapId) {
     $vw = $this->db->query("
 SELECT min(datum) date
@@ -296,6 +334,7 @@ return $vw->fetch_row()[0];
 public function update_aanwas($hisId, $datum) {
     $this->db->query("UPDATE tblHistorie set datum = '".$this->db->real_escape_string($datum)."' WHERE hisId = '".$this->db->real_escape_string($hisId)."' ");
 }
+
 public function zoek_speendm($schaapId) {
     $vw = $this->db->query("
 SELECT hisId, datum
@@ -395,33 +434,6 @@ if ($vw->num_rows) {
 return [null, null];
 }
 
-public function zoek_afvoer_nietvoor_datum() {
-    $vw = $this->db->query("
-SELECT max(datum) date
-From (
-    SELECT h.datum, a.actie
-    FROM tblActie a 
-     join tblHistorie h on (a.actId = h.actId)
-     join tblStal st on (st.stalId = h.stalId)
-    WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and st.schaapId = '".$this->db->real_escape_string($schaapId)."' and 
-     a.af != 1 and h.skip = 0
-
-    union
-
-    SELECT max(h.datum) datum, 'Laatste worp' actie
-    FROM tblSchaap mdr
-     join tblVolwas v on (mdr.schaapId = v.mdrId)
-     join tblSchaap lam on (v.volwId = lam.volwId)
-     join tblStal st on (st.schaapId = lam.schaapId)
-     join tblHistorie h on (st.stalId = h.stalId and h.actId = 1 and h.skip = 0)
-    WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and mdr.schaapId = '".$this->db->real_escape_string($schaapId)."'
-    GROUP BY mdr.schaapId, h.actId
-    HAVING (max(h.datum) > min(h.datum))
-) datum
-");
-return $vw->fetch_row()[0];
-}
-
 public function update_afvoerdm($hidId, $datum) {
     $this->db->query("UPDATE tblHistorie h set h.datum = '".$this->db->real_escape_string($datum)."' WHERE hisId = '".$this->db->real_escape_string($hidId)."' ");
 }
@@ -454,10 +466,137 @@ public function insert_afvoer($stalId, $dmafv) {
         actId = 3 ");
 }
 
+// waarschijnlijk verkeerde naam, afgekeken hierboven bij actid=3
 public function insert_afvoer_act($stalId, $datum, $actId) {
     $this->db->query("INSERT INTO tblHistorie set stalId = '".$this->db->real_escape_string($stalId)."',
         datum = '".$this->db->real_escape_string($datum)."',
         actId = '".$this->db->real_escape_string($actId)."' ");
+}
+
+public function zoek_vorige_weging($schaapId, $date) {
+$vw = $this->db->query("
+SELECT max(hisId) vorige_weging
+FROM tblHistorie h
+ join tblStal st on (st.stalId = h.stalId)
+WHERE st.schaapId = '".$this->db->real_escape_string($schaapId)."' and h.datum < '".$this->db->real_escape_string($date)."' and h.kg is not null
+");
+return $vw->fetch_row()[0];
+}
+
+public function zoek_actie_vorige_weging($hisId) {
+    $vw = $this->db->query("
+SELECT h.actId, actie, h.datum, kg
+FROM tblHistorie h
+ join tblStal st on (st.stalId = h.stalId)
+ join tblActie a on (h.actId = a.actId)
+WHERE h.hisId = '".$this->db->real_escape_string($hisId)."'
+");
+if ($vw->num_rows) {
+    return $vw->fetch_assoc();
+}
+return null;
+}
+
+public function zoek_acties($lidId) {
+return $this->db->query("
+SELECT h.actId, a.actie
+FROM tblHistorie h
+ join tblActie a on (h.actId = a.actId)
+ join tblStal st on (st.stalId = h.stalId)
+WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and h.kg is not null
+GROUP BY h.actId, a.actie
+ORDER BY h.actId
+");
+}
+
+public function zoek_datum_na($lidId, $schaapId) {
+    $vw = $this->db->query("
+SELECT max(datum) date
+FROM (
+     SELECT h.datum
+     FROM tblHistorie h
+      join tblStal st on (h.stalId = st.stalId)
+     WHERE st.schaapId = '".$this->db->real_escape_string($schaapId)."' and actId = 1 and skip = 0
+  union
+     SELECT max(h.datum) dmaank
+     FROM tblHistorie h
+      join tblStal st on (h.stalId = st.stalId)
+     WHERE st.schaapId = '".$this->db->real_escape_string($schaapId)."' and st.lidId = '".$this->db->real_escape_string($lidId)."' and actId = 2 and skip = 0
+  union
+      SELECT h.datum
+     FROM tblHistorie h
+      join tblStal st on (h.stalId = st.stalId)
+     WHERE st.schaapId = '".$this->db->real_escape_string($schaapId)."' and actId = 4 and skip = 0
+) dm_na    
+");
+return $vw->fetch_row()[0];
+}
+
+public function zoek_datum_vanaf($lidId, $schaapId) {
+    $vw = $this->db->query("
+SELECT max(h.datum) date, date_format(max(h.datum),'%d-%m-%Y') datum
+FROM tblHistorie h
+ join tblStal st on (h.stalId = st.stalId)
+WHERE st.schaapId = '".$this->db->real_escape_string($schaapId)."'
+ and st.lidId = '".$this->db->real_escape_string($lidId)."'
+ and (actId = 3 or actId = 7)
+ and skip = 0
+");
+return $vw->fetch_row()[0];
+}
+
+public function zoek_uitschaardatum($last_stalId) {
+    $vw = $this->db->query("
+SELECT datum date
+FROM tblHistorie
+WHERE stalId = '".$this->db->real_escape_string($last_stalId)."' and actId = 10
+");
+if ($vw->num_rows) {
+    return $vw->fetch_row()[0];
+}
+return null;
+}
+
+public function zoek_laatste_hisid($lidId, $schaapId) {
+    return $this->first_field("
+SELECT max(hisId) hisId
+FROM tblHistorie h
+ join tblStal st on (h.stalId = st.stalId)
+WHERE lidId = '".$this->db->real_escape_string($lidId)."' and st.schaapId = '".$this->db->real_escape_string($schaapId)."'
+");
+}
+
+public function zoek_afgevoerd($maxhis) {
+    return $this->db->query("
+SELECT h.hisId afvhisId, date_format(h.datum,'%d-%m-%Y') afvoerdm, h.kg afvoerkg, h.actId, a.actie, lower(a.actie) status
+FROM tblHistorie h
+ join tblActie a on (h.actId = a.actId)
+WHERE hisId = '".$this->db->real_escape_string($maxhis)."' and a.af = 1
+");    
+    }
+
+public function zoek_laatste_verblijf($lidId, $schaapId) {
+    return $this->first_field("
+SELECT max(h.hisId) hisId
+FROM tblHistorie h
+ join tblBezet b on (b.hisId = h.hisId)
+ join tblStal st on (h.stalId = st.stalId)
+WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and st.schaapId = '".$this->db->real_escape_string($schaapId)."'
+");
+    }
+
+public function zoek_dier_uit_verblijf($lst_bezet, $schaapId) {
+    return $this->first_field("
+SELECT h.actId
+FROM tblHistorie h
+ join tblActie a on (h.actId = a.actId)
+ join tblStal st on (h.stalId = st.stalId)
+WHERE hisId > '".$this->db->real_escape_string($lst_bezet)."' and uit = 1 and st.schaapId = '".$this->db->real_escape_string($schaapId)."'
+");
+    }
+
+public function skip($hisId) {
+    $this->db->query("UPDATE tblHistorie SET skip=1 WHERE hisId=".$this->db->real_escape_string($hisId));
 }
 
 }

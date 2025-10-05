@@ -135,7 +135,26 @@ else     { ?>
 
 <input type= "text" name= <?php echo "txtStdat_$Id"; ?> size = 4 style = "font-size:12px; text-align : right;" title = "Standaard verbruikshoeveelheid" value = <?php echo $stdat; ?> >
 
-
+<!-- kzlVerbruikseenheid (al dan niet te wijzigen) -->
+</td><td><?php
+If ($rows_inkoop > 0) { echo "$eenhd"; }
+else  {
+$result = $eenheid_gateway->findByLid($lidId);
+?>
+ <select style="width:50;" name= <?php echo "kzlNhd_$Id"; ?> value = "" style = "font-size:12px;">
+  <option></option>
+<?php
+while($lijn = mysqli_fetch_array($result)) {
+    $raak = $lijn['enhuId'];
+    $opties= array($lijn['enhuId']=>$lijn['eenheid']);
+    foreach ( $opties as $key => $waarde) {
+        if ((!isset($_POST['knpSave_']) && $enhuId == $raak) || (isset($_POST["kzlNhd_$Id"]) && $_POST["kzlNhd_$Id"] == $key)){
+            echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
+        } else { 
+            echo '<option value="' . $key . '" >' . $waarde . '</option>';  
+        }    
+    }
+}
 ?></select>
 
 <?php }    ?>
@@ -161,45 +180,53 @@ foreach ( $opties as $key => $waarde)
 
 } ?>
     </select> </td>
-
+<!-- EINDE kzlBtw bij wijzigen        
+    kzlLeverancier bij wijzigen -->
+ <td> <?php
+$qryLevcier = $partij_gateway->findLeverancier($lidId);
+?>
  <select style= "width:110;" name= <?php echo "kzlRelatie_$Id"; ?> value = "" style = "font-size:12px;">
   <option></option>
-<?php $count = count($relnm);
-for ($i = 0; $i < $count; $i++){
+<?php        while($lijn = mysqli_fetch_array($qryLevcier))
+        {
+            $raak = $lijn['relId'];
 
-    $opties = array($rel_Id[$i]=>$relnm[$i]);
-            foreach($opties as $key => $waarde)
+            $opties= array($lijn['relId']=>$lijn['naam']);
+            foreach ( $opties as $key => $waarde)
             {
-
-   if ((!isset($_POST['knpSave_']) && $relId == $rel_Id[$i]) || (isset($_POST["kzlRelatie_$Id"]) && $_POST["kzlRelatie_$Id"] == $key)){
+  if ((!isset($_POST['knpSave_']) && $relId == $raak) || (isset($_POST["kzlRelatie_$Id"]) && $_POST["kzlRelatie_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
-    echo '<option value="' . $key . '" >' . $waarde . '</option>';
-  }               
+    echo '<option value="' . $key . '" >' . $waarde . '</option>';  
+  }    
             }
-} ?>
-</select>
- </td>
-<!-- EINDE kzlLeverancier bij wijzigen -->
+            
+        }
+?>
+</select></td>
+<?php
+// EINDE kzlLeverancier bij wijzigen        
+if($modfin == 1 ) { ?>
 
-<?php      
-if($modfin == 1 ) {
-
-
-
-<!-- KZLRUBRIEK bij wijzigen-->
 <td>
- <select style="width:140;" name= <?php echo "kzlRubriek_$Id"; ?> value = "" style = "font-size:12px;">
-  <option></option>
-<?php 
-$count = count($rubnm);
-for ($i = 0; $i < $count; $i++){
+<!-- KZLRUBRIEK bij wijzigen-->
+<?php
 
-            $opties = array($rubId[$i]=>$rubnm[$i]);
-            foreach ($opties as $key => $waarde)
+$qryRubriek = $rubriek_gateway->zoek_hoofdrubriek_6($lidId);
+?>
+ <select style="width:180;" name= <?php echo "kzlRubriek_$Id"; ?> value = "" style = "font-size:12px;">
+  <option></option>
+<?php        while($rub = mysqli_fetch_array($qryRubriek))
+        {
+            $raak = $rub['rubuId'];
+
+
+            $opties = array($rub['rubuId']=>$rub['rubriek']);
+            foreach ( $opties as $key => $waarde)
             {
-                        
-        if( (!isset($_POST['knpSave_']) && $rubuId == $rubId[$i]) || (isset($_POST["kzlRubriek_$Id"]) && $_POST["kzlRubriek_$Id"] == $key) )
+                        $keuze = '';
+        
+        if( (!isset($_POST['knpSave_']) && $rubuId == $raak) || (isset($_POST["kzlRubriek_$Id"]) && $_POST["kzlRubriek_$Id"] == $key) )
         {
             echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
         }

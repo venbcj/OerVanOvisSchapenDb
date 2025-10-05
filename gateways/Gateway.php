@@ -18,7 +18,12 @@ class Gateway {
     }
 
     protected function run_query($SQL, $args = []) {
-        return $this->db->query($this->expand($SQL, $args));
+        // TODO: ik kan niet wachten tot er config() is, voor een setting debug.log_queries
+        $statement = $this->expand($SQL, $args);
+        # Logger::debug($statement);
+        $res = $this->db->query($statement);
+        # Logger::debug($this->db->error);
+        return $res;
     }
 
     protected function first_field($SQL, $args = [], $default = null) {

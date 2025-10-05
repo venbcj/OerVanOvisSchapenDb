@@ -47,6 +47,17 @@ while ( $row = $vw->fetch_assoc()) { $vroegst_volgende_dekdatum = $row['datum'];
 return $vroegst_volgende_dekdatum ?? null;
 }
 
+public function zoek_volwas($schaapId) {
+    return $this->first_field(<<<SQL
+SELECT max(volwId) volwId
+FROM tblVolwas
+WHERE mdrId = :schaapId
+ OR vdrId = :schaapId
+SQL
+    , [[':schaapId', $schaapId, self::INT]]
+    );
+}
+
 public function zoek_laatste_worp_moeder($mdrId) {
    $vw = $this->db->query("
 SELECT max(v.volwId) max_worp

@@ -3,6 +3,7 @@ delete from tblRequest;
 delete from tblHistorie;
 delete from tblStal;
 delete from tblSchaap;
+
 insert into tblMelding(meldId, skip, fout, reqId, hisId)
 values(4, 0, 0, 5,6);
 insert into tblRequest(reqId, code, def)

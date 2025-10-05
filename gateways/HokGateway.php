@@ -74,4 +74,22 @@ GROUP BY h.hoknr
 ");
 }
 
+public function zoek_hok($schaapId) {
+    $zoek_hok = $this->db->query("
+     SELECT hk.hoknr
+     FROM tblHok hk
+      join tblPeriode p on (hk.hokId = p.hokId)
+      join tblBezet b on (p.periId = b.periId)
+      join (
+        SELECT max(bezId) bezId
+        FROM tblBezet b
+         join tblHistorie h on (b.hisId = h.hisId)
+         join tblStal st on (st.stalId = h.stalId)
+        WHERE h.skip = 0 and st.schaapId = '".$this->db->real_escape_string($schaapId)."'
+      ) mb on (mb.bezId = b.bezId)
+      ");
+    while( $hk = $zoek_hok->fetch_assoc()) { $hok = $hk['hoknr']; }
+     return $hok ?? null;
+        }
+
 }

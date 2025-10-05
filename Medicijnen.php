@@ -329,6 +329,7 @@ ORDER BY p.naam
 ") or die (mysqli_error($db)); 
 
 $index = 0; 
+$relnm = [];
 while ($rel = mysqli_fetch_array($qryLevcier)) 
 { 
    $rel_Id[$index] = $rel['relId']; 
@@ -385,6 +386,7 @@ ORDER BY r.rubriek
  ") or die (mysqli_error($db));
 
 $index = 0; 
+$rubnm = [];
 while ($rub = mysqli_fetch_array($qryRubriek)) 
 { 
    $rubId[$index] = $rub['rubuId']; 

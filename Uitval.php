@@ -116,6 +116,7 @@ ORDER BY r.reden
  ") or die (mysqli_error($db));
 
    $index = 0; 
+$red_Id = [];
 while ($qr = mysqli_fetch_assoc($qryReden)) 
 { 
    $red_Id[$index] = $qr['redId'];

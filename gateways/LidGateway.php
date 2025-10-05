@@ -106,6 +106,26 @@ $insert_tblMomentuser = "INSERT INTO tblMomentuser (lidId, momId)
         $this->db->query($insert_tblMomentuser);
     }
 
+    public function getMoments($lidId, $schaapId, $where) {
+        return $this->db->query("
+SELECT m.momId, m.moment
+FROM tblMoment m
+ join tblMomentuser mu on (m.momId = mu.momId)
+WHERE '" .$where. "'
+ and mu.lidId = '".$this->db->real_escape_string($lidId)."'
+ and m.actief = 1
+ and mu.actief = 1
+
+union
+
+SELECT m.momId, m.moment
+FROM tblMoment m
+ join tblSchaap s on (m.momId = s.momId)
+WHERE s.schaapId = '".$this->db->real_escape_string($schaapId)."'
+
+ORDER BY momId");
+    }
+
     public function createEenheden($lidId) {
 $insert_tblEenheiduser = "INSERT INTO tblEenheiduser (lidId, eenhId)
     SELECT '".$this->db->real_escape_string($lidId)."', eenhId
@@ -379,5 +399,24 @@ WHERE redId in (15, 45, 46, 47, 48, 49, 50, 51) and afvoer = 1 and lidId = '".$t
 ");
 return $vw->fetch_row()[0];
     }
+
+public function zoek_groei($lidId) {
+   $vw = $this->db->query("SELECT groei FROM tblLeden WHERE lidId = '".$this->db->real_escape_string($lidId)."' ");
+    while ( $gr = $vw->fetch_assoc()) { $groei = $gr['groei']; }
+   return $groei;
+}
+
+public function zoek_crediteur_vermist($lidId) {
+    $vw = $this->db->query("
+SELECT relId
+FROM tblPartij p
+ join tblRelatie r on (r.partId = p.partId)
+WHERE p.lidId = ".$this->db->real_escape_string($lidId)." and p.naam = 'Vermist'
+");
+while($zcv = $vw->fetch_assoc()) {
+    $cred_vermist = $zcv['relId']; 
+}
+    return $cred_vermist ?? null;
+}
 
 }
