@@ -41,12 +41,10 @@ $qryRelatiekeuze = mysqli_query($db,"SELECT r.relId, p.naam
 $index = 0; 
 $relId = [];
 $relnm = [];
-$relRaak = [];
 while ($rel = mysqli_fetch_array($qryRelatiekeuze)) 
 { 
    $relId[$index] = $rel['relId']; 
    $relnm[$index] = $rel['naam'];
-   $relRaak[$index] = $rel['relId']; 
    $index++; 
 } 
 unset($index);
@@ -168,7 +166,7 @@ for ($i = 0; $i < $count; $i++){
     $opties = array($relId[$i]=>$relnm[$i]);
             foreach($opties as $key => $waarde)
             {
-  if ((isset($_POST['knpNext_']) && $kzeBest == $relRaak[$i]) || (isset($_POST["kzlBest_$Id"]) && $_POST["kzlBest_$Id"] == $key)){
+  if ((isset($_POST['knpNext_']) && $kzeBest == $relId[$i]) || (isset($_POST["kzlBest_$Id"]) && $_POST["kzlBest_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  

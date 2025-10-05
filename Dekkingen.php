@@ -66,10 +66,10 @@ $hok_gateway = new HokGateway();
     $resultvader = $schaap_gateway->resultvader($lidId, $Karwerk);
 $index = 0; 
 $vawerknr = [];
-$vaRaak = [];
+$vaId = [];
 while ($va = mysqli_fetch_array($resultvader)) { 
    $vawerknr[$index] = $va['werknr'];
-   $vaRaak[$index] = $va['schaapId'];   
+   $vaId[$index] = $va['schaapId'];   
    $index++; 
 } 
 unset($index);
@@ -358,7 +358,7 @@ while($row = mysqli_fetch_array($result)) {
 <?php
 $count = count($vawerknr);
 for ($i = 0; $i < $count; $i++) {
-    $opties = array($vaRaak[$i] => $vawerknr[$i]);
+    $opties = array($vaId[$i] => $vawerknr[$i]);
     foreach ($opties as $key => $waarde) {
         if ((isset($_POST['kzlRamNew1_']) && $_POST['kzlRamNew1_'] == $key)) {
             echo '<option value="'. $key .'" selected>' . $waarde . '</option>';
@@ -428,7 +428,7 @@ while ($row = mysqli_fetch_array($result)) {
 <?php
 $count = count($vawerknr);
 for ($i = 0; $i < $count; $i++) {
-    $opties= array($vaRaak[$i]=>$vawerknr[$i]);
+    $opties= array($vaId[$i]=>$vawerknr[$i]);
     foreach ( $opties as $key => $waarde) {
         if ((isset($_POST['kzlRamNew2_']) && $_POST['kzlRamNew2_'] == $key)) {
             echo '<option value="'. $key .'" selected>' . $waarde . '</option>'; 
@@ -648,10 +648,10 @@ $array_drachtdatum[] = $Id; ?>
 <?php    $count = count($vawerknr);
 for ($i = 0; $i < $count; $i++){
         
-    $opties= array($vaRaak[$i]=>$vawerknr[$i]);
+    $opties= array($vaId[$i]=>$vawerknr[$i]);
             foreach ( $opties as $key => $waarde)
             {
-    if(($vaderId == $vaRaak[$i]) || (isset($_POST["kzlRam_$Id"]) && $_POST["kzlRam_$Id"] == $key)) {
+    if(($vaderId == $vaId[$i]) || (isset($_POST["kzlRam_$Id"]) && $_POST["kzlRam_$Id"] == $key)) {
         echo '<option value="'. $key .'" selected>' . $waarde . '</option>'; }
         else
         {
