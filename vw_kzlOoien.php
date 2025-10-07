@@ -43,7 +43,7 @@ FROM (
      FROM tblStal st
       join tblHistorie h on (st.stalId = h.stalId)
       join tblActie a on (h.actId = a.actId)
-     WHERE a.af = 1 and h.actId <> 10 and lidId = '".mysqli_real_escape_string($db,$lidId)."'
+     WHERE a.af = 1 and h.actId <> 10 and lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
      ) afv on (afv.stalId = st.stalId)
 WHERE s.geslacht = 'ooi' and (isnull(afv.stalId) or afv.datum > date_add(curdate(), interval -2 month) )
 
