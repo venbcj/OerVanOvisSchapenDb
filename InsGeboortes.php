@@ -88,7 +88,7 @@ impAgrident rd
  WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best)
  ) s on (rd.levensnummer = s.levensnummer)
  left join (
-    SELECT s.stalId, s.levensnummer, af.datum
+    SELECT st.stalId, s.levensnummer, af.datum
     FROM tblSchaap s
      join tblStal st on (s.schaapId = st.schaapId)
      join (
