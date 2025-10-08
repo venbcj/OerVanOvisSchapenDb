@@ -2,9 +2,11 @@
 
 class Gateway {
 
-    const TXT = 'txt';
-    const INT = 'int';
-    const BOOL = 'bool';
+    protected const TXT = 'txt';
+    protected const INT = 'int';
+    protected const BOOL = 'bool';
+
+    protected $db;
 
     public function __construct($db = null) {
         if (is_null($db)) {

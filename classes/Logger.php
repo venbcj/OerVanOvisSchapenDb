@@ -1,6 +1,6 @@
 <?php
 
-define('APP', '/usr/local/var/chi/proj/OerVanOvisSchapenDb/');
+define('APP', '/home/bas/html/oer/');
 
 class Logger {
 
