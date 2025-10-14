@@ -30,6 +30,11 @@ case 'ovis.oervanovis.nl':
     $user = 'bvdvschaapovis';
     $pw = 'MSenWL44';
     break;
+case 'ovis.alexander-ict.nl':
+    $dtb = 'schapen';
+    $user = 'varken';
+    $pw = 'hok33hok77';
+    break;
 case 'oer-dev':
 case 'basq':
     $dtb = "SchapenDb1";
