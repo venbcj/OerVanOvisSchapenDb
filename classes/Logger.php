@@ -1,7 +1,5 @@
 <?php
 
-define('APP', '/home/bas/html/oer/');
-
 class Logger {
 
     public static function instance() {

@@ -14,6 +14,7 @@ $db_d = 'k36098_bvdvschapendbs';
 $db_t = 'k36098_bvdvSchapenDbT';
 
 $host = "localhost";
+
 switch ($_SERVER['HTTP_HOST']) {
 case 'localhost:8080':
     $dtb = 'SchapenDb1';
@@ -34,13 +35,16 @@ case 'ovis.alexander-ict.nl':
     $dtb = 'schapen';
     $user = 'varken';
     $pw = 'hok33hok77';
+    $app = '/var/www/vhosts/alexander-ict.nl/ovis-alexander-ict.nl/';
     break;
 case 'oer-dev':
 case 'basq':
     $dtb = "SchapenDb1";
     $user = 'oer';
     $pw = 'schaapn';
+    $app = '/home/bas/html/oer/';
     break;
 default:
     throw new Exception("No configuration for {$_SERVER['HTTP_HOST']}");
 }
+define('APP', $app);
