@@ -14,6 +14,7 @@ $db_d = 'k36098_bvdvschapendbs';
 $db_t = 'k36098_bvdvSchapenDbT';
 
 $host = "localhost";
+$env = 'development';
 
 switch ($_SERVER['HTTP_HOST']) {
 case 'localhost:8080':
@@ -25,17 +26,20 @@ case 'test.oervanovis.nl':
     $dtb = 'k36098_bvdvSchapenDbT';
     $user = 'bvdvschaapt';
     $pw = 'MSenWL44';
+    $env = 'test';
     break;
 case 'ovis.oervanovis.nl':
     $dtb = 'k36098_bvdvSchapenDb';
     $user = 'bvdvschaapovis';
     $pw = 'MSenWL44';
+    $env = 'production';
     break;
 case 'ovis.alexander-ict.nl':
     $dtb = 'schapen';
     $user = 'varken';
     $pw = 'hok33hok77';
     $app = '/var/www/vhosts/alexander-ict.nl/ovis.alexander-ict.nl/';
+    $env = 'test';
     break;
 case 'oer-dev':
 case 'basq':
@@ -49,4 +53,7 @@ default:
 }
 if (!defined('APP')) {
     define('APP', $app);
+}
+if (!defined('ENV')) {
+    define('ENV', $env);
 }

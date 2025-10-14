@@ -1,7 +1,9 @@
 <?php
 
-ini_set('display_errors', true);
-error_reporting(E_ALL);
+if (ENV != 'production') {
+    ini_set('display_errors', true);
+    error_reporting(E_ALL);
+}
 
 # include-path voorlopig maar even hier
 $app_folders = ['.', 'classes', 'templates', 'fpdf', 'gateways'];
