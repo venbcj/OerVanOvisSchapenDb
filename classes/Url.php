@@ -18,17 +18,22 @@ class Url {
 
     public static function getTagId() {
         $host = $_SERVER['HTTP_HOST'];
-        if ($host == 'localhost:8080') {
+        switch ($host) {
+        case 'localhost:8080':
             $tagid = 'balkOntw';
-        }
-        if ($host == 'test.oervanovis.nl') {
+            break;
+        case 'test.oervanovis.nl':
             $tagid = 'balkTest';
-        }
-        if ($host == 'demo.oervanovis.nl') {
+            break;
+        case 'demo.oervanovis.nl':
             $tagid = 'balkDemo';
-        }
-        if ($host == 'ovis.oervanovis.nl') {
+            break;
+        case 'ovis.oervanovis.nl':
             $tagid = 'balkProd';
+            break;
+        case 'ovis.alexander-ict.nl':
+            $tagid = 'balkTest';
+            break;
         }
         if (php_uname('n') == 'basq') {
             $tagid = 'balkOntw';
