@@ -320,7 +320,8 @@ if ($dmschaap < $dmmin  || // Als datum 00-00-0000 is wordt dit hiermee afgevang
 
 // Berichtgeving o.b.v. eigen foute registratie
 if(!isset($ubn_bst))     { $foutieve_invoer = 'Ubn van bestemming is onbekend'; }
-elseif (isset($fout_db))     { $foutieve_invoer = $fout_db.' '.$waarschuwing; }
+elseif (isset($fout_db))     { $foutieve_invoer = $fout_db; }
+elseif (isset($waarschuwing)) { $foutieve_invoer = $waarschuwing; }
 // Einde Berichtgeving o.b.v. eigen foute registratie
 
 // Berichtgeving o.b.v. terugkoppeling RVO
@@ -408,8 +409,7 @@ for ($i = 0; $i < $count; $i++){
 <?php 
     if($skip == 1)                 { $boodschap = "Verwijderd";      $color = "black"; }
 elseif(isset($bericht))         { $boodschap = $bericht;          $color = "#FF4000"; unset($bericht); }
-elseif(isset($foutieve_invoer))    { $boodschap = $foutieve_invoer; $color = "blue";       unset($foutieve_invoer); /*unset($wrong);*/ } // $foutieve_invoer en $wrong kan gelijktijdig van toepassing zijn
-else                             { $color = 'red';  $boodschap = $waarschuwing; }
+else (isset($foutieve_invoer))    { $boodschap = $foutieve_invoer; $color = "blue";       unset($foutieve_invoer); /*unset($wrong);*/ } // $foutieve_invoer en $wrong kan gelijktijdig van toepassing zijn
 
 if($sucind == 'J' && $skip == 0) { $color = "green"; } // $sucind van laatste response kan J zijn maar inmiddels ook verwijderd.
 if(isset($boodschap)) { ?> 
