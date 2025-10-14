@@ -1,7 +1,8 @@
 <?php
 $response = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $response = `git pull`;
+    exec('git pull 2>&1', $out);
+    $response = ':'.implode('<br>', $out);
 }
 
 ?>
