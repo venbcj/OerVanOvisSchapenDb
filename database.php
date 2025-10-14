@@ -35,7 +35,7 @@ case 'ovis.alexander-ict.nl':
     $dtb = 'schapen';
     $user = 'varken';
     $pw = 'hok33hok77';
-    $app = '/var/www/vhosts/alexander-ict.nl/ovis-alexander-ict.nl/';
+    $app = '/var/www/vhosts/alexander-ict.nl/ovis.alexander-ict.nl/';
     break;
 case 'oer-dev':
 case 'basq':
@@ -47,4 +47,6 @@ case 'basq':
 default:
     throw new Exception("No configuration for {$_SERVER['HTTP_HOST']}");
 }
-define('APP', $app);
+if (!defined('APP')) {
+    define('APP', $app);
+}
