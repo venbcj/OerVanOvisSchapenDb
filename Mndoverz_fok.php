@@ -435,7 +435,7 @@ FROM (
  GROUP BY dagen_per_geboortejaarmaand.jaarmaand
 ") or die (mysqli_error($db));
 
-while($kgd = mysqli_fetch_array($kg_per_maand)) { $mndkg = $kgd['kgMnd']; }
+while($kgd = mysqli_fetch_array($kg_per_maand)) { $mndkg = $kgd['kgMnd']; } if(!isset($mndkg)) { $mndkg = 0; }
 // Einde Kg voer per Maand
 ?>        
 <tr align = "center">    
