@@ -68,18 +68,7 @@ if (Auth::is_logged_in()) {
         $oke = aantal_oke_aanv($db, $reqId);
         if ($aantMeld > 0 && $oke > 0) {
             // Bestand maken
-            // TODO: (BV) #0004146 soms voegen variabelen iets toe. Hier vind ik van niet. Het kan in 1 regel, zie hieronder:
-            $alias = alias_voor_lid($db, $lidId);
-            $file_r = dirname(__FILE__); // Het pad naar alle php bestanden
-            $input_file = $alias."_".$reqId."_request.txt"; // Bestandsnaam
-            $end_dir_reader = $file_r ."/". "BRIGHT/";
-            $root = $end_dir_reader.$input_file;
-            // dus
-            // (invullen) $root = $file_r . '/BRIGHT/' . $input_file;
-            // (invullen) $root = dirname(__FILE__) . '/BRIGHT/' . $alias . '_' . $reqId . '_request.txt';
-            // Dit is in 1 regel:
-            // $fh = fopen(dirname(__FILE__) . '/BRIGHT/' . alias_voor_lid($db, $lidId) . '_' . $reqId . '_request.txt', 'w');
-            $fh = fopen($root, 'w');
+            $fh = fopen(dirname(__FILE__) . '/BRIGHT/' . alias_voor_lid($db, $lidId) . '_' . $reqId . '_request.txt', 'w');
             /* insert field values into data.txt */
             $qry_txtRequest_RVO = aanvoer_request_rvo_query($db, $reqId);
             /* Herkomst (ubn_herk) is niet verplicht te melden */
