@@ -85,7 +85,7 @@ if (Auth::is_logged_in()) {
             /* Herkomst (ubn_herk) is niet verplicht te melden */
             while ($row = mysqli_fetch_row($qry_txtRequest_RVO)) {
 
-                 fwrite($fh, implode(';', $row));
+                 fwrite($fh, implode(';', $row) . PHP_EOL);
             }
             fclose($fh);
 
