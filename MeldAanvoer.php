@@ -83,19 +83,9 @@ if (Auth::is_logged_in()) {
             /* insert field values into data.txt */
             $qry_txtRequest_RVO = aanvoer_request_rvo_query($db, $reqId);
             /* Herkomst (ubn_herk) is niet verplicht te melden */
-            while ($row = mysqli_fetch_array($qry_txtRequest_RVO)) {
-                // TODO: (BV) #0004147 volgens mij is dit hele stuk ...
-                $num = mysqli_num_fields($qry_txtRequest_RVO) ;
-                $last = $num - 1;
-                for ($i = 0; $i < $num; $i++) {
-                    fwrite($fh, $row[$i]);
-                    if ($i != $last) {
-                        fwrite($fh, ";");
-                    }
-                }
-                fwrite($fh, PHP_EOL);
-                // ... exact hetzelfde als
-                // fwrite($fh, implode(';', $row);
+            while ($row = mysqli_fetch_row($qry_txtRequest_RVO)) {
+
+                 fwrite($fh, implode(';', $row));
             }
             fclose($fh);
 
