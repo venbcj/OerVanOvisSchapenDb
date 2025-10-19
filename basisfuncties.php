@@ -1,7 +1,6 @@
 <?php
 /* 12-08-2023 : bestand gemaakt
-30-12-2023 and skip = 0 toegevoegd aan tblHistorie
-*/
+30-12-2023 and skip = 0 toegevoegd aan tblHistorie */
 
 $vandaag = date('d-m-Y');
 $today = date('Y-m-d');
@@ -106,8 +105,10 @@ Toegepast in :
 - post_readerWgn.php
 - UpdSchaap.php */
 
-function zoek_stalId_in_stallijst($LIDID,$Schaapid) {
+function zoek_stalId_in_stallijst(int $LIDID, int $Schaapid) : ?int {
 global $db;
+
+$stalId = null;
 
 $zoek_stalId = mysqli_query($db,"
 SELECT st.stalId
