@@ -407,13 +407,27 @@ for ($i = 0; $i < $count; $i++){
  <td width = 600 style = "font-size : 14px;">        
 
 <?php 
-    if($skip == 1)                 { $boodschap = "Verwijderd";      $color = "black"; }
-elseif(isset($bericht))         { $boodschap = $bericht;          $color = "#FF4000"; unset($bericht); }
-else (isset($foutieve_invoer))    { $boodschap = $foutieve_invoer; $color = "blue";       unset($foutieve_invoer); /*unset($wrong);*/ } // $foutieve_invoer en $wrong kan gelijktijdig van toepassing zijn
+    if($skip == 1) {
+        $boodschap = "Verwijderd";
+        $color = "black";
+    }
+    elseif(isset($bericht)) {
+        $boodschap = $bericht;
+        $color = "#FF4000";
+        unset($bericht);
+    }
+else (isset($foutieve_invoer)) {
+    $boodschap = $foutieve_invoer;
+    $color = "blue";
+    unset($foutieve_invoer);
+} // $foutieve_invoer en $wrong kan gelijktijdig van toepassing zijn
 
 if($sucind == 'J' && $skip == 0) { $color = "green"; } // $sucind van laatste response kan J zijn maar inmiddels ook verwijderd.
 if(isset($boodschap)) { ?> 
-    <div style = "color : <?php echo $color; ?>;" > <?php echo $boodschap; } unset($color); unset($boodschap); ?>
+    <div style = "color : <?php echo $color; ?>;" > <?php echo $boodschap;
+} unset($color);
+unset($boodschap);
+?>
     </div>
  </td> 
 </tr>
