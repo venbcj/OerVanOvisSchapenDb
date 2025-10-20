@@ -168,7 +168,6 @@ $uitvdm = date('d-m-Y', strtotime($date2));
     $ubnId_rd = $array['ubnId_rd'];
     $levnr_rd = $array['levnr_rd']; //if (strlen($levnr_rd)== 11) {$levnr_rd = '0'.$array['levnr'];}
     $levnr_dupl = $array['dubbelen']; // twee keer in reader bestand
-    $mdr_db = $array['mdr_db'];
     $hok_rd = $array['hok_rd'];
     $hok_db = $array['hok_db'];
 
@@ -287,7 +286,6 @@ while ($za = mysqli_fetch_assoc($zoek_afvoer)) { $afv_status = $za['actie']; }
 
 $kzlUbn = $ubnId_rd;
 
-/*$kzlOoi = $mdr_db;*/  
 if (isset($_POST['knpVervers_'])) {
     $datum = $_POST["txtAanvdm_$Id"];
     $date = date('Y-m-d', strtotime($datum));
