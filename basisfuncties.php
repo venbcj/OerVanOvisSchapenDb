@@ -138,8 +138,10 @@ Toegepast in :
 - post_readerWgn.php
 - UpdSchaap.php */
 
-function zoek_stalId_in_stallijst($LIDID, $Schaapid) {
+function zoek_stalId_in_stallijst(int $LIDID, int $Schaapid) : ?int {
 global $db;
+
+$stalId = null;
 
 $zoek_stalId = mysqli_query($db, "
 SELECT st.stalId
