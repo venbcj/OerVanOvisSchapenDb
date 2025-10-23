@@ -51,6 +51,7 @@ FROM (
     FROM tblBezet b
      join tblHistorie h on (b.hisId = h.hisId)
      join tblStal st on (st.stalId = h.stalId)
+	 join tblUbn u on (st.ubnId = u.ubnId)
      left join 
      (
         SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
@@ -60,6 +61,7 @@ FROM (
          join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
+		 join tblUbn u on (st.ubnId = u.ubnId)
          left join (
             SELECT st.schaapId, h.datum dmspn
             FROM tblStal st
@@ -72,7 +74,7 @@ FROM (
              join tblHistorie h on (st.stalId = h.stalId)
             WHERE h.actId = 3 and h.skip = 0
          ) prnt on (prnt.schaapId = st.schaapId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+        WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
          and h1.datum <= coalesce(dmspn, coalesce(dmprnt,'2200-01-01'))
         GROUP BY b.bezId, st.schaapId, h1.hisId
      ) uit on (uit.hisv = b.hisId)
@@ -88,7 +90,7 @@ FROM (
          join tblHistorie h on (st.stalId = h.stalId)
         WHERE h.actId = 3 and h.skip = 0
      ) prnt on (prnt.schaapId = st.schaapId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0 and isnull(uit.bezId)
+    WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0 and isnull(uit.bezId)
     and isnull(spn.schaapId)
     and isnull(prnt.schaapId)
 
@@ -98,6 +100,7 @@ FROM (
     FROM tblBezet b
      join tblHistorie h on (b.hisId = h.hisId)
      join tblStal st on (st.stalId = h.stalId)
+	 join tblUbn u on (st.ubnId = u.ubnId)
      left join 
      (
         SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
@@ -107,7 +110,8 @@ FROM (
          join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
+		 join tblUbn u on (st.ubnId = u.ubnId)
+        WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
         GROUP BY b.bezId, st.schaapId, h1.hisId
      ) uit on (uit.hisv = b.hisId)
      join (
@@ -122,7 +126,7 @@ FROM (
          join tblHistorie h on (st.stalId = h.stalId)
         WHERE h.actId = 3 and h.skip = 0
      ) prnt on (prnt.schaapId = st.schaapId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0 and isnull(uit.bezId)
+    WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0 and isnull(uit.bezId)
     and isnull(prnt.schaapId)
 
     UNION
@@ -139,6 +143,7 @@ FROM (
          join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
+		 join tblUbn u on (st.ubnId = u.ubnId)
          left join (
             SELECT st.schaapId, h.datum dmspn
             FROM tblStal st join tblHistorie h on (st.stalId = h.stalId)
@@ -149,12 +154,13 @@ FROM (
             FROM tblStal st join tblHistorie h on (st.stalId = h.stalId)
             WHERE h.actId = 3 and h.skip = 0
          ) prnt on (prnt.schaapId = st.schaapId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
+        WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
          and h1.datum <= coalesce(dmspn, coalesce(dmprnt,'2200-01-01'))
         GROUP BY b.bezId, st.schaapId, h1.hisId
      ) uit on (uit.hisv = b.hisId)
      join tblHistorie ht on (ht.hisId = uit.hist)
      join tblStal st on (st.stalId = h.stalId)
+	 join tblUbn u on (st.ubnId = u.ubnId)
      left join (
         SELECT st.schaapId, h.datum
         FROM tblStal st
@@ -174,7 +180,7 @@ FROM (
         WHERE h.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = 1 and dmafsluit is not null
         GROUP BY p.hokId
      ) endgeb on (endgeb.hokId = b.hokId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0 and ht.datum > coalesce(dmstop,'1973-09-11') 
+    WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0 and ht.datum > coalesce(dmstop,'1973-09-11') 
      and (isnull(spn.schaapId)  or spn.datum  > coalesce(dmstop,'1973-09-11') and h.datum < spn.datum) 
      and (isnull(prnt.schaapId) or prnt.datum > coalesce(dmstop,'1973-09-11'))
 
@@ -192,11 +198,13 @@ FROM (
          join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+		 join tblUbn u on (st.ubnId = u.ubnId)
+        WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
         GROUP BY b.bezId, st.schaapId, h1.hisId
      ) uit on (uit.hisv = b.hisId)
      join tblHistorie ht on (ht.hisId = uit.hist)
      join tblStal st on (st.stalId = h.stalId)
+	 join tblUbn u on (st.ubnId = u.ubnId)
      join (
         SELECT st.schaapId, h.datum
         FROM tblStal st
@@ -216,7 +224,7 @@ FROM (
         WHERE h.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.doelId = 2 and dmafsluit is not null
         GROUP BY p.hokId
      ) endspn on (endspn.hokId = b.hokId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId /*9-1-2019 weggehaald and (isnull(prnt.schaapId) or prnt.datum > coalesce(dmstop,'1973-09-11')) */)."' and h.skip = 0 and ht.datum > coalesce(dmstop,'1973-09-11') 
+    WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId /*9-1-2019 weggehaald and (isnull(prnt.schaapId) or prnt.datum > coalesce(dmstop,'1973-09-11')) */)."' and h.skip = 0 and ht.datum > coalesce(dmstop,'1973-09-11') 
      and h.datum >= spn.datum and (h.datum < prnt.datum or isnull(prnt.schaapId))
      
 
@@ -228,16 +236,18 @@ FROM (
         FROM tblBezet b
          join tblHistorie h on (b.hisId = h.hisId)
          join tblStal st on (st.stalId = h.stalId)
+		 join tblUbn u on (st.ubnId = u.ubnId)
          join (
             SELECT st.schaapId, h.hisId, h.datum
             FROM tblStal st
              join tblHistorie h on (st.stalId = h.stalId)
             WHERE h.actId = 3 and h.skip = 0
         ) prnt on (prnt.schaapId = st.schaapId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0 and h.datum >= prnt.datum
+        WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0 and h.datum >= prnt.datum
      ) b
      join tblHistorie h on (b.hisId = h.hisId)
      join tblStal st on (st.stalId = h.stalId)
+	 join tblUbn u on (st.ubnId = u.ubnId)
      left join 
      (
         SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
@@ -247,7 +257,8 @@ FROM (
          join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
+		 join tblUbn u on (st.ubnId = u.ubnId)
+        WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
         GROUP BY b.bezId, h1.hisId
      ) uit on (uit.hisv = b.hisId)
      join (
@@ -256,7 +267,7 @@ FROM (
          join tblHistorie h on (st.stalId = h.stalId)
         WHERE h.actId = 3 and h.skip = 0
      ) prnt on (prnt.schaapId = st.schaapId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(uit.bezId)
+    WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(uit.bezId)
 
  ) ingebr
  join tblHok h on (ingebr.hokId = h.hokId)
