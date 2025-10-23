@@ -21,7 +21,7 @@ $titel = 'Afleverlijst';
 $file = "ZoekAfldm.php";
 Include "login.php";
 ?>
-		<TD align = "center" valign = "top">
+        <TD align = "center" valign = "top">
 <?php 
 if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) {
 
@@ -35,7 +35,7 @@ FROM tblHistorie h
  join tblStal st on (st.stalId = h.stalId)
 WHERE h.hisId = '".mysqli_real_escape_string($db,$hisId)."'
 ") or die (mysqli_error($db));
-	while( $da_be = mysqli_fetch_assoc($zoek_datum_bestemmming)) { $date = $da_be['datum']; $bestm = $da_be['rel_best']; }
+    while( $da_be = mysqli_fetch_assoc($zoek_datum_bestemmming)) { $date = $da_be['datum']; $bestm = $da_be['rel_best']; }
 
 
 
@@ -50,24 +50,24 @@ FROM tblStal st
 WHERE a.af = 1 and st.rel_best = '".mysqli_real_escape_string($db,$bestm)."' and h.datum = '".mysqli_real_escape_string($db,$date)."' and h.skip = 0
 GROUP BY p.naam, date_format(h.datum,'%d-%m-%Y')
 ") or die (mysqli_error($db));
-	while ($za = mysqli_fetch_array($zoek_aflevergegevens))
-	{
+    while ($za = mysqli_fetch_array($zoek_aflevergegevens))
+    {
 $bestemming = $za['naam'];
 $datum =  $za['datum'];
 $aantal = $za['tal'];
-	} ?>
+    } ?>
 <table border = 0 >
 
-	
+    
 <tr >
 <td > </td>
 
-		<td  >	
+        <td  >  
 <tr >
  <td></td> 
  <td colspan = 10 align =center>
-	 <a href= '<?php echo $url;?>AfleverLijst_pdf.php?hisId=<?php echo $hisId; ?>' style = 'color : blue'>
-	print pagina </a>
+     <a href= '<?php echo $url;?>AfleverLijst_pdf.php?hisId=<?php echo $hisId; ?>' style = 'color : blue'>
+    print pagina </a>
  </td> 
  <td colspan = 2 align = \"left\"><i style = \"font-size:14px;\"> Bestemming :</i></td> 
  <td colspan = 4><b style = \"font-size:15px;\"><?php echo $bestemming; ?> </b></td>
@@ -114,55 +114,56 @@ FROM tblSchaap s
 WHERE a.af = 1 and st.rel_best = '".mysqli_real_escape_string($db,$bestm)."' and h.datum = '".mysqli_real_escape_string($db,$date)."' and h.skip = 0
 ORDER BY right(s.levensnummer,$Karwerk)
 ") or die (mysqli_error($db));
-		while($zs = mysqli_fetch_assoc($zoek_schaap))
-		{	$levnr = $zs['levensnummer'];	if(!isset($levnr)) { $levnr = 'Geen'; } 
-			$werknr = $zs['werknr'];
-			$schaapId = $zs['schaapId'];
-			$kg = $zs['kg']; ?>
+        while($zs = mysqli_fetch_assoc($zoek_schaap))
+        {   $levnr = $zs['levensnummer'];   if(!isset($levnr)) { $levnr = 'Geen'; } 
+            $werknr = $zs['werknr'];
+            $schaapId = $zs['schaapId'];
+            $kg = $zs['kg']; ?>
 <tr align = center>
-	<td width = 0 > </td>
-	<td width = 100 style = "font-size:15px;"> <?php echo $levnr; ?> <br> </td>
-	<td width = 0 > </td>
-	<td width = 100 style = "font-size:15px;"> <?php echo $werknr; ?> <br> </td>
-	<td width = 0 > </td>
-	<td width = 100 style = "font-size:15px;"> <?php echo $kg; ?> <br> </td>
+    <td width = 0 > </td>
+    <td width = 100 style = "font-size:15px;"> <?php echo $levnr; ?> <br> </td>
+    <td width = 0 > </td>
+    <td width = 100 style = "font-size:15px;"> <?php echo $werknr; ?> <br> </td>
+    <td width = 0 > </td>
+    <td width = 100 style = "font-size:15px;"> <?php echo $kg; ?> <br> </td>
 
-		<td colspan = 6><table border = 0>
+        <td colspan = 6><table border = 0>
 
 <?php
 $zoek_pil = mysqli_query($db,"
 SELECT date_format(h.datum,'%d-%m-%Y') datum, art.naam, art.wdgn_v, (h.datum + interval art.wdgn_v day) toon
 FROM tblSchaap s 
  join tblStal st on (st.schaapId = s.schaapId)
+ join tblUbn u on (st.ubnId = u.ubnId)
  join tblHistorie h on (h.stalId = st.stalId)
  join tblActie a on (a.actId = h.actId)
  left join tblNuttig n on (h.hisId = n.hisId)
  left join tblInkoop i on (i.inkId = n.inkId)
  left join tblArtikel art on (i.artId = art.artId) 
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and h.actId = 8 and h.skip = 0 and (h.datum + interval art.wdgn_v day) >= sysdate()
-") or die (mysqli_error($db));	
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and h.actId = 8 and h.skip = 0 and (h.datum + interval art.wdgn_v day) >= sysdate()
+") or die (mysqli_error($db));  
 
 $vandaag = date('Y-m-d');
-		while($row = mysqli_fetch_array($zoek_pil))
-		{
-If (!empty($row['datum']))		{ ?>
+        while($row = mysqli_fetch_array($zoek_pil))
+        {
+If (!empty($row['datum']))      { ?>
 <tr align = center>
  <td width = 0> </td>
  <td width = 100 style = "font-size:15px;" align = "left"> <?php echo $row['naam']; ?> <br> </td>
- <td width = 1> </td>			
+ <td width = 1> </td>           
  <td width = 120 style = "font-size:15px;"> <?php echo $row['datum']; ?> <br> </td>
  <td width = 1> </td>
- <td width = 100 style = "font-size:15px;"> <?php	echo $row['wdgn_v']; ?> <br> </td> 
- <td width = 1> </td>	   
-</tr>			<?php	}
+ <td width = 100 style = "font-size:15px;"> <?php   echo $row['wdgn_v']; ?> <br> </td> 
+ <td width = 1> </td>      
+</tr>           <?php   }
 
-		} ?>
-	</table></td> <?php } ?>
-</tr>				
+        } ?>
+    </table></td> <?php } ?>
+</tr>               
 </table>
 
 
-		</TD>
+        </TD>
 <?php
 Include "menuRapport.php"; } ?>
 </body>

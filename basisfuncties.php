@@ -20,8 +20,8 @@ FROM tblLeden
 WHERE lidId = '".mysqli_real_escape_string($db,$LIDID)."'
 ") or die (mysqli_error($db));
 
-	while ( $zsg = mysqli_fetch_assoc($zoek_startjaar_gebruiker)) { return $zsg['jaar']; }
-	 }
+    while ( $zsg = mysqli_fetch_assoc($zoek_startjaar_gebruiker)) { return $zsg['jaar']; }
+     }
 
 
 /*Toegepast in :
@@ -29,8 +29,8 @@ WHERE lidId = '".mysqli_real_escape_string($db,$LIDID)."'
 - Newuser.php
 */
 function date_add_months($day,$var) {
-	 return date('Y-m-d', strtotime($day . $var .' months'));
-	 }
+     return date('Y-m-d', strtotime($day . $var .' months'));
+     }
 
 function db_null_input($var){
 global $db;
@@ -59,7 +59,7 @@ FROM tblSchaap
 WHERE levensnummer = '".mysqli_real_escape_string($db,$LEVNR)."'
 ") or die (mysqli_error($db));
 
-	while ( $zsd = mysqli_fetch_assoc($zoek_schaap_database)) { return $zsd['schaapId']; }
+    while ( $zsd = mysqli_fetch_assoc($zoek_schaap_database)) { return $zsd['schaapId']; }
 }
 
 /*****************************************************************************************************
@@ -75,7 +75,7 @@ FROM tblSchaap
 WHERE levensnummer = '".mysqli_real_escape_string($db,$LEVNR)."'
 ") or die (mysqli_error($db));
 
-	while ( $zsd = mysqli_fetch_assoc($zoek_schaap_database)) { return $zsd['transponder']; }
+    while ( $zsd = mysqli_fetch_assoc($zoek_schaap_database)) { return $zsd['transponder']; }
 }
 
 /*****************************************************************************************************
@@ -90,10 +90,11 @@ $zoek_schaap_stallijst = mysqli_query($db,"
 SELECT s.schaapId
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
-WHERE levensnummer = '".mysqli_real_escape_string($db,$LEVNR)."' and st.lidId = '" . mysqli_real_escape_string($db,$LIDID) . "' and isnull(rel_best)
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE levensnummer = '".mysqli_real_escape_string($db,$LEVNR)."' and u.lidId = '" . mysqli_real_escape_string($db,$LIDID) . "' and isnull(rel_best)
 ") or die (mysqli_error($db));
 
-	while ( $zss = mysqli_fetch_assoc($zoek_schaap_stallijst)) { return $zss['schaapId']; }
+    while ( $zss = mysqli_fetch_assoc($zoek_schaap_stallijst)) { return $zss['schaapId']; }
 
 }
 
@@ -113,7 +114,8 @@ $stalId = null;
 $zoek_stalId = mysqli_query($db,"
 SELECT st.stalId
 FROM tblStal st
-WHERE st.lidId = '".mysqli_real_escape_string($db,$LIDID)."' and st.schaapId = '".mysqli_real_escape_string($db,$Schaapid)."' and isnull(rel_best)
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$LIDID)."' and st.schaapId = '".mysqli_real_escape_string($db,$Schaapid)."' and isnull(rel_best)
 ") or die (mysqli_error($db));
 
 while ( $zst = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $zst['stalId']; }
@@ -132,7 +134,8 @@ global $db;
 $zoek_max_stalId = mysqli_query($db,"
 SELECT max(st.stalId) stalId
 FROM tblStal st
-WHERE st.lidId = '".mysqli_real_escape_string($db,$LIDID)."' and st.schaapId = '".mysqli_real_escape_string($db,$Schaapid)."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$LIDID)."' and st.schaapId = '".mysqli_real_escape_string($db,$Schaapid)."'
 ") or die (mysqli_error($db));
 
 while ( $zmst = mysqli_fetch_assoc($zoek_max_stalId)) { return $zmst['stalId']; }
@@ -216,8 +219,8 @@ Toegepast in :
 function insert_tblHistorie($STALID,$DATUM,$ACTID){
 global $db;
 
-$insert_tblHistorie = "INSERT INTO tblHistorie SET stalId = '".mysqli_real_escape_string($db,$STALID)."', datum = '".mysqli_real_escape_string($db,$DATUM)."', actId = '".mysqli_real_escape_string($db,$ACTID)."' ";	
-/*echo $insert_tblHistorie.'<br>';*/		return mysqli_query($db,$insert_tblHistorie);
+$insert_tblHistorie = "INSERT INTO tblHistorie SET stalId = '".mysqli_real_escape_string($db,$STALID)."', datum = '".mysqli_real_escape_string($db,$DATUM)."', actId = '".mysqli_real_escape_string($db,$ACTID)."' ";   
+/*echo $insert_tblHistorie.'<br>';*/        return mysqli_query($db,$insert_tblHistorie);
 
 }
 
@@ -228,8 +231,8 @@ Toegepast in :
 function insert_tblHistorie_kg($STALID,$DATUM,$ACTID,$KG){
 global $db;
 
-$insert_tblHistorie = "INSERT INTO tblHistorie SET stalId = '".mysqli_real_escape_string($db,$STALID)."', datum = '".mysqli_real_escape_string($db,$DATUM)."', actId = '".mysqli_real_escape_string($db,$ACTID)."', kg = '".mysqli_real_escape_string($db,$KG)."' ";	
-/*echo $insert_tblHistorie.'<br>';*/		return mysqli_query($db,$insert_tblHistorie);
+$insert_tblHistorie = "INSERT INTO tblHistorie SET stalId = '".mysqli_real_escape_string($db,$STALID)."', datum = '".mysqli_real_escape_string($db,$DATUM)."', actId = '".mysqli_real_escape_string($db,$ACTID)."', kg = '".mysqli_real_escape_string($db,$KG)."' ";    
+/*echo $insert_tblHistorie.'<br>';*/        return mysqli_query($db,$insert_tblHistorie);
 
 }
 
@@ -260,7 +263,7 @@ function insert_dekking_mdr($HISID,$MDRID,$VDRID){
 global $db;
 
 $insert_tblVolwas = "INSERT INTO tblVolwas set hisId = '".mysqli_real_escape_string($db,$HISID)."', mdrId = '".mysqli_real_escape_string($db,$MDRID)."', vdrId = " . db_null_input($VDRID);
-/*echo $insert_tblVolwas;*/		mysqli_query($db,$insert_tblVolwas) or die (mysqli_error($db));
+/*echo $insert_tblVolwas;*/     mysqli_query($db,$insert_tblVolwas) or die (mysqli_error($db));
 } 
 
 /**********************************************************************
@@ -271,7 +274,7 @@ function insert_dracht_mdr($MDRID,$VDRID,$WORPGR){
 global $db;
 
 $insert_tblVolwas = "INSERT INTO tblVolwas set mdrId = '".mysqli_real_escape_string($db,$MDRID)."', vdrId = " . db_null_input($VDRID) . ", grootte = " . db_null_input($WORPGR) ;
-/*echo $insert_tblVolwas;*/		mysqli_query($db,$insert_tblVolwas) or die (mysqli_error($db));
+/*echo $insert_tblVolwas;*/     mysqli_query($db,$insert_tblVolwas) or die (mysqli_error($db));
 
 } 
 
@@ -288,7 +291,7 @@ SELECT max(volwId) volwId
 FROM tblVolwas
 WHERE mdrId = '".mysqli_real_escape_string($db,$MDRID)."' and " . db_null_filter(vdrId, $VDRID) . "
 ") or die (mysqli_error($db));
-	while ( $zv = mysqli_fetch_assoc($zoek_volwId)) { return $zv['volwId']; }
+    while ( $zv = mysqli_fetch_assoc($zoek_volwId)) { return $zv['volwId']; }
 
 }
 
@@ -304,13 +307,14 @@ FROM tblRequest r
  join tblMelding m on (r.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($datb,$lidid)."' and h.skip = 0 and isnull(r.dmmeld) and code = '".mysqli_real_escape_string($datb,$fldCode)."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($datb,$lidid)."' and h.skip = 0 and isnull(r.dmmeld) and code = '".mysqli_real_escape_string($datb,$fldCode)."'
 "); // Foutafhandeling zit in return FALSE
-	if($aantalmelden)
-	{	$row = mysqli_fetch_assoc($aantalmelden);
+    if($aantalmelden)
+    {   $row = mysqli_fetch_assoc($aantalmelden);
             return $row['aant'];
-	}
-	return FALSE; // Foutafhandeling
+    }
+    return FALSE; // Foutafhandeling
 }
 // Einde Functie aantal nog te melden
 
@@ -332,11 +336,11 @@ FROM tblMelding m
 WHERE m.reqId = '".mysqli_real_escape_string($datb,$fldReqId)."' and m.skip <> 1 and h.skip = 0
 ");//Foutafhandeling zit in return FALSE
 
-	if($aantalmelden)
-	{	$row = mysqli_fetch_assoc($aantalmelden);
+    if($aantalmelden)
+    {   $row = mysqli_fetch_assoc($aantalmelden);
             return $row['aant'];
-	}
-	return FALSE;
+    }
+    return FALSE;
 }
 
 
@@ -361,11 +365,11 @@ WHERE m.reqId = '".mysqli_real_escape_string($datb,$fldReqId)."'
  and LENGTH(RTRIM(CAST(h.datum AS UNSIGNED))) = 8
  and m.skip <> 1
 ");
-	if($juistaantal)
-	{	$row = mysqli_fetch_assoc($juistaantal);
-			return $row['aant'];
-	}
-	return FALSE;
+    if($juistaantal)
+    {   $row = mysqli_fetch_assoc($juistaantal);
+            return $row['aant'];
+    }
+    return FALSE;
 }
 
 
@@ -386,10 +390,10 @@ FROM impRespons
 WHERE def = 'N' and reqId = '".mysqli_real_escape_string($datb,$fldReqId)."'
 ");//Foutafhandeling zit in return FALSE
 
-	if($aantalcontrole)
-	{	$row = mysqli_fetch_assoc($aantalcontrole);
+    if($aantalcontrole)
+    {   $row = mysqli_fetch_assoc($aantalcontrole);
             return $row['aant'];
-	}
-	return FALSE;
+    }
+    return FALSE;
 }
 ?>
