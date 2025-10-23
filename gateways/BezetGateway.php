@@ -8,6 +8,7 @@ SELECT count(distinct hokId) aant
 FROM tblBezet b
  join tblHistorie h on (b.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
+ join tblUbn u on (st.ubnId = u.ubnId)
  left join 
  (
     SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
@@ -17,6 +18,7 @@ FROM tblBezet b
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
+     join tblUbn u on (st.ubnId = u.ubnId)
      left join (
         SELECT st.schaapId, h.datum dmspn
         FROM tblStal st
@@ -29,7 +31,7 @@ FROM tblBezet b
          join tblHistorie h on (st.stalId = h.stalId)
         WHERE h.actId = 3
      ) prnt on (prnt.schaapId = st.schaapId)
-    WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
      and h1.datum <= coalesce(dmspn, coalesce(dmprnt,'2200-01-01'))
     GROUP BY b.bezId, st.schaapId, h1.hisId
  ) uit on (b.hisId = uit.hisv)
@@ -45,7 +47,7 @@ FROM tblBezet b
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(uit.bezId) and isnull(spn.schaapId) and isnull(prnt.schaapId) and h.skip = 0
+WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(uit.bezId) and isnull(spn.schaapId) and isnull(prnt.schaapId) and h.skip = 0
 ");
 if ($vw->num_rows == 0) {
     return 0;
@@ -59,6 +61,7 @@ SELECT count(distinct hokId) aant
 FROM tblBezet b
  join tblHistorie h on (b.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
+ join tblUbn u on (st.ubnId = u.ubnId)
  left join 
  (
     SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
@@ -68,7 +71,8 @@ FROM tblBezet b
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+     join tblUbn u on (st.ubnId = u.ubnId)
+    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
     GROUP BY b.bezId, st.schaapId, h1.hisId
  ) uit on (b.hisId = uit.hisv)
  join (
@@ -83,7 +87,7 @@ FROM tblBezet b
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(uit.bezId) and isnull(prnt.schaapId) and h.skip = 0
+WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(uit.bezId) and isnull(prnt.schaapId) and h.skip = 0
 ");
 if ($vw->num_rows == 0) {
     return 0;
@@ -97,9 +101,10 @@ SELECT count(hin.schaapId) aantin
 FROM (
     SELECT st.schaapId, max(hisId) hisId
     FROM tblStal st
+     join tblUbn u on (st.ubnId = u.ubnId)
      join tblHistorie h on (st.stalId = h.stalId)
      join tblActie a on (a.actId = h.actId) 
-    WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(st.rel_best) and a.aan = 1 and h.skip = 0
+    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(st.rel_best) and a.aan = 1 and h.skip = 0
     GROUP BY st.schaapId
  ) hin
  left join tblBezet b on (hin.hisId = b.hisId)
@@ -111,7 +116,8 @@ FROM (
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+     join tblUbn u on (st.ubnId = u.ubnId)
+    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
     GROUP BY b.bezId, st.schaapId, h1.hisId
  ) uit on (uit.hisv = hin.hisId)
  left join (
@@ -149,6 +155,7 @@ FROM (
     FROM tblBezet b
      join tblHistorie h on (b.hisId = h.hisId)
      join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (st.ubnId = u.ubnId)
      left join 
      (
         SELECT b.bezId, min(h2.hisId) hist
@@ -158,7 +165,8 @@ FROM (
          join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
-        WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+         join tblUbn u on (st.ubnId = u.ubnId)
+        WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
         GROUP BY b.bezId
      ) uit on (uit.bezId = b.bezId)
      left join (
@@ -173,7 +181,7 @@ FROM (
          join tblHistorie h on (st.stalId = h.stalId)
         WHERE h.actId = 3 and h.skip = 0
      ) prnt on (prnt.schaapId = st.schaapId)
-    WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(uit.bezId)
+    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(uit.bezId)
     and isnull(spn.schaapId)
     and isnull(prnt.schaapId)
      and h.skip = 0
@@ -192,11 +200,13 @@ FROM (
          join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
-        WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
+         join tblUbn u on (st.ubnId = u.ubnId)
+        WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
         GROUP BY b.bezId
      ) uit on (uit.bezId = b.bezId)
      join tblHistorie ht on (ht.hisId = uit.hist)
      join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (st.ubnId = u.ubnId)
      left join (
         SELECT h.hisId, st.schaapId, h.datum
         FROM tblStal st
@@ -216,7 +226,7 @@ FROM (
         WHERE h.lidId = '".$this->db->real_escape_string($lidId)."' and p.doelId = 1 and dmafsluit is not null
         GROUP BY p.hokId
      ) endgeb on (endgeb.hokId = b.hokId)
-    WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and ht.datum > coalesce(dmstop,'1973-09-11') 
+    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and ht.datum > coalesce(dmstop,'1973-09-11') 
      and ( isnull(spn.schaapId)  or (spn.datum  > coalesce(dmstop,'1973-09-11') and 
              ( h.datum < spn.datum || (h.datum = spn.datum && h.hisId < spn.hisId) ) )
           )
@@ -229,6 +239,7 @@ FROM (
     FROM tblBezet b
      join tblHistorie h on (b.hisId = h.hisId)
      join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (st.ubnId = u.ubnId)
      left join 
      (
         SELECT b.bezId, min(h2.hisId) hist
@@ -238,7 +249,8 @@ FROM (
          join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
-        WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
+         join tblUbn u on (st.ubnId = u.ubnId)
+        WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
         GROUP BY b.bezId
      ) uit on (uit.bezId = b.bezId)
      join (
@@ -253,7 +265,7 @@ FROM (
          join tblHistorie h on (st.stalId = h.stalId)
         WHERE h.actId = 3 and h.skip = 0
      ) prnt on (prnt.schaapId = st.schaapId)
-    WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(uit.bezId)
+    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(uit.bezId)
     and (isnull(prnt.schaapId) or h.datum < prnt.datum)
     and h.skip = 0
 
@@ -271,11 +283,13 @@ FROM (
          join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
-        WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+         join tblUbn u on (st.ubnId = u.ubnId)
+        WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
         GROUP BY b.bezId
      ) uit on (uit.bezId = b.bezId)
      join tblHistorie ht on (ht.hisId = uit.hist)
      join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (st.ubnId = u.ubnId)
      join (
         SELECT h.hisId, st.schaapId, h.datum
         FROM tblStal st
@@ -295,7 +309,7 @@ FROM (
         WHERE h.lidId = '".$this->db->real_escape_string($lidId)."' and p.doelId = 2 and dmafsluit is not null
         GROUP BY p.hokId
      ) endspn on (endspn.hokId = b.hokId)
-    WHERE st.lidId = '".$this->db->real_escape_string($lidId)."'
+    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."'
     -- 9-1-2019 weggehaald and (isnull(prnt.schaapId) or prnt.datum > coalesce(dmstop,'1973-09-11'))
      and ht.datum > coalesce(dmstop,'1973-09-11') 
      and (h.datum > spn.datum || (h.datum = spn.datum && h.hisId >= spn.hisId) )
@@ -308,6 +322,7 @@ FROM (
     FROM tblBezet b
      join tblHistorie h on (b.hisId = h.hisId)
      join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (st.ubnId = u.ubnId)
      left join 
      (
         SELECT b.bezId, min(h2.hisId) hist
@@ -317,7 +332,8 @@ FROM (
          join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
-        WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+         join tblUbn u on (st.ubnId = u.ubnId)
+        WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
         GROUP BY b.bezId
      ) uit on (uit.bezId = b.bezId)
      join (
@@ -326,7 +342,7 @@ FROM (
          join tblHistorie h on (st.stalId = h.stalId)
         WHERE h.actId = 3 and h.skip = 0
      ) prnt on (prnt.schaapId = st.schaapId)
-    WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(uit.bezId) and h.skip = 0
+    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(uit.bezId) and h.skip = 0
 
     UNION
 
@@ -342,11 +358,13 @@ FROM (
          join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
-        WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+         join tblUbn u on (st.ubnId = u.ubnId)
+        WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
         GROUP BY b.bezId, st.schaapId, h1.hisId
      ) uit on (uit.bezId = b.bezId)
      join tblHistorie ht on (ht.hisId = uit.hist)
      join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (st.ubnId = u.ubnId)
      join (
         SELECT h.hisId, st.schaapId, h.datum
         FROM tblStal st
@@ -360,7 +378,7 @@ FROM (
         WHERE h.lidId = '".$this->db->real_escape_string($lidId)."' and p.doelId = 3 and dmafsluit is not null
         GROUP BY p.hokId
      ) endspn on (endspn.hokId = b.hokId)
-    WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and ht.datum > coalesce(dmstop,'1973-09-11') 
+    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and ht.datum > coalesce(dmstop,'1973-09-11') 
      and (h.datum > prnt.datum || (h.datum = prnt.datum && h.hisId >= prnt.hisId) ) and h.skip = 0
  ) ingebr
  join tblHok h on (ingebr.hokId = h.hokId)
@@ -881,14 +899,16 @@ FROM tblBezet b
      SELECT h.hisId, h.stalId, '".$this->db->real_escape_string($dmbegin)."' datum
      FROM tblHistorie h
       join tblStal st on (st.stalId = h.stalId)
+      join tblUbn u on (st.ubnId = u.ubnId)
       join tblBezet alleen_his_uit_bez on (alleen_his_uit_bez.hisId = h.hisId)
-     WHERE h.skip = 0 and st.lidId = '".$this->db->real_escape_string($lidId)."' and h.datum < '".$this->db->real_escape_string($dmbegin)."'
+     WHERE h.skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."' and h.datum < '".$this->db->real_escape_string($dmbegin)."'
      union 
      SELECT h.hisId, h.stalId, h.datum
      FROM tblHistorie h
       join tblStal st on (st.stalId = h.stalId)
+      join tblUbn u on (st.ubnId = u.ubnId)
       join tblBezet alleen_his_uit_bez on (alleen_his_uit_bez.hisId = h.hisId)
-     WHERE h.skip = 0 and st.lidId = '".$this->db->real_escape_string($lidId)."' and h.datum >= '".$this->db->real_escape_string($dmbegin)."'
+     WHERE h.skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."' and h.datum >= '".$this->db->real_escape_string($dmbegin)."'
  ) his_in on (his_in.hisId = b.hisId)
 
  join tblStal st on (st.stalId = his_in.stalId)
@@ -902,32 +922,37 @@ FROM tblBezet b
          join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
-        WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+         join tblUbn u on (st.ubnId = u.ubnId)
+        WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
         GROUP BY b.bezId, st.schaapId, h1.hisId
      ) uit on (uit.hisv = b.hisId)
  left join (
      SELECT h.hisId, h.stalId, '".$this->db->real_escape_string($dmeind)."' datum
      FROM tblHistorie h
       join tblStal st on (st.stalId = h.stalId)
-     WHERE h.skip = 0 and st.lidId = '".$this->db->real_escape_string($lidId)."' and h.datum > '".$this->db->real_escape_string($dmeind)."'
+      join tblUbn u on (st.ubnId = u.ubnId)
+     WHERE h.skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."' and h.datum > '".$this->db->real_escape_string($dmeind)."'
      union 
      SELECT h.hisId, h.stalId, h.datum
      FROM tblHistorie h
       join tblStal st on (st.stalId = h.stalId)
-     WHERE h.skip = 0 and st.lidId = '".$this->db->real_escape_string($lidId)."' and h.datum <= '".$this->db->real_escape_string($dmeind)."'
+      join tblUbn u on (st.ubnId = u.ubnId)
+     WHERE h.skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."' and h.datum <= '".$this->db->real_escape_string($dmeind)."'
  ) his_uit on (his_uit.hisId = uit.hist)
 
  left join (
     SELECT st.schaapId, h.datum
     FROM tblStal st
+     join tblUbn u on (st.ubnId = u.ubnId)
      join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0 and st.lidId = '".$this->db->real_escape_string($lidId)."'
+    WHERE h.actId = 4 and h.skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."'
  ) spn on (spn.schaapId = st.schaapId)
   left join (
     SELECT st.schaapId, h.datum
     FROM tblStal st
+     join tblUbn u on (st.ubnId = u.ubnId)
      join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0 and st.lidId = '".$this->db->real_escape_string($lidId)."'
+    WHERE h.actId = 3 and h.skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."'
  ) prn on (prn.schaapId = st.schaapId)
  join tblPeriode p on (p.hokId = b.hokId and p.dmafsluit = '".$this->db->real_escape_string($dmeind)."')
 WHERE b.hokId = '".$this->db->real_escape_string($hokId)."'

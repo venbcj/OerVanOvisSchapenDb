@@ -53,7 +53,8 @@ $stapel = mysqli_query($db,"
 SELECT count(*) aant
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
-WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(st.rel_best)
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(st.rel_best)
 ") or die (mysqli_error($db));
 
     while($rij = mysqli_fetch_array($stapel))
@@ -128,13 +129,14 @@ $result = mysqli_query($db,"
 SELECT st.stalId, s.levensnummer, s.geslacht, h.actId
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
+ join tblUbn u on (st.ubnId = u.ubnId)
  left join (
     SELECT schaapId, h.actId
     FROM tblStal st
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
  ) h on (h.schaapId = st.schaapId)
-WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(st.rel_best)
+WHERE u.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(st.rel_best)
 ORDER BY h.actId, s.geslacht, right(s.levensnummer,$Karwerk)
 ") or die (mysqli_error($db));
 

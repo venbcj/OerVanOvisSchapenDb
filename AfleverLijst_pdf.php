@@ -18,9 +18,10 @@ if ($Afdrukstand == 'P') { $headerWidth = 190; $imageWidth = 169; }
 if ($Afdrukstand == 'L') { $headerWidth = 277; $imageWidth = 256; }
 
 $zoek = mysqli_query($db,"
-SELECT st.lidId, date_format(datum,'%d-%m-%Y') datum, datum date, rel_best, p.naam
+SELECT u.lidId, date_format(datum,'%d-%m-%Y') datum, datum date, rel_best, p.naam
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
+ join tblUbn u on (st.ubnId = u.ubnId)
  join tblRelatie r on (st.rel_best = r.relId)
  join tblPartij p on (p.partId = r.partId)
 WHERE h.hisId = '".mysqli_real_escape_string($db,$his)."' ") or die (mysqli_error($db));
@@ -44,8 +45,9 @@ $aantal = mysqli_query($db,"
 SELECT count(distinct st.stalId) aant
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
+ join tblUbn u on (st.ubnId = u.ubnId)
  join tblActie a on (h.actId = a.actId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.datum = '".mysqli_real_escape_string($db,$afvDate)."' and st.rel_best = '".mysqli_real_escape_string($db,$relId)."' and a.af = 1 and h.skip = 0
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.datum = '".mysqli_real_escape_string($db,$afvDate)."' and st.rel_best = '".mysqli_real_escape_string($db,$relId)."' and a.af = 1 and h.skip = 0
 ");
 while($rij = mysqli_fetch_array($aantal)){ $schpn = $rij['aant']; }
 
@@ -64,20 +66,22 @@ $pdf->SetFont('Times','',6);
 $pdf->SetDrawColor(200,200,200); // Grijs
 
 $zoek_schaap = mysqli_query($db,"
-SELECT st.lidId, s.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr, h.kg, pil.datum, pil.naam, pil.wdgn_v
+SELECT u.lidId, s.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr, h.kg, pil.datum, pil.naam, pil.wdgn_v
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
+ join tblUbn u on (st.ubnId = u.ubnId)
  join tblSchaap s on (s.schaapId = st.schaapId)
  join tblActie a on (h.actId = a.actId)
  left join (
     SELECT s.schaapId, date_format(h.datum,'%d-%m-%Y') datum, art.naam, art.wdgn_v
     FROM tblSchaap s 
      join tblStal st on (st.schaapId = s.schaapId)
+     join tblUbn u on (st.ubnId = u.ubnId)
      join tblHistorie h on (h.stalId = st.stalId)
      join tblNuttig n on (h.hisId = n.hisId)
      join tblInkoop i on (i.inkId = n.inkId)
      join tblArtikel art on (i.artId = art.artId) 
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 8 and h.skip = 0 and (h.datum + interval art.wdgn_v day) >= sysdate()
+    WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 8 and h.skip = 0 and (h.datum + interval art.wdgn_v day) >= sysdate()
 ) pil on (st.schaapId = pil.schaapId)
 WHERE h.datum = '".mysqli_real_escape_string($db,$afvDate)."' and st.rel_best = '".mysqli_real_escape_string($db,$relId)."' and a.af = 1 and h.skip = 0
 ORDER BY right(s.levensnummer,$Karwerk)

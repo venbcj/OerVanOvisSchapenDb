@@ -144,12 +144,13 @@ $zoek_pil = mysqli_query($db,"
 SELECT date_format(h.datum,'%d-%m-%Y') datum, art.naam, art.wdgn_v, (h.datum + interval art.wdgn_v day) toon
 FROM tblSchaap s 
  join tblStal st on (st.schaapId = s.schaapId)
+ join tblUbn u on (st.ubnId = u.ubnId)
  join tblHistorie h on (h.stalId = st.stalId)
  join tblActie a on (a.actId = h.actId)
  left join tblNuttig n on (h.hisId = n.hisId)
  left join tblInkoop i on (i.inkId = n.inkId)
  left join tblArtikel art on (i.artId = art.artId) 
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and h.actId = 8 and h.skip = 0 and (h.datum + interval art.wdgn_v day) >= sysdate()
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and h.actId = 8 and h.skip = 0 and (h.datum + interval art.wdgn_v day) >= sysdate()
 ") or die (mysqli_error($db));    
 
 $vandaag = date('Y-m-d');

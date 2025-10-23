@@ -122,7 +122,8 @@ $zoek_schaap_stallijst = mysqli_query($db, "
 SELECT s.schaapId
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
-WHERE levensnummer = '".mysqli_real_escape_string($db, $LEVNR)."' and st.lidId = '" . mysqli_real_escape_string($db, $LIDID) . "' and isnull(rel_best)
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE levensnummer = '".mysqli_real_escape_string($db, $LEVNR)."' and u.lidId = '" . mysqli_real_escape_string($db, $LIDID) . "' and isnull(rel_best)
 ") or die(mysqli_error($db));
 
     while ($zss = mysqli_fetch_assoc($zoek_schaap_stallijst)) {
@@ -146,7 +147,8 @@ $stalId = null;
 $zoek_stalId = mysqli_query($db, "
 SELECT st.stalId
 FROM tblStal st
-WHERE st.lidId = '".mysqli_real_escape_string($db, $LIDID)."' and st.schaapId = '".mysqli_real_escape_string($db, $Schaapid)."' and isnull(rel_best)
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db, $LIDID)."' and st.schaapId = '".mysqli_real_escape_string($db, $Schaapid)."' and isnull(rel_best)
 ") or die(mysqli_error($db));
 
 while ($zst = mysqli_fetch_assoc($zoek_stalId)) {
@@ -167,7 +169,8 @@ global $db;
 $zoek_max_stalId = mysqli_query($db, "
 SELECT max(st.stalId) stalId
 FROM tblStal st
-WHERE st.lidId = '".mysqli_real_escape_string($db, $LIDID)."' and st.schaapId = '".mysqli_real_escape_string($db, $Schaapid)."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db, $LIDID)."' and st.schaapId = '".mysqli_real_escape_string($db, $Schaapid)."'
 ") or die(mysqli_error($db));
 
 while ($zmst = mysqli_fetch_assoc($zoek_max_stalId)) {
@@ -451,7 +454,8 @@ function zoek_oudste_request_niet_definitief_gemeld($db, $lidId) {
      join tblMelding m on (rq.reqId = m.reqId)
      join tblHistorie h on (h.hisId = m.hisId)
      join tblStal st on (st.stalId = h.stalId)
-     join tblLeden l on (l.lidId = st.lidId)
+     join tblUbn u on (st.ubnId = u.ubnId)
+     join tblLeden l on (l.lidId = u.lidId)
     WHERE h.skip = 0 and l.lidId = '".mysqli_real_escape_string($db, $lidId)."' and isnull(rq.dmmeld) and rq.code = 'AAN' 
     GROUP BY l.relnr
     ") or die(mysqli_error($db));
@@ -481,7 +485,7 @@ function aanvoer_request_rvo_query($db, $reqId) {
      join tblHistorie h on (m.hisId = h.hisId)
      join tblStal st on (h.stalId = st.stalId)
      join tblUbn u on (u.ubnId = st.ubnId)
-     join tblLeden l on (st.lidId = l.lidId)
+     join tblLeden l on (u.lidId = l.lidId)
      join tblSchaap s on (st.schaapId = s.schaapId)
      join tblStal st_all on (s.schaapId = st_all.schaapId)
      left join tblHistorie hg on (hg.stalId = st_all.stalId)
@@ -534,7 +538,8 @@ FROM tblMelding m
     SELECT st.schaapId, max(datum) datum 
     FROM tblHistorie h
      join tblStal st on (st.stalId = h.stalId)
-    WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db, $lidId)."' and 
+     join tblUbn u on (st.ubnId = u.ubnId)
+    WHERE h.skip = 0 and u.lidId = '".mysqli_real_escape_string($db, $lidId)."' and 
      not exists (SELECT max(stl.stalId) stalId FROM tblStal stl WHERE stl.lidId = '".mysqli_real_escape_string($db, $lidId)."' and stl.stalId = st.stalId)
     GROUP BY st.schaapId
  ) lastdm on (lastdm.schaapId = s.schaapId)
@@ -597,8 +602,10 @@ function zoek_request_definitief($db, $reqId) {
 function zoek_eerste_stalrecord($lidId) {
     global $db;
     $maand_voorbij = mysqli_query($db, "
-        SELECT date_format(min(st.dmcreatie),'%Y%m') maand FROM tblStal st
-         WHERE st.lidId = '".mysqli_real_escape_string($db, $lidId)."'
+        SELECT date_format(min(st.dmcreatie),'%Y%m') maand
+        FROM tblStal st
+         join tblUbn u on (st.ubnId = u.ubnId)
+        WHERE u.lidId = '".mysqli_real_escape_string($db, $lidId)."'
             ") or die(mysqli_error($db));
     while ($ym = mysqli_fetch_assoc($maand_voorbij)) {
         $controle_maand = $ym['maand'];
