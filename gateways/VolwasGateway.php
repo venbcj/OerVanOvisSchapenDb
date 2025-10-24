@@ -76,12 +76,14 @@ lst_volwId
 FROM tblVolwas v
  join tblSchaap mdr on (v.mdrId = mdr.schaapId)
  join tblStal stm on (stm.schaapId = mdr.schaapId)
+ join tblUbn um on (stm.ubnId = um.ubnId)
  join tblHistorie h on (stm.stalId = h.stalId and v.hisId = h.hisId)
  left join (
-     SELECT hisId, h.datum dekdate, date_format(h.datum,'%d-%m-%Y') dekdatum, year(h.datum) dekjaar, skip
-     FROM tblHistorie h
-      join tblStal st on (st.stalId = h.stalId)
-     WHERE actId = 18 and skip = 0 and st.lidId = '".$this->db->real_escape_string($lidId)."'
+    SELECT hisId, h.datum dekdate, date_format(h.datum,'%d-%m-%Y') dekdatum, year(h.datum) dekjaar, skip
+    FROM tblHistorie h
+     join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (st.ubnId = u.ubnId)
+    WHERE actId = 18 and skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."'
  ) dek on (v.hisId = dek.hisId)
  left join tblSchaap vdr on (v.vdrId = vdr.schaapId)
  left join (
@@ -89,10 +91,12 @@ FROM tblVolwas v
      FROM tblDracht d 
      join tblHistorie h on (h.hisId = d.hisId)
      join tblStal st on (st.stalId = h.stalId)
-    WHERE actId = 19 and h.skip = 0 and st.lidId = '".$this->db->real_escape_string($lidId)."'
+     join tblUbn u on (st.ubnId = u.ubnId)
+    WHERE actId = 19 and h.skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."'
  ) dra on (dra.volwId = v.volwId)
  left join tblSchaap lam on (lam.volwId = v.volwId)
  left join tblStal stl on (stl.schaapId = lam.schaapId)
+ join tblUbn ul on (st.ubnId = ul.ubnId)
  left join (
      SELECT stalId, date_format(datum,'%d-%m-%Y') werpdatum, year(date_add(datum,interval -145 day)) dekjaar_obv_worp
      FROM tblHistorie
@@ -123,8 +127,8 @@ FROM tblVolwas v
     WHERE (dek.hisId is not null or dra.volwId is not null) and isnull(ha.schaapId)
     GROUP BY mdrId
  ) lst_v on (lst_v.mdrId = v.mdrId)
-WHERE stm.lidId = '".$this->db->real_escape_string($lidId)."'
- and (isnull(stl.lidId) or stl.lidId = '".$this->db->real_escape_string($lidId)."')
+WHERE um.lidId = '".$this->db->real_escape_string($lidId)."'
+ and (isnull(ul.lidId) or ul.lidId = '".$this->db->real_escape_string($lidId)."')
  and (dekdatum is not null or drachtdatum is not null)
  and coalesce(dekjaar, dekjaar_obv_worp, drachtjaar) = '".$this->db->real_escape_string($jaar)."'
  and isnull(stm.rel_best)

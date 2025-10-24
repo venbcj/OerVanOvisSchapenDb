@@ -16,11 +16,12 @@ if ($Afdrukstand == 'P') { $headerWidth = 190; $imageWidth = 169; }
 if ($Afdrukstand == 'L') { $headerWidth = 277; $imageWidth = 256; }
 
 $zoek_lid = mysqli_query($db,"
-SELECT lidId
-FROM tblStal
-WHERE stalId = ".mysqli_real_escape_string($db,$stal)." 
+SELECT u.lidId
+FROM tblStal st
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE st.stalId = ".mysqli_real_escape_string($db,$stal)." 
 ") or die (mysqli_error($db));
-While ($row = mysqli_fetch_assoc($zoek_lid)) {    $lidId = $row['lidId']; }
+While ($row = mysqli_fetch_assoc($zoek_lid)) { $lidId = $row['lidId']; }
 
 
 // *** Opbouwen van een array met die links en rechts op het rapport reps. reden uitval en reden medicijnen opbouwt ***

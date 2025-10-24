@@ -423,7 +423,8 @@ if($modtech == 1) {
 $zoek_stalId = mysqli_query($db,"
 SELECT st.stalId
 FROM tblStal st
-WHERE st.lidId = ".mysqli_real_escape_string($db,$lidId)."  
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = ".mysqli_real_escape_string($db,$lidId)."  
 ") or die (mysqli_error($db));
 
 $pdf = '';
