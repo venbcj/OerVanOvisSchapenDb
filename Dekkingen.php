@@ -90,6 +90,7 @@ dracht = document.getElementById(kzlDrachtig);		var dr = dracht.value;
 $resultvader = mysqli_query($db,"
 SELECT st.schaapId, right(s.levensnummer,$Karwerk) werknr
 FROM tblStal st
+ join tblUbn u on (st.ubnId = u.ubnId)
  join tblSchaap s on (st.schaapId = s.schaapId)
  join (
  	SELECT schaapId
@@ -100,7 +101,8 @@ FROM tblStal st
  join (
  	SELECT schaapId, max(stalId) stalId
  	FROM tblStal st
- 	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+	 join tblUbn u on (st.ubnId = u.ubnId)
+ 	WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
  	GROUP BY schaapId
  ) mst on (s.schaapId = mst.schaapId)
  left join (
@@ -110,7 +112,7 @@ FROM tblStal st
  	 join tblActie a on (h.actId = a.actId)
  	WHERE a.af = 1 and h.skip = 0
  ) afv on (afv.stalId = mst.stalId)
-WHERE s.geslacht = 'ram' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(afv.stalId)
+WHERE s.geslacht = 'ram' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(afv.stalId)
 ORDER BY right(s.levensnummer,$Karwerk)
 ") or die (mysqli_error($db)); 
 
@@ -771,7 +773,8 @@ $zoek_jaartal_eerste_dekking_dracht = mysqli_query($db,"
 SELECT year(min(h.datum)) jaar
 FROM tblHistorie h
  join tblStal st on (st.stalId = h.stalId)
-WHERE (actId = 18 or actId = 19) and skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and year(h.datum) >= '".mysqli_real_escape_string($db,$een_startjaar_eerder_gebruiker)."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE (actId = 18 or actId = 19) and skip = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and year(h.datum) >= '".mysqli_real_escape_string($db,$een_startjaar_eerder_gebruiker)."'
 ") or die (mysqli_error($db));
 
 	while($zj = mysqli_fetch_assoc($zoek_jaartal_eerste_dekking_dracht)) { $first_year_db = $zj['jaar']; }
@@ -822,7 +825,8 @@ FROM tblVolwas v
  	SELECT hisId, h.datum dekdate, date_format(h.datum,'%d-%m-%Y') dekdatum, year(h.datum) dekjaar, skip
  	FROM tblHistorie h
  	 join tblStal st on (st.stalId = h.stalId)
- 	WHERE actId = 18 and skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+	 join tblUbn u on (st.ubnId = u.ubnId)
+ 	WHERE actId = 18 and skip = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
  ) dek on (v.hisId = dek.hisId)
  left join tblSchaap vdr on (v.vdrId = vdr.schaapId)
  left join (
@@ -830,7 +834,8 @@ FROM tblVolwas v
  	FROM tblDracht d 
 	 join tblHistorie h on (h.hisId = d.hisId)
 	 join tblStal st on (st.stalId = h.stalId)
-	WHERE actId = 19 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+	 join tblUbn u on (st.ubnId = u.ubnId)
+	WHERE actId = 19 and h.skip = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
  ) dra on (dra.volwId = v.volwId)
  left join tblSchaap lam on (lam.volwId = v.volwId)
  left join tblStal stl on (stl.schaapId = lam.schaapId)
@@ -937,7 +942,8 @@ SELECT max(h.datum) datum
 FROM tblHistorie h
  join tblBezet b on (h.hisId = b.hisId)
  join tblStal st on (h.stalId = st.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$mdrId)."' and h.datum <= '".mysqli_real_escape_string($db,$dmdek)."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$mdrId)."' and h.datum <= '".mysqli_real_escape_string($db,$dmdek)."'
 ") or die (mysqli_error($db)); 
 
 while ($zdvtd = mysqli_fetch_array($zoek_datum_verblijf_tijdens_dekking)) 
@@ -949,7 +955,8 @@ SELECT max(h.hisId) hisId
 FROM tblHistorie h
  join tblBezet b on (h.hisId = b.hisId)
  join tblStal st on (h.stalId = st.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$mdrId)."' and h.datum = '".mysqli_real_escape_string($db,$date_verblijf)."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$mdrId)."' and h.datum = '".mysqli_real_escape_string($db,$date_verblijf)."'
 ") or die (mysqli_error($db)); 
 
 while ($zhvtd = mysqli_fetch_array($zoek_hisId_verblijf_tijdens_dekking)) 
@@ -969,7 +976,8 @@ FROM tblBezet b
 	 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 	 join tblActie a2 on (a2.actId = h2.actId)
 	 join tblStal st on (h1.stalId = st.stalId)
-	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+	 join tblUbn u on (st.ubnId = u.ubnId)
+	WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
 	GROUP BY b.bezId, st.schaapId, h1.hisId
  ) uit on (b.hisId = uit.hisv)
  left join tblHistorie ht on (ht.hisId = uit.hist)

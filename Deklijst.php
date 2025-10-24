@@ -180,7 +180,8 @@ $zoek_aantal_afleveren_per_jaar = "
 SELECT count(h.hisId) aant
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
-WHERE h.actId = 12 and h.skip = 0 and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE h.actId = 12 and h.skip = 0 and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ";
 
 $zoek_aantal_afleveren_per_jaar = mysqli_query($db,$zoek_aantal_afleveren_per_jaar) or die (mysqli_error($db));
@@ -217,8 +218,9 @@ $zoek_worpen_per_jaar = mysqli_query($db,"
 SELECT count(distinct s.volwId) aant
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
+ join tblUbn u on (st.ubnId = u.ubnId)
  join tblHistorie h on (h.stalId = st.stalId)
-WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die (mysqli_error($db));
 
 	while ( $zwj = mysqli_fetch_assoc($zoek_worpen_per_jaar)) { $jaarworp = $zwj['aant']; }
@@ -226,8 +228,9 @@ WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y') = '".mysqli_real_
 $zoek_geboortes_per_jaar = mysqli_query($db,"
 SELECT count(st.schaapId) aant
 FROM tblStal st
+ join tblUbn u on (st.ubnId = u.ubnId)
  join tblHistorie h on (h.stalId = st.stalId)
-WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die (mysqli_error($db));
 
 	while ( $zgj = mysqli_fetch_assoc($zoek_geboortes_per_jaar)) { $jaargeboortes = $zgj['aant']; }
@@ -244,14 +247,16 @@ $worpgrootte_r = 0;
 $zoek_sterfte_per_jaar = mysqli_query($db,"
 SELECT count(st.schaapId) aant
 FROM tblStal st
+ join tblUbn u on (st.ubnId = u.ubnId)
  join tblHistorie h on (h.stalId = st.stalId)
  join (
  	SELECT st.schaapId
 	FROM tblStal st
+	 join tblUbn u on (st.ubnId = u.ubnId)
 	 join tblHistorie h on (h.stalId = st.stalId)
-	WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+	WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
  ) geb on (geb.schaapId = st.schaapId)
-WHERE h.actId = 14 and h.skip = 0 and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+WHERE h.actId = 14 and h.skip = 0 and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die (mysqli_error($db));
 
 	while ( $zsj = mysqli_fetch_assoc($zoek_sterfte_per_jaar)) { $jaarsterfte = $zsj['aant']; }
@@ -472,7 +477,8 @@ SELECT count(volwId) aant
 FROM tblVolwas v
  join tblHistorie h on (v.hisId = h.hisId)
  join tblStal st on (h.stalId = st.stalId)
-WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and year(h.datum) = '".mysqli_real_escape_string($db,$kzlJaar)."' and h.datum < '".mysqli_real_escape_string($db,$dmdek1)."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE h.skip = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and year(h.datum) = '".mysqli_real_escape_string($db,$kzlJaar)."' and h.datum < '".mysqli_real_escape_string($db,$dmdek1)."'
 ") or die (mysqli_error($db));
 
 	while($zdvw = mysqli_fetch_assoc($zoek_dekkingen_voor_week1))
@@ -511,7 +517,8 @@ SELECT count(v.volwId) aant
 FROM tblVolwas v 
  join tblHistorie h on (v.hisId = h.hisId)
  join tblStal st on (h.stalId = st.stalId)
-WHERE h.skip = 0 and date_format(h.datum,'%Y%u') = '".mysqli_real_escape_string($db,$lastYearWeek)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE h.skip = 0 and date_format(h.datum,'%Y%u') = '".mysqli_real_escape_string($db,$lastYearWeek)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die (mysqli_error($db));
 
 	while ( $zad = mysqli_fetch_assoc($zoek_aantal_dekkingen)) { $dekat_r_week0 = $zad['aant']; }
@@ -520,7 +527,8 @@ $zoek_aantal_lammeren = mysqli_query($db,"
 SELECT count(h.hisId) aant
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
-WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y%u') = '".mysqli_real_escape_string($db,$wJaarWeek0)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y%u') = '".mysqli_real_escape_string($db,$wJaarWeek0)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die (mysqli_error($db));
 	while ( $zal = mysqli_fetch_assoc($zoek_aantal_lammeren)) { $werpat_r_week0 = $zal['aant']; if($werpat_r_week0 == 0) { unset($werpat_r_week0); } }
 
@@ -528,7 +536,8 @@ $zoek_aantal_afvoer = mysqli_query($db,"
 SELECT count(h.hisId) aant
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
-WHERE h.actId = 12 and h.skip = 0 and date_format(h.datum,'%Y%u') = '".mysqli_real_escape_string($db,$aJaarWeek0)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE h.actId = 12 and h.skip = 0 and date_format(h.datum,'%Y%u') = '".mysqli_real_escape_string($db,$aJaarWeek0)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die (mysqli_error($db));
 	while ( $zaa = mysqli_fetch_assoc($zoek_aantal_afvoer)) { $afvat_r_week0 = $zaa['aant']; if($afvat_r_week0 == 0) { unset($afvat_r_week0); } }
 
@@ -673,7 +682,8 @@ SELECT count(v.volwId) aant
 FROM tblVolwas v 
  join tblHistorie h on (v.hisId = h.hisId)
  join tblStal st on (h.stalId = st.stalId)
-WHERE h.skip = 0 and date_format(h.datum,'%Y%u') = '".mysqli_real_escape_string($db,$dek_jaarweek)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE h.skip = 0 and date_format(h.datum,'%Y%u') = '".mysqli_real_escape_string($db,$dek_jaarweek)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die (mysqli_error($db));
 	while ( $zadw = mysqli_fetch_assoc($zoek_aantal_dekkingen_per_week)) { $dekat_r = $zadw['aant']; if($dekat_r == 0) { unset($dekat_r); } }
 
@@ -681,7 +691,8 @@ $zoek_aantal_geboortes_per_week = "
 SELECT count(h.hisId) aant
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
-WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y%u') = '".mysqli_real_escape_string($db,$werp_jaarweek)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y%u') = '".mysqli_real_escape_string($db,$werp_jaarweek)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ";
 //echo $zoek_aantal_geboortes_per_week.'<br>';
 
@@ -693,7 +704,8 @@ $zoek_aantal_afvoer_per_week = mysqli_query($db,"
 SELECT count(h.hisId) aant
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
-WHERE h.actId = 12 and h.skip = 0 and date_format(h.datum,'%Y%u') = '".mysqli_real_escape_string($db,$afv_jaarweek)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE h.actId = 12 and h.skip = 0 and date_format(h.datum,'%Y%u') = '".mysqli_real_escape_string($db,$afv_jaarweek)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die (mysqli_error($db));
 	while ( $zaaw = mysqli_fetch_assoc($zoek_aantal_afvoer_per_week)) { $afvat_r = $zaaw['aant']; if($afvat_r == 0) { unset($afvat_r); } }
 
@@ -815,7 +827,8 @@ SELECT count(v.volwId) aant
 FROM tblVolwas v 
  join tblHistorie h on (v.hisId = h.hisId)
  join tblStal st on (h.stalId = st.stalId)
-WHERE h.skip = 0 and date_format(h.datum,'%Y%u') >= '".mysqli_real_escape_string($db,$Dweekvan)."' and date_format(h.datum,'%Y%u') <= '".mysqli_real_escape_string($db,$Dweektot)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE h.skip = 0 and date_format(h.datum,'%Y%u') >= '".mysqli_real_escape_string($db,$Dweekvan)."' and date_format(h.datum,'%Y%u') <= '".mysqli_real_escape_string($db,$Dweektot)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die (mysqli_error($db));
 	while ( $zadm = mysqli_fetch_assoc($zoek_aantal_dekkingen_per_maand)) { $dektot_r = $zadm['aant']; }
 
@@ -865,7 +878,8 @@ $zoek_aantal_lammeren_per_maand = mysqli_query($db,"
 SELECT count(h.hisId) aant
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
-WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y%u') >= '".mysqli_real_escape_string($db,$Wweekvan)."' and date_format(h.datum,'%Y%u') <= '".mysqli_real_escape_string($db,$Wweektot)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y%u') >= '".mysqli_real_escape_string($db,$Wweekvan)."' and date_format(h.datum,'%Y%u') <= '".mysqli_real_escape_string($db,$Wweektot)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die (mysqli_error($db));
 
 	while ( $zalm = mysqli_fetch_assoc($zoek_aantal_lammeren_per_maand)) { $werptot_r = $zalm['aant']; }
@@ -915,7 +929,8 @@ $zoek_aantal_afleveren_per_maand = "
 SELECT count(h.hisId) aant
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
-WHERE h.actId = 12 and h.skip = 0 and date_format(h.datum,'%Y%u') >= '".mysqli_real_escape_string($db,$Afweekvan)."' and date_format(h.datum,'%Y%u') <= '".mysqli_real_escape_string($db,$Afweektot)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE h.actId = 12 and h.skip = 0 and date_format(h.datum,'%Y%u') >= '".mysqli_real_escape_string($db,$Afweekvan)."' and date_format(h.datum,'%Y%u') <= '".mysqli_real_escape_string($db,$Afweektot)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ";
 //echo $zoek_aantal_afleveren_per_maand.'<br><br>';
 $zoek_aantal_afleveren_per_maand = mysqli_query($db,$zoek_aantal_afleveren_per_maand) or die (mysqli_error($db));
