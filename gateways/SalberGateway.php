@@ -40,9 +40,10 @@ $vw = $this->db->query("
 SELECT count(s.schaapId) aant_geb
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
+ join tblUbn u on (st.ubnId = u.ubnId)
  join tblHistorie hg on (hg.stalId = st.stalId and hg.actId = 1 and hg.skip = 0)
  left join tblHistorie hkoop on (hkoop.stalId = st.stalId and hkoop.actId = 2 and hkoop.skip = 0)
-WHERE st.lidId = '".$this->db->real_escape_string($lidId)."'
+WHERE u.lidId = '".$this->db->real_escape_string($lidId)."'
  and date_format(hg.datum,'%Y') = '".$this->db->real_escape_string($jaar)."'
  and isnull(hkoop.hisId)
 ");

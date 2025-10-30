@@ -32,7 +32,8 @@ FROM tblRequest r
  join tblMelding m on (r.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '".$this->db->real_escape_string($lidid)."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = '".$this->db->real_escape_string($lidid)."'
  and h.skip = 0
  and isnull(r.dmmeld)
  and code = '".$this->db->real_escape_string($fldCode)."'
@@ -51,13 +52,14 @@ FROM tblRequest r
  join tblMelding m on (r.reqId = m.reqId)
  join tblHistorie h on (h.hisId = m.hisId)
  join tblStal st on (st.stalId = h.stalId)
+ join tblUbn u on (st.ubnId = u.ubnId)
  left join(
     SELECT max(respId) respId, reqId
     FROM impRespons 
     GROUP BY reqId
     ) lr on (r.reqId = lr.reqId)
  left join impRespons rp on (rp.respId = lr.respId)
-WHERE st.lidId = '".$this->db->real_escape_string($lidId)."' and (rp.def != 'J' or isnull(rp.def)) and h.skip = 0
+WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and (rp.def != 'J' or isnull(rp.def)) and h.skip = 0
 GROUP BY r.reqId
 ORDER BY r.reqId
 ");
@@ -81,7 +83,8 @@ FROM tblRequest r
  join tblMelding m on (r.reqId = m.reqId)
  join tblHistorie h on (h.hisId = m.hisId)
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = ".$this->db->real_escape_string($lidId)." and h.skip = 0 and isnull(r.dmmeld) and m.skip <> 1 ");
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = ".$this->db->real_escape_string($lidId)." and h.skip = 0 and isnull(r.dmmeld) and m.skip <> 1 ");
 return $vw->fetch_row()[0] > 0;
     }
 
