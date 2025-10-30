@@ -1316,6 +1316,7 @@ FROM
      join tblVolwas v on (v.mdrId = s.schaapId)
      join tblSchaap lam on (lam.volwId = v.volwId)
      join tblStal sl on (lam.schaapId = sl.schaapId)
+     join tblUbn ul on (st.ubnId = u.ubnId)
      join tblHistorie hl on (sl.stalId = hl.stalId)
      left join (
         SELECT s.schaapId, h.datum 
@@ -1325,7 +1326,7 @@ FROM
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
      ) ouder on (ouder.schaapId = s.schaapId)
 
-    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and sl.lidId = '".$this->db->real_escape_string($lidId)."' and hl.actId = 1 and hl.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
+    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and ul.lidId = '".$this->db->real_escape_string($lidId)."' and hl.actId = 1 and hl.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
     GROUP BY s.levensnummer, s.geslacht, ouder.datum
  ) mdr
  join
@@ -1368,13 +1369,14 @@ FROM
          join tblVolwas v on (v.mdrId = moe.schaapId)
          join tblSchaap lam on (lam.volwId = v.volwId)
          join tblStal sl on (lam.schaapId = sl.schaapId)
+         join tblUbn ul on (st.ubnId = u.ubnId)
          join tblHistorie hl on (sl.stalId = hl.stalId)
 
         WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and hl.actId = 1 and hl.skip = 0 and moe.schaapId = '".$this->db->real_escape_string($schaapId)."'
         GROUP BY moe.levensnummer, moe.geslacht
      ) lam1 on (lam1.levensnummer = s.levensnummer and lam1.worp1 = hl.datum)
 
-    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and sl.lidId = '".$this->db->real_escape_string($lidId)."' and hl.actId = 1 and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and isnull(lam1.worp1)
+    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and ul.lidId = '".$this->db->real_escape_string($lidId)."' and hl.actId = 1 and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and isnull(lam1.worp1)
     GROUP BY s.levensnummer, s.geslacht, ouder.datum
  ) mdr
  join
