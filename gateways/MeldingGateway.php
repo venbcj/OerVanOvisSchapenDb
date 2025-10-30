@@ -60,7 +60,7 @@ WHERE m.reqId = '".$this->db->real_escape_string($fldReqId)."'
 }
 
 // Aantal dieren goed geregistreerd om automatisch te kunnen melden.
-public function aantal_oke_uitv($lidid,$fldReqId,$nestHistorieDm) {
+public function aantal_oke_uitv($fldReqId,$nestHistorieDm) {
 $vw = $this->db->query("
 SELECT count(*) aant
 FROM tblMelding m
@@ -91,7 +91,7 @@ WHERE m.reqId = '".$this->db->real_escape_string($fldReqId)."'
     return FALSE;
 }
 
-public function aantal_oke_afv($lidid,$fldReqId,$nestHistorieDm) {
+public function aantal_oke_afv($fldReqId,$nestHistorieDm) {
 $vw = $this->db->query("
 SELECT count(*) aant
 FROM tblMelding m
