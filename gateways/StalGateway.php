@@ -24,18 +24,20 @@ class StalGateway extends Gateway {
 
     public function zoek_lege_stallijst($lidId) {
         return $this->first_field(<<<SQL
-SELECT count(stalId) aant
-FROM tblStal
-WHERE lidId = :lidId
+SELECT count(st.stalId) aant
+FROM tblStal st
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = :lidId
 SQL
         , [[':lidId', $lidId, self::INT]]);
     }
 
     public function tel_stallijsten($lidId, $schaapId) {
         return $this->first_field("
-SELECT count(stalId) stalId
-FROM tblStal
-WHERE schaapId = '" . $this->db->real_escape_string($schaapId) . "' and lidId <> '" . $this->db->real_escape_string($lidId) . "'");
+SELECT count(st.stalId) stalId
+FROM tblStal st
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE st.schaapId = '" . $this->db->real_escape_string($schaapId) . "' and u.lidId <> '" . $this->db->real_escape_string($lidId) . "'");
     }
 
     public function kzlOoien($lidId, $Karwerk) {
@@ -50,10 +52,11 @@ WHERE schaapId = '" . $this->db->real_escape_string($schaapId) . "' and lidId <>
 SELECT st.stalId, st.schaapId, s.levensnummer, right(s.levensnummer,:Karwerk) werknr, count(lam.schaapId) lamrn,
  concat(st.kleur,' ',st.halsnr) halsnr
 FROM (
-    SELECT max(stalId) stalId, schaapId
-    FROM tblStal
-    WHERE lidId = :lidId
-    GROUP BY schaapId
+    SELECT max(st.stalId) stalId, st.schaapId
+    FROM tblStal st
+     join tblUbn u on (st.ubnId = u.ubnId)
+    WHERE u.lidId = :lidId
+    GROUP BY st.schaapId
  ) stm
  join tblStal st on (stm.stalId = st.stalId)
  join tblSchaap s on (st.schaapId = s.schaapId)
@@ -66,11 +69,12 @@ FROM (
  left join tblVolwas v on (s.schaapId = v.mdrId)
  left join tblSchaap lam on (lam.volwId = v.volwId)
  left join (
-     SELECT st.stalId, datum
-     FROM tblStal st
-      join tblHistorie h on (st.stalId = h.stalId)
-      join tblActie a on (h.actId = a.actId)
-     WHERE a.af = 1 and h.actId <> 10 and lidId = :lidId
+    SELECT st.stalId, datum
+    FROM tblStal st
+     join tblUbn u on (st.ubnId = u.ubnId)
+     join tblHistorie h on (st.stalId = h.stalId)
+     join tblActie a on (h.actId = a.actId)
+    WHERE a.af = 1 and h.actId <> 10 and u.lidId = :lidId
      ) afv on (afv.stalId = st.stalId)
 WHERE s.geslacht = 'ooi' and (isnull(afv.stalId) or afv.datum > date_add(curdate(), interval -2 month) )
 GROUP BY st.stalId, st.schaapId, s.levensnummer, right(s.levensnummer,:Karwerk)
@@ -81,18 +85,20 @@ SQL
 
     public function zoek_laatste_stalId($lidId, $schaapId) {
         $vw = $this->db->query("
-SELECT max(stalId) stalId
-FROM tblStal
-WHERE lidId = '".$this->db->real_escape_string($lidId)."' and schaapId = '".$this->db->real_escape_string($schaapId)."' 
+SELECT max(st.stalId) stalId
+FROM tblStal st
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and st.schaapId = '".$this->db->real_escape_string($schaapId)."' 
 ");
 return $vw->fetch_row()[0];
 }
 
 public function findLidByStal($stalId) {
     $vw = $this->db->query("
-SELECT lidId
+SELECT u.lidId
 FROM tblStal
-WHERE stalId = ".$this->db->real_escape_string($stalId)." 
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE st.stalId = ".$this->db->real_escape_string($stalId)." 
 ");
 if ($vw->num_rows) {
     return $vw->fetch_row()[0];
@@ -104,7 +110,8 @@ public function zoekKleurHalsnr($lidId, $schaapId) {
     $vw = $this->db->query("
 SELECT stalId, kleur, halsnr
 FROM tblStal st
-WHERE st.lidId = '".$this->db->real_escape_string($lidId)."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = '".$this->db->real_escape_string($lidId)."'
  and st.schaapId = '".$this->db->real_escape_string($schaapId)."'
  and isnull(st.rel_best)
 ");
@@ -122,9 +129,10 @@ public function zoek_relid($lidId, $schaapId) {
     $vw = $this->db->query("
 SELECT st.stalId, st.rel_best
 FROM (
-    SELECT max(stalId) stalId
+    SELECT max(st.stalId) stalId
     FROM tblStal
-    WHERE lidId = '".$this->db->real_escape_string($lidId)."' and schaapId = '".$this->db->real_escape_string($schaapId)."'
+     join tblUbn u on (st.ubnId = u.ubnId)
+    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and st.schaapId = '".$this->db->real_escape_string($schaapId)."'
  ) mst
  join tblStal st on (mst.stalId = st.stalId)
 ");
@@ -163,35 +171,36 @@ WHERE hisId = :hisId
 SQL;
     }
 
-    public function countHisHok1324($lidId, $date) {
-        $vw = $this->db->query(" select count(h.hisId) aant
-        from tblStal st
-        join tblHistorie h on (h.stalId = st.stalId)
-        join tblBezetting b on (h.hisId = b.hisId)
-        join tblPeriode p on (p.periId =b.periId)
-        join tblHok hk on (hk.hokId =p.hokId)
-        left join
-        (
-            select b.bezId, h1.hisId hisv, min(h2.hisId) hist
-            from tblBezetting b
-            join tblHistorie h1 on (b.hisId = h1.hisId)
-            join tblActie a1 on (a1.actId = h1.actId)
-            join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
-            join tblActie a2 on (a2.actId = h2.actId)
-            join tblStal st on (h1.stalId = st.stalId)
-            join tblPeriode p on (p.periId = b.periId)
-            where st.lidId = " . $this->db->real_escape_string($lidId) . " and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-            group by b.bezId, h1.hisId
+public function countHisHok1324($lidId, $date) {
+    $vw = $this->db->query(" SELECT count(h.hisId) aant
+    FROM tblStal st
+    join tblHistorie h on (h.stalId = st.stalId)
+    join tblBezetting b on (h.hisId = b.hisId)
+    join tblPeriode p on (p.periId =b.periId)
+    join tblHok hk on (hk.hokId =p.hokId)
+    left join
+    (
+        SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
+        FROM tblBezetting b
+         join tblHistorie h1 on (b.hisId = h1.hisId)
+         join tblActie a1 on (a1.actId = h1.actId)
+         join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
+         join tblActie a2 on (a2.actId = h2.actId)
+         join tblStal st on (h1.stalId = st.stalId)
+         join tblUbn u on (st.ubnId = u.ubnId)
+         join tblPeriode p on (p.periId = b.periId)
+        WHERE u.lidId = " . $this->db->real_escape_string($lidId) . " and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+        GROUP BY b.bezId, h1.hisId
     ) uit
     on (uit.bezId = b.bezId)
     left join tblHistorie ht on (ht.hisId = uit.hist)
     left join (
-        select st.schaapId, h.datum
-        from tblStal st
+        SELECT st.schaapId, h.datum
+        FROM tblStal st
         join tblHistorie h on (st.stalId = h.stalId)
-        where h.actId = 4
+        WHERE h.actId = 4
     ) hs on (hs.schaapId = st.schaapId)
-    where hk.hokId = 1324 and h.datum <= '$date' and (ht.datum > '$date' or isnull(ht.datum)) and hs.datum <= '$date'
+    WHERE hk.hokId = 1324 and h.datum <= '$date' and (ht.datum > '$date' or isnull(ht.datum)) and hs.datum <= '$date'
     ");
         return $vw->fetch_row()[0];
     }
