@@ -171,40 +171,6 @@ WHERE hisId = :hisId
 SQL;
     }
 
-public function countHisHok1324($lidId, $date) {
-    $vw = $this->db->query(" SELECT count(h.hisId) aant
-    FROM tblStal st
-    join tblHistorie h on (h.stalId = st.stalId)
-    join tblBezetting b on (h.hisId = b.hisId)
-    join tblPeriode p on (p.periId =b.periId)
-    join tblHok hk on (hk.hokId =p.hokId)
-    left join
-    (
-        SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
-        FROM tblBezetting b
-         join tblHistorie h1 on (b.hisId = h1.hisId)
-         join tblActie a1 on (a1.actId = h1.actId)
-         join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId)
-         join tblActie a2 on (a2.actId = h2.actId)
-         join tblStal st on (h1.stalId = st.stalId)
-         join tblUbn u on (st.ubnId = u.ubnId)
-         join tblPeriode p on (p.periId = b.periId)
-        WHERE u.lidId = " . $this->db->real_escape_string($lidId) . " and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-        GROUP BY b.bezId, h1.hisId
-    ) uit
-    on (uit.bezId = b.bezId)
-    left join tblHistorie ht on (ht.hisId = uit.hist)
-    left join (
-        SELECT st.schaapId, h.datum
-        FROM tblStal st
-        join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 4
-    ) hs on (hs.schaapId = st.schaapId)
-    WHERE hk.hokId = 1324 and h.datum <= '$date' and (ht.datum > '$date' or isnull(ht.datum)) and hs.datum <= '$date'
-    ");
-        return $vw->fetch_row()[0];
-    }
-
     public function insert($lidId, $schaapId, $rel_herk) {
         $this->db->query("INSERT INTO tblStal set lidId = '" . $this->db->real_escape_string($lidId) . "',
         schaapId = '" . $this->db->real_escape_string($schaapId) . "',
