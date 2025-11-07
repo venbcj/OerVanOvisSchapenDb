@@ -234,7 +234,8 @@ INSERT INTO tblHistorie (stalId, datum, kg, actId, skip, hisId_basis)
 	SELECT st.stalId, DATE_ADD(h.datum, INTERVAL $dagen DAY), NULL, h.actId, h.skip, h.hisId
 	FROM tblHistorie_basis h
 	 join tblStal st on (h.stalId = st.stalId_basis)
-	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (h.actId = 1 or h.actId = 2 or h.actId = 3 or h.actId = 10 or h.actId = 11 or h.actId = 12 or h.actId = 13 or h.actId = 14)
+	 join tblUbn u on (st.ubnId = u.ubnId)
+	WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (h.actId = 1 or h.actId = 2 or h.actId = 3 or h.actId = 10 or h.actId = 11 or h.actId = 12 or h.actId = 13 or h.actId = 14)
 	ORDER BY h.hisId	
 ";
 	mysqli_query($db,$ins_tblHistorie) or die(mysqli_error($db));
@@ -248,7 +249,8 @@ INSERT INTO tblHistorie (stalId, datum, kg, actId, skip, hisId_basis)
 	SELECT st.stalId, DATE_ADD(h.datum, INTERVAL $dagen DAY), h.kg, h.actId, h.skip, h.hisId
 	FROM tblHistorie_basis h
 	 join tblStal st on (h.stalId = st.stalId_basis)
-	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+	 join tblUbn u on (st.ubnId = u.ubnId)
+	WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 	ORDER BY h.hisId	
 ";
 	mysqli_query($db,$ins_tblHistorie) or die(mysqli_error($db));
@@ -310,10 +312,11 @@ INSERT INTO tblNuttig (hisId, inkId, nutat, stdat, reduId)
 	FROM tblNuttig_basis n
 	join tblHistorie h on (n.hisId = h.hisId_basis)
 	 join tblStal st on (st.stalId = h.stalId)
+	 join tblUbn u on (st.ubnId = u.ubnId)
 	 join tblInkoop i on (n.inkId = i.inkId_basis)
 	 join tblEenheiduser eu on (i.enhuId = eu.enhuId)
 	 join tblRedenuser ru on (n.reduId = ru.reduId_basis)
-	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ru.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+	WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ru.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 	ORDER BY nutId
 ";
 	mysqli_query($db,$ins_tblNuttig) or die(mysqli_error($db));
@@ -356,7 +359,8 @@ INSERT INTO tblBezet (periId, hisId, hokId)
 	 left join tblPeriode p on (b.periId = p.periId_basis and p.hokId = ho.hokId)
 	 join tblHistorie h on (b.hisId = h.hisId_basis)
 	 join tblStal st on (st.stalId = h.stalId)	
-	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ho.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+	 join tblUbn u on (st.ubnId = u.ubnId)
+	WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ho.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 	ORDER BY b.bezId
 ";
 	mysqli_query($db,$ins_tblBezet) or die(mysqli_error($db));
@@ -402,7 +406,8 @@ INSERT INTO tblMelding (reqId, hisId, meldnr, skip, fout)
 	 join tblRequest r on (m.reqId = r.reqId_basis)
 	 join tblHistorie h on (m.hisId = h.hisId_basis)
 	 join tblStal st on (st.stalId = h.stalId)
-	WHERE r.lidId_demo = '".mysqli_real_escape_string($db,$lidId)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+	 join tblUbn u on (st.ubnId = u.ubnId)
+	WHERE r.lidId_demo = '".mysqli_real_escape_string($db,$lidId)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 	ORDER BY meldId
 ";
 	mysqli_query($db,$ins_tblMelding) or die(mysqli_error($db));
