@@ -43,7 +43,8 @@ $zoek_schapen = mysqli_query($db,"
 SELECT s.schaapId,  s.levensnummer
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.levensnummer is not null
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.levensnummer is not null
 GROUP BY s.schaapId, s.levensnummer
 ORDER BY s.levensnummer
 ") or die (mysqli_error($db));
@@ -55,9 +56,10 @@ $zoek_moeders = mysqli_query($db,"
 SELECT mdr.schaapId, right(mdr.levensnummer,$Karwerk) werknr_ooi
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
+ join tblUbn u on (st.ubnId = u.ubnId)
  join tblVolwas v on (v.volwId = s.volwId)
  join tblSchaap mdr on (v.mdrId = mdr.schaapId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and mdr.levensnummer is not null
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and mdr.levensnummer is not null
 GROUP BY mdr.schaapId, right(mdr.levensnummer,$Karwerk)
 ORDER BY right(mdr.levensnummer,$Karwerk)
 ") or die (mysqli_error($db));
@@ -159,6 +161,7 @@ $result = "
 SELECT right(mdr.levensnummer, $Karwerk) moeder, s.schaapId, s.levensnummer, right(s.levensnummer, $Karwerk) werknum, s.geslacht, prnt.datum aanw, h.kg, h.datum date, date_format(h.datum,'%d-%m-%Y') datum, h.actId, a.actie
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
+ join tblUbn u on (st.ubnId = u.ubnId)
  join tblHistorie h on (st.stalId = h.stalId) 
  join tblActie a on (h.actId = a.actId)
  left join (
@@ -175,7 +178,7 @@ FROM tblSchaap s
  ) prnt on (prnt.schaapId = s.schaapId) 
  left join tblVolwas v on (v.volwId = s.volwId)
  left join tblSchaap mdr on (v.mdrId = mdr.schaapId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best) and h.kg is not null and h.skip = 0 ".$where. "
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best) and h.kg is not null and h.skip = 0 ".$where. "
 ORDER BY right(mdr.levensnummer, $Karwerk), right(s.levensnummer, $Karwerk), h.hisId
 ";
 

@@ -41,7 +41,8 @@ SELECT h.actId, a.actie
 FROM tblHistorie h
  join tblActie a on (h.actId = a.actId)
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.kg is not null
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.kg is not null
 GROUP BY h.actId, a.actie
 ORDER BY h.actId
 ") or die (mysqli_error($db));
@@ -128,6 +129,7 @@ $result = "
 SELECT date_format(h.datum,'%d-%m-%Y') datum, h.datum date, a.actie, right(mdr.levensnummer, $Karwerk) moeder, s.schaapId, right(s.levensnummer, $Karwerk) werknum, s.geslacht, prnt.datum aanw, h.kg
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
+ join tblUbn u on (st.ubnId = u.ubnId)
  join tblHistorie h on (st.stalId = h.stalId) 
  join tblActie a on (h.actId = a.actId)
  left join (
@@ -138,7 +140,7 @@ FROM tblSchaap s
  ) prnt on (prnt.schaapId = s.schaapId) 
  left join tblVolwas v on (v.volwId = s.volwId)
  left join tblSchaap mdr on (v.mdrId = mdr.schaapId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best) and h.kg is not null and h.skip = 0 ".$where. "
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best) and h.kg is not null and h.skip = 0 ".$where. "
 ORDER BY h.datum desc, h.actId, right(mdr.levensnummer, $Karwerk), right(s.levensnummer, $Karwerk), h.hisId
 ";
 
