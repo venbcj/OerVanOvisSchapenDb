@@ -96,7 +96,8 @@ $tabel = "tblSchaap s
 			SELECT max(hisId) hisId, h.stalId
 			FROM tblHistorie h
 			 join tblStal st on (st.stalId = h.stalId)
-			WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
+			 join tblUbn u on (st.ubnId = u.ubnId)
+			WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
 			GROUP BY h.stalId
 	 ) hmax on (hmax.stalId = st.stalId)
 	 join tblHistorie hm on (hm.hisId = hmax.hisId)

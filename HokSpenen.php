@@ -176,7 +176,8 @@ $tabel = "tblSchaap s
 		 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 		 join tblActie a2 on (a2.actId = h2.actId)
 		 join tblStal st on (h1.stalId = st.stalId)
-		WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1
+		 join tblUbn u on (st.ubnId = u.ubnId)
+		WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1
 		 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
 		GROUP BY b.bezId, st.schaapId, h1.hisId
  ) uit on (uit.bezId = b.bezId)
