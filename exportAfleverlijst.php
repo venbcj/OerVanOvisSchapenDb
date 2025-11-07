@@ -33,11 +33,12 @@ FROM tblHistorie h
     SELECT s.schaapId, date_format(h.datum,'%d-%m-%Y') datum, art.naam, art.wdgn_v
     FROM tblSchaap s 
      join tblStal st on (st.schaapId = s.schaapId)
+     join tblUbn u on (st.ubnId = u.ubnId)
      join tblHistorie h on (h.stalId = st.stalId)
      join tblNuttig n on (h.hisId = n.hisId)
      join tblInkoop i on (i.inkId = n.inkId)
      join tblArtikel art on (i.artId = art.artId) 
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 8 and h.skip = 0 and (h.datum + interval art.wdgn_v day) >= sysdate()
+    WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 8 and h.skip = 0 and (h.datum + interval art.wdgn_v day) >= sysdate()
 ) pil on (st.schaapId = pil.schaapId)
 WHERE h.datum = '".mysqli_real_escape_string($db,$afvDate)."' and st.rel_best = '".mysqli_real_escape_string($db,$relId)."' and a.af = 1 and h.skip = 0
 ORDER BY right(s.levensnummer,$Karwerk)

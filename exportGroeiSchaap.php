@@ -29,8 +29,9 @@ $query = $db->query("
 SELECT right(mdr.levensnummer, $Karwerk) moeder, s.levensnummer, right(s.levensnummer, $Karwerk) werknum, s.geslacht, prnt.datum aanw, h.kg, h.datum date, date_format(h.datum,'%d-%m-%Y') datum, a.actie
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  join tblHistorie h on (st.stalId = h.stalId) 
-  join tblActie a on (h.actId = a.actId)
+ join tblActie a on (h.actId = a.actId)
  left join (
     SELECT st.schaapId, datum
     FROM tblStal st
@@ -45,7 +46,7 @@ FROM tblSchaap s
  ) prnt on (prnt.schaapId = s.schaapId)
  left join tblVolwas v on (v.volwId = s.volwId)
  left join tblSchaap mdr on (v.mdrId = mdr.schaapId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best) and h.kg is not null and h.skip = 0
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best) and h.kg is not null and h.skip = 0
  " . $where . "
 ORDER BY right(mdr.levensnummer, $Karwerk), right(s.levensnummer, $Karwerk), h.hisId
 "); 

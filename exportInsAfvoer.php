@@ -30,17 +30,19 @@ SELECT rd.datum, right(rd.levensnummer,".mysqli_real_escape_string($db,$Karwerk)
 FROM impAgrident rd
  left join (
     SELECT s.schaapId, s.levensnummer, s.geslacht
-     FROM tblSchaap s
-      join tblStal st on (st.schaapId = s.schaapId)
-     WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-     GROUP BY s.schaapId, s.levensnummer, s.geslacht
+    FROM tblSchaap s
+     join tblStal st on (st.schaapId = s.schaapId)
+     join tblUbn u on (u.ubnId = st.ubnId)
+    WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    GROUP BY s.schaapId, s.levensnummer, s.geslacht
  ) s on (s.levensnummer = rd.levensnummer)
  left join (
     SELECT st.schaapId, h.hisId, a.actie, a.af
     FROM tblStal st
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblHistorie h on (st.stalId = h.stalId)
      join tblActie a on (h.actId = a.actId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a.af = 1 and h.skip = 0
+    WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a.af = 1 and h.skip = 0
  ) haf on (s.schaapId = haf.schaapId)
  left join (
     SELECT st.schaapId, h.datum
@@ -70,24 +72,27 @@ FROM impAgrident rd
         SELECT s.schaapId, h.datum, h.datum datum_kg, a.actie, h.actId, h.skip
         FROM tblSchaap s
          join tblStal st on (st.schaapId = s.schaapId)
+         join tblUbn u on (u.ubnId = st.ubnId)
          join tblHistorie h on (h.stalId = st.stalId)
          join tblActie a on (a.actId = h.actId)
-        WHERE a.actId = 2 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+        WHERE a.actId = 2 and h.skip = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 
         Union
 
         SELECT s.schaapId, h.datum, NULL datum_kg, a.actie, h.actId, h.skip
         FROM tblSchaap s
          join tblStal st on (st.schaapId = s.schaapId)
+         join tblUbn u on (u.ubnId = st.ubnId)
          join tblHistorie h on (h.stalId = st.stalId)
          join tblActie a on (a.actId = h.actId)
-        WHERE (a.actId = 5 or a.actId = 8 or a.actId = 9 or a.actId = 12 or a.actId = 13 or a.actId = 14) and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+        WHERE (a.actId = 5 or a.actId = 8 or a.actId = 9 or a.actId = 12 or a.actId = 13 or a.actId = 14) and h.skip = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 
         Union
 
         SELECT s.schaapId, h.datum, NULL datum_kg, a.actie, h.actId, h.skip
         FROM tblSchaap s
          join tblStal st on (st.schaapId = s.schaapId)
+         join tblUbn u on (u.ubnId = st.ubnId)
          join tblHistorie h on (h.stalId = st.stalId)
          join tblActie a on (a.actId = h.actId)
          left join 
@@ -95,10 +100,11 @@ FROM impAgrident rd
             SELECT s.schaapId, h.actId, h.datum 
             FROM tblSchaap s
              join tblStal st on (st.schaapId = s.schaapId)
+             join tblUbn u on (u.ubnId = st.ubnId)
              join tblHistorie h on (h.stalId = st.stalId) 
-            WHERE actId = 2 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+            WHERE actId = 2 and h.skip = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
          ) koop on (s.schaapId = koop.schaapId and koop.datum <= h.datum)
-        WHERE a.actId = 3 and h.skip = 0 and (isnull(koop.datum) or koop.datum < h.datum) and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+        WHERE a.actId = 3 and h.skip = 0 and (isnull(koop.datum) or koop.datum < h.datum) and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 
         Union
 
@@ -116,8 +122,9 @@ FROM impAgrident rd
          join tblVolwas v on (mdr.schaapId = v.mdrId)
          join tblSchaap lam on (v.volwId = lam.volwId)
          join tblStal st on (st.schaapId = lam.schaapId)
+         join tblUbn u on (u.ubnId = st.ubnId)
          join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 1 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+        WHERE h.actId = 1 and h.skip = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
         GROUP BY mdr.schaapId
 
         Union
@@ -127,8 +134,9 @@ FROM impAgrident rd
          join tblVolwas v on (mdr.schaapId = v.mdrId)
          join tblSchaap lam on (v.volwId = lam.volwId)
          join tblStal st on (st.schaapId = lam.schaapId)
+         join tblUbn u on (u.ubnId = st.ubnId)
          join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 1 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+        WHERE h.actId = 1 and h.skip = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
         GROUP BY mdr.schaapId, h.actId
         HAVING (max(h.datum) > min(h.datum))
 
@@ -140,8 +148,9 @@ FROM impAgrident rd
          join tblBezet b on (b.periId = p.periId)
          join tblHistorie h on (h.hisId = b.hisId)
          join tblStal st on (st.stalId = h.stalId)
+         join tblUbn u on (u.ubnId = st.ubnId)
          join tblSchaap s on (s.schaapId = st.schaapId)
-        WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' 
+        WHERE h.skip = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidId)."' 
         GROUP BY s.schaapId, p.dmafsluit
     ) sd
     GROUP BY schaapId
@@ -178,12 +187,13 @@ $zoek_pil = mysqli_query($db,"
 SELECT date_format(h.datum,'%d-%m-%Y') datum, art.naam, DATEDIFF( (h.datum + interval art.wdgn_v day), '".mysqli_real_escape_string($db,$date)."') resterend
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  join tblHistorie h on (h.stalId = st.stalId)
  join tblActie a on (a.actId = h.actId)
  left join tblNuttig n on (h.hisId = n.hisId)
  left join tblInkoop i on (i.inkId = n.inkId)
  left join tblArtikel art on (i.artId = art.artId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.schaapId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 8 and h.skip = 0
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.schaapId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 8 and h.skip = 0
  and '".mysqli_real_escape_string($db,$date)."' < (h.datum + interval art.wdgn_v day)
 ") or die (mysqli_error($db));  
 

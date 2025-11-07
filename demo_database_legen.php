@@ -58,7 +58,8 @@ FROM tblDracht d
  join tblVolwas v on (d.volwId = v.volwId)
  join tblSchaap s on (v.volwId = s.volwId)
  join tblStal st on (s.schaapId = st.schaapId)
-WHERE st.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
 ORDER BY d.draId
 ") or die (mysqli_error($db));
 
@@ -78,7 +79,8 @@ SELECT v.volwId
 FROM tblVolwas v
  join tblSchaap s on (v.volwId = s.volwId)
  join tblStal st on (s.schaapId = st.schaapId)
-WHERE st.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
 GROUP BY v.volwId
 ORDER BY v.volwId
 ") or die (mysqli_error($db));
@@ -98,7 +100,8 @@ $zoek_schaapId = mysqli_query($db,"
 SELECT s.schaapId
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
-WHERE st.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
 GROUP BY s.schaapId
 ORDER BY s.schaapId
 ") or die (mysqli_error($db));
@@ -117,7 +120,8 @@ $zoek_hisId = mysqli_query($db,"
 SELECT h.hisId
 FROM tblHistorie h
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '". mysqli_real_escape_string($db,$lidId) ."' and h.actId = 8
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = '". mysqli_real_escape_string($db,$lidId) ."' and h.actId = 8
 ") or die (mysqli_error($db));
 
 $hisId = array();
@@ -182,8 +186,9 @@ $zoek_hisId = mysqli_query($db,"
 SELECT h.hisId
 FROM tblHistorie h
  join tblStal st on (st.stalId = h.stalId)
+ join tblUbn u on (st.ubnId = u.ubnId)
  join tblBezet b on (b.hisId = h.hisId)
-WHERE st.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
+WHERE u.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
 GROUP BY h.hisId
 ORDER BY h.hisId
 ") or die (mysqli_error($db));
@@ -232,8 +237,9 @@ $zoek_hisId = mysqli_query($db,"
 SELECT h.hisId
 FROM tblHistorie h
  join tblStal st on (st.stalId = h.stalId)
+ join tblUbn u on (st.ubnId = u.ubnId)
  join tblBezet b on (b.hisId = h.hisId)
-WHERE st.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
+WHERE u.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
 ORDER BY h.hisId
 ") or die (mysqli_error($db));
 
@@ -258,7 +264,8 @@ SELECT m.reqId
 FROM tblMelding m
  join tblHistorie h on (h.hisId = m.hisId)
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
 GROUP BY m.reqId
 ORDER BY m.reqId
 ") or die (mysqli_error($db));
@@ -282,7 +289,8 @@ SELECT m.meldId
 FROM tblMelding m
  join tblHistorie h on (h.hisId = m.hisId)
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
 ORDER BY m.meldId
 ") or die (mysqli_error($db));
 
@@ -316,7 +324,8 @@ SELECT n.nutId
 FROM tblNuttig n
  join tblHistorie h on (n.hisId = h.hisId)
  join tblStal st on (h.stalId = st.stalId)
-WHERE st.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
 ORDER BY n.nutId
 ") or die (mysqli_error($db));
 
@@ -334,7 +343,8 @@ $zoek_hisId = mysqli_query($db,"
 SELECT h.hisId
 FROM tblHistorie h
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '". mysqli_real_escape_string($db,$lidId) ."' and h.actId = 8
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = '". mysqli_real_escape_string($db,$lidId) ."' and h.actId = 8
 ") or die (mysqli_error($db));
 
 $hisId = array();
@@ -457,13 +467,22 @@ mysqli_query($db,$verw_Verblijf) or die (mysqli_error($db));
 /* Verwijderen Stallijst */
 if(isset($_POST['chbSchaap']) || isset($_POST['chbHok']) || isset($_POST['chbCredit']) || isset($_POST['chbDebet']) || isset($_POST['chbAlles'])) {
 
-$verw_Stal = 
-"DELETE
-FROM tblStal st
-WHERE st.lidId = '". mysqli_real_escape_string($db,$lidId) ."' ";
+$zoek_ubnId = mysqli_query($db,"
+SELECT ubnId
+FROM tblUbn
+WHERE lidId = '". mysqli_real_escape_string($db,$lidId) ."'
+ORDER BY ubnId
+") or die (mysqli_error($db));
 
-mysqli_query($db,$verw_Stal) or die (mysqli_error($db));
+$ubnId = array();
+while( $zu = mysqli_fetch_assoc($zoek_ubnId)) { $ubnId[] = $zu['ubnId']; 
 
+$ubnIds = implode(',',$ubnId);
+    }
+    
+    $del_Stal = "DELETE FROM tblStal WHERE ubnId IN (".mysqli_real_escape_string($db,$ubnIds).") ";
+    /*echo $del_Stal.'<br>'; */    mysqli_query($db,$del_Stal);
+    
 $verw_Ubn = 
 "DELETE
 FROM tblUbn
