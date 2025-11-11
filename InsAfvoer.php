@@ -80,10 +80,10 @@ $tabel = "
 impAgrident rd
  left join (
 	SELECT s.schaapId, s.levensnummer, s.geslacht
-	 FROM tblSchaap s
-	  join tblStal st on (st.schaapId = s.schaapId)
-	 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-	 GROUP BY s.schaapId, s.levensnummer, s.geslacht
+	FROM tblSchaap s
+	 join tblStal st on (st.schaapId = s.schaapId)
+	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+	GROUP BY s.schaapId, s.levensnummer, s.geslacht
  ) s on (s.levensnummer = rd.levensnummer)
  left join (
  	SELECT st.schaapId, max(st.stalId) stalId
