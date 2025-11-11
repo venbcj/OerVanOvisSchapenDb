@@ -73,23 +73,26 @@ impAgrident rd
 	FROM tblSchaap s
 	 join tblStal st on (st.schaapId = s.schaapId)
 	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE st.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and h.skip = 0
+	 join tblUbn u on (st.ubnId = u.ubnId)
+	WHERE u.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and h.skip = 0
 	GROUP BY s.schaapId, s.levensnummer
  ) st on (rd.levensnummer = st.levensnummer)
  left join (
 	SELECT max(h.datum) datum, s.schaapId, s.levensnummer
 	FROM tblSchaap s
 	 join tblStal st on (st.schaapId = s.schaapId)
+	 join tblUbn u on (st.ubnId = u.ubnId)
 	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE st.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and h.skip = 0
+	WHERE u.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and h.skip = 0
 	GROUP BY s.schaapId, s.levensnummer
  ) lstDate on (rd.levensnummer = lstDate.levensnummer)
  left join (
  	SELECT h.actId, h.datum, st.schaapId
  	FROM tblHistorie h
  	 join tblStal st on (h.stalId = st.stalId)
+	 join tblUbn u on (st.ubnId = u.ubnId)
  	 join tblActie a on (a.actId = h.actId)
- 	WHERE st.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and a.af = 1 and h.skip = 0
+ 	WHERE u.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and a.af = 1 and h.skip = 0
  ) afv on (afv.datum = lstDate.datum and afv.schaapId = lstDate.schaapId)
  left join tblPartij p on (rd.ubn = p.ubn and p.lidId = '" . mysqli_real_escape_string($db,$lidId) . "')
  left join (
