@@ -86,12 +86,17 @@ impAgrident rd
 	 GROUP BY s.schaapId, s.levensnummer, s.geslacht
  ) s on (s.levensnummer = rd.levensnummer)
  left join (
-	SELECT st.schaapId, h.hisId, a.actie, a.af
+ 	SELECT schaapId, max(stalId) stalId
+	FROM tblStal
+	GROUP BY schaapId
+ 	) mst on (mst.schaapId = s.schaapId)
+ left join (
+	SELECT st.stalId, h.hisId, a.actie, a.af
 	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
 	 join tblActie a on (h.actId = a.actId)
 	WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a.af = 1 and h.skip = 0
- ) haf on (s.schaapId = haf.schaapId)
+ ) haf on (mst.stalId = haf.stalId)
  left join (
 	SELECT st.schaapId, h.datum
 	 FROM tblStal st
@@ -221,7 +226,7 @@ impAgrident rd
  left join tblRedenuser red on (rd.reden = red.redId and red.lidId = '".mysqli_real_escape_string($db,$lidId)."')
 ";
 
-$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 12 and isnull(ubnId) and isnull(rd.verwerkt) ";
+$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 12 and isnull(rd.ubnId) and isnull(rd.verwerkt) ";
 
 include "paginas.php";
 
