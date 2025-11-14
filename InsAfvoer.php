@@ -91,8 +91,9 @@ impAgrident rd
  left join (
  	SELECT st.schaapId, max(st.stalId) stalId
  	FROM tblStal st
- 	 join tblUbn u on (st.ubnId = u ubnId)
+ 	 join tblUbn u on (st.ubnId = u.ubnId)
  	WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    GROUP BY st.schaapId
  ) mst on (mst.schaapId = s.schaapId)
  left join (
     SELECT st.stalId, h.hisId, a.actie, a.af
