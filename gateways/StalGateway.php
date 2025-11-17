@@ -22,17 +22,6 @@ class StalGateway extends Gateway {
             ");
     }
 
-/* BV : Telt het aantal schapen op de stallijst van een gebruiker om te bepalen of er een stallijst bestaat */
-    public function zoek_lege_stallijst($lidId) {
-        return $this->first_field(<<<SQL
-SELECT count(st.stalId) aant
-FROM tblStal st
- join tblUbn u on (st.ubnId = u.ubnId)
-WHERE u.lidId = :lidId
-SQL
-        , [[':lidId', $lidId, self::INT]]);
-    }
-
     public function tel_stallijsten($lidId, $schaapId) {
         return $this->first_field("
 SELECT count(st.stalId) stalId
