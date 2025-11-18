@@ -1,4 +1,4 @@
-<?php
+<?php // Session: weet hoe de sessie werkt, snapt verder niets van het programma. 
 
 class Session {
 
