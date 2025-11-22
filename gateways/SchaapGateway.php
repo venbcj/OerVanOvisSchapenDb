@@ -1428,6 +1428,7 @@ FROM tblStal st
  join (
      SELECT schaapId, max(stalId) stalId
      FROM tblStal st
+ join tblUbn u on (st.ubnId = u.ubnId)
      WHERE u.lidId = '".$this->db->real_escape_string($lidId)."'
      GROUP BY schaapId
  ) mst on (s.schaapId = mst.schaapId)
