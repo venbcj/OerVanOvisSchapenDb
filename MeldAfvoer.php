@@ -79,11 +79,11 @@ $aantMeld = aantal_melden($db,$reqId); // Aantal dieren te melden functie gedecl
 $melding_gateway = new MeldingGateway();
 
 // Aantal dieren goed geregistreerd om automatisch te kunnen melden.
-$oke = $melding_gateway->aantal_oke_afv($lidId,$reqId,$vw_HistorieDm);
+$oke = $melding_gateway->aantal_oke_afv($reqId,$vw_HistorieDm);
 // Einde Aantal dieren goed geregistreerd om automatisch te kunnen melden.
 
 // MELDEN
-if (isset($_POST['knpMeld_'])) {    include "save_melding.php"; $aantMeld = aantal_melden($db,$reqId); $oke = $melding_gateway->aantal_oke_afv($lidId,$reqId,$vw_HistorieDm);
+if (isset($_POST['knpMeld_'])) {    include "save_melding.php"; $aantMeld = aantal_melden($db,$reqId); $oke = $melding_gateway->aantal_oke_afv($reqId,$vw_HistorieDm);
 if( $aantMeld > 0 && $oke > 0) {
 // Bestand maken
 $qry_Leden = mysqli_query($db,"
