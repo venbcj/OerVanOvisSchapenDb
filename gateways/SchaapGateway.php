@@ -1417,6 +1417,7 @@ public function resultvader($lidId, $Karwerk) {
     return $this->db->query("
 SELECT st.schaapId, right(s.levensnummer,$Karwerk) werknr
 FROM tblStal st
+ join tblUbn u on (st.ubnId = u.ubnId)
  join tblSchaap s on (st.schaapId = s.schaapId)
  join (
      SELECT schaapId
