@@ -96,7 +96,7 @@ FROM tblVolwas v
  ) dra on (dra.volwId = v.volwId)
  left join tblSchaap lam on (lam.volwId = v.volwId)
  left join tblStal stl on (stl.schaapId = lam.schaapId)
- join tblUbn ul on (st.ubnId = ul.ubnId)
+ join tblUbn ul on (stl.ubnId = ul.ubnId)
  left join (
      SELECT stalId, date_format(datum,'%d-%m-%Y') werpdatum, year(date_add(datum,interval -145 day)) dekjaar_obv_worp
      FROM tblHistorie
