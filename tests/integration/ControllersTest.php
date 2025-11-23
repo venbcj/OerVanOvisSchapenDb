@@ -233,7 +233,7 @@ TXT
     public static function controllers_needing_database() {
         return self::txt2ar(<<<TXT
 TXT
-);
+        );
     }
 
     // in schema.sql zitten niet alle tabellen.
@@ -254,7 +254,7 @@ TXT
     }
 
     # php-8
-    # #[DataProvider('gettable_controllers')]
+    #[DataProvider('gettable_controllers')]
     /**
      * @dataProvider gettable_controllers
      */
@@ -265,7 +265,7 @@ TXT
     }
 
     # php-8
-    # #[DataProvider('gettable_controllers')]
+    #[DataProvider('gettable_controllers')]
     /**
      * @dataProvider gettable_controllers
      */
@@ -275,7 +275,7 @@ TXT
     }
 
     # php-8
-    # #[DataProvider('controllers_needing_fixtures')]
+    #[DataProvider('controllers_needing_fixtures')]
     /**
      * @dataProvider controllers_needing_fixtures
      */
@@ -301,7 +301,7 @@ TXT
     }
 
     # php-8
-    # #[DataProvider('controllers_with_post_include')]
+    #[DataProvider('controllers_with_post_include')]
     /**
      * @dataProvider controllers_with_post_include
      * Dit is een beginnetje tbv coverage / storingsdetectie
@@ -316,7 +316,7 @@ TXT
     }
 
     # php-8
-    # #[DataProvider('controllers_with_save_include')]
+    #[DataProvider('controllers_with_save_include')]
     /**
      * @dataProvider controllers_with_save_include
      * Dit is een beginnetje tbv coverage / storingsdetectie
@@ -344,7 +344,7 @@ TXT
 
     public function testReaderbestanden() {
         $dir = 'user_1/Readerbestanden/';
-        $file = 'x'.date('d-m-Y');
+        $file = 'x' . date('d-m-Y');
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }

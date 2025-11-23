@@ -72,7 +72,7 @@ class IntegrationCase extends UnitCase {
 
     protected function approve() {
         # phpunit 8:
-        $file = getcwd().'/tests/approval/'.$this->getName();
+        $file = getcwd().'/tests/approval/'.$this->name();
         # phpunit 12:
         # $file = getcwd().'/tests/approval/'.$this->name();
         $expected_file = $file.'.expected';

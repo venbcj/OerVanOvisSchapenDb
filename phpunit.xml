@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/8.5/phpunit.xsd" bootstrap="tests/bootstrap.php" cacheResultFile=".phpunit.cache/test-results" executionOrder="random" testdox="false" colors="true" forceCoversAnnotation="false" beStrictAboutCoversAnnotation="false" beStrictAboutOutputDuringTests="true" beStrictAboutTodoAnnotatedTests="true" convertDeprecationsToExceptions="true" verbose="true" processIsolation="false">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/12.4/phpunit.xsd" bootstrap="tests/bootstrap.php" executionOrder="random" testdox="false" colors="true" beStrictAboutOutputDuringTests="true" processIsolation="false" cacheDirectory=".phpunit.cache" requireCoverageMetadata="false" beStrictAboutCoverageMetadata="false">
+  <coverage/>
   <testsuites>
     <testsuite name="default">
       <directory>tests</directory>
@@ -12,13 +13,14 @@
       <directory>utils/rector/tests</directory>
     </testsuite>
   </testsuites>
-  <filter>
-    <whitelist processUncoveredFilesFromWhitelist="false">
-      <exclude>
-        <directory>tests</directory>
-        <directory>vendor</directory>
-      </exclude>
-      <directory>.</directory>
-    </whitelist>
-  </filter>
+  <logging/>
+  <source>
+    <include>
+      <file>./gateways/SchaapGateway.php</file>
+    </include>
+    <exclude>
+      <directory>tests</directory>
+      <directory>vendor</directory>
+    </exclude>
+  </source>
 </phpunit>
