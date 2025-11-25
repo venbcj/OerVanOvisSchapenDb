@@ -8,6 +8,7 @@ class SchaapGatewayTest extends GatewayCase {
     private const NEW_GESLACHT = 'ooi';
     private const NEW_LEVENSNUMMER = '9990303';
     private const NEWSCHAAPID = 7;
+    private const NEWSCHAAPID2 = 8;
     private const VOLWID = 1;
 
     protected static $sutname = 'SchaapGateway';
@@ -307,11 +308,15 @@ class SchaapGatewayTest extends GatewayCase {
 
     public function testWelMeerlingenPerooiPerjaar() {
         $this->runfixture('schaap-4');
+        $this->runSQL("UPDATE tblSchaap SET geslacht='ooi'");
         $this->runSQL("DELETE FROM tblVolwas");
         $this->runSQL("INSERT INTO tblVolwas(mdrId, volwId) VALUES(4, 1)");
         $this->runSQL("INSERT INTO tblSchaap(schaapId, volwId) VALUES(" . self::NEWSCHAAPID . ", " . self::VOLWID . ")"); // lam
+        $this->runSQL("INSERT INTO tblSchaap(schaapId, volwId) VALUES(" . self::NEWSCHAAPID2 . ", " . self::VOLWID . ")"); // lam
         $this->runSQL("INSERT INTO tblStal(stalId, lidId, schaapId) VALUES(2, 1, " . self::NEWSCHAAPID . ")");
+        $this->runSQL("INSERT INTO tblStal(stalId, lidId, schaapId) VALUES(3, 1, " . self::NEWSCHAAPID2 . ")");
         $this->runSQL("INSERT INTO tblHistorie(stalId, actId, datum) VALUES(2, 1, '2020-09-07')");
+        $this->runSQL("INSERT INTO tblHistorie(stalId, actId, datum) VALUES(3, 1, '2020-09-07')");
         $res = $this->sut->meerlingen_perOoi_perJaar(self::LIDID, self::SCHAAP4_ID, 2020, '09');
         $this->assertEquals([1, self::VOLWID], $res);
     }
