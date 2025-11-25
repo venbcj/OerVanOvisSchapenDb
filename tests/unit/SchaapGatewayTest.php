@@ -272,18 +272,21 @@ class SchaapGatewayTest extends GatewayCase {
     }
 
     public function testMeerlingen() {
+        // richt de database zo in, dat een ooi met een tweeling bestaat. (kon ook drieling, vierling, enz zijn)
         $this->runfixture('schaap-4');
         $ooiId = 4;
         $aantal = 1;
         $this->runSQL("DELETE FROM tblVolwas");
-        $this->runSQL("INSERT INTO tblVolwas(mdrId, volwId) VALUES(4, 1)");
+        $this->runSQL("INSERT INTO tblVolwas(mdrId, volwId) VALUES(" . $ooiId . ", " . self::VOLWID . ")");
         $this->runSQL("INSERT INTO tblSchaap(schaapId, volwId) VALUES(" . self::NEWSCHAAPID . ", " . self::VOLWID . ")"); // lam
+        $this->runSQL("INSERT INTO tblSchaap(schaapId, volwId) VALUES(" . self::NEWSCHAAPID2 . ", " . self::VOLWID . ")"); // lam
         $this->runSQL("INSERT INTO tblStal(stalId, lidId, schaapId) VALUES(2, 1, " . self::NEWSCHAAPID . ")");
+        $this->runSQL("INSERT INTO tblStal(stalId, lidId, schaapId) VALUES(3, 1, " . self::NEWSCHAAPID2 . ")");
         $this->runSQL("INSERT INTO tblHistorie(stalId, actId, datum) VALUES(2, 1, '2021-11-07')");
         $res = $this->sut->aantal_meerlingen_perOoi(self::LIDID, $ooiId, $aantal);
-        $this->assertEquals(1, $res->num_rows);
+        $this->assertEquals(1, $res->num_rows, 'het aantal rijen klopt niet');
         // deze '1' is het id in tblVolw. Wat zijn we nu aan het doen?
-        $this->assertEquals(1, $res->fetch_assoc()['volwId']);
+        $this->assertEquals(1, $res->fetch_assoc()['volwId'], 'het id klopt niet');
     }
 
     public function testDeLammerenLeeg() {

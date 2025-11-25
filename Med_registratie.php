@@ -204,7 +204,8 @@ while( $s = mysqli_fetch_assoc($zoek_schaapId)) { /* Doorlopen van geselecteerde
 $zoek_stalId = "
 SELECT max(stalId) stalId
 FROM tblStal st
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+INNER JOIN tblUbn u ON (st.ubnId = u.ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
 ";
 
 /*echo $zoek_stalId.'<br>';*/  $zoek_stalId = mysqli_query($db,$zoek_stalId) or die (mysqli_error($db));

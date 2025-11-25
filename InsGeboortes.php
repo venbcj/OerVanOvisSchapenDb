@@ -234,6 +234,8 @@ $qryMoeder = ("(".$vw_kzlOoien.") ");
 $moederdier = mysqli_query($db,$qryMoeder) or die (mysqli_error($db)); 
 
 $index = 0; 
+$wnrOoi = [];
+$mdrStalId = [];
 while ($mdr = mysqli_fetch_assoc($moederdier)) 
 { 
    $mdrStalId[$index] = $mdr['stalId']; // 10-07-2025 gewijzigd van $mdr['schaapId']; naar $mdr['stalId'];
@@ -408,7 +410,7 @@ $makeday = date_create($datum); $day = date_format($makeday, 'Y-m-d');
     $mom_rd = $array['mom_rd']; if($leef_dgn > 0) { $mom_rd = 3; }
 
       $var1 = $array['date_dood']; // uitvaldatum voor merken
-  $date1 = str_replace('/', '-', $var1);
+  $date1 = str_replace('/', '-', $var1 . '');
   $uitvdag = date('d-m-Y', strtotime($date1));
   $makeday1 = date_create($uitvdag); $uitvday = date_format($makeday1, 'Y-m-d');
 
@@ -428,7 +430,7 @@ $kzlRas = $ras_db;
 $kzlSekse = $sekse; 
 
 if($modtech == 1) {
-$kzlOoi = $ooi_db; 
+$kzlOoi = $ooi_db . ''; // TODO #0004197 noodfix om nulls in str_replace ed te voorkomen; vervangen door echte invoer-aanpak
 $kzlMoeder = $ooi_rd;
 $kzlHok = $hok_db;
     if($reader == 'Biocontrol' && !empty($var1)) { $mom_rd = 3; } // Bij $mom_rd == 3 wordt keuzelijst moment gevuld met 'uitval voor merken' en bij $kzlMom == 3 wordt het veld uitvaldatum getoond
@@ -462,6 +464,7 @@ WHERE schaapId = '".mysqli_real_escape_string($db,$kzlOoi)."'
 
 unset($werpdag);
 
+$terugstalId = '';
 $zoek_stalId_terug_uitscharen = mysqli_query($db,"
 SELECT st.stalId
 FROM tblStal st
@@ -522,7 +525,7 @@ WHERE a.af = 1 and h.actId != 10 and h.skip = 0
 
 
 // Zoek vorige worp
-unset($lst_volwId);
+$lst_volwId = '';
 // zoek de vorige worp waarbij de werpdatum minimaal 30 dagen voor de geboortedatum moet liggen. Dit voor het geval de huidige worp enkele dagen voor de geboortedatum ligt.
  $zoek_vorige_worp = mysqli_query($db,"
 SELECT max(l.volwId) volwId
@@ -542,7 +545,7 @@ WHERE v.mdrId = '".mysqli_real_escape_string($db,$kzlOoi)."' and h.actId = 1 and
  ") or die (mysqli_error($db));
   while ( $zvw = mysqli_fetch_assoc($zoek_vorige_worp)) { $lst_volwId = $zvw['volwId']; }
 
-unset($werpday);
+$werpday = '';
 // Zoek een huidige worp
 $zoek_huidige_worp = mysqli_query($db,"
 SELECT l.volwId, h.datum dmwerp, date_format(h.datum,'%d-%m-%Y') werpdm

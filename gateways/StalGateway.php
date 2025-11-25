@@ -86,7 +86,7 @@ return $vw->fetch_row()[0];
 public function findLidByStal($stalId) {
     $vw = $this->db->query("
 SELECT u.lidId
-FROM tblStal
+FROM tblStal st
  join tblUbn u on (st.ubnId = u.ubnId)
 WHERE st.stalId = ".$this->db->real_escape_string($stalId)." 
 ");
@@ -120,7 +120,7 @@ public function zoek_relid($lidId, $schaapId) {
 SELECT st.stalId, st.rel_best
 FROM (
     SELECT max(st.stalId) stalId
-    FROM tblStal
+    FROM tblStal st
      join tblUbn u on (st.ubnId = u.ubnId)
     WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and st.schaapId = '".$this->db->real_escape_string($schaapId)."'
  ) mst

@@ -389,6 +389,10 @@ ORDER BY u.ubn, right(s.levensnummer, $Karwerk)
 ");
 }
 
+public function ooien_met_vijfling($lidId, $ooiId) {
+    return $this->aantal_meerlingen_perOoi($lidId, $ooiId, 5);
+}
+
 public function aantal_meerlingen_perOoi($Lidid,$Ooiid,$Nr) {
 return $this->db->query("
 SELECT v.volwId
@@ -1635,6 +1639,7 @@ public function zoek_schapen($lidId) {
 SELECT s.schaapId,  s.levensnummer
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
+ INNER JOIN tblUbn u USING (ubnId)
 WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and s.levensnummer is not null
 GROUP BY s.schaapId, s.levensnummer
 ORDER BY s.levensnummer
@@ -1646,6 +1651,7 @@ public function zoek_moeders($lidId, $Karwerk) {
 SELECT mdr.schaapId, right(mdr.levensnummer,$Karwerk) werknr_ooi
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
+ INNER JOIN tblUbn u USING (ubnId)
  join tblVolwas v on (v.volwId = s.volwId)
  join tblSchaap mdr on (v.mdrId = mdr.schaapId)
 WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and mdr.levensnummer is not null
@@ -1690,6 +1696,7 @@ SELECT date_format(h.datum,'%d-%m-%Y') datum, h.datum date, a.actie, right(mdr.l
  s.schaapId, right(s.levensnummer, $Karwerk) werknum, s.geslacht, prnt.datum aanw, h.kg
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
+ INNER JOIN tblUbn u USING(ubnId)
  join tblHistorie h on (st.stalId = h.stalId) 
  join tblActie a on (h.actId = a.actId)
  left join (
@@ -1819,6 +1826,7 @@ FROM tblSchaap s
  join (
     SELECT max(stalId) stalId, schaapId
     FROM tblStal st
+INNER JOIN tblUbn u ON (st.ubnId = u.ubnId)
     WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and st.schaapId = '".$this->db->real_escape_string($schaapId)."'
     GROUP BY schaapId
  ) stm on (stm.schaapId = s.schaapId)
@@ -1855,6 +1863,7 @@ FROM tblSchaap s
     FROM tblHistorie h
      join tblActie a on (a.actId = h.actId)
      join tblStal st on (h.stalId = st.stalId)
+INNER JOIN tblUbn u ON (st.ubnId = u.ubnId)
     WHERE u.lidId = '".$this->db->real_escape_string($lidId)."'
  and h.skip = 0
  and a.af = 1
@@ -1883,6 +1892,7 @@ FROM tblSchaap s
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
+INNER JOIN tblUbn u ON (st.ubnId = u.ubnId)
     WHERE u.lidId = '".$this->db->real_escape_string($lidId)."'
  and a1.aan = 1
  and a2.uit = 1

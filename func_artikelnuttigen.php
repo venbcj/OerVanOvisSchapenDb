@@ -137,7 +137,9 @@ FROM tblArtikel a
     FROM tblNuttig 
     GROUP BY inkId
  ) n on (i.inkId = n.inkId)
-WHERE i.artId = '".mysqli_real_escape_string($datb,$artikel)."' and i.inkat > (i.inkat - coalesce(n.nutat,0)) and (i.inkat - coalesce(n.nutat,0)) > 0
+WHERE i.artId = '".mysqli_real_escape_string($datb,$artikel)."'
+ and i.inkat > (i.inkat - coalesce(n.nutat,0))
+ and (i.inkat - coalesce(n.nutat,0)) > 0
 ") or die (mysqli_error($datb));
   while ($i_vrd = mysqli_fetch_assoc($zoek_inkId_en_resterende_voorraad_van_laatst_aangesproken_voorraad)) {
 
@@ -158,12 +160,17 @@ $ink_voorraad = zoek_voorraad_oudste_inkoop_pil($datb, $artid);
 $inkId = $ink_voorraad[0];
 $rest_ink_vrd = $ink_voorraad[1];
 $stdat = $ink_voorraad[2];
-$rest_toedien_vrd = $rest_ink_vrd/$stdat;
+$rest_toedien_vrd = $rest_ink_vrd / $stdat;
 
 
   if($rest_toedat > $rest_toedien_vrd) {
 
-$inlezen_pil = "INSERT INTO tblNuttig SET hisId = '".mysqli_real_escape_string($datb,$hisid)."', inkId = '".mysqli_real_escape_string($datb,$inkId)."', nutat = '".mysqli_real_escape_string($datb,$rest_toedien_vrd)."', stdat = '".mysqli_real_escape_string($datb,$stdat)."', reduId = " . db_null_input($reduid) . " ";  
+      $inlezen_pil = "INSERT INTO tblNuttig
+          SET hisId = '".mysqli_real_escape_string($datb,$hisid)."',
+ inkId = '".mysqli_real_escape_string($datb,$inkId)."',
+ nutat = '".mysqli_real_escape_string($datb,$rest_toedien_vrd)."',
+ stdat = '".mysqli_real_escape_string($datb,$stdat)."',
+ reduId = " . db_null_input($reduid) . " ";  
 
   mysqli_query($datb,$inlezen_pil) or die (mysqli_error($datb));
 
@@ -176,7 +183,12 @@ $inlezen_pil = "INSERT INTO tblNuttig SET hisId = '".mysqli_real_escape_string($
   }
   else {
 
-$inlezen_pil = "INSERT INTO tblNuttig SET hisId = '".mysqli_real_escape_string($datb,$hisid)."', inkId = '".mysqli_real_escape_string($datb,$inkId)."', nutat = '".mysqli_real_escape_string($datb,$rest_toedat)."', stdat = '".mysqli_real_escape_string($datb,$stdat)."', reduId = " . db_null_input($reduid) . " ";  
+      $inlezen_pil = "INSERT INTO tblNuttig
+          SET hisId = '".mysqli_real_escape_string($datb,$hisid)."',
+ inkId = '".mysqli_real_escape_string($datb,$inkId)."',
+ nutat = '".mysqli_real_escape_string($datb,$rest_toedat)."',
+ stdat = '".mysqli_real_escape_string($datb,$stdat)."',
+ reduId = " . db_null_input($reduid) . " ";  
 
    mysqli_query($datb,$inlezen_pil) or die (mysqli_error($datb));
 

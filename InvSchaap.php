@@ -227,7 +227,8 @@ $zoek_in_stallijst = mysqli_query($db, "
 SELECT s.schaapId 
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and levensnummer = '".mysqli_real_escape_string($db,$levnr)."' and isnull(st.rel_best)
+ INNER JOIN tblUbn u USING(ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and levensnummer = '".mysqli_real_escape_string($db,$levnr)."' and isnull(st.rel_best)
 "); # or die (mysqli_error($db));
 while($stl = mysqli_fetch_assoc($zoek_in_stallijst)) {
     $aanwezig = $stl['schaapId']; 
@@ -409,9 +410,10 @@ if(isset($moeder)) {
 $query_startdm_moeder = mysqli_query($db,"
 SELECT h.datum
 FROM (
-    SELECT stalId
-    FROM tblStal
-    WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    SELECT st.stalId
+    FROM tblStal st
+    INNER JOIN tblUbn u USING(ubnId)
+    WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
         and isnull(rel_best)
         and schaapId = '".mysqli_real_escape_string($db,$moeder)."'
  ) minst
@@ -426,9 +428,10 @@ $startmdr = '';
 $zoek_eindm_mdr_indien_afgevoerd = mysqli_query($db,"
 SELECT h.datum
 FROM (
-    SELECT max(stalId) stalId, schaapId
-    FROM tblStal
-    WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and schaapId = '".mysqli_real_escape_string($db,$moeder)."'
+    SELECT max(st.stalId) stalId, schaapId
+    FROM tblStal st
+    INNER JOIN tblUbn u USING (ubnId)
+    WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and schaapId = '".mysqli_real_escape_string($db,$moeder)."'
     GROUP BY schaapId
  ) maxst
  join tblStal st on (st.stalId = maxst.stalId)

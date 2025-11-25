@@ -289,6 +289,7 @@ $qryRelatie = ("SELECT r.relId, '6karakters' ubn, concat(p.ubn, ' - ', p.naam) n
 $relatienr = mysqli_query($db,$qryRelatie) or die (mysqli_error($db)); 
 
 $index = 0; 
+$relnum = [];
 while ($rnr = mysqli_fetch_array($relatienr)) 
 { 
    $relnId[$index] = $rnr['relId']; 

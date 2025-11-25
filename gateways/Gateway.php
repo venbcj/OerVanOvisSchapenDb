@@ -5,6 +5,7 @@ class Gateway {
     protected const TXT = 'txt';
     protected const INT = 'int';
     protected const BOOL = 'bool';
+    protected const DATE = 'date';
 
     protected $db;
 
@@ -50,26 +51,18 @@ class Gateway {
     // parameter is een [naam, waarde, formaat]
     // naam is bijvoorbeeld :id
     // waarde is bijvoorbeeld 4
-    // formaat kan zijn self::INT, self::TXT, self::BOOL
+    // formaat kan zijn self::INT, self::TXT, self::BOOL, self::DATE
     // TODO meer formaten
     private function expand($SQL, $args = []) {
         foreach ($args as $arg) {
-            if (!is_array($arg)) {
-                throw new Exception("Query-parameters: verwacht een array van arrays.");
-            }
-            // default formaat is TXT
-            if (count($arg) == 2) {
-                $arg[] = self::TXT;
-            }
-            if (count($arg) != 3) {
-                throw new Exception("Query-parameters: een parameter moet twee of drie onderdelen bevatten.");
-            }
+            $arg = $this->validateArg($arg);
             [$key, $value, $format] = $arg;
             if (is_null($value)) {
                 $value = 'NULL';
             } else {
                 switch ($arg[2]) {
                 case self::TXT:
+                case self::DATE:
                     $value = "'" . $this->db->real_escape_string($value) . "'";
                     break;
                 case self::INT:
@@ -84,6 +77,20 @@ class Gateway {
         }
         Logger::instance()->debug($SQL);
         return $SQL;
+    }
+
+    private function validateArg($arg) {
+        if (!is_array($arg)) {
+            throw new Exception("Query-parameters: verwacht een array van arrays.");
+        }
+        // default formaat is TXT
+        if (count($arg) == 2) {
+            $arg[] = self::TXT;
+        }
+        if (count($arg) != 3) {
+            throw new Exception("Query-parameters: een parameter moet twee of drie onderdelen bevatten.");
+        }
+        return $arg;
     }
 
 }

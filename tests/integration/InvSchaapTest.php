@@ -20,6 +20,8 @@ class InvSchaapTest extends IntegrationCase {
     }
 
     public function testSaveInvSchaapMetLevnr() {
+        $this->uses_db();
+        $this->runsql('truncate tblSchaap');
         $this->post("/InvSchaap.php", $this->minimal([
             'txtLevnr' => self::LEVNR_NIET_IN_DB,
         ]));

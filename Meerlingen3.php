@@ -235,7 +235,7 @@ $lam_mrl2 = $schaap_gateway->de_lammeren($vw,$Karwerk);
 <table border = 0>
 
 <?php
-$mling5 = $schaap_gateway->aantal_meerlingen_perOoi($lidId,$ooiId,5);
+$mling5 = $schaap_gateway->ooien_met_vijfling($lidId,$ooiId,5);
     while($mrl = mysqli_fetch_assoc($mling5))
             {
                 $vw = $mrl['volwId']; 
