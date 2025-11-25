@@ -15,7 +15,7 @@ spl_autoload_register(function ($class) {
         foreach (explode(' ', ' .class .trait') as $type) {
             $file = "$class$type.php";
             if (file_exists("$prefix/$file")) {
-                include_once $file;
+                include_once "$prefix/$file";
                 break;
             }
         }

@@ -22,6 +22,12 @@ case 'localhost:8080':
     $user = 'root';
     $pw = 'usbw';
     break;
+case 'localhost':
+    $dtb = 'oer';
+    $user = 'root';
+    $pw = '';
+    $app = '\\Users\\Bas\\Documents\\GitHub\\OerVanOvisSchapenDb\\';
+    break;
 case 'test.oervanovis.nl':
     $dtb = 'k36098_bvdvSchapenDbT';
     $user = 'bvdvschaapt';

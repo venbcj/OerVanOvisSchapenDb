@@ -21,7 +21,7 @@ class UnitCase extends TestCase {
     // TODO: dit is herhaald in bootstrap. Uitbouwen in nieuw object Fixture?
     protected static function runfixture($name) {
         if (file_exists($file = getcwd()."/tests/fixtures/$name.sql")) {
-            system("cat $file | scripts/console");
+            self::performStatementsIn($file);
         } else {
             throw new Exception("fixture $name not found as $file.");
         }
@@ -29,10 +29,20 @@ class UnitCase extends TestCase {
 
     protected static function runsetup($name) {
         if (file_exists($file = getcwd()."/db/setup/$name.sql")) {
-            system("cat $file | scripts/console");
+            self::performStatementsIn($file);
         } else {
             throw new Exception("fixture $name not found as $file.");
         }
+    }
+
+    private static function performStatementsIn($file) {
+        global $db;
+        foreach (explode(';', file_get_contents($file)) as $SQL) {
+            if (trim($SQL)) {
+            $db->query($SQL);
+        }
+        }
+        # system("cat $file | scripts/console");
     }
 
     protected function runSQL($SQL) {
