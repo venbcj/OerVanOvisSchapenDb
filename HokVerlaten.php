@@ -232,7 +232,7 @@ if (isset($_POST['knpVervers_']) && !isset($_POST['txtDatumall_'])) { $cbKies = 
 <!--    <input type = hidden size = 1 name = <?php #echo "txtOke_$schaapId"; ?>  value = <?php #echo $oke; ?> >--><!--hiddden Dit veld zorgt ervoor dat chbkies wordt aangevinkt als het ingebruk wordt gesteld -->
     <input type = hidden size = 1 name = <?php echo "chbkies_$schaapId"; ?> value = 0 > <!-- hiddden -->
     <input type = checkbox           name = <?php echo "chbkies_$schaapId"; ?> value = 1 <?php echo $cbKies == 1 ? 'checked' : ''; if ($oke <> 1) { ?> disabled <?php }  else {    ?> class="checkall" <?php } 
-    /* else if (txtOke == 0) wordt maar 1x gepasseerd nl. als onvolledige gegevens voor het eerst volledig zijn ingevuld. Anders is óf het eerst gedeeldte van het if-statement van toepassing of txtOke == 1.  */
+    /* else if (txtOke == 0) wordt maar 1x gepasseerd nl. als onvolledige gegevens voor het eerst volledig zijn ingevuld. Anders is of het eerst gedeeldte van het if-statement van toepassing of txtOke == 1.  */
  ?> >
  </td>
 <!-- Overplaatsdatum -->

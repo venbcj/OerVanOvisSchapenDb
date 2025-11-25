@@ -1336,6 +1336,7 @@ FROM
      join tblVolwas v on (mdr.schaapId = v.mdrId)
      join tblSchaap lam on (v.volwId = lam.volwId)
      join tblStal st on (st.schaapId = lam.schaapId)
+     join tblUbn u on (st.ubnId = u.ubnId)
      join tblHistorie h on (h.stalId = st.stalId)
     WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and h.actId = 1 and h.skip = 0 and mdr.schaapId = '".$this->db->real_escape_string($schaapId)."'
     GROUP BY mdr.levensnummer, h.datum
@@ -1369,14 +1370,14 @@ FROM
          join tblVolwas v on (v.mdrId = moe.schaapId)
          join tblSchaap lam on (lam.volwId = v.volwId)
          join tblStal sl on (lam.schaapId = sl.schaapId)
-         join tblUbn ul on (st.ubnId = u.ubnId)
+         join tblUbn ul on (st.ubnId = ul.ubnId)
          join tblHistorie hl on (sl.stalId = hl.stalId)
 
-        WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and hl.actId = 1 and hl.skip = 0 and moe.schaapId = '".$this->db->real_escape_string($schaapId)."'
+        WHERE ul.lidId = '".$this->db->real_escape_string($lidId)."' and hl.actId = 1 and hl.skip = 0 and moe.schaapId = '".$this->db->real_escape_string($schaapId)."'
         GROUP BY moe.levensnummer, moe.geslacht
      ) lam1 on (lam1.levensnummer = s.levensnummer and lam1.worp1 = hl.datum)
 
-    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and ul.lidId = '".$this->db->real_escape_string($lidId)."' and hl.actId = 1 and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and isnull(lam1.worp1)
+    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and hl.actId = 1 and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and isnull(lam1.worp1)
     GROUP BY s.levensnummer, s.geslacht, ouder.datum
  ) mdr
  join
@@ -1386,6 +1387,7 @@ FROM
      join tblVolwas v on (mdr.schaapId = v.mdrId)
      join tblSchaap lam on (v.volwId = lam.volwId)
      join tblStal st on (st.schaapId = lam.schaapId)
+     join tblUbn u on (st.ubnId = u.ubnId)
      join tblHistorie h on (h.stalId = st.stalId)
     WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and h.actId = 1 and h.skip = 0 and mdr.schaapId = '".$this->db->real_escape_string($schaapId)."'
     GROUP BY mdr.levensnummer, h.datum
@@ -1428,6 +1430,7 @@ FROM tblStal st
  join (
      SELECT schaapId, max(stalId) stalId
      FROM tblStal st
+ join tblUbn u on (st.ubnId = u.ubnId)
      WHERE u.lidId = '".$this->db->real_escape_string($lidId)."'
      GROUP BY schaapId
  ) mst on (s.schaapId = mst.schaapId)

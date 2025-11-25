@@ -116,10 +116,10 @@ if (!Auth::is_logged_in()) {
 
     // Bepalen aantal karakters werknr
     $Karwerk = $lid_gateway->zoek_karwerk($lidId);
-    User::register('Karwerk', $Karwerk);
+    CurrentUser::register('Karwerk', $Karwerk);
 
     # gebruikt in GroeiresultaatSchaap, en Zoeken
-    $w_werknr = 25 + (8 * User::Karwerk());
+    $w_werknr = 25 + (8 * CurrentUser::Karwerk());
 
     // Bepalen aantal karakter verblijf
     $w_hok = max(60, 15 + 9 * $hok_gateway->findLongestHoknr($lidId));

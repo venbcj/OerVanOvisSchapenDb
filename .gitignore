@@ -11,3 +11,5 @@ erd.pdf
 user_*
 log/*
 BRIGHT
+*.zip
+production*sql

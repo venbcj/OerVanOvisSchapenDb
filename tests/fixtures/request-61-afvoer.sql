@@ -132,5 +132,5 @@ insert into tblMelding(reqId, hisId, meldId, skip, fout) values
 insert into tblHistorie(hisId, stalId, datum, skip) values
 (1, 1, '1900-01-01', 0)
 ;
-insert into tblStal(stalId, lidId, schaapId) values(1, 1, 0);
+insert into tblStal(stalId, ubnId, schaapId) values(1, 1, 0);
 

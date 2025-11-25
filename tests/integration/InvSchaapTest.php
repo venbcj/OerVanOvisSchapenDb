@@ -4,7 +4,7 @@ class InvSchaapTest extends IntegrationCase {
 
     private const LEVNR_NIET_IN_DB = '9';
     private const LEVNR_IN_FIXTURE = '4';
-    private const EEN_RAS = 'kool';
+    private const EEN_RAS = '3';
 
     public function testPostInvSchaap() {
         $this->post("/InvSchaap.php", ['ingelogd' => 1, 'txtLevnr' => 1]);
