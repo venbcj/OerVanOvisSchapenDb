@@ -144,7 +144,8 @@ WHERE i.artId = '".mysqli_real_escape_string($datb,$artikel)."'
 ") or die (mysqli_error($datb));
   while ($i_vrd = mysqli_fetch_assoc($zoek_inkId_en_resterende_voorraad_van_laatst_aangesproken_voorraad)) {
 
-    $inkoop = array($i_vrd['inkId'], $i_vrd['vrdat'], $i_vrd['stdat']); }
+      $inkoop = array($i_vrd['inkId'], $i_vrd['vrdat'], $i_vrd['stdat']);
+  }
 
   if(!isset($inkoop[0])) 
   { 
