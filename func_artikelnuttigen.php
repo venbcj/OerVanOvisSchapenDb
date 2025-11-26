@@ -175,7 +175,7 @@ $rest_toedien_vrd = $rest_ink_vrd / $stdat;
  stdat = '".mysqli_real_escape_string($datb,$stdat)."',
  reduId = " . db_null_input($reduid) . " ";  
 
-  mysqli_query($datb,$inlezen_pil) or die (mysqli_error($datb));
+  mysqli_query($datb,$inlezen_pil);
 
 
     $rest_toedat = $rest_toedat-$rest_toedien_vrd;
@@ -193,7 +193,7 @@ $rest_toedien_vrd = $rest_ink_vrd / $stdat;
  stdat = '".mysqli_real_escape_string($datb,$stdat)."',
  reduId = " . db_null_input($reduid) . " ";  
 
-   mysqli_query($datb,$inlezen_pil) or die (mysqli_error($datb));
+   mysqli_query($datb,$inlezen_pil);
 
   }
 
