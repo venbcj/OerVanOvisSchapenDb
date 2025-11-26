@@ -39,6 +39,7 @@ if ($fldKies == 1 && !empty($updDag))
 echo "Datum = ".$updDag.'<br>' ; 
 echo "Kg = ".$updKg.'<br>' ; */
 
+    $stalId = 0;
 $zoek_stalId = mysqli_query($db,"
 SELECT stalId
 FROM tblStal st

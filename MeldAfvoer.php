@@ -416,7 +416,7 @@ for ($i = 0; $i < $count; $i++){
         $color = "#FF4000";
         unset($bericht);
     }
-else (isset($foutieve_invoer)) {
+elseif (isset($foutieve_invoer)) {
     $boodschap = $foutieve_invoer;
     $color = "blue";
     unset($foutieve_invoer);

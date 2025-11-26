@@ -1,6 +1,6 @@
 <?php
 
-# use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ControllersTest extends IntegrationCase {
 
@@ -287,6 +287,7 @@ TXT
         $this->assertNoNoise();
     }
 
+    #[DataProvider('controllers_using_pdf')]
     /**
      * @dataProvider controllers_using_pdf
      */
@@ -304,7 +305,6 @@ TXT
     #[DataProvider('controllers_with_post_include')]
     /**
      * @dataProvider controllers_with_post_include
-     * Dit is een beginnetje tbv coverage / storingsdetectie
      */
     public function testPostInsert($controller, $fixtures, $postdata) {
         foreach ($fixtures as $fixture) {
@@ -319,7 +319,6 @@ TXT
     #[DataProvider('controllers_with_save_include')]
     /**
      * @dataProvider controllers_with_save_include
-     * Dit is een beginnetje tbv coverage / storingsdetectie
      */
     public function testPostSave($controller, $fixtures, $postdata) {
         foreach ($fixtures as $fixture) {

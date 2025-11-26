@@ -289,6 +289,7 @@ $qryRelatie = ("SELECT r.relId, '6karakters' ubn, concat(p.ubn, ' - ', p.naam) n
 $relatienr = mysqli_query($db,$qryRelatie) or die (mysqli_error($db)); 
 
 $index = 0; 
+$relnum = [];
 while ($rnr = mysqli_fetch_array($relatienr)) 
 { 
    $relnId[$index] = $rnr['relId']; 
@@ -477,7 +478,9 @@ for ($i = 0; $i < $count; $i++){
             }
 }
 ?> </select>
-<?php if( $red_rd <> NULL && empty($reduId_db) && empty($_POST["kzlReden_$Id"]) ) { ?> <b style = "color : red;"> ! </b>  <?php } ?>
+<?php 
+// hier stond "$red_rd" maar die variabele bestaat niet. @TODO is dit juist gecorrigeerd?
+if( $redId_rd <> NULL && empty($reduId_db) && empty($_POST["kzlReden_$Id"]) ) { ?> <b style = "color : red;"> ! </b>  <?php } ?>
     </td> <!-- EINDE KZLREDEN -->
     
  <td width = 80 align = "center"><?php 

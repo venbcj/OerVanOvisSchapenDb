@@ -63,8 +63,8 @@ include "inlezenAgrident.php";
 #  Alle delen die wel op dezelfde manier werken, bundelen we in een GROUP BY actId. Dan krijg je vanzelf al een array.
 #  De actId-waarden vertalen naar betekenisvolle namen kan eenvoudig daarna.
 
-$stal_gateway = new StalGateway();
-$stallijstaantal = $stal_gateway->zoek_lege_stallijst($lidId);
+$lid_gateway = new LidGateway();
+$stallijstaantal = $lid_gateway->zoek_lege_stallijst($lidId);
 ?>
 <table border = 0 align="center" style = "font-size: 17px"; >
    <h2 align="center" style="color:blue";>Hier kun je de gegevens uit de reader verwerken<br> in het managementprogramma.</h2>

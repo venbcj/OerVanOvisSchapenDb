@@ -142,8 +142,7 @@ echo $page_numbers; ?></td>
 <?php
 if(isset($data))  {    foreach($data as $key => $array)
     {
-unset($fase);
-
+$fase = '';
         $var = $array['datum'];
 $date = str_replace('/', '-', $var);
 $datum = date('d-m-Y', strtotime($date));
