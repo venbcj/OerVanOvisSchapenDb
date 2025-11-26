@@ -19,7 +19,7 @@ class ArtikelnuttigenTest extends IntegrationCase {
         // voer de methode uit met de 6 parameters... er zijn heel wat scenario's denkbaar
         $hisid = 0;
         $artid = 93;
-        $rest_toedat = '';
+        $rest_toedat = 0;
         $toediendatum = '';
         $reduid = 0;
         inlezen_pil($this->db, $hisid, $artid, $rest_toedat, $toediendatum, $reduid);
