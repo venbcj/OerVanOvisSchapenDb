@@ -1,6 +1,6 @@
 <?php
 
-class ArtikelnuttigenTest extends UnitCase {
+class ArtikelnuttigenTest extends IntegrationCase {
 
     public function setup(): void {
         require_once "func_artikelnuttigen.php";
@@ -12,6 +12,9 @@ class ArtikelnuttigenTest extends UnitCase {
         // GIVEN
         // zet de database goed
         $this->setArtikelFixture();
+        $this->expectNewRecordsInTables([
+            'tblNuttig' => 1,
+        ]);
         // WHEN
         // voer de methode uit met de 6 parameters... er zijn heel wat scenario's denkbaar
         $hisid = 0;
@@ -22,6 +25,7 @@ class ArtikelnuttigenTest extends UnitCase {
         inlezen_pil($this->db, $hisid, $artid, $rest_toedat, $toediendatum, $reduid);
         // THEN
         // controleer dat de juiste dingen in de database zijn gewijzigd. Er is geen functie-output.
+        $this->assertTablesGrew();
     }
 
     # inlezen_voer
