@@ -512,8 +512,9 @@ include "kzl.php";
 
 $zoek_halsnr = mysqli_query($db,"
 SELECT schaapId, concat(kleur,' ',halsnr) halsnr
-FROM tblStal
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(rel_best) and (kleur is not null or halsnr is not null)
+FROM tblStal st
+INNER JOIN tblUbn u USING (ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(rel_best) and (kleur is not null or halsnr is not null)
 ORDER BY concat(kleur,' ',halsnr)
 ") or die (mysqli_error($db)); 
 $name = "kzlHalsnr";

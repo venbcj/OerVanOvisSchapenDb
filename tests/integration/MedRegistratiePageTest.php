@@ -153,7 +153,7 @@ class MedRegistratiePageTest extends IntegrationCase {
     }
 
     public function testInsertMedregistratieGeenVoorraad() {
-        $this->markTestSkipped('geeft "opeens" division by zero.');
+        # $this->markTestSkipped('geeft "opeens" division by zero.');
         $this->runfixture('medicijnvoorraad');
         $this->post('/Med_registratie.php', [
             'ingelogd' => 1,

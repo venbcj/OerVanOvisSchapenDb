@@ -15,7 +15,8 @@ FROM tblRequest r
  join tblMelding m on (r.reqId = m.reqId)
  join tblHistorie h on (h.hisId = m.hisId)
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = ".mysqli_real_escape_string($db, $lidId)." and h.skip = 0 and isnull(r.dmmeld) and m.skip <> 1 ");
+ INNER JOIN tblUbn u USING (ubnId)
+WHERE u.lidId = ".mysqli_real_escape_string($db, $lidId)." and h.skip = 0 and isnull(r.dmmeld) and m.skip <> 1 ");
     $row = mysqli_fetch_assoc($req_open);
     if ($row['aant'] > 0) {
         $meld_color = 'red';

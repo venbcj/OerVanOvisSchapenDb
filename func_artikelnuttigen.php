@@ -122,6 +122,7 @@ $zoek_inkoophoeveelheid = mysqli_query($datb,"
 
     while ($ih = mysqli_fetch_assoc($zoek_inkoophoeveelheid)) { $inkoop = array($ih['inkId'], $ih['inkat'], $ih['stdat']); }
 
+// @TODO: #0004201 $inkoop kan leeg zijn. Maar daar moet je tegen beveiligen.
     return $inkoop;
 
 }
@@ -160,6 +161,7 @@ $ink_voorraad = zoek_voorraad_oudste_inkoop_pil($datb, $artid);
 $inkId = $ink_voorraad[0];
 $rest_ink_vrd = $ink_voorraad[1];
 $stdat = $ink_voorraad[2];
+# @TODO: #0004202 zorg dat je niet deelt door 0
 $rest_toedien_vrd = $rest_ink_vrd / $stdat;
 
 

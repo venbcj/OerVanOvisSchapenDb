@@ -244,6 +244,7 @@ $qryReden = ("SELECT r.redId, r.reden
 $reden = mysqli_query($db,$qryReden) or die (mysqli_error($db)); 
 
 $index = 0; 
+$redId = [];
 while ($red = mysqli_fetch_array($reden)) 
 { 
    $redId[$index] = $red['redId'];

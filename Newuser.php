@@ -117,6 +117,9 @@ include "newreader_keuzelijsten.php";
 
 
 $map = 'user_'.$newId;
+if (file_exists($map)) {
+    throw new Exception("Map voor lid $newId is al aanwezig");
+}
     mkdir("$map"); // Persoonlijk map voor user maken
 
 $map = 'user_'.$newId.'/Readerbestanden';

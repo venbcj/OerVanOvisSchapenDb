@@ -18,12 +18,13 @@ $vw = $this->db->query("
 SELECT st.stalId
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
+ INNER JOIN tblUbn u USING (ubnId)
  join (
      SELECT stalId
      FROM tblHistorie
      WHERE actId = 3
  ) ouder on (ouder.stalId = st.stalId)
-WHERE s.geslacht = 'ram' and isnull(st.rel_best) and lidId = '".$this->db->real_escape_string($lidId)."' 
+WHERE s.geslacht = 'ram' and isnull(st.rel_best) and u.lidId = '".$this->db->real_escape_string($lidId)."' 
 GROUP BY st.stalId  
 ");
 if ($vw->num_rows == 0) {
@@ -53,12 +54,13 @@ $vw = $this->db->query("
 SELECT st.stalId, right(levensnummer, $Karwerk) werknr, concat(kleur, ' ', halsnr) halsnr
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
+ INNER JOIN tblUbn u USING (ubnId)
  join (
      SELECT stalId
      FROM tblHistorie
      WHERE actId = 3
  ) ouder on (ouder.stalId = st.stalId)
-WHERE s.geslacht = 'ram' and isnull(st.rel_best) and lidId = '".$this->db->real_escape_string($lidId)."' 
+WHERE s.geslacht = 'ram' and isnull(st.rel_best) and u.lidId = '".$this->db->real_escape_string($lidId)."' 
 GROUP BY st.stalId, levensnummer
 ORDER BY right(levensnummer, $Karwerk)  
 ");
@@ -822,14 +824,16 @@ FROM tblSchaap s
  left join tblSchaap vdr on (v.vdrId = vdr.schaapId)
  join (
     SELECT min(stalId) stalId, schaapId
-    FROM tblStal
-    WHERE lidId = '".$this->db->real_escape_string($lidId)."'
+    FROM tblStal st
+    INNER JOIN tblUbn u USING (ubnId)
+    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."'
     GROUP BY schaapId
  ) st1 on (s.schaapId = st1.schaapId)
  join (
     SELECT max(stalId) stalId, schaapId
-    FROM tblStal
-    WHERE lidId = '".$this->db->real_escape_string($lidId)."'
+    FROM tblStal st
+    INNER JOIN tblUbn u USING (ubnId)
+    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."'
     GROUP BY schaapId
  ) stm on (s.schaapId = stm.schaapId)
  join tblStal st on (stm.stalId = st.stalId)

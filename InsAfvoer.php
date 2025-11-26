@@ -311,6 +311,7 @@ ORDER BY reden
 $reden = mysqli_query($db,$qryReden) or die (mysqli_error($db)); 
 
 $index = 0; 
+$reduId = [];
 while ($rdn = mysqli_fetch_array($reden)) 
 { 
    $reduId[$index] = $rdn['reduId']; 
