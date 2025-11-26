@@ -91,6 +91,7 @@ $index = 0;
  <!-- KZLJAAR -->
  <select style="width:65;" name= "kzlJaar_" >
 <?php    $count = count($jaarnr);    
+$Id = ''; # @TODO: #0004198 deze variabele lijkt me overbodig --BCB
 for ($i = 0; $i < $count; $i++){
 
     $opties = array($jaarnr[$i]=>$jaarnr[$i]);
@@ -224,6 +225,7 @@ $zoek_element = $salber_gateway->zoek_element($lidId, $kzlJaar);
     $eenheid_voor = array(''=>' ','euro'=>'&euro;','getal'=>'&nbsp&nbsp','procent'=>'&nbsp&nbsp');
     $eenheid_achter = array(''=>'','euro'=>'','getal'=>' st','procent'=>'%');
     
+   $mdrs = 0; // @TODO: #0004199 variabele werd niet gezet
 // Realiteit en prognose ophalen per component 
     // TODO: constanten maken voor de waarden van $elemId, zodat het commentaar weg kan
 if($elemId == 1 && $kzlJaar <= date('Y')) { /* 1 = Aantal ooien*/ $real = $mdrs; }

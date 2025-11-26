@@ -1665,6 +1665,7 @@ public function zoek_groeiresultaat_schaap($lidId, $Karwerk, $where) {
 SELECT right(mdr.levensnummer, $Karwerk) moeder, s.schaapId, s.levensnummer, right(s.levensnummer, $Karwerk) werknum, s.geslacht, prnt.datum aanw, h.kg, h.datum date, date_format(h.datum,'%d-%m-%Y') datum, h.actId, a.actie
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
+ INNER JOIN tblUbn u USING (ubnId)
  join tblHistorie h on (st.stalId = h.stalId) 
  join tblActie a on (h.actId = a.actId)
  left join (

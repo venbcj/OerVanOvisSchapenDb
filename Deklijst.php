@@ -334,6 +334,7 @@ $jaarNr = [];
         <!-- KZLJAAR -->
          <select style="width:65;" name= "kzlJaar_" >
         <?php    $count = count($jaarNr);    
+    $Id = ''; // @TODO: #0004200 variabele lijkt overbodig
         for ($i = 0; $i < $count; $i++){
 
             $opties = array($jaarNr[$i]=>$jaarNr[$i]);
@@ -675,7 +676,7 @@ FROM tblVolwas v
  join tblStal st on (h.stalId = st.stalId)
 WHERE h.skip = 0 and date_format(h.datum,'%Y%u') = '".mysqli_real_escape_string($db,$dek_jaarweek)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die (mysqli_error($db));
-    while ( $zadw = mysqli_fetch_assoc($zoek_aantal_dekkingen_per_week)) { $dekat_r = $zadw['aant']; if($dekat_r == 0) { unset($dekat_r); } }
+    while ( $zadw = mysqli_fetch_assoc($zoek_aantal_dekkingen_per_week)) { $dekat_r = $zadw['aant']; }
 
 $zoek_aantal_geboortes_per_week = "
 SELECT count(h.hisId) aant
@@ -686,7 +687,7 @@ WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y%u') = '".mysqli_rea
 //echo $zoek_aantal_geboortes_per_week.'<br>';
 
 $zoek_aantal_geboortes_per_week = mysqli_query($db,$zoek_aantal_geboortes_per_week) or die (mysqli_error($db));
-    while ( $zagw = mysqli_fetch_assoc($zoek_aantal_geboortes_per_week)) { $werpat_r = $zagw['aant']; if($werpat_r == 0) { unset($werpat_r); } }
+    while ( $zagw = mysqli_fetch_assoc($zoek_aantal_geboortes_per_week)) { $werpat_r = $zagw['aant']; }
 
 
 $zoek_aantal_afvoer_per_week = mysqli_query($db,"
@@ -695,7 +696,7 @@ FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
 WHERE h.actId = 12 and h.skip = 0 and date_format(h.datum,'%Y%u') = '".mysqli_real_escape_string($db,$afv_jaarweek)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die (mysqli_error($db));
-    while ( $zaaw = mysqli_fetch_assoc($zoek_aantal_afvoer_per_week)) { $afvat_r = $zaaw['aant']; if($afvat_r == 0) { unset($afvat_r); } }
+    while ( $zaaw = mysqli_fetch_assoc($zoek_aantal_afvoer_per_week)) { $afvat_r = $zaaw['aant']; }
 
 
 ?>
@@ -812,7 +813,6 @@ WHERE h.skip = 0 and date_format(h.datum,'%Y%u') >= '".mysqli_real_escape_string
     while ( $zadm = mysqli_fetch_assoc($zoek_aantal_dekkingen_per_maand)) { $dektot_r = $zadm['aant']; }
 
 if ($mndnr == 1 && isset($dekat_r_week0)) { $dektot_r = $dektot_r + $dekat_r_week0; }
-if($dektot_r == 0) { unset($dektot_r); }
 // Einde DEKKINGEN
 
 // WORPEN
@@ -852,7 +852,6 @@ WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y%u') >= '".mysqli_re
     while ( $zalm = mysqli_fetch_assoc($zoek_aantal_lammeren_per_maand)) { $werptot_r = $zalm['aant']; }
 
 if ($mndnr == 1 && isset($werpat_r_week0)) { $werptot_r = $werptot_r + $werpat_r_week0; }
-if($werptot_r == 0) { unset($werptot_r); }
 // Einde WORPEN
 
 // AFLEVEREN

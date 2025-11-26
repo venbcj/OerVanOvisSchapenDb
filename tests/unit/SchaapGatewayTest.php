@@ -280,8 +280,8 @@ class SchaapGatewayTest extends GatewayCase {
         $this->runSQL("INSERT INTO tblVolwas(mdrId, volwId) VALUES(" . $ooiId . ", " . self::VOLWID . ")");
         $this->runSQL("INSERT INTO tblSchaap(schaapId, volwId) VALUES(" . self::NEWSCHAAPID . ", " . self::VOLWID . ")"); // lam
         $this->runSQL("INSERT INTO tblSchaap(schaapId, volwId) VALUES(" . self::NEWSCHAAPID2 . ", " . self::VOLWID . ")"); // lam
-        $this->runSQL("INSERT INTO tblStal(stalId, lidId, schaapId) VALUES(2, 1, " . self::NEWSCHAAPID . ")");
-        $this->runSQL("INSERT INTO tblStal(stalId, lidId, schaapId) VALUES(3, 1, " . self::NEWSCHAAPID2 . ")");
+        $this->runSQL("INSERT INTO tblStal(stalId, ubnId, schaapId) VALUES(2, 1, " . self::NEWSCHAAPID . ")");
+        $this->runSQL("INSERT INTO tblStal(stalId, ubnId, schaapId) VALUES(3, 1, " . self::NEWSCHAAPID2 . ")");
         $this->runSQL("INSERT INTO tblHistorie(stalId, actId, datum) VALUES(2, 1, '2021-11-07')");
         $res = $this->sut->aantal_meerlingen_perOoi(self::LIDID, $ooiId, $aantal);
         $this->assertEquals(1, $res->num_rows, 'het aantal rijen klopt niet');

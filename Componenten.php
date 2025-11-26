@@ -61,7 +61,7 @@ while($rij = mysqli_fetch_assoc($loopEenh)) {
 <tr><th height = 52 align = left valign = bottom><?php echo $eenheid; ?><hr></th></tr>    
 <?php        
         // START LOOP Componenten
-        $loopCom = $lid_gateway->user_componenten($lidId, $eenhd);
+        $loopCom = $lid_gateway->user_componenten($lidId, $eenh);
 
     while($row = mysqli_fetch_assoc($loopCom)) {
         $Id = "{$row['elemuId']}";
