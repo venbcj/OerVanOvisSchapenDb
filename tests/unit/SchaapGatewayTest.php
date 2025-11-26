@@ -313,11 +313,11 @@ class SchaapGatewayTest extends GatewayCase {
         $this->runSQL("INSERT INTO tblVolwas(mdrId, volwId) VALUES(4, 1)");
         $this->runSQL("INSERT INTO tblSchaap(schaapId, volwId) VALUES(" . self::NEWSCHAAPID . ", " . self::VOLWID . ")"); // lam
         $this->runSQL("INSERT INTO tblSchaap(schaapId, volwId) VALUES(" . self::NEWSCHAAPID2 . ", " . self::VOLWID . ")"); // lam
-        $this->runSQL("INSERT INTO tblStal(stalId, lidId, schaapId) VALUES(2, 1, " . self::NEWSCHAAPID . ")");
-        $this->runSQL("INSERT INTO tblStal(stalId, lidId, schaapId) VALUES(3, 1, " . self::NEWSCHAAPID2 . ")");
+        $this->runSQL("INSERT INTO tblStal(stalId, ubnId, schaapId) VALUES(2, 1, " . self::NEWSCHAAPID . ")");
+        $this->runSQL("INSERT INTO tblStal(stalId, ubnId, schaapId) VALUES(3, 1, " . self::NEWSCHAAPID2 . ")");
         $this->runSQL("INSERT INTO tblHistorie(stalId, actId, datum) VALUES(2, 1, '2020-09-07')");
         $this->runSQL("INSERT INTO tblHistorie(stalId, actId, datum) VALUES(3, 1, '2020-09-07')");
-        $res = $this->sut->meerlingen_perOoi_perJaar(self::LIDID, self::SCHAAP4_ID, 2020, '09');
+        $res = $this->sut->meerlingen_perOoi_perJaar(self::LIDID, self::SCHAAP4_ID, '2020', '09');
         $this->assertEquals([1, self::VOLWID], $res);
     }
 
