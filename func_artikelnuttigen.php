@@ -92,7 +92,7 @@ function inlezen_voer($datb, $artid, $rest_toedat, $toediendatum, $periode_id, $
 
 
 
-function volgende_inkoop_pil($datb, $artikel): array {
+function volgende_inkoop_pil($artikel): array {
     $inkoop_gateway = new InkoopGateway();
     $dmink = $inkoop_gateway->eerste_inkoopdatum_zonder_nuttiging($artikel);
     $new_inkId = $inkoop_gateway->eerste_inkoopid_op_datum($artikel, $dmink);
@@ -103,31 +103,17 @@ function volgende_inkoop_pil($datb, $artikel): array {
     return $inkoop;
 }
 
-function zoek_voorraad_oudste_inkoop_pil($datb, $artikel) {
-    $zoek_inkId_en_resterende_voorraad_van_laatst_aangesproken_voorraad = mysqli_query($datb, "
-SELECT i.inkId, i.inkat - coalesce(n.nutat,0) vrdat, a.stdat
-FROM tblArtikel a
- join tblInkoop i on (a.artId = i.artId)
- left join (
-    SELECT inkId, sum(nutat*stdat) nutat
-    FROM tblNuttig 
-    GROUP BY inkId
- ) n on (i.inkId = n.inkId)
-WHERE i.artId = '" . mysqli_real_escape_string($datb, $artikel) . "'
- and i.inkat > (i.inkat - coalesce(n.nutat,0))
- and (i.inkat - coalesce(n.nutat,0)) > 0
-");
-    while ($i_vrd = mysqli_fetch_assoc($zoek_inkId_en_resterende_voorraad_van_laatst_aangesproken_voorraad)) {
-        $inkoop = array($i_vrd['inkId'], $i_vrd['vrdat'], $i_vrd['stdat']);
-    }
+function zoek_voorraad_oudste_inkoop_pil($artikel) {
+    $inkoop_gateway = new InkoopGateway();
+    $inkoop = $inkoop_gateway->laatst_aangesproken_voorraad($artikel);
     if (!isset($inkoop[0])) {
-        $inkoop = volgende_inkoop_pil($datb, $artikel);
+        $inkoop = volgende_inkoop_pil($artikel);
     }
     return $inkoop;
 }
 
 function inlezen_pil($datb, $hisid, $artid, $rest_toedat, $toediendatum, $reduid) {
-    $ink_voorraad = zoek_voorraad_oudste_inkoop_pil($datb, $artid);
+    $ink_voorraad = zoek_voorraad_oudste_inkoop_pil($artid);
     $inkId = $ink_voorraad[0];
     $rest_ink_vrd = $ink_voorraad[1];
     $stdat = $ink_voorraad[2];
@@ -145,11 +131,6 @@ function inlezen_pil($datb, $hisid, $artid, $rest_toedat, $toediendatum, $reduid
 }
 
 function nuttig_pil($datb, $hisid, $inkId, $stdat, $reduid, $aantal) {
-    $inlezen_pil = "INSERT INTO tblNuttig
-        SET hisId = '" . mysqli_real_escape_string($datb, $hisid) . "',
-        inkId = '" . mysqli_real_escape_string($datb, $inkId) . "',
-        nutat = '" . mysqli_real_escape_string($datb, $aantal) . "',
-        stdat = '" . mysqli_real_escape_string($datb, $stdat) . "',
-        reduId = " . db_null_input($reduid) . " ";
-    mysqli_query($datb, $inlezen_pil);
+    $nuttig_gateway = new NuttigGateway();
+    $nuttig_gateway->nuttig_pil($hisid, $inkId, $stdat, $reduid, $aantal);
 }

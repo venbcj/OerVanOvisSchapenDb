@@ -23,9 +23,11 @@ class Gateway {
     protected function run_query($SQL, $args = []) {
         // TODO: ik kan niet wachten tot er config() is, voor een setting debug.log_queries
         $statement = $this->expand($SQL, $args);
-        # Logger::debug($statement);
+        Logger::instance()->debug($statement);
         $res = $this->db->query($statement);
-        # Logger::debug($this->db->error);
+        if ($this->db->error) {
+            Logger::instance()->debug($this->db->error);
+        }
         return $res;
     }
 
@@ -84,7 +86,6 @@ class Gateway {
             }
             $SQL = str_replace($key, $value, $SQL);
         }
-        Logger::instance()->debug($SQL);
         return $SQL;
     }
 

@@ -29,9 +29,9 @@ class ArtikelnuttigenTest extends IntegrationCase {
     public function test_inlezen_pil_meerDan() {
         // GIVEN
         $this->setArtikelFixture();
-        // als je onvoldoende inkoopt, klapt de test eruit. 3 is genoeg. Waarom?
+        // als je onvoldoende inkoopt, klapt de test eruit. 3 is genoeg. Nee 4. Waarom?
         $this->runSQL("INSERT INTO tblInkoop(inkId, dmink, artId, inkat, enhuId, prijs)
-            VALUES(2, '2012-01-01', " . self::ARTID . ", 3, 1, 1)");
+            VALUES(2, '2012-01-01', " . self::ARTID . ", 4, 1, 1)");
         $this->expectNewRecordsInTables([
             'tblNuttig' => 2,
         ]);
@@ -50,14 +50,14 @@ class ArtikelnuttigenTest extends IntegrationCase {
         $this->setArtikelFixture();
         $artid = self::ARTID;
         $this->expectException(Exception::class);
-        $actual = volgende_inkoop_pil($this->db, $artid);
+        $actual = volgende_inkoop_pil($artid);
     }
 
     public function test_volgende_inkoop_pil() {
         $this->setArtikelFixture();
         $this->runSQL("INSERT INTO tblInkoop(inkId, dmink, artId, inkat, enhuId, prijs) VALUES(2, '2012-01-01', " . self::ARTID . ", 1, 1, 1)");
         $artid = self::ARTID;
-        $actual = volgende_inkoop_pil($this->db, $artid);
+        $actual = volgende_inkoop_pil($artid);
         $expected = [2, 1, 4];
         $this->assertEquals($expected, $actual);
     }
@@ -71,7 +71,7 @@ class ArtikelnuttigenTest extends IntegrationCase {
         // WHEN
         // voer de methode uit
         $artid = self::ARTID;
-        $actual = zoek_voorraad_oudste_inkoop_pil($this->db, $artid);
+        $actual = zoek_voorraad_oudste_inkoop_pil($artid);
         // THEN
         // controleer dat de juiste waarde terugkomt
         $expected = [1, 1, 4];

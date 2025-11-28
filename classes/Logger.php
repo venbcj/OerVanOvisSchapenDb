@@ -7,14 +7,18 @@ class Logger {
     }
 
     public function error($msg) {
-        error_log('ERROR: '.$msg.PHP_EOL, 3, APP.'log/development.log');
+        error_log($this->moment().' [ERROR] '.$msg.PHP_EOL, 3, APP.'log/development.log');
         error_log($this->trace(), 3, APP.'log/development.log');
         # throw new Exception($msg);
     }
 
     public function debug($msg) {
-        error_log('DEBUG: '.$msg.PHP_EOL, 3, APP.'log/development.log');
+        error_log($this->moment().' [DEBUG] '.$msg.PHP_EOL, 3, APP.'log/development.log');
         # throw new Exception($msg);
+    }
+
+    private function moment() {
+        return date("Y-m-d H:i:s");
     }
 
     private function trace() {

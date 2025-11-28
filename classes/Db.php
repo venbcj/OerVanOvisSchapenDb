@@ -13,6 +13,13 @@ class Db {
         return self::$instance;
     }
 
+    public function __get($name) {
+        if ($name == 'error') {
+            return $this->connection->error;
+        }
+        throw new Exception("Unknown property $name");
+    }
+
     private function __construct($logger = null) {
         if (is_null($logger)) {
             $logger = Logger::instance();
