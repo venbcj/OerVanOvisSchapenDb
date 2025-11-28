@@ -41,4 +41,42 @@ SQL
         );
     }
 
+    public function eerste_inkoopdatum_zonder_nuttiging($artikel) {
+        // deze query leverde nooit geen-rijen op! MIN() zonder GROUP BY is onvoorspelbaar --BCB
+        return $this->first_field(<<<SQL
+  SELECT min(dmink) dmink
+  FROM tblInkoop i
+   left join tblNuttig n on (i.inkId = n.inkId) 
+  WHERE artId = :artId
+ and isnull(n.inkId)
+GROUP BY i.inkId
+SQL
+        , [[':artId', $artikel, self::INT]]
+        );
+    }
+
+    public function eerste_inkoopid_op_datum($artikel, $dmink) {
+        return $this->first_field(<<<SQL
+  SELECT min(i.inkId) inkId
+  FROM tblInkoop i
+   left join tblNuttig n on (i.inkId = n.inkId)
+  WHERE artId = :artId
+ and dmink = :dmink
+ and isnull(n.inkId)
+SQL
+        , [[':artId', $artikel, self::INT], [':dmink', $dmink, self::DATE]]
+        );
+    }
+
+    public function zoek_inkoop($new_inkId) {
+        return $this->first_row(<<<SQL
+  SELECT i.inkId, i.inkat, a.stdat
+  FROM tblInkoop i
+   join tblArtikel a on (i.artId = a.artId)
+  WHERE inkId = :inkId
+SQL
+        , [[':inkId', $new_inkId, self::INT]]
+        );
+    }
+
 }

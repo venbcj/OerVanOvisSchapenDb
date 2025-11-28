@@ -46,6 +46,13 @@ class ArtikelnuttigenTest extends IntegrationCase {
         $this->assertTablesGrew();
     }
 
+    public function test_volgende_inkoop_pil_throws_exception_when_insufficient_voorraad() {
+        $this->setArtikelFixture();
+        $artid = self::ARTID;
+        $this->expectException(Exception::class);
+        $actual = volgende_inkoop_pil($this->db, $artid);
+    }
+
     public function test_volgende_inkoop_pil() {
         $this->setArtikelFixture();
         $this->runSQL("INSERT INTO tblInkoop(inkId, dmink, artId, inkat, enhuId, prijs) VALUES(2, '2012-01-01', " . self::ARTID . ", 1, 1, 1)");

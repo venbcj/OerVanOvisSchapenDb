@@ -92,39 +92,13 @@ function inlezen_voer($datb, $artid, $rest_toedat, $toediendatum, $periode_id, $
 
 
 
-function volgende_inkoop_pil($datb, $artikel) {
-    // deze query leverde nooit geen-rijen op! MIN() zonder GROUP BY is onvoorspelbaar --BCB
-    $zoek_volgende_inkoopdatum = mysqli_query($datb, "
-  SELECT min(dmink) dmink
-  FROM tblInkoop i
-   left join tblNuttig n on (i.inkId = n.inkId) 
-  WHERE artId = '" . mysqli_real_escape_string($datb, $artikel) . "'
- and isnull(n.inkId)
-GROUP BY i.inkId
-");
-    while ($v_inkdm = mysqli_fetch_assoc($zoek_volgende_inkoopdatum)) {
-        $dmink = $v_inkdm['dmink'];
-    }
-    $zoek_volgende_inkId = mysqli_query($datb, "
-  SELECT min(i.inkId) inkId
-  FROM tblInkoop i
-   left join tblNuttig n on (i.inkId = n.inkId)
-  WHERE artId = '" . mysqli_real_escape_string($datb, $artikel) . "'
- and dmink = '" . mysqli_real_escape_string($datb, $dmink) . "'
- and isnull(n.inkId)
-");
-    while ($v_inkId = mysqli_fetch_assoc($zoek_volgende_inkId)) {
-        $new_inkId = $v_inkId['inkId'];
-    }
-    $inkoop = [1, 1, 1];
-    $zoek_inkoophoeveelheid = mysqli_query($datb, "
-  SELECT i.inkId, i.inkat, a.stdat
-  FROM tblInkoop i
-   join tblArtikel a on (i.artId = a.artId)
-  WHERE inkId = '" . mysqli_real_escape_string($datb, $new_inkId) . "'
-");
-    while ($ih = mysqli_fetch_assoc($zoek_inkoophoeveelheid)) {
-        $inkoop = array($ih['inkId'], $ih['inkat'], $ih['stdat']);
+function volgende_inkoop_pil($datb, $artikel): array {
+    $inkoop_gateway = new InkoopGateway();
+    $dmink = $inkoop_gateway->eerste_inkoopdatum_zonder_nuttiging($artikel);
+    $new_inkId = $inkoop_gateway->eerste_inkoopid_op_datum($artikel, $dmink);
+    $inkoop = $inkoop_gateway->zoek_inkoop($new_inkId);
+    if (!$inkoop) {
+        throw new Exception("volgende_inkoop mag niet worden aangeroepen bij onvoldoende voorraad");
     }
     return $inkoop;
 }
