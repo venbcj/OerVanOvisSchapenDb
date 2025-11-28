@@ -88,7 +88,7 @@ function inlezen_voer($datb, $artid, $rest_toedat, $toediendatum, $periode_id, $
 
         mysqli_query($datb, $inlezen_voer);
     }
-} // Einde function inlezen_voer(
+}
 
 
 
@@ -160,22 +160,22 @@ function inlezen_pil($datb, $hisid, $artid, $rest_toedat, $toediendatum, $reduid
 # @TODO: #0004202 zorg dat je niet deelt door 0
     $rest_toedien_vrd = $rest_ink_vrd / $stdat;
     if ($rest_toedat > $rest_toedien_vrd) {
-        $inlezen_pil = "INSERT INTO tblNuttig
-          SET hisId = '" . mysqli_real_escape_string($datb, $hisid) . "',
-              inkId = '" . mysqli_real_escape_string($datb, $inkId) . "',
-              nutat = '" . mysqli_real_escape_string($datb, $rest_toedien_vrd) . "',
-              stdat = '" . mysqli_real_escape_string($datb, $stdat) . "',
-              reduId = " . db_null_input($reduid) . " ";
-        mysqli_query($datb, $inlezen_pil);
+        $aantal = $rest_toedien_vrd;
+        nuttig_pil($datb, $hisid, $inkId, $stdat, $reduid, $aantal);
         $rest_toedat = $rest_toedat - $rest_toedien_vrd;
         inlezen_pil($datb, $hisid, $artid, $rest_toedat, $toediendatum, $reduid);
     } else {
-        $inlezen_pil = "INSERT INTO tblNuttig
-          SET hisId = '" . mysqli_real_escape_string($datb, $hisid) . "',
-              inkId = '" . mysqli_real_escape_string($datb, $inkId) . "',
-              nutat = '" . mysqli_real_escape_string($datb, $rest_toedat) . "',
-              stdat = '" . mysqli_real_escape_string($datb, $stdat) . "',
-              reduId = " . db_null_input($reduid) . " ";
-        mysqli_query($datb, $inlezen_pil);
+        $aantal = $rest_toedat;
+        nuttig_pil($datb, $hisid, $inkId, $stdat, $reduid, $aantal);
     }
+}
+
+function nuttig_pil($datb, $hisid, $inkId, $stdat, $reduid, $aantal) {
+    $inlezen_pil = "INSERT INTO tblNuttig
+        SET hisId = '" . mysqli_real_escape_string($datb, $hisid) . "',
+        inkId = '" . mysqli_real_escape_string($datb, $inkId) . "',
+        nutat = '" . mysqli_real_escape_string($datb, $aantal) . "',
+        stdat = '" . mysqli_real_escape_string($datb, $stdat) . "',
+        reduId = " . db_null_input($reduid) . " ";
+    mysqli_query($datb, $inlezen_pil);
 }
