@@ -32,14 +32,13 @@ SQL
     }
 
     public function countArtikel($artId) {
-        $voer_ingekocht = $this->db->query("
+        return $this->first_field(<<<SQL
 SELECT count(artId) aant
 FROM tblInkoop
-WHERE artId = '".$this->db->real_escape_string($artId)."'
-");
-$ing = $voer_ingekocht->fetch_assoc();
-$rows_inkoop = $ing['aant'];
-return $rows_inkoop;
-        }
+WHERE artId = :artId
+SQL
+        , [[':artId', $artId, self::INT]]
+        );
+    }
 
 }
