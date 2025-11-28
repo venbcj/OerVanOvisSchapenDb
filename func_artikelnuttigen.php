@@ -113,6 +113,7 @@ function zoek_voorraad_oudste_inkoop_pil($artikel) {
 }
 
 function inlezen_pil($datb, $hisid, $artid, $rest_toedat, $toediendatum, $reduid) {
+    $nuttig_gateway = new NuttigGateway();
     $ink_voorraad = zoek_voorraad_oudste_inkoop_pil($artid);
     $inkId = $ink_voorraad[0];
     $rest_ink_vrd = $ink_voorraad[1];
@@ -121,16 +122,12 @@ function inlezen_pil($datb, $hisid, $artid, $rest_toedat, $toediendatum, $reduid
     $rest_toedien_vrd = $rest_ink_vrd / $stdat;
     if ($rest_toedat > $rest_toedien_vrd) {
         $aantal = $rest_toedien_vrd;
-        nuttig_pil($datb, $hisid, $inkId, $stdat, $reduid, $aantal);
+        $nuttig_gateway->nuttig_pil($hisid, $inkId, $stdat, $reduid, $aantal);
         $rest_toedat = $rest_toedat - $rest_toedien_vrd;
+        // @TODO: moet je opnieuw zoek_voorraad_oudste... doen?
         inlezen_pil($datb, $hisid, $artid, $rest_toedat, $toediendatum, $reduid);
     } else {
         $aantal = $rest_toedat;
-        nuttig_pil($datb, $hisid, $inkId, $stdat, $reduid, $aantal);
+        $nuttig_gateway->nuttig_pil($hisid, $inkId, $stdat, $reduid, $aantal);
     }
-}
-
-function nuttig_pil($datb, $hisid, $inkId, $stdat, $reduid, $aantal) {
-    $nuttig_gateway = new NuttigGateway();
-    $nuttig_gateway->nuttig_pil($hisid, $inkId, $stdat, $reduid, $aantal);
 }
