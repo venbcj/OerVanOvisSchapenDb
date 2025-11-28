@@ -130,7 +130,6 @@ GROUP BY i.inkId
 }
 
 function zoek_voorraad_oudste_inkoop_pil($datb, $artikel) {
-
     $zoek_inkId_en_resterende_voorraad_van_laatst_aangesproken_voorraad = mysqli_query($datb, "
 SELECT i.inkId, i.inkat - coalesce(n.nutat,0) vrdat, a.stdat
 FROM tblArtikel a
@@ -147,48 +146,36 @@ WHERE i.artId = '" . mysqli_real_escape_string($datb, $artikel) . "'
     while ($i_vrd = mysqli_fetch_assoc($zoek_inkId_en_resterende_voorraad_van_laatst_aangesproken_voorraad)) {
         $inkoop = array($i_vrd['inkId'], $i_vrd['vrdat'], $i_vrd['stdat']);
     }
-
     if (!isset($inkoop[0])) {
         $inkoop = volgende_inkoop_pil($datb, $artikel);
     }
-
     return $inkoop;
 }
 
 function inlezen_pil($datb, $hisid, $artid, $rest_toedat, $toediendatum, $reduid) {
-
     $ink_voorraad = zoek_voorraad_oudste_inkoop_pil($datb, $artid);
-
     $inkId = $ink_voorraad[0];
     $rest_ink_vrd = $ink_voorraad[1];
     $stdat = $ink_voorraad[2];
 # @TODO: #0004202 zorg dat je niet deelt door 0
     $rest_toedien_vrd = $rest_ink_vrd / $stdat;
-
-
     if ($rest_toedat > $rest_toedien_vrd) {
         $inlezen_pil = "INSERT INTO tblNuttig
           SET hisId = '" . mysqli_real_escape_string($datb, $hisid) . "',
- inkId = '" . mysqli_real_escape_string($datb, $inkId) . "',
- nutat = '" . mysqli_real_escape_string($datb, $rest_toedien_vrd) . "',
- stdat = '" . mysqli_real_escape_string($datb, $stdat) . "',
- reduId = " . db_null_input($reduid) . " ";
-
+              inkId = '" . mysqli_real_escape_string($datb, $inkId) . "',
+              nutat = '" . mysqli_real_escape_string($datb, $rest_toedien_vrd) . "',
+              stdat = '" . mysqli_real_escape_string($datb, $stdat) . "',
+              reduId = " . db_null_input($reduid) . " ";
         mysqli_query($datb, $inlezen_pil);
-
-
         $rest_toedat = $rest_toedat - $rest_toedien_vrd;
-
-
         inlezen_pil($datb, $hisid, $artid, $rest_toedat, $toediendatum, $reduid);
     } else {
         $inlezen_pil = "INSERT INTO tblNuttig
           SET hisId = '" . mysqli_real_escape_string($datb, $hisid) . "',
- inkId = '" . mysqli_real_escape_string($datb, $inkId) . "',
- nutat = '" . mysqli_real_escape_string($datb, $rest_toedat) . "',
- stdat = '" . mysqli_real_escape_string($datb, $stdat) . "',
- reduId = " . db_null_input($reduid) . " ";
-
+              inkId = '" . mysqli_real_escape_string($datb, $inkId) . "',
+              nutat = '" . mysqli_real_escape_string($datb, $rest_toedat) . "',
+              stdat = '" . mysqli_real_escape_string($datb, $stdat) . "',
+              reduId = " . db_null_input($reduid) . " ";
         mysqli_query($datb, $inlezen_pil);
     }
-} // Einde function inlezen_pil(
+}
