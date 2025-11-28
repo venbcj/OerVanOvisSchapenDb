@@ -2,35 +2,58 @@
 
 class ArtikelnuttigenTest extends IntegrationCase {
 
+    private const ARTID = 93;
+
     public function setup(): void {
         require_once "func_artikelnuttigen.php";
         $this->uses_db();
     }
 
     public function test_inlezen_pil() {
-        # $this->markTestIncomplete('onderdelen moeten eerst goed werken');
         // GIVEN
-        // zet de database goed
         $this->setArtikelFixture();
         $this->expectNewRecordsInTables([
             'tblNuttig' => 1,
         ]);
         // WHEN
-        // voer de methode uit met de 6 parameters... er zijn heel wat scenario's denkbaar
         $hisid = 0;
-        $artid = 93;
+        $artid = self::ARTID;
         $rest_toedat = 0;
         $toediendatum = '';
         $reduid = 0;
         inlezen_pil($this->db, $hisid, $artid, $rest_toedat, $toediendatum, $reduid);
         // THEN
-        // controleer dat de juiste dingen in de database zijn gewijzigd. Er is geen functie-output.
         $this->assertTablesGrew();
     }
 
-    # inlezen_voer
-    # volgende_inkoop_pil
-    # volgende_inkoop_voer
+    public function test_inlezen_pil_meerDan() {
+        // GIVEN
+        $this->setArtikelFixture();
+        // als je onvoldoende inkoopt, klapt de test eruit. 3 is genoeg. Waarom?
+        $this->runSQL("INSERT INTO tblInkoop(inkId, dmink, artId, inkat, enhuId, prijs)
+            VALUES(2, '2012-01-01', " . self::ARTID . ", 3, 1, 1)");
+        $this->expectNewRecordsInTables([
+            'tblNuttig' => 2,
+        ]);
+        // WHEN
+        $hisid = 0;
+        $artid = self::ARTID;
+        $rest_toedat = 1;
+        $toediendatum = '';
+        $reduid = 0;
+        inlezen_pil($this->db, $hisid, $artid, $rest_toedat, $toediendatum, $reduid);
+        // THEN
+        $this->assertTablesGrew();
+    }
+
+    public function test_volgende_inkoop_pil() {
+        $this->setArtikelFixture();
+        $this->runSQL("INSERT INTO tblInkoop(inkId, dmink, artId, inkat, enhuId, prijs) VALUES(2, '2012-01-01', " . self::ARTID . ", 1, 1, 1)");
+        $artid = self::ARTID;
+        $actual = volgende_inkoop_pil($this->db, $artid);
+        $expected = [2, 1, 4];
+        $this->assertEquals($expected, $actual);
+    }
 
     public function test_zoek_voorraad_oudste_inkoop_pil() {
         // GIVEN
@@ -40,7 +63,7 @@ class ArtikelnuttigenTest extends IntegrationCase {
         $this->setArtikelFixture();
         // WHEN
         // voer de methode uit
-        $artid = 93;
+        $artid = self::ARTID;
         $actual = zoek_voorraad_oudste_inkoop_pil($this->db, $artid);
         // THEN
         // controleer dat de juiste waarde terugkomt
@@ -48,14 +71,18 @@ class ArtikelnuttigenTest extends IntegrationCase {
         $this->assertEquals($expected, $actual);
     }
 
+    # TODO: scenarios voor:
+    # inlezen_voer
+    # volgende_inkoop_voer
     # zoek_voorraad_oudste_inkoop_voer
 
     private function setArtikelFixture() {
-        $this->runSQL("TRUNCATE tblArtikel");
-        $this->runSQL("INSERT INTO tblArtikel(artId, stdat, soort, naam) VALUES(93, 4, 0, 'test')");
         $this->runSQL("TRUNCATE tblInkoop");
-        $this->runSQL("INSERT INTO tblInkoop(artId, inkId, inkat, enhuId, prijs) VALUES(93, 1, 2, 1, 1)");
+        $this->runSQL("INSERT INTO tblInkoop(inkId, artId, inkat, enhuId, prijs) VALUES(1, " . self::ARTID . ", 2, 1, 1)");
         $this->runSQL("TRUNCATE tblNuttig");
         $this->runSQL("INSERT INTO tblNuttig(inkId, nutat, stdat) VALUES(1, 1, 1)");
+        $this->runSQL("TRUNCATE tblArtikel");
+        $this->runSQL("INSERT INTO tblArtikel(artId, naam, stdat, soort) VALUES(" . self::ARTID . ", 'test', 4, 0)");
     }
+
 }

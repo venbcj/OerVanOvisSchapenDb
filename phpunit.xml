@@ -18,11 +18,7 @@
         <directory>tests</directory>
         <directory>vendor</directory>
       </exclude>
-      <directory>.</directory>
+      <file>./func_artikelnuttigen.php</file>
     </whitelist>
   </filter>
-  <logging>
-    <log type="coverage-html" target="./coverage-html"/>
-    <log type="coverage-clover" target="./coverage.xml"/>
-  </logging>
 </phpunit>

@@ -162,7 +162,7 @@ class MedRegistratiePageTest extends IntegrationCase {
             'txtDatum' => '1990-05-02',
             'txtAantal' => 10,
             'kzlReden' => 4,
-            'kzlArtikel' => 1,
+            'kzlArtikel' => 93,
         ]);
         $this->assertNoNoise();
         // TODO: met betere data komt hier een betekenisvolle melding
@@ -178,7 +178,7 @@ class MedRegistratiePageTest extends IntegrationCase {
             'txtDatum' => '1990-05-02',
             'txtAantal' => 2,
             'kzlReden' => 4,
-            'kzlArtikel' => 1,
+            'kzlArtikel' => 93,
         ]);
         $this->assertNoNoise();
         // TODO: met betere data komt hier een betekenisvolle melding
