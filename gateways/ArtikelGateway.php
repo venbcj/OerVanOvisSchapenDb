@@ -3,54 +3,61 @@
 class ArtikelGateway extends Gateway {
 
     public function pilForLid($lidId) {
-return $this->db->query("
+        return $this->run_query(<<<SQL
 SELECT a.artId, a.naam
 FROM tblEenheiduser eu
  join tblArtikel a on (eu.enhuId = a.enhuId)
  join tblInkoop i on (a.artId = i.artId)
  join tblNuttig n on (n.inkId = i.inkId)
-WHERE eu.lidId = '".$this->db->real_escape_string($lidId)."' and a.soort = 'pil'
+WHERE eu.lidId = :lidId
+ and a.soort = 'pil'
 GROUP BY a.naam
 ORDER BY a.naam
-");
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        );
     }
 
     public function zoek_soort($artId) {
-        $pArtId = $this->db->real_escape_string($artId);
         return $this->first_field(<<<SQL
 SELECT a.soort
 FROM tblArtikel a
-WHERE a.artId = $pArtId
+WHERE a.artId = :artId
 SQL
-        , [[':artId', $artId, self::INT]], 'pil');
+        , [[':artId', $artId, self::INT]]
+        );
     }
 
     public function pilregels($artId) {
-        return $this->db->query("
+        return $this->run_query(<<<SQL
 SELECT i.inkId, a.naam, date_format(i.dmink,'%d-%m-%Y') toedm, i.charge, round(i.inkat - sum(coalesce(n.nutat*n.stdat,0)),0) totat, e.eenheid
 FROM tblArtikel a
  join tblInkoop i on (a.artId = i.artId)
  join tblEenheiduser eu on (eu.enhuId = i.enhuId)
  join tblEenheid e on (e.eenhId = eu.eenhId)
  left join tblNuttig n on (n.inkId = i.inkId) 
-WHERE a.artId = ".$this->db->real_escape_string($artId)."
+WHERE a.artId = :artId
 GROUP BY i.inkId, a.naam, i.dmink, i.charge, i.inkat, e.eenheid
 ORDER BY i.dmink desc, i.inkId
-");
+SQL
+        , [[':artId', $artId, self::INT]]
+        );
     }
 
     public function voerregels($artId) {
-        return $this->db->query("
+        return $this->run_query(<<<SQL
 SELECT i.inkId, a.naam, date_format(i.dmink,'%d-%m-%Y') toedm, NULL charge, round(i.inkat - sum(coalesce(v.nutat*v.stdat,0)),0) totat, e.eenheid
 FROM tblArtikel a
  join tblInkoop i on (a.artId = i.artId)
  join tblEenheiduser eu on (eu.enhuId = i.enhuId)
  join tblEenheid e on (e.eenhId = eu.eenhId)
  left join tblVoeding v on (v.inkId = i.inkId) 
-WHERE a.artId = ".$this->db->real_escape_string($artId)."
+WHERE a.artId = :artId
 GROUP BY i.inkId, a.naam, i.dmink, i.inkat, e.eenheid
 ORDER BY i.dmink desc, i.inkId
-");
+SQL
+        , [[':artId', $artId, self::INT]]
+        );
     }
 
     public function voer($lidId) {
@@ -207,7 +214,74 @@ ORDER BY a.actief desc, a.naam  ");
 }
 
 public function activeer($artId) {
-$this->db->query("Update tblArtikel set actief = 1 WHERE artId = '".$this->db->real_escape_string($artId)."' ");
+    $this->db->query("Update tblArtikel set actief = 1 WHERE artId = '".$this->db->real_escape_string($artId)."' ");
+}
+
+public function zoek_pil_op_voorraad($lidId) {
+    return $this->run_query(<<<SQL
+SELECT a.artId, a.naam, a.stdat, e.eenheid, sum(i.inkat-coalesce(n.vbrat,0)) vrdat
+FROM tblEenheid e
+ join tblEenheiduser eu on (e.eenhId = eu.eenhId)
+ join tblInkoop i on (i.enhuId = eu.enhuId)
+ join tblArtikel a on (i.artId = a.artId)
+ left join (
+    SELECT n.inkId, sum(n.nutat*n.stdat) vbrat
+    FROM tblNuttig n
+    GROUP BY n.inkId
+ ) n on (i.inkId = n.inkId)
+WHERE eu.lidId = :lidId
+ and i.inkat-coalesce(n.vbrat,0) > 0
+ and a.soort = 'pil'
+GROUP BY a.artId, a.naam, a.stdat, e.eenheid
+ORDER BY a.naam
+SQL
+    , [[':lidId', $lidId, self::INT]]
+    );
+}
+
+public function zoek($artId) {
+    $vw = $this->run_query(<<<SQL
+SELECT replace(a.stdat, '.00', '') stdrd, a.naam, e.eenheid, a.stdat
+FROM tblArtikel a
+ join tblEenheiduser eu on (eu.enhuId = a.enhuId)
+ join tblEenheid e on (e.eenhId = eu.eenhId)
+WHERE a.artId = :artId
+SQL
+    , [[':artId', $artId]]
+    );
+    if ($vw->num_rows == 0) {
+        return [0, 0, 0, 0];
+    }
+    return $vw->fetch_row();
+}
+
+public function zoek_eenheid($artId) {
+    return $this->run_query(<<<SQL
+SELECT a.stdat, e.eenheid
+FROM tblEenheid e
+ join tblEenheiduser eu on (e.eenhId = eu.eenhId)
+ join tblArtikel a on (a.enhuId = eu.enhuId)
+WHERE a.artId = :artId
+SQL
+    , [[':artId', $artId, self::INT]]
+    );
+}
+
+public function voorraad($artId) {
+    return $this->first_field(<<<SQL
+SELECT sum(i.inkat-coalesce(n.vbrat,0)) vrdat
+FROM tblInkoop i
+ left join (
+    SELECT n.inkId, sum(n.nutat*n.stdat) vbrat
+    FROM tblInkoop i
+     join tblNuttig n on (i.inkId = n.inkId)
+    WHERE i.artId = :artId
+    GROUP BY n.inkId
+ ) n on (i.inkId = n.inkId)
+WHERE i.artId = :artId
+SQL
+    , [[':artId', $artId, self::INT]]
+    );
 }
 
 }

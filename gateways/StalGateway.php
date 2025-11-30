@@ -111,6 +111,18 @@ if ($vw->num_rows) {
 return ['stalId' => null, 'kleur' => null, 'halsnr' => null];
 }
 
+public function zoek_kleuren_halsnrs($lidId) {
+    return $this->run_query(<<<SQL
+SELECT schaapId, concat(kleur,' ',halsnr) halsnr
+FROM tblStal st
+INNER JOIN tblUbn u USING (ubnId)
+WHERE u.lidId = :lidId and isnull(rel_best) and (kleur is not null or halsnr is not null)
+ORDER BY concat(kleur,' ',halsnr)
+SQL
+    , [[':lidId', $lidId, self::INT]]
+    );
+}
+
 public function updateKleurHalsnr($stalId, $kleur, $halsnr) {
     $this->db->query("UPDATE tblStal set kleur = ". db_null_input($kleur) .", halsnr = ". db_null_input($halsnr)." WHERE stalId = '".$this->db->real_escape_string($stalId)."' ");
 }
@@ -165,6 +177,21 @@ SQL;
         $this->db->query("INSERT INTO tblStal set lidId = '" . $this->db->real_escape_string($lidId) . "',
         schaapId = '" . $this->db->real_escape_string($schaapId) . "',
         rel_herk = '" . $this->db->real_escape_string($rel_herk) . "' ");
+    }
+
+    public function zoek_laatste_stal($lidId, $schaapId) {
+        return $this->run_query(<<<SQL
+SELECT max(stalId) stalId
+FROM tblStal st
+INNER JOIN tblUbn u ON (st.ubnId = u.ubnId)
+WHERE u.lidId = :lidId
+ and st.schaapId = :schaapId
+SQL
+        , [
+            [':lidId', $lidId, self::INT],
+            [':schaapId', $schaapId, self::INT],
+        ]
+        );
     }
 
 }

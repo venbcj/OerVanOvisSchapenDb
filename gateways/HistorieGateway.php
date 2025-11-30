@@ -184,6 +184,19 @@ public function herstel_invoeren($stalId, $datum, $kg, $actId) {
  actId = '".$this->db->real_escape_string($actId)."' ");
 }
 
+public function medicijn_invoeren($stalId, $datum) {
+    $this->run_query(<<<SQL
+ INSERT INTO tblHistorie SET stalId = :stalId,
+        datum = :datum,
+        actId= 8
+SQL
+    , [
+        [':stalId', $stalId, self::INT],
+        [':datum', $datum, self::DATE]
+    ]
+    );
+}
+
 public function weegaantal($lidId, $schaapId) {
     $vw = $this->db->query("
 SELECT count(hisId) aant
@@ -616,6 +629,35 @@ WHERE hisId > '".$this->db->real_escape_string($lst_bezet)."' and a.uit = 1 and 
 
 public function skip($hisId) {
     $this->db->query("UPDATE tblHistorie SET skip=1 WHERE hisId=".$this->db->real_escape_string($hisId));
+}
+
+public function zoek_laatste($stalId, $datum) {
+    return $this->first_field(<<<SQL
+SELECT max(hisId) hisId
+FROM tblHistorie
+WHERE stalId = :stalId
+and datum = :datum
+and actId = 8
+SQL
+    , [
+        [':stalId', $stalId, self::INT],
+        [':datum', $datum, self::DATE],
+    ]
+    );
+}
+
+public function zoek_einddatum($stalId) {
+    return $this->first_row(<<<SQL
+SELECT datum day, date_format(datum,'%d-%m-%Y') datum
+FROM tblHistorie h
+ join tblActie a on (h.actId = a.actId)
+WHERE a.af = 1
+and h.actId != 10
+and h.stalId = :stalId
+and h.skip = 0
+SQL
+    , [[':stalId', $stalId, self::INT]]
+    );
 }
 
 }
