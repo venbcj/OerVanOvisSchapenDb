@@ -19,6 +19,7 @@ class Url {
     public static function getTagId() {
         $host = $_SERVER['HTTP_HOST'];
         switch ($host) {
+        case 'oer-dev':
         case 'localhost:8080':
             $tagid = 'balkOntw';
             break;
@@ -34,6 +35,7 @@ class Url {
         case 'ovis.alexander-ict.nl':
             $tagid = 'balkTest';
             break;
+
         }
         if (php_uname('n') == 'basq') {
             $tagid = 'balkOntw';
