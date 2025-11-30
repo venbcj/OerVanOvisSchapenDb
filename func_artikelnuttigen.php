@@ -57,8 +57,7 @@ function volgende_inkoop_pil($artikel): array {
     $new_inkId = $inkoop_gateway->eerste_inkoopid_op_datum($artikel, $dmink);
     $inkoop = $inkoop_gateway->zoek_inkoop($new_inkId);
     if (!$inkoop) {
-        # throw new Exception("volgende_inkoop_pil mag niet worden aangeroepen bij onvoldoende voorraad");
-        return [1,1,1];
+        throw new Exception("volgende_inkoop_pil mag niet worden aangeroepen bij onvoldoende voorraad");
     }
     return $inkoop;
 }
