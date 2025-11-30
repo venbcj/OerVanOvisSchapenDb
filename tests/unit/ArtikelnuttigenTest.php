@@ -85,7 +85,7 @@ class ArtikelnuttigenTest extends IntegrationCase {
         ]);
         $artid = self::ARTID;
         $rest_toedat = 0;
-        $toediendatum = '';
+        $toediendatum = '2020-01-01'; // moet geldig zijn. Relevantie wordt hier niet duidelijk
         $periode_id = 0;
         $readerid = 0;
         inlezen_voer($this->db, $artid, $rest_toedat, $toediendatum, $periode_id, $readerid);
@@ -101,7 +101,7 @@ class ArtikelnuttigenTest extends IntegrationCase {
         ]);
         $artid = self::ARTID;
         $rest_toedat = 2;
-        $toediendatum = '';
+        $toediendatum = '2020-01-01';
         $periode_id = 0;
         $readerid = 0;
         inlezen_voer($this->db, $artid, $rest_toedat, $toediendatum, $periode_id, $readerid);
@@ -113,21 +113,11 @@ class ArtikelnuttigenTest extends IntegrationCase {
     # zoek_voorraad_oudste_inkoop_voer
 
     private function setArtikelPilFixture() {
-        $this->runSQL("TRUNCATE tblInkoop");
-        $this->runSQL("TRUNCATE tblNuttig");
-        $this->runSQL("TRUNCATE tblArtikel");
-        $this->runSQL("INSERT INTO tblArtikel(artId, naam, stdat, soort) VALUES(" . self::ARTID . ", 'test', 4, 0)");
-        $this->runSQL("INSERT INTO tblInkoop(inkId, artId, inkat, enhuId, prijs) VALUES(1, " . self::ARTID . ", 2, 1, 1)");
-        $this->runSQL("INSERT INTO tblNuttig(inkId, nutat, stdat) VALUES(1, 1, 1)");
+        $this->runfixture('pil-inkoop');
     }
 
     private function setArtikelVoerFixture() {
-        $this->runSQL("TRUNCATE tblArtikel");
-        $this->runSQL("TRUNCATE tblInkoop");
-        $this->runSQL("TRUNCATE tblVoeding");
-        $this->runSQL("INSERT INTO tblArtikel(artId, naam, stdat, soort) VALUES(" . self::ARTID . ", 'test', 4, 0)");
-        $this->runSQL("INSERT INTO tblInkoop(inkId, artId, inkat, enhuId, prijs) VALUES(1, " . self::ARTID . ", 2, 1, 1)");
-        $this->runSQL("INSERT INTO tblVoeding(inkId, nutat, stdat) VALUES(1, 1, 1)");
+        $this->runfixture('voer-inkoop');
     }
 
 }

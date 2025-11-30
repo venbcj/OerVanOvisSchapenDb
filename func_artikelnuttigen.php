@@ -3,33 +3,12 @@
 /*5-9-2021 : functie inlezen_voer gemaakt 22-9-2021 functie inlezen_pil gemaakt */
 
 function volgende_inkoop_voer($datb, $artikel) {
-    $zoek_volgende_inkoopdatum = mysqli_query($datb, "
-  SELECT min(dmink) dmink
-  FROM tblInkoop i
-   left join tblVoeding v on (i.inkId = v.inkId) 
-  WHERE artId = '" . mysqli_real_escape_string($datb, $artikel) . "' and isnull(v.inkId)
-");
-    while ($v_inkdm = mysqli_fetch_assoc($zoek_volgende_inkoopdatum)) {
-        $dmink = $v_inkdm['dmink'];
-    }
-    $zoek_volgende_inkId = mysqli_query($datb, "
-  SELECT min(i.inkId) inkId
-  FROM tblInkoop i
-   left join tblVoeding v on (i.inkId = v.inkId)
-  WHERE artId = '" . mysqli_real_escape_string($datb, $artikel) . "' and dmink = '" . mysqli_real_escape_string($datb, $dmink) . "' and isnull(v.inkId)
-");
-    while ($v_inkId = mysqli_fetch_assoc($zoek_volgende_inkId)) {
-        $new_inkId = $v_inkId['inkId'];
-    }
-    $zoek_inkoophoeveelheid = mysqli_query($datb, "
-  SELECT i.inkId, i.inkat, a.stdat
-  FROM tblInkoop i
-   join tblArtikel a on (i.artId = a.artId)
-  WHERE inkId = '" . mysqli_real_escape_string($datb, $new_inkId) . "'
-");
-$inkoop = null;
-    while ($ih = mysqli_fetch_assoc($zoek_inkoophoeveelheid)) {
-        $inkoop = array($ih['inkId'], $ih['inkat'], $ih['stdat']);
+    $inkoop_gateway = new InkoopGateway();
+    $dmink = $inkoop_gateway->eerste_inkoopdatum_zonder_voeding($artikel);
+    $new_inkId = $inkoop_gateway->eerste_inkoopid_voeding_op_datum($artikel, $dmink);
+    $inkoop = $inkoop_gateway->zoek_inkoop($new_inkId);
+    if (!$inkoop) {
+        throw new Exception("volgende_inkoop_voer mag niet worden aangeroepen bij onvoldoende voorraad");
     }
     return $inkoop;
 }
@@ -58,18 +37,17 @@ WHERE i.artId = '" . mysqli_real_escape_string($datb, $artikel) . "'
 }
 
 function inlezen_voer($datb, $artid, $rest_toedat, $toediendatum, $periode_id, $readerid) {
+    $voeding_gateway = new VoedingGateway();
     $ink_voorraad = zoek_voorraad_oudste_inkoop_voer($datb, $artid);
     $inkId = $ink_voorraad[0];
     $rest_ink_vrd = $ink_voorraad[1];
     $stdat = $ink_voorraad[2];
     if ($rest_toedat > $rest_ink_vrd) {
-        $inlezen_voer = "INSERT INTO tblVoeding SET periId = '" . mysqli_real_escape_string($datb, $periode_id) . "', inkId = '" . mysqli_real_escape_string($datb, $inkId) . "', nutat = '" . mysqli_real_escape_string($datb, $rest_ink_vrd) . "', stdat = '" . mysqli_real_escape_string($datb, $stdat) . "', datum = " . db_null_input($toediendatum) . ", readerId = " . db_null_input($readerid) . " ";
-        mysqli_query($datb, $inlezen_voer);
+        $voeding_gateway->inlezen($periode_id, $inkId, $rest_ink_vrd, $stdat, $toediendatum, $readerid);
         $rest_toedat = $rest_toedat - $rest_ink_vrd;
         inlezen_voer($datb, $artid, $rest_toedat, $toediendatum, $periode_id, $readerid);
     } else {
-        $inlezen_voer = "INSERT INTO tblVoeding SET periId = '" . mysqli_real_escape_string($datb, $periode_id) . "', inkId = '" . mysqli_real_escape_string($datb, $inkId) . "', nutat = '" . mysqli_real_escape_string($datb, $rest_toedat) . "', stdat = '" . mysqli_real_escape_string($datb, $stdat) . "', datum = " . db_null_input($toediendatum) . ", readerId = " . db_null_input($readerid) . " ";
-        mysqli_query($datb, $inlezen_voer);
+        $voeding_gateway->inlezen($periode_id, $inkId, $rest_toedat, $stdat, $toediendatum, $readerid);
     }
 }
 
@@ -79,7 +57,8 @@ function volgende_inkoop_pil($artikel): array {
     $new_inkId = $inkoop_gateway->eerste_inkoopid_op_datum($artikel, $dmink);
     $inkoop = $inkoop_gateway->zoek_inkoop($new_inkId);
     if (!$inkoop) {
-        throw new Exception("volgende_inkoop mag niet worden aangeroepen bij onvoldoende voorraad");
+        # throw new Exception("volgende_inkoop_pil mag niet worden aangeroepen bij onvoldoende voorraad");
+        return [1,1,1];
     }
     return $inkoop;
 }

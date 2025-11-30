@@ -18,7 +18,7 @@
         <directory>tests</directory>
         <directory>vendor</directory>
       </exclude>
-      <file>./func_artikelnuttigen.php</file>
+      <directory>.</directory>
     </whitelist>
   </filter>
 </phpunit>

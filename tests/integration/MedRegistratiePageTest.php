@@ -152,6 +152,7 @@ class MedRegistratiePageTest extends IntegrationCase {
         $this->assertFout('De reden is niet geselecteerd.');
     }
 
+    private const ARTID = 93;
     public function testInsertMedregistratieGeenVoorraad() {
         # $this->markTestSkipped('geeft "opeens" division by zero.');
         $this->runfixture('medicijnvoorraad');

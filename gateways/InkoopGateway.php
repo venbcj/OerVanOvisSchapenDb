@@ -68,6 +68,33 @@ SQL
         );
     }
 
+    public function eerste_inkoopdatum_zonder_voeding($artikel) {
+        return $this->first_field(<<<SQL
+  SELECT min(dmink) dmink
+  FROM tblInkoop i
+   left join tblVoeding v on (i.inkId = v.inkId) 
+  WHERE artId = :artId and isnull(v.inkId)
+SQL
+        , [[':artId', $artikel, self::INT]]
+        );
+    }
+
+    public function eerste_inkoopid_voeding_op_datum($artikel, $dmink) {
+        return $this->first_field(<<<SQL
+  SELECT min(i.inkId) inkId
+  FROM tblInkoop i
+   left join tblVoeding v on (i.inkId = v.inkId)
+  WHERE artId = :artId
+ and dmink = :dmink
+ and isnull(v.inkId)
+SQL
+        , [
+            [':artId', $artikel, self::INT],
+            [':dmink', $dmink, self::DATE],
+        ]
+        );
+    }
+
     public function zoek_inkoop($new_inkId) {
         return $this->first_row(<<<SQL
   SELECT i.inkId, i.inkat, a.stdat

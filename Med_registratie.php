@@ -76,7 +76,7 @@ GROUP BY a.artId, a.naam, a.stdat, e.eenheid
 ORDER BY a.naam
 "; 
 
-$zoek_artId_op_voorraad1 = mysqli_query($db,$zoek_artId_op_voorraad) or die (mysqli_error($db));
+$zoek_artId_op_voorraad1 = mysqli_query($db,$zoek_artId_op_voorraad);
     while($lin = mysqli_fetch_array($zoek_artId_op_voorraad1))
         {
             $stdat = str_replace('.00', '', $lin['stdat']);
@@ -117,7 +117,7 @@ FROM tblArtikel a
  join tblEenheiduser eu on (eu.enhuId = a.enhuId)
  join tblEenheid e on (e.eenhId = eu.eenhId)
 WHERE a.artId = '".mysqli_real_escape_string($db,$kzlArt)."'
-") or die (mysqli_error($db));
+");
 
 $stdrd = 0;
 while ($qryvrd = mysqli_fetch_assoc($qryArtikel))
@@ -132,11 +132,12 @@ $tel_aantal_schapen = "
 SELECT count(s.schaapId) schpat
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.levensnummer IN (".implode(',', $_POST['chbKeuze']).")
+INNER JOIN tblUbn u USING (ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.levensnummer IN (".implode(',', $_POST['chbKeuze']).")
 ";
 
-
-/*echo $tel_aantal_schapen.'<br>';*/ $tel_aantal_schapen = mysqli_query($db,$tel_aantal_schapen) or die (mysqli_error($db));
+/*echo $tel_aantal_schapen.'<br>';*/
+$tel_aantal_schapen = mysqli_query($db,$tel_aantal_schapen);
 
 
     while ($tal = mysqli_fetch_assoc($tel_aantal_schapen))
@@ -156,7 +157,7 @@ FROM tblInkoop i
     GROUP BY n.inkId
  ) n on (i.inkId = n.inkId)
 WHERE i.artId = '".mysqli_real_escape_string($db,$kzlArt)."'
-") or die (mysqli_error($db));
+");
 
 while ($instock = mysqli_fetch_assoc($artikelvoorraad))
 { $stock = "$instock[vrdat]";    }
@@ -195,7 +196,7 @@ FROM tblSchaap s
 WHERE s.levensnummer IN (".implode(',', $_POST['chbKeuze']).")
 ";
 
-/*echo $zoek_schaapId.'<br>';*/  $zoek_schaapId = mysqli_query($db,$zoek_schaapId) or die (mysqli_error($db));
+/*echo $zoek_schaapId.'<br>';*/  $zoek_schaapId = mysqli_query($db,$zoek_schaapId);
 while( $s = mysqli_fetch_assoc($zoek_schaapId)) { /* Doorlopen van geselecteerde schapen  */ 
     $schaapId = $s['schaapId'];
     $levnsr = $s['levensnummer'];
@@ -208,7 +209,7 @@ INNER JOIN tblUbn u ON (st.ubnId = u.ubnId)
 WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
 ";
 
-/*echo $zoek_stalId.'<br>';*/  $zoek_stalId = mysqli_query($db,$zoek_stalId) or die (mysqli_error($db));
+/*echo $zoek_stalId.'<br>';*/  $zoek_stalId = mysqli_query($db,$zoek_stalId);
 while( $s = mysqli_fetch_assoc($zoek_stalId)) { /* Doorlopen van geselecteerde schapen met bijbehorend stalId */ 
     $stalId = $s['stalId'];
 
@@ -219,7 +220,7 @@ SELECT datum day, date_format(datum,'%d-%m-%Y') datum
 FROM tblHistorie h
  join tblActie a on (h.actId = a.actId)
 WHERE a.af = 1 and h.actId != 10 and h.stalId = '".mysqli_real_escape_string($db,$stalId)."' and h.skip = 0
-") or die (mysqli_error($db));
+");
 while ($zk_end = mysqli_fetch_assoc($zoek_einddatum))
 { $dmafv = $zk_end['day']; $afvdm = $zk_end['datum']; }
 // Einde Zoek naar einddatum in geval schaap reeds is afgevoerd
@@ -235,13 +236,13 @@ else { // Vervolgen toevoegen medicijn
 
 // Aanvullen tblHistorie
 $insert_tblHistorie = " INSERT INTO tblHistorie SET stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$fldDay)."', actId= 8 ";    
-        mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
+        mysqli_query($db,$insert_tblHistorie);
 // zoeken laatste hisId van ingelezen historie t.b.v. tblNuttig ($insert_tblHistorie)
 $zoek_hisId = mysqli_query($db,"
 SELECT max(hisId) hisId
 FROM tblHistorie
 WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."' and datum = '".mysqli_real_escape_string($db,$fldDay)."' and actId = 8
-") or die (mysqli_error($db));
+");
 while ($zk_hi = mysqli_fetch_assoc($zoek_hisId))
 { $hisId = $zk_hi['hisId']; }
 
@@ -287,7 +288,7 @@ FROM tblEenheid e
  join tblEenheiduser eu on (e.eenhId = eu.eenhId)
  join tblArtikel a on (a.enhuId = eu.enhuId)
 WHERE a.artId = '".mysqli_real_escape_string($db,$kzlArt)."'
- ") or die (mysqli_error($db));
+ ");
 while ($qryeenh = mysqli_fetch_assoc($queryEenheid))
 {
     $eheid = $qryeenh['eenheid'];
@@ -299,7 +300,7 @@ while ($qryeenh = mysqli_fetch_assoc($queryEenheid))
 <?php
 /* KZLMEDICIJN 
 Medicijnen met artId als key. deze inkId is de laagste inkId waarvan nog voorraad is */
-$zoek_artId_op_voorraad2 = mysqli_query($db,$zoek_artId_op_voorraad) or die (mysqli_error($db));
+$zoek_artId_op_voorraad2 = mysqli_query($db,$zoek_artId_op_voorraad);
 
 $name = "kzlArtikel";
 //$width=  ;
@@ -328,7 +329,7 @@ FROM tblReden r
  join tblRedenuser ru on (r.redId = ru.redId)
 WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and r.actief = 1 and ru.pil = 1
 ORDER BY reden
-") or die (mysqli_error($db));
+");
 $name = "kzlReden";
 $width= 200 ;?>
 <select name=<?php echo"$name";?> style="width:<? echo "$width";?>;\" >";
@@ -436,7 +437,7 @@ FROM tblSchaap s
  ) afv on (afv.stalId = st.stalId)
 WHERE " . db_filter_afvoerdatum($radAfv) . " h.skip = 0 and s.levensnummer is not null
 ORDER BY s.levensnummer
-") or die (mysqli_error($db)); ?>
+"); ?>
 
  <select name="kzlLevnr"  width=110 >
  <option></option>    
@@ -490,7 +491,7 @@ FROM tblSchaap s
 WHERE " . db_filter_afvoerdatum($radAfv) . " h.skip = 0 and s.levensnummer is not null
 GROUP BY s.schaapId, right(s.levensnummer,$Karwerk)
 ORDER BY right(s.levensnummer,$Karwerk)
-") or die (mysqli_error($db)); 
+"); 
 $name = "kzlWerknr";
 $width= 25+(8*$Karwerk) ;
 ?>
@@ -516,7 +517,7 @@ FROM tblStal st
 INNER JOIN tblUbn u USING (ubnId)
 WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(rel_best) and (kleur is not null or halsnr is not null)
 ORDER BY concat(kleur,' ',halsnr)
-") or die (mysqli_error($db)); 
+"); 
 $name = "kzlHalsnr";
 $width= 25+(8*$Karwerk) ;
 ?>
@@ -564,7 +565,7 @@ FROM tblBezet b
 WHERE hk.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(uit.bezId) and h.skip = 0
 GROUP BY b.hokId, hk.hoknr
 ORDER BY hk.hoknr
-") or die (mysqli_error($db));
+");
 $name = "kzlHok";
 $width= 100 ;
 ?>
@@ -668,7 +669,7 @@ FROM tblSchaap s
  left join tblBezet b on (h.hisId = b.hisId)
  
 WHERE s.geslacht = 'ooi' and $where_mdr
-") or die (mysqli_error($db));
+");
     while($kkop = mysqli_fetch_assoc($zoek_aanwezig_moeder))
     {
     $levnr_mdr = $kkop['levensnummer'];
@@ -857,7 +858,7 @@ FROM (
 
 WHERE $filter
 ORDER BY generatie, werknr, lstgeblam desc
-    ") or die (mysqli_error($db));    
+    ");    
     while($row = mysqli_fetch_assoc($zoek_schaapgegevens))
     {
     $schaapId = $row['schaapId']; // nodig bij doorklikken naar historie medicatie
@@ -897,7 +898,7 @@ FROM tblSchaap s
  join tblArtikel a on (i.artId = a.artId)
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0 and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and a.soort = 'pil'
 GROUP BY s.levensnummer
-") or die (mysqli_error($db));
+");
     while($med = mysqli_fetch_assoc($zoek_medicijn))
             { $medic = $med['aant'];
 
