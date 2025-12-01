@@ -2043,6 +2043,47 @@ isnull(afv.stalId)
 SQL;
 }
 
+    public function getMedicatieWhere($post) {
+        $filt_mdr = null;
+        $parts = [];
+        if (!empty($post['kzlLevnr'])) {
+            $parts[] = "schaapId = '$post[kzlLevnr]' ";
+        }
+        if (!empty($post['kzlWerknr'])) {
+            $parts[] = "schaapId = '$post[kzlWerknr]' ";
+        }
+        if (!empty($post['kzlHalsnr'])) {
+            $parts[] = "schaapId = '$post[kzlHalsnr]' ";
+        }
+        if (!empty($post['chbOoi'])) {
+            $parts[] = "geslacht = 'ooi' and aanw is not null";
+        }
+        // Als hok is gekozen is ook een keuze lam, moeders of allebei gemaakt. Vandaar opslitsing in variable $filt_hok.
+        if (!empty($post['kzlHok'])) {
+            if ($post['radHok'] == 1) {
+                $filt_hok = "hokId = '$post[kzlHok]' and generatie = 'lam' ";
+            } elseif ($post['radHok'] == 2) {
+                $filt_hok = "hokId = '$post[kzlHok]' and generatie = 'ouder' ";
+            } elseif ($post['radHok'] == 3) {
+                $filt_hok = "hokId = '$post[kzlHok]' ";
+            }
+        }
+        if (isset($filt_hok)) {
+            $parts[] = $filt_hok;
+        }
+        if (count($parts) == 2 && isset($filt_hok)) {
+            $filt_mdr = implode(' and ', $parts);
+        }
+        //$filt_mdr alleen bij keuzes niet betrekking op verblijf
+        if (!empty($post['txtGeb_van'])) {
+            $vanGeb = date_format(date_create($post['txtGeb_van']), 'Y-m-d');
+            $totGeb = date_format(date_create($post['txtGeb_tot'] ?? date('d-m-Y')), 'Y-m-d');
+            $parts[] = " dmgeb >= '" . $vanGeb . "' and dmgeb <= '" . $totGeb . "'";
+        }
+        $filter = implode(' and ', $parts);
+        return [$filter, $filt_mdr];
+    }
+
 public function zoek_schaapgegevens($lidId, $Karwerk, $afvoer, $filter) {
     $part = $this->db_filter_afvoerdatum($afvoer);
     return $this->run_query(<<<SQL

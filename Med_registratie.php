@@ -447,55 +447,8 @@ Medicijnen met artId als key. deze inkId is de laagste inkId waarvan nog voorraa
 -->
         <?php
 // Ophalen en tonen van dieren o.b.v. ingevulde keuzelijst(en)
-        if (!empty($_POST['kzlArtikel']) && (!empty($_POST['kzlLevnr']) || !empty($_POST['kzlWerknr']) || !empty($_POST['kzlHalsnr']) || !empty($_POST['chbOoi']) || !empty($_POST['kzlHok']) || !empty($_POST['txtGeb_van'])    )) {
-            if (!empty($_POST['kzlLevnr'])) {
-                $filter = "schaapId = '$_POST[kzlLevnr]' ";
-            }
-            if (!empty($_POST['kzlWerknr']) && !isset($filter)) {
-                $filter = "schaapId = '$_POST[kzlWerknr]' ";
-            } elseif (!empty($_POST['kzlWerknr']) && isset($filter)) {
-                $filter = $filter . " and schaapId = '$_POST[kzlWerknr]' ";
-            }
-            if (!empty($_POST['kzlHalsnr']) && !isset($filter)) {
-                $filter = "schaapId = '$_POST[kzlHalsnr]' ";
-            } elseif (!empty($_POST['kzlHalsnr']) && isset($filter)) {
-                $filter = $filter . " and schaapId = '$_POST[kzlHalsnr]' ";
-            }
-            if (!empty($_POST['chbOoi']) && !isset($filter)) {
-                $filter = "geslacht = 'ooi' and aanw is not null";
-            } elseif (!empty($_POST['chbOoi']) && isset($filter)) {
-                $filter = $filter . " and geslacht = 'ooi' and aanw is not null";
-            }
-// Als hok is gekozen is ook een keuze lam, moeders of allebei gemaakt. Vandaar opslitsing in variable $filt_hok.
-            if (!empty($_POST['kzlHok']) && $_POST['radHok'] == 1) {
-                $filt_hok = "hokId = '$_POST[kzlHok]' and generatie = 'lam' ";
-            } elseif (!empty($_POST['kzlHok']) && $_POST['radHok'] == 2) {
-                $filt_hok = "hokId = '$_POST[kzlHok]' and generatie = 'ouder' ";
-            } elseif (!empty($_POST['kzlHok']) && $_POST['radHok'] == 3) {
-                $filt_hok = "hokId = '$_POST[kzlHok]' ";
-            }
-            if (isset($filt_hok) && !isset($filter)) {
-                $filter = $filt_hok;
-            } elseif (isset($filt_hok) &&  isset($filter)) {
-                $filter = $filt_hok . " and " . $filter;
-                $filt_mdr = $filter;
-            }
-//$filt_mdr alleen bij keuzes niet betrekking op verblijf
-            if (!empty($_POST['txtGeb_van'])) {
-                $Geb_van = $_POST['txtGeb_van'];
-                $vanGeb = date_format(date_create($Geb_van), 'Y-m-d');
-                if (!empty($_POST['txtGeb_tot'])) {
-                    $Geb_tot = $_POST['txtGeb_tot'];
-                } else {
-                    $Geb_tot = date('d-m-Y');
-                }
-                $totGeb = date_format(date_create($Geb_tot), 'Y-m-d');
-                if (isset($filter)) {
-                    $filter = $filter . " and dmgeb >= '" . $vanGeb . "' and dmgeb <= '" . $totGeb . "'";
-                } else {
-                    $filter = " dmgeb >= '" . $vanGeb . "' and dmgeb <= '" . $totGeb . "'";
-                }
-            }
+        if (!empty($_POST['kzlArtikel']) && (!empty($_POST['kzlLevnr']) || !empty($_POST['kzlWerknr']) || !empty($_POST['kzlHalsnr']) || !empty($_POST['chbOoi']) || !empty($_POST['kzlHok']) || !empty($_POST['txtGeb_van']))) {
+            [$filter, $filt_mdr] = $schaap_gateway->getMedicatieWhere($_POST);
             if (isset($filt_mdr)) {
             /*$where_mdr = $filt_mdr;*/
             }
@@ -599,7 +552,8 @@ Medicijnen met artId als key. deze inkId is de laagste inkId waarvan nog voorraa
             ?>
 </table>
             <?php
-        } ?>
+        }
+?>
 <!--
     **************************************************
     **    EINDE MEDICIJNREGISTRATIE TONEN    **
