@@ -123,6 +123,7 @@ class IntegrationCase extends UnitCase {
         }
     }
 
+    // Heeft <select name=$name> $count <option>s?
     protected function assertOptieCount($name, $count) {
         $dom = new DOMDocument();
         libxml_use_internal_errors(true);
@@ -132,6 +133,18 @@ class IntegrationCase extends UnitCase {
         $this->assertCount(1, $select, "kan select met name $name niet vinden");
         $options = $path->query('//select[@name="'.$name.'"]/option');
         $this->assertCount($count, $options, "select heeft niet de verwachte $count opties");
+    }
+
+    // heeft <table id=$id> $count <tr>s?
+    protected function assertTrCount($id, $count) {
+        $dom = new DOMDocument();
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($this->output);
+        $path = new DOMXPath($dom);
+        $table = $path->query('//table[@id="'.$id.'"]');
+        $this->assertCount(1, $table, "kan table met id $id niet vinden");
+        $rows = $path->query('//table[@id="'.$id.'"]/tr');
+        $this->assertCount($count, $rows, "table heeft niet de verwachte $count rijen");
     }
 
     protected function expectNewRecordsInTables(array $tables) {

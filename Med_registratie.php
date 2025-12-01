@@ -57,7 +57,11 @@ include "login.php";
 if (Auth::is_logged_in()) {
     if ($modtech == 1) {
         $artikel_gateway = new ArtikelGateway();
-        $schaap_gateway = new SchaapGateway();
+        // poor man's Dependency Injection
+        // aanroepende test kan een schaap_gateway klaarzetten in GLOBALS
+        if (empty($schaap_gateway)) {
+            $schaap_gateway = new SchaapGateway();
+        }
         $stal_gateway = new StalGateway();
         $historie_gateway = new HistorieGateway();
         $reden_gateway = new RedenGateway();
@@ -506,7 +510,7 @@ Medicijnen met artId als key. deze inkId is de laagste inkId waarvan nog voorraa
             include "med-registratie-toggle.js.php";
 // TODO: #0004159 onclick aanhangen met event listener (jquery?), niet in html
             ?>
-<table border = 0>
+<table id="schapen" border="0">
 <tr height = 30><td></td></tr>
 <tr style = "font-size:12px;">
  <th width = 0 height = 30></th>
