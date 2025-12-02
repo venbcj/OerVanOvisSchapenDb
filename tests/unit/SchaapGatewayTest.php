@@ -2,6 +2,8 @@
 
 class SchaapGatewayTest extends GatewayCase {
 
+    use Expectations;
+
     private const SCHAAP4_ID = 4;
     private const SCHAAP4_LEVENSNUMMER = '4';
     private const STALID = 1;
@@ -78,6 +80,20 @@ class SchaapGatewayTest extends GatewayCase {
         $this->runfixture('schaap-afleverdatum');
         $res = $this->sut->afleverdatum(self::LIDID);
         $this->assertEquals(1, $res->num_rows);
+    }
+
+    public function testZoekSchaap_leeg() {
+        $this->uses_db();
+        $this->runSQL("TRUNCATE tblSchaap");
+        $postdata = [
+            'kzlLevnr_' => '1',
+            'kzlWerknr_' => '',
+            'kzlHalsnr_' => '',
+            'kzlOoi_' => '',
+            'kzlRam_' => '',
+        ];
+        $where = $this->sut->getZoekWhere($postdata);
+        $this->assertEquals(null, $this->sut->zoekSchaap($where));
     }
 
     public function testZoekSchaap() {
@@ -394,6 +410,71 @@ class SchaapGatewayTest extends GatewayCase {
         $this->runSQL("INSERT INTO tblHistorie(stalId, actId, datum) VALUES(1, 3, '2020-01-01')");
         $this->runSQL("INSERT INTO tblHistorie(stalId, actId, datum) VALUES(1, 14, '2020-01-01')");
         $this->assertEquals(1, $this->sut->zoek_aantal_sterfte_moeder_in_jaar(self::LIDID, 2020));
+    }
+
+    // Patroon: Confirm Stub Role
+    // Deze test geeft de database-toestand om de Expectation "zoek_schaapgegevens" te laten uitkomen.
+    //   de expectation doet dienst in de integratietest MedRegistratiePage.
+    //
+    // TODO meer scenarios, tenminste voor elke union eentje lijkt mij
+    public function test_zoek_schaapgegevens() {
+        // GIVEN
+        $this->runfixture('schaap-4');
+        $this->uses_db();
+        $this->runSQL("INSERT INTO tblHistorie(stalId, actId) VALUES(1, 1)");
+        // WHEN
+        $expectation = 'zoek_schaapgegevens';
+        $lidId = self::LIDID;
+        $Karwerk = 5;
+        $afvoer = 0;
+        $filter = 'true';
+        $result = $this->sut->zoek_schaapgegevens($lidId, $Karwerk, $afvoer, $filter);
+        // THEN
+        $this->assertStubBehaves($expectation, $result);
+    }
+
+    // zoek_medicatie_lijst en zoek_medicatielijst_werknummer gebruiken dezelfde bron
+    public function test_zoek_medicatie_lijst() {
+        // GIVEN
+        $this->runfixture('stubproof-medicatielijst');
+        // WHEN
+        $result = $this->sut->zoek_medicatie_lijst(self::LIDID, $afvoer = 1); // dit "dekt" de if in db_filter_afvoerdatum, maar dat deugt natuurlijk voor geen meter
+        // THEN
+        $this->assertStubBehaves('zoek_medicatie_lijst', $result);
+    }
+
+    // zoek_medicatie_lijst en zoek_medicatielijst_werknummer gebruiken dezelfde bron
+    public function test_zoek_medicatielijst_werknummer() {
+        // GIVEN
+        $this->runfixture('stubproof-medicatielijst');
+        // WHEN
+        $result = $this->sut->zoek_medicatielijst_werknummer(self::LIDID, $Karwerk = 5, $afvoer = 0);
+        // THEN
+        $this->assertStubBehaves('zoek_medicatielijst_werknummer', $result);
+    }
+
+    public function test_zoekGeschiedenis_leeg() {
+        $this->uses_db();
+        $this->runSQL("TRUNCATE tblSchaap");
+        $result = $this->sut->zoekGeschiedenis(self::LIDID, self::SCHAAP4_ID, $Karwerk = 5);
+        $this->assertEquals(0, $result->num_rows);
+    }
+
+    public function test_zoekGeschiedenis() {
+        $this->markTestIncomplete("Er zijn nogal wat scenarios nodig voor zoekGeschiedenis");
+    }
+
+    // TODO kandidaat voor Pull Up Method
+    protected function assertStubBehaves($expectation, $result) {
+        $expected = $this->getExpected($expectation);
+        $this->assertInstanceOf(mysqli_result::class, $result, "Query mislukt, kan niet kloppen");
+        $this->assertEquals(count($expected), $result->num_rows, "Verwacht een specifiek aantal rijen");
+        $actual = [];
+        // NOTE misschien doet iets ergens ook wel fetch_row ipv fetch_assoc. Nou, dan faalt het vanzelf huh.
+        while ($row = $result->fetch_assoc()) {
+            $actual[] = $row;
+        }
+        $this->assertEquals($expected, $actual);
     }
 
 }

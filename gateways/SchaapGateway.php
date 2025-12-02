@@ -1962,6 +1962,7 @@ SQL
     );
 }
 
+// zoek_medicatie_lijst en zoek_medicatielijst_werknummer gebruiken dezelfde bron
 public function zoek_medicatie_lijst($lidId, $afvoer) {
     $part = $this->db_filter_afvoerdatum($afvoer);
     return $this->run_query(<<<SQL
@@ -1970,7 +1971,8 @@ FROM tblSchaap s
  join (
     SELECT max(stalId) stalId, schaapId
     FROM tblStal
-    WHERE lidId = :lidId
+    INNER JOIN tblUbn u USING(ubnId)
+    WHERE u.lidId = :lidId
     GROUP BY schaapId
  )st on (st.schaapId = s.schaapId)
  join (
@@ -1997,6 +1999,7 @@ SQL
     ]);
 }
 
+// zoek_medicatie_lijst en zoek_medicatielijst_werknummer gebruiken dezelfde bron
 public function zoek_medicatielijst_werknummer($lidId, $Karwerk, $afvoer) {
     $part = $this->db_filter_afvoerdatum($afvoer);
     return $this->run_query(<<<SQL
@@ -2005,7 +2008,8 @@ FROM tblSchaap s
  join (
     SELECT max(stalId) stalId, schaapId
     FROM tblStal
-    WHERE lidId = :lidId
+    INNER JOIN tblUbn u USING(ubnId)
+    WHERE u.lidId = :lidId
     GROUP BY schaapId
  )st on (st.schaapId = s.schaapId)
  join (
@@ -2096,14 +2100,16 @@ FROM (
      join (
         SELECT max(stalId) stalId, schaapId
         FROM tblStal
-        WHERE lidId = :lidId
+        INNER JOIN tblUbn u USING (ubnId)
+        WHERE u.lidId = :lidId
         GROUP BY schaapId
      ) stm on (stm.schaapId = s.schaapId)
      join (
         SELECT max(h.hisId) hisId, h.stalId
         FROM tblHistorie h
          join tblStal st on (h.stalId = st.stalId)
-        WHERE st.lidId = :lidId and h.skip = 0
+        INNER JOIN tblUbn u USING (ubnId)
+        WHERE u.lidId = :lidId and h.skip = 0
         GROUP BY stalId
      ) hm on (hm.stalId = stm.stalId)
      join tblHistorie h on (hm.hisId = h.hisId)
