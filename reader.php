@@ -63,12 +63,13 @@ if (!isset($headers['Authorization'])) { // Als in de headers geen index 'Autori
     echo strlen(trim($authorization[1])).'<br>';*/
     if (count($authorization) == 2 && trim($authorization[0]) == "Bearer" && strlen(trim($authorization[1])) == 64) {
 
-        $zoek_lidId = mysqli_query($db, "SELECT lidId from tblLeden where readerkey = '".mysqli_real_escape_string($db,$authorization[1])."'" ) or die(mysqli_error($db));
+        $statement = "SELECT lidId from tblLeden where readerkey = '".mysqli_real_escape_string($db,$authorization[1])."'" ;
+        $zoek_lidId_result = mysqli_query($db, $statement) or die(mysqli_error($db));
 
-        $result = mysqli_fetch_array($zoek_lidId);
+        $row = mysqli_fetch_assoc($zoek_lidId_result);
 
-        if($result){
-           $lidid = $result['lidId'];
+        if($row){
+           $lidid = $row['lidId'];
         } else {
             http_response_code(401); // Unauthorized
             echo 'via authorization header wordt de gebruiker niet gevonden.';

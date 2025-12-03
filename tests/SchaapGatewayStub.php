@@ -18,7 +18,10 @@ class SchaapGatewayStub {
     // om methoden die we niet implementeren zo door te sturen aan original
     // Als we meer gateways gaan stubben, kan dit naar de nieuwe parent GatewayStub
     public function __call($method, $arguments) {
-        call_user_func_array([$this->original, $method], $arguments);
+        if (array_key_exists($method, $this->datasets)) {
+            return new ResultFaker($this->datasets[$method]);
+        }
+        return call_user_func_array([$this->original, $method], $arguments);
     }
 
     public function zoek_medicatie_lijst($lidId, $afvoer) {

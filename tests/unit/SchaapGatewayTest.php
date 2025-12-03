@@ -469,12 +469,27 @@ class SchaapGatewayTest extends GatewayCase {
         $expected = $this->getExpected($expectation);
         $this->assertInstanceOf(mysqli_result::class, $result, "Query mislukt, kan niet kloppen");
         $this->assertEquals(count($expected), $result->num_rows, "Verwacht een specifiek aantal rijen");
-        $actual = [];
         // NOTE misschien doet iets ergens ook wel fetch_row ipv fetch_assoc. Nou, dan faalt het vanzelf huh.
-        while ($row = $result->fetch_assoc()) {
-            $actual[] = $row;
-        }
+        $actual = $result->fetch_all($mode = MYSQLI_ASSOC);
         $this->assertEquals($expected, $actual);
     }
+    
+    public function test_zoek_schaap_aflever() {
+        $this->uses_db();
+        $this->runSQL("truncate tblPartij");
+        $this->runSQL("truncate tblRelatie");
+        $this->runSQL("truncate tblStal");
+        $this->runSQL("truncate tblHistorie");
+        $this->runSQL("truncate tblSchaap");
+        $this->runSQL("INSERT INTO tblPartij(naam, partId, lidId) VALUES('Stempelmans', 1, 1)");
+        $this->runSQL("INSERT INTO tblRelatie(relId, partId, relatie) VALUES(1, 1, 'test')");
+        $this->runSQL("INSERT INTO tblStal(stalId, rel_best, schaapId) VALUES(1, 1, 4)");
+        $this->runSQL("INSERT INTO tblHistorie(hisId, stalId, actId, datum, kg) VALUES(1, 1, 12, '2010-01-01', 1)");
+        $this->runSQL("INSERT INTO tblSchaap(schaapId, levensnummer) VALUES(4, '131072')");
+        // WHEN
+        $result = $this->sut->zoek_schaap_aflever($bestm = 1, $date = '2010-01-01', $Karwerk = 5);
+        $this->assertStubBehaves('zoek_schaap_aflever', $result);
+    }
+
 
 }
