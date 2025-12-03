@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/8.5/phpunit.xsd" bootstrap="tests/bootstrap.php" cacheResultFile=".phpunit.cache/test-results" executionOrder="default" testdox="false" colors="true" forceCoversAnnotation="false" beStrictAboutCoversAnnotation="false" beStrictAboutOutputDuringTests="true" beStrictAboutTodoAnnotatedTests="true" convertDeprecationsToExceptions="true" verbose="true" processIsolation="false">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/8.5/phpunit.xsd" bootstrap="tests/bootstrap.php" cacheResultFile=".phpunit.cache/test-results" executionOrder="random" testdox="false" colors="true" forceCoversAnnotation="false" beStrictAboutCoversAnnotation="false" beStrictAboutOutputDuringTests="true" beStrictAboutTodoAnnotatedTests="true" convertDeprecationsToExceptions="true" verbose="true" processIsolation="false">
   <testsuites>
     <testsuite name="default">
       <directory>tests</directory>
@@ -7,6 +7,11 @@
     <testsuite name="gebruiker">
       <file>tests/approval/GebruikerPageTest.php</file>
       <file>tests/integration/GebruikerTest.php</file>
+    </testsuite>
+    <testsuite name="schaap">
+      <file>tests/unit/SchaapGatewayGetWhereTest.php</file>
+      <file>tests/unit/SchaapGatewayMedicatieWhereTest.php</file>
+      <file>tests/unit/SchaapGatewayTest.php</file>
     </testsuite>
     <testsuite name="rector">
       <directory>utils/rector/tests</directory>
@@ -18,7 +23,7 @@
         <directory>tests</directory>
         <directory>vendor</directory>
       </exclude>
-      <file>./func_artikelnuttigen.php</file>
+      <directory>.</directory>
     </whitelist>
   </filter>
 </phpunit>

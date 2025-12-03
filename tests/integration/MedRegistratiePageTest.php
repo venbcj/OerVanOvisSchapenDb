@@ -2,6 +2,12 @@
 
 class MedRegistratiePageTest extends IntegrationCase {
 
+    use Expectations;
+
+    public function tearDown(): void {
+        unset ($GLOBALS['schaap_gateway']);
+    }
+
     public function testToonMedregistratieGeenSchaap() {
         $this->post('/Med_registratie.php', [
             'ingelogd' => 1,
@@ -152,6 +158,7 @@ class MedRegistratiePageTest extends IntegrationCase {
         $this->assertFout('De reden is niet geselecteerd.');
     }
 
+    private const ARTID = 93;
     public function testInsertMedregistratieGeenVoorraad() {
         # $this->markTestSkipped('geeft "opeens" division by zero.');
         $this->runfixture('medicijnvoorraad');
@@ -171,6 +178,8 @@ class MedRegistratiePageTest extends IntegrationCase {
 
     public function testInsertMedregistratieToedienen() {
         $this->runfixture('medicijnvoorraad');
+        $this->uses_db();
+        $this->runSQL("TRUNCATE tblHistorie");
         $this->post('/Med_registratie.php', [
             'ingelogd' => 1,
             'knpInsert' => 1,
@@ -183,6 +192,73 @@ class MedRegistratiePageTest extends IntegrationCase {
         $this->assertNoNoise();
         // TODO: met betere data komt hier een betekenisvolle melding
         $this->assertFout("Er is bij 1 dier 2kg wortel toegediend");
+    }
+
+    public function testInsertMedregistratieToedienenTeLaat() {
+        $this->runfixture('medicijnvoorraad');
+        $this->uses_db();
+        $this->runSQL("TRUNCATE tblHistorie");
+        $this->runSQL("INSERT INTO tblHistorie(actId, stalId, skip, datum) VALUES(12, 1, 0, '2001-12-13')");
+        $this->post('/Med_registratie.php', [
+            'ingelogd' => 1,
+            'knpInsert' => 1,
+            'chbKeuze' => ['131072'],
+            'txtDatum' => '2990-05-02',
+            'txtAantal' => 2,
+            'kzlReden' => 4,
+            'kzlArtikel' => 93,
+        ]);
+        $this->assertNoNoise();
+        // hier moet je de \ escapen, en dat vind ik jammer. TODO ooit oplossen.
+        $this->assertFout("De volgende dieren hebben geen medicatie gekregen !!\\n131072 de datum mag niet na de afvoerdatum 13-12-2001 liggen.\\n\\nEr is bij 0 dieren totaal 0kg wortel toegediend");
+    }
+
+    // NOTE: de prime-resultaten worden door SchaapGateway inhoudelijk getest.
+
+    public function testKeuzelijstenLevnr() {
+        $stub = new SchaapGatewayStub();
+        // overschrijft zoek_medicatielijst, voegt 3 schapen toe
+        $GLOBALS['schaap_gateway'] = $stub;
+        $stub->prime('zoek_medicatie_lijst', $this->getExpected('zoek_medicatie_lijst'));
+        $stub->prime('zoek_medicatielijst_werknummer', []); // wordt aangeroepen; testen we hier niet
+        $this->post('/Med_registratie.php', [
+            'ingelogd' => 1,
+            'kzlLevnr' => '2', // dan wordt ook de selected-optie gedekt. Hoe assereren we dat?
+        ]);
+        // en nou nagaan dat er in select.kzlLevnr drie options zitten. Eh vier, er is altijd een lege
+        $this->assertOptieCount('kzlLevnr', 4);
+    }
+
+    public function testKeuzelijstenWerknr() {
+        $stub = new SchaapGatewayStub();
+        $GLOBALS['schaap_gateway'] = $stub;
+        $stub->prime('zoek_medicatie_lijst', [ ]);
+        $stub->prime('zoek_medicatielijst_werknummer', $this->getExpected('zoek_medicatielijst_werknummer'));
+        $this->post('/Med_registratie.php', [
+            'ingelogd' => 1,
+            'kzlWerknr' => '2', // dan wordt ook de selected-optie gedekt. Hoe assereren we dat?
+        ]);
+        // en nou nagaan dat er in de select drie options zitten. Eh vier, er is altijd een lege
+        $this->assertOptieCount('kzlWerknr', 4);
+    }
+
+    public function testSchaapgegevens() {
+        $stub = new SchaapGatewayStub();
+        $GLOBALS['schaap_gateway'] = $stub;
+        $stub->prime('zoek_medicatie_lijst', [ ]);
+        $stub->prime('zoek_medicatielijst_werknummer', [ ]);
+        $stub->prime('zoek_schaapgegevens', $this->getExpected('zoek_schaapgegevens'));
+        $this->post('/Med_registratie.php', [
+            'ingelogd' => 1,
+            'knpToon' => 1,
+            'radHok' => 0,
+            'radAfv' => 0,
+            'chbKeuze' => 1,
+            'kzlLevnr' => '1',
+            'kzlArtikel' => '1',
+        ]);
+        // en nou nagaan dat er in de tabel een tr zit. Eh drie: er zitten twee "kunstregels" in.
+        $this->assertTrCount('schapen', 3);
     }
 
 }

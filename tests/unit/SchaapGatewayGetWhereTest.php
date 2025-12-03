@@ -1,6 +1,6 @@
 <?php
 
-class SchaapGatewayGetwhereTest extends UnitCase {
+class SchaapGatewayGetWhereTest extends UnitCase {
 
     private $sut;
 

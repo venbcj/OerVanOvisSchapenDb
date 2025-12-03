@@ -1,0 +1,2 @@
+#!/bin/bash
+xmlstarlet tr ~/bin/statements.xsl coverage.xml | sed '/file/!d' | sort -t\" -k 4nr -k 6n | sed 's/.usr.local.var.chi.proj.OerVanOvisSchapenDb.//'
