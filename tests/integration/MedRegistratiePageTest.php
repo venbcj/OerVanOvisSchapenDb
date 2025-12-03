@@ -4,6 +4,10 @@ class MedRegistratiePageTest extends IntegrationCase {
 
     use Expectations;
 
+    public function tearDown(): void {
+        unset ($GLOBALS['schaap_gateway']);
+    }
+
     public function testToonMedregistratieGeenSchaap() {
         $this->post('/Med_registratie.php', [
             'ingelogd' => 1,
