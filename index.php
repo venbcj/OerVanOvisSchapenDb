@@ -26,7 +26,7 @@ echo <<<HTML
 -->
 HTML;
 
-include "header_logout.tpl.php";
+//include "header_logout.tpl.php";
 
 echo <<<HTML
 <TD align = "center">

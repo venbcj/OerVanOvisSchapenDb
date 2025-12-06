@@ -6,9 +6,17 @@
     error_reporting(E_ALL);
 # }
 
-# include-path voorlopig maar even hier
-$app_folders = ['.', 'classes', 'templates', 'fpdf', 'gateways'];
-set_include_path(implode(':', $app_folders));
+$base = __DIR__;
+
+$app_folders = [
+    $base,
+    $base . '/classes',
+    $base . '/templates',
+    $base . '/fpdf',
+    $base . '/gateways'
+];
+
+set_include_path(implode(PATH_SEPARATOR, $app_folders));
 
 spl_autoload_register(function ($class) {
     foreach (explode(':', get_include_path()) as $prefix) {
@@ -16,10 +24,10 @@ spl_autoload_register(function ($class) {
             $file = "$class$type.php";
             if (file_exists("$prefix/$file")) {
                 include_once "$prefix/$file";
-                break;
+                return;
             }
         }
     }
 });
-Session::set_instance(new Session());
-Response::setProduction();
+//Session::set_instance(new Session());
+//Response::setProduction();

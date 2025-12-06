@@ -20,6 +20,7 @@ class Url {
         $host = $_SERVER['HTTP_HOST'];
         switch ($host) {
         case 'oer-dev':
+        case 'localhost':
         case 'localhost:8080':
             $tagid = 'balkOntw';
             break;
@@ -48,7 +49,7 @@ class Url {
         if ($_SERVER['HTTP_HOST'] == 'localhost:8080') {
             $root = 'http://'.$_SERVER['HTTP_HOST'].'/Schapendb/';
         } else {
-            $root = 'https://'.$_SERVER['HTTP_HOST'].'/';
+            $root = 'http://'.$_SERVER['HTTP_HOST'].'/';
         }
         #$root = "http://testapp.masterwebsite.nl/";
         if (php_uname('n') == 'basq') {
