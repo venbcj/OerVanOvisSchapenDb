@@ -4,6 +4,10 @@ class AfleverlijstTest extends IntegrationCase {
 
     use Expectations;
 
+    public function teardown(): void {
+        unset ($GLOBALS['schaap_gateway']);
+    }
+
     public function test_bestemming_ingevuld() {
         $this->setupStalFixture();
         $this->post('/AfleverLijst.php', [
