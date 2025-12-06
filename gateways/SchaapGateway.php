@@ -2310,8 +2310,9 @@ FROM tblHistorie h
  join tblStal st on (st.stalId = h.stalId)
 WHERE h.hisId = :hisId
 SQL
-    , [[':hisId', $hisId, self::INT]]
-        , ['bestm' => 0, 'date' => 0]
+    ,
+        [[':hisId', $hisId, self::INT]],
+        [0, 0]
     );
 }
 
@@ -2333,7 +2334,7 @@ SQL
         [':bestm', $bestm],
         [':date', $date],
     ],
-    ['bestemming' => '', 'datum' => '', 'aantal' => '']
+    ['', '', '']
     );
 }
 

@@ -82,16 +82,14 @@ if (!Auth::is_logged_in()) {
             Response::redirect($file);
             return;
         }
-        $output[] = ""; // "header_logout.tpl.php"; BV Dit bestand bestaat nog niet.
+        $output[] = "header_logout.tpl.php";
         $message = ' Gebruikersnaam of wachtwoord onjuist !';
         // NOTE: $file moet gezet zijn voor login_form
         // TODO: #0004172 $destination of $target zouden betere namen zijn voor deze variabele --BCB
         $output[] = "login_form.tpl.php";
     } else {
-        //.$output[] = "header_logout.tpl.php"; // BV Dit bestand bestaat nog niet
-        //$output[] = "uitgelogd.tpl.php";      // BV Dit bestand bestaat nog niet
-        $output[] = "header.tpl.php";           // BV $output mag niet leeg zijn dus zolang maar de waarde header.tpl.php gegeven
-
+        $output[] = "header_logout.tpl.php"; // BV Dit bestand bestaat nog niet BCB: jawel, in templates/
+        $output[] = "uitgelogd.tpl.php";      // BV Dit bestand bestaat nog niet BCB: idem
     }
     // *** EINDE ALS NIET IS INGELOGD ***
 } elseif (Auth::is_logged_in()) {
