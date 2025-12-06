@@ -2303,4 +2303,81 @@ SQL
     );
 }
 
+public function zoek_datum_bestemming($hisId) {
+    return $this->first_row(<<<SQL
+SELECT datum, rel_best
+FROM tblHistorie h
+ join tblStal st on (st.stalId = h.stalId)
+WHERE h.hisId = :hisId
+SQL
+    , [[':hisId', $hisId, self::INT]]
+        , ['bestm' => 0, 'date' => 0]
+    );
+}
+
+public function zoek_aflevergegevens($bestm, $date) {
+    return $this->first_row(<<<SQL
+SELECT p.naam, date_format(h.datum,'%d-%m-%Y') datum, count(st.schaapId) tal
+FROM tblStal st
+ join tblHistorie h on (st.stalId = h.stalId)
+ join tblActie a on (h.actId = a.actId)
+ join tblRelatie r on (st.rel_best = r.relId)
+ join tblPartij p on (p.partId = r.partId)
+WHERE a.af = 1
+ and st.rel_best = :bestm
+ and h.datum = :date
+ and h.skip = 0
+GROUP BY p.naam, date_format(h.datum,'%d-%m-%Y')
+SQL
+    , [
+        [':bestm', $bestm],
+        [':date', $date],
+    ],
+    ['bestemming' => '', 'datum' => '', 'aantal' => '']
+    );
+}
+
+public function zoek_schaap_aflever($bestm, $date, $Karwerk) {
+    return $this->run_query(<<<SQL
+SELECT s.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr, h.kg 
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join tblHistorie h on (st.stalId = h.stalId)
+ join tblActie a on (h.actId = a.actId)
+WHERE a.af = 1
+ and st.rel_best = :bestm
+ and h.datum = :date
+ and h.skip = 0
+ORDER BY right(s.levensnummer,$Karwerk)
+SQL
+    , [
+        [':bestm', $bestm],
+        [':date', $date],
+    ]
+    );
+}
+
+public function zoek_pil_aflever($lidId, $schaapId) {
+    return $this->run_query(<<<SQL
+SELECT date_format(h.datum,'%d-%m-%Y') datum, art.naam, art.wdgn_v, (h.datum + interval art.wdgn_v day) toon
+FROM tblSchaap s 
+ join tblStal st on (st.schaapId = s.schaapId)
+ join tblUbn u on (st.ubnId = u.ubnId)
+ join tblHistorie h on (h.stalId = st.stalId)
+ join tblActie a on (a.actId = h.actId)
+ left join tblNuttig n on (h.hisId = n.hisId)
+ left join tblInkoop i on (i.inkId = n.inkId)
+ left join tblArtikel art on (i.artId = art.artId) 
+WHERE u.lidId = :lidId
+ and s.schaapId = :schaapId
+ and h.actId = 8
+ and h.skip = 0
+ and (h.datum + interval art.wdgn_v day) >= sysdate()
+SQL
+ , [
+     [':lidId', $lidId, self::INT],
+     [':schaapId', $schaapId, self::INT]
+ ]);
+}
+
 }

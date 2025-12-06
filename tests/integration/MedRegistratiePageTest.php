@@ -247,7 +247,8 @@ class MedRegistratiePageTest extends IntegrationCase {
         $GLOBALS['schaap_gateway'] = $stub;
         $stub->prime('zoek_medicatie_lijst', [ ]);
         $stub->prime('zoek_medicatielijst_werknummer', [ ]);
-        $stub->prime('zoek_schaapgegevens', $this->getExpected('zoek_schaapgegevens'));
+        $expected = $this->getExpected('zoek_schaapgegevens');
+        $stub->prime('zoek_schaapgegevens', $expected);
         $this->post('/Med_registratie.php', [
             'ingelogd' => 1,
             'knpToon' => 1,
@@ -258,7 +259,7 @@ class MedRegistratiePageTest extends IntegrationCase {
             'kzlArtikel' => '1',
         ]);
         // en nou nagaan dat er in de tabel een tr zit. Eh drie: er zitten twee "kunstregels" in.
-        $this->assertTrCount('schapen', 3);
+        $this->assertTrCount('schapen', 2 + count($expected));
     }
 
 }

@@ -33,6 +33,15 @@ trait Expectations {
                     'af' => '0',
                 ],
             ];
+        case 'zoek_schaap_aflever':
+            return [
+                [
+                    'schaapId' => 4,
+                    'levensnummer' => '131072',
+                    'werknr' => '31072',
+                    'kg' => 1,
+                ]
+            ];
         }
     }
 
