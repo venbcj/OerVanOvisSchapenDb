@@ -12,7 +12,7 @@ if (php_uname('n') == 'LAPTOP-GCTJE203') {
 if (php_uname('n') == 'brave-beaver.85-215-36-84.plesk.page') {
     $_SERVER['HTTP_HOST'] = 'ovis.alexander-ict.nl';
 }
-set_include_path(get_include_path() . ':tests');
+set_include_path(get_include_path() . PATH_SEPARATOR . 'tests');
 Session::set_instance(new TestSession());
 // jammer: omdat onder windows 'cat' niet bestaat, moeten we hier de database-connectie alvast maken
 require_once "just_connect_db.php";
