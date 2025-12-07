@@ -3,18 +3,24 @@
 class SchaapGateway extends Gateway {
 
     public function zoek_schaapid($fldLevnr) {
-        $vw = $this->db->query("
+        $vw = $this->run_query(
+            <<<SQL
 SELECT schaapId
-FROM tblSchaap 
-WHERE levensnummer = '".$this->db->real_escape_string($fldLevnr)."'");
-$rec = $vw->fetch_assoc();
-return $rec['schaapId'] ?? 0;
-            # TODO: #0004137 nullcheck. Als fldLevnr niet voorkomt, is zs geen array, en dat geeft een warning.
+FROM tblSchaap
+WHERE levensnummer = '".$this->db->real_escape_string($fldLevnr)."'
+SQL
+            ,
+            []
+        );
+        $rec = $vw->fetch_assoc();
+        return $rec['schaapId'] ?? 0;
+        # TODO: #0004137 nullcheck. Als fldLevnr niet voorkomt, is zs geen array, en dat geeft een warning.
         # Dit wijst erop dat de code dingen doet die niet bij elkaar horen.
     }
 
     public function zoek_stalid($lidId) {
-$vw = $this->db->query("
+        $vw = $this->run_query(
+            <<<SQL
 SELECT st.stalId
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
@@ -24,18 +30,22 @@ FROM tblSchaap s
      FROM tblHistorie
      WHERE actId = 3
  ) ouder on (ouder.stalId = st.stalId)
-WHERE s.geslacht = 'ram' and isnull(st.rel_best) and u.lidId = '".$this->db->real_escape_string($lidId)."' 
-GROUP BY st.stalId  
-");
-if ($vw->num_rows == 0) {
-    return null;
-}
-return $vw->fetch_row()[0];
+WHERE s.geslacht = 'ram' and isnull(st.rel_best) and u.lidId = '".$this->db->real_escape_string($lidId)."'
+GROUP BY st.stalId
+SQL
+            ,
+            []
+        );
+        if ($vw->num_rows == 0) {
+            return null;
+        }
+        return $vw->fetch_row()[0];
     }
 
     public function zoek_staldetails($lidId, $Karwerk) {
-        return $this->db->query("
-SELECT st.stalId, right(levensnummer, $Karwerk) werknr, concat(kleur,' ',halsnr) halsnr, scan 
+        return $this->run_query(
+            <<<SQL
+SELECT st.stalId, right(levensnummer, $Karwerk) werknr, concat(kleur, ' ', halsnr) halsnr, scan
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join (
@@ -43,14 +53,18 @@ FROM tblSchaap s
      FROM tblHistorie
      WHERE actId = 3
  ) ouder on (ouder.stalId = st.stalId)
-WHERE s.geslacht = 'ram' and isnull(st.rel_best) and lidId = ".$this->db->real_escape_string($lidId)." 
-GROUP BY st.stalId, levensnummer, scan 
+WHERE s.geslacht = 'ram' and isnull(st.rel_best) and lidId = ".$this->db->real_escape_string($lidId)."
+GROUP BY st.stalId, levensnummer, scan
 ORDER BY right(levensnummer, $Karwerk)
-");
+SQL
+            ,
+            []
+        );
     }
 
     public function zoek_vaders($lidId, $Karwerk) {
-$vw = $this->db->query("
+        $vw = $this->run_query(
+            <<<SQL
 SELECT st.stalId, right(levensnummer, $Karwerk) werknr, concat(kleur, ' ', halsnr) halsnr
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
@@ -60,10 +74,13 @@ FROM tblSchaap s
      FROM tblHistorie
      WHERE actId = 3
  ) ouder on (ouder.stalId = st.stalId)
-WHERE s.geslacht = 'ram' and isnull(st.rel_best) and u.lidId = '".$this->db->real_escape_string($lidId)."' 
+WHERE s.geslacht = 'ram' and isnull(st.rel_best) and u.lidId = '".$this->db->real_escape_string($lidId)."'
 GROUP BY st.stalId, levensnummer
-ORDER BY right(levensnummer, $Karwerk)  
-");
+ORDER BY right(levensnummer, $Karwerk)
+SQL
+            ,
+            []
+        );
         $records = [];
         while ($record = $vw->fetch_assoc()) {
             $records[] = $record;
@@ -72,38 +89,57 @@ ORDER BY right(levensnummer, $Karwerk)
     }
 
     public function zoek_werknummer($mdrId, $Karwerk) {
-        $vw = $this->db->query("
+        $vw = $this->run_query(
+            <<<SQL
 SELECT right(levensnummer, $Karwerk) werknr
 FROM tblSchaap
 WHERE schaapId = '" . $this->db->real_escape_string($mdrId) . "'
-");
-if ($vw->num_rows) {
-    return $vw->fetch_row()[0];
-}
-return null;
+SQL
+            ,
+            []
+        );
+        if ($vw->num_rows) {
+            return $vw->fetch_row()[0];
+        }
+        return null;
     }
 
     public function levnr_exists_outside($fldLevnr, $schaapId): bool {
-        $vw = $this->db->query("
+        $vw = $this->run_query(
+            <<<SQL
 SELECT count(*) aant
-FROM tblSchaap 
+FROM tblSchaap
 WHERE levensnummer = '".$this->db->real_escape_string($fldLevnr)."'
- and schaapId <> '".$this->db->real_escape_string($schaapId)."'");
-$rec = $vw->fetch_assoc();
-return $rec['aant'] > 0;
+ and schaapId <> '".$this->db->real_escape_string($schaapId)."'
+SQL
+            ,
+            []
+        );
+        $rec = $vw->fetch_assoc();
+        return $rec['aant'] > 0;
     }
 
     // deze handeling heet "change" omdat het sleutelveld verandert
     public function changeLevensnummer($old, $new) {
-        $this->db->query("
+        $this->run_query(
+            <<<SQL
 UPDATE tblSchaap SET levensnummer = '".$this->db->real_escape_string($new)."'
-        WHERE levensnummer = '".$this->db->real_escape_string($old)."' ");
+        WHERE levensnummer = '".$this->db->real_escape_string($old)."'
+SQL
+            ,
+            []
+        );
     }
 
     public function updateGeslacht($levensnummer, $geslacht) {
-        $this->db->query("
+        $this->run_query(
+            <<<SQL
 UPDATE tblSchaap SET geslacht='".$this->db->real_escape_string($geslacht)."'
-        WHERE levensnummer = '".$this->db->real_escape_string($levensnummer)."' ");
+        WHERE levensnummer = '".$this->db->real_escape_string($levensnummer)."'
+SQL
+            ,
+            []
+        );
     }
 
     public function aantalLamOpStal($lidId) {
@@ -125,8 +161,9 @@ UPDATE tblSchaap SET geslacht='".$this->db->real_escape_string($geslacht)."'
     }
 
     private function countByStalFase($lidid, $Sekse, $Ouder) {
-$vw = $this->db->query("
-SELECT count(distinct(s.schaapId)) aant 
+        $vw = $this->run_query(
+            <<<SQL
+SELECT count(distinct(s.schaapId)) aant
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
  join tblUbn u on (st.ubnId = u.ubnId)
@@ -135,11 +172,14 @@ FROM tblSchaap s
     FROM tblStal st
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = s.schaapId) 
-WHERE u.lidId = '".$this->db->real_escape_string($lidid)."' and isnull(st.rel_best) and ".$Sekse." and ".$Ouder." 
-");
-$row = $vw->fetch_assoc();
-return $row['aant'];
+ ) prnt on (prnt.schaapId = s.schaapId)
+WHERE u.lidId = '".$this->db->real_escape_string($lidid)."' and isnull(st.rel_best) and ".$Sekse." and ".$Ouder."
+SQL
+            ,
+            []
+        );
+        $row = $vw->fetch_assoc();
+        return $row['aant'];
     }
 
     public function aantalLamUitschaar($lidId) {
@@ -162,8 +202,9 @@ return $row['aant'];
 
     private function countByFaseUitgeschaard($lidid, $Sekse, $Ouder) {
         // TODO: #0004177 is de left join met prnt nodig?
-        $vw = $this->db->query("
-SELECT count(distinct(s.schaapId)) aant 
+        $vw = $this->run_query(
+            <<<SQL
+SELECT count(distinct(s.schaapId)) aant
 FROM tblSchaap s
  join (
     SELECT u.lidId, st.schaapId, max(st.stalId) stalId
@@ -183,16 +224,20 @@ FROM tblSchaap s
     FROM tblStal st
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = s.schaapId) 
-WHERE mst.lidId = '".$this->db->real_escape_string($lidid)."' and ".$Sekse." and ".$Ouder." 
-");
-    $row = $vw->fetch_assoc();
-    return $row['aant'];
+ ) prnt on (prnt.schaapId = s.schaapId)
+WHERE mst.lidId = '".$this->db->real_escape_string($lidid)."' and ".$Sekse." and ".$Ouder."
+SQL
+            ,
+            []
+        );
+        $row = $vw->fetch_assoc();
+        return $row['aant'];
     }
 
     // Functie die het aantal lammeren, moederdieren of vaders telt
-    public function med_aantal_fase($lidid,$M,$J,$V,$Sekse,$Ouder) {
-        $vw = $this->db->query("
+    public function med_aantal_fase($lidid, $M, $J, $V, $Sekse, $Ouder) {
+        $vw = $this->run_query(
+            <<<SQL
 SELECT count(distinct s.levensnummer) werknrs
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
@@ -209,22 +254,26 @@ FROM tblSchaap s
 WHERE true
   AND h.skip = 0
   AND month(h.datum) = $M
-  AND date_format(h.datum,'%Y') = $J
+  AND date_format(h.datum, '%Y') = $J
   AND i.artId = $V
   AND ".$Sekse."
   AND ".$Ouder."
   AND u.lidId = '".$this->db->real_escape_string($lidid)."'
   AND h.actId = 8
-GROUP BY date_format(h.datum,'%Y%m')
-");
-            $row = $vw->fetch_assoc();
-            return $row['werknrs'];
+GROUP BY date_format(h.datum, '%Y%m')
+SQL
+            ,
+            []
+        );
+        $row = $vw->fetch_assoc();
+        return $row['werknrs'];
     }
 
     // Functie die de hoeveelheid voer berekend per lammeren, moederdieren of vaders
-    public function voer_fase($lidid,$M,$J,$V,$Sekse,$Ouder) { 
-        $vw = $this->db->query("
-        SELECT round(sum(n.nutat*n.stdat),2) totats
+    public function voer_fase($lidid, $M, $J, $V, $Sekse, $Ouder) {
+        $vw = $this->run_query(
+            <<<SQL
+        SELECT round(sum(n.nutat*n.stdat), 2) totats
         FROM tblSchaap s
          join tblStal st on (s.schaapId = st.schaapId)
          join tblUbn u on (st.ubnId = u.ubnId)
@@ -240,22 +289,26 @@ GROUP BY date_format(h.datum,'%Y%m')
         WHERE true
   AND h.skip = 0
   AND month(h.datum) = $M
-  AND date_format(h.datum,'%Y') = $J
+  AND date_format(h.datum, '%Y') = $J
   AND i.artId = $V
   AND ".$Sekse."
   AND ".$Ouder."
   AND u.lidId = '".$this->db->real_escape_string($lidid)."'
-        GROUP BY concat(date_format(h.datum,'%Y'),month(h.datum))
-        ");
-            $row = $vw->fetch_assoc();
-                        return $row['totats'];
+        GROUP BY concat(date_format(h.datum, '%Y'), month(h.datum))
+SQL
+            ,
+            []
+        );
+        $row = $vw->fetch_assoc();
+        return $row['totats'];
     }
 
     // zou dit in EenheidGateway horen?
     // Functie die de eenheid ophaalt per lammeren, moederdieren of vaders
-    public function eenheid_fase($lidid,$M,$J,$V,$Sekse,$Ouder) {
-        $vw = $this->db->query("
-SELECT e.eenheid 
+    public function eenheid_fase($lidid, $M, $J, $V, $Sekse, $Ouder) {
+        $vw = $this->run_query(
+            <<<SQL
+SELECT e.eenheid
 FROM tblEenheid e
  join tblEenheiduser eu on (e.eenhId = eu.eenhId)
  join tblArtikel a on (eu.enhuId = a.enhuId)
@@ -273,53 +326,72 @@ FROM tblEenheid e
 WHERE true
   AND h.skip = 0
   AND month(h.datum) = $M
-  AND date_format(h.datum,'%Y') = $J
+  AND date_format(h.datum, '%Y') = $J
   AND i.artId = $V
   AND ".$Sekse."
   AND ".$Ouder."
   AND eu.lidId = '".$this->db->real_escape_string($lidid)."'
 GROUP BY e.eenheid
-");
-if($vw->num_rows) {
-    $row = $vw->fetch_assoc();
-                return $row['eenheid'];
+SQL
+            ,
+            []
+        );
+        if ($vw->num_rows) {
+            $row = $vw->fetch_assoc();
+            return $row['eenheid'];
         }
-        return FALSE; // Foutafhandeling
-}
+        return false; // Foutafhandeling
+    }
 
-public function zoekStapel($lidId) {
-    $vw = $this->db->query("
+    public function zoekStapel($lidId) {
+        $vw = $this->run_query(
+            <<<SQL
 SELECT count(distinct(s.schaapId)) aant
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
  join tblUbn u on (st.ubnId = u.ubnId)
 WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(st.rel_best)
-");
-$stapel = null;
-    while($zs = $vw->fetch_assoc())
-        { $stapel = $zs['aant']; }
-    return $stapel;
-}
+SQL
+            ,
+            []
+        );
+        $stapel = null;
+        while ($zs = $vw->fetch_assoc()) {
+            $stapel = $zs['aant'];
+        }
+        return $stapel;
+    }
 
-public function countUitgeschaarden($lidId) {
-    $vw = $this->db->query("SELECT count(*) aantal" . $this->fromUitgeschaarden($lidId));
-    return $vw->fetch_row()[0];
-}
+    public function countUitgeschaarden($lidId) {
+        $vw = $this->run_query(
+            "SELECT count(*) aantal" . $this->fromUitgeschaarden(),
+            [[':lidId', $lidId, self::INT]]
+        );
+        return $vw->fetch_row()[0];
+    }
 
-public function zoekUitgeschaarden($lidId, $Karwerk) {
-    return $this->db->query("
-SELECT s.levensnummer, right(s.levensnummer, $Karwerk) werknum, s.transponder, date_format(hg.datum,'%Y%m%d') gebdm_sort, date_format(hg.datum,'%d-%m-%Y') gebdm, s.geslacht, prnt.datum aanw, best.naam, haf.actId
-" . $this->fromUitgeschaarden($lidId));
-}
+    public function zoekUitgeschaarden($lidId, $Karwerk) {
+        $from = $this->fromUitgeschaarden();
+        return $this->run_query(
+            <<<SQL
+SELECT s.levensnummer, right(s.levensnummer, $Karwerk) werknum, s.transponder,
+date_format(hg.datum, '%Y%m%d') gebdm_sort, date_format(hg.datum, '%d-%m-%Y') gebdm,
+s.geslacht, prnt.datum aanw, best.naam, haf.actId
+    $from
+SQL
+        ,
+            [[':lidId', $lidId, self::INT]]
+        );
+    }
 
-private function fromUitgeschaarden($lidId) {
-    return "
+    private function fromUitgeschaarden() {
+        return <<<SQL
 FROM tblSchaap s
  join (
      SELECT st.schaapId, max(st.stalId) stalId
      FROM tblStal st
       join tblUbn u on (st.ubnId = u.ubnId)
-     WHERE u.lidId = '".$this->db->real_escape_string($lidId)."'
+     WHERE u.lidId = :lidId
      GROUP BY st.schaapId
   ) mst on (mst.schaapId = s.schaapId)
  left join (
@@ -327,7 +399,7 @@ FROM tblSchaap s
      FROM tblHistorie h
       join tblStal st on (st.stalId = h.stalId)
      WHERE h.actId = 1 and h.skip = 0
- ) hg on (s.schaapId = hg.schaapId) 
+ ) hg on (s.schaapId = hg.schaapId)
  left join (
     SELECT st.schaapId, datum
     FROM tblStal st
@@ -340,7 +412,7 @@ FROM tblSchaap s
      SELECT relId, naam
      FROM tblPartij p
       join tblRelatie r on (p.partId = r.partId)
-     WHERE p.lidId = '".$this->db->real_escape_string($lidId)."'
+     WHERE p.lidId = :lidId
  ) best on (best.relId = st.rel_best)
  join (
      SELECT h.stalId, h.actId
@@ -349,33 +421,36 @@ FROM tblSchaap s
       join tblActie a on (h.actId = a.actId)
      WHERE a.af = 1 and h.skip = 0
  ) haf on (haf.stalId = st.stalId)
-WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and haf.actId = 10
-";
-}
+WHERE u.lidId = :lidId
+ and haf.actId = 10
+SQL
+        ;
+    }
 
-public function aanwezigen($lidId, $Karwerk) {
-return $this->db->query("
+    public function aanwezigen($lidId, $Karwerk) {
+        return $this->run_query(
+            <<<SQL
 SELECT u.ubn, s.transponder, right(s.levensnummer, $Karwerk) werknum, s.levensnummer,
- date_format(hg.datum,'%Y%m%d') gebdm_sort, date_format(hg.datum,'%d-%m-%Y') gebdm,
+ date_format(hg.datum, '%Y%m%d') gebdm_sort, date_format(hg.datum, '%d-%m-%Y') gebdm,
  s.geslacht, prnt.datum aanw, scan.dag_sort, scan.dag, haf.actId
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
  join tblUbn u on (u.ubnId = st.ubnId)
- left join tblHistorie hg on (st.stalId = hg.stalId and hg.actId = 1 and hg.skip = 0) 
+ left join tblHistorie hg on (st.stalId = hg.stalId and hg.actId = 1 and hg.skip = 0)
  left join (
     SELECT st.schaapId, datum
     FROM tblStal st
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = s.schaapId) 
+ ) prnt on (prnt.schaapId = s.schaapId)
  left join (
-     SELECT contr_scan.schaapId, date_format(datum,'%Y%m%d') dag_sort, date_format(datum,'%d-%m-%Y') dag
+     SELECT contr_scan.schaapId, date_format(datum, '%Y%m%d') dag_sort, date_format(datum, '%d-%m-%Y') dag
      FROM tblHistorie h
       join (
          SELECT max(hisId) hismx, schaapId
          FROM tblHistorie h
           join tblStal st on (h.stalId = st.stalId)
-         WHERE actId = 22 and h.skip = 0 and lidId = '".$this->db->real_escape_string($lidId)."'
+         WHERE actId = 22 and h.skip = 0 and lidId = :lidId
          GROUP BY schaapId
     ) contr_scan on (contr_scan.hismx = h.hisId)
  ) scan on (scan.schaapId = s.schaapId)
@@ -386,17 +461,24 @@ FROM tblSchaap s
       join tblActie a on (h.actId = a.actId)
      WHERE a.af = 1 and h.skip = 0
  ) haf on (haf.stalId = st.stalId)
-WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(haf.actId)
+WHERE u.lidId = :lidId
+ and isnull(haf.actId)
 ORDER BY u.ubn, right(s.levensnummer, $Karwerk)
-");
-}
+SQL
+            ,
+            [[':lidId', $lidId, self::INT]]
+        );
+    }
 
-public function ooien_met_vijfling($lidId, $ooiId) {
-    return $this->aantal_meerlingen_perOoi($lidId, $ooiId, 5);
-}
+    // TODO rename: telt het aantal vijflingen bij deze ooi
+    public function ooien_met_vijfling($lidId, $ooiId) {
+        return $this->aantal_meerlingen_perOoi($lidId, $ooiId, 5);
+    }
 
-public function aantal_meerlingen_perOoi($Lidid,$Ooiid,$Nr) {
-return $this->db->query("
+    // TODO spread: maak er zes functies van, verwijder Nr uit de publieke interface
+    public function aantal_meerlingen_perOoi($Lidid, $Ooiid, $Nr) {
+        return $this->run_query(
+            <<<SQL
 SELECT v.volwId
 FROM tblSchaap mdr
  join tblStal stm on (stm.schaapId = mdr.schaapId)
@@ -412,13 +494,17 @@ WHERE isnull(stm.rel_best)
  and h.skip = 0
 GROUP BY v.volwId
 HAVING count(st.schaapId) in ('".$this->db->real_escape_string($Nr)."')
-ORDER BY date_format(h.datum,'%Y') desc, date_format(h.datum,'%m') desc
-");
-} 
+ORDER BY date_format(h.datum, '%Y') desc, date_format(h.datum, '%m') desc
+SQL
+            ,
+            []
+        );
+    }
 
-// deze query kijkt niet of stm.rel_best null is. Waarom niet?
-public function meerlingen_perOoi_perJaar($Lidid,$Ooiid,$Jaar,$Maand) {
-    $zoek_meerlingen = $this->db->query("
+    // deze query kijkt niet of stm.rel_best null is. Waarom niet?
+    public function meerlingen_perOoi_perJaar($Lidid, $Ooiid, $Jaar, $Maand) {
+        $zoek_meerlingen = $this->run_query(
+            <<<SQL
 SELECT count(lam.schaapId) aant, v.volwId
 FROM tblSchaap mdr
  join tblVolwas v on (v.mdrId = mdr.schaapId)
@@ -429,51 +515,63 @@ FROM tblSchaap mdr
 WHERE u.lidId = ".$this->db->real_escape_string($Lidid)."
  and mdr.schaapId = ".$this->db->real_escape_string($Ooiid)."
  and h.actId = 1
- and date_format(h.datum,'%Y') = '".$this->db->real_escape_string($Jaar)."'
- and date_format(h.datum,'%m') = '".$this->db->real_escape_string($Maand)."'
+ and date_format(h.datum, '%Y') = '".$this->db->real_escape_string($Jaar)."'
+ and date_format(h.datum, '%m') = '".$this->db->real_escape_string($Maand)."'
  and h.skip = 0
 GROUP BY v.volwId
-ORDER BY date_format(h.datum,'%Y%m') desc
-");    
-if ($zoek_meerlingen->num_rows) {
-    return $zoek_meerlingen->fetch_row();
-}
-return [null, null];
-} 
+ORDER BY date_format(h.datum, '%Y%m') desc
+SQL
+            ,
+            []
+        );
+        if ($zoek_meerlingen->num_rows) {
+            return $zoek_meerlingen->fetch_row();
+        }
+        return [null, null];
+    }
 
-public function periode($Volwid) {
-    $vw = $this->db->query("
-SELECT date_format(h.datum,'%Y') jaar, date_format(h.datum,'%m')*1 mndnr
+    public function periode($Volwid) {
+        $vw = $this->run_query(
+            <<<SQL
+SELECT date_format(h.datum, '%Y') jaar, date_format(h.datum, '%m')*1 mndnr
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
  join tblHistorie h on (st.stalId = h.stalId)
 WHERE s.volwId = '".$this->db->real_escape_string($Volwid)."' and h.actId = 1 and h.skip = 0
-GROUP BY date_format(h.datum,'%Y'), date_format(h.datum,'%m')
-");
-if ($vw->num_rows) {
-    # een stuk makkelijker wanneer de afnemers gewoon naar ->maand en ->jaar kunnen vragen ...
-    return array_merge([0], array_values($vw->fetch_assoc()));
-}
-return [0, '', ''];
-}
+GROUP BY date_format(h.datum, '%Y'), date_format(h.datum, '%m')
+SQL
+            ,
+            []
+        );
+        if ($vw->num_rows) {
+            # een stuk makkelijker wanneer de afnemers gewoon naar ->maand en ->jaar kunnen vragen ...
+            return array_merge([0], array_values($vw->fetch_assoc()));
+        }
+        return [0, '', ''];
+    }
 
-public function de_lammeren($Volwid,$KarWerk) {
-    $zoek_lammeren = $this->db->query("
-SELECT coalesce(geslacht,'---') geslacht, coalesce(right(s.levensnummer,$KarWerk),'-------') werknr
+    public function de_lammeren($Volwid, $KarWerk) {
+        $zoek_lammeren = $this->run_query(
+            <<<SQL
+SELECT coalesce(geslacht, '---') geslacht, coalesce(right(s.levensnummer, $KarWerk), '-------') werknr
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
  join tblHistorie h on (st.stalId = h.stalId)
 WHERE s.volwId = '".$this->db->real_escape_string($Volwid)."' and h.actId = 1 and h.skip = 0
-ORDER BY coalesce(geslacht,'zzz')
-");
-if ($zoek_lammeren->num_rows) {
-    return $zoek_lammeren->fetch_row();
-}
-return [null, null];
-}
+ORDER BY coalesce(geslacht, 'zzz')
+SQL
+            ,
+            []
+        );
+        if ($zoek_lammeren->num_rows) {
+            return $zoek_lammeren->fetch_row();
+        }
+        return [null, null];
+    }
 
-public function aantal_perGeslacht($Volwid,$Geslacht,$Jaar,$Maand) {
-    $vw = $this->db->query("
+    public function aantal_perGeslacht($Volwid, $Geslacht, $Jaar, $Maand) {
+        $vw = $this->run_query(
+            <<<SQL
 SELECT count(s.schaapId) aant
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
@@ -481,16 +579,20 @@ FROM tblSchaap s
 WHERE s.volwId = ".$this->db->real_escape_string($Volwid)."
  and s.geslacht = '".$this->db->real_escape_string($Geslacht)."'
  and h.actId = 1
- and date_format(h.datum,'%m') = ".$this->db->real_escape_string($Maand)."
- and date_format(h.datum,'%Y') = ".$this->db->real_escape_string($Jaar)."
- and h.skip = 0        
-");
-    return $vw->fetch_row()[0];
-}
+ and date_format(h.datum, '%m') = ".$this->db->real_escape_string($Maand)."
+ and date_format(h.datum, '%Y') = ".$this->db->real_escape_string($Jaar)."
+ and h.skip = 0
+SQL
+            ,
+            []
+        );
+        return $vw->fetch_row()[0];
+    }
 
-public function afleverdatum($lidId) {
-    return $this->db->query("
-SELECT min(h.hisId) hisId, count(h.hisId) aantal, date_format(h.datum,'%d-%m-%Y') datum, r.relId, p.naam 
+    public function afleverdatum($lidId) {
+        return $this->run_query(
+            <<<SQL
+SELECT min(h.hisId) hisId, count(h.hisId) aantal, date_format(h.datum, '%d-%m-%Y') datum, r.relId, p.naam
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join tblHistorie h on (st.stalId = h.stalId)
@@ -501,18 +603,22 @@ FROM tblSchaap s
 WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and a.af = 1 and h.skip = 0
 GROUP BY h.datum, r.relId, p.naam
 ORDER BY r.uitval, h.datum desc
-");
-}
+SQL
+            ,
+            []
+        );
+    }
 
-public function zoek_ooien_in_jaar($lidId, $jaar) {
-    $vw = $this->db->query("
+    public function zoek_ooien_in_jaar($lidId, $jaar) {
+        $vw = $this->run_query(
+            <<<SQL
 SELECT count(s.schaapId) aant_mdr
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join (
     SELECT stalId, datum
     FROM tblHistorie
-    WHERE actId = 3 and skip = 0 and date_format(datum,'%Y') <= '".$this->db->real_escape_string($jaar)."'
+    WHERE actId = 3 and skip = 0 and date_format(datum, '%Y') <= '".$this->db->real_escape_string($jaar)."'
  ) ouder on (st.stalId = ouder.stalId)
  join (
     SELECT st.stalId
@@ -521,7 +627,7 @@ FROM tblSchaap s
      join tblUbn u on (st.ubnId = u.ubnId)
     WHERE h.skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."'
     GROUP BY h.stalId
-    HAVING (date_format(min(h.datum),'%Y') <= '".$this->db->real_escape_string($jaar)."')
+    HAVING (date_format(min(h.datum), '%Y') <= '".$this->db->real_escape_string($jaar)."')
  ) mindm on (st.stalId = mindm.stalId)
  join (
     SELECT st.stalId, st.rel_best
@@ -530,15 +636,19 @@ FROM tblSchaap s
      join tblUbn u on (st.ubnId = u.ubnId)
     WHERE h.skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."'
     GROUP BY h.stalId, st.rel_best
-    HAVING (date_format(max(h.datum),'%Y') >= '".$this->db->real_escape_string($jaar)."' or isnull(st.rel_best))
+    HAVING (date_format(max(h.datum), '%Y') >= '".$this->db->real_escape_string($jaar)."' or isnull(st.rel_best))
  ) maxdm on (st.stalId = maxdm.stalId)
 WHERE s.geslacht = 'ooi'
-");
+SQL
+            ,
+            []
+        );
         return $vw->fetch_row()[0];
     }
 
-public function zoek_lammeren_in_jaar($lidId, $jaar, $jan1) {
-   $vw = $this->db->query("
+    public function zoek_lammeren_in_jaar($lidId, $jaar, $jan1) {
+        $vw = $this->run_query(
+            <<<SQL
 SELECT count(s.schaapId) aant_lam
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
@@ -554,7 +664,7 @@ FROM tblSchaap s
      join tblUbn u on (st.ubnId = u.ubnId)
     WHERE h.skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."'
     GROUP BY h.stalId
-    HAVING (date_format(min(h.datum),'%Y') <= '".$this->db->real_escape_string($jaar)."')
+    HAVING (date_format(min(h.datum), '%Y') <= '".$this->db->real_escape_string($jaar)."')
  ) mindm on (st.stalId = mindm.stalId)
  join (
     SELECT st.stalId, st.rel_best
@@ -563,16 +673,20 @@ FROM tblSchaap s
      join tblUbn u on (st.ubnId = u.ubnId)
     WHERE h.skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."'
     GROUP BY h.stalId, st.rel_best
-    HAVING (date_format(max(h.datum),'%Y') >= '".$this->db->real_escape_string($jaar)."' or isnull(st.rel_best))
+    HAVING (date_format(max(h.datum), '%Y') >= '".$this->db->real_escape_string($jaar)."' or isnull(st.rel_best))
  ) maxdm on (st.stalId = maxdm.stalId)
 
 WHERE (isnull(ouder.datum) or ouder.datum > '".$this->db->real_escape_string($jan1)."')
-");
+SQL
+            ,
+            []
+        );
         return $vw->fetch_row()[0];
-}
+    }
 
-public function zoek_aantal_sterfte_lammeren_in_jaar($lidId, $jaar) {
-$vw = $this->db->query("
+    public function zoek_aantal_sterfte_lammeren_in_jaar($lidId, $jaar) {
+        $vw = $this->run_query(
+            <<<SQL
 SELECT count(s.schaapId) aant_lam
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
@@ -593,7 +707,7 @@ FROM tblSchaap s
      join tblUbn u on (st.ubnId = u.ubnId)
     WHERE h.skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."'
     GROUP BY h.stalId
-    HAVING (date_format(min(h.datum),'%Y') <= '".$this->db->real_escape_string($jaar)."')
+    HAVING (date_format(min(h.datum), '%Y') <= '".$this->db->real_escape_string($jaar)."')
  ) mindm on (st.stalId = mindm.stalId)
  join (
     SELECT st.stalId, max(h.datum) tempmax, st.rel_best
@@ -602,16 +716,20 @@ FROM tblSchaap s
      join tblUbn u on (st.ubnId = u.ubnId)
     WHERE h.skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."'
     GROUP BY h.stalId, st.rel_best
-    HAVING (date_format(max(h.datum),'%Y') >= '".$this->db->real_escape_string($jaar)."' or isnull(st.rel_best))
+    HAVING (date_format(max(h.datum), '%Y') >= '".$this->db->real_escape_string($jaar)."' or isnull(st.rel_best))
  ) maxdm on (st.stalId = maxdm.stalId)
 
-WHERE isnull(ouder.datum) and date_format(dood.datum,'%Y') = '".$this->db->real_escape_string($jaar)."'
-");
+WHERE isnull(ouder.datum) and date_format(dood.datum, '%Y') = '".$this->db->real_escape_string($jaar)."'
+SQL
+            ,
+            []
+        );
         return $vw->fetch_row()[0];
-}
+    }
 
-public function zoek_aantal_sterfte_moeder_in_jaar($lidId, $jaar) {
-   $vw = $this->db->query("
+    public function zoek_aantal_sterfte_moeder_in_jaar($lidId, $jaar) {
+        $vw = $this->run_query(
+            <<<SQL
 SELECT count(s.schaapId) aant_mdr
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
@@ -623,7 +741,7 @@ FROM tblSchaap s
  join (
     SELECT stalId, datum
     FROM tblHistorie
-    WHERE actId = 3 and skip = 0 and date_format(datum,'%Y') <= '".$this->db->real_escape_string($jaar)."'
+    WHERE actId = 3 and skip = 0 and date_format(datum, '%Y') <= '".$this->db->real_escape_string($jaar)."'
  ) ouder on (st.stalId = ouder.stalId)
  join (
     SELECT st.stalId, min(h.datum) tempmin
@@ -632,7 +750,7 @@ FROM tblSchaap s
      join tblUbn u on (st.ubnId = u.ubnId)
     WHERE h.skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."'
     GROUP BY h.stalId
-    HAVING (date_format(min(h.datum),'%Y') <= '".$this->db->real_escape_string($jaar)."')
+    HAVING (date_format(min(h.datum), '%Y') <= '".$this->db->real_escape_string($jaar)."')
  ) mindm on (st.stalId = mindm.stalId)
  join (
     SELECT st.stalId, max(h.datum) tempmax, st.rel_best
@@ -641,15 +759,19 @@ FROM tblSchaap s
      join tblUbn u on (st.ubnId = u.ubnId)
     WHERE skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."'
     GROUP BY h.stalId, st.rel_best
-    HAVING (date_format(max(h.datum),'%Y') >= '".$this->db->real_escape_string($jaar)."' or isnull(st.rel_best))
+    HAVING (date_format(max(h.datum), '%Y') >= '".$this->db->real_escape_string($jaar)."' or isnull(st.rel_best))
  ) maxdm on (st.stalId = maxdm.stalId)
-WHERE s.geslacht = 'ooi' and date_format(dood.datum,'%Y') = '".$this->db->real_escape_string($jaar)."'
-");
+WHERE s.geslacht = 'ooi' and date_format(dood.datum, '%Y') = '".$this->db->real_escape_string($jaar)."'
+SQL
+            ,
+            []
+        );
         return $vw->fetch_row()[0];
     }
 
-public function zoek_worpen_in_jaar($lidId, $jaar) {
-   $vw = $this->db->query("
+    public function zoek_worpen_in_jaar($lidId, $jaar) {
+        $vw = $this->run_query(
+            <<<SQL
 SELECT count(distinct v.mdrId) aant_worp
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
@@ -658,17 +780,21 @@ FROM tblSchaap s
  join tblHistorie hg on (hg.stalId = st.stalId and hg.actId = 1 and hg.skip = 0)
  left join tblHistorie hkoop on (hkoop.stalId = st.stalId and hkoop.actId = 2 and hkoop.skip = 0)
 WHERE u.lidId = '".$this->db->real_escape_string($lidId)."'
- and date_format(hg.datum,'%Y') = '".$this->db->real_escape_string($jaar)."'
+ and date_format(hg.datum, '%Y') = '".$this->db->real_escape_string($jaar)."'
  and isnull(hkoop.hisId)
-");
-    if ($vw->num_rows > 0) {
-        return $vw->fetch_row()[0];
+SQL
+            ,
+            []
+        );
+        if ($vw->num_rows > 0) {
+            return $vw->fetch_row()[0];
+        }
+        return null;
     }
-    return null;
-}
 
-public function eigen_schapen($lidId) {
-    return $this->db->query("
+    public function eigen_schapen($lidId) {
+        return $this->run_query(
+            <<<SQL
 SELECT s.schaapId,  s.levensnummer
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
@@ -676,25 +802,33 @@ FROM tblSchaap s
 WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and s.levensnummer is not null
 GROUP BY s.schaapId, s.levensnummer
 ORDER BY s.levensnummer
-");
-}
+SQL
+            ,
+            []
+        );
+    }
 
-public function werknummers($lidId, $Karwerk) {
-    return $this->db->query("
-SELECT s.schaapId, right(s.levensnummer,$Karwerk) werknr
+    public function werknummers($lidId, $Karwerk) {
+        return $this->run_query(
+            <<<SQL
+SELECT s.schaapId, right(s.levensnummer, $Karwerk) werknr
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join tblUbn u on (st.ubnId = u.ubnId)
 WHERE u.lidId = '".$this->db->real_escape_string($lidId)."'
  and s.levensnummer is not null
-GROUP BY s.schaapId, right(s.levensnummer,$Karwerk)
-ORDER BY right(s.levensnummer,$Karwerk)
-"); 
-}
+GROUP BY s.schaapId, right(s.levensnummer, $Karwerk)
+ORDER BY right(s.levensnummer, $Karwerk)
+SQL
+            ,
+            []
+        );
+    }
 
-public function halsnummers($lidId) {
-    return $this->db->query("
-SELECT s.schaapId, concat(st.kleur,' ',st.halsnr) halsnr
+    public function halsnummers($lidId) {
+        return $this->run_query(
+            <<<SQL
+SELECT s.schaapId, concat(st.kleur, ' ', st.halsnr) halsnr
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join tblUbn u on (st.ubnId = u.ubnId)
@@ -702,14 +836,18 @@ WHERE u.lidId = '".$this->db->real_escape_string($lidId)."'
  and st.kleur is not null
  and st.halsnr is not null
  and isnull(st.rel_best)
-GROUP BY s.schaapId, concat(st.kleur,' ',st.halsnr)
+GROUP BY s.schaapId, concat(st.kleur, ' ', st.halsnr)
 ORDER BY st.kleur, st.halsnr
-"); 
-}
+SQL
+            ,
+            []
+        );
+    }
 
-public function ooien($lidId, $Karwerk) {
-    return $this->db->query("
-SELECT mdr.schaapId, right(mdr.levensnummer,$Karwerk) werknr_ooi
+    public function ooien($lidId, $Karwerk) {
+        return $this->run_query(
+            <<<SQL
+SELECT mdr.schaapId, right(mdr.levensnummer, $Karwerk) werknr_ooi
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join tblUbn u on (st.ubnId = u.ubnId)
@@ -717,14 +855,18 @@ FROM tblSchaap s
  join tblSchaap mdr on (v.mdrId = mdr.schaapId)
 WHERE u.lidId = '".$this->db->real_escape_string($lidId)."'
  and mdr.levensnummer is not null
-GROUP BY mdr.schaapId, right(mdr.levensnummer,$Karwerk)
-ORDER BY right(mdr.levensnummer,$Karwerk)
-");
-}
+GROUP BY mdr.schaapId, right(mdr.levensnummer, $Karwerk)
+ORDER BY right(mdr.levensnummer, $Karwerk)
+SQL
+            ,
+            []
+        );
+    }
 
-public function rammen($lidId, $Karwerk) {
-    return $this->db->query("
-SELECT vdr.schaapId, right(vdr.levensnummer,$Karwerk) werknr_ram
+    public function rammen($lidId, $Karwerk) {
+        return $this->run_query(
+            <<<SQL
+SELECT vdr.schaapId, right(vdr.levensnummer, $Karwerk) werknr_ram
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join tblUbn u on (st.ubnId = u.ubnId)
@@ -732,10 +874,13 @@ FROM tblSchaap s
  join tblSchaap vdr on (v.vdrId = vdr.schaapId)
 WHERE u.lidId = '".$this->db->real_escape_string($lidId)."'
  and vdr.levensnummer is not null
-GROUP BY vdr.schaapId, right(vdr.levensnummer,$Karwerk)
-ORDER BY right(vdr.levensnummer,$Karwerk)
-");
-}
+GROUP BY vdr.schaapId, right(vdr.levensnummer, $Karwerk)
+ORDER BY right(vdr.levensnummer, $Karwerk)
+SQL
+            ,
+            []
+        );
+    }
 
     public function getZoekWhere($postdata) {
         $parts = [];
@@ -765,9 +910,10 @@ ORDER BY right(vdr.levensnummer,$Karwerk)
         return implode(' and ', $parts);
     }
 
-public function zoekAankoop($lidId, $where) {
-    $aankoop = $this->db->query("
-SELECT date_format(hg.datum,'%d-%m-%Y') gebdm, koop.datum dmkoop
+    public function zoekAankoop($lidId, $where) {
+        $aankoop = $this->run_query(
+            <<<SQL
+SELECT date_format(hg.datum, '%d-%m-%Y') gebdm, koop.datum dmkoop
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join tblUbn u on (st.ubnId = u.ubnId)
@@ -775,48 +921,56 @@ FROM tblSchaap s
  left join tblSchaap mdr on (v.mdrId = mdr.schaapId)
  left join tblSchaap vdr on (v.vdrId = vdr.schaapId)
  left join (
-    SELECT st.schaapId, h.datum 
+    SELECT st.schaapId, h.datum
     FROM tblHistorie h
      join tblStal st on (h.stalId = st.stalId)
     WHERE h.actId = 1 and h.skip = 0
  ) hg on (hg.schaapId = s.schaapId)
  left join (
-    SELECT st.schaapId, h.datum 
+    SELECT st.schaapId, h.datum
     FROM tblHistorie h
      join tblStal st on (h.stalId = st.stalId)
     WHERE h.actId = 2 and h.skip = 0
  ) koop on (koop.schaapId = s.schaapId)
 WHERE u.lidId = '".$this->db->real_escape_string($lidId)."'
  and $where
-");
-if ($aankoop->num_rows > 0) {
-    return $aankoop->fetch_assoc();
-}
-return ['gebdm' => null, 'dmkoop' => null];
-             }
+SQL
+            ,
+            []
+        );
+        if ($aankoop->num_rows > 0) {
+            return $aankoop->fetch_assoc();
+        }
+        return ['gebdm' => null, 'dmkoop' => null];
+    }
 
-public function zoekSchaap($where) {
-    $vw = $this->db->query("
+    public function zoekSchaap($where) {
+        $vw = $this->run_query(
+            <<<SQL
 SELECT s.schaapId
 FROM tblSchaap s
  left join tblVolwas v on (v.volwId = s.volwId)
  left join tblSchaap mdr on (v.mdrId = mdr.schaapId)
  left join tblSchaap vdr on (v.vdrId = vdr.schaapId)
 WHERE $where
-");
-if ($vw->num_rows > 0) {
-    return $vw->fetch_row()[0];
-}
-return null;
- }
+SQL
+            ,
+            []
+        );
+        if ($vw->num_rows > 0) {
+            return $vw->fetch_row()[0];
+        }
+        return null;
+    }
 
-public function zoekresultaat($lidId, $where, $Karwerk) {
-    return $this->run_query("
-SELECT s.transponder, concat(st.kleur,' ',st.halsnr) halsnr, s.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr,
- s.fokkernr, right(mdr.levensnummer,$Karwerk) werknr_ooi, right(vdr.levensnummer,$Karwerk) werknr_ram, r.ras, s.geslacht,
- ouder.datum dmaanw, coalesce(lower(haf.actie),'aanwezig') status, haf.af,
-hs.datum dmspn, hs.kg spnkg, afl.datum dmafl, afl.kg aflkg, hg.datum dmgeb, date_format(hg.datum,'%d-%m-%Y') gebdm,
- hg.kg gebkg, date_format(aanv1.datum,'%d-%m-%Y') aanvdm, aanv1.datum dmaanv, aanv1.kg aankkg
+    public function zoekresultaat($lidId, $where, $Karwerk) {
+        return $this->run_query(
+            <<<SQL
+SELECT s.transponder, concat(st.kleur, ' ', st.halsnr) halsnr, s.schaapId, s.levensnummer, right(s.levensnummer, $Karwerk) werknr,
+ s.fokkernr, right(mdr.levensnummer, $Karwerk) werknr_ooi, right(vdr.levensnummer, $Karwerk) werknr_ram, r.ras, s.geslacht,
+ ouder.datum dmaanw, coalesce(lower(haf.actie), 'aanwezig') status, haf.af,
+hs.datum dmspn, hs.kg spnkg, afl.datum dmafl, afl.kg aflkg, hg.datum dmgeb, date_format(hg.datum, '%d-%m-%Y') gebdm,
+ hg.kg gebkg, date_format(aanv1.datum, '%d-%m-%Y') aanvdm, aanv1.datum dmaanv, aanv1.kg aankkg
 
 FROM tblSchaap s
  left join tblVolwas v on (v.volwId = s.volwId)
@@ -839,25 +993,25 @@ FROM tblSchaap s
  join tblStal st on (stm.stalId = st.stalId)
  left join (
     SELECT st.schaapId, h.datum, h.kg
-    FROM tblStal st 
+    FROM tblStal st
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 1 and h.skip = 0
  ) hg on (s.schaapId = hg.schaapId)
  left join (
     SELECT st.stalId, h.datum, h.kg
-    FROM tblStal st 
+    FROM tblStal st
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 2 and h.skip = 0
  ) aanv1 on (st1.stalId = aanv1.stalId)
  left join (
     SELECT st.stalId, h.datum, h.kg
-    FROM tblStal st 
+    FROM tblStal st
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 4 and h.skip = 0
  ) hs on (st.stalId = hs.stalId)
  left join (
     SELECT st.schaapId, h.datum
-    FROM tblStal st 
+    FROM tblStal st
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
  ) ouder on (s.schaapId = ouder.schaapId)
@@ -875,10 +1029,10 @@ FROM tblSchaap s
  ) haf on (haf.stalId = st.stalId)
  left join (
     SELECT st.schaapId, h.datum, h.kg
-    FROM tblHistorie h 
-     join 
+    FROM tblHistorie h
+     join
      (
-        SELECT s.levensnummer, min(h.hisId) hisId 
+        SELECT s.levensnummer, min(h.hisId) hisId
         FROM tblStal st
          join tblUbn u on (st.ubnId = u.ubnId)
          join tblSchaap s on (st.schaapId = s.schaapId)
@@ -896,63 +1050,67 @@ FROM tblSchaap s
  ) afl on (afl.schaapId = s.schaapId)
  left join tblRas r on(s.rasId = r.rasId)
 WHERE $where
-ORDER BY if(isnull(s.levensnummer),'Geen',''), dmgeb desc, status
-"); 
-}
+ORDER BY if(isnull(s.levensnummer), 'Geen', ''), dmgeb desc, status
+SQL
+            ,
+            []
+        );
+    }
 
-public function zoekGeschiedenis($lidId, $schaapId, $Karwerk) {
-    return $this->db->query("
-SELECT his.hisId, his.ubn, his.levensnummer, his.geslacht, his.datum, his.date, his.actId, his.actie, his.actie_if, his.kg, date_format(his.dmaanw,'%Y-%m-%d 00:00:00') dmaanw, toel.toel, his.hisId hiscom, comment
+    public function zoekGeschiedenis($lidId, $schaapId, $Karwerk) {
+        return $this->run_query(
+            <<<SQL
+SELECT his.hisId, his.ubn, his.levensnummer, his.geslacht, his.datum, his.date, his.actId, his.actie, his.actie_if, his.kg, date_format(his.dmaanw, '%Y-%m-%d 00:00:00') dmaanw, toel.toel, his.hisId hiscom, comment
 FROM
 (
-    SELECT h.hisId, u.ubn, s.levensnummer, s.geslacht, date_format(h.datum, '%d-%m-%Y') datum, h.datum date, h.actId, a.actie, right(a.actie,4) actie_if, h.kg, ouder.datum dmaanw, h.comment
+    SELECT h.hisId, u.ubn, s.levensnummer, s.geslacht, date_format(h.datum, '%d-%m-%Y') datum, h.datum date, h.actId, a.actie, right(a.actie, 4) actie_if, h.kg, ouder.datum dmaanw, h.comment
     FROM tblSchaap s
      join tblStal st on (st.schaapId = s.schaapId)
      join tblUbn u on (st.ubnId = u.ubnId)
      join tblHistorie h on (st.stalId = h.stalId)
      join tblActie a on (a.actId = h.actId)
      left join (
-        SELECT s.schaapId, h.datum 
-        FROM tblSchaap s 
+        SELECT s.schaapId, h.datum
+        FROM tblSchaap s
          join tblStal st on (st.schaapId = s.schaapId)
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
      ) ouder on (ouder.schaapId = s.schaapId)
     WHERE s.schaapId = '".$this->db->real_escape_string($schaapId)."' and u.lidId = '".$this->db->real_escape_string($lidId)."' and h.skip = 0
      and not exists (
-        SELECT datum 
-        FROM tblHistorie ha 
+        SELECT datum
+        FROM tblHistorie ha
          join tblStal st on (ha.stalId = st.stalId)
          join tblSchaap s on (st.schaapId = s.schaapId)
         WHERE actId = 2 and h.skip = 0 and h.datum = ha.datum and h.actId = ha.actId+1 and s.schaapId = '".$this->db->real_escape_string($schaapId)."')
 
   union
 
-    SELECT h.hisId, u.ubn, s.levensnummer, s.geslacht, date_format(h.datum, '%d-%m-%Y') datum, h.datum date, h.actId, a.actie, right(a.actie,4) actie_if, h.kg, ouder.datum, h.comment
+    SELECT h.hisId, u.ubn, s.levensnummer, s.geslacht, date_format(h.datum, '%d-%m-%Y') datum, h.datum date, h.actId, a.actie, right(a.actie, 4) actie_if, h.kg, ouder.datum, h.comment
     FROM tblHistorie h
      join tblStal st on (st.stalId = h.stalId)
      join tblUbn u on (st.ubnId = u.ubnId)
      join tblSchaap s on (st.schaapId = s.schaapId)
      join tblActie a on (a.actId = h.actId)
      left join (
-        SELECT s.schaapId, h.datum 
-        FROM tblSchaap s 
+        SELECT s.schaapId, h.datum
+        FROM tblSchaap s
          join tblStal st on (st.schaapId = s.schaapId)
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
      ) ouder on (ouder.schaapId = s.schaapId)
     WHERE s.schaapId = '".$this->db->real_escape_string($schaapId)."' and h.actId = 1 and h.skip = 0
 ) his
-left join 
+left join
 (
-    SELECT 'adoptie lammeren' qry, h.hisId, concat('Bij ooi ', right(mdr.levensnummer,$Karwerk)) toel
+    SELECT 'adoptie lammeren' qry, h.hisId, concat('Bij ooi ', right(mdr.levensnummer, $Karwerk)) toel
     FROM tblHistorie h
      join impAgrident vp on (h.datum = vp.datum)
      join tblStal st on (h.stalId = st.stalId)
      join tblSchaap s on (st.schaapId = s.schaapId and vp.levensnummer = s.levensnummer)
      left join (
-        SELECT levensnummer 
-        FROM tblSchaap mdr 
+        SELECT levensnummer
+        FROM tblSchaap mdr
         join tblStal st on (mdr.schaapId = st.schaapId)
          join tblUbn u on (st.ubnId = u.ubnId)
         WHERE u.lidId = '".$this->db->real_escape_string($lidId)."'
@@ -961,7 +1119,7 @@ left join
 
 Union
 
-    SELECT 'lammeren in hok geplaatst excl. adoptie' qry, h.hisId, concat('Geplaatst in ', lower(ho.hoknr),' voor ',datediff(coalesce(ht.datum,curdate()), h.datum), If(datediff(coalesce(ht.datum,curdate()), h.datum) = 1, ' dag', ' dagen')) toel
+    SELECT 'lammeren in hok geplaatst excl. adoptie' qry, h.hisId, concat('Geplaatst in ', lower(ho.hoknr), ' voor ', datediff(coalesce(ht.datum, curdate()), h.datum), If(datediff(coalesce(ht.datum, curdate()), h.datum) = 1, ' dag', ' dagen')) toel
 
     FROM tblHok ho
      join tblBezet b on (b.hokId = ho.hokId)
@@ -993,7 +1151,7 @@ Union
 
 Union
 
-    SELECT 'Volwassenen in hok geplaatst' qry, h.hisId, concat('Geplaatst in ', lower(ho.hoknr),' voor ',datediff(coalesce(ht.datum,curdate()), h.datum), If(datediff(coalesce(ht.datum,curdate()), h.datum) = 1, ' dag', ' dagen')) toel
+    SELECT 'Volwassenen in hok geplaatst' qry, h.hisId, concat('Geplaatst in ', lower(ho.hoknr), ' voor ', datediff(coalesce(ht.datum, curdate()), h.datum), If(datediff(coalesce(ht.datum, curdate()), h.datum) = 1, ' dag', ' dagen')) toel
 
     FROM tblHok ho
      join tblBezet b on (b.hokId = ho.hokId)
@@ -1025,7 +1183,7 @@ Union
 
 Union
 
-    SELECT 'Volwassenen hok verlaten' qry, uit.hist hisId, concat(ho.hoknr,' verlaten ') toel
+    SELECT 'Volwassenen hok verlaten' qry, uit.hist hisId, concat(ho.hoknr, ' verlaten ') toel
 
     FROM tblHok ho
      join tblBezet b on (b.hokId = ho.hokId)
@@ -1078,7 +1236,7 @@ Union
 
 Union
 
-    SELECT 'medicatie' qry, n.hisId, concat(round(sum(n.nutat*n.stdat),2),' ', e.eenheid,'  ', a.naam,'  ',coalesce(i.charge,'')) toel
+    SELECT 'medicatie' qry, n.hisId, concat(round(sum(n.nutat*n.stdat), 2), ' ', e.eenheid, '  ', a.naam, '  ', coalesce(i.charge, '')) toel
     FROM tblNuttig n
      join tblInkoop i on (n.inkId = i.inkId)
      join tblArtikel a on (a.artId = i.artId)
@@ -1098,9 +1256,9 @@ Union
 ) toel
 on (his.hisId = toel.hisId)
 
-UNION 
+UNION
 
-SELECT NULL hisId, u.ubn, s.levensnummer, s.geslacht, date_format(p.dmafsluit,'%d-%m-%Y') datum, p.dmafsluit date, NULL actId, 'Gevoerd' actie, NULL actie_if, NULL kg, NULL dmaanw, concat(coalesce(round(datediff(ht.datum,hv.datum) * vr.kg_st,2),0), ' kg ', lower(a.naam), ' t.b.v. ', lower(h.hoknr)) toel, NULL hiscom, NULL comment
+SELECT NULL hisId, u.ubn, s.levensnummer, s.geslacht, date_format(p.dmafsluit, '%d-%m-%Y') datum, p.dmafsluit date, NULL actId, 'Gevoerd' actie, NULL actie_if, NULL kg, NULL dmaanw, concat(coalesce(round(datediff(ht.datum, hv.datum) * vr.kg_st, 2), 0), ' kg ', lower(a.naam), ' t.b.v. ', lower(h.hoknr)) toel, NULL hiscom, NULL comment
 FROM tblBezet b
  join tblPeriode p on (p.periId = b.periId)
  join tblHok h on (h.hokId = p.hokId)
@@ -1125,9 +1283,9 @@ FROM tblBezet b
         GROUP BY b.bezId
      ) uit on (uit.bezId = b.bezId)
  join tblHistorie ht on (ht.hisId = uit.hist)
- join 
+ join
 (
-    SELECT v.periId, v.inkId, v.nutat/sum(datediff(ht.datum,hv.datum)) kg_st
+    SELECT v.periId, v.inkId, v.nutat/sum(datediff(ht.datum, hv.datum)) kg_st
     FROM tblVoeding v
      join tblPeriode p on (v.periId = p.periId)
      join tblBezet b on (p.periId = b.periId)
@@ -1159,9 +1317,9 @@ FROM tblBezet b
  join tblInkoop i on (i.inkId = vr.inkId)
  join tblArtikel a on (a.artId = i.artId)
 
-UNION 
+UNION
 
-SELECT m.hisId, u.ubn, rs.levensnummer, s.geslacht, date_format(r.dmmeld,'%d-%m-%Y') datum, r.dmmeld date, NULL actId, 'Geboorte gemeld' actie, NULL actie_if, NULL kg, ouder.datum dmaanw, case when isnull(rs.meldnr) then concat('RVO meldt : ',rs.foutmeld) else concat('meldnr : ',rs.meldnr) end toel, NULL hiscom, NULL comment
+SELECT m.hisId, u.ubn, rs.levensnummer, s.geslacht, date_format(r.dmmeld, '%d-%m-%Y') datum, r.dmmeld date, NULL actId, 'Geboorte gemeld' actie, NULL actie_if, NULL kg, ouder.datum dmaanw, case when isnull(rs.meldnr) then concat('RVO meldt : ', rs.foutmeld) else concat('meldnr : ', rs.meldnr) end toel, NULL hiscom, NULL comment
 FROM tblRequest r
  join tblMelding m on (r.reqId = m.reqId)
  join tblHistorie h on (h.hisId = m.hisId)
@@ -1184,8 +1342,8 @@ FROM tblRequest r
     ) id on (id.schaapId = s.schaapId and id.reqId = r.reqId)
  join impRespons rs on (id.respId = rs.respId )
  left join (
-        SELECT s.schaapId, h.datum 
-        FROM tblSchaap s 
+        SELECT s.schaapId, h.datum
+        FROM tblSchaap s
          join tblStal st on (st.schaapId = s.schaapId)
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
@@ -1193,9 +1351,9 @@ FROM tblRequest r
 
 WHERE r.dmmeld is not null and r.code = 'GER' and u.lidId = '".$this->db->real_escape_string($lidId)."' and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and h.skip = 0 and m.skip = 0
 
-UNION 
+UNION
 
-SELECT m.hisId, u.ubn, rs.levensnummer, s.geslacht, date_format(r.dmmeld,'%d-%m-%Y') datum, r.dmmeld date, NULL actId, 'Aanvoer gemeld' actie, NULL actie_if, NULL kg, ouder.datum dmaanw, case when isnull(rs.meldnr) then concat('RVO meldt : ',rs.foutmeld) else concat('meldnr : ',rs.meldnr) end toel, NULL hiscom, NULL comment
+SELECT m.hisId, u.ubn, rs.levensnummer, s.geslacht, date_format(r.dmmeld, '%d-%m-%Y') datum, r.dmmeld date, NULL actId, 'Aanvoer gemeld' actie, NULL actie_if, NULL kg, ouder.datum dmaanw, case when isnull(rs.meldnr) then concat('RVO meldt : ', rs.foutmeld) else concat('meldnr : ', rs.meldnr) end toel, NULL hiscom, NULL comment
 FROM tblRequest r
  join tblMelding m on (r.reqId = m.reqId)
  join tblHistorie h on (h.hisId = m.hisId)
@@ -1218,8 +1376,8 @@ FROM tblRequest r
     ) id on (id.schaapId = s.schaapId and id.reqId = r.reqId)
  join impRespons rs on (id.respId = rs.respId )
  left join (
-        SELECT s.schaapId, h.datum 
-        FROM tblSchaap s 
+        SELECT s.schaapId, h.datum
+        FROM tblSchaap s
          join tblStal st on (st.schaapId = s.schaapId)
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
@@ -1227,9 +1385,9 @@ FROM tblRequest r
 
 WHERE r.dmmeld is not null and r.code = 'AAN' and u.lidId = '".$this->db->real_escape_string($lidId)."' and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and h.skip = 0 and m.skip = 0
 
-UNION 
+UNION
 
-SELECT m.hisId, u.ubn, rs.levensnummer, s.geslacht, date_format(r.dmmeld,'%d-%m-%Y') datum, r.dmmeld date, NULL actId, 'Afvoer gemeld' actie, NULL actie_if, NULL kg, ouder.datum dmaanw, case when isnull(rs.meldnr) then concat('RVO meldt : ',rs.foutmeld) else concat('meldnr : ',rs.meldnr) end toel, NULL hiscom, NULL comment
+SELECT m.hisId, u.ubn, rs.levensnummer, s.geslacht, date_format(r.dmmeld, '%d-%m-%Y') datum, r.dmmeld date, NULL actId, 'Afvoer gemeld' actie, NULL actie_if, NULL kg, ouder.datum dmaanw, case when isnull(rs.meldnr) then concat('RVO meldt : ', rs.foutmeld) else concat('meldnr : ', rs.meldnr) end toel, NULL hiscom, NULL comment
 FROM tblRequest r
  join tblMelding m on (r.reqId = m.reqId)
  join tblHistorie h on (h.hisId = m.hisId)
@@ -1252,8 +1410,8 @@ FROM tblRequest r
     ) id on (id.schaapId = s.schaapId and id.reqId = r.reqId)
  join impRespons rs on (id.respId = rs.respId )
  left join (
-        SELECT s.schaapId, h.datum 
-        FROM tblSchaap s 
+        SELECT s.schaapId, h.datum
+        FROM tblSchaap s
          join tblStal st on (st.schaapId = s.schaapId)
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
@@ -1261,9 +1419,9 @@ FROM tblRequest r
 
 WHERE r.dmmeld is not null and r.code = 'AFV' and u.lidId = '".$this->db->real_escape_string($lidId)."' and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and h.skip = 0 and m.skip = 0
 
-UNION 
+UNION
 
-SELECT m.hisId, u.ubn, s.levensnummer, s.geslacht, date_format(r.dmmeld,'%d-%m-%Y') datum, r.dmmeld date, NULL actId, 'Uitval gemeld' actie, NULL actie_if, NULL kg, ouder.datum dmaanw, case when isnull(rs.meldnr) then concat('RVO meldt : ',rs.foutmeld) else concat('meldnr : ',rs.meldnr) end toel, NULL hiscom, NULL comment
+SELECT m.hisId, u.ubn, s.levensnummer, s.geslacht, date_format(r.dmmeld, '%d-%m-%Y') datum, r.dmmeld date, NULL actId, 'Uitval gemeld' actie, NULL actie_if, NULL kg, ouder.datum dmaanw, case when isnull(rs.meldnr) then concat('RVO meldt : ', rs.foutmeld) else concat('meldnr : ', rs.meldnr) end toel, NULL hiscom, NULL comment
 FROM tblRequest r
  join tblMelding m on (r.reqId = m.reqId)
  join tblHistorie h on (h.hisId = m.hisId)
@@ -1277,8 +1435,8 @@ FROM tblRequest r
     ) id on (id.levensnummer = s.levensnummer and id.reqId = r.reqId)
  join impRespons rs on (id.respId = rs.respId )
  left join (
-        SELECT s.schaapId, h.datum 
-        FROM tblSchaap s 
+        SELECT s.schaapId, h.datum
+        FROM tblSchaap s
          join tblStal st on (st.schaapId = s.schaapId)
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
@@ -1288,7 +1446,7 @@ WHERE r.dmmeld is not null and r.code = 'DOO' and u.lidId = '".$this->db->real_e
 
 UNION
 
-SELECT m.hisId, u.ubn, s.levensnummer, s.geslacht, date_format(r.dmmeld,'%d-%m-%Y') datum, r.dmmeld date, NULL actId, 'Omnummeren gemeld' actie, NULL actie_if, NULL kg, ouder.datum dmaanw, case when isnull(rs.meldnr) then concat('RVO meldt : ',rs.foutmeld) else concat('meldnr : ',rs.meldnr) end toel, NULL hiscom, NULL comment
+SELECT m.hisId, u.ubn, s.levensnummer, s.geslacht, date_format(r.dmmeld, '%d-%m-%Y') datum, r.dmmeld date, NULL actId, 'Omnummeren gemeld' actie, NULL actie_if, NULL kg, ouder.datum dmaanw, case when isnull(rs.meldnr) then concat('RVO meldt : ', rs.foutmeld) else concat('meldnr : ', rs.meldnr) end toel, NULL hiscom, NULL comment
 FROM tblRequest r
  join tblMelding m on (r.reqId = m.reqId)
  join tblHistorie h on (h.hisId = m.hisId)
@@ -1302,8 +1460,8 @@ FROM tblRequest r
     ) id on (id.levensnummer_new = s.levensnummer and id.reqId = r.reqId)
  join impRespons rs on (id.respId = rs.respId )
  left join (
-        SELECT s.schaapId, h.datum 
-        FROM tblSchaap s 
+        SELECT s.schaapId, h.datum
+        FROM tblSchaap s
          join tblStal st on (st.schaapId = s.schaapId)
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
@@ -1313,7 +1471,7 @@ WHERE r.dmmeld is not null and r.code = 'VMD' and u.lidId = '".$this->db->real_e
 
 UNION
 
-SELECT hisId1 hisId, mdr.ubn, mdr.levensnummer, mdr.geslacht, date_format(mdr.worp1,'%d-%m-%Y') datum, mdr.worp1 date, NULL actId,
+SELECT hisId1 hisId, mdr.ubn, mdr.levensnummer, mdr.geslacht, date_format(mdr.worp1, '%d-%m-%Y') datum, mdr.worp1 date, NULL actId,
  'Eerste worp' actie, 'worp' actie_if, NULL kg, mdr.dmaanw, concat(lam.lmrn) toel, NULL hiscom, NULL comment
 FROM
  (
@@ -1327,8 +1485,8 @@ FROM
      join tblUbn ul on (st.ubnId = u.ubnId)
      join tblHistorie hl on (sl.stalId = hl.stalId)
      left join (
-        SELECT s.schaapId, h.datum 
-        FROM tblSchaap s 
+        SELECT s.schaapId, h.datum
+        FROM tblSchaap s
          join tblStal st on (st.schaapId = s.schaapId)
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
@@ -1339,7 +1497,7 @@ FROM
  ) mdr
  join
  (
-    SELECT mdr.levensnummer moeder, h.datum, count(lam.schaapId) lmrn 
+    SELECT mdr.levensnummer moeder, h.datum, count(lam.schaapId) lmrn
     FROM tblSchaap mdr
      join tblVolwas v on (mdr.schaapId = v.mdrId)
      join tblSchaap lam on (v.volwId = lam.volwId)
@@ -1352,7 +1510,7 @@ FROM
 
 UNION
 
-SELECT hisend hisId, mdr.ubn, mdr.levensnummer, mdr.geslacht, date_format(mdr.worpend,'%d-%m-%Y') datum, mdr.worpend date, NULL actId, 'Laatste worp' actie, 'worp' actie_if, NULL kg, mdr.dmaanw, concat(lam.lmrn) toel, NULL hiscom, NULL comment
+SELECT hisend hisId, mdr.ubn, mdr.levensnummer, mdr.geslacht, date_format(mdr.worpend, '%d-%m-%Y') datum, mdr.worpend date, NULL actId, 'Laatste worp' actie, 'worp' actie_if, NULL kg, mdr.dmaanw, concat(lam.lmrn) toel, NULL hiscom, NULL comment
 FROM
  (
     SELECT u.ubn, s.levensnummer, s.geslacht, ouder.datum dmaanw, max(hl.datum) worpend, max(hl.hisId) hisend
@@ -1364,8 +1522,8 @@ FROM
      join tblStal sl on (lam.schaapId = sl.schaapId)
      join tblHistorie hl on (sl.stalId = hl.stalId)
      left join (
-        SELECT s.schaapId, h.datum 
-        FROM tblSchaap s 
+        SELECT s.schaapId, h.datum
+        FROM tblSchaap s
          join tblStal st on (st.schaapId = s.schaapId)
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
@@ -1390,7 +1548,7 @@ FROM
  ) mdr
  join
  (
-    SELECT mdr.levensnummer moeder, h.datum, count(lam.schaapId) lmrn 
+    SELECT mdr.levensnummer moeder, h.datum, count(lam.schaapId) lmrn
     FROM tblSchaap mdr
      join tblVolwas v on (mdr.schaapId = v.mdrId)
      join tblSchaap lam on (v.volwId = lam.volwId)
@@ -1402,30 +1560,38 @@ FROM
  ) lam on (mdr.levensnummer = lam.moeder and mdr.worpend = lam.datum)
 
 ORDER BY date_format(date, '%Y-%m-%d 00:00:00') desc, hisId desc
-");
+SQL
+            ,
+            []
+        );
 /*Toelichting Order by :
 kg noodzakelijk eerst hok verlaten geboren en dan de(zelfde) datum van spenen
  Id noodzakelijk bij meerder overplaatsingen (recordes tblBezet) op dezelfde dag
-  */
-}
+ */
+    }
 
-public function zoek_laatste_werpdatum($max_worp) {
-    $vw = $this->db->query("
-SELECT date_add(max(h.datum),interval 60 day) werpdate
+    public function zoek_laatste_werpdatum($max_worp) {
+        $vw = $this->run_query(
+            <<<SQL
+SELECT date_add(max(h.datum), interval 60 day) werpdate
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join tblHistorie h on (h.stalId = st.stalId)
 WHERE h.actId = 1 and h.skip = 0 and s.volwId = '" . $this->db->real_escape_string($max_worp) . "'
-");
-if ($vw->num_rows) {
-    return $vw->fetch_row()[0];
-}
-return null;
+SQL
+            ,
+            []
+        );
+        if ($vw->num_rows) {
+            return $vw->fetch_row()[0];
+        }
+        return null;
     }
 
-public function resultvader($lidId, $Karwerk) {
-    return $this->db->query("
-SELECT st.schaapId, right(s.levensnummer,$Karwerk) werknr
+    public function resultvader($lidId, $Karwerk) {
+        return $this->run_query(
+            <<<SQL
+SELECT st.schaapId, right(s.levensnummer, $Karwerk) werknr
 FROM tblStal st
  join tblUbn u on (st.ubnId = u.ubnId)
  join tblSchaap s on (st.schaapId = s.schaapId)
@@ -1450,15 +1616,19 @@ FROM tblStal st
      WHERE a.af = 1 and h.skip = 0
  ) afv on (afv.stalId = mst.stalId)
 WHERE s.geslacht = 'ram' and u.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(afv.stalId)
-ORDER BY right(s.levensnummer,$Karwerk)
-"); 
+ORDER BY right(s.levensnummer, $Karwerk)
+SQL
+            ,
+            []
+        );
     }
 
-// TODO: #0004183 hier gebruik je 5 ipv Karwerk, is dat expres?
-public function ouders($schaapId) {
-return $this->db->query("
+    // TODO: #0004183 hier gebruik je 5 ipv Karwerk, is dat expres?
+    public function ouders($schaapId) {
+        return $this->run_query(
+            <<<SQL
 with recursive sheep (schaapId, levnr, geslacht, ras, volwId_s, mdrId, levnr_ma, ras_ma, vdrId, levnr_pa, ras_pa) as (
-   SELECT s.schaapId, right(s.levensnummer,5) levnr, s.geslacht, r.ras, s.volwId, v.mdrId, right(ma.levensnummer,5) levnr_ma, rm.ras ras_ma, v.vdrId, right(pa.levensnummer,5) levnr_pa, rv.ras ras_pa
+   SELECT s.schaapId, right(s.levensnummer, 5) levnr, s.geslacht, r.ras, s.volwId, v.mdrId, right(ma.levensnummer, 5) levnr_ma, rm.ras ras_ma, v.vdrId, right(pa.levensnummer, 5) levnr_pa, rv.ras ras_pa
      FROM tblVolwas v
      left join tblSchaap s on s.volwId = v.volwId
      left join tblRas r on s.rasId = r.rasId
@@ -1468,7 +1638,7 @@ with recursive sheep (schaapId, levnr, geslacht, ras, volwId_s, mdrId, levnr_ma,
      left join tblRas rv on pa.rasId = rv.rasId
     WHERE s.schaapId = '".$this->db->real_escape_string($schaapId)."'
     union all
-   SELECT sm.schaapId, right(sm.levensnummer,5) levnr, sm.geslacht, r.ras, sm.volwId, vm.mdrId, right(ma.levensnummer,5) levnr_ma, rm.ras ras_ma, vm.vdrId, right(pa.levensnummer,5) levnr_pa, rv.ras ras_pa
+   SELECT sm.schaapId, right(sm.levensnummer, 5) levnr, sm.geslacht, r.ras, sm.volwId, vm.mdrId, right(ma.levensnummer, 5) levnr_ma, rm.ras ras_ma, vm.vdrId, right(pa.levensnummer, 5) levnr_pa, rv.ras ras_pa
      FROM tblVolwas vm
      left join tblSchaap sm on sm.volwId = vm.volwId
      left join tblRas r on sm.rasId = r.rasId
@@ -1478,7 +1648,7 @@ with recursive sheep (schaapId, levnr, geslacht, ras, volwId_s, mdrId, levnr_ma,
      left join tblRas rv on pa.rasId = rv.rasId
      join sheep on sm.schaapId = sheep.mdrId
     union all
-   SELECT sv.schaapId, right(sv.levensnummer,5) levnr, sv.geslacht, r.ras, sv.volwId, vv.mdrId, right(ma.levensnummer,5) levnr_ma, rm.ras ras_ma, vv.vdrId, right(pa.levensnummer,5) levnr_pa, rv.ras ras_pa
+   SELECT sv.schaapId, right(sv.levensnummer, 5) levnr, sv.geslacht, r.ras, sv.volwId, vv.mdrId, right(ma.levensnummer, 5) levnr_ma, rm.ras ras_ma, vv.vdrId, right(pa.levensnummer, 5) levnr_pa, rv.ras ras_pa
      FROM tblVolwas vv
      left join tblSchaap sv on sv.volwId = vv.volwId
      left join tblRas r on sv.rasId = r.rasId
@@ -1492,154 +1662,241 @@ with recursive sheep (schaapId, levnr, geslacht, ras, volwId_s, mdrId, levnr_ma,
    join tblSchaap worp on (s.volwId_s = worp.volwId)
 GROUP BY s.schaapId, levnr, geslacht, ras, volwId_s, levnr_ma, ras_ma, levnr_pa, ras_pa
 ORDER BY s.schaapId
-");
-}
+SQL
+            ,
+            []
+        );
+    }
 
-# LET OP er is een weeg() in Historie en Schaap
-public function weeg($lidId, $schaapId) {
-    return $this->db->query("
-SELECT s.schaapId, s.levensnummer 
+    # LET OP er is een weeg() in Historie en Schaap
+    public function weeg($lidId, $schaapId) {
+        return $this->run_query(
+            <<<SQL
+SELECT s.schaapId, s.levensnummer
 FROM tblSchaap s
- join tblStal st on (s.schaapId = st.schaapId) 
+ join tblStal st on (s.schaapId = st.schaapId)
 WHERE st . lidId = '" . $this->db->real_escape_string($lidId) . "' and st . schaapId = '" . $this->db->real_escape_string($schaapId) . "'
-");
-}
+SQL
+            ,
+            []
+        );
+    }
 
-public function zoek_bestaand_levensnummer($schaapId) {
-$vw = $this->db->query("
+    public function zoek_bestaand_levensnummer($schaapId) {
+        $vw = $this->run_query(
+            <<<SQL
 SELECT levensnummer
 FROM tblSchaap s
 WHERE s.schaapId = '".$this->db->real_escape_string($schaapId)."'
-");
-if ($vw->num_rows) {
-    return $vw->fetch_row()[0];
-}
-return null;
-}
+SQL
+            ,
+            []
+        );
+        if ($vw->num_rows) {
+            return $vw->fetch_row()[0];
+        }
+        return null;
+    }
 
-public function zoek_op_levensnummer($levensnummer) {
-$vw = $this->db->query("
+    public function zoek_op_levensnummer($levensnummer) {
+        $vw = $this->run_query(
+            <<<SQL
 SELECT schaapId
 FROM tblSchaap s
 WHERE s.levensnummer = '".$this->db->real_escape_string($levensnummer)."'
-");
-if ($vw->num_rows) {
-    return $vw->fetch_row()[0];
-}
-return null;
-}
+SQL
+            ,
+            []
+        );
+        if ($vw->num_rows) {
+            return $vw->fetch_row()[0];
+        }
+        return null;
+    }
 
-public function updateLevensnummer($schaapId, $levensnummer) {
-    $this->db->query(" UPDATE tblSchaap set levensnummer = '".$this->db->real_escape_string($levensnummer)."' WHERE schaapId = '".$this->db->real_escape_string($schaapId)."' ");
-}
+    public function updateLevensnummer($schaapId, $levensnummer) {
+        $this->run_query(
+            <<<SQL
+UPDATE tblSchaap
+set levensnummer = '".$this->db->real_escape_string($levensnummer)."'
+WHERE schaapId = '".$this->db->real_escape_string($schaapId)."'
+SQL
+            ,
+            []
+        );
+    }
 
-public function zoek_fokkernr($schaapId) {
-    $vw = $this->db->query("
+    public function zoek_fokkernr($schaapId) {
+        $vw = $this->run_query(
+            <<<SQL
 SELECT fokkernr
 FROM tblSchaap
 WHERE schaapId = '".$this->db->real_escape_string($schaapId)."'
-");
-if ($vw->num_rows) {
-    return $vw->fetch_row()[0];
-}
-return null;
-}
+SQL
+            ,
+            []
+        );
+        if ($vw->num_rows) {
+            return $vw->fetch_row()[0];
+        }
+        return null;
+    }
 
-public function updateFokkernr($schaapId, $newfokrnr) {
-    $this->db->query("UPDATE tblSchaap set fokkernr = ".db_null_input($newfokrnr)." WHERE schaapId = '".$this->db->real_escape_string($schaapId)."' ");
-}
+    public function updateFokkernr($schaapId, $newfokrnr) {
+        $this->run_query(
+            <<<SQL
+UPDATE tblSchaap set fokkernr = ".db_null_input($newfokrnr)." WHERE schaapId = '".$this->db->real_escape_string($schaapId)."'
+SQL
+            ,
+            []
+        );
+    }
 
-public function update_geslacht($schaapId, $newsekse) {
-    $update_Geslacht = "UPDATE tblSchaap set geslacht = '".$this->db->real_escape_string($newsekse)."' WHERE schaapId = '".$this->db->real_escape_string($schaapId)."' ";
-    $this->db->query($update_Geslacht);
-}
+    public function update_geslacht($schaapId, $newsekse) {
+        $this->run_query(
+            <<<SQL
+UPDATE tblSchaap set geslacht = '".$this->db->real_escape_string($newsekse)."' WHERE schaapId = '".$this->db->real_escape_string($schaapId)."'
+SQL
+            ,
+            []
+        );
+    }
 
-public function zoek_ras($schaapId) {
-$zoek_ras = $this->db->query("
+    public function zoek_ras($schaapId) {
+        $zoek_ras = $this->run_query(
+            <<<SQL
 SELECT rasId
 FROM tblSchaap
 WHERE schaapId = '".$this->db->real_escape_string($schaapId)."'
-");
-    while( $ra = $zoek_ras->fetch_assoc()) { $dbRasId = $ra['rasId']; }
-return $dbRasId ?? null;
-}
+SQL
+            ,
+            []
+        );
+        while ($ra = $zoek_ras->fetch_assoc()) {
+            $dbRasId = $ra['rasId'];
+        }
+        return $dbRasId ?? null;
+    }
 
-public function update_ras($schaapId, $rasId) {
-    $update_Ras = "UPDATE tblSchaap set rasId = ".db_null_input($rasId)." WHERE schaapId = '".$this->db->real_escape_string($schaapId)."' ";
-    $this->db->query($update_Ras);
-}
+    public function update_ras($schaapId, $rasId) {
+        $this->run_query(
+            <<<SQL
+UPDATE tblSchaap set rasId = ".db_null_input($rasId)." WHERE schaapId = '".$this->db->real_escape_string($schaapId)."'
+SQL
+        );
+    }
 
-public function zoek_moeder($schaapId) {
-    $vw = $this->db->query("
+    public function zoek_moeder($schaapId) {
+        $vw = $this->run_query(
+            <<<SQL
 SELECT v.volwId, v.mdrId
 FROM tblVolwas v
  join tblSchaap s on (v.volwId = s.volwId)
 WHERE s.schaapId = '".$this->db->real_escape_string($schaapId)."'
-");
-if ($vw->num_rows) {
-    return $vw->fetch_row();
-}
-return [null, null];
-}
+SQL
+            ,
+            []
+        );
+        if ($vw->num_rows) {
+            return $vw->fetch_row();
+        }
+        return [null, null];
+    }
 
-public function update_moeder($schaapId, $mdrId) {
-    $this->db->query("
-    UPDATE tblVolwas v 
+    public function update_moeder($schaapId, $mdrId) {
+        $this->run_query(
+            <<<SQL
+    UPDATE tblVolwas v
      join tblSchaap s on (v.volwId = s.volwId)
     set v.mdrId = '".$this->db->real_escape_string($mdrId)."'
-    WHERE s.schaapId = '".$this->db->real_escape_string($schaapId)."' ");
-}
+    WHERE s.schaapId = '".$this->db->real_escape_string($schaapId)."'
+SQL
+            ,
+            []
+        );
+    }
 
-public function update_vader($schaapId, $newvdrId) {
-    $this->db->query("
+    public function update_vader($schaapId, $newvdrId) {
+        $this->run_query(
+            <<<SQL
     UPDATE tblVolwas v
      join tblSchaap s on (v.volwId = s.volwId)
     set v.vdrId = '".$this->db->real_escape_string($newvdrId)."'
     WHERE s.schaapId = '".$this->db->real_escape_string($schaapId)."'
-    ");
+SQL
+            ,
+            []
+        );
     }
 
-public function update_volw($schaapId, $volwId) {
-    $this->db->query("UPDATE tblSchaap set volwId = '".$this->db->real_escape_string($volwId)."' WHERE schaapId = '".$this->db->real_escape_string($schaapId)."' ");
-}
+    public function update_volw($schaapId, $volwId) {
+        $this->run_query(
+            <<<SQL
+UPDATE tblSchaap set volwId = '".$this->db->real_escape_string($volwId)."' WHERE schaapId = '".$this->db->real_escape_string($schaapId)."'
+SQL
+            ,
+            []
+        );
+    }
 
-public function zoek_reden($schaapId) {
-    $vw = $this->db->query("
+    public function zoek_reden($schaapId) {
+        $vw = $this->run_query(
+            <<<SQL
 SELECT redId
 FROM tblSchaap
 WHERE schaapId = '".$this->db->real_escape_string($schaapId)."'
-");
-if ($vw->num_rows) {
-    return $vw->fetch_row()[0];
-}
-return null;
-}
+SQL
+            ,
+            []
+        );
+        if ($vw->num_rows) {
+            return $vw->fetch_row()[0];
+        }
+        return null;
+    }
 
-public function update_reden($schaapId, $redId) {
-    $this->db->query("UPDATE tblSchaap set redId = ".db_null_input($redId)." WHERE schaapId = '".$this->db->real_escape_string($schaapId)."' ");
-}
+    public function update_reden($schaapId, $redId) {
+        $this->run_query(
+            <<<SQL
+UPDATE tblSchaap set redId = ".db_null_input($redId)." WHERE schaapId = '".$this->db->real_escape_string($schaapId)."'
+SQL
+            ,
+            []
+        );
+    }
 
-public function zoek_geslacht($schaapId) {
-    return $this->first_field("SELECT geslacht FROM tblSchaap WHERE schaapId = '".$this->db->real_escape_string($schaapId)."'");
-}
+    public function zoek_geslacht($schaapId) {
+        return $this->first_field(
+            <<<SQL
+SELECT geslacht FROM tblSchaap WHERE schaapId = '".$this->db->real_escape_string($schaapId)."'
+SQL
+            ,
+            []
+        );
+    }
 
-public function zoek_halsnr_db($lidId, $kleur, $halsnr) {
-    $zoek_halsnr_db = $this->db->query("
+    public function zoek_halsnr_db($lidId, $kleur, $halsnr) {
+        $zoek_halsnr_db = $this->run_query(
+            <<<SQL
 SELECT schaapId
 FROM tblStal
 WHERE lidId = '".$this->db->real_escape_string($lidId)."'
  and kleur = '".$this->db->real_escape_string($kleur)."'
  and halsnr = '".$this->db->real_escape_string($halsnr)."'
  and isnull(rel_best)
-");
-if ($vw->num_rows) {
-    return $vw->fetch_row()[0];
-}
-return null;
-}
+SQL
+            ,
+            []
+        );
+        if ($vw->num_rows) {
+            return $vw->fetch_row()[0];
+        }
+        return null;
+    }
 
-public function zoek_schapen($lidId) {
-    return $this->db->query("
+    public function zoek_schapen($lidId) {
+        return $this->run_query(
+            <<<SQL
 SELECT s.schaapId,  s.levensnummer
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
@@ -1647,30 +1904,38 @@ FROM tblSchaap s
 WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and s.levensnummer is not null
 GROUP BY s.schaapId, s.levensnummer
 ORDER BY s.levensnummer
-");
-}
+SQL
+            ,
+            []
+        );
+    }
 
-public function zoek_moeders($lidId, $Karwerk) {
-    return $this->db->query("
-SELECT mdr.schaapId, right(mdr.levensnummer,$Karwerk) werknr_ooi
+    public function zoek_moeders($lidId, $Karwerk) {
+        return $this->run_query(
+            <<<SQL
+SELECT mdr.schaapId, right(mdr.levensnummer, $Karwerk) werknr_ooi
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  INNER JOIN tblUbn u USING (ubnId)
  join tblVolwas v on (v.volwId = s.volwId)
  join tblSchaap mdr on (v.mdrId = mdr.schaapId)
 WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and mdr.levensnummer is not null
-GROUP BY mdr.schaapId, right(mdr.levensnummer,$Karwerk)
-ORDER BY right(mdr.levensnummer,$Karwerk)
-");
-}
+GROUP BY mdr.schaapId, right(mdr.levensnummer, $Karwerk)
+ORDER BY right(mdr.levensnummer, $Karwerk)
+SQL
+            ,
+            []
+        );
+    }
 
-public function zoek_groeiresultaat_schaap($lidId, $Karwerk, $where) {
-    return $this->db->query("
-SELECT right(mdr.levensnummer, $Karwerk) moeder, s.schaapId, s.levensnummer, right(s.levensnummer, $Karwerk) werknum, s.geslacht, prnt.datum aanw, h.kg, h.datum date, date_format(h.datum,'%d-%m-%Y') datum, h.actId, a.actie
+    public function zoek_groeiresultaat_schaap($lidId, $Karwerk, $where) {
+        return $this->run_query(
+            <<<SQL
+SELECT right(mdr.levensnummer, $Karwerk) moeder, s.schaapId, s.levensnummer, right(s.levensnummer, $Karwerk) werknum, s.geslacht, prnt.datum aanw, h.kg, h.datum date, date_format(h.datum, '%d-%m-%Y') datum, h.actId, a.actie
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
  INNER JOIN tblUbn u USING (ubnId)
- join tblHistorie h on (st.stalId = h.stalId) 
+ join tblHistorie h on (st.stalId = h.stalId)
  join tblActie a on (h.actId = a.actId)
  left join (
     SELECT st.schaapId, datum
@@ -1683,7 +1948,7 @@ FROM tblSchaap s
     FROM tblStal st
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = s.schaapId) 
+ ) prnt on (prnt.schaapId = s.schaapId)
  left join tblVolwas v on (v.volwId = s.volwId)
  left join tblSchaap mdr on (v.mdrId = mdr.schaapId)
 WHERE u.lidId = '".$this->db->real_escape_string($lidId)."'
@@ -1692,48 +1957,57 @@ WHERE u.lidId = '".$this->db->real_escape_string($lidId)."'
  and h.skip = 0
  ".$where. "
 ORDER BY right(mdr.levensnummer, $Karwerk), right(s.levensnummer, $Karwerk), h.hisId
-");
-}
+SQL
+            ,
+            []
+        );
+    }
 
-public function zoek_groeiresultaat_weging($lidId, $Karwerk, $where) {
-    return $this->db->query("
-SELECT date_format(h.datum,'%d-%m-%Y') datum, h.datum date, a.actie, right(mdr.levensnummer, $Karwerk) moeder,
+    public function zoek_groeiresultaat_weging($lidId, $Karwerk, $where) {
+        return $this->run_query(
+            <<<SQL
+SELECT date_format(h.datum, '%d-%m-%Y') datum, h.datum date, a.actie, right(mdr.levensnummer, $Karwerk) moeder,
  s.schaapId, right(s.levensnummer, $Karwerk) werknum, s.geslacht, prnt.datum aanw, h.kg
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
  INNER JOIN tblUbn u USING(ubnId)
- join tblHistorie h on (st.stalId = h.stalId) 
+ join tblHistorie h on (st.stalId = h.stalId)
  join tblActie a on (h.actId = a.actId)
  left join (
     SELECT st.schaapId, datum
     FROM tblStal st
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = s.schaapId) 
+ ) prnt on (prnt.schaapId = s.schaapId)
  left join tblVolwas v on (v.volwId = s.volwId)
  left join tblSchaap mdr on (v.mdrId = mdr.schaapId)
 WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(st.rel_best) and h.kg is not null and h.skip = 0 ".$where. "
-ORDER BY h.datum desc, h.actId, right(mdr.levensnummer, $Karwerk), right(s.levensnummer, $Karwerk), h.hisId");
-}
+ORDER BY h.datum desc, h.actId, right(mdr.levensnummer, $Karwerk), right(s.levensnummer, $Karwerk), h.hisId
+SQL
+            ,
+            []
+        );
+    }
 
-// gebruiker UpdSchaap doet niets met actid en datum .. ?
-public function query_historie($lidId, $schaapId) {
-    return $this->db->query("
-SELECT date_format(datum,'%d-%m-%Y') dag, h.actId, actie, datum
+    // gebruiker UpdSchaap doet niets met actid en datum .. ?
+    public function query_historie($lidId, $schaapId) {
+        return $this->run_query(
+            <<<SQL
+SELECT date_format(datum, '%d-%m-%Y') dag, h.actId, actie, datum
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join tblHistorie h on (st.stalId = h.stalId)
  join tblActie a on (a.actId = h.actId)
 WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and s.schaapId = '".$this->db->real_escape_string($schaapId)."' and h.skip = 0
 and not exists (
-    SELECT datum 
-    FROM tblHistorie geenAanwas 
+    SELECT datum
+    FROM tblHistorie geenAanwas
      join tblStal st on (geenAanwas.stalId = st.stalId)
     WHERE actId = 2 and h.datum = geenAanwas.datum and h.actId = geenAanwas.actId+1 and st.schaapId = '".$this->db->real_escape_string($schaapId)/* bij aankoop incl. aanwas wordt aanwas niet getoond */."')
 
 union
 
-SELECT date_format(datum,'%d-%m-%Y') dag, h.actId, actie, datum
+SELECT date_format(datum, '%d-%m-%Y') dag, h.actId, actie, datum
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join tblHistorie h on (st.stalId = h.stalId)
@@ -1742,8 +2016,8 @@ WHERE h.actId = 1 and h.skip = 0 and s.schaapId = '".$this->db->real_escape_stri
 
 union
 
-SELECT date_format(p.dmafsluit,'%d-%m-%Y') dag, h.actId, 'Gevoerd' actie, p.dmafsluit
-FROM tblVoeding v    
+SELECT date_format(p.dmafsluit, '%d-%m-%Y') dag, h.actId, 'Gevoerd' actie, p.dmafsluit
+FROM tblVoeding v
  join tblPeriode p on (p.periId = v.periId)
  join tblBezet b on (p.periId = b.periId)
  join tblHistorie h on (h.hisId = b.hisId)
@@ -1753,7 +2027,7 @@ WHERE h.skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."' and s
 
 union
 
-SELECT date_format(min(h.datum),'%d-%m-%Y') dag, h.actId, 'Eerste worp' actie, min(h.datum) datum
+SELECT date_format(min(h.datum), '%d-%m-%Y') dag, h.actId, 'Eerste worp' actie, min(h.datum) datum
 FROM tblSchaap s
  join tblVolwas v on (s.schaapId = v.mdrId)
  join tblSchaap lam on (v.volwId = lam.volwId)
@@ -1764,7 +2038,7 @@ GROUP BY h.actId
 
 union
 
-SELECT date_format(max(h.datum),'%d-%m-%Y') dag, h.actId, 'Laatste worp' actie, max(h.datum) datum
+SELECT date_format(max(h.datum), '%d-%m-%Y') dag, h.actId, 'Laatste worp' actie, max(h.datum) datum
 FROM tblSchaap s
  join tblVolwas v on (s.schaapId = v.mdrId)
  join tblSchaap lam on (v.volwId = lam.volwId)
@@ -1776,7 +2050,7 @@ HAVING (max(h.datum) > min(h.datum))
 
 union
 
-SELECT date_format(rs.dmcreate,'%d-%m-%Y') dag, h.actId, 'Geboorte gemeld' actie, rs.dmcreate
+SELECT date_format(rs.dmcreate, '%d-%m-%Y') dag, h.actId, 'Geboorte gemeld' actie, rs.dmcreate
 FROM impRespons rs
  join tblMelding m on (rs.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
@@ -1786,7 +2060,7 @@ WHERE rs.melding = 'GER' and rs.meldnr is not null and h.skip = 0 and u.lidId = 
 
 union
 
-SELECT date_format(rs.dmcreate,'%d-%m-%Y') dag, h.actId, 'Aanvoer gemeld' actie, rs.dmcreate
+SELECT date_format(rs.dmcreate, '%d-%m-%Y') dag, h.actId, 'Aanvoer gemeld' actie, rs.dmcreate
 FROM impRespons rs
  join tblMelding m on (rs.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
@@ -1796,7 +2070,7 @@ WHERE rs.melding = 'AAN' and rs.meldnr is not null and h.skip = 0 and u.lidId = 
 
 union
 
-SELECT date_format(rs.dmcreate,'%d-%m-%Y') dag, h.actId, 'Afvoer gemeld' actie, rs.dmcreate
+SELECT date_format(rs.dmcreate, '%d-%m-%Y') dag, h.actId, 'Afvoer gemeld' actie, rs.dmcreate
 FROM impRespons rs
  join tblMelding m on (rs.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
@@ -1806,7 +2080,7 @@ WHERE rs.melding = 'AFV' and rs.meldnr is not null and h.skip = 0 and u.lidId = 
 
 union
 
-SELECT date_format(rs.dmcreate,'%d-%m-%Y') dag, h.actId, 'Uitval gemeld' actie, rs.dmcreate
+SELECT date_format(rs.dmcreate, '%d-%m-%Y') dag, h.actId, 'Uitval gemeld' actie, rs.dmcreate
 FROM impRespons rs
  join tblMelding m on (rs.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
@@ -1815,16 +2089,20 @@ FROM impRespons rs
 WHERE rs.melding = 'DOO' and rs.meldnr is not null and h.skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."' and s.schaapId = '".$this->db->real_escape_string($schaapId)."'
 
 ORDER BY datum desc, actId desc
-");
-     }
+SQL
+            ,
+            []
+        );
+    }
 
-public function show_update($lidId, $schaapId, $Karwerk) {
-    return $this->db->query("
-SELECT stm.stalId, st.kleur, st.halsnr hnr, s.levensnummer, date_format(hg.datum,'%d-%m-%Y') gebdm, hg.kg gebkg, s.rasId, s.geslacht,
- date_format(hs.datum,'%d-%m-%Y') speendm, hs.kg speenkg, ouder.datum dmaanw, date_format(ouder.datum,'%d-%m-%Y') aanwdm, 
-mdr.schaapId mdrId, right(mdr.levensnummer,$Karwerk) werknr_ooi, vdr.schaapId vdrId, right(vdr.levensnummer,$Karwerk) werknr_ram,
+    public function show_update($lidId, $schaapId, $Karwerk) {
+        return $this->run_query(
+            <<<SQL
+SELECT stm.stalId, st.kleur, st.halsnr hnr, s.levensnummer, date_format(hg.datum, '%d-%m-%Y') gebdm, hg.kg gebkg, s.rasId, s.geslacht,
+ date_format(hs.datum, '%d-%m-%Y') speendm, hs.kg speenkg, ouder.datum dmaanw, date_format(ouder.datum, '%d-%m-%Y') aanwdm,
+mdr.schaapId mdrId, right(mdr.levensnummer, $Karwerk) werknr_ooi, vdr.schaapId vdrId, right(vdr.levensnummer, $Karwerk) werknr_ram,
 s.momId, s.redId,
-b.bezId, ho.hoknr hoknr_lst, h_in.datum dmHokIn, date_format(h_in.datum,'%d-%m-%Y') hokInDm, p.periId, p.dmafsluit, 
+b.bezId, ho.hoknr hoknr_lst, h_in.datum dmHokIn, date_format(h_in.datum, '%d-%m-%Y') hokInDm, p.periId, p.dmafsluit,
 st.rel_best
 
 FROM tblSchaap s
@@ -1909,16 +2187,26 @@ INNER JOIN tblUbn u ON (st.ubnId = u.ubnId)
 
 WHERE st.schaapId = '".$this->db->real_escape_string($schaapId)."'
 
-ORDER BY right(s.levensnummer,$Karwerk)
-");
-}
+ORDER BY right(s.levensnummer, $Karwerk)
+SQL
+            ,
+            []
+        );
+    }
 
-public function noteer_overleden($schaapId) {
-    $this->db->query("UPDATE tblSchaap SET momId = NULL, redId = NULL WHERE schaapId = '".$this->db->real_escape_string($schaapId)."' ");
-}
+    public function noteer_overleden($schaapId) {
+        $this->run_query(
+            <<<SQL
+UPDATE tblSchaap SET momId = NULL, redId = NULL WHERE schaapId = '".$this->db->real_escape_string($schaapId)."'
+SQL
+            ,
+            []
+        );
+    }
 
-public function zoek_eerste_worp($lidId, $schaapId) {
-    $zoek_eerste_worp = $this->db->query("
+    public function zoek_eerste_worp($lidId, $schaapId) {
+        $zoek_eerste_worp = $this->run_query(
+            <<<SQL
 SELECT min(datum) date
 From (
     SELECT  min(h.datum) datum, 'Eerste worp' actie
@@ -1929,13 +2217,19 @@ From (
      join tblHistorie h on (st.stalId = h.stalId and h.actId = 1 and h.skip = 0)
     WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and mdr.schaapId = '".$this->db->real_escape_string($schaapId)."'
 ) datum
-");
-while( $nna = $zoek_eerste_worp->fetch_assoc()) { $dmworp1 = $nna['date']; }
-return $dmworp1 ?? null;
-}
+SQL
+            ,
+            []
+        );
+        while ($nna = $zoek_eerste_worp->fetch_assoc()) {
+            $dmworp1 = $nna['date'];
+        }
+        return $dmworp1 ?? null;
+    }
 
-public function tel_bij_lid_en_levensnummer($lidId, $levensnummers) {
-    return $this->first_field(<<<SQL
+    public function tel_bij_lid_en_levensnummer($lidId, $levensnummers) {
+        return $this->first_field(
+            <<<SQL
 SELECT count(s.schaapId) schpat
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
@@ -1943,29 +2237,33 @@ INNER JOIN tblUbn u USING (ubnId)
 WHERE u.lidId = :lidId
  and s.levensnummer IN (:levensnummers)
 SQL
-    , [
-        [':lidId', $lidId, self::INT],
-        [':levensnummers', $levensnummers],
-    ]
-    );
-}
+            ,
+            [
+                [':lidId', $lidId, self::INT],
+                [':levensnummers', $levensnummers],
+            ]
+        );
+    }
 
-public function zoek_per_levensnummers($levensnummers) {
-    return $this->run_query(<<<SQL
+    public function zoek_per_levensnummers($levensnummers) {
+        return $this->run_query(
+            <<<SQL
 SELECT s.schaapId, s.levensnummer
 FROM tblSchaap s
 WHERE s.levensnummer IN (:levensnummers)
 SQL
-    , [
-        [':levensnummers', $levensnummers],
-    ]
-    );
-}
+            ,
+            [
+                [':levensnummers', $levensnummers],
+            ]
+        );
+    }
 
-// zoek_medicatie_lijst en zoek_medicatielijst_werknummer gebruiken dezelfde bron
-public function zoek_medicatie_lijst($lidId, $afvoer) {
-    $part = $this->db_filter_afvoerdatum($afvoer);
-    return $this->run_query(<<<SQL
+    // zoek_medicatie_lijst en zoek_medicatielijst_werknummer gebruiken dezelfde bron
+    public function zoek_medicatie_lijst($lidId, $afvoer) {
+        $part = $this->db_filter_afvoerdatum($afvoer);
+        return $this->run_query(
+            <<<SQL
 SELECT s.schaapId, s.levensnummer
 FROM tblSchaap s
  join (
@@ -1994,16 +2292,19 @@ WHERE $part
 and s.levensnummer is not null
 ORDER BY s.levensnummer
 SQL
-    , [
-        [':lidId', $lidId, self::INT]
-    ]);
-}
+            ,
+            [
+                [':lidId', $lidId, self::INT]
+            ]
+        );
+    }
 
-// zoek_medicatie_lijst en zoek_medicatielijst_werknummer gebruiken dezelfde bron
-public function zoek_medicatielijst_werknummer($lidId, $Karwerk, $afvoer) {
-    $part = $this->db_filter_afvoerdatum($afvoer);
-    return $this->run_query(<<<SQL
-SELECT s.schaapId, right(s.levensnummer,$Karwerk) werknr
+    // zoek_medicatie_lijst en zoek_medicatielijst_werknummer gebruiken dezelfde bron
+    public function zoek_medicatielijst_werknummer($lidId, $Karwerk, $afvoer) {
+        $part = $this->db_filter_afvoerdatum($afvoer);
+        return $this->run_query(
+            <<<SQL
+SELECT s.schaapId, right(s.levensnummer, $Karwerk) werknr
 FROM tblSchaap s
  join (
     SELECT max(stalId) stalId, schaapId
@@ -2029,23 +2330,24 @@ FROM tblSchaap s
 WHERE $part
 AND h.skip = 0
 and s.levensnummer is not null
-GROUP BY s.schaapId, right(s.levensnummer,$Karwerk)
-ORDER BY right(s.levensnummer,$Karwerk)
+GROUP BY s.schaapId, right(s.levensnummer, $Karwerk)
+ORDER BY right(s.levensnummer, $Karwerk)
 SQL
-    , [[':lidId', $lidId, self::INT]]
-    );
-}
+            ,
+            [[':lidId', $lidId, self::INT]]
+        );
+    }
 
-private function db_filter_afvoerdatum($afvoer) {
-    if ($afvoer) {
-        return <<<SQL
+    private function db_filter_afvoerdatum($afvoer) {
+        if ($afvoer) {
+            return <<<SQL
 (isnull(afv.datum) or (afv.datum > date_add(curdate(), interval -666 month) ))
 SQL;
-    }
-    return <<<SQL
+        }
+        return <<<SQL
 isnull(afv.stalId)
 SQL;
-}
+    }
 
     public function getMedicatieWhere($post) {
         $filt_mdr = null;
@@ -2088,13 +2390,14 @@ SQL;
         return [$filter, $filt_mdr];
     }
 
-public function zoek_schaapgegevens($lidId, $Karwerk, $afvoer, $filter) {
-    $part = $this->db_filter_afvoerdatum($afvoer);
-    return $this->run_query(<<<SQL
+    public function zoek_schaapgegevens($lidId, $Karwerk, $afvoer, $filter) {
+        $part = $this->db_filter_afvoerdatum($afvoer);
+        return $this->run_query(
+            <<<SQL
 SELECT schaapId, levensnummer, werknr, dmgeb, gebdm, geslacht, aanw, hoknr, lstgeblam, generatie, actId, af
 FROM (
-    SELECT s.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr,
-        hg.datum dmgeb, date_format(hg.datum,'%d-%m-%Y') gebdm, s.geslacht,
+    SELECT s.schaapId, s.levensnummer, right(s.levensnummer, $Karwerk) werknr,
+        hg.datum dmgeb, date_format(hg.datum, '%d-%m-%Y') gebdm, s.geslacht,
         prnt.schaapId aanw, b.hokId, b.hoknr, NULL lstgeblam, 'lam' generatie, a.actId, a.af
     FROM tblSchaap s
      join (
@@ -2171,9 +2474,9 @@ FROM (
 
     Union
 
-    SELECT s.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr,
-        hg.datum dmgeb, date_format(hg.datum,'%d-%m-%Y') gebdm, s.geslacht,
-        prnt.schaapId aanw, b.hokId, b.hoknr, date_format(lstlam.lstgeblam,'%d-%m-%Y') lstgeblam, 'ouder' generatie, a.actId, a.af
+    SELECT s.schaapId, s.levensnummer, right(s.levensnummer, $Karwerk) werknr,
+        hg.datum dmgeb, date_format(hg.datum, '%d-%m-%Y') gebdm, s.geslacht,
+        prnt.schaapId aanw, b.hokId, b.hoknr, date_format(lstlam.lstgeblam, '%d-%m-%Y') lstgeblam, 'ouder' generatie, a.actId, a.af
     FROM tblSchaap s
      join (
         SELECT max(stalId) stalId, schaapId
@@ -2249,14 +2552,16 @@ FROM (
 WHERE $filter
 ORDER BY generatie, werknr, lstgeblam desc
 SQL
-    , [
-        [':lidId', $lidId, self::INT],
-    ]
-    );
-}
+            ,
+            [
+                [':lidId', $lidId, self::INT],
+            ]
+        );
+    }
 
-public function zoek_aanwezig_moeder($lidId, $where_mdr) {
-    return $this->run_query(<<<SQL
+    public function zoek_aanwezig_moeder($lidId, $where_mdr) {
+        return $this->run_query(
+            <<<SQL
 SELECT s.levensnummer
 FROM tblSchaap s
  join (
@@ -2276,12 +2581,14 @@ FROM tblSchaap s
  left join tblBezet b on (h.hisId = b.hisId)
 WHERE s.geslacht = 'ooi' and $where_mdr
 SQL
-    , [[':lidId', $lidId, self::INT]]
-    );
-}
+            ,
+            [[':lidId', $lidId, self::INT]]
+        );
+    }
 
-public function tel_medicijn_historie($lidId, $schaapId) {
-    return $this->first_field(<<<SQL
+    public function tel_medicijn_historie($lidId, $schaapId) {
+        return $this->first_field(
+            <<<SQL
 SELECT count(s.levensnummer) aant
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
@@ -2296,29 +2603,32 @@ and s.schaapId = :schaapId
 and a.soort = 'pil'
 GROUP BY s.levensnummer
 SQL
-    , [
-        [':lidId', $lidId, self::INT],
-        [':schaapId', $schaapId, self::INT]
-    ]
-    );
-}
+            ,
+            [
+                [':lidId', $lidId, self::INT],
+                [':schaapId', $schaapId, self::INT]
+            ]
+        );
+    }
 
-public function zoek_datum_bestemming($hisId) {
-    return $this->first_row(<<<SQL
+    public function zoek_datum_bestemming($hisId) {
+        return $this->first_row(
+            <<<SQL
 SELECT datum, rel_best
 FROM tblHistorie h
  join tblStal st on (st.stalId = h.stalId)
 WHERE h.hisId = :hisId
 SQL
-    ,
-        [[':hisId', $hisId, self::INT]],
-        [0, 0]
-    );
-}
+            ,
+            [[':hisId', $hisId, self::INT]],
+            [0, 0]
+        );
+    }
 
-public function zoek_aflevergegevens($bestm, $date) {
-    return $this->first_row(<<<SQL
-SELECT p.naam, date_format(h.datum,'%d-%m-%Y') datum, count(st.schaapId) tal
+    public function zoek_aflevergegevens($bestm, $date) {
+        return $this->first_row(
+            <<<SQL
+SELECT p.naam, date_format(h.datum, '%d-%m-%Y') datum, count(st.schaapId) tal
 FROM tblStal st
  join tblHistorie h on (st.stalId = h.stalId)
  join tblActie a on (h.actId = a.actId)
@@ -2328,19 +2638,21 @@ WHERE a.af = 1
  and st.rel_best = :bestm
  and h.datum = :date
  and h.skip = 0
-GROUP BY p.naam, date_format(h.datum,'%d-%m-%Y')
+GROUP BY p.naam, date_format(h.datum, '%d-%m-%Y')
 SQL
-    , [
-        [':bestm', $bestm],
-        [':date', $date],
-    ],
-    ['', '', '']
-    );
-}
+            ,
+            [
+                [':bestm', $bestm],
+                [':date', $date],
+            ],
+            ['', '', '']
+        );
+    }
 
-public function zoek_schaap_aflever($bestm, $date, $Karwerk) {
-    return $this->run_query(<<<SQL
-SELECT s.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr, h.kg 
+    public function zoek_schaap_aflever($bestm, $date, $Karwerk) {
+        return $this->run_query(
+            <<<SQL
+SELECT s.schaapId, s.levensnummer, right(s.levensnummer, $Karwerk) werknr, h.kg
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join tblHistorie h on (st.stalId = h.stalId)
@@ -2349,36 +2661,353 @@ WHERE a.af = 1
  and st.rel_best = :bestm
  and h.datum = :date
  and h.skip = 0
-ORDER BY right(s.levensnummer,$Karwerk)
+ORDER BY right(s.levensnummer, $Karwerk)
 SQL
-    , [
-        [':bestm', $bestm],
-        [':date', $date],
-    ]
-    );
-}
+            ,
+            [
+                [':bestm', $bestm],
+                [':date', $date],
+            ]
+        );
+    }
 
-public function zoek_pil_aflever($lidId, $schaapId) {
-    return $this->run_query(<<<SQL
-SELECT date_format(h.datum,'%d-%m-%Y') datum, art.naam, art.wdgn_v, (h.datum + interval art.wdgn_v day) toon
-FROM tblSchaap s 
+    public function zoek_pil_aflever($lidId, $schaapId) {
+        return $this->run_query(
+            <<<SQL
+SELECT date_format(h.datum, '%d-%m-%Y') datum, art.naam, art.wdgn_v, (h.datum + interval art.wdgn_v day) toon
+FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
  join tblUbn u on (st.ubnId = u.ubnId)
  join tblHistorie h on (h.stalId = st.stalId)
  join tblActie a on (a.actId = h.actId)
  left join tblNuttig n on (h.hisId = n.hisId)
  left join tblInkoop i on (i.inkId = n.inkId)
- left join tblArtikel art on (i.artId = art.artId) 
+ left join tblArtikel art on (i.artId = art.artId)
 WHERE u.lidId = :lidId
  and s.schaapId = :schaapId
  and h.actId = 8
  and h.skip = 0
  and (h.datum + interval art.wdgn_v day) >= sysdate()
 SQL
- , [
-     [':lidId', $lidId, self::INT],
-     [':schaapId', $schaapId, self::INT]
- ]);
-}
+            ,
+            [
+                [':lidId', $lidId, self::INT],
+                [':schaapId', $schaapId, self::INT]
+            ]
+        );
+    }
+
+    // @TODO: deze query neemt geen parameters. En wordt eigenlijk ook niet gebruikt. Weg?
+    public function fase_bij_dier() {
+        $vw = $this->run_query(
+            <<<SQL
+SELECT s.levensnummer, 'moeder' fase
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join tblHistorie h ON (h.stalId = st.stalId)
+ join (
+     SELECT stalId, datum
+     FROM tblHistorie
+     WHERE actId = 1 and skip = 0
+ ) hg ON (hg.stalId = st.stalId)
+WHERE h.actId = 3 and geslacht = 'ooi' and date_add(hg.datum, interval 10 year) > CURRENT_DATE()
+
+UNION
+
+SELECT s.levensnummer, 'moeder' fase
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join tblHistorie h ON (h.stalId = st.stalId)
+ left join (
+     SELECT stalId, datum
+     FROM tblHistorie
+     WHERE actId = 1 and skip = 0
+ ) hg ON (hg.stalId = st.stalId)
+WHERE h.actId = 3 and h.skip = 0 and isnull(hg.stalId) and geslacht = 'ooi' and date_add(s.dmcreatie, interval 10 year) > CURRENT_DATE()
+
+UNION
+
+SELECT s.levensnummer, 'vader' fase
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join tblHistorie h ON (h.stalId = st.stalId)
+ join (
+     SELECT stalId, datum
+     FROM tblHistorie
+     WHERE actId = 1 and skip = 0
+ ) hg ON (hg.stalId = st.stalId)
+WHERE h.actId = 3 and h.skip = 0 and geslacht = 'ram' and date_add(hg.datum, interval 10 year) > CURRENT_DATE()
+
+UNION
+
+SELECT s.levensnummer, 'vader' fase
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join tblHistorie h ON (h.stalId = st.stalId)
+ left join (
+     SELECT stalId, datum
+     FROM tblHistorie
+     WHERE actId = 1 and skip = 0
+ ) hg ON (hg.stalId = st.stalId)
+WHERE h.actId = 3 and h.skip = 0 and isnull(hg.stalId) and geslacht = 'ram' and date_add(s.dmcreatie, interval 10 year) > CURRENT_DATE()
+
+UNION
+
+SELECT s.levensnummer, 'lam' fase
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ left join (
+     SELECT stalId
+     FROM tblHistorie
+     WHERE actId = 3 and skip = 0
+ ) h ON (h.stalId = st.stalId)
+ join (
+     SELECT stalId, datum
+     FROM tblHistorie
+     WHERE actId = 1 and skip = 0
+ ) hg ON (hg.stalId = st.stalId)
+ WHERE isnull(h.stalId) and s.levensnummer is not null and date_add(hg.datum, interval 10 year) > CURRENT_DATE()
+
+ UNION
+
+SELECT s.levensnummer, 'lam' fase
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ left join (
+     SELECT stalId
+     FROM tblHistorie
+     WHERE actId = 3 and skip = 0
+ ) h ON (h.stalId = st.stalId)
+ left join (
+     SELECT stalId
+     FROM tblHistorie
+     WHERE actId = 1 and skip = 0
+ ) hg ON (hg.stalId = st.stalId)
+ WHERE isnull(h.stalId) and s.levensnummer is not null and isnull(hg.stalId) and date_add(s.dmcreatie, interval 10 year) > CURRENT_DATE()
+SQL
+        );
+        if ($vw->num_rows == 0) {
+            return [];
+        }
+        $res = [];
+        while ($row = $vw->fetch_assoc()) {
+            $res[$row['levensnummer']] = $row['fase'];
+        }
+        return $res;
+    }
+
+    public function zoek_laatste_dekkingen($Karwerk) {
+        $vw = $this->run_query(
+            <<<SQL
+SELECT v.mdrId, right(vdr.levensnummer, $Karwerk) lev
+FROM tblVolwas v
+ join (
+     SELECT v.mdrId, max(v.volwId) volwId
+    FROM tblVolwas v
+     left join tblHistorie hv on (hv.hisId = v.hisId)
+     left join tblDracht d on (v.volwId = d.volwId)
+     left join tblHistorie hd on (hd.hisId = d.hisId)
+     left join tblSchaap k on (k.volwId = v.volwId)
+     left join (
+        SELECT s.schaapId
+        FROM tblSchaap s
+         join tblStal st on (s.schaapId = st.schaapId)
+         join tblHistorie h on (st.stalId = h.stalId)
+        WHERE h.actId = 3 and h.skip = 0
+     ) ha on (k.schaapId = ha.schaapId)
+    WHERE (isnull(hv.hisId) or hv.skip = 0) and (isnull(hd.hisId) or hd.skip = 0) and isnull(ha.schaapId)
+    GROUP BY v.mdrId
+ ) lv on (v.volwId = lv.volwId)
+ join tblSchaap vdr on (vdr.schaapId = v.vdrId)
+SQL
+        );
+        if ($vw->num_rows == 0) {
+            return [];
+        }
+        $res = [];
+        while ($row = $vw->fetch_assoc()) {
+            $res[$row['mdrid']] = $row['lev'];
+        }
+        return $res;
+    }
+
+    public function zoek_werpdatum_laatste_dekking() {
+        $vw = $this->run_query(
+            <<<SQL
+SELECT v.mdrId, date_format(h.datum, '%d-%m-%Y') werpdm
+FROM tblVolwas v
+ join (
+     SELECT v.mdrId, max(v.volwId) volwId
+    FROM tblVolwas v
+     left join tblHistorie hv on (hv.hisId = v.hisId)
+     left join tblDracht d on (v.volwId = d.volwId)
+     left join tblHistorie hd on (hd.hisId = d.hisId)
+     left join tblSchaap k on (k.volwId = v.volwId)
+     left join (
+        SELECT s.schaapId
+        FROM tblSchaap s
+         join tblStal st on (s.schaapId = st.schaapId)
+         join tblHistorie h on (st.stalId = h.stalId)
+        WHERE h.actId = 3 and h.skip = 0
+     ) ha on (k.schaapId = ha.schaapId)
+    WHERE (isnull(hv.hisId) or hv.skip = 0) and (isnull(hd.hisId) or hd.skip = 0) and isnull(ha.schaapId)
+    GROUP BY v.mdrId
+ ) lv on (v.volwId = lv.volwId)
+ join tblSchaap l on (l.volwId = v.volwId)
+ join tblStal st on (st.schaapId = l.schaapId)
+ join tblHistorie h on (st.stalId = h.stalId)
+WHERE h.actId = 1 and h.skip = 0 and date_add(h.datum, interval 30 day) > CURRENT_DATE()
+GROUP BY v.mdrId, h.datum
+SQL
+        );
+        if ($vw->num_rows == 0) {
+            return [];
+        }
+        $res = [];
+        while ($row = $vw->fetch_assoc()) {
+            $res[$row['mdrId']] = $row['werpdm'];
+        }
+        return $res;
+    }
+
+    // NOTE dit doet iets anders dan zoek_bestaand_levensnummer. Waarom is dit zoveel uitgebreider?
+    public function zoek_eerder_levensnummer($levnr) {
+        return $this->run_query(
+            <<<SQL
+SELECT s.schaapId, s.geslacht, s.volwId, v.mdrId, hg.datum dmgeb, h1.datum dmeerste,
+date_format(h1.datum,'%d-%m-%Y') eerstedm, ha.datum dmaanw, haf.datum dmafv, date_format(haf.datum,'%d-%m-%Y') afvdm
+FROM tblSchaap s
+ left join tblVolwas v on (s.volwId = v.volwId)
+ left join (
+    SELECT s.schaapId, h.datum
+    FROM tblSchaap s
+     join tblStal st on (s.schaapId = st.schaapId)
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 1
+ and h.skip = 0
+ and s.levensnummer = :levnr
+ ) hg on (s.schaapId = hg.schaapId)
+ left join (
+    SELECT his1.schaapId, h.datum
+    FROM tblHistorie h
+    join (
+        SELECT st.schaapId, min(h.hisId) hisId
+        FROM tblSchaap s
+         join tblStal st on (s.schaapId = st.schaapId)
+         join tblHistorie h on (st.stalId = h.stalId)
+        WHERE h.skip = 0
+ and s.levensnummer = :levnr
+        GROUP BY st.schaapId
+    ) his1 on (his1.hisId = h.hisId)
+ ) h1 on (s.schaapId = h1.schaapId)
+ left join (
+    SELECT s.schaapId, h.datum
+    FROM tblSchaap s
+     join tblStal st on (s.schaapId = st.schaapId)
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3
+ and h.skip = 0
+ and s.levensnummer = :levnr
+ ) ha on (s.schaapId = ha.schaapId)
+ left join (
+    SELECT afv.schaapId, h.datum
+    FROM tblHistorie h
+    join (
+        SELECT st.schaapId, max(h.hisId) hisId
+        FROM tblSchaap s
+         join tblStal st on (s.schaapId = st.schaapId)
+         join tblHistorie h on (st.stalId = h.stalId)
+         join tblActie a on (h.actId = a.actId)
+        WHERE a.af = 1
+ and h.skip = 0
+ and s.levensnummer = :levnr
+        GROUP BY st.schaapId
+    ) afv on (afv.hisId = h.hisId)
+    WHERE h.skip = 0
+ ) haf on (s.schaapId = haf.schaapId)
+WHERE levensnummer = :levnr
+SQL
+        ,
+            [[':levnr', $levnr]]
+        );
+    }
+
+    public function zoek_laatste_worp($mdrId) {
+        return $this->first_field(
+            <<<SQL
+SELECT max(l.volwId) volwId
+FROM tblSchaap l
+ join tblVolwas v on (l.volwId = v.volwId)
+ join tblStal st on (l.schaapId = st.schaapId)
+ join tblHistorie h on (h.stalId = st.stalId) 
+ left join tblSchaap k on (k.volwId = v.volwId)
+     left join (
+        SELECT s.schaapId
+        FROM tblSchaap s
+         join tblStal st on (s.schaapId = st.schaapId)
+         join tblHistorie h on (st.stalId = h.stalId)
+        WHERE h.actId = 3 and h.skip = 0
+     ) ha on (k.schaapId = ha.schaapId)
+WHERE v.mdrId = :mdrId
+ and h.actId = 1
+ and h.skip = 0
+ and isnull(ha.schaapId)
+SQL
+        , [[':mdrId', $mdrId, self::INT]]
+        );
+    }
+
+    public function zoek_datum_laatste_worp($volwId) {
+        $vw = $this->run_query(
+            <<<SQL
+SELECT h.datum, date_format(h.datum,'%d-%m-%Y') dag
+FROM tblSchaap l
+ join tblStal st on (l.schaapId = st.schaapId)
+ join tblHistorie h on (h.stalId = st.stalId)
+WHERE h.actId = 1
+ and h.skip = 0
+ and l.volwId = :volwId
+SQL
+        ,
+            [[':volwId', $volwId, self::INT]]
+        );
+        if ($vw->num_rows) {
+            return $vw->fetch_row();
+        }
+        return [null, null];
+    }
+
+    public function maak_schaap($ubn, $rasId, $geslacht, $volwId, $momId, $redId) {
+        $this->run_query(
+            <<<SQL
+INSERT INTO tblSchaap SET
+ levensnummer = :ubn,
+ rasId = :rasId,
+ geslacht = :geslacht,
+ volwId = :volwId,
+ momId = :momId,
+ redId = :redId
+SQL
+        ,
+            [
+                [':ubn', $ubn],
+                [':rasId', $rasId],
+                [':geslacht', $geslacht],
+                [':volwId', $volwId],
+                [':momId', $momId],
+                [':redId', $redId],
+            ]
+        );
+    }
+
+    public function wis_levensnummer($ubn) {
+        $this->run_query(
+            <<<SQL
+UPDATE tblSchaap SET levensnummer = NULL WHERE levensnummer = :ubn
+SQL
+        ,
+            [[':ubn', $ubn, self::INT]]
+        );
+    }
 
 }

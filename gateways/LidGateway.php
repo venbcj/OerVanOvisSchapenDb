@@ -87,6 +87,18 @@ if ($vw->num_rows) {
 return ['user' => null, 'passw' => null];
     }
 
+    public function findUbn($lidId) {
+        return $this->first_field(
+            <<<SQL
+SELECT ubnId
+FROM tblUbn
+WHERE lidId = :lidId
+ and actief = 1
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
+
     public function findAlias($lidId) {
         $vw = $this->db->query("SELECT alias FROM tblLeden WHERE lidId = '".$this->db->real_escape_string($lidId)."' ");
         while ($row = $vw->fetch_assoc()) {

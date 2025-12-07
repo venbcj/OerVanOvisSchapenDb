@@ -179,6 +179,30 @@ SQL;
         rel_herk = '" . $this->db->real_escape_string($rel_herk) . "' ");
     }
 
+    public function insert_uitgebreid() {
+        $this->run_query(<<<SQL
+INSERT INTO tblStal SET
+    lidId = :lidId,
+ ubnId = :ubnId,
+ schaapId = :schaapId,
+ kleur = :kleur,
+ halsnr = :halsnr,
+ rel_herk = :rel_herk,
+ rel_best = :rel_best
+SQL
+        ,
+            [
+                [':lidId', $lidId, self::INT],
+                [':ubnId', $ubnId, self::INT],
+                [':schaapId', $schaapId, self::INT],
+                [':kleur', $kleur],
+                [':halsnr', $halsnr],
+                [':rel_herk', $rel_herk],
+                [':rel_best', $rel_best],
+            ]
+        );
+    }
+
     public function zoek_laatste_stal($lidId, $schaapId) {
         return $this->run_query(<<<SQL
 SELECT max(stalId) stalId
@@ -191,6 +215,146 @@ SQL
             [':lidId', $lidId, self::INT],
             [':schaapId', $schaapId, self::INT],
         ]
+        );
+    }
+
+    public function zoek_in_stallijst($lidId, $levnr) {
+        return $this->first_field(
+            <<<SQL
+SELECT s.schaapId 
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ INNER JOIN tblUbn u USING(ubnId)
+WHERE u.lidId = :lidId
+ and levensnummer = :levnr
+ and isnull(st.rel_best)
+SQL
+        ,
+            [
+                [':lidId', $lidId, self::INT],
+                [':levnr', $levnr],
+            ]
+        );
+    }
+
+    public function zoek_in_afgevoerd($lidId, $levnr) {
+        return $this->first_field(
+            <<<SQL
+SELECT s.schaapId 
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join tblHistorie h on (st.stalId = h.stalId)
+WHERE st.lidId = :lidId
+ and levensnummer = :levnr
+ and st.rel_best is not null
+ and (h.actId = 12 or h.actId = 13)
+ and h.skip = 0
+SQL
+        ,
+            [
+                [':lidId', $lidId, self::INT],
+                [':levnr', $levnr],
+            ]
+        );
+    }
+
+    public function zoek_dood($levnr) {
+        return $this->first_field(
+            <<<SQL
+SELECT s.schaapId 
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join tblHistorie h on (st.stalId = h.stalId)
+WHERE levensnummer = :levnr
+ and h.actId = 14
+ and h.skip = 0
+SQL
+        ,
+            [
+                [':levnr', $levnr],
+            ]
+        );
+    }
+
+    public function zoek_uitgeschaard($levnr) {
+        return $this->first_field(
+            <<<SQL
+SELECT hisId
+FROM tblHistorie h
+ join (
+     SELECT max(stalId) stalId
+     FROM tblStal st
+      join tblSchaap s on (s.schaapId = st.schaapId)
+     WHERE levensnummer = :levnr
+ ) st on (st.stalId = h.stalId) 
+WHERE h.actId = 10 and h.skip = 0
+SQL
+        ,
+            [
+                [':levnr', $levnr],
+            ]
+        );
+    }
+
+    public function zoek_herkomst($hisId) {
+        return $this->first_field(
+            <<<SQL
+SELECT rel_best
+FROM tblHistorie h
+ join tblStal st on (st.stalId = h.stalId) 
+WHERE h.hisId = :hisId
+SQL
+        ,
+            [[':hisId', $hisId, self::INT]]
+        );
+    }
+
+    public function startdm_moeder($lidId, $schaapId) {
+        return $this->first_field(
+            <<<SQL
+SELECT h.datum
+FROM (
+    SELECT st.stalId
+    FROM tblStal st
+    INNER JOIN tblUbn u USING(ubnId)
+    WHERE u.lidId = :lidId
+        and isnull(rel_best)
+        and schaapId = :schaapId
+ ) minst
+ join tblHistorie h on (minst.stalId = h.stalId)
+ join tblActie a on (h.actId = a.actId)
+WHERE a.op = 1 and h.skip = 0
+SQL
+        ,
+            [
+                [':lidId', $lidId, self::INT],
+                [':schaapId', $schaapId, self::INT],
+            ]
+        );
+    }
+
+    public function zoek_eindm_mdr_indien_afgevoerd($lidId, $schaapId) {
+        return $this->first_field(
+            <<<SQL
+SELECT h.datum
+FROM (
+    SELECT max(st.stalId) stalId, schaapId
+    FROM tblStal st
+    INNER JOIN tblUbn u USING (ubnId)
+    WHERE u.lidId = :lidId
+ and schaapId = :schaapId
+    GROUP BY schaapId
+ ) maxst
+ join tblStal st on (st.stalId = maxst.stalId)
+ join tblHistorie h on (h.stalId = st.stalId)
+ join tblActie a on (h.actId = a.actId)
+WHERE a.af = 1
+SQL
+        ,
+            [
+                [':lidId', $lidId, self::INT],
+                [':schaapId', $schaapId, self::INT],
+            ]
         );
     }
 

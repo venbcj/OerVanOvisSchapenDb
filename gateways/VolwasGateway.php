@@ -137,16 +137,213 @@ ORDER BY right(mdr.levensnummer,$Karwerk), dekdate desc
 ");
 }
 
-public function insert_ouders($mdrId, $vdrId) {
-    $this->db->query("INSERT INTO tblVolwas set mdrId = ".db_null_input($mdrId).", vdrId = ".db_null_input($vdrId));
-    }
-
 public function zoek_ouders($mdrId, $vdrId) {
     $vw = $this->db->query("
         SELECT max(volwId) volwId
         FROM tblVolwas
         WHERE ".db_null_filter('mdrId', $mdrId) . " and " . db_null_filter('vdrId', $vdrId));
     return $vw->fetch_row()[0];
+}
+
+public function zoek_actuele_worp($mdrId, $datum) {
+    return $this->first_field(
+        <<<SQL
+SELECT v.volwId
+FROM tblVolwas v
+ join tblSchaap l on (l.volwId = v.volwId)
+ join tblStal stl on (stl.schaapId = l.schaapId)
+ join tblHistorie h on (h.stalId = stl.stalId)
+WHERE v.mdrId = :mdrId
+ and h.actId = 1
+ and h.skip = 0
+ and h.datum = :datum
+SQL
+    ,
+        [
+            [':mdrId', $mdrId, self::INT],
+            [':datum', $datum, self::DATE],
+        ]
+    );
+}
+
+public function zoek_vorige_worp($mdrId, $datum) {
+    return $this->first_field(
+        <<<SQL
+SELECT max(l.volwId) volwId
+FROM tblSchaap l
+ join tblVolwas v on (l.volwId = v.volwId)
+ join tblStal st on (l.schaapId = st.schaapId)
+ join tblHistorie h on (h.stalId = st.stalId)
+ left join tblSchaap k on (k.volwId = v.volwId)
+ left join (
+    SELECT s.schaapId
+    FROM tblSchaap s
+     join tblStal st on (s.schaapId = st.schaapId)
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
+ ) ha on (k.schaapId = ha.schaapId)
+WHERE v.mdrId = :mdrId
+ and h.actId = 1
+ and h.skip = 0
+ and h.datum < :datum
+ and isnull(ha.schaapId)
+SQL
+    ,
+        [
+            [':mdrId', $mdrId, self::INT],
+            [':datum', $datum, self::DATE],
+        ]
+    );
+}
+
+public function zoek_actuele_dracht($mdrId, $volwId) {
+    return $this->first_field(
+        <<<SQL
+SELECT v.volwId
+FROM tblVolwas v
+ join tblDracht d on (d.volwId = v.volwId)
+ join tblHistorie h on (h.hisId = d.hisId)
+WHERE h.skip = 0
+ and v.mdrId = :mdrId
+ and v.volwId > :volwId
+SQL
+    ,
+        [
+            [':mdrId', $mdrId, self::INT],
+            [':volwId', $volwId, self::INT],
+        ]
+    );
+}
+
+public function zoek_actuele_dekking($mdrId, $volwId) {
+    return $this->first_field(
+        <<<SQL
+SELECT max(v.volwId) volwId
+FROM tblVolwas v
+ join tblHistorie h on (h.hisId = v.hisId)
+WHERE h.skip = 0
+ and v.mdrId = :mdrId
+ and v.volwId > :volwId
+SQL
+    ,
+        [
+            [':mdrId', $mdrId, self::INT],
+            [':volwId', $volwId, self::INT],
+        ]
+    );
+}
+
+public function zoek_vader_uit_koppel($volwId) {
+    return $this->first_field(
+        <<<SQL
+ SELECT vdrId
+ FROM tblVolwas
+ WHERE volwId = :volwId
+SQL
+    , [[':volwId', $volwId, self::INT]]
+    );
+}
+
+public function update_koppel($vdrId, $volwId) {
+    $this->run_query(
+        <<<SQL
+UPDATE tblVolwas set vdrId = :vdrId WHERE volwId = :volwId
+    SQL
+    ,
+    [
+        [':vdrId', $vdrId, self::INT],
+        [':volwId', $volwId, self::INT],
+    ]
+    );
+}
+
+public function maak_koppel($mdrId, $vdrId) {
+    $this->run_query(
+        <<<SQL
+ INSERT INTO tblVolwas set mdrId = :mdrId, vdrId = :vdrId
+SQL
+    ,
+        [[':mdrId', $mdrId, self::INT], [':vdrId', $vdrId, self::INT]]
+    );
+}
+
+public function zoek_recentste_id($mdrId) {
+    return $this->first_field(
+        <<<SQL
+ SELECT max(volwId) volwId
+ FROM tblVolwas
+ WHERE mdrId = :mdrId
+SQL
+    , [[':mdrId', $mdrId, self::INT]]
+    );
+}
+
+public function zoek_bestaande_worp($mdrId, $datum) {
+    return $this->first_field(
+        <<<SQL
+SELECT v.volwId
+FROM tblVolwas v
+ join tblSchaap l on (l.volwId = v.volwId)
+ join tblStal stl on (stl.schaapId = l.schaapId)
+ join tblHistorie h on (h.stalId = stl.stalId)
+WHERE v.mdrId = :mdrId
+ and h.actId = 1
+ and h.skip = 0
+ and h.datum = :datum
+SQL
+    ,
+        [
+            [':mdrId', $mdrId, self::INT],
+            [':datum', $datum, self::DATE],
+        ]
+    );
+}
+
+public function zoek_laatste_worp_voor_geboortedatum($mdrId, $datum) {
+    $vw = $this->run_query(
+        <<<SQL
+SELECT max(h.datum) datum, date_format(max(h.datum),'%d-%m-%Y') dag
+FROM tblSchaap l
+ join tblVolwas v on (l.volwId = v.volwId)
+ join tblStal st on (l.schaapId = st.schaapId)
+ join tblHistorie h on (h.stalId = st.stalId)
+WHERE v.mdrId = :mdrId
+ and h.actId = 1
+ and h.skip = 0
+ and h.datum < :datum
+SQL
+    ,
+        [[':mdrId', $mdrId, self::INT], [':datum', $datum, self::DATE]]
+    );
+    if ($vw->num_rows) {
+        return $vw->fetch_row();
+    }
+    return [null, null];
+}
+
+public function zoek_volgende_worp_na_geboortedatum($mdrId, $datum) {
+    $vw = $this->run_query(
+        <<<SQL
+SELECT min(h.datum) datum, date_format(min(h.datum),'%d-%m-%Y') dag
+FROM tblSchaap l
+ join tblVolwas v on (l.volwId = v.volwId)
+ join tblStal st on (l.schaapId = st.schaapId)
+ join tblHistorie h on (h.stalId = st.stalId)
+WHERE v.mdrId = :mdrId
+ and h.actId = 1
+ and h.skip = 0
+ and h.datum > :datum
+SQL
+    ,
+        [
+            [':mdrId', $mdrId, self::INT],
+            [':datum', $datum, self::DATE],
+        ]
+    );
+    if ($vw->num_rows) {
+        return $vw->fetch_row();
+    }
+    return [null, null];
 }
 
 }
