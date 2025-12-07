@@ -284,4 +284,92 @@ SQL
     );
 }
 
+public function periodes($lidId, $minjaar, $maxjaar, $artId) {
+    return $this->run_query(<<<SQL
+SELECT date_format(h.datum,'%Y%m') jrmnd, month(h.datum) mnd, date_format(h.datum,'%Y') jaar
+FROM tblEenheid e
+ join tblEenheiduser eu on (e.eenhId = eu.eenhId)
+ join tblArtikel a on (eu.enhuId = a.enhuId)
+ join tblInkoop i on (a.artId = i.artId)
+ join tblNuttig n on (n.inkId = i.inkId)
+ join tblHistorie h on (h.hisId = n.hisId)
+WHERE h.skip = 0
+ and eu.lidId = :lidId
+ and date_format(h.datum,'%Y') >= :minjaar
+ and date_format(h.datum,'%Y') <= :maxjaar
+ and a.artId = :artId
+GROUP BY date_format(h.datum,'%Y%m')
+ORDER BY date_format(h.datum,'%Y%m') desc
+SQL
+    , [
+        [':lidId', $lidId, self::INT],
+        [':minjaar', $minjaar],
+        [':maxjaar', $maxjaar],
+        [':artId', $artId, self::INT],
+    ]
+    );
+}
+
+// gebruikt dezelfde query als periodes(), alleen om het aantal rijen te tellen
+// @TODO @REFACTOR dat kun je ook aan de periodes-query zelf zien
+public function aantal_periodes($lidId, $minjaar, $maxjaar, $artId) {
+    $vw = $this->run_query(<<<SQL
+SELECT jrmnd FROM (
+SELECT date_format(h.datum,'%Y%m') jrmnd, month(h.datum) mnd, date_format(h.datum,'%Y') jaar
+FROM tblEenheid e
+ join tblEenheiduser eu on (e.eenhId = eu.eenhId)
+ join tblArtikel a on (eu.enhuId = a.enhuId)
+ join tblInkoop i on (a.artId = i.artId)
+ join tblNuttig n on (n.inkId = i.inkId)
+ join tblHistorie h on (h.hisId = n.hisId)
+WHERE h.skip = 0
+ and eu.lidId = :lidId
+ and date_format(h.datum,'%Y') >= :minjaar
+ and date_format(h.datum,'%Y') <= :maxjaar
+ and a.artId = :artId
+GROUP BY date_format(h.datum,'%Y%m')
+ORDER BY date_format(h.datum,'%Y%m') desc
+)
+SQL
+    , [
+        [':lidId', $lidId, self::INT],
+        [':minjaar', $minjaar],
+        [':maxjaar', $maxjaar],
+        [':artId', $artId, self::INT],
+    ]
+    );
+    if ($vw) {
+        return $vw->num_rows;
+    }
+    return 0;
+}
+
+public function maandjaren($lidId, $minjaar, $maxjaar, $artId, $filter) {
+    return $this->run_query(<<<SQL
+SELECT month(h.datum) mnd, date_format(h.datum,'%Y') jaar 
+FROM tblEenheiduser eu
+ join tblArtikel a on (eu.enhuId = a.enhuId)
+ join tblInkoop i on (a.artId = i.artId)
+ join tblNuttig n on (n.inkId = i.inkId)
+ join tblHistorie h on (h.hisId = n.hisId)
+WHERE h.skip = 0
+ and eu.lidId = :lidId
+ and date_format(h.datum,'%Y') >= :minjaar
+ and date_format(h.datum,'%Y') <= :maxjaar
+ and i.artId = :artId
+ and $filter
+GROUP BY month(h.datum), date_format(h.datum,'%Y')
+ORDER BY date_format(h.datum,'%Y') desc, month(h.datum) desc 
+SQL
+    ,
+        [
+            [':lidId', $lidId, self::INT],
+            [':minjaar', $minjaar],
+            [':maxjaar', $maxjaar],
+            [':filter', $filter],
+            [':artId', $artId, self::INT],
+        ]
+    );
+}
+
 }
