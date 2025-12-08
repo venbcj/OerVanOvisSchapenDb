@@ -81,6 +81,8 @@ foreach ($multip_array as $recId => $id) {
         $historie_gateway = new HistorieGateway();
         if ($code == 'AAN' || $code == 'GER') {
             // TODO: #0004165 deze variabelen zijn alleen nodig om de foutmelding wrong_dag te vormen. Verplaats naar HistorieGateway? Nee, naar een Transactie
+        // TODO: #0004135 record teruggeven ipv anonieme array?
+        // TODO in een veel later stadium: opnemen in Transactie, samen met validatie
             [$first_day, $eerste_dag] = $historie_gateway->zoek_eerste_datum_stalop($recId);
         }
         /* Einde Eerste datum zoeken ter controle bij aanvoer bedrijf */

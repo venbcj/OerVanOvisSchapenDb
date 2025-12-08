@@ -3,9 +3,8 @@
 class HistorieGateway extends Gateway {
 
     public function zoek_eerste_datum_stalop($recId) {
-        $first_day = null;
-        $eerste_dag = null;
-        $vw = $this->db->query("
+        return $this->first_row(
+            <<<SQL
 SELECT min(datum) date, date_format(min(datum),'%d-%m-%Y') datum
 FROM tblHistorie h
  join tblActie a on (a.actId = h.actId)
@@ -14,41 +13,45 @@ FROM tblHistorie h
     FROM tblStal st
      join tblHistorie h on (h.stalId = st.stalId)
      join tblMelding m on (m.hisId = h.hisId)
-    WHERE m.meldId = '$recId'
+    WHERE m.meldId = :meldId
  ) st on (st.stalId = h.stalId and st.hisId <> h.hisId)
  WHERE a.op = 1
-");
-            while ($mi = $vw->fetch_assoc()) {
-                $first_day = $mi['date'];
-                $eerste_dag = $mi['datum'];
-            }
-        // TODO: #0004135 record teruggeven ipv anonieme array?
-        // TODO in een veel later stadium: opnemen in Transactie, samen met validatie
-        return [$first_day, $eerste_dag];
+SQL
+        ,
+            [[':meldId', $recId, self::INT]],
+            [null, null]
+        );
     }
 
     public function setDatum($day, $recId) {
-        $this->db->query("
+        $this->run_query(
+            <<<SQL
  UPDATE tblHistorie h
   join tblMelding m on (h.hisId = m.hisId)
- set   h.datum  = '".$this->db->real_escape_string($day)."'
- WHERE m.meldId = '$recId' 
- ");
+ set h.datum = :datum
+ WHERE m.meldId = :meldId
+SQL
+        ,
+            [
+                [':datum', $day],
+                [':meldId', $recId],
+            ]
+        );
     }
 
+    // @TODO: naamgeving. Zoekt niet speciaal naar dekking.
     public function zoek_dekdatum($dekMoment) {
-        $vw = $this->db->query("
+        return $this->first_row(
+            <<<SQL
 SELECT date_format(datum,'%d-%m-%Y') datum, year(datum) jaar
 FROM tblHistorie
-WHERE hisId = '".$this->db->real_escape_string($dekMoment)."' and skip = 0
-    ");
-        $dekdm = 0;
-        $dekjaar = 0;
-        while ( $zd = $vw->fetch_assoc()) {
-            $dekdm = $zd['datum']; $dekjaar = $zd['jaar']; 
-        }
-        return [$dekdm, $dekjaar];
-        }
+WHERE hisId = :hisId
+ and skip = 0
+SQL
+        , [[':hisId', $dekMoment]],
+            [0, 0]
+        );
+    }
 
     public function zoek_drachtdatum($drachtMoment) {
         $vw = $this->db->query("

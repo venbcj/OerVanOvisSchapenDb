@@ -52,6 +52,7 @@ class UnitCase extends TestCase {
 
     protected function assertTableWithPK($table, $pk, $id, $values = []) {
         $vw = $this->db->query("SELECT * FROM $table WHERE $pk=$id");
+        $this->assertInstanceOf(mysqli_result::class, $vw, $this->db->error);
         $this->assertEquals(1, $vw->num_rows);
         $row = $vw->fetch_assoc();
         foreach ($values as $key => $expected) {
