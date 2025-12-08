@@ -367,6 +367,7 @@ $delete_inkoop = "DELETE FROM tblInkoop WHERE inkId = ".mysqli_real_escape_strin
 <?php } else { ?> <img src='Inkopen_php.jpg'  width='970' height='550'/> <?php }
 include "menuInkoop.php"; } 
 
+$urls['delete'] = 'delete_inkoop.php';
 include "inkopen.js.php";
 ?>
 

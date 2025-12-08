@@ -58,6 +58,16 @@ return $vw->num_rows > 0;
         return $vw->fetch_assoc();
     }
 
+    public function findByReaderkey($key) {
+        return $this->first_field(
+            <<<SQL
+SELECT lidId from tblLeden where readerkey = :key
+    SQL
+    ,
+    [[':key', $key]]
+        );
+    }
+
     public function countUserByLoginPassw($login, $passw) {
         $count = $this->db->query("SELECT login, passw FROM tblLeden 
             WHERE login = '".$this->db->real_escape_string($login)."' 

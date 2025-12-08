@@ -2955,7 +2955,7 @@ SQL
         }
         $res = [];
         while ($row = $vw->fetch_assoc()) {
-            $res[$row['mdrid']] = $row['lev'];
+            $res[$row['mdrId']] = $row['lev'];
         }
         return $res;
     }
