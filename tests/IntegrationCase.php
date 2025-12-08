@@ -147,17 +147,4 @@ class IntegrationCase extends UnitCase {
         $this->assertCount($count, $rows, "table heeft niet de verwachte $count rijen");
     }
 
-    protected function expectNewRecordsInTables(array $tables) {
-        foreach ($tables as $table => $expected) {
-            $this->tablecounts[$table] = $this->tableRowcount($table);
-            $this->expectedincrements[$table] = $expected;
-        }
-    }
-
-    protected function assertTablesGrew() {
-        foreach ($this->tablecounts as $table => $count) {
-            $this->assertEquals($this->expectedincrements[$table], $this->tableRowcount($table) - $count, "Unexpected rowcount in $table.");
-        }
-    }
-
 }
