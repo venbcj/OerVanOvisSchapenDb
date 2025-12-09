@@ -39,6 +39,7 @@ if (Auth::is_logged_in()) {
 $ingescand = date_add_months($today,1); //zie basisfuncties.php
 
 if (isset ($_POST['knpSave'])) {        
+    # TODO: #0004209 verbouw het formulier
     # als je de formulier-elementen "user[roepnaam]" enz noemt, kun je $_POST['user'] in 1x oppakken. En doorgeven aan je gateway.
     $txtRoep = $_POST['txtRoep'];
     $txtVoeg = $_POST['txtVoeg'];

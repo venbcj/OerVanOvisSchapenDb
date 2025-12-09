@@ -43,4 +43,21 @@ ORDER BY r.rubriek
 ");
 }
 
+public function update($recId, $fldActief, $fldSalber) {
+    $this->run_query(
+        <<<SQL
+UPDATE tblRubriekuser
+SET actief = :actief,
+ sal = :sal
+WHERE rubuId = :rubuId 
+SQL
+    ,
+        [
+            [':actief', $fldActief],
+            [':sal', $fldSalber],
+            [':rubuId', $recId],
+        ]
+    );
+}
+
 }

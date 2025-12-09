@@ -23,7 +23,7 @@ include "login.php"; ?>
                 <TD valign = 'top' align = 'center'>
 <?php
 if (Auth::is_logged_in()) { if($modtech ==1) {
-
+    $schaap_gateway = new SchaapGateway();
 ?>
 
 <form action= "Meerlingen3.php" method="post">
@@ -54,30 +54,16 @@ if(isset($_POST['ascTotat'])) {    $order = "sum(worp)"; }
 elseif(isset($_POST['descTotat'])) { $order = "sum(worp) desc"; }
 else { $order = "ooi"; }
 
-$ooien_met_meerlingworpen = mysqli_query($db,"
-SELECT schaapId, ooi, sum(worp) totat
-FROM (
-    SELECT mdr.schaapId, right(mdr.levensnummer,$Karwerk) ooi, v.volwId, count(lam.schaapId) worp
-    FROM tblSchaap mdr
-     join tblStal stm on (stm.schaapId = mdr.schaapId)
-     join tblVolwas v on (mdr.schaapId = v.mdrId)
-     join tblSchaap lam on (v.volwId = lam.volwId)
-     join tblStal st on (lam.schaapId = st.schaapId)
-    WHERE isnull(stm.rel_best) and stm.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-    GROUP BY mdr.schaapId, right(mdr.levensnummer,$Karwerk), v.volwId
-    HAVING count(v.volwId) > 1
-     ) perWorp
-GROUP BY schaapId, ooi
+$ooien_met_meerlingworpen = $schaap_gateway->ooien_met_meerlingworpen($lidId, $Karwerk, $order);
 
-ORDER BY $order
-") or die(mysqli_error($db));
-
-while($jm = mysqli_fetch_assoc($ooien_met_meerlingworpen)) { 
-
+while ($jm = $ooien_met_meerlingworpen->fetch_assoc()) { 
+    // TODO: [overal] niet dit datapompen, maar gewoon de waardes gebruiken waar je ze nodig hebt.
+    // Optioneel: fetch_object(), en dan $jm->schaapId.
+    // "$jm" vervangen door "$rec", of $record als je wil. "rec" is zo'n standaardafkorting die ik toelaatbaar vind. --BCB
     $ooiId = $jm['schaapId']; 
     $ooi = $jm['ooi'];
     $totat = $jm['totat'];
- ?>
+?>
 
 <tr height = 30 valign = 'bottom'>
  <td style = "font-size : 18px;"> <b><?php echo $ooi; ?></b></td>
@@ -107,9 +93,8 @@ while($jm = mysqli_fetch_assoc($ooien_met_meerlingworpen)) {
 <table border = 0>
 
 <?php
-    $schaap_gateway = new SchaapGateway();
 $mling2 = $schaap_gateway->aantal_meerlingen_perOoi($lidId,$ooiId,2);
-    while($mrl = mysqli_fetch_assoc($mling2))
+    while($mrl = $mling2->fetch_assoc())
             {
                 $vw = $mrl['volwId']; 
             
@@ -152,7 +137,7 @@ $lam_mrl2 = $schaap_gateway->de_lammeren($vw,$Karwerk);
 
 <?php
 $mling3 = $schaap_gateway->aantal_meerlingen_perOoi($lidId,$ooiId,3);
-    while($mrl = mysqli_fetch_assoc($mling3))
+    while($mrl = $mling3->fetch_assoc())
             {
                 $vw = $mrl['volwId']; 
             
@@ -194,7 +179,7 @@ $lam_mrl2 = $schaap_gateway->de_lammeren($vw,$Karwerk);
 
 <?php
 $mling4 = $schaap_gateway->aantal_meerlingen_perOoi($lidId,$ooiId,4);
-    while($mrl = mysqli_fetch_assoc($mling4))
+    while($mrl = $mling4->fetch_assoc())
             {
                 $vw = $mrl['volwId']; 
             
@@ -236,7 +221,7 @@ $lam_mrl2 = $schaap_gateway->de_lammeren($vw,$Karwerk);
 
 <?php
 $mling5 = $schaap_gateway->ooien_met_vijfling($lidId,$ooiId,5);
-    while($mrl = mysqli_fetch_assoc($mling5))
+    while($mrl = $mling5->fetch_assoc())
             {
                 $vw = $mrl['volwId']; 
             
@@ -276,12 +261,10 @@ $lam_mrl2 = $schaap_gateway->de_lammeren($vw,$Karwerk);
 <table border = 0>
 
 <?php
+// TODO variabele is misgenaamd. Voorstel: mlingmeer. Beter voorstel: gewoon $res gebruiken overal --BCB
 $mling5 = $schaap_gateway->aantal_meerlingen_perOoi($lidId,$ooiId,'6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30');
-    while($mrl = mysqli_fetch_assoc($mling5))
-            {
+    while($mrl = $mling5->fetch_assoc()) {
                 $vw = $mrl['volwId']; 
-            
- 
 ?>
 <tr>
  <td width = 60 align="left" style = "font-size : 13px";> <?php

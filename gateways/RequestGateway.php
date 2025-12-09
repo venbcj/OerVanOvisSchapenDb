@@ -84,7 +84,10 @@ FROM tblRequest r
  join tblHistorie h on (h.hisId = m.hisId)
  join tblStal st on (st.stalId = h.stalId)
  join tblUbn u on (st.ubnId = u.ubnId)
-WHERE u.lidId = ".$this->db->real_escape_string($lidId)." and h.skip = 0 and isnull(r.dmmeld) and m.skip <> 1 ");
+WHERE u.lidId = ".$this->db->real_escape_string($lidId)."
+ and h.skip = 0
+ and isnull(r.dmmeld)
+ and m.skip <> 1 ");
 return $vw->fetch_row()[0] > 0;
     }
 

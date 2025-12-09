@@ -72,7 +72,7 @@ if (Auth::is_logged_in()) {
             /* insert field values into data.txt */
             $qry_txtRequest_RVO = aanvoer_request_rvo_query($db, $reqId);
             /* Herkomst (ubn_herk) is niet verplicht te melden */
-            while ($row = mysqli_fetch_row($qry_txtRequest_RVO)) {
+            while ($row = $qry_txtRequest_RVO->fetch_row()) {
 
                  fwrite($fh, implode(';', $row) . PHP_EOL);
             }
@@ -199,8 +199,7 @@ if (Auth::is_logged_in()) {
 
 <?php
     $zoek_meldregels = aanvoer_zoek_meldregels_query($db, $reqId, $lidId);
-
-    while ($row = mysqli_fetch_assoc($zoek_meldregels)) {
+    while ($row = $zoek_meldregels->fetch_assoc()) {
         // TODO: (BCB) Inline Variable. Code hieronder mag direct uit $row[] putten.
         $Id = $row['meldId'];
         $ubn = $row['ubn_gebruiker'];
@@ -289,20 +288,10 @@ if (Auth::is_logged_in()) {
 
 <?php
         // Declaratie HERKOMST
-        // TODO: (BCB) Extract Method. Eerst met BV duidelijk krijgen of relRaak nodig is
-        // lower(if(isnull(ubn),'6karakters',ubn)) zorgt ervoor dat $relId nooit leeg is. Anders worden legen velden gevonden in legen velden binnen tblPartij.
-        $qryRelatie = ("
-        SELECT relId, lower(coalesce(ubn,999999)) ubn, naam
-        FROM tblRelatie r
-         join tblPartij p on (r.partId = p.partId)
-        WHERE p.lidId = '".mysqli_real_escape_string($db, $lidId)."'
-         and r.relatie = 'cred' and ubn is not null
-         and isnull(r.uitval) and r.actief = 1 and p.actief = 1
-        ORDER BY relatie
-        ");
-        $relatienr = mysqli_query($db, $qryRelatie) or die(mysqli_error($db));
+            $partij_gateway = new PartijGateway();
+        $relatienr = $partij_gateway->relatienummers($lidId);
         $index = 0;
-        while ($rnr = mysqli_fetch_array($relatienr)) {
+        while ($rnr = $relatienr->fetch_array()) {
             $relId[$index] = $rnr['relId'];
             $relnum[$index] = $rnr['naam'];
             $index++;

@@ -38,13 +38,8 @@ If (isset($_POST['knpInsert_']))  {
 }
 
 // Aantal nog in te lezen WEGINGEN
-$zoek_wegingen = mysqli_query ($db,"
-SELECT count(datum) aant
-FROM impAgrident
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 9 and isnull(verwerkt)
-") or die (mysqli_error($db));
- While ($zw = mysqli_fetch_assoc($zoek_wegingen))
- {    $aantwg = $zw['aant'];    }
+$schaap_gateway = new SchaapGateway();
+$aantwg = $schaap_gateway->zoek_wegingen($lidId);
 // EINDE Aantal nog in te lezen WEGINGEN
 
 $velden = "str_to_date(rd.datum,'%Y-%m-%d') sort , rd.datum, rd.Id readId, rd.levensnummer levnr, rd.gewicht kg,

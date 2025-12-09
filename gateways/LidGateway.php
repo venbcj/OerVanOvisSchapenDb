@@ -62,7 +62,7 @@ return $vw->num_rows > 0;
         return $this->first_field(
             <<<SQL
 SELECT lidId from tblLeden where readerkey = :key
-    SQL
+SQL
     ,
     [[':key', $key]]
         );

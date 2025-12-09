@@ -224,16 +224,11 @@ echo $page_numbers;
 
 
 // Declaratie HOKNUMMER            // lower(if(isnull(scan),'6karakters',scan)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.
-$qryHoknummer = mysqli_query($db,"
-SELECT hokId, hoknr, lower(coalesce(scan,'6karakters')) scan
-FROM tblHok hb
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief = 1
-ORDER BY hoknr
-") or die (mysqli_error($db)); 
+$hok_gateway = new HokGateway();
+$qryHoknummer = $hok_gateway->actieve_nummers_bij_lid($lidId);
 
 $index = 0; 
-while ($hnr = mysqli_fetch_array($qryHoknummer)) 
-{ 
+while ($hnr = mysqli_fetch_array($qryHoknummer)) { 
    $hoknId[$index] = $hnr['hokId']; 
    $hoknum[$index] = $hnr['hoknr'];
    $index++; 

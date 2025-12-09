@@ -14,22 +14,8 @@ function volgende_inkoop_voer($datb, $artikel) {
 }
 
 function zoek_voorraad_oudste_inkoop_voer($datb, $artikel) {
-    $zoek_inkId_en_resterende_voorraad_van_laatst_aangesproken_voorraad = mysqli_query($datb, "
-SELECT i.inkId, i.inkat - coalesce(n.nutat,0) vrdat, a.stdat
-FROM tblArtikel a
- join tblInkoop i on (a.artId = i.artId)
- left join (
-    SELECT inkId, sum(nutat*stdat) nutat
-    FROM tblVoeding 
-    GROUP BY inkId
- ) n on (i.inkId = n.inkId)
-WHERE i.artId = '" . mysqli_real_escape_string($datb, $artikel) . "'
- and i.inkat > (i.inkat - coalesce(n.nutat,0))
- and (i.inkat - coalesce(n.nutat,0)) > 0
-");
-    while ($i_vrd = mysqli_fetch_assoc($zoek_inkId_en_resterende_voorraad_van_laatst_aangesproken_voorraad)) {
-        $inkoop = array($i_vrd['inkId'], $i_vrd['vrdat'], $i_vrd['stdat']);
-    }
+    $inkoop_gateway = new InkoopGateway();
+    $inkoop = $inkoop_gateway->laatst_aangesproken_voorraad_voer($artikel);
     if (!isset($inkoop[0])) {
         $inkoop = volgende_inkoop_voer($datb, $artikel);
     }

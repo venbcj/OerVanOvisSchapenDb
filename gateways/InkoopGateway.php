@@ -122,6 +122,25 @@ WHERE i.artId = :artId
 SQL
         , [[':artId', $artikel, self::INT]]
         );
-
     }
+
+    public function laatst_aangesproken_voorraad_voer($artId) {
+        return $this->first_row(
+            <<<SQL
+SELECT i.inkId, i.inkat - coalesce(n.nutat,0) vrdat, a.stdat
+FROM tblArtikel a
+ join tblInkoop i on (a.artId = i.artId)
+ left join (
+    SELECT inkId, sum(nutat*stdat) nutat
+    FROM tblVoeding 
+    GROUP BY inkId
+ ) n on (i.inkId = n.inkId)
+WHERE i.artId = :artId
+ and i.inkat > (i.inkat - coalesce(n.nutat,0))
+ and (i.inkat - coalesce(n.nutat,0)) > 0
+SQL
+        , [[':artId', $artId, self::INT]]
+        );
+    }
+
 }

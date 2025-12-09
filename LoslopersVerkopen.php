@@ -37,15 +37,11 @@ if(isset($_POST['knpVerder_']) && isset($_POST['kzlRelall_']))    {
 if(isset($_POST['knpSave_'])) { $actId = 13; include "save_afleveren.php"; }
 
 // Declaratie RELATIE KEUZE
-$qryRelatiekeuze = mysqli_query($db,"SELECT r.relId, p.naam
-            FROM tblPartij p
-             join tblRelatie r on (r.partId = p.partId)
-            WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and r.relatie = 'deb' and p.actief = 1 and r.actief = 1
-            ORDER BY p.naam") or die (mysqli_error($db)); 
+$partij_gateway = new PartijGateway();
+$qryRelatiekeuze = $partij_gateway->findKlant($lidId);
 
 $index = 0; 
-while ($rel = mysqli_fetch_array($qryRelatiekeuze)) 
-{ 
+while ($rel = mysqli_fetch_array($qryRelatiekeuze)) { 
    $relId[$index] = $rel['relId']; 
    $relnm[$index] = $rel['naam'];
    $index++; 

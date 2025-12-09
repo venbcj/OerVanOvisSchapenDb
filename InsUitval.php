@@ -239,14 +239,12 @@ echo $page_numbers; ?></td>
 <?php
 
 // Declaratie REDEN
-$qryReden = ("SELECT r.redId, r.reden
-            FROM tblReden r join tblRedenuser ru on (r.redId = ru.redId) WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ru.uitval = 1 ORDER BY r.reden"); 
-$reden = mysqli_query($db,$qryReden) or die (mysqli_error($db)); 
+$reden_gateway = new RedenGateway();
+$reden = $reden_gateway->alle_lijst_voor($lidId);
 
 $index = 0; 
 $redId = [];
-while ($red = mysqli_fetch_array($reden)) 
-{ 
+while ($red = mysqli_fetch_array($reden)) { 
    $redId[$index] = $red['redId'];
    $redn[$index] = $red['reden'];
    $index++; 
