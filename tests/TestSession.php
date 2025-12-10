@@ -4,10 +4,6 @@ class TestSession extends Session {
 
     private $storage = [];
 
-    public function __construct() {
-        $this->storage = [];
-    }
-
     public function getkey($name) {
         return $this->storage[$name] ?? null;
     }
