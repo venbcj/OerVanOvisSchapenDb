@@ -45,49 +45,6 @@ if(isset($_POST['knpVerder_']) && isset($_POST['txtDatumall_']))    {
 
 $hok_gateway = new HokGateway();
 $hoknr = $hok_gateway->findHoknrById($ID);
-/*        
-$zoek_nu_in_verblijf_parent = mysqli_query($db,"
-SELECT count(b.hisId) aantin
-FROM (
-    SELECT b.hisId, b.hokId
-    FROM tblBezet b
-     join tblHistorie h on (b.hisId = h.hisId)
-     join tblStal st on (st.stalId = h.stalId)
-     join (
-        SELECT st.schaapId, h.hisId, h.datum
-        FROM tblStal st
-        join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 3
-    ) prnt on (prnt.schaapId = st.schaapId)
-    WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and h.datum >= prnt.datum
- ) b
- join tblHistorie h on (b.hisId = h.hisId)
- join tblStal st on (st.stalId = h.stalId)
- left join 
- (
-    SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
-    WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
-    GROUP BY b.bezId, h1.hisId
- ) uit on (uit.hisv = b.hisId)
- join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3
- ) prnt on (prnt.schaapId = st.schaapId)
-WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId)
-") or die (mysqli_error($db));
-        
-    while($nu_p = mysqli_fetch_assoc($zoek_nu_in_verblijf_parent))
-        { $nu_prnt = $nu_p['aantin']; }        
-        
-    $nu = $nu_prnt;*/
 
 if(isset($_POST['knpSave_'])) { include "save_verlaten.php"; } // staat hier omdat $doelId moet zijn gedeclareerd !
 

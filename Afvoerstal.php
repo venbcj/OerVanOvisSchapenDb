@@ -32,33 +32,22 @@ include "kalender.php";
 if(isset($_POST['knpAfvoer_'])) { include "save_afvoerstal.php"; } 
 $verder = 0;
 // Declaratie RELATIE
-$qryRelatiekeuze = mysqli_query($db,"SELECT r.relId, p.naam
-            FROM tblPartij p
-             join tblRelatie r on (r.partId = p.partId)
-            WHERE p.lidId = ".mysqli_real_escape_string($db,$lidId)." and r.relatie = 'deb' and p.actief = 1 and r.actief = 1
-            ORDER BY p.naam") or die (mysqli_error($db)); 
+$partij_gateway = new PartijGateway();
+$qryRelatiekeuze = $partij_gateway->findKlant($lidId);
 
 $index = 0; 
 $relId = [];
 $relnm = [];
-while ($rel = mysqli_fetch_array($qryRelatiekeuze)) 
-{ 
+while ($rel = $qryRelatiekeuze->fetch_array()) { 
    $relId[$index] = $rel['relId']; 
    $relnm[$index] = $rel['naam'];
    $index++; 
 } 
 unset($index);
 // EINDE Declaratie RELATIE
-$stapel = mysqli_query($db,"
-SELECT count(*) aant
-FROM tblSchaap s
- join tblStal st on (st.schaapId = s.schaapId)
- join tblUbn u on (st.ubnId = u.ubnId)
-WHERE u.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(st.rel_best)
-") or die (mysqli_error($db));
-
-    while($rij = mysqli_fetch_array($stapel))
-        {       $schapen = $rij['aant'];        } //echo "Aantal schapen {$rij['aant']}"; ?>
+$schaap_gateway = new SchaapGateway();
+$schapen = $schaap_gateway->tel_niet_afgevoerd($lidId);
+?>
 
 <form action = "Afvoerstal.php" method = "post" >
 <table Border = 0 align = "center">
@@ -125,23 +114,8 @@ if(isset($_POST['knpNext_']) || isset($_POST['knpAfvoer_'])) {
 </tr>
 
 <?php
-$result = mysqli_query($db,"
-SELECT st.stalId, s.levensnummer, s.geslacht, h.actId
-FROM tblSchaap s
- join tblStal st on (st.schaapId = s.schaapId)
- join tblUbn u on (st.ubnId = u.ubnId)
- left join (
-    SELECT schaapId, h.actId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) h on (h.schaapId = st.schaapId)
-WHERE u.lidId = ".mysqli_real_escape_string($db,$lidId)." and isnull(st.rel_best)
-ORDER BY h.actId, s.geslacht, right(s.levensnummer,$Karwerk)
-") or die (mysqli_error($db));
-
-        while($row = mysqli_fetch_array($result))
-        {
+     $result = $schaap_gateway->afvoerlijst($lidId, $Karwerk);
+        while ($row = $result->fetch_array()) {
         $Id = $row['stalId']; 
         $levnr = $row['levensnummer'];
         $sekse = $row['geslacht'];

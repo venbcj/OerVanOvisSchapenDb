@@ -15,30 +15,12 @@ $Afdrukstand = 'P';
 if ($Afdrukstand == 'P') { $headerWidth = 190; $imageWidth = 169; }
 if ($Afdrukstand == 'L') { $headerWidth = 277; $imageWidth = 256; }
 
-$zoek_lid = mysqli_query($db,"
-SELECT u.lidId
-FROM tblStal st
- join tblUbn u on (st.ubnId = u.ubnId)
-WHERE st.stalId = ".mysqli_real_escape_string($db,$stal)." 
-") or die (mysqli_error($db));
-While ($row = mysqli_fetch_assoc($zoek_lid)) { $lidId = $row['lidId']; }
-
+$stal_gateway = new StalGateway();
+$lidId = $stal_gateway->findLidByStal($_GET['Id']);
+$combireden_gateway = new CombiredenGateway();
 
 // *** Opbouwen van een array met die links en rechts op het rapport reps. reden uitval en reden medicijnen opbouwt ***
-$zoek_reden_uitval = mysqli_query($db,"
-SELECT cr.scan, r.reden
-from tblCombireden cr
- join tblRedenuser ru on (cr.reduId = ru.reduId)
- join tblReden r on (r.redId = ru.redId)
-where ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and cr.tbl = 'd'
-order by cr.scan
-") or die (mysqli_error($db));
-while ($row = mysqli_fetch_assoc($zoek_reden_uitval)) {
-    $scan = $row['scan'];
-    $reden = $row['reden'];
-
-$array_d[] = array($scan,$reden);
-}
+$array_d = $combireden_gateway->zoek_reden_uitval($lidId);
 
 $zoek_reden_medicijn = mysqli_query($db,"
 SELECT cr.scan, a.naam, round(cr.stdat) stdat, r.reden
@@ -56,6 +38,7 @@ while ($row = mysqli_fetch_assoc($zoek_reden_medicijn)) {
     $stdat = $row['stdat'];
     $reden = $row['reden']; if(!isset($reden)) { $reden = ''; }
 
+    // TODO: is het ergens goed voor dat de indices bij 4 beginnen?
 $array_p[] = array(4=>$scan,$artikel,$stdat,$reden);
 }
 

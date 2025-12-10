@@ -68,6 +68,15 @@ SQL
         );
     }
 
+    public function findLididByUbn($ubn) {
+        return $this->first_field(
+            <<<SQL
+SELECT lidId FROM tblLeden WHERE ubn = :ubn
+SQL
+        , [[':ubn', $ubn]]
+        );
+    }
+
     public function countWithReaderkey($apikey) {
         return $this->first_field(
             <<<SQL
@@ -485,6 +494,36 @@ SQL
     , [
         [':lidId', $lidId, self::INT],
         [':passw', $wwnew],
+    ]
+    );
+}
+
+public function ubn_exists($ubn) {
+    return 0 < $this->first_field(
+        <<<SQL
+SELECT count(*) aant FROM tblLeden WHERE ubn = :ubn
+SQL
+    , [[':ubn', $ubn]]
+    );
+}
+
+public function store($ubn, $passw, $tel, $mail) {
+    $this->run_query(
+        <<<SQL
+INSERT INTO tblLeden SET login = :ubn,
+ passw = :passw,
+ ubn = :ubn,
+ meld = 0,
+ tech = 1,
+ fin = 1,
+ tel = :tel,
+ mail = :mail
+SQL
+    , [
+        [':ubn', $ubn],
+        [':passw', $passw],
+        [':tel', $tel],
+        [':mail', $mail],
     ]
     );
 }

@@ -3717,4 +3717,39 @@ SQL
     );
 }
 
+public function tel_niet_afgevoerd($lidId) {
+    return $this->first_field(
+        <<<SQL
+SELECT count(*) aant
+FROM tblSchaap s
+ join tblStal st on (st.schaapId = s.schaapId)
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = :lidId
+ and isnull(st.rel_best)
+SQL
+    , [[':lidId', $lidId, self::INT]]
+    );
+}
+
+public function afvoerlijst($lidId, $Karwerk) {
+    return $this->run_query(
+        <<<SQL
+SELECT st.stalId, s.levensnummer, s.geslacht, h.actId
+FROM tblSchaap s
+ join tblStal st on (st.schaapId = s.schaapId)
+ join tblUbn u on (st.ubnId = u.ubnId)
+ left join (
+    SELECT schaapId, h.actId
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
+ ) h on (h.schaapId = st.schaapId)
+WHERE u.lidId = :lidId
+ and isnull(st.rel_best)
+ORDER BY h.actId, s.geslacht, right(s.levensnummer,$Karwerk)
+SQL
+    , [[':lidId', $lidId, self::INT]]
+    );
+}
+
 }
