@@ -84,16 +84,15 @@ return $vw->fetch_row()[0];
 }
 
 public function findLidByStal($stalId) {
-    $vw = $this->db->query("
+    return $this->first_field(
+        <<<SQL
 SELECT u.lidId
 FROM tblStal st
  join tblUbn u on (st.ubnId = u.ubnId)
-WHERE st.stalId = ".$this->db->real_escape_string($stalId)." 
-");
-if ($vw->num_rows) {
-    return $vw->fetch_row()[0];
-}
-return null;
+WHERE st.stalId = :stalId
+SQL
+    , [[':stalId', $stalId, self::INT]]
+    );
 }
 
 public function zoekKleurHalsnr($lidId, $schaapId) {
@@ -355,6 +354,21 @@ SQL
                 [':lidId', $lidId, self::INT],
                 [':schaapId', $schaapId, self::INT],
             ]
+        );
+    }
+    
+    public function findByLidWithoutBest($lidId, $recId) {
+        return $this->first_field(
+            <<<SQL
+SELECT stalId
+FROM tblStal st
+WHERE isnull(st.rel_best)
+ and st.schaapId = :schaapId
+ and st.lidId = :lidId
+SQL
+        ,
+            [[':lidId', $lidId, self::INT], [':schaapId', $recId, self::INT]],
+            0
         );
     }
 

@@ -60,4 +60,15 @@ SQL
     );
 }
 
+public function find($lidId) {
+    return $this->run_query(
+        <<<SQL
+SELECT '$maand' dag, rubuId
+FROM tblRubriekuser
+WHERE lidId = ".mysqli_real_escape_string($db,$lidId)."
+SQL
+    , [[':lidId', $lidId, self::INT]]
+    );
+}
+
 }

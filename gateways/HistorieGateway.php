@@ -497,6 +497,22 @@ public function insert_afvoer($stalId, $dmafv) {
         actId = 3 ");
 }
 
+public function insert_act_3($stalId, $datum, $kg) {
+    $this->run_query(
+        <<<SQL
+INSERT INTO tblHistorie set stalId = :stalId,
+        datum = :datum,
+        kg = :kg,
+        actId = 3
+SQL
+    , [
+        [':stalId', $stalId, self::INT],
+        [':datum', $datum, self::DATE],
+        [':kg', $kg],
+    ]
+    );
+}
+
 // waarschijnlijk verkeerde naam, afgekeken hierboven bij actid=3
 public function insert_afvoer_act($stalId, $datum, $actId) {
     $this->db->query("INSERT INTO tblHistorie set stalId = '".$this->db->real_escape_string($stalId)."',

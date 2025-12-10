@@ -143,4 +143,22 @@ SQL
         );
     }
 
+    public function set_prijs($prijs, $inkId) {
+        $this->run_query(
+            <<<SQL
+UPDATE tblInkoop set prijs = :prijs WHERE inkId = :inkId
+SQL
+        , [[':prijs', $prijs], [':inkId', $inkId, self::INT]]
+        );
+    }
+
+    public function remove($inkId) {
+        $this->run_query(
+            <<<SQL
+DELETE FROM tblInkoop WHERE inkId = :inkId
+SQL
+        , [[':inkId', $inkId, self::INT]]
+        );
+    }
+
 }

@@ -43,10 +43,8 @@ if(isset($_POST['knpVerder_']) && isset($_POST['txtDatumall_']))    {
     $datum = $_POST['txtDatumall_']; Session::set("DT1", $datum); } 
  $sess_dag = Session::get("DT1"); 
 
-$zoek_hok = mysqli_query ($db,"
-SELECT hoknr FROM tblHok WHERE hokId = '".mysqli_real_escape_string($db,$ID)."'
-") or die (mysqli_error($db));
-    while ($h = mysqli_fetch_assoc($zoek_hok)) { $hoknr = $h['hoknr']; }
+$hok_gateway = new HokGateway();
+$hoknr = $hok_gateway->findHoknrById($ID);
 /*        
 $zoek_nu_in_verblijf_parent = mysqli_query($db,"
 SELECT count(b.hisId) aantin

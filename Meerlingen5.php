@@ -23,7 +23,8 @@ include "login.php"; ?>
 
         <TD valign = 'top' align = 'center'>
 <?php
-if (Auth::is_logged_in()) { if($modtech ==1) {
+if (Auth::is_logged_in()) {
+    if($modtech ==1) {
 include "kalender.php";
 
 $huidigjaar = date("Y"); $begin_datum = '1-01-'.$huidigjaar; $eind_datum = '1-03-'.$huidigjaar;
@@ -39,41 +40,15 @@ if(isset($_POST['knpZoek'])) {
 $worp_van = $_POST['txtWorp_van']; $van = date_format(date_create($worp_van), 'Y-m-d');
 $worp_tot = $_POST['txtWorp_tot']; $tot = date_format(date_create($worp_tot), 'Y-m-d');
 
-$query = "
-SELECT right(lam.levensnummer,$Karwerk) lam, lam.geslacht, count(wrp.volwId) worp, h.datum date, date_format(h.datum,'%d-%m-%Y') datum, right(mdr.levensnummer,$Karwerk) ooi, round(((lstkg.kg - h.kg)*1000)/datediff(mx.mdm,h.datum),2) gemgroei, date_format(mx.mdm,'%d-%m-%Y') kgdag, st.stalId
-FROM tblSchaap lam
- join tblVolwas v on (lam.volwId = v.volwId)
- join tblSchaap mdr on (mdr.schaapId = v.mdrId)
- join tblSchaap wrp on (lam.volwId = wrp.volwId)
- join tblStal st on (st.schaapId = lam.schaapId)
- join tblHistorie h on (st.stalId = h.stalId)
- left join (
-     SELECT stalId, max(datum) mdm
-     FROM tblHistorie
-    WHERE kg is not null and actId > 1 and skip = 0
-    GROUP BY stalId
- ) mx on (mx.stalId = st.stalId)
- left join (
-     SELECT stalId, datum, max(kg) kg
-     FROM tblHistorie
-    WHERE kg is not null and actId > 1 and skip = 0
-    GROUP BY stalId, datum
- ) lstkg on (lstkg.stalId = st.stalId and lstkg.datum = mx.mdm)
-WHERE lam.levensnummer is not null and isnull(st.rel_best) and h.actId = 1 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.datum >= '".mysqli_real_escape_string($db,$van)."' and h.datum <= '".mysqli_real_escape_string($db,$tot)."' and h.skip = 0
-GROUP BY lam.levensnummer, lam.geslacht, h.datum, mdr.levensnummer, mx.mdm, st.stalId
-ORDER BY right(lam.levensnummer,$Karwerk)
-";
-
-$zoek_meerlingen = mysqli_query($db,$query) or die (mysqli_error($db));    
-
-while($mrl = mysqli_fetch_assoc($zoek_meerlingen))
-{                $pdf = $mrl['stalId']; // t.b.v. pdf
-            }
+$zoek_meerlingen = $schaap_gateway->zoek_meerlingen($lidId, $Karwerk, $van, $tot);
+// is dit niet een beetje dure query als je alleen 1 stalId wil ophalen?
+while($mrl = mysqli_fetch_assoc($zoek_meerlingen)) {
+    $pdf = $mrl['stalId']; // t.b.v. pdf
+}
 if (empty($pdf)) $pdf = 0;
 
-
-
-} ?>
+}
+?>
 
 <form action= "Meerlingen5.php" method="post">
 <table border = 0> 

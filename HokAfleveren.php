@@ -61,25 +61,15 @@ if(isset($_POST['knpVerder_']) && isset($_POST['kzlRelall_']))    {
 
 if(isset($_POST['knpSave_'])) { if($pagina == 'Uitscharen') { $actId = 10; } else if($pagina == 'Afleveren') { $actId = 12; } else if($pagina == 'Verkopen') { $actId = 13; } include "save_afleveren.php"; }
 
-$zoek_hok = mysqli_query ($db,"
-SELECT hoknr
-FROM tblHok
-WHERE hokId = '".mysqli_real_escape_string($db,$ID)."'
-") or die (mysqli_error($db));
-    while ($h = mysqli_fetch_assoc($zoek_hok)) { $hoknr = $h['hoknr']; }
-    
+$hok_gateway = new HokGateway();
+$hoknr = $hok_gateway->findHoknrById($ID);
 
 // Declaratie RELATIE KEUZE
-$qryRelatiekeuze = mysqli_query($db,"SELECT r.relId, concat(p.ubn, ' - ', p.naam) naam
-            FROM tblPartij p
-             join tblRelatie r on (r.partId = p.partId)
-            WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and r.relatie = 'deb' and p.actief = 1 and r.actief = 1
-            ORDER BY p.naam") or die (mysqli_error($db)); 
-
+$partij_gateway = new PartijGateway();
+$qryRelatiekeuze = $partij_gateway->findKlant($lidId);
 $index = 0; 
 $relnm = [];
-while ($rel = mysqli_fetch_array($qryRelatiekeuze)) 
-{ 
+while ($rel = $qryRelatiekeuze->fetch_array()) { 
    $relId[$index] = $rel['relId']; 
    $relnm[$index] = $rel['naam'];
    $index++; 
@@ -106,8 +96,6 @@ else if( $pagina == 'Uitscharen' && $radFase == 1) {
 
 else if( $pagina == 'Uitscharen' && $radFase == 4) { 
     $where = "WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId) and h.skip = 0"; }
-
-
 $velden = "s.schaapId, right(s.levensnummer,'".mysqli_real_escape_string($db,$Karwerk)."') werknr, s.geslacht, s.levensnummer, date_format(max(h.datum),'%Y-%m-%d') dmlst, date_format(max(h.datum),'%d-%m-%Y') lstdm, prnt.schaapId ouder";
 
 $tabel = "tblSchaap s 

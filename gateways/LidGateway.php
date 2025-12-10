@@ -68,6 +68,15 @@ SQL
         );
     }
 
+    public function countWithReaderkey($apikey) {
+        return $this->first_field(
+            <<<SQL
+    SELECT count(*) aant FROM tblLeden WHERE readerkey = :readerkey
+SQL
+        , [[':readerkey', $apikey]]
+        );
+    }
+
     public function countUserByLoginPassw($login, $passw) {
         $count = $this->db->query("SELECT login, passw FROM tblLeden 
             WHERE login = '".$this->db->real_escape_string($login)."' 
@@ -77,11 +86,6 @@ SQL
 
     public function update_username($lidId, $login) {
         $this->db->query("UPDATE tblLeden SET login = '".$this->db->real_escape_string($login)."' 
-            WHERE lidId = '".$this->db->real_escape_string($lidId)."' ");
-    }
-
-    public function update_password($lidId, $passw) {
-        $this->db->query("UPDATE tblLeden SET passw = '".$this->db->real_escape_string($passw)."' 
             WHERE lidId = '".$this->db->real_escape_string($lidId)."' ");
     }
 
@@ -123,6 +127,15 @@ SQL
             return $row['lidId'];
         }
         return '';
+    }
+
+    public function countWithAlias($alias) {
+        return $this->first_field(
+            <<<SQL
+SELECT count(*) aant FROM tblLeden WHERE alias = :alias
+SQL
+        , [[':alias', $alias]]
+        );
     }
 
     // onderdelen van create-nieuw-lid
@@ -450,6 +463,30 @@ while($zcv = $vw->fetch_assoc()) {
     $cred_vermist = $zcv['relId']; 
 }
     return $cred_vermist ?? null;
+}
+
+public function all() {
+    return $this->run_query(
+        <<<SQL
+SELECT l.lidId, l.alias, l.login, l.roep, l.voegsel, l.naam, u.ubn, l.tel, l.mail, l.meld, l.tech, l.fin, l.beheer,
+ date_format(laatste_inlog, '%d-%m-%Y %H:%i:%s') lst_i
+FROM tblLeden l
+ join tblUbn u on (l.lidId = u.lidId)
+ORDER BY l.lidId
+SQL
+    );
+}
+
+public function update_password($lidId, $wwnew) {
+    $this->run_query(
+        <<<SQL
+UPDATE tblLeden SET passw = :passw WHERE lidId = :lidId
+SQL
+    , [
+        [':lidId', $lidId, self::INT],
+        [':passw', $wwnew],
+    ]
+    );
 }
 
 }

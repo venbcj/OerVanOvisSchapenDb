@@ -21,7 +21,7 @@ SQL
     public function findKlant($lidId) {
         return $this->run_query(
             <<<SQL
-SELECT r.relId, p.naam
+SELECT r.relId, concat(p.ubn, ' - ', p.naam) naam
 FROM tblPartij p
 join tblRelatie r on (r.partId = p.partId)
 WHERE p.lidId = :lidId
@@ -51,5 +51,30 @@ SQL
         , [[':lidId', $lidId, self::INT]]
         );
     }
+
+    public function find_relatie($lidId) {
+        return $this->run_query(
+            <<<SQL
+SELECT r.relId, '6karakters' ubn, concat(p.ubn, ' - ', p.naam) naam
+FROM tblPartij p join tblRelatie r on (p.partId = r.partId)    
+WHERE p.lidId = :lidId
+ and relatie = 'deb'
+ and p.actief = 1
+ and r.actief = 1
+      and isnull(p.ubn)
+union
+SELECT r.relId, p.ubn, concat(p.ubn, ' - ', p.naam) naam
+FROM tblPartij p
+ join tblRelatie r on (p.partId = r.partId)    
+WHERE p.lidId = :lidId
+ and relatie = 'deb'
+ and p.actief = 1
+ and r.actief = 1 
+      and ubn is not null
+ORDER BY naam
+SQL
+    , [[':lidId', $lidId, self::INT]]
+    );
+}
 
 }

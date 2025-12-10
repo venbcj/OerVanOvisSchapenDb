@@ -22,7 +22,9 @@ include "login.php"; ?>
 
         <TD valign = 'top' align = 'center'>
 <?php
-if (Auth::is_logged_in()) { if($modtech ==1) {
+if (Auth::is_logged_in()) {
+    if($modtech ==1) {
+$schaap_gateway = new SchaapGateway();
 $huidigjaar = date("Y"); $begin_datum = '1-01-'.$huidigjaar; $eind_datum = '1-03-'.$huidigjaar;
 
 $var1dag = 60*60*24;
@@ -100,78 +102,9 @@ elseif(isset($_POST['descJaar4'])) { $order = "sum(perWorp_jr4.worp) desc, ooi a
 
 else { $order = "ooi"; }
 
-$ooien_met_meerlingworpen = mysqli_query($db,"
-SELECT perWorp.schaapId, ooi, sum(perWorp.worp) totat, sum(perWorp_jr1.worp) jr1, sum(perWorp_jr2.worp) jr2, sum(perWorp_jr3.worp) jr3, sum(perWorp_jr4.worp) jr4
-FROM (
-    SELECT mdr.schaapId, right(mdr.levensnummer,$Karwerk) ooi, v.volwId, count(lam.schaapId) worp
-    FROM tblSchaap mdr
-     join tblStal stm on (stm.schaapId = mdr.schaapId)
-     join tblVolwas v on (mdr.schaapId = v.mdrId)
-     join tblSchaap lam on (v.volwId = lam.volwId)
-     join tblStal st on (lam.schaapId = st.schaapId)
-     join tblHistorie h on (h.stalId = st.stalId)
-    WHERE isnull(stm.rel_best) and stm.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(h.datum,'%Y') <= '".mysqli_real_escape_string($db,$jaar1)."' and date_format(h.datum,'%Y') >= '".mysqli_real_escape_string($db,$jaar4)."' and h.actId = 1 and h.skip = 0
-    GROUP BY mdr.schaapId, right(mdr.levensnummer,$Karwerk), v.volwId
-    HAVING count(v.volwId) > 0
- ) perWorp
-left join (
-    SELECT mdr.schaapId, v.volwId, count(lam.schaapId) worp
-    FROM tblSchaap mdr
-     join tblStal stm on (stm.schaapId = mdr.schaapId)
-     join tblVolwas v on (mdr.schaapId = v.mdrId)
-     join tblSchaap lam on (v.volwId = lam.volwId)
-     join tblStal st on (lam.schaapId = st.schaapId)
-     join tblHistorie h on (h.stalId = st.stalId)
-    WHERE isnull(stm.rel_best) and stm.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-     and h.actId = 1 and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar1)."' and h.skip = 0
-    GROUP BY mdr.schaapId, v.volwId
-    HAVING count(v.volwId) > 0
-) perWorp_jr1  on (perWorp.volwId = perWorp_jr1.volwId)
-left join (
-    SELECT mdr.schaapId, v.volwId, count(lam.schaapId) worp
-    FROM tblSchaap mdr
-     join tblStal stm on (stm.schaapId = mdr.schaapId)
-     join tblVolwas v on (mdr.schaapId = v.mdrId)
-     join tblSchaap lam on (v.volwId = lam.volwId)
-     join tblStal st on (lam.schaapId = st.schaapId)
-     join tblHistorie h on (h.stalId = st.stalId)
-    WHERE isnull(stm.rel_best) and stm.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-     and h.actId = 1 and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar2)."' and h.skip = 0
-    GROUP BY mdr.schaapId, v.volwId
-    HAVING count(v.volwId) > 0
-) perWorp_jr2 on (perWorp.volwId = perWorp_jr2.volwId)
-left join (
-    SELECT mdr.schaapId, v.volwId, count(lam.schaapId) worp
-    FROM tblSchaap mdr
-     join tblStal stm on (stm.schaapId = mdr.schaapId)
-     join tblVolwas v on (mdr.schaapId = v.mdrId)
-     join tblSchaap lam on (v.volwId = lam.volwId)
-     join tblStal st on (lam.schaapId = st.schaapId)
-     join tblHistorie h on (h.stalId = st.stalId)
-    WHERE isnull(stm.rel_best) and stm.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-     and h.actId = 1 and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar3)."' and h.skip = 0
-    GROUP BY mdr.schaapId, v.volwId
-    HAVING count(v.volwId) > 0
-) perWorp_jr3 on (perWorp.volwId = perWorp_jr3.volwId)
-left join (
-    SELECT mdr.schaapId, v.volwId, count(lam.schaapId) worp
-    FROM tblSchaap mdr
-     join tblStal stm on (stm.schaapId = mdr.schaapId)
-     join tblVolwas v on (mdr.schaapId = v.mdrId)
-     join tblSchaap lam on (v.volwId = lam.volwId)
-     join tblStal st on (lam.schaapId = st.schaapId)
-     join tblHistorie h on (h.stalId = st.stalId)
-    WHERE isnull(stm.rel_best) and stm.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-     and h.actId = 1 and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar4)."' and h.skip = 0
-    GROUP BY mdr.schaapId, v.volwId
-    HAVING count(v.volwId) > 0
-) perWorp_jr4 on (perWorp.volwId = perWorp_jr4.volwId)
-GROUP BY schaapId, ooi
+$ooien_met_meerlingworpen = $schaap_gateway->alle_ooien_met_meerlingworpen($lidId, $Karwerk, $order, $jaar1, $jaar2, $jaar3, $jaar4);
 
-ORDER BY $order
-") or die(mysqli_error($db));
-
-while($jm = mysqli_fetch_assoc($ooien_met_meerlingworpen)) { 
+while($jm = $ooien_met_meerlingworpen->fetch_assoc()) { 
 
     $ooiId = $jm['schaapId']; 
     $ooi = $jm['ooi'];
@@ -197,24 +130,10 @@ while($jm = mysqli_fetch_assoc($ooien_met_meerlingworpen)) {
 <?php
 $maand = array(1 => 'Jan','Feb','Mrt','Apr','Mei','Jun','Jul','Aug','Sep','Okt','Nov','Dec');
 
-$zoek_maanden_per_ooi = "
-SELECT date_format(h.datum,'%m') mndtxt, date_format(h.datum,'%m')*1 mndnr
-FROM tblSchaap mdr
- join tblVolwas v on (v.mdrId = mdr.schaapId)
- join tblSchaap lam on (v.volwId = lam.volwId)
- join tblStal st on (st.schaapId = lam.schaapId)
- join tblHistorie h on (st.stalId = h.stalId)
- 
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and mdr.schaapId = '".mysqli_real_escape_string($db,$ooiId)."' and h.actId = 1 and date_format(h.datum,'%Y') <= '".mysqli_real_escape_string($db,$jaar1)."' and date_format(h.datum,'%Y') >= '".mysqli_real_escape_string($db,$jaar4)."' and h.skip = 0
-GROUP BY date_format(h.datum,'%m')
-ORDER BY date_format(h.datum,'%m')
-";
-//echo $zoek_maanden_per_ooi; 
-$schaap_gateway = new SchaapGateway();
-$zoek_maanden_per_ooi = mysqli_query($db,$zoek_maanden_per_ooi) or die (mysqli_error($db));    
-    while($mrl = mysqli_fetch_assoc($zoek_maanden_per_ooi))
-            { $maandtxt = $mrl['mndtxt']; 
-              $maandnr = $mrl['mndnr']; #echo $maandnr.'<br>';
+$zoek_maanden_per_ooi = $schaap_gateway->zoek_maanden_per_ooi($lidId, $ooiId, $jaar1, $jaar4);
+    while($mrl = $zoek_maanden_per_ooi->fetch_assoc()) {
+        $maandtxt = $mrl['mndtxt']; 
+              $maandnr = $mrl['mndnr'];
             
 /* Gegevens jaar 1 opvragen : meerling, aantal ooitjes en/of rammetjes */
 unset($ooi_st1);

@@ -216,23 +216,10 @@ echo /*'$page_numbers : '.*/$page_numbers/*.'<br> '.$record_numbers.'<br>'*/;
 <?php
 
 // Declaratie BESTEMMING            // lower(if(isnull(ubn),'6karakters',ubn)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.
-$qryRelatie = ("SELECT r.relId, '6karakters' ubn, concat(p.ubn, ' - ', p.naam) naam
-            FROM tblPartij p join tblRelatie r on (p.partId = r.partId)    
-            WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and relatie = 'deb' and p.actief = 1 and r.actief = 1
-                  and isnull(p.ubn)
-            union
-            
-            SELECT r.relId, p.ubn, concat(p.ubn, ' - ', p.naam) naam
-            FROM tblPartij p
-             join tblRelatie r on (p.partId = r.partId)    
-            WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and relatie = 'deb' and p.actief = 1 and r.actief = 1 
-                  and ubn is not null
-            ORDER BY naam"); 
-$relatienr = mysqli_query($db,$qryRelatie) or die (mysqli_error($db)); 
-
+    $partij_gateway = new PartijGateway();
+$relatienr = $partij_gateway->find_relatie($lidId);
 $index = 0; 
-while ($rnr = mysqli_fetch_array($relatienr)) 
-{ 
+while ($rnr = mysqli_fetch_array($relatienr)) { 
    $relnId[$index] = $rnr['relId']; 
    $relnum[$index] = $rnr['naam'];
    $relUbn[$index] = $rnr['ubn'];   
@@ -355,21 +342,11 @@ if (isset($status)) { echo $fase ;} ?>
  </td> <?php
 // Wachtdagen bepalen
 if(isset($schaapId)) {
-$zoek_pil = mysqli_query($db,"
-SELECT date_format(h.datum,'%d-%m-%Y') datum, art.naam, DATEDIFF( (h.datum + interval art.wdgn_v day), '".mysqli_real_escape_string($db,$date)."') resterend
-FROM tblSchaap s
- join tblStal st on (st.schaapId = s.schaapId)
- join tblHistorie h on (h.stalId = st.stalId)
- join tblActie a on (a.actId = h.actId)
- left join tblNuttig n on (h.hisId = n.hisId)
- left join tblInkoop i on (i.inkId = n.inkId)
- left join tblArtikel art on (i.artId = art.artId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.schaapId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 8 and h.skip = 0
- and '".mysqli_real_escape_string($db,$date)."' < (h.datum + interval art.wdgn_v day)
-") or die (mysqli_error($db));    
+    $schaap_gateway = new SchaapGateway();
+    $zoek_pil = $schaap_gateway->zoek_pil($lidId, $date, $schaapId);
 
 $vandaag = date('Y-m-d');
-        while($row = mysqli_fetch_array($zoek_pil))
+        while($row = $zoek_pil->fetch_array())
         { $pildm = $row['datum']; 
           $pil = $row['naam']; 
           $wdgn_v = $row['resterend']; }

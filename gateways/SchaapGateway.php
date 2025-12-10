@@ -2826,6 +2826,32 @@ SQL
         );
     }
 
+    public function zoek_pil() {
+        return $this->run_query(
+            <<<SQL
+SELECT date_format(h.datum,'%d-%m-%Y') datum, art.naam, DATEDIFF( (h.datum + interval art.wdgn_v day), :date) resterend
+FROM tblSchaap s
+ join tblStal st on (st.schaapId = s.schaapId)
+ join tblHistorie h on (h.stalId = st.stalId)
+ join tblActie a on (a.actId = h.actId)
+ left join tblNuttig n on (h.hisId = n.hisId)
+ left join tblInkoop i on (i.inkId = n.inkId)
+ left join tblArtikel art on (i.artId = art.artId)
+WHERE st.lidId = :lidId
+ and s.schaapId = :schaapId
+ and h.actId = 8
+ and h.skip = 0
+ and :date < (h.datum + interval art.wdgn_v day)
+SQL
+        ,
+            [
+                [':lidId', $lidId, self::INT],
+                [':schaapId', $schaapId, self::INT],
+                [':date', $date],
+            ]
+        );
+    }
+
     // @TODO: deze query neemt geen parameters. En wordt eigenlijk ook niet gebruikt. Weg?
     public function fase_bij_dier() {
         $vw = $this->run_query(
@@ -3401,6 +3427,293 @@ GROUP BY schaapId, ooi
 ORDER BY $order
 SQL
     , [[':lidId', $lidId, self::INT]]
+    );
+}
+
+public function alle_ooien_met_meerlingworpen($lidId, $Karwerk, $order, $jaar1, $jaar2, $jaar3, $jaar4) {
+    return $this->run_query(
+        <<<SQL
+SELECT perWorp.schaapId, ooi, sum(perWorp.worp) totat,
+ sum(perWorp_jr1.worp) jr1, sum(perWorp_jr2.worp) jr2, sum(perWorp_jr3.worp) jr3, sum(perWorp_jr4.worp) jr4
+FROM (
+    SELECT mdr.schaapId, right(mdr.levensnummer,$Karwerk) ooi, v.volwId, count(lam.schaapId) worp
+    FROM tblSchaap mdr
+     join tblStal stm on (stm.schaapId = mdr.schaapId)
+     join tblVolwas v on (mdr.schaapId = v.mdrId)
+     join tblSchaap lam on (v.volwId = lam.volwId)
+     join tblStal st on (lam.schaapId = st.schaapId)
+     join tblHistorie h on (h.stalId = st.stalId)
+    WHERE isnull(stm.rel_best)
+ and stm.lidId = :lidId
+ and st.lidId = :lidId
+ and date_format(h.datum,'%Y') <= '$jaar1'
+ and date_format(h.datum,'%Y') >= '$jaar4'
+ and h.actId = 1
+ and h.skip = 0
+    GROUP BY mdr.schaapId, right(mdr.levensnummer,$Karwerk), v.volwId
+    HAVING count(v.volwId) > 0
+ ) perWorp
+left join (
+    SELECT mdr.schaapId, v.volwId, count(lam.schaapId) worp
+    FROM tblSchaap mdr
+     join tblStal stm on (stm.schaapId = mdr.schaapId)
+     join tblVolwas v on (mdr.schaapId = v.mdrId)
+     join tblSchaap lam on (v.volwId = lam.volwId)
+     join tblStal st on (lam.schaapId = st.schaapId)
+     join tblHistorie h on (h.stalId = st.stalId)
+    WHERE isnull(stm.rel_best)
+ and stm.lidId = :lidId
+ and st.lidId = :lidId
+ and h.actId = 1
+ and date_format(h.datum,'%Y') = '$jaar1'
+ and h.skip = 0
+    GROUP BY mdr.schaapId, v.volwId
+    HAVING count(v.volwId) > 0
+) perWorp_jr1  on (perWorp.volwId = perWorp_jr1.volwId)
+left join (
+    SELECT mdr.schaapId, v.volwId, count(lam.schaapId) worp
+    FROM tblSchaap mdr
+     join tblStal stm on (stm.schaapId = mdr.schaapId)
+     join tblVolwas v on (mdr.schaapId = v.mdrId)
+     join tblSchaap lam on (v.volwId = lam.volwId)
+     join tblStal st on (lam.schaapId = st.schaapId)
+     join tblHistorie h on (h.stalId = st.stalId)
+    WHERE isnull(stm.rel_best)
+ and stm.lidId = :lidId
+ and st.lidId = :lidId
+ and h.actId = 1
+ and date_format(h.datum,'%Y') = '$jaar2'
+ and h.skip = 0
+    GROUP BY mdr.schaapId, v.volwId
+    HAVING count(v.volwId) > 0
+) perWorp_jr2 on (perWorp.volwId = perWorp_jr2.volwId)
+left join (
+    SELECT mdr.schaapId, v.volwId, count(lam.schaapId) worp
+    FROM tblSchaap mdr
+     join tblStal stm on (stm.schaapId = mdr.schaapId)
+     join tblVolwas v on (mdr.schaapId = v.mdrId)
+     join tblSchaap lam on (v.volwId = lam.volwId)
+     join tblStal st on (lam.schaapId = st.schaapId)
+     join tblHistorie h on (h.stalId = st.stalId)
+    WHERE isnull(stm.rel_best)
+ and stm.lidId = :lidId
+ and st.lidId = :lidId
+ and h.actId = 1
+ and date_format(h.datum,'%Y') = '$jaar3'
+ and h.skip = 0
+    GROUP BY mdr.schaapId, v.volwId
+    HAVING count(v.volwId) > 0
+) perWorp_jr3 on (perWorp.volwId = perWorp_jr3.volwId)
+left join (
+    SELECT mdr.schaapId, v.volwId, count(lam.schaapId) worp
+    FROM tblSchaap mdr
+     join tblStal stm on (stm.schaapId = mdr.schaapId)
+     join tblVolwas v on (mdr.schaapId = v.mdrId)
+     join tblSchaap lam on (v.volwId = lam.volwId)
+     join tblStal st on (lam.schaapId = st.schaapId)
+     join tblHistorie h on (h.stalId = st.stalId)
+    WHERE isnull(stm.rel_best)
+ and stm.lidId = :lidId
+ and st.lidId = :lidId
+ and h.actId = 1
+ and date_format(h.datum,'%Y') = '$jaar4'
+ and h.skip = 0
+    GROUP BY mdr.schaapId, v.volwId
+    HAVING count(v.volwId) > 0
+) perWorp_jr4 on (perWorp.volwId = perWorp_jr4.volwId)
+GROUP BY schaapId, ooi
+ORDER BY $order
+SQL
+    , [[':lidId', $lidId, self::INT]]
+    );
+}
+
+public function zoek_maanden_per_ooi($lidId, $ooiId, $jaar1, $jaar4) {
+    return $this->run_query(
+        <<<SQL
+SELECT date_format(h.datum,'%m') mndtxt, date_format(h.datum,'%m')*1 mndnr
+FROM tblSchaap mdr
+ join tblVolwas v on (v.mdrId = mdr.schaapId)
+ join tblSchaap lam on (v.volwId = lam.volwId)
+ join tblStal st on (st.schaapId = lam.schaapId)
+ join tblHistorie h on (st.stalId = h.stalId)
+WHERE st.lidId = :lidId
+ and mdr.schaapId = :schaapId
+ and h.actId = 1
+ and date_format(h.datum,'%Y') <= '$jaar1'
+ and date_format(h.datum,'%Y') >= '$jaar4'
+ and h.skip = 0
+GROUP BY date_format(h.datum,'%m')
+ORDER BY date_format(h.datum,'%m')
+SQL
+    ,
+        [
+            [':lidId', $lidId, self::INT],
+            [':schaapId', $ooiId, self::INT],
+        ]
+    );
+}
+
+public function zoek_meerlingen($lidId, $Karwerk, $van, $tot) {
+    return $this->run_query(
+    <<<SQL
+SELECT right(lam.levensnummer,$Karwerk) lam, lam.geslacht, count(wrp.volwId) worp, h.datum date,
+ date_format(h.datum,'%d-%m-%Y') datum, right(mdr.levensnummer,$Karwerk) ooi,
+ round(((lstkg.kg - h.kg)*1000)/datediff(mx.mdm,h.datum),2) gemgroei, date_format(mx.mdm,'%d-%m-%Y') kgdag, st.stalId
+FROM tblSchaap lam
+ join tblVolwas v on (lam.volwId = v.volwId)
+ join tblSchaap mdr on (mdr.schaapId = v.mdrId)
+ join tblSchaap wrp on (lam.volwId = wrp.volwId)
+ join tblStal st on (st.schaapId = lam.schaapId)
+ join tblHistorie h on (st.stalId = h.stalId)
+ left join (
+     SELECT stalId, max(datum) mdm
+     FROM tblHistorie
+    WHERE kg is not null and actId > 1 and skip = 0
+    GROUP BY stalId
+ ) mx on (mx.stalId = st.stalId)
+ left join (
+     SELECT stalId, datum, max(kg) kg
+     FROM tblHistorie
+    WHERE kg is not null and actId > 1 and skip = 0
+    GROUP BY stalId, datum
+ ) lstkg on (lstkg.stalId = st.stalId and lstkg.datum = mx.mdm)
+WHERE lam.levensnummer is not null
+ and isnull(st.rel_best)
+ and h.actId = 1
+ and st.lidId = :lidId
+ and h.datum >= :van
+ and h.datum <= :tot
+ and h.skip = 0
+GROUP BY lam.levensnummer, lam.geslacht, h.datum, mdr.levensnummer, mx.mdm, st.stalId
+ORDER BY right(lam.levensnummer,$Karwerk)
+SQL
+,
+    [
+            [':lidId', $lidId, self::INT],
+            [':van', $van, self::DATE],
+            [':tot', $tot, self::DATE],
+    ]
+    );
+}
+
+public function zoek_meerling($lidId, $Karwerk, $van, $tot) {
+    return $this->run_query(
+        <<<SQL
+SELECT right(lam.levensnummer,$Karwerk) lam, lam.geslacht, count(wrp.volwId) worp, h.datum date, 
+date_format(h.datum,'%d-%m-%Y') datum, right(mdr.levensnummer,$Karwerk) ooi,
+ round(((lstkg.kg - h.kg)*1000)/datediff(mx.mdm,h.datum),2) gemgroei, date_format(mx.mdm,'%d-%m-%Y') kgdag, st.stalId
+FROM tblSchaap lam
+ join tblVolwas v on (lam.volwId = v.volwId)
+ join tblSchaap mdr on (mdr.schaapId = v.mdrId)
+ join tblSchaap wrp on (lam.volwId = wrp.volwId)
+ join tblStal st on (st.schaapId = lam.schaapId)
+ join tblHistorie h on (st.stalId = h.stalId)
+ left join (
+     SELECT stalId, max(datum) mdm
+     FROM tblHistorie
+    WHERE kg is not null and actId > 1
+    GROUP BY stalId
+ ) mx on (mx.stalId = st.stalId)
+ left join (
+     SELECT stalId, datum, max(kg) kg
+     FROM tblHistorie
+    WHERE kg is not null and actId > 1
+    GROUP BY stalId, datum
+ ) lstkg on (lstkg.stalId = st.stalId and lstkg.datum = mx.mdm)
+WHERE lam.levensnummer is not null
+ and isnull(st.rel_best)
+ and h.actId = 1
+ and st.lidId = :lidId
+ and h.datum >= :van
+ and h.datum <= :tot
+GROUP BY lam.levensnummer, lam.geslacht, h.datum, mdr.levensnummer, mx.mdm, st.stalId
+ORDER BY right(lam.levensnummer,$Karwerk)
+SQL
+    ,
+        [
+            [':lidId', $lidId, self::INT],
+            [':van', $van, self::DATE],
+            [':tot', $tot, self::DATE],
+        ]
+    );
+}
+
+public function ooikaart_all($lidId, $Karwerk) {
+    return $this->run_query(
+        <<<SQL
+SELECT mdr.schaapId, mdr.levensnummer, right(mdr.levensnummer,$Karwerk) werknr, r.ras, hg.datum dmgebrn,
+ date_format(hg.datum,'%d-%m-%Y') geb_datum, date_format(haf.datum,'%d-%m-%Y') afleverdm,
+ date_format(hdo.datum,'%d-%m-%Y') uitvaldm,  
+ count(lam.schaapId) lammeren, count(lam.levensnummer) levend,
+ round(((count(lam.levensnummer) / count(lam.schaapId)) * 100),2) percleven, count(ooi.schaapId) aantooi,
+ count(ram.schaapId) aantram, round(avg(hg_lm.kg),2) gemgewicht, 
+ count(hs_lm.datum) aantspn, ((count(hs_lm.datum)/count(lam.schaapId))*100) percspn,
+ round(avg(hs_lm.kg),2) gemspnkg, round(avg(hs_lm.kg-hg_lm.kg),2) gemgr_spn,
+ count(haf_lm.datum) aantafv, round(avg(haf_lm.kg),2) gemafvkg, round(avg(haf_lm.kg-hg_lm.kg),2) gemgr_afv 
+FROM tblSchaap mdr 
+ left join tblVolwas v on (mdr.schaapId = v.mdrId)
+ left join tblSchaap lam on (v.volwId = lam.volwId)
+ join tblStal st on (mdr.schaapId = st.schaapId)
+ join (
+    SELECT st.schaapId
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
+ ) ouder on (mdr.schaapId = ouder.schaapId)
+ left join (
+    SELECT st.schaapId, datum
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 1 and h.skip = 0
+ ) hg on (st.schaapId = hg.schaapId)
+ left join tblHistorie haf on (st.stalId = haf.stalId and haf.actId = 13 and haf.skip = 0)
+ left join tblHistorie hdo on (st.stalId = hdo.stalId and hdo.actId = 14 and hdo.skip = 0)
+ left join tblRas r on (r.rasId = mdr.rasId)
+ left join tblSchaap ooi on (lam.schaapId = ooi.schaapId and ooi.geslacht = 'ooi')
+ left join tblSchaap ram on (lam.schaapId = ram.schaapId and ram.geslacht = 'ram')
+ left join tblStal st_lm on (lam.schaapId = st_lm.schaapId)
+ left join tblHistorie hg_lm on (st_lm.stalId = hg_lm.stalId and hg_lm.actId = 1 and hg_lm.skip = 0)
+ left join tblHistorie hs_lm on (st_lm.stalId = hs_lm.stalId and hs_lm.actId = 4 and hs_lm.skip = 0)
+ left join tblHistorie haf_lm on (st_lm.stalId = haf_lm.stalId and haf_lm.actId = 12 and haf_lm.skip = 0)
+WHERE st.lidId = :lidId
+ and mdr.geslacht = 'ooi'
+ and isnull(haf.datum)
+ and isnull(hdo.datum)
+GROUP BY mdr.levensnummer, r.ras, hg.datum, date_format(haf.datum,'%d-%m-%Y'), date_format(hdo.datum,'%d-%m-%Y')
+SQL
+    , [[':lidId', $lidId, self::INT]]
+    );
+}
+
+public function toon_meerlingen($lidId, $van, $tot) {
+    return $this->run_query(
+        <<<SQL
+SELECT count(s.schaapId) aantal, aant worp
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join tblHistorie h on (h.stalId = st.stalId)
+ join (
+    SELECT s.volwId, count(s.schaapId) aant
+    FROM tblSchaap s
+     join tblStal st on (s.schaapId = st.schaapId)
+    WHERE lidId = :lidId
+    GROUP BY s.volwId
+ ) w on (s.volwId = w.volwId)
+WHERE s.geslacht = 'ooi'
+ and isnull(st.rel_best)
+ and h.actId = 1
+ and h.skip = 0
+ and h.datum >= :van
+ and h.datum <= :tot
+GROUP BY aant
+ORDER BY aant desc
+SQL
+    , [
+        [':lidId', $lidId, self::INT],
+        [':van', $van],
+        [':tot', $tot],
+    ]
     );
 }
 
