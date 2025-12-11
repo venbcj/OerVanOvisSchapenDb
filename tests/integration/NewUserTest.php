@@ -53,19 +53,21 @@ class NewUserTest extends IntegrationCase {
 
     private function some_user_form() {
         return [
-            'txtRoep' => 'a',
-            'txtVoeg' => 'v',
-            'txtNaam' => 'n',
-            'txtTel' => '1',
-            'txtMail' => 'a@b',
-            'txtUbn' => 4,
-            'txtRelnr' => 2,
-            'txtUrvo' => '13',
-            'txtPrvo' => '26',
-            'kzlReader' => 3,
-            'radMeld' => 1,
-            'radTech' => 0,
-            'radFin' => 0,
+            'user' => [
+                'roep' => 'a',
+                'voegsel' => 'v',
+                'naam' => 'n',
+                'tel' => '1',
+                'mail' => 'a@b',
+                'ubn' => 4,
+                'relnr' => 2,
+                'urvo' => '13',
+                'prvo' => '26',
+                'reader' => 3,
+                'meld' => 1,
+                'tech' => 0,
+                'fin' => 0,
+            ],
         ];
     }
 

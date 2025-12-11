@@ -67,7 +67,7 @@ class Gateway {
     private function expand($SQL, $args = []) {
         foreach ($args as $arg) {
             $arg = $this->validateArg($arg);
-            [$key, $value, $format] = $arg;
+            [$name, $value, $format] = $arg;
             if (is_null($value)) {
                 $value = 'NULL';
             } else {
@@ -84,9 +84,16 @@ class Gateway {
                     break;
                 }
             }
-            $SQL = str_replace($key, $value, $SQL);
+            $SQL = preg_replace("#$name\b#", $value, $SQL);
         }
         return $SQL;
+    }
+
+    protected function struct_to_args($form) {
+        return array_map(function($key, $value) {
+            return [":$key", $value];
+        }, array_keys($form), array_values($form)
+        );
     }
 
     private function validateArg($arg) {

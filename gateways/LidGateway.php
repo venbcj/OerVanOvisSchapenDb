@@ -528,4 +528,19 @@ SQL
     );
 }
 
+public function save_new($form) {
+    $this->run_query(
+        <<<SQL
+INSERT INTO tblLeden SET alias = :alias, login = :login, passw = :passw,
+                roep = :roep, voegsel = :voegsel, naam = :naam,
+                relnr = :relnr, urvo = :urvo, prvo = :prvo,
+                mail = :mail, tel = :tel, kar_werknr = :kar_werknr,
+                actief = :actief, ingescand = :ingescand, beheer = :beheer,
+                histo = :histo, meld = :meld, tech = :tech, fin = :fin,
+                reader = :reader, readerkey = :readerkey
+SQL
+    , $this->struct_to_args($form)
+    );
+}
+
 }
