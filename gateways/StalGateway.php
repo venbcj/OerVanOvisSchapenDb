@@ -372,4 +372,17 @@ SQL
         );
     }
 
+    public function zoek_stal($schaapId, $lidId) {
+        return $this->first_field(
+            <<<SQL
+SELECT stalId
+FROM tblStal
+WHERE schaapId = :schaapId
+ and lidId = :lidId
+ and isnull(rel_best)
+SQL
+        , [[':lidId', $lidId, self::INT], [':schaapId', $schaapId, self::INT]]
+        );
+    }
+
 }

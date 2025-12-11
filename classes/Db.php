@@ -68,7 +68,7 @@ class Db {
             if (count($arg) != 3) {
                 throw new Exception("Query-parameters: een parameter moet twee of drie onderdelen bevatten.");
             }
-            [$key, $value, $format] = $arg;
+            [$name, $value, $format] = $arg;
             if (is_null($value)) {
                 $value = 'NULL';
             } else {
@@ -84,7 +84,7 @@ class Db {
                     break;
                 }
             }
-            $SQL = str_replace($key, $value, $SQL);
+            $SQL = preg_replace("#$name\\b#", $value, $SQL);
         }
         $this->logger->debug($SQL);
         return $SQL;

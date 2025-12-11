@@ -38,96 +38,25 @@ if(isset($_POST['knpVerder_']) && isset($_POST['kzlHokall_']))    {
     $hokkeuze = $_POST['kzlHokall_']; Session::set("BST", $hokkeuze); } 
  else { $hokkeuze = Session::get("BST");  } $sess_dag = Session::get("DT1"); $sess_bestm = Session::get("BST");
 
-$zoek_nu_in_verblijf_geb_spn = mysqli_query($db,"
-SELECT count(hin.schaapId) aantin
-FROM (
-    SELECT st.schaapId, max(hisId) hisId
-    FROM tblStal st 
-     join tblHistorie h on (st.stalId = h.stalId)
-     join tblActie a on (a.actId = h.actId) 
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best) and a.aan = 1 and h.skip = 0
-    GROUP BY st.schaapId
- ) hin
- left join tblBezet b on (hin.hisId = b.hisId)
- left join (
-    SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-    GROUP BY b.bezId, st.schaapId, h1.hisId
- ) uit on (uit.hisv = hin.hisId)
- left join (
-    SELECT st.schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = hin.schaapId)
-WHERE (isnull(b.hokId) or uit.hist is not null) and isnull(prnt.schaapId)
-") or die (mysqli_error($db));
-        
-    while($nu_l = mysqli_fetch_assoc($zoek_nu_in_verblijf_geb_spn))
-        { $nu_lam = $nu_l['aantin']; }
-        
-$zoek_nu_in_verblijf_parent = mysqli_query($db,"
-SELECT count(hin.schaapId) aantin
-FROM (
-    SELECT st.schaapId, max(hisId) hisId
-    FROM tblStal st 
-     join tblHistorie h on (st.stalId = h.stalId)
-     join tblActie a on (a.actId = h.actId) 
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best) and a.aan = 1 and h.skip = 0
-    GROUP BY st.schaapId
- ) hin
- left join tblBezet b on (hin.hisId = b.hisId)
- left join (
-    SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-    GROUP BY b.bezId, st.schaapId, h1.hisId
- ) uit on (uit.hisv = hin.hisId)
- join (
-    SELECT st.schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = hin.schaapId)
-WHERE (isnull(b.hokId) or uit.hist is not null)
-") or die (mysqli_error($db));
-        
-    while($nu_p = mysqli_fetch_assoc($zoek_nu_in_verblijf_parent))
-        { $nu_prnt = $nu_p['aantin']; }        
-        
+    $historie_gateway = new HistorieGateway();
+    $nu_lam = $historie_gateway->zoek_nu_in_verblijf_geb_spn($lidId);
+    $nu_prnt = $historie_gateway->zoek_nu_in_verblijf_parent($lidId);
     $nu = $nu_lam + $nu_prnt;
-
 if(isset($_POST['knpSave_'])) { include "save_overpl.php"; } // staat hier omdat $doelId moet zijn gedeclareerd !
     
 // Declaratie HOKNUMMER KEUZE
 
-$qryHokkeuze = mysqli_query($db,"
-SELECT hokId, hoknr
-FROM tblHok h
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief = 1
-order by hoknr
-") or die (mysqli_error($db));
-
+$hok_gateway = new HokGateway();
+$qryHokkeuze = $hok_gateway->kzlHok($lidId);
 $index = 0;
-while ($hnr = mysqli_fetch_array($qryHokkeuze)) 
-{ 
+while ($hnr = mysqli_fetch_array($qryHokkeuze)) { 
    $hoknId[$index] = $hnr['hokId']; 
    $hoknum[$index] = $hnr['hoknr'];
    $index++; 
 } 
 unset($index);
-// EINDE Declaratie HOKNUMMER  KEUZE ?>
+// EINDE Declaratie HOKNUMMER  KEUZE
+?>
 
 <form action="LoslopersPlaatsen.php" method = "post"><?php 
 // Opbouwen paginanummering 

@@ -36,16 +36,11 @@ If (isset ($_POST['knpInsert_'])) {
     }
 
 // Declaratie HOKNUMMER            // lower(if(isnull(scan),'6karakters',scan)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.
-$qryHoknummer = mysqli_query($db,"
-SELECT hokId, hoknr, lower(if(isnull(scan),'6karakters',scan)) scan
-FROM tblHok hb
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief = 1
-ORDER BY hoknr
-") or die (mysqli_error($db)); 
+$hok_gateway = new HokGateway();
+$qryHoknummer = $hok_gateway->hoknummer($lidId);
 
 $index = 0; 
-while ($hnr = mysqli_fetch_array($qryHoknummer)) 
-{ 
+while ($hnr = $qryHoknummer->fetch_array()) { 
    $hoknId[$index] = $hnr['hokId']; 
    $hoknum[$index] = $hnr['hoknr'];   
    $index++; 
@@ -138,47 +133,15 @@ if(isset($data))  {    foreach($data as $key => $array)
     $dmmax = $array['datummax'];
 
 // VERBLIJF MOEDER zoeken
-unset($stalId);
-$zoek_stalId = mysqli_query($db,"
-SELECT stalId
-FROM tblStal
-WHERE schaapId = '".mysqli_real_escape_string($db,$mdr_db)."' and lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(rel_best)
-");
-
-while ($zs = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $zs['stalId']; }
-
+    $stal_gateway = new StalGateway();
+    $stalId = $stal_gateway->zoek_stal($mdr_db, $lidId);
 unset($hok_db);
 
 if(isset($stalId)) {
-$zoek_verblijf_mdr = mysqli_query($db,"
-SELECT b.hokId
-FROM (
-    SELECT max(hisId) hisId
-    FROM tblHistorie h
-     join tblActie a on (a.actId = h.actId)
-    WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."' and a.aan = 1
- ) hin
- left join tblBezet b on (hin.hisId = b.hisId)
- left join (
-    SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.stalId = '".mysqli_real_escape_string($db,$stalId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-    GROUP BY b.bezId, h1.hisId
- ) uit on (uit.hisv = hin.hisId)
-WHERE isnull(uit.hist)
-
-");
-
-while ($zv = mysqli_fetch_assoc($zoek_verblijf_mdr)) { $hok_db = $zv['hokId']; }
-
+    $historie_gateway = new HistorieGateway();
+    $hok_db = $historie_gateway->zoek_verblijf_moeder($stalId);
 }
 // VERBLIJF MOEDER zoeken 
-
 
 // Controleren of ingelezen waardes worden gevonden .
 $dag = $datum ; $dmdag = $date; $kzlHok = $hok_db;

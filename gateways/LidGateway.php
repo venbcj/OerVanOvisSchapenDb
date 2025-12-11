@@ -58,6 +58,17 @@ return $vw->num_rows > 0;
         return $vw->fetch_assoc();
     }
 
+    public function findByRas($rasnr) {
+        return $this->first_field(
+            <<<SQL
+SELECT lidId
+FROM tblRasuser
+WHERE rasuId = :rasuId
+SQL
+        , [[':rasuId', $rasnr, self::INT]]
+        );
+    }
+
     public function findByReaderkey($key) {
         return $this->first_field(
             <<<SQL

@@ -1,7 +1,8 @@
 <?php 
 
-require_once("autoload.php");
+exit("Dit kan niet werken. mvrgr, BCB");
 
+require_once("autoload.php");
 
 $versie = '14-8-2014'; /*Menu (rechts) veranderd van menuInkoop naar menuBeheer en html buiten php geprogrammeerd */
 $versie = '8-3-2015'; /*Login toegevoegd*/
@@ -94,8 +95,39 @@ if (empty($_POST['chkActief']))    {    $updact = "actief = NULL";    }
         if (empty($_POST['txthang']))    {    $updhang = "aanhanger = NULL";    }
   else        {    $updhang = "aanhanger = '$_POST[txthang]' ";    }
 
-    
-    $wijzigklant = "UPDATE tblRelaties SET ubn = ".$updubn.", relnr = ".$updrelnr.", wachtw = ".$updpassw.", relatie = ".$updnaam." , adres = ".$updstraat." , ".$updnr." , ".$updpc." , ".$updplaats." , adres1 = ".$upd_straat." , ".$upd_nr." , ".$upd_pc." , ".$upd_plaats." , ".$updtel.", ".$updfax.", ".$updmail.", ".$updsite.", ".$updbank.", ".$updact.", ".$updkent.", ".$updhang." WHERE lidId = ".mysqli_real_escape_string($db,$lidId)." and relatId = '$klantid'     ";
+        $relatie_gateway = new RelatieGateway();
+        $relatie_gateway->update_klant();
+        public function update_klant() {
+            $this->run_query(
+               <<<SQL
+UPDATE tblRelaties SET ubn = ".$updubn.",
+ relnr = ".$updrelnr.",
+ wachtw = ".$updpassw.",
+ relatie = ".$updnaam." ,
+ adres = ".$updstraat." ,
+ ".$updnr." ,
+ ".$updpc." ,
+ ".$updplaats." ,
+ adres1 = ".$upd_straat." ,
+ ".$upd_nr." ,
+ ".$upd_pc." ,
+ ".$upd_plaats." ,
+ ".$updtel.",
+ ".$updfax.",
+ ".$updmail.",
+ ".$updsite.",
+ ".$updbank.",
+ ".$updact.",
+ ".$updkent.",
+ ".$updhang."
+WHERE lidId = ".mysqli_real_escape_string($db, $lidId)."
+ and relatId = '$klantid'     
+SQL
+ ,
+     [
+     ]
+            );
+        }
         mysqli_query($db,$wijzigklant) or die (mysqli_error($db));
 
     //}
