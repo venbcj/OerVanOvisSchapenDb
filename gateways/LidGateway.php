@@ -133,6 +133,18 @@ SQL
         );
     }
 
+    public function findUbns($lidId) {
+        return $this->run_query(
+            <<<SQL
+SELECT ubn
+FROM tblUbn
+WHERE lidId = :lidId
+ and actief = 1
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
+
     public function findAlias($lidId) {
         $vw = $this->db->query("SELECT alias FROM tblLeden WHERE lidId = '".$this->db->real_escape_string($lidId)."' ");
         while ($row = $vw->fetch_assoc()) {
@@ -551,6 +563,37 @@ INSERT INTO tblLeden SET alias = :alias, login = :login, passw = :passw,
                 reader = :reader, readerkey = :readerkey
 SQL
     , $this->struct_to_args($form)
+    );
+}
+
+public function update_formdetails($lidId, $data) {
+    $this->run_query(
+        <<<SQL
+UPDATE tblLeden SET relnr = :relnr, urvo = :urvo, prvo = :prvo, reader = :reader, kar_werknr = :kar_werknr,
+ histo = :histo, groei = :groei
+WHERE lidId = :lidId
+SQL
+    , [
+        [':lidId', $lidId, self::INT],
+        [':relnr', $data['txtRelnr']],
+        [':urvo', $data['txtUrvo']],
+        [':prvo', $data['txtPrvo']],
+        [':reader', $data['kzlReader']],
+        [':kar_werknr', $data['txtKarWerknr'], self::INT],
+        [':histo', $data['kzlHis']],
+        [':groei', $data['kzlGroei']],
+    ]
+    );
+}
+
+public function get_form($lidId) {
+    return $this->first_row(
+        <<<SQL
+SELECT lidId, relnr, urvo, prvo, kar_werknr, histo, groei
+FROM tblLeden
+WHERE lidId = :lidId
+SQL
+    , [[':lidId', $lidId, self::INT]]
     );
 }
 

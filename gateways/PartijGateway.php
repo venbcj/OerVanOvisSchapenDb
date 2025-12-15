@@ -73,8 +73,17 @@ WHERE p.lidId = :lidId
       and ubn is not null
 ORDER BY naam
 SQL
-    , [[':lidId', $lidId, self::INT]]
-    );
-}
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
+
+    public function findNaam($partId) {
+        return $this->first_field(
+            <<<SQL
+SELECT naam FROM tblPartij WHERE partId = :partId
+SQL
+        , [[':partId', $partId, self::INT]]
+        );
+    }
 
 }

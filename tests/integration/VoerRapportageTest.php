@@ -36,7 +36,9 @@ class VoerRapportageTest extends IntegrationCase {
         $this->assertAbsent('<select name="kzlMdjr_"');
     }
 
+    // ooh lekker weer. Deze test faalt "af en toe".
     public function testToon_met_maanden() {
+        $this->runfixture('voervoorraad');
         $this->runfixture('jaarmaanden-n');
         $this->post('/Voer_rapportage.php', [
             'ingelogd_' => 1,
@@ -46,7 +48,8 @@ class VoerRapportageTest extends IntegrationCase {
         ]);
         $this->assertNoNoise();
         $this->assertPresent('<select name="kzlMdjr_"');
-        $this->assertOptieCount('kzlMdjr_', 3); // een lege, twee uit de fixture
+        $fixed_options = 1; // een lege
+        $this->assertOptieCount('kzlMdjr_', $fixed_options + 2);
     }
 
 }

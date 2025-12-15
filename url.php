@@ -1,18 +1,4 @@
 <?php
-// 20-12-2019 : http gewijzigd naar https
-/* Naast verderop genoemde include bestanden toegepast in :
-    - Eenheden.php
-    - InsAanwas.php
-    - InsAfleveren.php
-    - InsGeboortes.php Ivm noodzakelijk voor include header
-    - InsMedicijn.php
-    - InsOverplaats.php
-    - InsSpenen.php
-    - InsUitval.php
-    - Leveranciers.php
-    - Uitval.php
-    - Voer.php
- */
 
 global $url;
 $url = Url::getWebroot();

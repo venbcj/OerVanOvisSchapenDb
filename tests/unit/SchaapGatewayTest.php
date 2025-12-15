@@ -461,9 +461,9 @@ class SchaapGatewayTest extends GatewayCase {
         $this->assertEquals(0, $result->num_rows);
     }
 
-    public function test_zoekGeschiedenis() {
-        $this->markTestIncomplete("Er zijn nogal wat scenarios nodig voor zoekGeschiedenis");
-    }
+    # public function test_zoekGeschiedenis() {
+    #     $this->markTestIncomplete("Er zijn nogal wat scenarios nodig voor zoekGeschiedenis");
+    # }
 
     // TODO kandidaat voor Pull Up Method
     protected function assertStubBehaves($expectation, $result) {

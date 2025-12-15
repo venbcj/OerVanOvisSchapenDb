@@ -27,7 +27,7 @@ $liquiditeit_gateway = new LiquiditeitGateway();
 // TODO geen magic 12, maar door de maanden heen-foreachen
 for ($i = 0; $i < 12; $i++) {
     $maand = $maanden[$i];
-    $ophalen_rubriekuser = $rubriek_gateway->find($lidId);
+    $ophalen_rubriekuser = $rubriek_gateway->find($lidId, $maand);
     while ($oph = $ophalen_rubriekuser->fetch_assoc()) {
         $rub_user = $oph['rubuId'];
         $datum = $oph['dag'];

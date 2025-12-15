@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+PHPUNIT="vendor/bin/phpunit"
+FAILING_TEST="Tests\\FlakyTest::testFails"
+LIST="tests.list" # default: tests.list
+
+mapfile -t ALL < "$LIST"
+
+PREFIX=()
+for t in "${ALL[@]}"; do
+    [[ "$t" == "$FAILING_TEST" ]] && break
+    PREFIX+=("$t")
+done
+
+# Number of times to retry a subset to confirm failure
+RETRIES=3
+
+fails() {
+  local subset=("$@")
+  local suite
+  suite=$(mktemp)
+
+  cat > "$suite" <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit>
+  <testsuites>
+    <testsuite name="ddmin">
+EOF
+
+  for t in "${subset[@]}"; do
+    class=${t%%::*}
+    method=${t##*::}
+    cat >> "$suite" <<EOF
+      <testcase class="$class" name="$method"/>
+EOF
+  done
+
+  # add failing test
+  class=${FAILING_TEST%%::*}
+  method=${FAILING_TEST##*::}
+  cat >> "$suite" <<EOF
+      <testcase class="$class" name="$method"/>
+    </testsuite>
+  </testsuites>
+</phpunit>
+EOF
+
+  ! $PHPUNIT -c "$suite" >/dev/null 2>&1
+}
+
+n=${#PREFIX[@]}
+granularity=2
+last_n=$n
+
+echo "▶ Starting ddmin with $n tests"
+
+while (( n > 0 )); do
+    chunk_size=$(( (n + granularity - 1) / granularity ))
+    reduced=false
+
+    echo "  Trying granularity=$granularity (chunk size=$chunk_size)"
+
+    for (( i=0; i<n; i+=chunk_size )); do
+        complement=("${PREFIX[@]:0:i}" "${PREFIX[@]:i+chunk_size}")
+
+    # Guarantee progress
+    (( ${#complement[@]} < n )) || continue
+
+    echo "    Testing subset size ${#complement[@]}"
+
+    if fails "${complement[@]}"; then
+        PREFIX=("${complement[@]}")
+        n=${#PREFIX[@]}
+        granularity=2
+        reduced=true
+        echo "    ✔ Reduced to $n tests"
+        break
+    fi
+done
+
+if ! $reduced; then
+    if (( granularity >= n )); then
+        echo "  No further reduction possible"
+        break
+    fi
+    granularity=$(( granularity * 2 ))
+fi
+
+  # Hard stop if no progress
+  if (( n == last_n )); then
+      echo "  ⚠ No progress this round, stopping"
+      break
+  fi
+  last_n=$n
+done
+
+echo
+echo "💥 Minimal failure-inducing tests:"
+for t in "${PREFIX[@]}"; do
+    echo "  $t"
+done

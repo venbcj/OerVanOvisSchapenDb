@@ -58,20 +58,20 @@ impAgrident rd
     WHERE st.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and h.skip = 0
     GROUP BY st.stalId, s.schaapId, s.levensnummer, s.geslacht, s.rasId, st.lidId
  ) stal on (rd.levensnummer = stal.levensnummer)
- left join tblRas r on (s.rasId = r.rasId)
+ left join tblRas r on (stal.rasId = r.rasId)
  left join (
      SELECT schaapId ouder
      FROM tblStal st
       join tblHistorie h on (h.stalId = st.stalId)
      WHERE actId = 3 and h.skip = 0
- ) ouder on (ouder.ouder = s.schaapId)
+ ) ouder on (ouder.ouder = stal.schaapId)
  left join (
      SELECT st.stalId, actie
     FROM tblActie a
      join tblHistorie h on (a.actId = h.actId)
      join tblStal st on (st.stalId = h.stalId)
     WHERE a.af = 1 and st.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and h.skip = 0
- ) af on (af.stalId = s.stalId)
+ ) af on (af.stalId = stal.stalId)
 
  left join (
          SELECT lsthk.hisId actueel_hisId_hok, lsthk.stalId
@@ -98,7 +98,7 @@ impAgrident rd
              left join tblBezet b on (b.hisId = lsthk.hisId)
                 WHERE lsthk.hisId is not null and isnull(hist)
 
-    ) act_b on (act_b.stalId = s.stalId)
+    ) act_b on (act_b.stalId = stal.stalId)
  left join tblBezet b on (act_b.actueel_hisId_hok = b.hisId)
  left join tblHok hk on (hk.hokId = b.hokId)
 
@@ -107,7 +107,7 @@ impAgrident rd
     FROM tblHistorie h
      join tblStal st on (st.stalId = h.stalId)
     WHERE h.actId = 1 and h.skip = 0
- ) hg on (s.schaapId = hg.schaapId)
+ ) hg on (stal.schaapId = hg.schaapId)
  left join (
      SELECT rd.Id, count(dup.Id) dubbelen
     FROM impAgrident rd

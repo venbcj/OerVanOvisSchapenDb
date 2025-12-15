@@ -2,7 +2,7 @@
 
 namespace Rector\Tests\TypeDeclaration\Rector\MysqliQueryFunctionCallToDbMethodCallRector\Fixture;
 
-// @todo fill code before
+mysqli_query($db, 'SELECT');
 
 ?>
 -----
@@ -10,6 +10,6 @@ namespace Rector\Tests\TypeDeclaration\Rector\MysqliQueryFunctionCallToDbMethodC
 
 namespace Rector\Tests\TypeDeclaration\Rector\MysqliQueryFunctionCallToDbMethodCallRector\Fixture;
 
-// @todo fill code after
+$this->db->query('SELECT');
 
 ?>

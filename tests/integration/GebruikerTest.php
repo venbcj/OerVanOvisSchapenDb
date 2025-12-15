@@ -52,6 +52,8 @@ class GebruikerTest extends IntegrationCase {
 
     public function testSaveGebruiker() {
         $this->uses_db();
+        $this->runsetup('user-1');
+        $this->runsetup('tblLeden');
         $this->post('/Gebruiker.php', [
             'ingelogd' => 1,
             'uid' => 42, // hack. login.php vangt dit op;
