@@ -107,9 +107,9 @@ $tabel = "
 $WHERE = '';
 
 include "paginas.php";
-
 $data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id");
- ?>
+
+?>
 <table border = 0>
 <tr> <form action="InsVoerregistratie.php" method = "post">
  <td colspan = 2 style = "font-size : 13px;">

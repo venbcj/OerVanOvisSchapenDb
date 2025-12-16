@@ -26,7 +26,7 @@ class ControllersTest extends IntegrationCase {
             ['InsOverplaats.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
             # deze checkt fldKies die nooit gezet wordt
             # ['InsSpenen.php', [], ['chbkies_1' => 1, ]],
-            # deze veroorzaakt Unknown column s.rasId in ON, Page_numbers:43
+            # deze veroorzaakt Unknown column s.rasId in ON, Paginator:43
             # ['InsStallijstscan_controle.php', ['impagrident'], ['chbkies_1' => 1, 'kzlFase_1' => 1, 'chbDel_1' => 0, ]],
             ['InsStallijstscan_nieuwe_klant.php', [], ['chbkies_1' => 1, 'kzlFase_1' => 1, 'chbDel_1' => 0, ]],
             ['InsTvUitscharen.php', [], ['chbKies_1' => 1, 'chbDel_1' => 0, ]], // hoofdletter K ?!

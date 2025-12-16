@@ -120,12 +120,10 @@ impAgrident rd
 $WHERE = "WHERE rd.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and rd.actId = 22 and isnull(rd.verwerkt)";
 
 include "paginas.php";
+$data = $page_nums->fetch_data($velden, "ORDER BY s.lidId asc, dup.dubbelen desc, actId desc, rd.datum, rd.Id");
 
-$data = $page_nums->fetch_data($velden, "ORDER BY s.lidId asc, dup.dubbelen desc, actId desc, rd.datum, rd.Id"); ?>
-
+?>
 <form action="InsStallijstscan_controle.php" method = "post">
-
-
 <?php
 $aantal_niet_op_stallijst = mysqli_query($db,"
 SELECT count(Id) aant

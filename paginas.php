@@ -1,7 +1,7 @@
 <?php
 
 /********************   MEERDERE PAGINA'S  ********************/
-$page_nums = new Page_numbers($tabel, $WHERE, $db, $pag, $RPP, $_SERVER['PHP_SELF']);
+$page_nums = new Paginator($tabel, $WHERE, $db, $pag, $RPP, $_SERVER['PHP_SELF']);
 
 Session::set("RPP", $page_nums->rpp);
 $RPP = Session::get("RPP"); // zorgt dat regels per pagina wordt onthouden bij het opnieuw laden van de pagina

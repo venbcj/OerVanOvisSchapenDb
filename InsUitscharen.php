@@ -181,7 +181,6 @@ impAgrident rd
 $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 10 and isnull(rd.verwerkt) ";
 
 include "paginas.php";
-
 $data = $page_nums-> fetch_data($velden, "ORDER BY right(rd.levensnummer,".mysqli_real_escape_string($db,$Karwerk).") "); 
 
 ?>
@@ -190,14 +189,7 @@ $data = $page_nums-> fetch_data($velden, "ORDER BY right(rd.levensnummer,".mysql
 <tr> <form action="InsUitscharen.php" method = "post">
  <td colspan = 3 style = "font-size : 13px;">
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
- <td colspan = 2 align = "center" style = "font-size : 14px;"><?php 
-/*echo '<br>'; 
-echo '$page_nums->total_pages : '.$page_nums->total_pages.'<br>'; 
-echo '$page_nums->total_records : '.$page_nums->total_records.'<br>'; 
-echo '$page_nums->rpp : '.$page_nums->rpp.'<br>'; */
-echo /*'$page_numbers : '.*/$page_numbers/*.'<br> '.$record_numbers.'<br>'*/; 
-/*echo '$page_nums->count_records() : '. $page_nums->count_records();*/ 
-//echo '$page_nums->pagina_string : '. $page_nums->pagina_string; ?></td>
+ <td colspan = 2 align = "center" style = "font-size : 14px;"><?php echo $page_numbers; ?></td>
  <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
  <td align = 'right'> <input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
  <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td></tr>

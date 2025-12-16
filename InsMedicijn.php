@@ -87,13 +87,9 @@ left join tblRedenuser ru on (rd.reden = ru.reduId)
 ";
 
 $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 8 and isnull(rd.verwerkt) ";
+$order_by = "ORDER BY sort, rd.Id";
 
-include "paginas.php";
-
-$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id");
-}
-
-else {
+} else {
 $velden = "rd.readId, str_to_date(rd.datum,'%Y/%m/%d') sort, rd.datum, rd.levnr_pil levnr, rd.reden_pil scan, 
 
     s.schaapId,
@@ -139,12 +135,14 @@ left join
 ";
 
 $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.teller_pil is not null and isnull(rd.verwerkt) ";
+$order_by = "ORDER BY sort, rd.readId";
+
+}
 
 include "paginas.php";
+$data = $page_nums->fetch_data($velden, $order_by);
 
-$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.readId");
-
-} ?>
+?>
 
 <table border = 0>
 <form action="InsMedicijn.php" method = "post">

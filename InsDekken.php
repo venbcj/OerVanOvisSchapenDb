@@ -55,8 +55,9 @@ impAgrident rd
 $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 18 and isnull(verwerkt) ";
 
 include "paginas.php";
+$data = $page_nums->fetch_data($velden, "ORDER BY date_format(rd.datum,'%d/%m/%Y'), rd.Id");
 
-$data = $page_nums->fetch_data($velden, "ORDER BY date_format(rd.datum,'%d/%m/%Y'), rd.Id"); ?>
+?>
 
 <table border = 0>
 <tr> <form action="InsDekken.php" method = "post">

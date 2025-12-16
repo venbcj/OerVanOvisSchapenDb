@@ -125,13 +125,9 @@ impAgrident rd
 "; 
 
 $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 14 and isnull(rd.verwerkt) ";
+$order_by = "ORDER BY sort, rd.Id";
 
-include "paginas.php";
-
-$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id");
-}
-
-else {
+} else {
 $velden = "rd.readId, str_to_date(rd.datum,'%d/%m/%Y') sort, rd.datum, rd.levnr_uitv levnr, rd.reden_uitv, ru.reduId dbreduId,
 lower(h.actie) actie, h.af, s.geslacht, ouder.datum dmaanw, date_format(max.datummax,'%Y-%m-%d') datummax, date_format(max.datummax,'%d-%m-%Y') maxdatum"; 
 
@@ -211,11 +207,14 @@ impReader rd
 "; 
 
 $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.teller_uitv is not null and isnull(rd.verwerkt) ";
+$order_by = "ORDER BY sort, rd.readId";
+
+}
 
 include "paginas.php";
+$data = $page_nums->fetch_data($velden, $order_by); 
 
-$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.readId"); 
-} ?>
+?>
 
 <table border = 0>
 <tr> <form action="InsUitval.php" method = "post">

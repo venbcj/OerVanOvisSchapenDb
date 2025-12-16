@@ -108,9 +108,9 @@ $tabel = " tblSchaap s
 $WHERE = " WHERE (isnull(b.hokId) or uit.hist is not null) ";
 
 include "paginas.php";
-
 $data = $page_nums->fetch_data($velden, "ORDER BY right(s.levensnummer,".mysqli_real_escape_string($db,$Karwerk).")"); 
 // Einde Opbouwen paginanummering
+
 if(!isset($sess_dag) && !isset($sess_bestm)) { $width = 100; } 
 else { $width = 200; } ?>
 <table border = 0 > <!-- tabel1 --> <tr> <td>

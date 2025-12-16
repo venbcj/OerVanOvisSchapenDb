@@ -119,12 +119,9 @@ impAgrident rd
  " ;
 
 $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 4 and isnull(rd.verwerkt)";
+$order_by = "ORDER BY sort, rd.Id";
 
-include "paginas.php";
-
-$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id"); 
-}
-else {
+} else {
 
 $velden = "str_to_date(rd.datum,'%d/%m/%Y') sort , rd.datum, rd.readId, rd.levnr_sp levnr, round((rd.speenkg/100),2) kg,
 
@@ -194,11 +191,14 @@ impReader rd
  " ;
 
 $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.teller_sp is not null and isnull(rd.verwerkt)";
+$order_by = "ORDER BY sort, rd.readId";
+
+}
 
 include "paginas.php";
+$data = $page_nums->fetch_data($velden, $order_by); 
 
-$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.readId"); 
-} ?>
+?>
 
 <table border = 0>
 <tr> <form action="InsSpenen.php" method = "post">

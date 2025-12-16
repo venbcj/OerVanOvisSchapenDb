@@ -388,6 +388,46 @@ ORDER BY hoknr
 return $vw;
     }
 
+    public function zoek_nu_in_verblijf_geb_spn($hokId) {
+        return $this->first_field(
+            <<<SQL
+SELECT count(b.bezId) aantin
+FROM tblBezet b
+ join tblHistorie h on (b.hisId = h.hisId)
+ join tblStal st on (st.stalId = h.stalId)
+ left join 
+ (
+    SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
+    FROM tblBezet b
+     join tblHistorie h1 on (b.hisId = h1.hisId)
+     join tblActie a1 on (a1.actId = h1.actId)
+     join tblHistorie h2 on (h1.stalId = h2.stalId
+ and ((h1.datum < h2.datum) or (h1.datum = h2.datum
+ and h1.hisId < h2.hisId)) )
+     join tblActie a2 on (a2.actId = h2.actId)
+     join tblStal st on (h1.stalId = st.stalId)
+    WHERE b.hokId = :hokId
+ and a2.uit = 1
+ and h1.skip = 0
+ and h2.skip = 0
+    GROUP BY b.bezId, h1.hisId
+ ) uit on (uit.hisv = b.hisId)
+ left join (
+    SELECT st.schaapId, h.datum
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3
+ and h.skip = 0
+ ) prnt on (prnt.schaapId = st.schaapId)
+WHERE b.hokId = :hokId
+ and h.skip = 0
+ and isnull(uit.bezId)
+ and isnull(prnt.schaapId)
+SQL
+        , [['hokId', $hokId, self::INT]]
+        );
+    }
+
     public function zoek_nu_in_verblijf_geb($hokId) {
 $vw = $this->db->query("
 SELECT count(b.bezId) aantin
@@ -469,8 +509,11 @@ if ($vw->num_rows == 0) {
 return $vw->fetch_row()[0];
     }
 
+    // uit Bezet
+    // (iets met dezelfde titel staat ook in Hoklijsten. Is het dezelfde query?)
     public function zoek_nu_in_verblijf_prnt($hokId) {
-       $vw = $this->db->query("
+        return $this->first_field(
+            <<<SQL
 SELECT count(distinct(st.schaapId)) aantin
 FROM tblStal st
  join tblHistorie h on (h.stalId = st.stalId)
@@ -480,23 +523,84 @@ FROM tblStal st
     FROM tblBezet b
      join tblHistorie h1 on (b.hisId = h1.hisId)
      join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+     join tblHistorie h2 on (h1.stalId = h2.stalId
+ and ((h1.datum < h2.datum) or (h1.datum = h2.datum
+ and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
-    WHERE b.hokId = '".$this->db->real_escape_string($hokId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+    WHERE b.hokId = :hokId
+ and a2.uit = 1
+ and h1.skip = 0
+ and h2.skip = 0
     GROUP BY b.bezId, h1.hisId
  ) uit on (b.bezId = uit.bezId)
  join (
     SELECT schaapId
     FROM tblStal st
      join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
+    WHERE h.actId = 3
+ and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE b.hokId = '".$this->db->real_escape_string($hokId)."' and isnull(uit.bezId) and h.skip = 0
-");
-if ($vw->num_rows == 0) {
-    return null;
-}
-return $vw->fetch_row()[0];
+WHERE b.hokId = :hokId
+ and isnull(uit.bezId)
+ and h.skip = 0
+SQL
+        , [[':hokId', $hokId, self::INT]]
+        );
+    }
+
+    // uit HokOverpl
+    public function zoek_nu_in_verblijf_parent($hokId) {
+        return $this->first_field(
+            <<<SQL
+SELECT count(b.hisId) aantin
+FROM (
+    SELECT b.hisId, b.hokId
+    FROM tblBezet b
+     join tblHistorie h on (b.hisId = h.hisId)
+     join tblStal st on (st.stalId = h.stalId)
+     join (
+        SELECT st.schaapId, h.hisId, h.datum
+        FROM tblStal st
+        join tblHistorie h on (st.stalId = h.stalId)
+        WHERE h.actId = 3
+ and h.skip = 0
+    ) prnt on (prnt.schaapId = st.schaapId)
+    WHERE b.hokId = :hokId
+ and h.skip = 0
+ and h.datum >= prnt.datum
+ ) b
+ join tblHistorie h on (b.hisId = h.hisId)
+ join tblStal st on (st.stalId = h.stalId)
+ left join 
+ (
+    SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
+    FROM tblBezet b
+     join tblHistorie h1 on (b.hisId = h1.hisId)
+     join tblActie a1 on (a1.actId = h1.actId)
+     join tblHistorie h2 on (h1.stalId = h2.stalId
+ and ((h1.datum < h2.datum) or (h1.datum = h2.datum
+ and h1.hisId < h2.hisId)) )
+     join tblActie a2 on (a2.actId = h2.actId)
+     join tblStal st on (h1.stalId = st.stalId)
+    WHERE b.hokId = :hokId
+ and a2.uit = 1
+ and h1.skip = 0
+ and h2.skip = 0
+ and h2.actId != 3
+    GROUP BY b.bezId, h1.hisId
+ ) uit on (uit.hisv = b.hisId)
+ join (
+    SELECT st.schaapId, h.datum
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3
+ and h.skip = 0
+ ) prnt on (prnt.schaapId = st.schaapId)
+WHERE b.hokId = :hokId
+ and isnull(uit.bezId)
+SQL
+        , [[':hokId', $hokId, self::INT]]
+        );
     }
 
     public function zoek_verlaten_geb_excl_overpl_en_uitval($hokId, $dmstopgeb) {

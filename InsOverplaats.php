@@ -105,8 +105,8 @@ impAgrident rd
 $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 5 and isnull(rd.verwerkt) and isnull(rs.Id) ";
 
 include "paginas.php";
-
 $data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id");
+
 }
 else {
 $velden = "rd.readId, str_to_date(rd.datum,'%d/%m/%Y') sort , rd.datum, rd.verwerkt, rd.levnr_ovpl levnr, rd.hok_ovpl hok_rd, hb.scan hok_db, 

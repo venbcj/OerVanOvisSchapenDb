@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 require_once("autoload.php");
 
@@ -9,7 +9,7 @@ $versie = '31-12-2023'; /* and h.skip = 0 toegevoegd aan tblHistorie */
 $versie = '07-01-2024'; /* Select_all toegevoegd en include kalender op een andere plek gezet omdat dit elkaar anders bijt. */
 $versie = '13-01-2024'; /* Sortering op fase en werknr */
 $versie = '20-01-2024'; /* in nestquery 'uit' is 'and a1.aan = 1' uit WHERE gehaald. De hisId die voorkomt in tblBezet volstaat. Bovendien is bij Pieter hisId met actId 3 gekoppeld aan tblBezet en heeft het veld 'aan' in tblActie de waarde 0. De WHERE incl. 'and a1.aan = 1' geeft dus een fout resultaat. */
-$versie = "11-03-2024"; /* Bij geneste query uit 
+$versie = "11-03-2024"; /* Bij geneste query uit
 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 */
@@ -31,7 +31,7 @@ $file = "Bezet.php";
 include "login.php"; ?>
 
                 <TD valign = "top">
-<?php 
+<?php
 if (!(Session::isset('DT1'))) Session::set('DT1', '1900-01-01');
 
 if (Auth::is_logged_in()) {
@@ -40,15 +40,15 @@ if(isset($_GET['pstId']))    { Session::set("ID", $_GET['pstId']); } $ID = Sessi
 
 
 if(isset($_POST['knpVerder_']) && isset($_POST['txtDatumall_']))    {
-    $datum = $_POST['txtDatumall_']; Session::set("DT1", $datum); } 
- $sess_dag = Session::get("DT1"); 
+    $datum = $_POST['txtDatumall_']; Session::set("DT1", $datum); }
+ $sess_dag = Session::get("DT1");
 
 $hok_gateway = new HokGateway();
 $hoknr = $hok_gateway->findHoknrById($ID);
 
 if(isset($_POST['knpSave_'])) { include "save_verlaten.php"; } // staat hier omdat $doelId moet zijn gedeclareerd !
 
-// Opbouwen paginanummering 
+// Opbouwen paginanummering
 $velden = " s.schaapId, s.levensnummer, s.geslacht, hm.datum, date_format(hm.datum,'%d-%m-%Y') dag, prnt.schaapId prnt, b_prnt.hokId, uit.bezId ";
 
 $tabel = "tblSchaap s
@@ -61,7 +61,7 @@ $tabel = "tblSchaap s
             GROUP BY h.stalId
      ) hmax on (hmax.stalId = st.stalId)
      join tblHistorie hm on (hm.hisId = hmax.hisId)
-     
+
      join tblHistorie h on (st.stalId = h.stalId)
      join (
             SELECT b.hisId, b.hokId
@@ -96,30 +96,30 @@ $tabel = "tblSchaap s
 $WHERE = " WHERE b_prnt.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId) ";
 
 include "paginas.php";
-
-$data = $page_nums->fetch_data($velden, "ORDER BY s.geslacht, right(s.levensnummer,'".mysqli_real_escape_string($db,$Karwerk)."') "); 
+$data = $page_nums->fetch_data($velden, "ORDER BY s.geslacht, right(s.levensnummer,'".mysqli_real_escape_string($db,$Karwerk)."') ");
 // Einde Opbouwen paginanummering
-if(!isset($sess_dag)) { $width = 100; } 
+
+if(!isset($sess_dag)) { $width = 100; }
 else { $width = 200; } ?>
 <form action="HokVerlaten.php" method = "post">
 <table border = 0 > <!-- tabel1 --> <tr> <td>
 <table border = 0 > <!-- tabel2 -->
-<tr> 
+<tr>
 <td width = <?php echo $width; ?> rowspan = 2 style = "font-size : 18px;">
   <b> <?php echo $hoknr; ?></b>
 </td>
 
  <?php if(!isset($sess_dag)) {
   include "kalender.php"; ?>
-     <td width = 750 style = "font-size : 14px;"> 
+     <td width = 750 style = "font-size : 14px;">
  &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Optioneel een datum voor alle schapen
   <input id="datepicker1" type = text name = 'txtDatumall_' size = 8 value = <?php if(isset($sess_dag)) { echo $sess_dag; } ?> > &nbsp
  <?php } else { ?> <td style = "font-size : 14px;">  <?php } ?>
 <!-- Opmaak paginanummering -->
  Regels Per Pagina: <?php echo $kzlRpp;
-if(isset($sess_dag)) { ?> </td> <td align = center > <?php echo $page_numbers.'<br>'; ?> </td> <td> <?php } 
+if(isset($sess_dag)) { ?> </td> <td align = center > <?php echo $page_numbers.'<br>'; ?> </td> <td> <?php }
 // Einde Opmaak paginanummering ?>
- </td> 
+ </td>
  <td width = 150 align = center>
 <?php if(!isset($sess_dag)) { ?>
   &nbsp &nbsp &nbsp <input type = submit name = "knpVerder_" value = "Verder">
@@ -127,7 +127,7 @@ if(isset($sess_dag)) { ?> </td> <td align = center > <?php echo $page_numbers.'<
  <td width = 200 align = 'right'></td>
    <?php }
 else { ?>
-  <input type = submit name = "knpVervers_" value = "Verversen"> 
+  <input type = submit name = "knpVervers_" value = "Verversen">
  </td>
  <td width = 200 align = 'right'>
   <input type = submit name = "knpSave_" value = "Verlaten">&nbsp &nbsp
@@ -168,14 +168,14 @@ if(isset($data)) {
 // Bij de eerste keer openen van deze pagina bestaat als enigste keer het veld txtDatumall_ . knpVervers_ bestaat als hidden veld. txtDatum_$schaapId en txtGewicht_$schaapId bestaan dan nog niet. Variabalen $datum en $kg kunnen enkel worden gevuld als wordt voldaan aan (isset($_POST['knpVervers_']) && !isset($_POST['txtDatumall_']))  !!!
     if(!isset($datum) && isset($sess_dag)) { $datum = $sess_dag; }
     if(isset($datum))  { $makeday = date_create($datum); $day = date_format($makeday,'Y-m-d'); }
-    
+
 // Controleren of ingelezen waardes correct zijn.
     if( empty($datum)                                                    || # Overplaatsdatum is leeg
         $day < $dmmax                                                     # speendag is kleiner dan laatste registratiedatum
     )
     {$oke = 0; } else { $oke = 1; }
-     
-// EINDE Controleren of ingelezen waardes corretc zijn.  
+
+// EINDE Controleren of ingelezen waardes corretc zijn.
 if (isset($_POST['knpVervers_']) && !isset($_POST['txtDatumall_'])) { $cbKies = $_POST["chbkies_$schaapId"]; $txtOke = $_POST["txtOke_$schaapId"]; } else { $cbKies = $oke; $txtOke = $oke; } // $cbKies is tbv het vasthouden van de keuze inlezen of niet ?>
 
 <!--    **************************************
@@ -183,10 +183,10 @@ if (isset($_POST['knpVervers_']) && !isset($_POST['txtDatumall_'])) { $cbKies = 
     ************************************** -->
 
 <tr style = "font-size:14px;">
- <td align = center> 
+ <td align = center>
 <!--    <input type = hidden size = 1 name = <?php #echo "txtOke_$schaapId"; ?>  value = <?php #echo $oke; ?> >--><!--hiddden Dit veld zorgt ervoor dat chbkies wordt aangevinkt als het ingebruk wordt gesteld -->
     <input type = hidden size = 1 name = <?php echo "chbkies_$schaapId"; ?> value = 0 > <!-- hiddden -->
-    <input type = checkbox           name = <?php echo "chbkies_$schaapId"; ?> value = 1 <?php echo $cbKies == 1 ? 'checked' : ''; if ($oke <> 1) { ?> disabled <?php }  else {    ?> class="checkall" <?php } 
+    <input type = checkbox           name = <?php echo "chbkies_$schaapId"; ?> value = 1 <?php echo $cbKies == 1 ? 'checked' : ''; if ($oke <> 1) { ?> disabled <?php }  else {    ?> class="checkall" <?php }
     /* else if (txtOke == 0) wordt maar 1x gepasseerd nl. als onvolledige gegevens voor het eerst volledig zijn ingevuld. Anders is of het eerst gedeeldte van het if-statement van toepassing of txtOke == 1.  */
  ?> >
  </td>
@@ -198,26 +198,26 @@ if (isset($_POST['knpVervers_']) && !isset($_POST['txtDatumall_'])) { $cbKies = 
  <td width = 110 align = center> <?php echo $levnr; ?>
  </td>
  <td align = center> <?php if(isset($fase)) { echo $fase; } ?> </td>
- <td colspan = 3 style = "color : red"> 
+ <td colspan = 3 style = "color : red">
 <?php if($day < $dmmax) { echo 'De datum '.$datum.' mag niet voor '.$maxdm.' liggen.';}
 ?>
-</td>    
+</td>
 </tr>
 <!--    **************************************
     **    EINDE OPMAAK GEGEVENS    **
     ************************************** -->
 
-<?php } 
+<?php }
         } // Einde if(isset($data))
       } ?>
 </table> <!-- Einde tabel3 --> </td> </tr>
 </table> <!-- Einde tabel1 -->
-</form> 
+</form>
 
 
 </TD>
-<?php    
-      include "menu1.php"; 
+<?php
+      include "menu1.php";
 include "select-all.js.php";
 } ?>
 </body>

@@ -21,6 +21,33 @@ ORDER BY hoknr
 ");
     }
 
+    public function items_without_one($lidId, $hokId) {
+        $vw = $this->run_query(
+            <<<SQL
+SELECT hokId, hoknr
+FROM tblHok h
+WHERE lidId = :lidId
+ and hokId != :hokId
+ and actief = 1
+ORDER BY hoknr
+SQL
+        , [
+            [':lidId', $lidId, self::INT],
+            [':hokId', $hokId, self::INT],
+        ]);
+        if ($vw->num_rows == 0) {
+            return [[], []];
+        }
+        $index = 0;
+        $hoknum = [];
+        while ($hnr = $vw->fetch_assoc()) { 
+            $hoknId[$index] = $hnr['hokId']; 
+            $hoknum[$index] = $hnr['hoknr'];
+            $index++; 
+        } 
+        return [$hoknId, $hoknum];
+    }
+
 public function lidIdByHokId($hok) {
 $vw = $this->db->query("
 SELECT lidId

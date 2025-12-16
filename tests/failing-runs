@@ -1,3 +1,9 @@
 1765814044
 UpdSchaapTest::testGetUpdSchaap
 UpdSchaapTest::testSaveUpdSchaap
+
+1765881989
+ControllersTest::testGetRouteAuthenticated "HokUitscharen.php" "HokOverpl.php" "HokSpenen.php"
+
+1765882227
+ControllersTest::testGetRouteAuthenticatedWithData with data set "GroeiresultaatWeging"
