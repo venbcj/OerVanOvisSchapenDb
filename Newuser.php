@@ -50,11 +50,7 @@ if (Auth::is_logged_in()) {
             $userForm['ingescand'] = $ingescand;
             $userForm['beheer'] = 0;
             $userForm['histo'] = 1;
-            $lid_gateway->save_new($userForm);
-            # alias is nu de primaire sleutel; uniek door de aanpak in "getAlias" (die we "createAlias" gaan noemen).
-            # Rest van de db gebruikt lidId, dus die halen we even op.
-            # Na verbouwing kan een insert-query direct het aangemaakte nummer teruggeven --BCB
-            $newId = $lid_gateway->findIdByAlias($userForm['alias']);
+            $newId = $lid_gateway->save_new($userForm);
             $ubn_gateway->insert($newId, $userForm['ubn']);
             # voormalige include "newuser_data":
 /* 11-6-2020 Standaard Lambar toegevoegd bij nieuwe users

@@ -57,6 +57,7 @@ if ($count_ar2 > $count_ar1) {
     $max = $count_ar2;
 } //echo '$max = '.$max.'<br>';
 
+$new_ar = [];
 for ($i = 0; $i < $max; $i++) { // doorloop een loop een aantal keer dat gelijk is aan het maximum records van 1 van de twee query's
 // $i is een index en begint bij 0. Als $i =3 dan is $max = 4 !!
 // echo '$i = '.$i.'<br>';

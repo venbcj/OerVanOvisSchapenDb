@@ -33,7 +33,9 @@ class Paginator {
     }
 
     private function determine_page($paginasessie) {
-        return isset($_GET['page']) && is_numeric($_GET['page']) && $_GET['page'] > 0 && $_GET['page'] <= $this->total_pages ? $_GET['page'] : $paginasessie;
+        return isset($_GET['page']) && is_numeric($_GET['page']) && $_GET['page'] > 0 && $_GET['page'] <= $this->total_pages
+            ? $_GET['page']
+            : $paginasessie;
     }
 
     private function count_records() {

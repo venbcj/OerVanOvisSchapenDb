@@ -181,7 +181,7 @@ impAgrident rd
 $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 10 and isnull(rd.verwerkt) ";
 
 include "paginas.php";
-$data = $page_nums-> fetch_data($velden, "ORDER BY right(rd.levensnummer,".mysqli_real_escape_string($db,$Karwerk).") "); 
+$data = $paginator-> fetch_data($velden, "ORDER BY right(rd.levensnummer,".mysqli_real_escape_string($db,$Karwerk).") "); 
 
 ?>
 

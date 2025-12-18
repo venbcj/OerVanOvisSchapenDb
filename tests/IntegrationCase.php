@@ -10,6 +10,15 @@ class IntegrationCase extends UnitCase {
     protected $tablecounts = [];
     protected $expectedincrements = [];
 
+    public function setup(): void {
+        $this->uses_db();
+        $this->db->begin_transaction();
+    }
+
+    public function teardown(): void {
+        $this->db->rollback();
+    }
+
     protected function simulateGetRequest($path, $data = []) {
         $_SERVER['HTTP_HOST'] = 'oer-dev';
         $_SERVER['REQUEST_SCHEME'] = 'http';

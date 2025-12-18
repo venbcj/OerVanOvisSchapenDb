@@ -25,6 +25,7 @@
       </exclude>
       <file>./classes/Paginator.php</file>
       <file>./classes/Paginator.php</file>
+      <file>./Gebruiker.php</file>
     </whitelist>
   </filter>
 </phpunit>

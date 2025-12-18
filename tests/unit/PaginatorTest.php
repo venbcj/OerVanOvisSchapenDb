@@ -4,6 +4,8 @@ class PageNumbersTest extends UnitCase {
 
     private const AANTAL_LEDEN = 2; // uit de fixtures
 
+    // dependencies. Er zijn (nog) tests die records verwijderen uit tblLeden, en niet opruimen.
+    // Daardoor faalt deze test af en toe.
     public function test_constructor() {
         $this->uses_db();
         $sut = new Paginator('tblLeden', '', $this->db);

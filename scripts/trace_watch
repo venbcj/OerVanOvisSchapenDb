@@ -1,0 +1,17 @@
+#!/bin/bash
+
+RUNNER='scripts/suite'
+
+DIRS='./'
+
+watch() {
+    clear
+    $@
+    while inotifywait -q --exclude "\.swp|log*|vendor|\.actual|\.cache" -e modify,close_write --recursive $DIRS; do
+        clear
+        $@
+    done
+}
+
+cover off
+XDEBUG_SESSION_START=1 watch $RUNNER $*

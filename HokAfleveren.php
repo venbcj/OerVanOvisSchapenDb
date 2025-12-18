@@ -129,7 +129,7 @@ $tabel = "tblSchaap s
  $WHERE = $where;
 
 include "paginas.php";
-$data = $page_nums->fetch_data($velden, "GROUP BY s.levensnummer ORDER BY right(s.levensnummer,'".mysqli_real_escape_string($db,$Karwerk)."')");
+$data = $paginator->fetch_data($velden, "GROUP BY s.levensnummer ORDER BY right(s.levensnummer,'".mysqli_real_escape_string($db,$Karwerk)."')");
 // Einde Opbouwen paginanummering
 
 if(!isset($sess_dag) && !isset($sess_bestm)) { $width = 100; }

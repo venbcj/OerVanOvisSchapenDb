@@ -32,10 +32,12 @@ include "login.php";
 if (Auth::is_logged_in()) {
     $lid_gateway = new LidGateway();
     if (isset($_POST['knpSave'])) {
-        if ($_POST['txtKarWerknr'] < 1 || $_POST['txtKarWerknr'] > 8) {
+        if ($_POST['user']['kar_werknr'] < 1 || $_POST['user']['kar_werknr'] > 8) {
             $fout = "Het aantal karakters van een werknr moet liggen tussen 1 en 8.";
         } else {
-            $lid_gateway->update_formdetails($lidId, $_POST);
+            $data = $_POST['user'];
+            $data['lidId'] = $lidId;
+            $lid_gateway->update_formdetails($data);
         }
     }
     [$relnr, $urvo, $prvo, $karwerknr, $histo, $groei] = $lid_gateway->get_form($lidId);
@@ -58,17 +60,17 @@ if (Auth::is_logged_in()) {
 </tr>
 <tr>
  <td style = "font-size : 14;"  >Aantal cijfers t.b.v. werknr (max 8)</td>
- <td width = 600 ><input type = text name = "txtKarWerknr" size = 1 value = <?php echo $karwerknr; ?>></td><td ></td>
+ <td width = 600 ><input type = text name = "user[kar_werknr]" size = 1 value = <?php echo $karwerknr; ?>></td><td ></td>
 </tr>
 <tr>
  <td style = "font-size : 14;"  >Historie schaap standaard tonen</td>
  <td width = 600 >
 <!-- KZLja/nee -->
-<select <?php echo "name=\"kzlHis\" "; ?> style = "width:60; font-size:13px;">
+<select name="user[histo]" style = "width:60; font-size:13px;">
 <?php
 $opties = array(1 => 'Ja', 0 => 'Nee');
 foreach ($opties as $key => $waarde) {
-    if ((!isset($_POST['knpSave']) && $histo == $key) || (isset($_POST["kzlHis"]) && $_POST["kzlHis"] == $key)) {
+    if ((!isset($_POST['knpSave']) && $histo == $key) || (isset($_POST['user']['histo']) && $_POST['user']['histo'] == $key)) {
         echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
     } else {
         echo '<option value="' . $key . '">' . $waarde . '</option>';
@@ -83,12 +85,11 @@ foreach ($opties as $key => $waarde) {
  <td style = "font-size : 14;"  >Groei schaap standaard tonen als </td>
  <td width = 600 >
 <!-- KZLGroei -->
-<select <?php echo "name=\"kzlGroei\" ";
-?> style = "width:180; font-size:13px;">
+<select name="user[groei]" style = "width:180; font-size:13px;">
 <?php
 $opties = array('Totale groei', 'Gemiddelde groei per dag');
 foreach ($opties as $key => $waarde) {
-    if ((!isset($_POST['knpSave']) && $groei == $key) || (isset($_POST["kzlGroei"]) && $_POST["kzlGroei"] == $key)) {
+    if ((!isset($_POST['knpSave']) && $groei == $key) || (isset($_POST['user']['groei']) && $_POST['user']['groei'] == $key)) {
         echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
     } else {
         echo '<option value="' . $key . '">' . $waarde . '</option>';
@@ -106,13 +107,12 @@ foreach ($opties as $key => $waarde) {
  <td style = "font-size : 14;"  >Reader</td>
  <td>
           <!-- kzlReader -->
-          <select <?php echo "name=\"kzlReader\" ";
-?> style = "width:80; font-size:13px;">
+          <select name="user[reader]" style = "width:80; font-size:13px;">
 <option></option>
 <?php
 $opties = array('Agrident' => 'Agrident', 'Biocontrol' => 'Biocontrol');
 foreach ($opties as $key => $waarde) {
-    if ((!isset($_POST['knpSave']) && $reader == $key) || (isset($_POST["kzlReader"]) && $_POST["kzlReader"] == $key)) {
+    if ((!isset($_POST['knpSave']) && $reader == $key) || (isset($_POST['user']['reader']) && $_POST['user']['reader'] == $key)) {
         echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
     } else {
         echo '<option value="' . $key . '">' . $waarde . '</option>';
@@ -147,13 +147,13 @@ for ($i = 0; $i < $count; $i++) {
 }
 ?>
  </td>
- <td width = 160 align = "right" >Gebruikersnaam RVO :</td><td><input type = "text" name = "txtUrvo" size = 15 value = <?php echo $urvo;
+ <td width = 160 align = "right" >Gebruikersnaam RVO :</td><td><input type = "text" name = "user[urvo]" size = 15 value = <?php echo $urvo;
 ?> ></td>
 </tr>
 <tr>
-<td width = 210 align = 'right'>Relatienummer RVO :</td><td width = 100><input type = text name = "txtRelnr" size = 15 value = <?php echo $relnr;
+<td width = 210 align = 'right'>Relatienummer RVO :</td><td width = 100><input type = text name = "user[relnr]" size = 15 value = <?php echo $relnr;
 ?>></td>
- <td width = 160 align = "right">Wachtwoord RVO :</td><td><input type = password name = "txtPrvo" size = 15 value = <?php echo $prvo; ?> ></td>
+ <td width = 160 align = "right">Wachtwoord RVO :</td><td><input type = password name = "user[prvo]" size = 15 value = <?php echo $prvo; ?> ></td>
  <td>
      <a href='<?php $url; ?>Ubn_toevoegen.php' style = 'color : blue'> Ubn toevoegen </a>
 </td>

@@ -107,7 +107,7 @@ $tabel = "
 $WHERE = '';
 
 include "paginas.php";
-$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id");
+$data = $paginator->fetch_data($velden, "ORDER BY sort, rd.Id");
 
 ?>
 <table border = 0>

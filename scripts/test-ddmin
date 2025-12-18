@@ -3,7 +3,7 @@
 set -euo pipefail
 
 PHPUNIT="vendor/bin/phpunit"
-FAILING_TEST="Tests\\FlakyTest::testFails"
+FAILING_TEST=$1
 LIST="tests.list" # default: tests.list
 
 mapfile -t ALL < "$LIST"

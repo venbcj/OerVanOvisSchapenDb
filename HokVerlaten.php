@@ -96,7 +96,7 @@ $tabel = "tblSchaap s
 $WHERE = " WHERE b_prnt.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId) ";
 
 include "paginas.php";
-$data = $page_nums->fetch_data($velden, "ORDER BY s.geslacht, right(s.levensnummer,'".mysqli_real_escape_string($db,$Karwerk)."') ");
+$data = $paginator->fetch_data($velden, "ORDER BY s.geslacht, right(s.levensnummer,'".mysqli_real_escape_string($db,$Karwerk)."') ");
 // Einde Opbouwen paginanummering
 
 if(!isset($sess_dag)) { $width = 100; }

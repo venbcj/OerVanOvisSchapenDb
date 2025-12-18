@@ -170,7 +170,7 @@ FROM tblSchaap s
 $WHERE = " WHERE hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(bezId) ". $filterResult;
 
 include "paginas.php";
-$data = $page_nums->fetch_data($velden, "ORDER BY sort, right(levensnummer,$Karwerk)");
+$data = $paginator->fetch_data($velden, "ORDER BY sort, right(levensnummer,$Karwerk)");
 // Einde Opbouwen paginanummering
 
 if(!isset($sess_dag) && !isset($sess_bestm)) { $width = 100; }

@@ -14,8 +14,11 @@ class Db {
     }
 
     public function __get($name) {
-        if ($name == 'error') {
+        switch ($name) {
+        case 'error':
             return $this->connection->error;
+        case 'insert_id':
+            return $this->connection->insert_id;
         }
         throw new Exception("Unknown property $name");
     }
@@ -25,10 +28,14 @@ class Db {
             $logger = Logger::instance();
         }
         $this->logger = $logger;
+        // duplicated code in basisfuncties:setup_db() en Db::__construct
         include "database.php";
-        $db = mysqli_connect($host, $user, $pw, $dtb);
-        if ($db == false) {
-            throw new Exception('Connectie database niet gelukt');
+        global $db;
+        if (!isset($db) || $db === false) {
+            $db = mysqli_connect($host, $user, $pw, $dtb);
+            if ($db == false) {
+                throw new Exception('Connectie database niet gelukt');
+            }
         }
         $this->connection = $db;
     }

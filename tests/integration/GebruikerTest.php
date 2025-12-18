@@ -21,8 +21,8 @@ class GebruikerTest extends IntegrationCase {
         $this->db->query("UPDATE tblLeden SET meld=0 WHERE lidId=42");
         $this->get('/Gebruiker.php', ['ingelogd' => 1, 'pstId' => 42]);
         $this->assertNoNoise();
-        $this->assertAbsent('"radMeld" value="1" checked');
-        $this->assertPresent('"radMeld" value="0" checked');
+        $this->assertAbsent('"user[meld]" value="1" checked');
+        $this->assertPresent('"user[meld]" value="0" checked');
     }
 
     public function testGetMeld() {
@@ -31,23 +31,23 @@ class GebruikerTest extends IntegrationCase {
         $this->assertTableWithPK('tblLeden', 'lidId', 42);
         $this->db->query("UPDATE tblLeden SET meld=1 WHERE lidId=42");
         $this->get('/Gebruiker.php', ['ingelogd' => 1, 'pstId' => 42]);
-        $this->assertPresent('"radMeld" value="1" checked');
+        $this->assertPresent('"user[meld]" value="1" checked');
         $this->db->query("UPDATE tblLeden SET meld=0 WHERE lidId=42");
     }
 
     public function testPostNotMeld() {
         $this->uses_db();
         $this->db->query("UPDATE tblLeden SET meld=1 WHERE lidId=42");
-        $this->post('/Gebruiker.php', ['ingelogd' => 1, 'pstId' => 42, 'radMeld' => 0]);
-        $this->assertAbsent('"radMeld" value="1" checked');
+        $this->post('/Gebruiker.php', ['ingelogd' => 1, 'pstId' => 42, 'user' => ['meld' => 0]]);
+        $this->assertAbsent('"user[meld]" value="1" checked');
         $this->db->query("UPDATE tblLeden SET meld=0 WHERE lidId=42");
     }
 
     public function testPostMeld() {
         $this->uses_db();
         $this->db->query("UPDATE tblLeden SET meld=0 WHERE lidId=42");
-        $this->post('/Gebruiker.php', ['ingelogd' => 1, 'pstId' => 42, 'radMeld' => 1]);
-        $this->assertPresent('"radMeld" value="1" checked');
+        $this->post('/Gebruiker.php', ['ingelogd' => 1, 'pstId' => 42, 'user' => ['meld' => 1]]);
+        $this->assertPresent('"user[meld]" value="1" checked');
     }
 
     public function testSaveGebruiker() {
@@ -56,25 +56,29 @@ class GebruikerTest extends IntegrationCase {
         $this->runsetup('tblLeden');
         $this->post('/Gebruiker.php', [
             'ingelogd' => 1,
-            'uid' => 42, // hack. login.php vangt dit op;
+            'uid' => 42,
+            // hack. login.php vangt dit op;
             'knpSave' => 1,
-            'txtRoep' => 'rr',
-            'txtVoeg' => 'rr',
-            'txtNaam' => 'rr',
-            'txtTel' => 'rr',
-            'txtMail' => '',
-            'txtRelnr' => 993,
-            'txtUrvo' => 994,
-            'txtPrvo' => 995,
-            'kzlReader' => 'Agrident',
-            'radMeld' => 1,
-            'radTech' => 1,
-            'radFin' => 0,
-            # 'radBeheer' => 1, # and this, my friend, is why we do not put the form implementation into the name
+            'user' => [
+                'roep' => 'rr',
+                'voegsel' => 'rr',
+                'naam' => 'rr',
+                'tel' => 'rr',
+                'mail' => '',
+                'relnr' => 993,
+                'urvo' => 994,
+                'prvo' => 995,
+                'reader' => 'Agrident',
+                'meld' => 1,
+                'tech' => 1,
+                'fin' => 0,
+                'beheer' => 0,
+                'ingescand' => '01-01-2021',
+            ],
+        # 'radBeheer' => 1, # and this, my friend, is why we do not put the form implementation into the name
             'kzlAdm' => 1,
-            'txtIngescand' => '01-01-2021',
         ]);
-            // lid 1 moet niet gewijzigd zijn
+        // lid 1 moet niet gewijzigd zijn
         $this->assertTableWithPK('tblLeden', 'lidId', 1, ['prvo' => 22]);
         $this->assertTableWithPK('tblLeden', 'lidId', 42, ['prvo' => 995, 'meld' => 1, 'fin' => 0]);
     }

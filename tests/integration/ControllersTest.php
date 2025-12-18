@@ -4,7 +4,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 class ControllersTest extends IntegrationCase {
 
-    public static function setupBeforeClass(): void {
+    public function setup(): void {
+        parent::setup();
         self::runfixture('hok');
         self::runfixture('partij-1');
         Response::setTest();
@@ -12,12 +13,12 @@ class ControllersTest extends IntegrationCase {
 
     public static function controllers_with_post_include() {
         return [
-            ['InsAanvoer.php', [], ['kzlFase_1' => 1, 'chbkies_1' => 1, 'chbDel_1' => 0, ]],
+            ['InsAanvoer.php', ['impagrident'], ['kzlFase_1' => 1, 'chbkies_1' => 1, 'chbDel_1' => 0, ]],
             ['InsAdoptie.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
             ['InsAfvoer.php', [], []],
             ['InsDekken.php', [], ['chbKies_1' => 1, 'chbDel_1' => 0, ]], // hoofdletter K !?!
             ['InsDracht.php', [], ['chbKies_1' => 1, ]],
-            ['InsGeboortes.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
+            ['InsGeboortes.php', ['impagrident-moeder'], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
             ['InsGrWijzigingUbn.php', [], []],
             ['InsHalsnummers.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
             ['InsLambar.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
@@ -28,7 +29,7 @@ class ControllersTest extends IntegrationCase {
             # ['InsSpenen.php', [], ['chbkies_1' => 1, ]],
             # deze veroorzaakt Unknown column s.rasId in ON, Paginator:43
             # ['InsStallijstscan_controle.php', ['impagrident'], ['chbkies_1' => 1, 'kzlFase_1' => 1, 'chbDel_1' => 0, ]],
-            ['InsStallijstscan_nieuwe_klant.php', [], ['chbkies_1' => 1, 'kzlFase_1' => 1, 'chbDel_1' => 0, ]],
+            ['InsStallijstscan_nieuwe_klant.php', ['impagrident'], ['chbkies_1' => 1, 'kzlFase_1' => 1, 'chbDel_1' => 0, ]],
             ['InsTvUitscharen.php', [], ['chbKies_1' => 1, 'chbDel_1' => 0, ]], // hoofdletter K ?!
             ['InsUitscharen.php', [], []],
             ['InsUitval.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],

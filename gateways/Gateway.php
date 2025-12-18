@@ -31,6 +31,15 @@ class Gateway {
         return $res;
     }
 
+    // returns table row as assoc-array
+    protected function first_record($SQL, $args = [], $default = null) {
+        $view = $this->run_query($SQL, $args);
+        if ($this->view_has_rows($view)) {
+            return $view->fetch_assoc();
+        }
+        return $default;
+    }
+
     // returns table row as array with just values
     protected function first_row($SQL, $args = [], $default = null) {
         $view = $this->run_query($SQL, $args);

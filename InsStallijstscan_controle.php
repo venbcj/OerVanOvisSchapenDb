@@ -120,7 +120,7 @@ impAgrident rd
 $WHERE = "WHERE rd.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and rd.actId = 22 and isnull(rd.verwerkt)";
 
 include "paginas.php";
-$data = $page_nums->fetch_data($velden, "ORDER BY s.lidId asc, dup.dubbelen desc, actId desc, rd.datum, rd.Id");
+$data = $paginator->fetch_data($velden, "ORDER BY s.lidId asc, dup.dubbelen desc, actId desc, rd.datum, rd.Id");
 
 ?>
 <form action="InsStallijstscan_controle.php" method = "post">

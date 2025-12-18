@@ -615,20 +615,21 @@ function zoek_eerste_stalrecord($lidId) {
 
 // global seams
 
+        // duplicated code in basisfuncties:setup_db() en Db::__construct
 function setup_db() {
     global $db;
     include "database.php";
-    if (!isset($db) || !$db) {
-    $db = mysqli_connect($host, $user, $pw, $dtb);
-    if ($db == false) {
-        throw new Exception('Connectie database niet gelukt');
-    }
-    # TODO: (BCB) #0004161 dit is de plek om db centraal te registreren, in een object dat op Session lijkt (bv Current)
-    # Nu is dat precies in het geval van db waarschijnlijk niet nodig, omdat:
-    # - db is voor database-operaties
-    # - alle database-operaties verhuizen eerst naar Gateway-objecten
-    # - Gateway houdt de verantwoordelijkheid voor de query-formuleringen, maar
-    # - Een nieuw object (DbView) gaat de communicatie met mysql verzorgen
+    if (!isset($db) || $db === false) {
+        $db = mysqli_connect($host, $user, $pw, $dtb);
+        if ($db == false) {
+            throw new Exception('Connectie database niet gelukt');
+        }
+        # TODO: (BCB) #0004161 dit is de plek om db centraal te registreren, in een object dat op Session lijkt (bv Current)
+        # Nu is dat precies in het geval van db waarschijnlijk niet nodig, omdat:
+        # - db is voor database-operaties
+        # - alle database-operaties verhuizen eerst naar Gateway-objecten
+        # - Gateway houdt de verantwoordelijkheid voor de query-formuleringen, maar
+        # - Een nieuw object (DbView) gaat de communicatie met mysql verzorgen
     }
     return [
         'db' => $db,

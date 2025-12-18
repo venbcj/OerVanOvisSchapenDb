@@ -212,7 +212,7 @@ $order_by = "ORDER BY sort, rd.readId";
 }
 
 include "paginas.php";
-$data = $page_nums->fetch_data($velden, $order_by); 
+$data = $paginator->fetch_data($velden, $order_by); 
 
 ?>
 

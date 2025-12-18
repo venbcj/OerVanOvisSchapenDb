@@ -202,7 +202,7 @@ $tabel = "tblSchaap s
  $WHERE = $fiter ;
 
 include "paginas.php";
-$data = $page_nums->fetch_data($velden, "GROUP BY s.schaapId, s.levensnummer ORDER BY prnt.actId, right(s.levensnummer,$Karwerk), s.levensnummer");
+$data = $paginator->fetch_data($velden, "GROUP BY s.schaapId, s.levensnummer ORDER BY prnt.actId, right(s.levensnummer,$Karwerk), s.levensnummer");
 // Einde Opbouwen paginanummering
 
 if(!isset($sess_dag) && !isset($sess_bestm)) { $width = 100; }

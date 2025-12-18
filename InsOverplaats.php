@@ -105,7 +105,7 @@ impAgrident rd
 $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 5 and isnull(rd.verwerkt) and isnull(rs.Id) ";
 
 include "paginas.php";
-$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id");
+$data = $paginator->fetch_data($velden, "ORDER BY sort, rd.Id");
 
 }
 else {
@@ -165,7 +165,7 @@ $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.te
 
 include "paginas.php";
 
-$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.readId");
+$data = $paginator->fetch_data($velden, "ORDER BY sort, rd.readId");
 }
  ?>
 <table border = 0>

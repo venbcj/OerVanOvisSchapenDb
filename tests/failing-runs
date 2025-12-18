@@ -7,3 +7,9 @@ ControllersTest::testGetRouteAuthenticated "HokUitscharen.php" "HokOverpl.php" "
 
 1765882227
 ControllersTest::testGetRouteAuthenticatedWithData with data set "GroeiresultaatWeging"
+
+1758476906
+DekkingenTest::testNieuweInvoerDierAlDrachtig
+DekkingenTest::testNieuweInvoerDierZelfdeRam
+PageNumbersTest::test_constructor
+MenusTest::testMenuMeldenBlauw

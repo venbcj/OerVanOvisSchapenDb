@@ -113,7 +113,7 @@ impAgrident rd
 $WHERE = "WHERE rd.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and (rd.actId = 2 or rd.actId = 3) and isnull(rd.verwerkt)";
 
 include "paginas.php";
-$data = $page_nums->fetch_data($velden, "ORDER BY rd.datum, rd.Id"); ?>
+$data = $paginator->fetch_data($velden, "ORDER BY rd.datum, rd.Id"); ?>
 
 <table border = 0>
 <tr> <form action="InsAanvoer.php" method = "post">

@@ -93,7 +93,7 @@ impAgrident rd
 $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 15 and isnull(rd.verwerkt) ";
 
 include "paginas.php";
-$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id");
+$data = $paginator->fetch_data($velden, "ORDER BY sort, rd.Id");
 
  ?>
 <table border = 0>

@@ -2,8 +2,13 @@
 
 class MenusTest extends IntegrationCase {
 
-    public function setup() : void {
-        $this->runfixture('request-none');
+    public function setup(): void {
+        $this->uses_db();
+        $this->db->begin_transaction();
+    }
+
+    public function teardown(): void {
+        $this->db->rollback();
     }
 
     public function testMenuMeldenRood() {
