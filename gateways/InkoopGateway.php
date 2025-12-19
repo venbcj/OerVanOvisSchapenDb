@@ -161,4 +161,76 @@ SQL
         );
     }
 
+    public function zoek_voorraad($lidId, $artId) {
+        return $this->first_row(
+            <<<SQL
+SELECT vrdat, actief v_actief 
+FROM (
+    SELECT i.artId, ifnull(vrd.inkId, max(i.inkId)) inkId, vrd.vrdat, a.actief
+    FROM tblInkoop i
+     join tblArtikel a on (i.artId = a.artId)
+     join tblEenheiduser eu on (eu.enhuId = a.enhuId)
+     left join (
+        SELECT a.artId, i.inkId, sum(i.inkat-coalesce(n.vbrat,0)) vrdat
+        FROM tblArtikel a
+         join tblEenheiduser eu on (eu.enhuId = a.enhuId)
+         join tblEenheid e on (e.eenhId = eu.eenhId)
+         join tblInkoop i on (a.artId = i.artId)
+         left join (
+            SELECT n.inkId, sum(n.nutat*n.stdat) vbrat
+            FROM tblEenheiduser eu
+             join tblArtikel a on (a.enhuId = eu.enhuId)
+             join tblInkoop i on (i.artId = a.artId)
+             join tblNuttig n on (i.inkId = n.inkId)
+            WHERE eu.lidId = :lidId
+ and a.soort = 'pil'
+            GROUP BY n.inkId
+         ) n on (i.inkId = n.inkId)
+         left join (
+            SELECT a.artId, sum(i.inkat) - sum(coalesce(n.vbrat,0)) totvrd
+            FROM tblEenheiduser eu
+             join tblArtikel a on (a.enhuId = eu.enhuId)
+             join tblInkoop i on (a.artId = i.artId)
+             left join (
+                SELECT n.inkId, sum(n.stdat*n.nutat) vbrat
+                FROM tblStal st
+                 join tblHistorie h on (h.stalId = st.stalId)
+                 join tblNuttig n on (n.hisId = h.hisId)
+                WHERE st.lidId = :lidId
+ and h.skip = 0
+                GROUP BY n.inkId
+             ) n on (i.inkId = n.inkId)
+            WHERE eu.lidId = :lidId
+            GROUP BY a.artId 
+         ) artvrd on (artvrd.artId = a.artId)
+        WHERE eu.lidId = :lidId
+ and a.soort = 'pil'
+ and (i.inkat-coalesce(n.vbrat,0) > 0 or (a.actief = 1
+ and totvrd = 0) )
+        GROUP BY a.artId, a.naam, a.stdat, e.eenheid, i.inkId, i.charge, artvrd.totvrd
+     ) vrd on (i.artId = vrd.artId)
+    WHERE eu.lidId = :lidId
+    GROUP BY i.artId, vrd.vrdat, actief
+) A
+WHERE artId = :artId
+SQL
+        , [[':lidId', $lidId, self::INT], [':artId', $artId, self::INT]]
+        );
+    }
+
+    public function porties($lidId, $artId) {
+        return $this->first_row(
+            <<<SQL
+SELECT a.stdat, e.eenheid
+FROM tblInkoop i
+ join tblArtikel a on (i.artId = a.artId)
+ join tblEenheiduser eu on (i.enhuId = eu.enhuId)
+ join tblEenheid e on (e.eenhId = eu.eenhId)
+WHERE eu.lidId = :lidId
+ and i.artId = :artId
+SQL
+        , [[':lidId', $lidId, self::INT], [':artId', $artId, self::INT]]
+        );
+    }
+
 }

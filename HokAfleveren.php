@@ -46,6 +46,10 @@ include "login.php"; ?>
                 <TD align = "center" valign = "top">
 <?php
 if (Auth::is_logged_in()) {
+$hok_gateway = new HokGateway();
+$partij_gateway = new PartijGateway();
+$bezet_gateway = new BezetGateway();
+
     if (!(Session::isset('BST'))) Session::set('BST', 1);
     if (!(Session::isset('Fase'))) Session::set('Fase', 1);
     if (!(Session::isset('DT1'))) Session::set('DT1', '1900-01-01');
@@ -61,11 +65,9 @@ if(isset($_POST['knpVerder_']) && isset($_POST['kzlRelall_']))    {
 
 if(isset($_POST['knpSave_'])) { if($pagina == 'Uitscharen') { $actId = 10; } else if($pagina == 'Afleveren') { $actId = 12; } else if($pagina == 'Verkopen') { $actId = 13; } include "save_afleveren.php"; }
 
-$hok_gateway = new HokGateway();
 $hoknr = $hok_gateway->findHoknrById($ID);
 
 // Declaratie RELATIE KEUZE
-$partij_gateway = new PartijGateway();
 $qryRelatiekeuze = $partij_gateway->findKlant($lidId);
 $index = 0;
 $relnm = [];
@@ -81,52 +83,10 @@ unset($index);
 else if( $pagina == 'Verkopen')     { ?> <form action="HokVerkopen.php" method = "post"> <?php }
 else if( $pagina == 'Uitscharen') { ?> <form action="HokUitscharen.php" method = "post"> <?php }
 // Opbouwen paginanummering
-$where = '';
-    if( $pagina == 'Afleveren') {
-    $where = "WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId) and h.skip = 0 and spn.schaapId is not null and isnull(prnt.schaapId)"; }
-
-else if( $pagina == 'Verkopen') {
-    $where = "WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId) and h.skip = 0 and prnt.schaapId is not null"; }
-
-else if( $pagina == 'Uitscharen' && $radFase == 3) {
-    $where = "WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId) and h.skip = 0 and prnt.schaapId is not null"; }
-
-else if( $pagina == 'Uitscharen' && $radFase == 1) {
-    $where = "WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId) and h.skip = 0 and isnull(prnt.schaapId)"; }
-
-else if( $pagina == 'Uitscharen' && $radFase == 4) {
-    $where = "WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId) and h.skip = 0"; }
 $velden = "s.schaapId, right(s.levensnummer,'".mysqli_real_escape_string($db,$Karwerk)."') werknr, s.geslacht, s.levensnummer, date_format(max(h.datum),'%Y-%m-%d') dmlst, date_format(max(h.datum),'%d-%m-%Y') lstdm, prnt.schaapId ouder";
 
-$tabel = "tblSchaap s
- join tblStal st on (st.schaapId = s.schaapId)
- join tblHistorie h on (h.stalId = st.stalId)
- join tblBezet b on (b.hisId = h.hisId)
- left join (
-    SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and b.hokId = '".mysqli_real_escape_string($db,$ID)."'
-    GROUP BY b.bezId, h1.hisId
- ) uit on (uit.bezId = b.bezId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0
- ) spn on (spn.schaapId = st.schaapId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = st.schaapId)";
-
- $WHERE = $where;
+$tabel = $bezet_gateway->getHokAfleverenFrom();
+$WHERE = $bezet_gateway->getHokAfleverenWhere($pagina, $radFase, $lidId, $ID);
 
 include "paginas.php";
 $data = $paginator->fetch_data($velden, "GROUP BY s.levensnummer ORDER BY right(s.levensnummer,'".mysqli_real_escape_string($db,$Karwerk)."')");
@@ -152,8 +112,8 @@ else { $width = 200; } ?>
      <input id = "datepicker1" type = text name = 'txtDatumall_' size = 8 value = <?php if(isset($sess_dag)) { echo $sess_dag; } ?> > &nbsp
  <?php } else { ?> <td style = "font-size : 14px;">  <?php } ?>
 <!-- Opmaak paginanummering -->
- Regels Per Pagina: <?php echo $kzlRpp;
-if(isset($sess_dag) || isset($sess_bestm)) { ?> </td> <td align = center > <?php echo $page_numbers.'<br>'; ?> </td> <td> <?php }
+ Regels Per Pagina: <?php echo $paginator->show_rpp();
+if(isset($sess_dag) || isset($sess_bestm)) { ?> </td> <td align = center > <?php echo $paginator->show_page_numbers().'<br>'; ?> </td> <td> <?php }
 // Einde Opmaak paginanummering ?>
      </td>
      <td width = 150 align = center>

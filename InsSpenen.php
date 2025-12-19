@@ -45,6 +45,7 @@ include "login.php"; ?>
                 <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) {
+    $impagrident_gateway = new ImpAgridentGateway();
 
 If (isset($_POST['knpInsert_']))  {
     include "url.php";
@@ -52,147 +53,29 @@ If (isset($_POST['knpInsert_']))  {
 }
 
 if($reader == 'Agrident') {
-$velden = "str_to_date(rd.datum,'%Y-%m-%d') sort , rd.datum, rd.Id readId, rd.levensnummer levnr, rd.gewicht kg,
- coalesce(rd.hokId,ro.hokId) rd_hok, kh.hokId db_scan,
- dup.dubbelen,
- s.levensnummer, s.geslacht,
- lower(h.actie) actie, h.af,
+    $velden = "str_to_date(rd.datum,'%Y-%m-%d') sort , rd.datum, rd.Id readId, rd.levensnummer levnr, rd.gewicht kg,
+        coalesce(rd.hokId,ro.hokId) rd_hok, kh.hokId db_scan,
+        dup.dubbelen,
+        s.levensnummer, s.geslacht,
+        lower(h.actie) actie, h.af,
+        date_format(hs.datum,'%d-%m-%Y') speendm, hs.datum dmspeen, ouder.datum dmaanw,
+        lstday.datum dmlst ";
 
- date_format(hs.datum,'%d-%m-%Y') speendm, hs.datum dmspeen, ouder.datum dmaanw,
-
- lstday.datum dmlst ";
-
-$tabel = "
-impAgrident rd
- left join (
-    SELECT lidId, levensnummer, hokId
-    FROM impAgrident
-    WHERE actId = 5 and lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(verwerkt) 
- ) ro on (rd.levensnummer = ro.levensnummer)
- left join (
-     SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
-     FROM tblSchaap s
-      join tblStal st on (st.schaapId = s.schaapId)
-      join tblHistorie h on (st.stalId = h.stalId)
-     WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
-     GROUP BY s.schaapId, s.levensnummer, s.geslacht
- ) s on (rd.levensnummer = s.levensnummer)
- left join (
-    SELECT h.hisId, a.actie, a.af
-    FROM tblHistorie h
-     join tblActie a on (h.actId = a.actId)
-    WHERE h.skip = 0
- ) h on (h.hisId = s.hisId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0
- ) hs on (hs.schaapId = s.schaapId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) ouder on (ouder.schaapId = s.schaapId)
- 
- left join tblHok kh on (coalesce(rd.hokId,ro.hokId) = kh.hokId and kh.lidId = '".mysqli_real_escape_string($db,$lidId)."')
- left join (
-     SELECT rd.Id, count(dup.Id) dubbelen
-    FROM impAgrident rd
-     join impAgrident dup on (rd.lidId = dup.lidId and rd.levensnummer = dup.levensnummer and rd.actId = dup.actId and rd.Id <> dup.Id)
-    WHERE rd.actId = 4 and rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ISNULL(rd.verwerkt) and ISNULL(dup.verwerkt)
-    GROUP BY rd.Id
- ) dup on (rd.Id = dup.Id)
- left join (
-    SELECT m.levensnummer, max(m.datum) datum
-    FROM (
-        SELECT s.levensnummer, h.datum
-        FROM tblSchaap s 
-         join tblStal st on (st.schaapId = s.schaapId)
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.levensnummer is not null and h.skip = 0
-        
-    ) m
-    GROUP BY m.levensnummer 
- ) lstday on (lstday.levensnummer = rd.levensnummer )
- " ;
-
-$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 4 and isnull(rd.verwerkt)";
-$order_by = "ORDER BY sort, rd.Id";
-
+    $tabel = $impagrident_gateway->getInsSpenenAgridentFrom();
+    $WHERE = $impagrident_gateway->getInsSpenenAgridentWhere($lidId);
+    $order_by = "ORDER BY sort, rd.Id";
 } else {
+    $velden = "str_to_date(rd.datum,'%d/%m/%Y') sort , rd.datum, rd.readId, rd.levnr_sp levnr, round((rd.speenkg/100),2) kg,
+        coalesce(rd.hok_sp,ro.hok_ovpl) rd_hok, kh.scan db_scan,
+        dup.dubbelen,
+        s.levensnummer, s.geslacht,
+        lower(h.actie) actie, h.af,
+        date_format(hs.datum,'%d-%m-%Y') speendm, hs.datum dmspeen, ouder.datum dmaanw,
+        lstday.datum dmlst ";
 
-$velden = "str_to_date(rd.datum,'%d/%m/%Y') sort , rd.datum, rd.readId, rd.levnr_sp levnr, round((rd.speenkg/100),2) kg,
-
- coalesce(rd.hok_sp,ro.hok_ovpl) rd_hok, kh.scan db_scan,
- dup.dubbelen,
- s.levensnummer, s.geslacht,
- lower(h.actie) actie, h.af,
-
- date_format(hs.datum,'%d-%m-%Y') speendm, hs.datum dmspeen, ouder.datum dmaanw,
-
- lstday.datum dmlst ";
-
-$tabel = "
-impReader rd
- left join (
-    SELECT r.lidId, r.levnr_ovpl, r.hok_ovpl
-    FROM impReader r
-    WHERE r.teller_ovpl is not null and isnull(r.verwerkt) 
- ) ro on (rd.lidId = ro.lidId and rd.levnr_sp = ro.levnr_ovpl)
- left join (
-     SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
-     FROM tblSchaap s
-      join tblStal st on (st.schaapId = s.schaapId)
-      join tblHistorie h on (st.stalId = h.stalId)
-     WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
-     GROUP BY s.schaapId, s.levensnummer, s.geslacht
- ) s on (rd.levnr_sp = s.levensnummer)
- left join (
-    SELECT h.hisId, a.actie, a.af
-    FROM tblHistorie h
-     join tblActie a on (h.actId = a.actId)
-     WHERE h.skip = 0
- ) h on (h.hisId = s.hisId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0
- ) hs on (hs.schaapId = s.schaapId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) ouder on (ouder.schaapId = s.schaapId)
- 
- left join tblHok kh on (coalesce(rd.hok_sp,ro.hok_ovpl) = kh.scan and kh.lidId = '".mysqli_real_escape_string($db,$lidId)."')
- left join (
-     SELECT rd.readId, count(dup.readId) dubbelen
-    FROM impReader rd
-     join impReader dup on (rd.lidId = dup.lidId and rd.levnr_sp = dup.levnr_sp and rd.readId <> dup.readId)
-    WHERE rd.teller_sp is not null and rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ISNULL(rd.verwerkt) and ISNULL(dup.verwerkt)
-    GROUP BY rd.readId
- ) dup on (rd.readId = dup.readId)
- left join (
-    SELECT m.levensnummer, max(m.datum) datum
-    FROM (
-        SELECT s.levensnummer, h.datum
-        FROM tblSchaap s 
-         join tblStal st on (st.schaapId = s.schaapId)
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.levensnummer is not null and h.skip = 0
-        
-    ) m
-    GROUP BY m.levensnummer 
- ) lstday on (lstday.levensnummer = rd.levnr_sp )
- " ;
-
-$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.teller_sp is not null and isnull(rd.verwerkt)";
-$order_by = "ORDER BY sort, rd.readId";
-
+    $tabel = $impagrident_gateway->getInsSpenenBiocontrolFrom();
+    $WHERE = $impagrident_gateway->getInsSpenenBiocontrolWhere($lidId);
+    $order_by = "ORDER BY sort, rd.readId";
 }
 
 include "paginas.php";
@@ -205,9 +88,9 @@ $data = $paginator->fetch_data($velden, $order_by);
  <td colspan = 3 style = "font-size : 13px;">
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
  <td colspan = 2 align = "center" style = "font-size : 14px;"><?php 
-echo $page_numbers; 
+echo $paginator->show_page_numbers(); 
 ?></td>
- <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
+ <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $paginator->show_rpp(); ?> </td>
  <td align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
  <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td></tr>
 <tr valign = bottom style = "font-size : 12px;">
@@ -228,7 +111,7 @@ $hok_gateway = new HokGateway();
 $qryHoknummer = $hok_gateway->actieve_nummers_bij_lid($lidId);
 
 $index = 0; 
-while ($hnr = mysqli_fetch_array($qryHoknummer)) { 
+while ($hnr = $qryHoknummer->fetch_array()) { 
    $hoknId[$index] = $hnr['hokId']; 
    $hoknum[$index] = $hnr['hoknr'];
    $index++; 

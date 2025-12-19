@@ -46,71 +46,21 @@ include "login.php"; ?>
             <TD valign = "top">
 <?php 
 if (Auth::is_logged_in()) {
+$impagrident_gateway = new ImpAgridentGateway();
+    $hok_gateway = new HokGateway();
+    $ubn_gateway = new UbnGateway();
+$ras_gateway = new RasGateway();
+$partij_gateway = new PartijGateway();
  
 If (isset($_POST['knpInsert_']))  {
     include "post_readerAanv.php"; #Deze include moet voor de vervversing in de functie header()
-    //header("Location: ".$url."InsAanvoer.php"); 
     }
-
-// Aantal nog in te lezen AANVOER
-/*$aanvoer = mysqli_query($db,"SELECT count(*) aant 
-                            FROM impReader 
-                            WHERE lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and teller_aanv is not NULL and isnull(verwerkt) ") or die (mysqli_error($db));
-    $row = mysqli_fetch_assoc($aanvoer);
-        $aantaanw = $row['aant'];*/
-// EINDE Aantal nog in te lezen AANVOER
 
 $velden = "rd.actId, rd.Id readId, rd.datum, rd.ubnId ubnId_rd, rd.levensnummer levnr_rd, rd.ubn ubn_herk, rd.rasId rasId_rd, rd.geslacht, rd.hokId hok_rd, rd.gewicht, rd.datumdier geb_datum, 
 s.schaapId schaapId_db, st.levensnummer levnr_stal, afv.actId afvoerId, p.ubn ubn_db, r.rasId rasId_db, ho.hokId hok_db, dup.dubbelen ";
 
-$tabel = "
-impAgrident rd
- left join tblSchaap s on (rd.levensnummer = s.levensnummer)
- left join (
-    SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer
-    FROM tblSchaap s
-     join tblStal st on (st.schaapId = s.schaapId)
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE st.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and h.skip = 0
-    GROUP BY s.schaapId, s.levensnummer
- ) st on (rd.levensnummer = st.levensnummer)
- left join (
-    SELECT max(h.datum) datum, s.schaapId, s.levensnummer
-    FROM tblSchaap s
-     join tblStal st on (st.schaapId = s.schaapId)
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE st.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and h.skip = 0
-    GROUP BY s.schaapId, s.levensnummer
- ) lstDate on (rd.levensnummer = lstDate.levensnummer)
- left join (
-     SELECT h.actId, h.datum, st.schaapId
-     FROM tblHistorie h
-      join tblStal st on (h.stalId = st.stalId)
-      join tblActie a on (a.actId = h.actId)
-     WHERE st.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and a.af = 1 and h.skip = 0
- ) afv on (afv.datum = lstDate.datum and afv.schaapId = lstDate.schaapId)
- left join tblPartij p on (rd.ubn = p.ubn and p.lidId = '" . mysqli_real_escape_string($db,$lidId) . "')
- left join (
-    SELECT ru.lidId, r.rasId
-    FROM tblRas r
-     join tblRasuser ru on (r.rasId = ru.rasId)
-    WHERE r.actief = 1 and ru.actief = 1
- ) r on (rd.rasId = r.rasId and r.lidId = rd.lidId)
- left join (
-    SELECT ho.hokId
-    FROM tblHok ho
-    WHERE ho.lidId = '" . mysqli_real_escape_string($db,$lidId) . "'
- ) ho on (rd.hokId = ho.hokId)
- left join (
-     SELECT rd.Id, count(dup.Id) dubbelen
-    FROM impAgrident rd
-     join impAgrident dup on (rd.lidId = dup.lidId and rd.levensnummer = dup.levensnummer and rd.Id <> dup.Id and rd.actId = dup.actId and isnull(dup.verwerkt))
-    WHERE rd.actId = 2 or rd.actId = 3
-    GROUP BY rd.Id
- ) dup on (rd.Id = dup.Id)
-";
-
-$WHERE = "WHERE rd.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and (rd.actId = 2 or rd.actId = 3) and isnull(rd.verwerkt)";
+$tabel = $impagrident_gateway->getInsAanvoerFrom();
+$WHERE = $impagrident_gateway->getInsAanvoerWhere($lidId);
 
 include "paginas.php";
 $data = $paginator->fetch_data($velden, "ORDER BY rd.datum, rd.Id"); ?>
@@ -120,8 +70,8 @@ $data = $paginator->fetch_data($velden, "ORDER BY rd.datum, rd.Id"); ?>
  <td colspan = 2 style = "font-size : 13px;"> 
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
  <td colspan = 2 align = center style = "font-size : 14px;"><?php 
-echo $page_numbers; ?></td>
- <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
+echo $paginator->show_page_numbers(); ?></td>
+ <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $paginator->show_rpp(); ?> </td>
  <td colspan = 3 align = 'right'> <input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
  <td colspan = 3 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet herkend. <br> 
 <?php if($modtech == 1) { ?>* Alleen verplicht bij lammeren. <?php } ?> </td></tr>
@@ -147,16 +97,10 @@ echo $page_numbers; ?></td>
 
 <?php
 // Declaratie kzlUbn
-$qryUbn = mysqli_query($db,"
-SELECT ubnId, ubn
-FROM tblUbn
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief = 1
-ORDER BY ubn
-") or die (mysqli_error($db));
+$qryUbn = $ubn_gateway->lijst($lidId);
 
 $index = 0; 
-while ($qu = mysqli_fetch_assoc($qryUbn)) 
-{ 
+while ($qu = $qryUbn->fetch_assoc()) { 
    $kzlUbnId[$index] = $qu['ubnId'];
    $ubnnm[$index] = $qu['ubn'];
    $index++;
@@ -167,20 +111,12 @@ $count = count($kzlUbnId);
 // Einde Declaratie kzlUbn
 
 // Declaratie ras
-$qryRassen = ("
-SELECT r.rasId, r.ras, lower(coalesce(isnull(ru.scan),'6karakters')) scan
-FROM tblRas r
- join tblRasuser ru on (r.rasId = ru.rasId)
-WHERE ru.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and r.actief = 1 and ru.actief = 1
-ORDER BY ras
-"); 
-$RAS = mysqli_query($db,$qryRassen) or die (mysqli_error($db)); 
+$RAS = $ras_gateway->rassen($lidId);
 
 $index = 0; 
 $rasId = [];
 $rasnm = [];
-while ($ras = mysqli_fetch_array($RAS)) 
-{
+while ($ras = $RAS->fetch_assoc()) {
    $rasId[$index] = $ras['rasId']; 
    $rasnm[$index] = $ras['ras'];
    $index++; 
@@ -199,16 +135,9 @@ echo "</select>";*/
 // EINDE Declaratie ras
 if($modtech == 1) {
 // Declaratie HOKNUMMER            // lower(if(isnull(scan),'6karakters',scan)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.
-$qryHoknummer = mysqli_query($db,"
-SELECT hokId, hoknr, lower(if(isnull(scan),'6karakters',scan)) scan
-FROM tblHok
-WHERE lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and actief = 1
-ORDER BY hoknr
-") or die (mysqli_error($db));
-
-$index = 0; 
-while ($hknr = mysqli_fetch_assoc($qryHoknummer)) 
-{ 
+    $qryHoknummer = $hok_gateway->hoknummer($lidId);
+    $index = 0;
+while ($hknr = $qryHoknummer->fetch_assoc()) { 
    $hoknId[$index] = $hknr['hokId']; 
    $hoknum[$index] = $hknr['hoknr'];
    $index++; 
@@ -218,22 +147,9 @@ unset($index);
 }
 
 // Declaratie HERKOMST            // lower(if(isnull(ubn),'6karakters',ubn)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.
-$qryRelatie = ("SELECT r.relId, '6karakters' ubn, concat(p.ubn, ' - ', p.naam) naam
-            FROM tblPartij p join tblRelatie r on (p.partId = r.partId)    
-            WHERE p.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and relatie = 'cred' and isnull(r.uitval) and p.actief = 1 and r.actief = 1
-                  and isnull(p.ubn)
-            union
-            
-            SELECT r.relId, p.ubn, concat(p.ubn, ' - ', p.naam) naam
-            FROM tblPartij p join tblRelatie r on (p.partId = r.partId)    
-            WHERE p.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and relatie = 'cred' and isnull(r.uitval) and p.actief = 1 and r.actief = 1 
-                  and ubn is not null
-            ORDER BY naam"); 
-$relatienr = mysqli_query($db,$qryRelatie) or die (mysqli_error($db)); 
-
+$relatienr = $partij_gateway->find_relatie($lidId);
 $index = 0; 
-while ($rnr = mysqli_fetch_array($relatienr)) 
-{ 
+while ($rnr = $relatienr->fetch_assoc()) {
    $relnId[$index] = $rnr['relId'];
    $relnum[$index] = $rnr['naam'];
    $relUbn[$index] = $rnr['ubn'];
@@ -291,40 +207,21 @@ unset($sekse_herk);
 unset($fase_herk);
 
     if(!isset($levnr_stal) && isset($schaapId_db)) {
-$zoek_schaapgegevens = mysqli_query($db,"
-SELECT r.ras, s.geslacht, ouder.schaapId aanw, date_format(geb.datum, '%d-%m-%Y') gebdm
-FROM tblSchaap s
- left join tblRas r on (s.rasId = r.rasId)
- left join (
-     SELECT st.schaapId
-     FROM tblHistorie h
-      join tblStal st on (st.stalId = h.stalId)
-     WHERE h.actId = 3
- ) ouder on (ouder.schaapId = s.schaapId)
- left join (
-     SELECT st.schaapId, h.datum
-     FROM tblHistorie h
-      join tblStal st on (st.stalId = h.stalId)
-     WHERE h.actId = 1
- ) geb on (geb.schaapId = s.schaapId)
- WHERE s.schaapId = '" . mysqli_real_escape_string($db, $schaapId_db) . "'
-") or die (mysqli_error($db));
+        $zoek_schaapgegevens = $schaap_gateway->zoek_schaap_aanvoer($schaapId_db);
 
-while ($zs = mysqli_fetch_assoc($zoek_schaapgegevens)) 
-{ 
-    
-    $ras_herk = $zs['ras']; // Ras van herkomst of te wel van een bestaand schaap dat niet op de stallijst van de gebruiker staat
-    $sekse_herk = $zs['geslacht']; /* $sekse_herk moet het eventuele geslacht ($sekse_rd) uit de reader overschrijven */
-    $volwassen_herk = $zs['aanw']; 
-        if(isset($volwassen_herk)) { 
-                  if($sekse_herk == 'ooi') { $fase_herk = 'moeder'; }
-            else if($sekse_herk == 'ram') { $fase_herk = 'vader'; }
-             unset($volwassen_herk); 
-                                             }
-        else { $fase_herk = 'lam'; }
-    $gebdm_herk = $zs['gebdm'];
-}
-}
+        while ($zs = $zoek_schaapgegevens->fetch_assoc()) {
+            $ras_herk = $zs['ras']; // Ras van herkomst of te wel van een bestaand schaap dat niet op de stallijst van de gebruiker staat
+            $sekse_herk = $zs['geslacht']; /* $sekse_herk moet het eventuele geslacht ($sekse_rd) uit de reader overschrijven */
+            $volwassen_herk = $zs['aanw']; 
+            if(isset($volwassen_herk)) { 
+                if($sekse_herk == 'ooi') { $fase_herk = 'moeder'; }
+                else if($sekse_herk == 'ram') { $fase_herk = 'vader'; }
+                unset($volwassen_herk); 
+            }
+            else { $fase_herk = 'lam'; }
+                $gebdm_herk = $zs['gebdm'];
+        }
+    }
 // Eind Zoek schaap gegevens als het levensnummer in de database al bestaat maar niet op de stallijst van de gebruiker voorkomt
 
 

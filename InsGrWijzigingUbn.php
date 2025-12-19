@@ -22,6 +22,8 @@ include "login.php"; ?>
             <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) { 
+    $impagrident_gateway = new ImpAgridentGateway(); 
+    $hok_gateway = new HokGateway();
 
 include "vw_HistorieDm.php";
 
@@ -29,155 +31,13 @@ If (isset($_POST['knpInsert_'])) {
 
     include "post_readerUbn.php";#Deze include moet voor de verversing in de functie header()
     }
-    
-$velden = "rd.Id readId, rd.datum, right(rd.levensnummer,".mysqli_real_escape_string($db,$Karwerk).") werknr, rd.levensnummer levnr, rd.hokId hok_rd, u_best.ubn ubn_best, rel_best.naam bestemming, rel_best.relId rel_best, gewicht kg, s.schaapId, s.geslacht, u_herk.ubn ubn_herk, rel_herk.naam herkomst, rel_herk.relId rel_herk, ouder.datum dmaanw, lower(haf.actie) actie, haf.af, ho.hokId hok_db, date_format(max.datummax_afv,'%d-%m-%Y') maxdatum_afv, max.datummax_afv, date_format(max.datummax_kg,'%d-%m-%Y') maxdatum_kg, max.datummax_kg ";
+$velden = "rd.Id readId, rd.datum, right(rd.levensnummer,$Karwerk) werknr, rd.levensnummer levnr, rd.hokId hok_rd, u_best.ubn ubn_best, rel_best.naam bestemming, rel_best.relId rel_best, gewicht kg, s.schaapId, s.geslacht, u_herk.ubn ubn_herk, rel_herk.naam herkomst, rel_herk.relId rel_herk, ouder.datum dmaanw, lower(haf.actie) actie, haf.af, ho.hokId hok_db, date_format(max.datummax_afv,'%d-%m-%Y') maxdatum_afv, max.datummax_afv, date_format(max.datummax_kg,'%d-%m-%Y') maxdatum_kg, max.datummax_kg ";
 
-$tabel = "
-impAgrident rd
- join tblUbn u_best on (u_best.ubnId = rd.ubnId)
- left join (
-     SELECT u.ubnId, p.ubn, p.naam, r.relId
-     FROM tblUbn u
-      left join tblPartij p on (p.ubn = u.ubn)
-      left join tblRelatie r on (p.partId = r.partId)
-     WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (r.relatie = 'deb' or isnull(r.relatie))
-  ) rel_best on (rd.ubnId = rel_best.ubnId)
- left join (
-    SELECT s.schaapId, s.levensnummer, s.geslacht
-     FROM tblSchaap s
-      join tblStal st on (st.schaapId = s.schaapId)
-     WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-     GROUP BY s.schaapId, s.levensnummer, s.geslacht
- ) s on (s.levensnummer = rd.levensnummer)
- left join (
-     SELECT max(stalId) stalIdmax, schaapId
-     FROM tblStal
-    WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
-     GROUP BY schaapId
- ) st_max on (st_max.schaapId = s.schaapId)
- left join tblStal st on (st.stalId = st_max.stalIdmax)
- left join tblUbn u_herk on (u_herk.ubnId = st.ubnId)
- left join (
- SELECT p.ubn, p.naam, r.relId
-     FROM tblPartij p
-      left join tblRelatie r on (p.partId = r.partId)
-     WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (r.relatie = 'cred' or isnull(r.relatie))
- ) rel_herk on (u_herk.ubn = rel_herk.ubn)
- left join (
-    SELECT st.schaapId, h.hisId, a.actie, a.af
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-     join tblActie a on (h.actId = a.actId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a.af = 1 and h.skip = 0
- ) haf on (s.schaapId = haf.schaapId)
- left join (
-    SELECT st.schaapId, h.datum
-     FROM tblStal st
-      join tblHistorie h on (st.stalId = h.stalId)
-     WHERE h.actId = 3 and h.skip = 0
- ) ouder on (ouder.schaapId = s.schaapId)
- left join (
-    SELECT ho.hokId
-    FROM tblHok ho
-    WHERE ho.lidId = '" . mysqli_real_escape_string($db,$lidId) . "'
- ) ho on (rd.hokId = ho.hokId)
- left join (
-    SELECT schaapId, max(datum) datummax_afv, max(datum_kg) datummax_kg
-    FROM (
-        SELECT s.schaapId, h.datum, h.datum datum_kg, a.actie, h.actId, h.skip
-        FROM tblSchaap s
-         join tblStal st on (st.schaapId = s.schaapId)
-         join tblHistorie h on (h.stalId = st.stalId)
-         join tblActie a on (a.actId = h.actId)
-        WHERE a.actId = 1 and h.skip = 0 and s.levensnummer is not null
-
-        Union
-
-        SELECT s.schaapId, h.datum, h.datum datum_kg, a.actie, h.actId, h.skip
-        FROM tblSchaap s
-         join tblStal st on (st.schaapId = s.schaapId)
-         join tblHistorie h on (h.stalId = st.stalId)
-         join tblActie a on (a.actId = h.actId)
-        WHERE a.actId = 2 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-
-        Union
-
-        SELECT s.schaapId, h.datum, NULL datum_kg, a.actie, h.actId, h.skip
-        FROM tblSchaap s
-         join tblStal st on (st.schaapId = s.schaapId)
-         join tblHistorie h on (h.stalId = st.stalId)
-         join tblActie a on (a.actId = h.actId)
-        WHERE (a.actId = 5 or a.actId = 8 or a.actId = 9 or a.actId = 12 or a.actId = 13 or a.actId = 14) and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-
-        Union
-
-        SELECT s.schaapId, h.datum, NULL datum_kg, a.actie, h.actId, h.skip
-        FROM tblSchaap s
-         join tblStal st on (st.schaapId = s.schaapId)
-         join tblHistorie h on (h.stalId = st.stalId)
-         join tblActie a on (a.actId = h.actId)
-         left join 
-         (
-            SELECT s.schaapId, h.actId, h.datum 
-            FROM tblSchaap s
-             join tblStal st on (st.schaapId = s.schaapId)
-             join tblHistorie h on (h.stalId = st.stalId) 
-            WHERE actId = 2 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-         ) koop on (s.schaapId = koop.schaapId and koop.datum <= h.datum)
-        WHERE a.actId = 3 and h.skip = 0 and (isnull(koop.datum) or koop.datum < h.datum) and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-
-        Union
-
-        SELECT s.schaapId, h.datum, NULL datum_kg, a.actie, h.actId, h.skip
-        FROM tblSchaap s
-         join tblStal st on (st.schaapId = s.schaapId)
-         join tblHistorie h on (h.stalId = st.stalId)
-         join tblActie a on (a.actId = h.actId)
-        WHERE a.actId = 4 and h.skip = 0
-
-        Union
-
-        SELECT  mdr.schaapId, min(h.datum) datum, NULL datum_kg, 'Eerste worp' actie, NULL, 0 skip
-        FROM tblSchaap mdr
-         join tblVolwas v on (mdr.schaapId = v.mdrId)
-         join tblSchaap lam on (v.volwId = lam.volwId)
-         join tblStal st on (st.schaapId = lam.schaapId)
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 1 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-        GROUP BY mdr.schaapId
-
-        Union
-
-        SELECT mdr.schaapId, max(h.datum) datum, NULL datum_kg, 'Laatste worp' actie, NULL, 0 skip
-        FROM tblSchaap mdr
-         join tblVolwas v on (mdr.schaapId = v.mdrId)
-         join tblSchaap lam on (v.volwId = lam.volwId)
-         join tblStal st on (st.schaapId = lam.schaapId)
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 1 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-        GROUP BY mdr.schaapId, h.actId
-        HAVING (max(h.datum) > min(h.datum))
-
-        Union
-
-        SELECT s.schaapId, p.dmafsluit datum, NULL datum_kg, 'Gevoerd' actie, NULL , h.skip
-        FROM tblVoeding vd
-         join tblPeriode p on (p.periId = vd.periId)
-         join tblBezet b on (b.periId = p.periId)
-         join tblHistorie h on (h.hisId = b.hisId)
-         join tblStal st on (st.stalId = h.stalId)
-         join tblSchaap s on (s.schaapId = st.schaapId)
-        WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' 
-        GROUP BY s.schaapId, p.dmafsluit
-    ) sd
-    GROUP BY schaapId
- ) max on (s.schaapId = max.schaapId)
-";
-
-$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 12 and isnull(rd.verwerkt) ";
+$tabel = $impagrident_gateway->getInsGrWijzigingUbnFrom();
+$WHERE = $impagrident_gateway->getInsGrWijzigingUbnWhere($lidId);
 
 include "paginas.php";
-$data = $paginator->fetch_data($velden, "ORDER BY right(rd.levensnummer,".mysqli_real_escape_string($db,$Karwerk).") ");
+$data = $paginator->fetch_data($velden, "ORDER BY right(rd.levensnummer,$Karwerk) ");
 
 ?>
 
@@ -186,9 +46,9 @@ $data = $paginator->fetch_data($velden, "ORDER BY right(rd.levensnummer,".mysqli
  <td colspan = 3 style = "font-size : 13px;">
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
  <td colspan = 2 align = center style = "font-size : 14px;"><?php 
-echo $page_numbers; 
+echo $paginator->show_page_numbers(); 
 ?></td>
- <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
+ <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $paginator->show_rpp(); ?> </td>
  <td align = 'right'> <input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
  <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td></tr>
 <tr valign = bottom style = "font-size : 12px;">
@@ -213,12 +73,10 @@ echo $page_numbers;
 
 if($modtech == 1) {
 // Declaratie HOKNUMMER            // lower(if(isnull(scan),'6karakters',scan)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.
-    $hok_gateway = new HokGateway();
 $qryHoknummer = $hok_gateway->hoknummer($lidId);
 
 $index = 0; 
-while ($hknr = mysqli_fetch_assoc($qryHoknummer)) 
-{ 
+while ($hknr = $qryHoknummer->fetch_assoc()) { 
    $hoknId[$index] = $hknr['hokId']; 
    $hoknum[$index] = $hknr['hoknr'];
    $index++; 

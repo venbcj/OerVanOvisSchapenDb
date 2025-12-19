@@ -96,4 +96,27 @@ SQL
         $this->run_query("UPDATE tblUbn SET actief = :actief WHERE ubnId = :ubnId", [[':ubnId', $ubnId, self::INT], [':actief', $actief, self::BOOL]]);
     }
 
+    public function lijst($lidId) {
+        return $this->run_query(
+            <<<SQL
+SELECT ubnId, ubn
+FROM tblUbn
+WHERE lidId = :lidId and actief = 1
+ORDER BY ubn
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
+
+    public function countPerLid($lidId) {
+        return $this->first_field(
+            <<<SQL
+SELECT count(ubnId) aant_ubn
+FROM tblUbn 
+WHERE lidId = :lidId
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
+
 }

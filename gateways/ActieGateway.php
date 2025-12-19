@@ -11,4 +11,15 @@ SQL
         );
     }
 
+    public function getListOp1() {
+        return $this->run_query(
+            <<<SQL
+SELECT actId, actie
+FROM tblActie
+WHERE op = 1
+ORDER BY actId
+SQL
+        );
+    }
+
 }

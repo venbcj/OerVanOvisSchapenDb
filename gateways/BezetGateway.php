@@ -1104,4 +1104,68 @@ SQL
     );
 }
 
+public function getHokAfleverenFrom() {
+    return <<<SQL
+tblSchaap s
+ join tblStal st on (st.schaapId = s.schaapId)
+ join tblHistorie h on (h.stalId = st.stalId)
+ join tblBezet b on (b.hisId = h.hisId)
+ left join (
+    SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
+    FROM tblBezet b
+     join tblHistorie h1 on (b.hisId = h1.hisId)
+     join tblActie a1 on (a1.actId = h1.actId)
+     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+     join tblActie a2 on (a2.actId = h2.actId)
+     join tblStal st on (h1.stalId = st.stalId)
+    WHERE st.lidId = :lidId
+ and a2.uit = 1
+ and h1.skip = 0
+ and h2.skip = 0
+ and b.hokId = :hokId
+    GROUP BY b.bezId, h1.hisId
+ ) uit on (uit.bezId = b.bezId)
+ left join (
+    SELECT st.schaapId, h.datum
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 4 and h.skip = 0
+ ) spn on (spn.schaapId = st.schaapId)
+ left join (
+    SELECT st.schaapId, h.datum
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
+ ) prnt on (prnt.schaapId = st.schaapId)
+SQL;
+}
+
+public function getHokAfleverenWhere($pagina, $fase, $lidId, $hokId) {
+    $where = "WHERE b.hokId = :hokId and isnull(uit.bezId) and h.skip = 0";
+    switch ($pagina) {
+    case 'Afleveren':
+        $where .= " and spn.schaapId is not null and prnt.schaapId is null";
+        break;
+    case 'Verkopen':
+        break;
+        $where .= " and prnt.schaapId is not null";
+    case 'Uitscharen':
+        switch ($fase) {
+        case 3:
+            $where .= " and prnt.schaapId is not null";
+            break;
+        case 1:
+            $where .= " and prnt.schaapId is null";
+            break;
+        }
+    }
+    return [
+        $where,
+        [
+            [':hokId', $hokId, self::INT],
+            [':lidId', $lidId, self::INT],
+        ]
+    ];
+}
+
 }

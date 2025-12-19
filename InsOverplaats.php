@@ -42,139 +42,38 @@ include "login.php"; ?>
             <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) { 
+    $impagrident_gateway = new ImpAgridentGateway();
 
-If (isset ($_POST['knpInsert_'])) {
-    include "post_readerOvp.php"; #Deze include moet voor de vervversing in de functie header()
-    //header("Location: ".$url."InsOverplaats.php");
+    If (isset ($_POST['knpInsert_'])) {
+        include "post_readerOvp.php"; #Deze include moet voor de vervversing in de functie header()
+        //header("Location: ".$url."InsOverplaats.php");
     }
 
-
-if($reader == 'Agrident') {
-$velden = "rd.Id readId, str_to_date(rd.datum,'%Y-%m-%d') sort , rd.datum, rd.verwerkt, rd.levensnummer levnr, rd.hokId hok_rd, hb.hokId hok_db,
-rs.Id readId_sp,
-h.actie status, h.af, spn.schaapId spn, prnt.schaapId prnt, s.geslacht, date_format(h.datum,'%d-%m-%Y') maxdatum, h.datum datummax";
-
-$tabel = "
-impAgrident rd
- left join (
-    SELECT levensnummer, Id 
-    FROM impAgrident 
-    WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 4 and isnull(verwerkt)
- ) rs on (rd.levensnummer = rs.levensnummer)
- left join (
-     SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
-     FROM tblSchaap s
-      join tblStal st on (st.schaapId = s.schaapId)
-      join tblHistorie h on (st.stalId = h.stalId)
-     WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
-     GROUP BY s.schaapId, s.levensnummer, s.geslacht
- ) s on (rd.levensnummer = s.levensnummer)
- 
- left join tblStal st on (st.schaapId = s.schaapId and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best))
- left join (
-    SELECT h.hisId, a.actie, a.af, h.datum
-    FROM tblHistorie h
-     join tblActie a on (h.actId = a.actId)
-    WHERE h.skip = 0
- ) h on (h.hisId = s.hisId)
- left join (
-    SELECT st.schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0
- ) spn on (spn.schaapId = s.schaapId)
- left join (
-    SELECT st.schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = s.schaapId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 14 and h.skip = 0
- ) hu on (hu.schaapId = s.schaapId)
- left join (
-    SELECT hokId
-    FROM tblHok
-    WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief = 1
- ) hb on (rd.hokId = hb.hokId)
-";
-
-$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 5 and isnull(rd.verwerkt) and isnull(rs.Id) ";
-
-include "paginas.php";
-$data = $paginator->fetch_data($velden, "ORDER BY sort, rd.Id");
-
-}
-else {
-$velden = "rd.readId, str_to_date(rd.datum,'%d/%m/%Y') sort , rd.datum, rd.verwerkt, rd.levnr_ovpl levnr, rd.hok_ovpl hok_rd, hb.scan hok_db, 
-rs.readId readId_sp,
-h.actie status, h.af, spn.schaapId spn, prnt.schaapId prnt, s.geslacht, date_format(h.datum,'%d-%m-%Y') maxdatum, h.datum datummax";
-
-$tabel = "
-impReader rd
- left join (
-    SELECT levnr_sp, readId 
-    FROM impReader 
-    WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and teller_sp is not null and isnull(verwerkt)
- ) rs on (rd.levnr_ovpl = rs.levnr_sp)
- left join (
-     SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
-     FROM tblSchaap s
-      join tblStal st on (st.schaapId = s.schaapId)
-      join tblHistorie h on (st.stalId = h.stalId)
-     WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
-     GROUP BY s.schaapId, s.levensnummer, s.geslacht
- ) s on (rd.levnr_ovpl = s.levensnummer)
- 
- left join tblStal st on (st.schaapId = s.schaapId and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best))
- left join (
-    SELECT h.hisId, a.actie, a.af, h.datum
-    FROM tblHistorie h
-     join tblActie a on (h.actId = a.actId)
-    WHERE h.skip = 0
- ) h on (h.hisId = s.hisId)
- left join (
-    SELECT st.schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0
- ) spn on (spn.schaapId = s.schaapId)
- left join (
-    SELECT st.schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = s.schaapId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 14 and h.skip = 0
- ) hu on (hu.schaapId = s.schaapId)
- left join (
-    SELECT scan
-    FROM tblHok
-    WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief = 1
- ) hb on (rd.hok_ovpl = hb.scan)
-";
-
-$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.teller_ovpl is not null and isnull(rd.verwerkt) and isnull(rs.readId) ";
-
-include "paginas.php";
-
-$data = $paginator->fetch_data($velden, "ORDER BY sort, rd.readId");
-}
- ?>
+    if ($reader == 'Agrident') {
+        $velden = "rd.Id readId, str_to_date(rd.datum,'%Y-%m-%d') sort , rd.datum, rd.verwerkt, rd.levensnummer levnr, rd.hokId hok_rd, hb.hokId hok_db,
+            rs.Id readId_sp,
+            h.actie status, h.af, spn.schaapId spn, prnt.schaapId prnt, s.geslacht, date_format(h.datum,'%d-%m-%Y') maxdatum, h.datum datummax";
+        $tabel = $impagrident_gateway->getInsOverplaatsAgridentFrom();
+        $WHERE = $impagrident_gateway->getInsOverplaatsAgridentWhere($lidId);
+        $order_by = "ORDER BY sort, rd.Id";
+    } else {
+        $velden = "rd.readId, str_to_date(rd.datum,'%d/%m/%Y') sort , rd.datum, rd.verwerkt, rd.levnr_ovpl levnr, rd.hok_ovpl hok_rd, hb.scan hok_db, 
+            rs.readId readId_sp,
+            h.actie status, h.af, spn.schaapId spn, prnt.schaapId prnt, s.geslacht, date_format(h.datum,'%d-%m-%Y') maxdatum, h.datum datummax";
+        $tabel = $impagrident_gateway->getInsOverplaatsBiocontrolFrom();
+        $WHERE = $impagrident_gateway->getInsOverplaatsBiocontrolWhere($lidId);
+        $order_by = "ORDER BY sort, rd.readId";
+    }
+    include "paginas.php";
+    $data = $paginator->fetch_data($velden, $order_by);
+?>
 <table border = 0>
 <tr> <form action="InsOverplaats.php" method = "post">
  <td colspan = 2 style = "font-size : 13px;">
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
- <td colspan = 2 align = "center" style = "font-size : 14px;"><?php 
-echo $page_numbers; ?></td>
- <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
+  <td colspan = 2 align = "center" style = "font-size : 14px;"><?php 
+    echo $paginator->show_page_numbers(); ?></td>
+ <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $paginator->show_rpp(); ?> </td>
  <td colspan = 3 align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
  <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td></tr>
 <tr valign = bottom style = "font-size : 12px;">
@@ -194,7 +93,7 @@ echo $page_numbers; ?></td>
     $qryHoknummer = $hok_gateway->nummers_bij_lid($lidId);
 
 $index = 0; 
-while ($hnr = mysqli_fetch_array($qryHoknummer)) { 
+while ($hnr = $qryHoknummer->fetch_array()) { 
    $hoknId[$index] = $hnr['hokId'];
    $hoknum[$index] = $hnr['hoknr'];
    $index++; 
@@ -202,8 +101,8 @@ while ($hnr = mysqli_fetch_array($qryHoknummer)) {
 unset($index);
 // EINDE Declaratie HOKNUMMER
 
-if(isset($data))  {    foreach($data as $key => $array)
-    {
+if(isset($data))  {
+    foreach($data as $key => $array) {
         $var = $array['datum'];
 $date = str_replace('/', '-', $var);
 $datum = date('d-m-Y', strtotime($date));

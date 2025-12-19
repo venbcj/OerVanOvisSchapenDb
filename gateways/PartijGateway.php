@@ -61,7 +61,7 @@ WHERE p.lidId = :lidId
  and relatie = 'deb'
  and p.actief = 1
  and r.actief = 1
-      and isnull(p.ubn)
+ and isnull(p.ubn)
 union
 SELECT r.relId, p.ubn, concat(p.ubn, ' - ', p.naam) naam
 FROM tblPartij p
@@ -70,7 +70,7 @@ WHERE p.lidId = :lidId
  and relatie = 'deb'
  and p.actief = 1
  and r.actief = 1 
-      and ubn is not null
+ and ubn is not null
 ORDER BY naam
 SQL
         , [[':lidId', $lidId, self::INT]]

@@ -11,9 +11,10 @@ class NewUserTest extends IntegrationCase {
     }
 
     public function testSave() {
+        Logger::instance()->debug('===============================================================');
         include "just_connect_db.php";
         $this->db = $db;
-        # $this->runsetup('tblLeden'); // maar waarom? Een integration-test alfabetisch voor ons gooit het record weg ... ?
+        $this->runsetup('tblLeden'); // maar waarom? Een integration-test "soms" voor ons gooit het record weg ... ?
         $this->runfixture('newuser-pre');
         if (is_dir(self::NEW_USER_DIR)) {
             rmdir(self::NEW_USER_DIR . '/Readerbestanden');

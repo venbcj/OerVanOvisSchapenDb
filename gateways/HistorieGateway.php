@@ -833,4 +833,18 @@ SQL
     );
 }
 
+public function zoek_afvoerdatum($stalId) {
+    return $this->first_row(
+        <<<SQL
+SELECT h.datum date, date_format(h.datum,'%d-%m-%Y') datum
+FROM tblHistorie h
+ join tblActie a on (a.actId = h.actId)
+WHERE h.stalId = :stalId
+ and a.af = 1
+ and h.skip = 0
+SQL
+    , [[':stalId', $stalId, self::INT]]
+    );
+}
+
 }

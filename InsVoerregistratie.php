@@ -35,6 +35,7 @@ include "login.php"; ?>
             <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) { 
+$impagrident_gateway = new ImpAgridentGateway();
 
 include "kalender.php";
 require_once "func_artikelnuttigen.php"; 
@@ -62,49 +63,8 @@ a.naam, a.actief,
 ntot.totat, i.actief a_act, i.vrdat, 
 hk.hoknr";
 
-$tabel = "
-(
-    SELECT max(Id) Id, hokId, artId, doelId
-    FROM impAgrident rd
-    WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 8888 and isnull(verwerkt)
-    GROUP BY hokId, artId, doelId
-) rd
- join (
-    SELECT max(Id) Id, min(datum) dmeerst, max(datum) dmlaatst, hokId, artId, sum(coalesce(toedat_upd, toedat)) toedtot, doelId
-    FROM impAgrident
-    WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 8888 and isnull(verwerkt)
-    GROUP BY hokId, artId, doelId
- ) md on (md.Id = rd.Id)
- join tblHok hk on (rd.hokId = hk.hokId) 
- join tblArtikel a on (rd.artId = a.artId)
-  join (
-    SELECT artId, sum(coalesce(toedat_upd, toedat)) totat
-    FROM impAgrident
-    WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 8888 and isnull(verwerkt)
-    GROUP BY artId
-) ntot on (ntot.artId = rd.artId)
- left join 
-(
-    SELECT min(i.inkId) inkId, a.artId, a.naam, a.stdat, a.actief, sum(i.inkat-coalesce(n.vbrat,0)) vrdat
-    FROM tblEenheiduser eu
-     join tblInkoop i on (i.enhuId = eu.enhuId)
-     join tblArtikel a on (i.artId = a.artId)
-     left join (
-        SELECT v.inkId, sum(v.nutat*v.stdat) vbrat
-        FROM tblVoeding v
-         join tblInkoop i on (v.inkId = i.inkId)
-         join tblArtikel a on (a.artId = i.artId)
-         join tblEenheiduser eu on (a.enhuId = eu.enhuId)
-        WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-        GROUP BY v.inkId
-     ) n on (i.inkId = n.inkId)
-    WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)/* deze query betreft min_inkId_met_vrd */."' and i.inkat-coalesce(n.vbrat,0) > 0 and a.soort = 'voer'
-    GROUP BY a.artId, a.naam, a.stdat
-) i on (rd.artId = i.artId)
-";
-
-//$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 8888 and isnull(rd.verwerkt) ";
-$WHERE = '';
+$tabel = $impagrident_gateway->getInsVoerregistratieFrom();
+$WHERE = $impagrident_gateway->getInsVoerregistratieWhere($lidId);
 
 include "paginas.php";
 $data = $paginator->fetch_data($velden, "ORDER BY sort, rd.Id");
@@ -115,8 +75,8 @@ $data = $paginator->fetch_data($velden, "ORDER BY sort, rd.Id");
  <td colspan = 2 style = "font-size : 13px;">
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
  <td colspan = 2 align = "center" style = "font-size : 14px;"><?php 
-echo $page_numbers; ?></td>
- <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
+echo $paginator->show_page_numbers(); ?></td>
+ <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $paginator->show_rpp(); ?> </td>
  <td colspan = 3 align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
  <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td></tr>
 <tr valign = bottom style = "font-size : 12px;">
@@ -133,17 +93,11 @@ echo $page_numbers; ?></td>
 </tr>
 <?php
 
-// Declaratie HOKNUMMER            // lower(if(isnull(scan),'6karakters',scan)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.
-$qryHoknummer = mysqli_query($db,"
-SELECT hokId, scan, hoknr
-FROM tblHok
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief = 1
-ORDER BY hoknr
-") or die (mysqli_error($db)); 
-
+// Declaratie HOKNUMMER
+    $hok_gateway = new HokGateway();
+    $qryHoknummer = $hok_gateway->hoknummer($lidId);
 $index = 0; 
-while ($hnr = mysqli_fetch_assoc($qryHoknummer)) 
-{ 
+while ($hnr = $qryHoknummer->fetch_assoc()) { 
    $hoknId[$index] = $hnr['hokId']; 
    $hoknum[$index] = $hnr['hoknr'];
    $index++; 

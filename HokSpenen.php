@@ -34,10 +34,12 @@ $versie = '26-12-2024'; /* <TD width = 940 height = 400 valign = "top"> gewijzig
 $titel = 'Spenen';
 $file = "HokkenBezet.php";
 include "login.php"; ?>
-
                 <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) {
+    $hok_gateway = new HokGateway();
+    $stal_gateway = new StalGateway();
+    $schaap_gateway = new SchaapGateway();
 
 if(isset($_GET['pstId']))    { Session::set("ID", $_GET['pstId']); } $ID = Session::get("ID"); /* zorgt het Id wordt onthouden bij het opnieuw laden van de pagina */
 if(isset($_POST['knpVerder_']) && isset($_POST['kzlHokall_']))    {
@@ -46,71 +48,12 @@ if(isset($_POST['knpVerder_']) && isset($_POST['kzlHokall_']))    {
  else { $hokkeuze = Session::get("BST") ?? '';  } $sess_dag = Session::get("DT1") ?? ''; $sess_bestm = Session::get("BST") ?? '';
 
 if(isset($_POST['knpSave_'])) { include "save_spenen.php"; }
+$hoknr = $hok_gateway->findHoknrById($ID);
 
-$zoek_hok = mysqli_query ($db,"
-SELECT hoknr
-FROM tblHok
-WHERE hokId = '".mysqli_real_escape_string($db,$ID)."'
-") or die (mysqli_error($db));
-    while ($h = mysqli_fetch_assoc($zoek_hok)) { $hoknr = $h['hoknr']; }
-
-/*$zoek_nu_in_verblijf_geb = mysqli_query($db,"
-SELECT count(b.bezId) aantin
-FROM tblBezet b
- join tblHistorie h on (b.hisId = h.hisId)
- join tblStal st on (st.stalId = h.stalId)
- left join
- (
-    SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
-    WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-    GROUP BY b.bezId, h1.hisId
- ) uit on (uit.hisv = b.hisId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4
- ) spn on (spn.schaapId = st.schaapId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3
- ) prnt on (prnt.schaapId = st.schaapId)
-WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId)
-and isnull(spn.schaapId)
-and isnull(prnt.schaapId)
-") or die (mysqli_error($db));
-
-    while($nu1 = mysqli_fetch_assoc($zoek_nu_in_verblijf_geb))
-        { $nu = $nu1['aantin']; }*/
-
-
-    //while($rij = mysqli_fetch_assoc($nu_in_hok))    { $nu = $rij['nu']; $hoknr = $rij['hoknr'];}
-    // Als laatste schaap is gespeend
-    /*if(!isset($hoknr)) { $hokken = mysqli_query($db,"SELECT h.hoknr FROM tblHok h WHERE hokId = '$Id' ") or die(mysqli_error($db));
-                            while (    $hk = mysqli_fetch_assoc($hokken)) { $hoknr = $hk['hoknr']; }    }*/
-    // Einde Als laatste schaap is gespeend
-// Declaratie HOKNUMMER KEUZE
-$qryHokkeuze = mysqli_query($db,"
-SELECT hokId, hoknr
-FROM tblHok
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief = 1
-ORDER BY hoknr
-
-") or die (mysqli_error($db));
-
+$qryHokkeuze = $hok_gateway->kzlHok($lidId);
 $index = 0;
 $hoknum = [];
-
-while ($hnr = mysqli_fetch_array($qryHokkeuze))
-{
+while ($hnr = $qryHokkeuze->fetch_assoc()) {
    $hoknId[$index] = $hnr['hokId'];
    $hoknum[$index] = $hnr['hoknr'];
    $index++;
@@ -120,86 +63,14 @@ unset($index);
 
 <form action="HokSpenen.php" method = "post"><?php
 
-$aantal_volwassen_dieren = mysqli_query($db,"
-SELECT count(*) aant
-FROM tblSchaap s
- join tblStal st on (st.schaapId = s.schaapId)
- join tblHistorie h on (h.stalId = st.stalId)
- join tblBezet b on (b.hisId = h.hisId)
-left join
-(
-        SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
-        FROM tblBezet b
-         join tblHistorie h1 on (b.hisId = h1.hisId)
-         join tblActie a1 on (a1.actId = h1.actId)
-         join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-         join tblActie a2 on (a2.actId = h2.actId)
-         join tblStal st on (h1.stalId = st.stalId)
-        WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and a1.aan = 1
-         and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-        GROUP BY b.bezId, st.schaapId, h1.hisId
-) uit on (uit.bezId = b.bezId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0
- ) spn on (spn.schaapId = st.schaapId)
- join (
-    SELECT st.schaapId, h.datum, h.actId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = st.schaapId)
-WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId) and h.skip = 0 and prnt.schaapId is not null
-") or die (mysqli_error($db));
+$volwas = $schaap_gateway->aantal_volwassen_dieren($ID);
 
-while ( $av = mysqli_fetch_assoc($aantal_volwassen_dieren)) {
-
-    $volwas = $av['aant'];
-}
-
-if(isset($_POST['knpVerder_']) && isset($_POST['radVolw']) && ($_POST['radVolw'] == 1 || $_POST['radVolw'] == 2)) {
-$fiter = "WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId) and h.skip = 0 and (isnull(spn.schaapId) or prnt.schaapId is not null)";
-}
-else
-{
-$fiter = "WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId) and h.skip = 0 and isnull(spn.schaapId) and isnull(prnt.schaapId)";
-}
+$condition = (isset($_POST['knpVerder_']) && isset($_POST['radVolw']) && ($_POST['radVolw'] == 1 || $_POST['radVolw'] == 2));
 // Opbouwen paginanummering
 $velden = "s.schaapId, right(s.levensnummer,$Karwerk) werknr, s.levensnummer, date_format(max(h.datum),'%Y-%m-%d') dmlst, date_format(max(h.datum),'%d-%m-%Y') lstdm, h.actId, prnt.actId nr, s.geslacht ";
 
-$tabel = "tblSchaap s
- join tblStal st on (st.schaapId = s.schaapId)
- join tblHistorie h on (h.stalId = st.stalId)
- join tblBezet b on (b.hisId = h.hisId)
- left join
- (
-        SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
-        FROM tblBezet b
-         join tblHistorie h1 on (b.hisId = h1.hisId)
-         join tblActie a1 on (a1.actId = h1.actId)
-         join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-         join tblActie a2 on (a2.actId = h2.actId)
-         join tblStal st on (h1.stalId = st.stalId)
-        WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1
-         and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-        GROUP BY b.bezId, st.schaapId, h1.hisId
- ) uit on (uit.bezId = b.bezId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0
- ) spn on (spn.schaapId = st.schaapId)
- left join (
-    SELECT st.schaapId, h.datum, h.actId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = st.schaapId)";
-
- $WHERE = $fiter ;
+$tabel = $stal_gateway->getHokSpenenFrom();
+$WHERE = $stal_gateway->getHokSpenenWhere($lidId, $ID, $condition);
 
 include "paginas.php";
 $data = $paginator->fetch_data($velden, "GROUP BY s.schaapId, s.levensnummer ORDER BY prnt.actId, right(s.levensnummer,$Karwerk), s.levensnummer");
@@ -221,8 +92,8 @@ else { $width = 200; } ?>
   <input id = "datepicker1" type = text name = 'txtDatumall_' size = 8 value = <?php if(isset($sess_dag)) { echo $sess_dag; } ?> > &nbsp
  <?php } else { ?> <td style = "font-size : 14px;">  <?php } ?>
 <!-- Opmaak paginanummering -->
- Regels Per Pagina: <?php echo $kzlRpp;
-if(isset($sess_dag) || isset($sess_bestm)) { ?> </td> <td align = center > <?php echo $page_numbers.'<br>'; ?> </td> <td> <?php }
+ Regels Per Pagina: <?php echo $paginator->show_rpp();
+if(isset($sess_dag) || isset($sess_bestm)) { ?> </td> <td align = center > <?php echo $paginator->show_page_numbers().'<br>'; ?> </td> <td> <?php }
 // Einde Opmaak paginanummering ?>
  </td>
  <td width = 150 align = center>

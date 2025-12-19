@@ -35,6 +35,8 @@ include "login.php"; ?>
 if (!(Session::isset('DT1'))) Session::set('DT1', '1900-01-01');
 
 if (Auth::is_logged_in()) {
+    $hok_gateway = new HokGateway();
+    $schaap_gateway = new SchaapGateway();
 
 if(isset($_GET['pstId']))    { Session::set("ID", $_GET['pstId']); } $ID = Session::get("ID"); /* zorgt het Id wordt onthouden bij het opnieuw laden van de pagina */
 
@@ -43,7 +45,6 @@ if(isset($_POST['knpVerder_']) && isset($_POST['txtDatumall_']))    {
     $datum = $_POST['txtDatumall_']; Session::set("DT1", $datum); }
  $sess_dag = Session::get("DT1");
 
-$hok_gateway = new HokGateway();
 $hoknr = $hok_gateway->findHoknrById($ID);
 
 if(isset($_POST['knpSave_'])) { include "save_verlaten.php"; } // staat hier omdat $doelId moet zijn gedeclareerd !
@@ -51,52 +52,11 @@ if(isset($_POST['knpSave_'])) { include "save_verlaten.php"; } // staat hier omd
 // Opbouwen paginanummering
 $velden = " s.schaapId, s.levensnummer, s.geslacht, hm.datum, date_format(hm.datum,'%d-%m-%Y') dag, prnt.schaapId prnt, b_prnt.hokId, uit.bezId ";
 
-$tabel = "tblSchaap s
-     join tblStal st on (s.schaapId = st.schaapId)
-     join (
-            SELECT max(hisId) hisId, h.stalId
-            FROM tblHistorie h
-             join tblStal st on (st.stalId = h.stalId)
-            WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
-            GROUP BY h.stalId
-     ) hmax on (hmax.stalId = st.stalId)
-     join tblHistorie hm on (hm.hisId = hmax.hisId)
-
-     join tblHistorie h on (st.stalId = h.stalId)
-     join (
-            SELECT b.hisId, b.hokId
-            FROM tblBezet b
-             join tblHistorie h on (b.hisId = h.hisId)
-             join tblStal st on (st.stalId = h.stalId)
-             join (
-                SELECT st.schaapId, h.hisId, h.datum
-                FROM tblStal st
-                join tblHistorie h on (st.stalId = h.stalId)
-                WHERE h.actId = 3 and h.skip = 0
-            ) prnt on (prnt.schaapId = st.schaapId)
-            WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and h.skip = 0
-      ) b_prnt on (b_prnt.hisId = h.hisId)
-     left join (
-            SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
-            FROM tblBezet b
-             join tblHistorie h1 on (b.hisId = h1.hisId)
-             join tblActie a1 on (a1.actId = h1.actId)
-             join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-             join tblActie a2 on (a2.actId = h2.actId)
-            WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
-            GROUP BY b.bezId, h1.hisId
-     ) uit on (uit.hisv = b_prnt.hisId)
-     left join (
-            SELECT st.schaapId, h.datum
-            FROM tblStal st
-             join tblHistorie h on (st.stalId = h.stalId)
-            WHERE h.actId = 3 and h.skip = 0
-     ) prnt on (prnt.schaapId = st.schaapId)";
-
-$WHERE = " WHERE b_prnt.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId) ";
+$tabel = $schaap_gateway->getHokVerlatenFrom();
+$WHERE = $schaap_gateway->getHokVerlatenWhere($lidId, $ID);
 
 include "paginas.php";
-$data = $paginator->fetch_data($velden, "ORDER BY s.geslacht, right(s.levensnummer,'".mysqli_real_escape_string($db,$Karwerk)."') ");
+$data = $paginator->fetch_data($velden, "ORDER BY s.geslacht, right(s.levensnummer,$Karwerk) ");
 // Einde Opbouwen paginanummering
 
 if(!isset($sess_dag)) { $width = 100; }
@@ -116,8 +76,8 @@ else { $width = 200; } ?>
   <input id="datepicker1" type = text name = 'txtDatumall_' size = 8 value = <?php if(isset($sess_dag)) { echo $sess_dag; } ?> > &nbsp
  <?php } else { ?> <td style = "font-size : 14px;">  <?php } ?>
 <!-- Opmaak paginanummering -->
- Regels Per Pagina: <?php echo $kzlRpp;
-if(isset($sess_dag)) { ?> </td> <td align = center > <?php echo $page_numbers.'<br>'; ?> </td> <td> <?php }
+ Regels Per Pagina: <?php echo $paginator->show_rpp();
+if(isset($sess_dag)) { ?> </td> <td align = center > <?php echo $paginator->show_page_numbers().'<br>'; ?> </td> <td> <?php }
 // Einde Opmaak paginanummering ?>
  </td>
  <td width = 150 align = center>

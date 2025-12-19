@@ -35,7 +35,6 @@ $modbeheer
 $modfin
 $modmeld
 $modtech
-$pag
 $persoonlijke_map
   # importRespons, Newuser, Readerversies
 $reader
@@ -45,7 +44,6 @@ $appfile_exists // idem
 $takenfile_exists // idem
 $rendac_Id
 $rendac_ubn
-$RPP
 $w_hok
 $w_werknr
  */

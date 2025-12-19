@@ -347,7 +347,7 @@ SQL
     }
 
     public function zoek_volgende_worp_na_geboortedatum($mdrId, $datum) {
-        $vw = $this->run_query(
+        return $this->first_row(
             <<<SQL
 SELECT min(h.datum) datum, date_format(min(h.datum),'%d-%m-%Y') dag
 FROM tblSchaap l
@@ -364,11 +364,271 @@ SQL
                 [':mdrId', $mdrId, self::INT],
                 [':datum', $datum, self::DATE],
             ]
+            , [null, null]
         );
-        if ($vw->num_rows) {
-            return $vw->fetch_row();
+    }
+
+    public function zoek_drachtdatum($volwId) {
+        return $this->first_row(
+            <<<SQL
+SELECT h.datum dmdracht, date_format(h.datum,'%d-%m-%Y') drachtdm
+FROM tblVolwas v
+ join tblDracht d on (v.volwId = d.volwId)
+ join tblHistorie h on (d.hisId = h.hisId)
+WHERE h.skip = 0 and v.volwId = :volwId
+SQL
+        , [[':volwId', $volwId, self::INT]]
+            , [null, null]
+        );
+    }
+
+    public function zoek_werpdatum($schaapId) {
+        return $this->first_row(
+            <<<SQL
+SELECT h.datum, date_format(h.datum,'%d-%m-%Y') werpdm
+FROM tblVolwas v
+ join tblSchaap l on (l.volwId = v.volwId)
+ join tblStal st on (l.schaapId = st.schaapId)
+ join tblHistorie h on (h.stalId = st.stalId)
+WHERE h.actId = 1
+ and h.skip = 0
+ and v.volwId = :schaapId
+SQL
+        , [['schaapId', $schaapId, self::INT]]
+            , [null, null]
+        );
+    }
+
+    public function zoek_laatste_worp($schaapId) {
+        return $this->first_field(
+            <<<SQL
+SELECT max(v.volwId) volwId
+FROM tblVolwas v
+ join tblSchaap l on (l.volwId = v.volwId)
+ left join tblSchaap k on (k.volwId = v.volwId)
+ left join (
+    SELECT s.schaapId
+    FROM tblSchaap s
+     join tblStal st on (s.schaapId = st.schaapId)
+    join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
+ ) ha on (k.schaapId = ha.schaapId)
+WHERE v.mdrId = :schaapId
+ and isnull(ha.schaapId)
+SQL
+        , [[':schaapId', $schaapId, self::INT]]
+        );
+    }
+
+    public function zoek_laatste_dekkingen_met_vader_zonder_werpdatum($lidId, $Karwerk) {
+        // Zoek de laatste dekkingen. Deze laatste dekking moet een vader hebben geregistreerd
+        // Er moet óf een dekking bestaan (tblVolwas.hisId) óf een dracht (tblDracht.hisId)
+        // Als er een dracht bestaat in tblDracht moet deze niet zijn verwijderd (zie hd.skip = 0)
+        // Key is schaapId ooi en value is werknr ram
+        $vw = $this->run_query(
+            <<<SQL
+SELECT v.volwId, v.mdrId, v.vdrId, right(vdr.levensnummer,$Karwerk) lev
+FROM tblVolwas v
+ join (
+  SELECT v.mdrId, max(v.volwId) volwId
+  FROM tblVolwas v
+   left join (
+    SELECT hisId
+    FROM tblHistorie h
+     join tblStal st on (st.stalId = h.stalId)
+    WHERE h.skip = 0
+ and st.lidId = :lidId
+   ) dek on (dek.hisId = v.hisId)
+   left join (
+      SELECT d.volwId, d.hisId
+      FROM tblDracht d
+       join tblHistorie h on (d.hisId = h.hisId)
+      WHERE h.skip = 0
+   ) dra on (v.volwId = dra.volwId)
+   left join tblSchaap lam on (lam.volwId = v.volwId)
+   left join (
+      SELECT s.schaapId
+      FROM tblSchaap s
+       join tblStal st on (s.schaapId = st.schaapId)
+       join tblHistorie h on (st.stalId = h.stalId)
+      WHERE h.actId = 3
+ and h.skip = 0
+   ) ha on (lam.schaapId = ha.schaapId)
+  WHERE (dek.hisId is not null or dra.hisId is not null)
+ and isnull(ha.schaapId)
+  GROUP BY v.mdrId
+ ) lastv on (v.volwId = lastv.volwId)
+ join tblSchaap vdr on (vdr.schaapId = v.vdrId)
+ left join tblSchaap lam on (lam.volwId = v.volwId)
+ left join tblStal stl on (stl.schaapId = lam.schaapId)
+ left join (
+  SELECT stalId, hisId werpId
+  FROM tblHistorie h
+  WHERE actId = 1
+ and h.skip = 0
+ ) hl on (stl.stalId = hl.stalId)
+WHERE isnull(hl.werpId)
+GROUP BY  v.volwId, v.mdrId, v.vdrId, right(vdr.levensnummer,$Karwerk)
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        );
+        $res = [];
+        while ($rec = $vw->fetch_assoc()) {
+            $res[$rec['mdrId']] = $rec['lev'];
         }
-        return [null, null];
+        return $res;
+    }
+
+    public function zoek_laatste_werpdatum($lidId, $Karwerk) {
+        $vw = $this->run_query(
+            <<<SQL
+SELECT v.volwId, v.mdrId, v.vdrId, right(vdr.levensnummer,$Karwerk) lev
+FROM tblVolwas v
+ join (
+  SELECT v.mdrId, max(v.volwId) volwId
+  FROM tblVolwas v
+   left join (
+    SELECT hisId
+    FROM tblHistorie h
+     join tblStal st on (st.stalId = h.stalId)
+    WHERE h.skip = 0
+ and st.lidId = :lidId
+   ) dek on (dek.hisId = v.hisId)
+   left join (
+      SELECT d.volwId, d.hisId
+      FROM tblDracht d
+       join tblHistorie h on (d.hisId = h.hisId)
+      WHERE h.skip = 0
+   ) dra on (v.volwId = dra.volwId)
+   left join tblSchaap lam on (lam.volwId = v.volwId)
+   left join (
+      SELECT s.schaapId
+      FROM tblSchaap s
+       join tblStal st on (s.schaapId = st.schaapId)
+       join tblHistorie h on (st.stalId = h.stalId)
+      WHERE h.actId = 3
+ and h.skip = 0
+   ) ha on (lam.schaapId = ha.schaapId)
+  WHERE (dek.hisId is not null or dra.hisId is not null)
+ and isnull(ha.schaapId)
+  GROUP BY v.mdrId
+ ) lastv on (v.volwId = lastv.volwId)
+ join tblSchaap vdr on (vdr.schaapId = v.vdrId)
+ left join tblSchaap lam on (lam.volwId = v.volwId)
+ left join tblStal stl on (stl.schaapId = lam.schaapId)
+ join (
+  SELECT stalId, hisId werpId
+  FROM tblHistorie h
+  WHERE actId = 1
+ and h.skip = 0
+ ) hl on (stl.stalId = hl.stalId)
+GROUP BY  v.volwId, v.mdrId, v.vdrId, right(vdr.levensnummer,$Karwerk)
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        );
+        $res = [];
+        while ($rec = $vw->fetch_assoc()) {
+            $res[$rec['mdrId']] = $rec['lev'];
+        }
+        return $res;
+    }
+
+    public function zoek_vader_uit_laatste_dekkingen($schaapId, $Karwerk) {
+        return $this->first_row(
+            <<<SQL
+SELECT v.vdrId, right(vdr.levensnummer,$Karwerk) werknr_ram
+FROM tblVolwas v
+ join tblSchaap vdr on (vdr.schaapId = v.vdrId)
+ join (
+   SELECT v.mdrId, max(v.volwId) volwId
+   FROM tblVolwas v
+    left join (
+      SELECT hisId
+      FROM tblHistorie h
+       join tblStal st on (st.stalId = h.stalId)
+      WHERE h.skip = 0
+ and st.schaapId = :schaapId
+    ) dek on (dek.hisId = v.hisId)
+    left join (
+      SELECT d.volwId, h.hisId
+      FROM tblDracht d 
+       join tblHistorie h on (h.hisId = d.hisId)
+       join tblStal st on (st.stalId = h.stalId)
+      WHERE h.skip = 0
+ and st.schaapId = :schaapId
+    ) dra on (v.volwId = dra.volwId)
+    left join tblSchaap lam on (lam.volwId = v.volwId)
+    left join (
+       SELECT s.schaapId
+       FROM tblSchaap s
+        join tblStal st on (s.schaapId = st.schaapId)
+        join tblHistorie h on (st.stalId = h.stalId)
+       WHERE h.actId = 3
+ and h.skip = 0
+    ) ha on (lam.schaapId = ha.schaapId)
+   WHERE (dek.hisId is not null or dra.hisId is not null)
+ and isnull(ha.schaapId)
+ and v.mdrId = :schaapId
+   GROUP BY v.mdrId
+ ) lv on (v.volwId = lv.volwId) 
+SQL
+        , [[':schaapId', $schaapId, self::INT]]
+        );
+    }
+
+    public function zoek_laatste_dekking_van_ooi($lidId, $schaapId) {
+        return $this->first_field(
+            <<<SQL
+SELECT max(v.volwId) volwId
+FROM tblVolwas v
+ left join (
+        SELECT hisId
+        FROM tblHistorie h
+         join tblStal st on (st.stalId = h.stalId)
+        WHERE h.skip = 0
+ and st.lidId = :lidId
+ and st.schaapId = :schaapId
+ ) dek on (dek.hisId = v.hisId)
+ left join (
+    SELECT d.volwId, date_format(h.datum,'%d-%m-%Y') drachtdatum
+    FROM tblDracht d 
+     join tblHistorie h on (h.hisId = d.hisId)
+     join tblStal st on (st.stalId = h.stalId)
+    WHERE h.skip = 0
+ and st.lidId = :lidId
+ and st.schaapId = :schaapId
+ ) dra on (v.volwId = dra.volwId)
+ left join tblSchaap lam on (lam.volwId = v.volwId)
+ left join (
+    SELECT s.schaapId
+    FROM tblSchaap s
+     join tblStal st on (s.schaapId = st.schaapId)
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3
+ and h.skip = 0
+ ) ha on (lam.schaapId = ha.schaapId)
+WHERE (dek.hisId is not null or dra.volwId is not null)
+ and isnull(ha.schaapId)
+ and v.mdrId = :schaapId
+GROUP BY v.mdrId
+SQL
+        , [[':lidId', $lidId, self::INT], [':schaapId', $schaapId, self::INT]]
+        );
+    }
+
+    public function zoek_laatste_werpdatum_dracht($schaapId) {
+        return $this->first_row(
+            <<<SQL
+SELECT max(h.datum) dmwerp, date_format(max(h.datum), '%d-%m-%Y') werpdm
+FROM tblVolwas v
+ join tblSchaap lam on (lam.volwId = v.volwId)
+ join tblStal stl on (stl.schaapId = lam.schaapId)
+ join tblHistorie h on (stl.stalId = h.stalId)
+WHERE h.skip = 0 and v.mdrId = :schaapId
+GROUP BY  v.mdrId
+SQL
+        , [[':schaapId', $schaapId, self::INT]]
+        );
     }
 
 }

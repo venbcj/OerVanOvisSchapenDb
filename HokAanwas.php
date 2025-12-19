@@ -61,40 +61,13 @@ if (Auth::is_logged_in()) {
     <form action="HokAanwas.php" method = "post">
 <?php
     // Opbouwen paginanummering
-    // TODO: Pagineren verbouwen, en/of hier een (database-)view van maken. Ja, nou zit er nog een vracht SQL tussen de PHP.
+    $schaap_gateway = new SchaapGateway();
     $velden = "s.schaapId, s.levensnummer, s.geslacht, date_format(max(h.datum),'%Y-%m-%d') dmlst, date_format(max(h.datum),'%d-%m-%Y') lstdm";
-    $tabel = "tblSchaap s
-        join tblStal st on (st.schaapId = s.schaapId)
-        join tblHistorie h on (h.stalId = st.stalId)
-        join tblBezet b on (b.hisId = h.hisId)
-        left join (
-            SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
-            FROM tblBezet b
-            join tblHistorie h1 on (b.hisId = h1.hisId)
-            join tblActie a1 on (a1.actId = h1.actId)
-            join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-            join tblActie a2 on (a2.actId = h2.actId)
-            join tblStal st on (h1.stalId = st.stalId)
-            WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and b.hokId = ".mysqli_real_escape_string($db,$ID)."
-            GROUP BY b.bezId, h1.hisId
- ) uit on (uit.bezId = b.bezId)
- join (
-     SELECT st.schaapId, h.datum
-     FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-     WHERE h.actId = 4 and h.skip = 0
- ) spn on (spn.schaapId = st.schaapId)
- left join (
-     SELECT st.schaapId, h.datum
-     FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-     WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = st.schaapId)";
-    $WHERE = "WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId) and h.skip = 0
-        and isnull(prnt.schaapId)";
+    $tabel = $schaap_gateway->getHokAanwasFrom();
+    $WHERE = $schaap_gateway->getHokAanwasWhere($ID, $lidId);
 
     include "paginas.php";
-    $data = $paginator->fetch_data($velden, "GROUP BY s.levensnummer ORDER BY right(s.levensnummer,'".mysqli_real_escape_string($db,$Karwerk)."') ");
+    $data = $paginator->fetch_data($velden, "GROUP BY s.levensnummer ORDER BY right(s.levensnummer,$Karwerk)");
     // Einde Opbouwen paginanummering
 
     if(!isset($sess_dag)) {
@@ -127,10 +100,10 @@ if (Auth::is_logged_in()) {
     }
 ?>
 <!-- Opmaak paginanummering -->
-Regels Per Pagina: <?php echo $kzlRpp;
+Regels Per Pagina: <?php echo $paginator->show_rpp();
 if(isset($sess_dag)) {
 ?>
-    </td> <td align = center > <?php echo $page_numbers.'<br>'; ?>
+    </td> <td align = center > <?php echo $paginator->show_page_numbers().'<br>'; ?>
 </td> <td>
 <?php
 }

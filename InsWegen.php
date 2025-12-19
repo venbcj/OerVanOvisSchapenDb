@@ -31,6 +31,7 @@ include "login.php"; ?>
             <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) {
+$impagrident_gateway = new ImpAgridentGateway();
 
 If (isset($_POST['knpInsert_']))  {
     include "url.php";
@@ -46,70 +47,10 @@ $velden = "str_to_date(rd.datum,'%Y-%m-%d') sort , rd.datum, rd.Id readId, rd.le
  dup.dubbelen,
  s.schaapId, s.levensnummer, s.geslacht,
  lower(haf.actie) actie, haf.af, haf.datum dmafv,
-
  date_format(hlst.datum,'%d-%m-%Y') weegdm, hlst.datum dmweeg, ouder.datum dmaanw,
-
  lstday.datum dmlst ";
-
-$tabel = "
-impAgrident rd
- left join ( 
-     SELECT levensnummer, max(stalId) stalId
-     FROM tblSchaap s
-      join tblStal st on (s.schaapId = st.schaapId)
-     GROUP BY levensnummer
- ) lstst on (lstst.levensnummer = rd.levensnummer)
- left join (
-     SELECT stalId, schaapId
-     FROM tblStal
-     WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
- ) st on (st.stalId = lstst.stalId)
- left join (
-     SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
-     FROM tblSchaap s
-      join tblStal st on (st.schaapId = s.schaapId)
-      join tblHistorie h on (st.stalId = h.stalId)
-     WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
-     GROUP BY s.schaapId, s.levensnummer, s.geslacht
- ) s on (st.schaapId = s.schaapId)
- left join (
-    SELECT st.schaapId, a.actie, a.af, h.datum
-    FROM tblStal st 
-     join tblHistorie h on (st.stalId = h.stalId)
-     join tblActie a on (h.actId = a.actId)
-    WHERE a.af = 1 and h.skip = 0
- ) haf on (haf.schaapId = s.schaapId)
- left join (
-    SELECT st.schaapId, max(h.datum) datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 9 and h.skip = 0
-    GROUP BY st.schaapId
- ) hlst on (hlst.schaapId = s.schaapId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) ouder on (ouder.schaapId = s.schaapId)
- 
- left join (
-     SELECT rd.Id, count(dup.Id) dubbelen
-    FROM impAgrident rd
-     join impAgrident dup on (rd.lidId = dup.lidId and rd.levensnummer = dup.levensnummer and rd.actId = dup.actId and rd.Id <> dup.Id)
-    WHERE rd.actId = 9 and rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ISNULL(rd.verwerkt) and ISNULL(dup.verwerkt)
-    GROUP BY rd.Id
- ) dup on (rd.Id = dup.Id)
- left join (
-    SELECT st.schaapId, max(h.datum) datum
-    FROM tblStal st 
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
-    GROUP BY st.schaapId 
- ) lstday on (lstday.schaapId = st.schaapId)
- " ;
-
-$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 9 and isnull(rd.verwerkt)";
+$tabel = $impagrident_gateway->getInsWegenFrom();
+$WHERE = $impagrident_gateway->getInsWegenWhere($lidId);
 
 include "paginas.php";
 $data = $paginator->fetch_data($velden, "ORDER BY sort, rd.Id");
@@ -121,8 +62,8 @@ $data = $paginator->fetch_data($velden, "ORDER BY sort, rd.Id");
  <td colspan = 2 style = "font-size : 13px;">
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
  <td colspan = 2 align = "center" style = "font-size : 14px;"><?php 
-echo $page_numbers; ?></td>
- <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
+echo $paginator->show_page_numbers(); ?></td>
+ <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $paginator->show_rpp(); ?> </td>
  <td align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
  <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td></tr>
 <tr valign = bottom style = "font-size : 12px;">

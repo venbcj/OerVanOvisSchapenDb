@@ -39,18 +39,21 @@ include "login.php"; ?>
                 <TD align = "center" valign = "top">
 <?php
 if (Auth::is_logged_in()) {
+    $hok_gateway = new HokGateway();
+    $bezet_gateway = new BezetGateway();
+    $schaap_gateway = new SchaapGateway();
 
 if(isset($_GET['pstId']))    { Session::set("ID", $_GET['pstId']); } $ID = Session::get("ID"); /* zorgt het Id wordt onthouden bij het opnieuw laden van de pagina */
 
 switch ($_POST['radFase_'] ?? 'alles') {
 case 'lam':
- Session::set("KZ", 1);
-break;
+    Session::set("KZ", 1);
+    break;
 case 'volw':
- Session::set("KZ", 2);
-break;
+    Session::set("KZ", 2);
+    break;
 default:
- Session::set("KZ", NULL);
+    Session::set("KZ", NULL);
 }
 $KEUZE = Session::get("KZ");
 
@@ -65,10 +68,8 @@ if(isset($_POST['knpVerder_']) && isset($_POST['kzlHokall_']))    {
     $hokkeuze = $_POST['kzlHokall_']; Session::set("BST", $hokkeuze); }
  else { $hokkeuze = Session::get("BST");  } $sess_dag = Session::get("DT1"); $sess_bestm = Session::get("BST");
 
-    $hok_gateway = new HokGateway();
     $hoknr = $hok_gateway->findHoknrById($ID);
 
-    $bezet_gateway = new BezetGateway();
     $nu_lam = $bezet_gateway->zoek_nu_in_verblijf_geb_spn($ID);
     $nu_prnt = $bezet_gateway->zoek_nu_in_verblijf_parent($ID);
 
@@ -81,93 +82,11 @@ if(isset($_POST['knpSave_'])) { include "save_overpl.php"; } // staat hier omdat
 [$hoknId, $hoknum] = $hok_gateway->items_without_one($lidId, $ID);
 // EINDE Declaratie HOKNUMMER  KEUZE
 
-$filterResult = '';
-         if($KEUZE == 1) { $filterResult = ' and isnull(prnt)'; }
-else if($KEUZE == 2) { $filterResult = ' and prnt is not null'; }
-
 // Opbouwen paginanummering
 $velden = " schaapId, levensnummer, geslacht, datum, dag, prnt ";
 
-$tabel = " (
-
-SELECT s.schaapId, s.levensnummer, s.geslacht, hm.datum, date_format(hm.datum,'%d-%m-%Y') dag, prnt.schaapId prnt, b.hokId, uit.bezId, 'lam' sort
-FROM tblSchaap s
- join tblStal st on (s.schaapId = st.schaapId)
- join (
-    SELECT max(hisId) hisId, stalId
-    FROM tblHistorie
-    WHERE skip = 0
-    GROUP BY stalId
- ) hmax on (hmax.stalId = st.stalId)
- join tblHistorie hm on (hm.hisId = hmax.hisId)
-
- join tblHistorie h on (st.stalId = h.stalId)
- join tblBezet b on (b.hisId = h.hisId)
- left join (
-    SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-    WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-    GROUP BY b.bezId, h1.hisId
- ) uit on (uit.bezId = b.bezId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = st.schaapId)
-WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and h.skip = 0 and isnull(uit.bezId) and isnull(prnt.schaapId)
-
-UNION
-
-SELECT s.schaapId, s.levensnummer, s.geslacht, hm.datum, date_format(hm.datum,'%d-%m-%Y') dag, prnt.schaapId prnt, b.hokId, uit.bezId, s.geslacht sort
-FROM tblSchaap s
- join tblStal st on (s.schaapId = st.schaapId)
- join (
-        SELECT max(hisId) hisId, stalId
-        FROM tblHistorie
-        WHERE skip = 0
-        GROUP BY stalId
- ) hmax on (hmax.stalId = st.stalId)
- join tblHistorie hm on (hm.hisId = hmax.hisId)
-
- join tblHistorie h on (st.stalId = h.stalId)
- join (
-        SELECT b.hisId, b.hokId
-        FROM tblBezet b
-         join tblHistorie h on (b.hisId = h.hisId)
-         join tblStal st on (st.stalId = h.stalId)
-         join (
-                SELECT st.schaapId, h.hisId, h.datum
-                FROM tblStal st
-                join tblHistorie h on (st.stalId = h.stalId)
-                WHERE h.actId = 3 and h.skip = 0
-        ) prnt on (prnt.schaapId = st.schaapId)
-        WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and h.skip = 0
- ) b on (b.hisId = h.hisId)
- left join (
-        SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
-        FROM tblBezet b
-         join tblHistorie h1 on (b.hisId = h1.hisId)
-         join tblActie a1 on (a1.actId = h1.actId)
-         join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-         join tblActie a2 on (a2.actId = h2.actId)
-        WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
-        GROUP BY b.bezId, h1.hisId
- ) uit on (uit.hisv = b.hisId)
- join (
-        SELECT st.schaapId, h.datum
-        FROM tblStal st
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = st.schaapId)
- WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and h.skip = 0 and isnull(uit.bezId)
-
-) tbl ";
-$WHERE = " WHERE hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(bezId) ". $filterResult;
+$tabel = $schaap_gateway->getHokOverplFrom();
+$WHERE = $schaap_gateway->getHokOverplWhere($KEUZE, $ID);
 
 include "paginas.php";
 $data = $paginator->fetch_data($velden, "ORDER BY sort, right(levensnummer,$Karwerk)");
@@ -191,8 +110,8 @@ else { $width = 200; } ?>
   <input id="datepicker1" type = text name = 'txtDatumall_' size = 8 value = <?php if(isset($sess_dag)) { echo $sess_dag; } ?> > &nbsp
  <?php } else { ?> <td style = "font-size : 14px;">  <?php } ?>
 <!-- Opmaak paginanummering -->
- Regels Per Pagina: <?php echo $kzlRpp;
-if(isset($sess_dag) || isset($sess_bestm)) { ?> </td> <td align = center > <?php echo $page_numbers.'<br>'; ?> </td> <td> <?php }
+ Regels Per Pagina: <?php echo $paginator->show_rpp();
+if(isset($sess_dag) || isset($sess_bestm)) { ?> </td> <td align = center > <?php echo $paginator->show_page_numbers().'<br>'; ?> </td> <td> <?php }
 // Einde Opmaak paginanummering ?>
  </td>
  <td width = 150 align = center>

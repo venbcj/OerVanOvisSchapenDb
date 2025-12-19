@@ -13,12 +13,15 @@ class HokGateway extends Gateway {
     }
 
     public function kzlHok($lidId) {
-        return $this->db->query("
+        return $this->run_query(
+            <<<SQL
 SELECT hokId, hoknr
 FROM tblHok
-WHERE actief = 1 and lidId = '" . $this->db->real_escape_string($lidId) . "' 
+WHERE actief = 1 and lidId = :lidId
 ORDER BY hoknr 
-");
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        );
     }
 
     public function items_without_one($lidId, $hokId) {
@@ -67,12 +70,17 @@ ORDER BY hoknr
 ");
 }
 
+// lijkt erg op kzlHok
 public function hoknummer($lidId) {
-    return $this->db->query("
+    return $this->run_query(
+        <<<SQL
 SELECT hokId, hoknr, lower(if(isnull(scan),'6karakters',scan)) scan
 FROM tblHok
-WHERE lidId = '" . $this->db->real_escape_string($lidId) . "' and actief = 1
-ORDER BY hoknr");
+WHERE lidId = :lidId and actief = 1
+ORDER BY hoknr
+SQL
+, [[':lidId', $lidId, self::INT]]
+);
 }
 
 public function countVerblijven($lidId, $artId, $doelId) {
