@@ -16,3 +16,6 @@ DekkingenTest::testNieuweInvoerDierAlDrachtig
 DekkingenTest::testNieuweInvoerDierZelfdeRam
 PageNumbersTest::test_constructor
 MenusTest::testMenuMeldenBlauw
+
+1766178220
+SchaapGatewayTest::testZoekresultaat

@@ -1,13 +1,27 @@
 <?php
 
+require_once("autoload.php");
+
 /* 27-2-2020 bestand gekopieerd van impVerplaatsing.php
-15-11-2020 Diverse imp... bestanden teruggebracht naar een bestand impAgrident.php
+15-11-2020 Diverse imp... bestanden teruggebracht naar een bestand
 23-1-2021 : Transponder toegevoegd
 20-6-2021 : Voerregistratie toegevoegd
 18-12-2021 : Dekken en Dracht toegevoegd
 26-11-2022 : Taak Aanvoer, Afvoer, Spenen en Dracht anders ingericht (andere loop in reader) */
 
 include "connect_db.php";
+if (!function_exists('getallheaders')) {
+    function getallheaders() {
+        $headers = [];
+        foreach ($_SERVER as $name => $value) {
+            if (substr($name, 0, 5) == 'HTTP_') {
+                $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+            }
+        }
+        return $headers;
+    }
+}
+
 $string = '';
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     return;
@@ -36,80 +50,8 @@ switch ($_SERVER['REQUEST_METHOD']) { // Switch
 case 'POST':
     $input = file_get_contents('php://input'); // php://input is de rauwe data. nl. het json bestand.
     $data = json_decode($input);
-    $taken = array('Worpregistratie', 'Doodgeboren', 'Groepsgeboorte', 'Verplaatsing', 'Spenen', 'Afvoer', 'Aanvoer', 'Omnummeren', 'Medicaties', 'Halsnummers', 'Groepsafvoer', 'Voerregistratie', 'Dekken', 'Dracht');
-    foreach ($data as $index => $item) {
-        // Inlezen record
-        for ($i = 0; $i < count($taken); $i++) { // Er zijn 7 elementen nl. zie array $velden
-            if ($i == 0) {
-                $inhoud = $item -> {$taken[$i]} ;
-                include "impWorpregistratie.php";
-            }
-            if ($i == 1) {
-                $inhoud = $item -> {$taken[$i]} ;
-                include "impDoodgeboren.php";
-            }
-            if ($i == 2) {
-                $inhoud = $item -> {$taken[$i]} ;
-                $velden = array('ActId', 'Datum', 'Transponder', 'Levensnummer');
-                include "impAgrident.php";
-            }
-            if ($i == 3) {
-                $inhoud = $item -> {$taken[$i]} ;
-                include "impVerplaatsing.php";
-            }
-            if ($i == 4) {
-                $inhoud = $item -> {$taken[$i]} ;
-                $velden = array('ActId', 'Datum', 'HokId', 'Levensnummer', 'Gewicht');
-                include "impAgrident.php";
-            }
-            if ($i == 5) {
-                $inhoud = $item -> {$taken[$i]} ;
-                $velden = array('ActId', 'Datum', 'Ubn', 'Reden', 'Transponder', 'Levensnummer', 'Gewicht');
-                include "impAgrident.php";
-            }
-            if ($i == 6) {
-                $inhoud = $item -> {$taken[$i]} ;
-                $velden = array('Datum', 'Ubn', 'RasId', 'HokId', 'Transponder', 'Levensnummer','Datumdier', 'Geslacht', 'ActId', 'Gewicht');
-                include "impAgrident.php";
-            }
-            if ($i == 7) {
-                $inhoud = $item -> {$taken[$i]} ;
-                $velden = array('ActId', 'Datum', 'Transponder', 'Levensnummer', 'Nieuw_Transponder', 'Nieuw_Nummer');
-                include "impAgrident.php";
-            }
-            if ($i == 8) {
-                $inhoud = $item -> {$taken[$i]} ;
-                $velden = array('ActId', 'Datum', 'ArtId','Reden','Toedat','Transponder','Levensnummer');
-                include "impAgrident.php";
-            }
-            if ($i == 9) {
-                $inhoud = $item -> {$taken[$i]} ;
-                $velden = array('ActId', 'Datum', 'Transponder', 'Levensnummer', 'Kleur', 'Halsnr');
-                include "impAgrident.php";
-            }
-            if ($i == 10) {
-                $inhoud = $item -> {$taken[$i]} ;
-                $velden = array('ActId', 'Datum', 'Ubn', 'Transponder', 'Levensnummer');
-                include "impAgrident.php";
-            }
-            if ($i == 11) {
-                $inhoud = $item -> {$taken[$i]} ;
-                $velden = array('ActId', 'Datum', 'HokId', 'DoelId', 'ArtId', 'Toedat');
-                include "impAgrident.php";
-            }
-            if ($i == 12) {
-                $inhoud = $item -> {$taken[$i]} ;
-                $velden = array('ActId', 'Datum', 'VdrId', 'MoederTransponder', 'Moeder');
-                include "impAgrident.php";
-            }
-            if ($i == 13) {
-                $inhoud = $item -> {$taken[$i]} ;
-                $velden = array('ActId', 'Datum', 'MoederTransponder', 'Moeder', 'Drachtig', 'Grootte');
-                include "impAgrident.php";
-            }
-            echo $i . '<br>';
-        }
-    }
+    $parser = new JsonAgridentParser($data, $lidid);
+    echo $parser->execute();
     // Maak een backup in de persoonlijke map op de server
     $dir = dirname(__FILE__);
     $dag = date('Y-m-d') . '_';

@@ -1,7 +1,6 @@
 <?php
 
-/*15-11-2020 bestand gekopieerd van impAgrident.php en diverse imp... bestanden teruggebracht naar dit ene bestand
- Het verschil met impAgrident is dat dit bestand een sub-array heeft me lammeren of ooien */
+/* Het verschil met impAgrident is dat dit bestand een sub-array heeft me lammeren of ooien */
 
 $cnt_taak = count($velden_taak);
 $last_element = $cnt_taak - 1; // het laatste element is een array met schapen (soms lammeren soms ooien)

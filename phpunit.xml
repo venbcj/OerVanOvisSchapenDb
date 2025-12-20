@@ -23,9 +23,7 @@
         <directory>tests</directory>
         <directory>vendor</directory>
       </exclude>
-      <file>./classes/Paginator.php</file>
-      <file>./classes/Paginator.php</file>
-      <file>./Gebruiker.php</file>
+      <directory>.</directory>
     </whitelist>
   </filter>
 </phpunit>

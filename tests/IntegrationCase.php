@@ -55,6 +55,12 @@ class IntegrationCase extends UnitCase {
         $this->visit($path);
     }
 
+    protected function patch($path, $data = []) {
+        $this->simulatePostRequest($path, $data);
+        $_SERVER['REQUEST_METHOD'] = 'PATCH';
+        $this->visit($path);
+    }
+
     protected function visit($path) {
         extract($GLOBALS);
         ob_start();
