@@ -31,6 +31,12 @@ class Gateway {
         return $res;
     }
 
+    public function explain_run_query($parSQL, $parArgs = []) {
+        $result = $this->run_query($parSQL, $parArgs);
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
     // returns table row as array with just values
     protected function first_row($SQL, $args = [], $default = null) {
         $view = $this->run_query($SQL, $args);
