@@ -19,7 +19,7 @@ $app_folders = [
 set_include_path(implode(PATH_SEPARATOR, $app_folders));
 
 spl_autoload_register(function ($class) {
-    foreach (explode(':', get_include_path()) as $prefix) {
+    foreach (explode(PATH_SEPARATOR, get_include_path()) as $prefix) {
         foreach (explode(' ', ' .class .trait') as $type) {
             $file = "$class$type.php";
             if (file_exists("$prefix/$file")) {
@@ -29,5 +29,5 @@ spl_autoload_register(function ($class) {
         }
     }
 });
-//Session::set_instance(new Session());
-//Response::setProduction();
+
+//trigger_error("Autoloader: Class '$class' not found in include path.", E_USER_WARNING);
