@@ -1,6 +1,6 @@
 <?php
 
-if (php_uname('n') != 'basq') {
+if (php_uname('n') != 'basq' && php_uname('n') != 'LAPTOP-GCTJE203') {
     return;
 }
 
@@ -73,3 +73,5 @@ for (i=0; i<textareas.length; i++) {
     }
 }
 </script>
+
+
