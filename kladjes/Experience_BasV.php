@@ -2,18 +2,8 @@
 
 require_once(__DIR__ . '/../autoload.php');
 
-$schaap = new SchaapGateway();
+$gateway = new Gateway();
 
-echo $schaap->zoek_stalId(1);
+$stmt = "SELECT hisId, actId, datum FROM tblHistorie WHERE hisId >= :hisid and actId = :actid";
 
-Ik zie nu het volledige pad inderdaad, bedankt.
-
-Mijn code is nu 
-
-<?php
-
-require_once(__DIR__ . '/../autoload.php');
-
-$schaap = new SchaapGateway();
-
-echo $schaap->zoek_stalId(1);
+print_r($gateway-> explain_run_query($stmt, [[':hisid', 180],[':actid', 1]]));
