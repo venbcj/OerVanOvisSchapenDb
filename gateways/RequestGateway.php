@@ -130,4 +130,26 @@ SQL
     );
 }
 
+public function update_response_date($reqId, $dmresponse) {
+    $this->run_query(
+        <<<SQL
+UPDATE tblRequest SET dmresponse = :dmresponse
+where reqId = :reqId
+SQL
+    , [[':reqId', $reqId, self::INT], [':dmresponse', $dmresponse]]
+    );
+}
+
+public function findById($reqId) {
+    return $this->first_record(
+        <<<SQL
+    SELECT r.def, r.code
+    FROM tblRequest r
+    WHERE reqId = :reqId
+SQL
+    , [[':reqId', $reqId, self::INT]]
+        , ['def' => null, 'code' => null]
+    );
+}
+
 }

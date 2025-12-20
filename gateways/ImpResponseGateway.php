@@ -3,7 +3,30 @@
 class ImpResponseGateway extends Gateway {
 
     public function updateLevensnummer($from, $to) {
-        $this->db->query(" UPDATE impRespons set levensnummer = '".$this->db->real_escape_string($to)."' WHERE levensnummer = '".$this->db->real_escape_string($from)."' ");
+        $this->run_query(
+            <<<SQL
+UPDATE impRespons
+set levensnummer = :to WHERE levensnummer = :from 
+SQL
+        , [
+            [':to', $to],
+            [':from', $from],
+        ]);
+    }
+
+    public function zoek_status_response($reqId) {
+        return $this->first_field(
+            <<<SQL
+    SELECT r.def
+    FROM impRespons r
+     join (
+        SELECT max(respId) respId
+        FROM impRespons
+        WHERE reqId = :reqId
+     ) lr on (r.respId = lr.respId)
+SQL
+        , [[':reqId', $reqId, self::INT]]
+        );
     }
 
 }

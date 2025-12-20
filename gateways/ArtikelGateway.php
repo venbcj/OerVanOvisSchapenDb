@@ -462,4 +462,26 @@ SQL
         );
     }
 
+    public function zoek_artid_op_voorraad($lidId) {
+        return $this->run_query(
+            <<<SQL
+SELECT a.artId, a.naam
+FROM tblEenheiduser eu
+ join tblInkoop i on (i.enhuId = eu.enhuId)
+ join tblArtikel a on (i.artId = a.artId)
+ left join (
+    SELECT v.inkId, sum(v.nutat*v.stdat) vbrat
+    FROM tblVoeding v
+    GROUP BY v.inkId
+ ) n on (i.inkId = n.inkId)
+WHERE eu.lidId = :lidId
+ and i.inkat-coalesce(n.vbrat,0) > 0
+ and a.soort = 'voer'
+GROUP BY a.artId, a.naam
+ORDER BY a.naam
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
+
 }

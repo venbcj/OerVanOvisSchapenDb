@@ -106,24 +106,11 @@ unset($index);
 // EINDE Declaratie HOKNUMMER
 
 // Declaratie VOER
-$zoek_artId_op_voorraad = mysqli_query($db," 
-SELECT a.artId, a.naam
-FROM tblEenheiduser eu
- join tblInkoop i on (i.enhuId = eu.enhuId)
- join tblArtikel a on (i.artId = a.artId)
- left join (
-    SELECT v.inkId, sum(v.nutat*v.stdat) vbrat
-    FROM tblVoeding v
-    GROUP BY v.inkId
- ) n on (i.inkId = n.inkId)
-WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and i.inkat-coalesce(n.vbrat,0) > 0 and a.soort = 'voer'
-GROUP BY a.artId, a.naam
-ORDER BY a.naam
-") or die (mysqli_error($db));
+$artikel_gateway = new ArtikelGateway();
+$vw = $artikel_gateway->zoek_artid_op_voorraad($lidId);
 
 $index = 0;
-while ($vr = mysqli_fetch_array($zoek_artId_op_voorraad))
-{
+while ($vr = $vw->fetch_array()) {
    $voerId[$index] = $vr['artId'];
    $voerln[$index] = $vr['naam'];
    $index++;
@@ -131,8 +118,8 @@ while ($vr = mysqli_fetch_array($zoek_artId_op_voorraad))
 unset($index);
 // EINDE Declaratie VOER 
 
-if(isset($data))  {    foreach($data as $key => $array)
-    {
+if(isset($data))  {
+    foreach($data as $key => $array) {
     $Id = $array['Id'];
     $datum = $array['datum'];
     $date = $array['sort'];
@@ -146,16 +133,9 @@ if(isset($data))  {    foreach($data as $key => $array)
     $doel_rd = $array['doelId'];
     $toedtot = $array['toedtot'];
     $vrdat = $array['vrdat'];
-
-
-
-
 if($doel_rd == 1 ) { $doelgroep = "Foklammeren"; }
 if($doel_rd == 2 ) { $doelgroep = "Vleeslammeren"; }
 if($doel_rd == 3 ) { $doelgroep = "Moederdieren"; }
-
-
-
 
 // Controleren of ingelezen waardes worden gevonden .
 // Waardes na verversen
@@ -167,33 +147,16 @@ if (isset($_POST['knpVervers_']) || isset($_POST['knpSaveVoer_'])) {
     if(!empty($_POST["txtAfslDatum_$Id"])) { $txtPeriode = $_POST["txtAfslDatum_$Id"]; }
     else { $txtPeriode = $_POST["txtDatumPeriode_"]; }
 
-unset($artId);
-//unset($vrdat);
+    unset($artId);
+    //unset($vrdat);
 
-if(!empty($kzlVoer)) {
-// Totale voorraad controleren
-$zoek_voorraad = mysqli_query($db," 
-SELECT sum(i.inkat-coalesce(n.vbrat,0)) vrdat
-FROM tblInkoop i
- left join (
-    SELECT v.inkId, sum(v.nutat*v.stdat) vbrat
-    FROM tblVoeding v
-     join tblInkoop i on (v.inkId = i.inkId)
-    WHERE i.artId = '".mysqli_real_escape_string($db,$kzlVoer)."'
-    GROUP BY v.inkId
- ) n on (i.inkId = n.inkId)
-WHERE i.artId = '".mysqli_real_escape_string($db,$kzlVoer)."' and i.inkat-coalesce(n.vbrat,0) > 0
-") or die (mysqli_error($db));
-
-while ($zv = mysqli_fetch_array($zoek_voorraad))
-{
-   $vrdat = $zv['vrdat'];
-}
-// Einde Totale voorraad controleren
-} // Einde if(!empty($kzlVoer))
-
-     } // Einde if (isset($_POST['knpVervers_']) || isset($_POST['knpSaveVoer_']))
-else { $kzlHok = $hok_rd; 
+    if(!empty($kzlVoer)) {
+        // Totale voorraad controleren
+        $inkoop_gateway = new InkoopGateway();
+        $vrdat = $inkoop_gateway->zoek_voorraad_artikel($kzlVoer);
+    }
+} else {
+    $kzlHok = $hok_rd; 
     $kzlVoer = $artId_rd;  
 }
 // Einde Waardes na verversen
@@ -207,13 +170,8 @@ echo '$voorraad = '.$voorraad.'<br>';*/
 
 $afsldag = date_create($txtPeriode); $dmPeriode =  date_format($afsldag, 'Y-m-d');
 
-unset($periId);
-$zoek_periId = mysqli_query ($db,"
-SELECT periId
-FROM tblPeriode
-WHERE hokId = '".mysqli_real_escape_string($db,$kzlHok)."' and doelId= '".mysqli_real_escape_string($db,$doel_rd)."' and dmafsluit = '".mysqli_real_escape_string($db,$dmPeriode)."'
-") or die (mysqli_error($db));
-    while ($pi = mysqli_fetch_assoc($zoek_periId)) { $periId = $pi['periId']; }
+$periode_gateway = new PeriodeGateway();
+$periId = $periode_gateway->findByHokAndDoel($kzlHok, $doel_rd, $dmPeriode);
 
      If     
      (  empty($kzlHok)    || # verblijf is leeg
@@ -334,15 +292,10 @@ else if (!empty($artId_rd) && $v_act <> 1)    { echo "Dit voer is uitlopend."; }
 
  </td>
  <td colspan="3"> <!-- hier volgt een tabel met detail regels-->
-<?php $zoek_voerregels_reader = mysqli_query($db,"
-SELECT Id, date_format(datum,'%d-%m-%Y') dag, hokId, artId, coalesce(toedat_upd, toedat) toedat, doelId
-FROM impAgrident
-WHERE hokId = '".mysqli_real_escape_string($db,$hok_rd)."' and artId = '".mysqli_real_escape_string($db,$artId_rd)."' and doelId = '".mysqli_real_escape_string($db,$doel_rd)."' and isnull(verwerkt)
-ORDER BY datum
-") or die (mysqli_error($db));
-
-while ($regel = mysqli_fetch_array($zoek_voerregels_reader))
-{
+<?php
+$impagrident_gateway = new ImpAgridentGateway();
+$vw = $impagrident_gateway->zoek_voerregels_reader($hok_rd, $artId_rd, $doel_rd);
+while ($regel = $vw->fetch_array()) {
    $regelId = $regel['Id'];
    $dag = $regel['dag'];
    $toedat = $regel['toedat'];

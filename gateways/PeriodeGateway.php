@@ -325,4 +325,20 @@ ORDER BY ho.hokId, p.dmeind
 ");
 }
 
+public function findByHokAndDoel($hokId, $doelId, $datum) {
+    return $this->first_field(
+        <<<SQL
+SELECT periId
+FROM tblPeriode
+WHERE hokId = :hokId
+ and doelId= :doelId
+ and dmafsluit = :datum
+SQL
+    , [
+        [':hokId', $hokId, self::INT],
+        [':doelId', $doelId, self::INT],
+        [':datum', $datum],
+    ]);
+}
+
 }

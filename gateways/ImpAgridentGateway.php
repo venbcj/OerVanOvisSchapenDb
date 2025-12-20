@@ -1857,4 +1857,22 @@ SQL
         ];
     }
 
+    public function zoek_voerregels_reader($hokid, $artId, $doelId) {
+        return $this->run_query(
+            <<<SQL
+SELECT Id, date_format(datum,'%d-%m-%Y') dag, hokId, artId, coalesce(toedat_upd, toedat) toedat, doelId
+FROM impAgrident
+WHERE hokId = :hokId
+ and artId = :artId
+ and doelId = :doelId
+ and isnull(verwerkt)
+ORDER BY datum
+SQL
+        , [
+            [':hokId', $hokId, self::INT],
+            [':doelId', $doelId, self::INT],
+            [':artId', $artId, self::INT],
+        ]);
+    }
+
 }

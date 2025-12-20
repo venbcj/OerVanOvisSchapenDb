@@ -233,4 +233,22 @@ SQL
         );
     }
 
+    public function zoek_voorraad_artikel($artId) {
+        return $this->first_field(
+            <<<SQL
+SELECT sum(i.inkat-coalesce(n.vbrat,0)) vrdat
+FROM tblInkoop i
+ left join (
+    SELECT v.inkId, sum(v.nutat*v.stdat) vbrat
+    FROM tblVoeding v
+     join tblInkoop i on (v.inkId = i.inkId)
+    WHERE i.artId = :artId
+    GROUP BY v.inkId
+ ) n on (i.inkId = n.inkId)
+WHERE i.artId = :artId and i.inkat-coalesce(n.vbrat,0) > 0
+SQL
+        , [[':artId', $artId, self::INT]]
+        );
+    }
+
 }

@@ -847,4 +847,78 @@ SQL
     );
 }
 
+public function zoek_afleverlijst($his) {
+    return $this->run_query(
+        <<<SQL
+SELECT u.lidId, date_format(datum,'%d-%m-%Y') datum, datum date, rel_best, p.naam
+FROM tblHistorie h
+ join tblStal st on (h.stalId = st.stalId)
+ join tblUbn u on (st.ubnId = u.ubnId)
+ join tblRelatie r on (st.rel_best = r.relId)
+ join tblPartij p on (p.partId = r.partId)
+WHERE h.hisId = :hisId
+SQL
+    , [[':hisId', $his, self::INT]]
+    );
+}
+
+public function count_afleverlijst($lidId, $datum, $relId) {
+    return $this->first_field(
+        <<<SQL
+SELECT count(distinct st.stalId) aant
+FROM tblHistorie h
+ join tblStal st on (h.stalId = st.stalId)
+ join tblUbn u on (st.ubnId = u.ubnId)
+ join tblActie a on (h.actId = a.actId)
+WHERE u.lidId = :lidId
+ and h.datum = :datum
+ and st.rel_best = :relId
+ and a.af = 1
+ and h.skip = 0
+SQL
+    ,
+        [
+            [':lidId', $lidId, self::INT],
+            [':datum', $datum],
+            [':relId', $relId, self::INT],
+        ]
+    );
+}
+
+public function zoek_schaap($lidId, $datum, $relId, $Karwerk) {
+    return $this->run_query(
+        <<<SQL
+SELECT u.lidId, s.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr, h.kg, pil.datum, pil.naam, pil.wdgn_v
+FROM tblHistorie h
+ join tblStal st on (h.stalId = st.stalId)
+ join tblUbn u on (st.ubnId = u.ubnId)
+ join tblSchaap s on (s.schaapId = st.schaapId)
+ join tblActie a on (h.actId = a.actId)
+ left join (
+    SELECT s.schaapId, date_format(h.datum,'%d-%m-%Y') datum, art.naam, art.wdgn_v
+    FROM tblSchaap s 
+     join tblStal st on (st.schaapId = s.schaapId)
+     join tblUbn u on (st.ubnId = u.ubnId)
+     join tblHistorie h on (h.stalId = st.stalId)
+     join tblNuttig n on (h.hisId = n.hisId)
+     join tblInkoop i on (i.inkId = n.inkId)
+     join tblArtikel art on (i.artId = art.artId) 
+    WHERE u.lidId = :lidId
+ and h.actId = 8
+ and h.skip = 0
+ and (h.datum + interval art.wdgn_v day) >= sysdate()
+) pil on (st.schaapId = pil.schaapId)
+WHERE h.datum = :datum
+ and st.rel_best = :relId
+ and a.af = 1
+ and h.skip = 0
+ORDER BY right(s.levensnummer,$Karwerk)
+SQL
+    , [
+        [':lidId', $lidId, self::INT],
+        [':datum', $datum],
+        [':relId', $relId, self::INT],
+    ]);
+}
+
 }
