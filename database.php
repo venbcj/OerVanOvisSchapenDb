@@ -26,7 +26,7 @@ case 'localhost':
     $dtb = 'oer';
     $user = 'root';
     $pw = '';
-    $app = '\\Users\\Bas\\Documents\\GitHub\\OerVanOvisSchapenDb\\';
+    $app = '/Users/Bas/Documents/GitHub/OerVanOvisSchapenDb/';
     break;
 case 'test.oervanovis.nl':
     $dtb = 'k36098_bvdvSchapenDbT';
