@@ -12,7 +12,7 @@ $app_folders = [
     $base,
     $base . '/classes',
     $base . '/templates',
-    $base . '/fpdf',
+    $base . '/fpdf_stub',
     $base . '/gateways'
 ];
 
