@@ -40,190 +40,38 @@ include "login.php"; ?>
                 <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) {
+$impagrident_gateway = new ImpAgridentGateway();
 
 If (isset($_POST['knpInsert_'])) {
     include "post_readerUitv.php"; #Deze include moet voor de vervversing in de functie header()
     //header("Location: ".$url."insUitval.php"); 
-    }
+}
 if($reader == 'Agrident') {
-$velden = "rd.Id readId, date_format(rd.datum,'%Y-%m-%d') sort, rd.datum, rd.levensnummer levnr, rd.reden reden_uitv, ru.reduId dbreduId,
-lower(h.actie) actie, h.af, s.geslacht, ouder.datum dmaanw, date_format(max.datummax,'%Y-%m-%d') datummax, date_format(max.datummax,'%d-%m-%Y') maxdatum"; 
-
-$tabel = "
-impAgrident rd
- left join (
-    SELECT r.reduId, r.lidId 
-    FROM tblRedenuser r
-    WHERE r.lidId = '".mysqli_real_escape_string($db,$lidId)."' and r.uitval = 1
- ) ru on (ru.reduId = rd.reden and ru.lidId = rd.lidId)
- left join (
-     SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
-     FROM tblSchaap s
-      join tblStal st on (st.schaapId = s.schaapId)
-      join tblHistorie h on (st.stalId = h.stalId)
-     WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
-     GROUP BY s.schaapId, s.levensnummer, s.geslacht
- ) s on (rd.levensnummer = s.levensnummer)
- left join (
-    SELECT h.hisId, a.actie, a.af
-    FROM tblHistorie h
-     join tblActie a on (h.actId = a.actId)
-    WHERE h.skip = 0
- ) h on (h.hisId = s.hisId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) ouder on (ouder.schaapId = s.schaapId)
- left join (
-    SELECT sd.schaapId, max(sd.datum) datummax 
-    FROM (
-        SELECT st.schaapId, max(h.datum) datum
-        FROM tblStal st
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)/* max datum uit tblHistorie */."' and h.skip = 0
-        GROUP BY st.schaapId         
-        
-        union
-        
-        SELECT  mdr.schaapId, min(h.datum) datum
-        FROM tblSchaap mdr
-         join tblVolwas v on (mdr.schaapId = v.mdrId)
-         join tblSchaap lam on (v.volwId = lam.volwId)
-         join tblStal st on (st.schaapId = lam.schaapId)
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 1 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)/* Eerste worp */."'
-        GROUP BY mdr.schaapId
-
-        Union
-
-        SELECT mdr.schaapId, max(h.datum) datum
-        FROM tblSchaap mdr
-         join tblVolwas v on (mdr.schaapId = v.mdrId)
-         join tblSchaap lam on (v.volwId = lam.volwId)
-         join tblStal st on (st.schaapId = lam.schaapId)
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 1 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)/* Laatste worp */."'
-        GROUP BY mdr.schaapId, h.actId
-        HAVING (max(h.datum) > min(h.datum))
-
-        Union
-
-        SELECT s.schaapId, p.dmafsluit datum
-        FROM tblVoeding vd
-         join tblPeriode p on (p.periId = vd.periId)
-         join tblBezet b on (b.periId = p.periId)
-         join tblHistorie h on (h.hisId = b.hisId)
-         join tblStal st on (st.stalId = h.stalId)
-         join tblSchaap s on (s.schaapId = st.schaapId)
-        WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)/* Gevoerd */."'
-        GROUP BY s.schaapId, p.dmafsluit
-    ) sd
-    GROUP BY sd.schaapId
- ) max on (s.schaapId = max.schaapId)
-"; 
-
-$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 14 and isnull(rd.verwerkt) ";
-
-include "paginas.php";
-
-$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id");
+    $velden = "rd.Id readId, date_format(rd.datum,'%Y-%m-%d') sort, rd.datum, rd.levensnummer levnr, rd.reden reden_uitv, ru.reduId dbreduId,
+        lower(h.actie) actie, h.af, s.geslacht, ouder.datum dmaanw, date_format(max.datummax,'%Y-%m-%d') datummax, date_format(max.datummax,'%d-%m-%Y') maxdatum"; 
+    $tabel = $impagrident_gateway->getInsUitvalAgridentFrom();
+    $WHERE = $impagrident_gateway->getInsUitvalAgridentWhere($lidId);
+    $order_by = "ORDER BY sort, rd.Id";
+} else {
+    $velden = "rd.readId, str_to_date(rd.datum,'%d/%m/%Y') sort, rd.datum, rd.levnr_uitv levnr, rd.reden_uitv, ru.reduId dbreduId,
+        lower(h.actie) actie, h.af, s.geslacht, ouder.datum dmaanw, date_format(max.datummax,'%Y-%m-%d') datummax, date_format(max.datummax,'%d-%m-%Y') maxdatum"; 
+    $tabel = $impagrident_gateway->getInsUitvalBiocontrolFrom();
+    $WHERE = $impagrident_gateway->getInsUitvalBiocontrolWhere($lidId);
+    $order_by = "ORDER BY sort, rd.readId";
 }
 
-else {
-$velden = "rd.readId, str_to_date(rd.datum,'%d/%m/%Y') sort, rd.datum, rd.levnr_uitv levnr, rd.reden_uitv, ru.reduId dbreduId,
-lower(h.actie) actie, h.af, s.geslacht, ouder.datum dmaanw, date_format(max.datummax,'%Y-%m-%d') datummax, date_format(max.datummax,'%d-%m-%Y') maxdatum"; 
-
-$tabel = "
-impReader rd
- left join (
-    SELECT r.reduId, r.lidId 
-    FROM tblRedenuser r
-    WHERE r.lidId = '".mysqli_real_escape_string($db,$lidId)."' and r.uitval = 1
- ) ru on (ru.reduId = rd.reden_uitv and ru.lidId = rd.lidId)
- left join (
-     SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
-     FROM tblSchaap s
-      join tblStal st on (st.schaapId = s.schaapId)
-      join tblHistorie h on (st.stalId = h.stalId)
-     WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
-     GROUP BY s.schaapId, s.levensnummer, s.geslacht
- ) s on (rd.levnr_uitv = s.levensnummer)
- left join (
-    SELECT h.hisId, a.actie, a.af
-    FROM tblHistorie h
-     join tblActie a on (h.actId = a.actId)
-    WHERE h.skip = 0
- ) h on (h.hisId = s.hisId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) ouder on (ouder.schaapId = s.schaapId)
- left join (
-    SELECT sd.schaapId, max(sd.datum) datummax 
-    FROM (
-        SELECT st.schaapId, max(h.datum) datum
-        FROM tblStal st
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)/* max datum uit tblHistorie */."' and h.skip = 0
-        GROUP BY st.schaapId         
-        
-        union
-        
-        SELECT  mdr.schaapId, min(h.datum) datum
-        FROM tblSchaap mdr
-         join tblVolwas v on (mdr.schaapId = v.mdrId)
-         join tblSchaap lam on (v.volwId = lam.volwId)
-         join tblStal st on (st.schaapId = lam.schaapId)
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 1 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)/* Eerste worp */."'
-        GROUP BY mdr.schaapId
-
-        Union
-
-        SELECT mdr.schaapId, max(h.datum) datum
-        FROM tblSchaap mdr
-         join tblVolwas v on (mdr.schaapId = v.mdrId)
-         join tblSchaap lam on (v.volwId = lam.volwId)
-         join tblStal st on (st.schaapId = lam.schaapId)
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 1 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)/* Laatste worp */."'
-        GROUP BY mdr.schaapId, h.actId
-        HAVING (max(h.datum) > min(h.datum))
-
-        Union
-
-        SELECT s.schaapId, p.dmafsluit datum
-        FROM tblVoeding vd
-         join tblPeriode p on (p.periId = vd.periId)
-         join tblBezet b on (b.periId = p.periId)
-         join tblHistorie h on (h.hisId = b.hisId)
-         join tblStal st on (st.stalId = h.stalId)
-         join tblSchaap s on (s.schaapId = st.schaapId)
-        WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)/* Gevoerd */."'
-        GROUP BY s.schaapId, p.dmafsluit
-    ) sd
-    GROUP BY sd.schaapId
- ) max on (s.schaapId = max.schaapId)
-"; 
-
-$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.teller_uitv is not null and isnull(rd.verwerkt) ";
-
 include "paginas.php";
+$data = $paginator->fetch_data($velden, $order_by); 
 
-$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.readId"); 
-} ?>
+?>
 
 <table border = 0>
 <tr> <form action="InsUitval.php" method = "post">
  <td colspan = 2 style = "font-size : 13px;">
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
  <td colspan = 2 align = "center" style = "font-size : 14px;"><?php 
-echo $page_numbers; ?></td>
- <td colspan = 2 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
+echo $paginator->show_page_numbers(); ?></td>
+ <td colspan = 2 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $paginator->show_rpp(); ?> </td>
  <td align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
  <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td></tr>
 <tr valign = bottom style = "font-size : 12px;">
@@ -239,14 +87,12 @@ echo $page_numbers; ?></td>
 <?php
 
 // Declaratie REDEN
-$qryReden = ("SELECT r.redId, r.reden
-            FROM tblReden r join tblRedenuser ru on (r.redId = ru.redId) WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ru.uitval = 1 ORDER BY r.reden"); 
-$reden = mysqli_query($db,$qryReden) or die (mysqli_error($db)); 
+$reden_gateway = new RedenGateway();
+$reden = $reden_gateway->uitval_lijst_voor($lidId);
 
 $index = 0; 
 $redId = [];
-while ($red = mysqli_fetch_array($reden)) 
-{ 
+while ($red = $reden->fetch_array()) { 
    $redId[$index] = $red['redId'];
    $redn[$index] = $red['reden'];
    $index++; 

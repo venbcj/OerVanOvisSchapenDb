@@ -31,16 +31,9 @@ If (isset($_POST['knpInsert_']))  {
     include "post_readerStalscan.php";
     }
 
-$zoek_laatste_scandag = mysqli_query($db,"
-SELECT ingescand
-FROM tblLeden
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' 
-") or die (mysqli_error($db));
-
-    while ( $zls = mysqli_fetch_assoc ($zoek_laatste_scandag)) { $lstScan = $zls['ingescand']; }
-
+$lid_gateway = new LidGateway();
+$lstScan = $lid_gateway->zoek_ingescand($lidId);
 $lstScanDag = date('d-m-Y', strtotime($lstScan));
-
 if($lstScan >= $today) { //$today is gedeclareerd in bsisfuncties.php
 $inleesstatus = "Je hebt t/m " . $lstScanDag . " de mogelijkheid de stallijst in te lezen";
 } else {
@@ -49,23 +42,14 @@ $inleesstatus = "Je had t/m " . $lstScanDag . " de mogelijkheid de stallijst in 
 
 $velden = "rd.actId, rd.Id readId, rd.datum, rd.ubnId ubnId_rd, rd.levensnummer levnr_rd, rd.rasId rasId_rd, rd.geslacht geslacht_rd, rd.hokId hokId_rd, rd.doelId, dup.dubbelen, ho.hoknr hoknr_rd";
 
-$tabel = "
-impAgrident rd
- left join (
-     SELECT rd.Id, count(dup.Id) dubbelen
-    FROM impAgrident rd
-     join impAgrident dup on (rd.lidId = dup.lidId and rd.levensnummer = dup.levensnummer and rd.Id <> dup.Id and rd.actId = dup.actId and isnull(dup.verwerkt))
-    WHERE rd.actId = 21
-    GROUP BY rd.Id
- ) dup on (rd.Id = dup.Id)
- left join tblHok ho on (rd.hokId = ho.hokId)
-";
-
-$WHERE = "WHERE rd.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and rd.actId = 21 and isnull(rd.verwerkt)";
+$impagrident_gateway = new ImpAgridentGateway();
+$tabel = $impagrident_gateway->getInsStallijstscanNieuweklantFrom();
+$WHERE = $impagrident_gateway->getInsStallijstscanNieuweklantWhere($lidId);
 
 include "paginas.php";
+$data = $paginator->fetch_data($velden, "ORDER BY actId desc, rd.datum, rd.Id");
 
-$data = $page_nums->fetch_data($velden, "ORDER BY actId desc, rd.datum, rd.Id"); ?>
+?>
 
 <form action="InsStallijstscan_nieuwe_klant.php" method = "post">
 <table border = 0>
@@ -73,8 +57,8 @@ $data = $page_nums->fetch_data($velden, "ORDER BY actId desc, rd.datum, rd.Id");
  <td colspan = 2 style = "font-size : 13px;"> 
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
  <td colspan = 2 align = "center" style = "font-size : 14px;"><?php 
-echo $page_numbers; ?></td>
- <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
+echo $paginator->show_page_numbers(); ?></td>
+ <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $paginator->show_rpp(); ?> </td>
  <td align = 'left'> <input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
  <td  style = "font-size : 12px;"> 
  </td>
@@ -106,68 +90,39 @@ echo $page_numbers; ?></td>
 
 <?php
 // Declaratie ubn
-$declaratie_kzlUbn = mysqli_query($db,"
-SELECT ubnId, ubn
-FROM tblUbn
-WHERE lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and actief = 1
-ORDER BY ubn
-") or die (mysqli_error($db));  
-
+    $ubn_gateway = new UbnGateway();
+$declaratie_kzlUbn = $ubn_gateway->lijst($lidId);
 $index = 0; 
-while ($du = mysqli_fetch_array($declaratie_kzlUbn)) 
-{
-   $ubnId[$index] = $du['ubnId']; 
-   $ubnnm[$index] = $du['ubn'];
-   $index++; 
+while ($du = $declaratie_kzlUbn->fetch_array()) {
+    $ubnId[$index] = $du['ubnId']; 
+    $ubnnm[$index] = $du['ubn'];
+    $index++; 
 }
 unset($index);
 // Einde Declaratie ubn
 
 // Declaratie ras
-$qryRassen = "
-SELECT r.rasId, r.ras, lower(coalesce(isnull(ru.scan),'6karakters')) scan
-FROM tblRas r
- join tblRasuser ru on (r.rasId = ru.rasId)
-WHERE ru.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and r.actief = 1 and ru.actief = 1
-ORDER BY ras
-"; 
-$RAS = mysqli_query($db,$qryRassen) or die (mysqli_error($db)); 
-
+$ras_gateway = new RasGateway();
+$RAS = $ras_gateway->rassen($lidId);
 $index = 0; 
 $rasId = [];
 $rasnm = [];
-while ($ras = mysqli_fetch_array($RAS)) 
-{
+while ($ras = $RAS->fetch_array()) {
    $rasId[$index] = $ras['rasId']; 
    $rasnm[$index] = $ras['ras'];
    $index++; 
 }
 unset($index);
 
-//dan het volgende:
-$count = count($rasId); 
-/*
-echo "<select name=\"kzlRas_Id\">"; 
-for ($i = 0; $i <= $count; $i++) 
-{ 
-    echo "<option value=\"$rasId[$i]\">$rasnm[$i]</option>"; 
-} 
-echo "</select>";*/
 // EINDE Declaratie ras
 
 if($modtech == 1) {
 
 // Declaratie HOKNUMMER            // lower(if(isnull(scan),'6karakters',scan)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.
-$qryHoknummer = mysqli_query($db,"
-SELECT hokId, hoknr, lower(if(isnull(scan),'6karakters',scan)) scan
-FROM tblHok
-WHERE lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and actief = 1
-ORDER BY hoknr
-") or die (mysqli_error($db));
-
+    $hok_gateway = new HokGateway();
+$qryHoknummer = $hok_gateway->kzlHok($lidId);
 $index = 0; 
-while ($hknr = mysqli_fetch_assoc($qryHoknummer)) 
-{ 
+while ($hknr = $qryHoknummer->fetch_assoc()) { 
    $hoknId[$index] = $hknr['hokId']; 
    $hoknum[$index] = $hknr['hoknr'];
    $index++; 
@@ -179,8 +134,6 @@ unset($index);
 
 
 if(isset($data))  {    
-
-//echo count($data);
 
     foreach($data as $key => $array)
     {
@@ -227,35 +180,9 @@ unset($ras_db);
 if(isset($schaapId)) {
 #echo $schaapId.'<br>';
 
-$zoek_levnr_db = "
-SELECT gebdag, spndag_geb, geslacht, spndag, his_aanw, r.ras
-FROM tblSchaap s
- left join (
-     SELECT schaapId, date_format(h.datum,'%d-%m-%Y') gebdag, date_format(date_add(h.datum,interval 49 day),'%d-%m-%Y') spndag_geb
-     FROM tblHistorie h
-      join tblStal st on (st.stalId = h.stalId)
-     WHERE actId = 1 and h.skip = 0
-     ) geb on (geb.schaapId = s.schaapId)
- left join (
-     SELECT schaapId, date_format(h.datum,'%d-%m-%Y') spndag
-     FROM tblHistorie h
-      join tblStal st on (st.stalId = h.stalId)
-     WHERE actId = 4 and h.skip = 0
-     ) spn on (spn.schaapId = s.schaapId)
-  left join (
-     SELECT schaapId, hisId his_aanw
-     FROM tblHistorie h
-      join tblStal st on (st.stalId = h.stalId)
-     WHERE actId = 3 and h.skip = 0
-     ) aanw on (aanw.schaapId = s.schaapId)
- left join tblRas r on (r.rasId = s.rasId)
-WHERE s.schaapId = '" . mysqli_real_escape_string($db,$schaapId) . "'
-";
-
- $zoek_levnr_db = mysqli_query($db,$zoek_levnr_db) or die (mysqli_error($db));
-
-while ($zld = mysqli_fetch_assoc($zoek_levnr_db)) 
-{ 
+    $schaap_gateway = new SchaapGateway();
+    $zoek_levnr_db = $schaap_gateway->zoek_levnr_db($schaapId);
+while ($zld = $zoek_levnr_db->fetch_assoc()) { 
   $gebdag_db = $zld['gebdag'];
   $spndag_geb = $zld['spndag_geb'];  
     $geslacht_db = $zld['geslacht'];

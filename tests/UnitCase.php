@@ -4,6 +4,8 @@ use PHPUnit\Framework\TestCase;
 
 class UnitCase extends TestCase {
 
+    // Database aanspreken in unit-tests vind ik eigenlijk niet okee. Code is nog niet ver genoeg --BCB
+
     protected $db;
 
     protected function uses_db() {
@@ -36,13 +38,18 @@ class UnitCase extends TestCase {
     }
 
     private static function performStatementsIn($file) {
+        // if (windows)
         global $db;
+        $logger = Logger::instance();
         foreach (explode(';', file_get_contents($file)) as $SQL) {
             if (trim($SQL)) {
-            $db->query($SQL);
+                $logger->debug($SQL);
+                $db->query($SQL);
+            }
         }
-        }
+        // else
         # system("cat $file | scripts/console");
+        // fi
     }
 
     protected function runSQL($SQL) {
@@ -52,10 +59,11 @@ class UnitCase extends TestCase {
 
     protected function assertTableWithPK($table, $pk, $id, $values = []) {
         $vw = $this->db->query("SELECT * FROM $table WHERE $pk=$id");
-        $this->assertEquals(1, $vw->num_rows);
+        $this->assertInstanceOf(mysqli_result::class, $vw, $this->db->error);
+        $this->assertEquals(1, $vw->num_rows, "kan record met $pk=$id niet vinden");
         $row = $vw->fetch_assoc();
         foreach ($values as $key => $expected) {
-            $this->assertEquals($expected, $row[$key], "verwacht $table:$pk $key=$expected");
+            $this->assertEquals($expected, $row[$key], "verwacht $table:$pk($id) $key=$expected");
         }
     }
 
@@ -67,6 +75,19 @@ class UnitCase extends TestCase {
         $vw = $this->db->query("SELECT COUNT(*) FROM $table");
         $this->assertInstanceOf(mysqli_result::class, $vw, "vw is boolean " . ($vw ? 'true' : 'false') . " .  Error? " . $this->db->error);
         return $vw->fetch_row()[0];
+    }
+
+    protected function expectNewRecordsInTables(array $tables) {
+        foreach ($tables as $table => $expected) {
+            $this->tablecounts[$table] = $this->tableRowcount($table);
+            $this->expectedincrements[$table] = $expected;
+        }
+    }
+
+    protected function assertTablesGrew() {
+        foreach ($this->tablecounts as $table => $count) {
+            $this->assertEquals($this->expectedincrements[$table], $this->tableRowcount($table) - $count, "Unexpected rowcount in $table.");
+        }
     }
 
 }

@@ -1,8 +1,9 @@
 #!/bin/bash
-echo "this takes some time."
-for i in *; do
-    NUM=$(ack mysqli_query $i|wc -l)
-    if [ $NUM -gt 0 ]; then
-        echo "$NUM $i"
-    fi
-done | sort -n
+# echo "this takes some time."
+# for i in *; do
+#     NUM=$(ack mysqli_query $i|wc -l)
+#     if [ $NUM -gt 0 ]; then
+#         echo "$NUM $i"
+#     fi
+# done | sort -n
+ack -lnc mysqli_query|sort -t\: -k2n | tr ':' '   '

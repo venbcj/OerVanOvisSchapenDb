@@ -27,52 +27,31 @@ include "login.php"; ?>
 if (Auth::is_logged_in()) {
  
 include "vw_kzlOoien.php";
+$impagrident_gateway = new ImpAgridentGateway();
 
 If (isset($_POST['knpInsert_']))  {
     include "post_readerTvUitsch.php"; #Deze include moet voor de vervversing in de functie header()
     //header("Location: ".$url."InsTvUitscharen.php"); 
     }
 
-// Aantal nog in te lezen AANVOER
-/*$aanvoer = mysqli_query($db,"SELECT count(*) aant 
-                            FROM impReader 
-                            WHERE lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and teller_aanv is not NULL and isnull(verwerkt) ") or die (mysqli_error($db));
-    $row = mysqli_fetch_assoc($aanvoer);
-        $aantaanw = $row['aant'];*/
-// EINDE Aantal nog in te lezen AANVOER
-
 $velden = "rd.Id, rd.datum, rd.ubnId ubnId_rd, rd.levensnummer levnr_rd, rd.hokId hok_rd,
 ho.hokId hok_db, dup.dubbelen ";
 
-$tabel = "
-impAgrident rd
- left join (
-    SELECT ho.hokId
-    FROM tblHok ho
-    WHERE ho.lidId = '" . mysqli_real_escape_string($db,$lidId) . "'
- ) ho on (rd.hokId = ho.hokId)
- left join (
-     SELECT rd.Id, count(dup.Id) dubbelen
-    FROM impAgrident rd
-     join impAgrident dup on (rd.lidId = dup.lidId and rd.levensnummer = dup.levensnummer and rd.Id <> dup.Id and rd.actId = dup.actId and isnull(dup.verwerkt))
-    WHERE rd.actId = 11
-    GROUP BY rd.Id
- ) dup on (rd.Id = dup.Id)
-";
-
-$WHERE = "WHERE rd.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and rd.actId = 11 and isnull(rd.verwerkt)";
+$tabel = $impagrident_gateway->getInsTvUitscharenFrom();
+$WHERE = $impagrident_gateway->getInsTvUitscharenWhere($lidId);
 
 include "paginas.php";
+$data = $paginator->fetch_data($velden, "ORDER BY rd.datum, rd.Id");
 
-$data = $page_nums->fetch_data($velden, "ORDER BY rd.datum, rd.Id"); ?>
+?>
 
 <table border = 0>
 <tr> <form action="InsTvUitscharen.php" method = "post">
  <td colspan = 2 style = "font-size : 13px;"> 
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
  <td colspan = 2 align = "center" style = "font-size : 14px;"><?php 
-echo $page_numbers; ?></td>
- <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
+echo $paginator->show_page_numbers(); ?></td>
+ <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $paginator->show_rpp(); ?> </td>
  <td colspan = 3 align = 'right'> <input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
  <td colspan = 3 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet herkend. <br> 
 <?php if($modtech == 1) { ?>* Alleen verplicht bij lammeren. <?php } ?> </td></tr>
@@ -94,16 +73,10 @@ echo $page_numbers; ?></td>
 
 <?php
 // Declaratie kzlUbn
-$qryUbn = mysqli_query($db,"
-SELECT ubnId, ubn
-FROM tblUbn
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief = 1
-ORDER BY ubn
-") or die (mysqli_error($db));
-
+    $ubn_gateway = new UbnGateway();
+$declaratie_kzlUbn = $ubn_gateway->lijst($lidId);
 $index = 0; 
-while ($qu = mysqli_fetch_assoc($qryUbn)) 
-{ 
+while ($qu = $declaratie_kzlUbn->fetch_assoc()) { 
    $kzlUbnId[$index] = $qu['ubnId'];
    $ubnnm[$index] = $qu['ubn'];
    $index++;
@@ -120,8 +93,7 @@ $qryMoeder = ("SELECT ko.schaapId, right(ko.levensnummer,$Karwerk) Werknr, ko.la
 $moederdier = mysqli_query($db,$qryMoeder) or die (mysqli_error($db));
 
 $index = 0; 
-while ($mdr = mysqli_fetch_assoc($moederdier)) 
-{ 
+while ($mdr = mysqli_fetch_assoc($moederdier)) { 
    $mdrId[$index] = $mdr['schaapId'];
    $wnrOoi[$index] = $mdr['Werknr'];
    $index++; 
@@ -130,16 +102,10 @@ unset($index);
 // EINDE Declaratie kzlMOEDERDIER
 
 // Declaratie kzlVERBLIJF            // lower(if(isnull(scan),'6karakters',scan)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.
-$qryHoknummer = mysqli_query($db,"
-SELECT hokId, hoknr, lower(if(isnull(scan),'6karakters',scan)) scan
-FROM tblHok
-WHERE lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and actief = 1
-ORDER BY hoknr
-") or die (mysqli_error($db));
-
+    $hok_gateway = new HokGateway();
+$qryHoknummer = $hok_gateway->kzlHok($lidId);
 $index = 0; 
-while ($hknr = mysqli_fetch_assoc($qryHoknummer)) 
-{ 
+while ($hknr = mysqli_fetch_assoc($qryHoknummer)) { 
    $hoknId[$index] = $hknr['hokId']; 
    $hoknum[$index] = $hknr['hoknr'];
    $index++; 

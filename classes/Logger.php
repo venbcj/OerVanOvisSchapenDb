@@ -6,15 +6,26 @@ class Logger {
         return new self();
     }
 
-    public function error($msg) {
-        error_log($this->moment().' [ERROR] '.$msg.PHP_EOL, 3, APP.'log/development.log');
-        error_log($this->trace(), 3, APP.'log/development.log');
+    public function error($msg, $with_trace = true) {
+        error_log($this->moment() . ' [ERROR] ' . $msg . PHP_EOL, 3, $this->file());
+        if ($with_trace) {
+            error_log($this->trace(), 3, $this->file());
+        }
         # throw new Exception($msg);
     }
 
-    public function debug($msg) {
-        error_log($this->moment().' [DEBUG] '.$msg.PHP_EOL, 3, APP.'log/development.log');
-        # throw new Exception($msg);
+    private function file() {
+        if (!defined('APP')) {
+            return 'log/development.log';
+        }
+        return APP . 'log/development.log';
+    }
+
+    public function debug($msg, $with_trace = false) {
+        error_log($this->moment() . ' [DEBUG] ' . $msg . PHP_EOL, 3, $this->file());
+        if ($with_trace) {
+            error_log($this->trace(), 3, $this->file());
+        }
     }
 
     private function moment() {
@@ -42,12 +53,19 @@ class Logger {
             $res .= $function . '()';
         }
         if (isset($file)) {
-            $res .= " from " . str_replace(APP, '', $file);
+            $res .= " from " . $this->just_file($file);
         }
         if (isset($line)) {
             $res .= "($line)";
         }
         return $res;
+    }
+
+    private function just_file($file) {
+        if (!defined('APP')) {
+            return $file;
+        }
+        return str_replace(APP, '', $file);
     }
 
 }

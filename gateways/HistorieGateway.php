@@ -3,9 +3,8 @@
 class HistorieGateway extends Gateway {
 
     public function zoek_eerste_datum_stalop($recId) {
-        $first_day = null;
-        $eerste_dag = null;
-        $vw = $this->db->query("
+        return $this->first_row(
+            <<<SQL
 SELECT min(datum) date, date_format(min(datum),'%d-%m-%Y') datum
 FROM tblHistorie h
  join tblActie a on (a.actId = h.actId)
@@ -14,41 +13,45 @@ FROM tblHistorie h
     FROM tblStal st
      join tblHistorie h on (h.stalId = st.stalId)
      join tblMelding m on (m.hisId = h.hisId)
-    WHERE m.meldId = '$recId'
+    WHERE m.meldId = :meldId
  ) st on (st.stalId = h.stalId and st.hisId <> h.hisId)
  WHERE a.op = 1
-");
-            while ($mi = $vw->fetch_assoc()) {
-                $first_day = $mi['date'];
-                $eerste_dag = $mi['datum'];
-            }
-        // TODO: #0004135 record teruggeven ipv anonieme array?
-        // TODO in een veel later stadium: opnemen in Transactie, samen met validatie
-        return [$first_day, $eerste_dag];
+SQL
+        ,
+            [[':meldId', $recId, self::INT]],
+            [null, null]
+        );
     }
 
     public function setDatum($day, $recId) {
-        $this->db->query("
+        $this->run_query(
+            <<<SQL
  UPDATE tblHistorie h
   join tblMelding m on (h.hisId = m.hisId)
- set   h.datum  = '".$this->db->real_escape_string($day)."'
- WHERE m.meldId = '$recId' 
- ");
+ set h.datum = :datum
+ WHERE m.meldId = :meldId
+SQL
+        ,
+            [
+                [':datum', $day],
+                [':meldId', $recId],
+            ]
+        );
     }
 
+    // @TODO: naamgeving. Zoekt niet speciaal naar dekking.
     public function zoek_dekdatum($dekMoment) {
-        $vw = $this->db->query("
+        return $this->first_row(
+            <<<SQL
 SELECT date_format(datum,'%d-%m-%Y') datum, year(datum) jaar
 FROM tblHistorie
-WHERE hisId = '".$this->db->real_escape_string($dekMoment)."' and skip = 0
-    ");
-        $dekdm = 0;
-        $dekjaar = 0;
-        while ( $zd = $vw->fetch_assoc()) {
-            $dekdm = $zd['datum']; $dekjaar = $zd['jaar']; 
-        }
-        return [$dekdm, $dekjaar];
-        }
+WHERE hisId = :hisId
+ and skip = 0
+SQL
+        , [[':hisId', $dekMoment]],
+            [0, 0]
+        );
+    }
 
     public function zoek_drachtdatum($drachtMoment) {
         $vw = $this->db->query("
@@ -494,6 +497,22 @@ public function insert_afvoer($stalId, $dmafv) {
         actId = 3 ");
 }
 
+public function insert_act_3($stalId, $datum, $kg) {
+    $this->run_query(
+        <<<SQL
+INSERT INTO tblHistorie set stalId = :stalId,
+        datum = :datum,
+        kg = :kg,
+        actId = 3
+SQL
+    , [
+        [':stalId', $stalId, self::INT],
+        [':datum', $datum, self::DATE],
+        [':kg', $kg],
+    ]
+    );
+}
+
 // waarschijnlijk verkeerde naam, afgekeken hierboven bij actid=3
 public function insert_afvoer_act($stalId, $datum, $actId) {
     $this->db->query("INSERT INTO tblHistorie set stalId = '".$this->db->real_escape_string($stalId)."',
@@ -658,6 +677,248 @@ and h.skip = 0
 SQL
     , [[':stalId', $stalId, self::INT]]
     );
+}
+
+public function zoek_verblijf_moeder($stalId) {
+    return $this->first_field(
+        <<<SQL
+SELECT b.hokId
+FROM (
+    SELECT max(hisId) hisId
+    FROM tblHistorie h
+     join tblActie a on (a.actId = h.actId)
+    WHERE stalId = :stalId and a.aan = 1
+ ) hin
+ left join tblBezet b on (hin.hisId = b.hisId)
+ left join (
+    SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
+    FROM tblBezet b
+     join tblHistorie h1 on (b.hisId = h1.hisId)
+     join tblActie a1 on (a1.actId = h1.actId)
+     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+     join tblActie a2 on (a2.actId = h2.actId)
+     join tblStal st on (h1.stalId = st.stalId)
+    WHERE st.stalId = :stalId
+ and a1.aan = 1
+ and a2.uit = 1
+ and h1.skip = 0
+ and h2.skip = 0
+    GROUP BY b.bezId, h1.hisId
+ ) uit on (uit.hisv = hin.hisId)
+WHERE isnull(uit.hist)
+SQL
+    , [[':stalId', $stalId, self::INT]]
+    );
+}
+
+public function zoek_nu_in_verblijf_geb_spn($lidId) {
+    return $this->first_field(
+        <<<SQL
+SELECT count(hin.schaapId) aantin
+FROM (
+    SELECT st.schaapId, max(hisId) hisId
+    FROM tblStal st 
+     join tblHistorie h on (st.stalId = h.stalId)
+     join tblActie a on (a.actId = h.actId) 
+    WHERE st.lidId = :lidId
+ and isnull(st.rel_best)
+ and a.aan = 1
+ and h.skip = 0
+    GROUP BY st.schaapId
+ ) hin
+ left join tblBezet b on (hin.hisId = b.hisId)
+ left join (
+    SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
+    FROM tblBezet b
+     join tblHistorie h1 on (b.hisId = h1.hisId)
+     join tblActie a1 on (a1.actId = h1.actId)
+     join tblHistorie h2 on (h1.stalId = h2.stalId
+ and ((h1.datum < h2.datum) or (h1.datum = h2.datum
+ and h1.hisId < h2.hisId)) )
+     join tblActie a2 on (a2.actId = h2.actId)
+     join tblStal st on (h1.stalId = st.stalId)
+    WHERE st.lidId = :lidId
+ and a1.aan = 1
+ and a2.uit = 1
+ and h1.skip = 0
+ and h2.skip = 0
+    GROUP BY b.bezId, st.schaapId, h1.hisId
+ ) uit on (uit.hisv = hin.hisId)
+ left join (
+    SELECT st.schaapId
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3
+ and h.skip = 0
+ ) prnt on (prnt.schaapId = hin.schaapId)
+WHERE (isnull(b.hokId) or uit.hist is not null)
+ and isnull(prnt.schaapId)
+SQL
+    , [[':lidId', $lidId, self::INT]]
+    );
+}
+
+public function zoek_nu_in_verblijf_parent($lidId) {
+    return $this->first_field(
+        <<<SQL
+SELECT count(hin.schaapId) aantin
+FROM (
+    SELECT st.schaapId, max(hisId) hisId
+    FROM tblStal st 
+     join tblHistorie h on (st.stalId = h.stalId)
+     join tblActie a on (a.actId = h.actId) 
+    WHERE st.lidId = :lidId
+ and isnull(st.rel_best)
+ and a.aan = 1
+ and h.skip = 0
+    GROUP BY st.schaapId
+ ) hin
+ left join tblBezet b on (hin.hisId = b.hisId)
+ left join (
+    SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
+    FROM tblBezet b
+     join tblHistorie h1 on (b.hisId = h1.hisId)
+     join tblActie a1 on (a1.actId = h1.actId)
+     join tblHistorie h2 on (h1.stalId = h2.stalId
+ and ((h1.datum < h2.datum) or (h1.datum = h2.datum
+ and h1.hisId < h2.hisId)) )
+     join tblActie a2 on (a2.actId = h2.actId)
+     join tblStal st on (h1.stalId = st.stalId)
+    WHERE st.lidId = :lidId
+ and a1.aan = 1
+ and a2.uit = 1
+ and h1.skip = 0
+ and h2.skip = 0
+    GROUP BY b.bezId, st.schaapId, h1.hisId
+ ) uit on (uit.hisv = hin.hisId)
+ join (
+    SELECT st.schaapId
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3
+ and h.skip = 0
+ ) prnt on (prnt.schaapId = hin.schaapId)
+WHERE (isnull(b.hokId) or uit.hist is not null)
+SQL
+    , [[':lidId', $lidId, self::INT]]
+    );
+}
+
+public function zoek_commentaar($hisId) {
+    return $this->first_field(
+        <<<SQL
+SELECT comment
+FROM tblHistorie
+WHERE hisId = :hisId
+SQL
+    , [[':hisId', $hisId, self::INT]]
+    );
+}
+
+public function update_commentaar($hisId, $comment) {
+    $this->run_query(
+        <<<SQL
+UPDATE tblHistorie SET comment = :comment WHERE hisId = :hisId
+SQL
+    , [[':hisId', $hisId, self::INT], [':comment', $comment]]
+    );
+}
+
+public function wis_commentaar($hisId) {
+    $this->run_query(
+        <<<SQL
+UPDATE tblHistorie SET comment = NULL WHERE hisId = :hisId
+SQL
+    , [[':hisId', $hisId, self::INT]]
+    );
+}
+
+public function zoek_afvoerdatum($stalId) {
+    return $this->first_row(
+        <<<SQL
+SELECT h.datum date, date_format(h.datum,'%d-%m-%Y') datum
+FROM tblHistorie h
+ join tblActie a on (a.actId = h.actId)
+WHERE h.stalId = :stalId
+ and a.af = 1
+ and h.skip = 0
+SQL
+    , [[':stalId', $stalId, self::INT]]
+    );
+}
+
+public function zoek_afleverlijst($his) {
+    return $this->run_query(
+        <<<SQL
+SELECT u.lidId, date_format(datum,'%d-%m-%Y') datum, datum date, rel_best, p.naam
+FROM tblHistorie h
+ join tblStal st on (h.stalId = st.stalId)
+ join tblUbn u on (st.ubnId = u.ubnId)
+ join tblRelatie r on (st.rel_best = r.relId)
+ join tblPartij p on (p.partId = r.partId)
+WHERE h.hisId = :hisId
+SQL
+    , [[':hisId', $his, self::INT]]
+    );
+}
+
+public function count_afleverlijst($lidId, $datum, $relId) {
+    return $this->first_field(
+        <<<SQL
+SELECT count(distinct st.stalId) aant
+FROM tblHistorie h
+ join tblStal st on (h.stalId = st.stalId)
+ join tblUbn u on (st.ubnId = u.ubnId)
+ join tblActie a on (h.actId = a.actId)
+WHERE u.lidId = :lidId
+ and h.datum = :datum
+ and st.rel_best = :relId
+ and a.af = 1
+ and h.skip = 0
+SQL
+    ,
+        [
+            [':lidId', $lidId, self::INT],
+            [':datum', $datum],
+            [':relId', $relId, self::INT],
+        ]
+    );
+}
+
+public function zoek_schaap($lidId, $datum, $relId, $Karwerk) {
+    return $this->run_query(
+        <<<SQL
+SELECT u.lidId, s.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr, h.kg, pil.datum, pil.naam, pil.wdgn_v
+FROM tblHistorie h
+ join tblStal st on (h.stalId = st.stalId)
+ join tblUbn u on (st.ubnId = u.ubnId)
+ join tblSchaap s on (s.schaapId = st.schaapId)
+ join tblActie a on (h.actId = a.actId)
+ left join (
+    SELECT s.schaapId, date_format(h.datum,'%d-%m-%Y') datum, art.naam, art.wdgn_v
+    FROM tblSchaap s 
+     join tblStal st on (st.schaapId = s.schaapId)
+     join tblUbn u on (st.ubnId = u.ubnId)
+     join tblHistorie h on (h.stalId = st.stalId)
+     join tblNuttig n on (h.hisId = n.hisId)
+     join tblInkoop i on (i.inkId = n.inkId)
+     join tblArtikel art on (i.artId = art.artId) 
+    WHERE u.lidId = :lidId
+ and h.actId = 8
+ and h.skip = 0
+ and (h.datum + interval art.wdgn_v day) >= sysdate()
+) pil on (st.schaapId = pil.schaapId)
+WHERE h.datum = :datum
+ and st.rel_best = :relId
+ and a.af = 1
+ and h.skip = 0
+ORDER BY right(s.levensnummer,$Karwerk)
+SQL
+    , [
+        [':lidId', $lidId, self::INT],
+        [':datum', $datum],
+        [':relId', $relId, self::INT],
+    ]);
 }
 
 }

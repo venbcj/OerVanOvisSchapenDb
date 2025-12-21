@@ -1,0 +1,7 @@
+#!/bin/bash
+[ "$1" == "" ] && echo Provide a failing seed && exit
+vendor/bin/phpunit \
+  --order-by=random \
+  --random-order-seed=$1 \
+  --list-tests \
+  > tests.list

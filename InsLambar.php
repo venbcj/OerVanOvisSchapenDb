@@ -36,6 +36,7 @@ include "login.php"; ?>
             <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) {
+    $impagrident_gateway = new ImpAgridentGateway();
 
 If (isset($_POST['knpInsert_']))  {
     include "url.php";
@@ -47,80 +48,22 @@ $velden = "str_to_date(rd.datum,'%Y-%m-%d') sort , rd.datum, rd.Id, rd.levensnum
  dup.dubbelen,
  s.levensnummer, s.geslacht,
  lower(h.actie) actie, h.af,
-
  date_format(hs.datum,'%d-%m-%Y') speendm, hs.datum dmspeen, ouder.datum dmaanw,
-
  h.datum dmlst ";
 
-$tabel = "
-impAgrident rd
- left join (
-     SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
-     FROM tblSchaap s
-      join tblStal st on (st.schaapId = s.schaapId)
-      join tblHistorie h on (st.stalId = h.stalId)
-     WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
-     GROUP BY s.schaapId, s.levensnummer, s.geslacht
- ) s on (rd.levensnummer = s.levensnummer)
- left join (
-    SELECT h.hisId, h.datum, a.actie, a.af
-    FROM tblHistorie h
-     join tblActie a on (h.actId = a.actId)
-    WHERE h.skip = 0
- ) h on (h.hisId = s.hisId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0
- ) hs on (hs.schaapId = s.schaapId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) ouder on (ouder.schaapId = s.schaapId)
- left join tblHok kh on (rd.hokId = kh.hokId and kh.lidId = rd.lidId)
- left join (
-     SELECT rd.Id, count(dup.Id) dubbelen
-    FROM impAgrident rd
-     join impAgrident dup on (rd.lidId = dup.lidId and rd.levensnummer = dup.levensnummer and rd.actId = dup.actId and rd.Id <> dup.Id)
-    WHERE rd.actId = 16 and rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ISNULL(rd.verwerkt) and ISNULL(dup.verwerkt)
-    GROUP BY rd.Id
- ) dup on (rd.Id = dup.Id)
- left join (
-    SELECT m.levensnummer, max(m.datum) datum
-    FROM (
-        SELECT s.levensnummer, h.datum
-        FROM tblSchaap s 
-         join tblStal st on (st.schaapId = s.schaapId)
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.levensnummer is not null and h.skip = 0
-        
-    ) m
-    GROUP BY m.levensnummer 
- ) lstday on (lstday.levensnummer = rd.levensnummer )
- " ;
-
-$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and actId = 16 and isnull(rd.verwerkt)";
+$tabel = $impagrident_gateway->getInsLambarFrom();
+$WHERE = $impagrident_gateway->getInsLambarWhere($lidId);
 
 include "paginas.php";
+$data = $paginator->fetch_data($velden, "ORDER BY sort, rd.Id");
 
-$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id"); ?>
-
+?>
 <table border = 0>
 <tr> <form action="InsLambar.php" method = "post">
  <td colspan = 3 style = "font-size : 13px;">
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
- <td colspan = 2 align = "center" style = "font-size : 14px;"><?php 
-/*echo '<br>'; 
-echo '$page_nums->total_pages : '.$page_nums->total_pages.'<br>'; 
-echo '$page_nums->total_records : '.$page_nums->total_records.'<br>'; 
-echo '$page_nums->rpp : '.$page_nums->rpp.'<br>'; */
-echo /*'$page_numbers : '.*/$page_numbers/*.'<br> '.$record_numbers.'<br>'*/; 
-/*echo '$page_nums->count_records() : '. $page_nums->count_records();*/ 
-//echo '$page_nums->pagina_string : '. $page_nums->pagina_string; ?></td>
- <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
+ <td colspan = 2 align = "center" style = "font-size : 14px;"><?php echo $paginator->show_page_numbers(); ?></td>
+ <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $paginator->show_rpp(); ?> </td>
  <td align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
  <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td></tr>
 <tr valign = bottom style = "font-size : 12px;">

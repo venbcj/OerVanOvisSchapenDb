@@ -56,7 +56,7 @@ class SchaapGatewayTest extends GatewayCase {
         # todo: deze twee inpakken. Veel queries hebben drie verschijningsvormen
         $Sekse = 's.geslacht is not null';
         $Ouder = 'isnull(oudr.hisId)';
-        $this->assertSame(false, $this->sut->eenheid_fase($lidid, $M, $J, $V, $Sekse, $Ouder));
+        $this->assertEquals(false, $this->sut->eenheid_fase($lidid, $M, $J, $V, $Sekse, $Ouder));
     }
 
     public function testEenheidFase() {
@@ -155,7 +155,8 @@ class SchaapGatewayTest extends GatewayCase {
         $this->runfixture('schaap-4');
         $this->runSQL("INSERT INTO tblHistorie(stalId, actId) VALUES(1, 3)");
         $Karwerk = 5;
-        $this->assertEquals([['stalId' => 1, 'werknr' => '4', 'halsnr' => null]], $this->sut->zoek_vaders(self::LIDID, $Karwerk));
+        $expected = [['stalId' => 1, 'werknr' => '4', 'halsnr' => null]];
+        $this->assertEquals($expected, $this->sut->zoek_vaders(self::LIDID, $Karwerk));
     }
 
     public function testLevnrUnique() {
@@ -460,9 +461,9 @@ class SchaapGatewayTest extends GatewayCase {
         $this->assertEquals(0, $result->num_rows);
     }
 
-    public function test_zoekGeschiedenis() {
-        $this->markTestIncomplete("Er zijn nogal wat scenarios nodig voor zoekGeschiedenis");
-    }
+    # public function test_zoekGeschiedenis() {
+    #     $this->markTestIncomplete("Er zijn nogal wat scenarios nodig voor zoekGeschiedenis");
+    # }
 
     // TODO kandidaat voor Pull Up Method
     protected function assertStubBehaves($expectation, $result) {

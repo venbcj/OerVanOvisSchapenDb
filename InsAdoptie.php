@@ -29,6 +29,8 @@ include "login.php"; ?>
                 <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) { 
+$hok_gateway = new HokGateway();
+$impagrident_gateway = new ImpAgridentGateway();
 
 If (isset ($_POST['knpInsert_'])) {
     include "post_readerAdop.php"; #Deze include moet voor de vervversing in de functie header()
@@ -36,16 +38,10 @@ If (isset ($_POST['knpInsert_'])) {
     }
 
 // Declaratie HOKNUMMER            // lower(if(isnull(scan),'6karakters',scan)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.
-$qryHoknummer = mysqli_query($db,"
-SELECT hokId, hoknr, lower(if(isnull(scan),'6karakters',scan)) scan
-FROM tblHok hb
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief = 1
-ORDER BY hoknr
-") or die (mysqli_error($db)); 
+$qryHoknummer = $hok_gateway->hoknummer($lidId);
 
 $index = 0; 
-while ($hnr = mysqli_fetch_array($qryHoknummer)) 
-{ 
+while ($hnr = $qryHoknummer->fetch_array()) { 
    $hoknId[$index] = $hnr['hokId']; 
    $hoknum[$index] = $hnr['hoknr'];   
    $index++; 
@@ -57,57 +53,20 @@ $velden = "rd.Id, date_format(rd.datum,'%d-%m-%Y') datum, rd.datum sort, rd.leve
 mdr.schaapId mdr_db,
 h.actie, h.af, spn.schaapId spn, prnt.schaapId prnt, date_format(h.datum,'%d-%m-%Y') maxdatum, h.datum datummax";
 
-$tabel = "
-impAgrident rd
- left join (
-     SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
-     FROM tblSchaap s
-      join tblStal st on (st.schaapId = s.schaapId)
-      join tblHistorie h on (st.stalId = h.stalId)
-     WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
-     GROUP BY s.schaapId, s.levensnummer, s.geslacht
- ) s on (rd.levensnummer = s.levensnummer)
- 
- left join tblSchaap mdr on (rd.moeder = mdr.levensnummer)
- left join tblStal st on (st.schaapId = s.schaapId and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best))
- left join (
-    SELECT h.hisId, a.actie, a.af, h.datum
-    FROM tblHistorie h
-     join tblActie a on (h.actId = a.actId)
- ) h on (h.hisId = s.hisId)
- left join (
-    SELECT st.schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0
- ) spn on (spn.schaapId = s.schaapId)
- left join (
-    SELECT st.schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = s.schaapId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 14 and h.skip = 0
- ) hu on (hu.schaapId = s.schaapId)
-";
-
-$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 15 and isnull(rd.verwerkt) ";
+$tabel = $impagrident_gateway->getInsAdoptieFrom();
+$WHERE = $impagrident_gateway->getInsAdoptieWhere($lidId);
 
 include "paginas.php";
+$data = $paginator->fetch_data($velden, "ORDER BY sort, rd.Id");
 
-$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id");
  ?>
 <table border = 0>
 <tr> <form action="InsAdoptie.php" method = "post">
  <td colspan = 2 style = "font-size : 13px;">
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
  <td colspan = 2 align = center style = "font-size : 14px;"><?php 
-echo $page_numbers; ?></td>
- <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
+echo $paginator->show_page_numbers(); ?></td>
+ <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $paginator->show_rpp(); ?> </td>
  <td colspan = 3 align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
  <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td></tr>
 <tr valign = bottom style = "font-size : 12px;">
@@ -122,8 +81,8 @@ echo $page_numbers; ?></td>
 </tr>
 <?php
 
-if(isset($data))  {    foreach($data as $key => $array)
-    {
+    if(isset($data))  {
+        foreach($data as $key => $array) {
     $Id = $array['Id'];
     $datum = $array['datum'];
     $date = $array['sort'];
@@ -138,47 +97,15 @@ if(isset($data))  {    foreach($data as $key => $array)
     $dmmax = $array['datummax'];
 
 // VERBLIJF MOEDER zoeken
-unset($stalId);
-$zoek_stalId = mysqli_query($db,"
-SELECT stalId
-FROM tblStal
-WHERE schaapId = '".mysqli_real_escape_string($db,$mdr_db)."' and lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(rel_best)
-");
-
-while ($zs = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $zs['stalId']; }
-
+    $stal_gateway = new StalGateway();
+    $stalId = $stal_gateway->zoek_stal($mdr_db, $lidId);
 unset($hok_db);
 
 if(isset($stalId)) {
-$zoek_verblijf_mdr = mysqli_query($db,"
-SELECT b.hokId
-FROM (
-    SELECT max(hisId) hisId
-    FROM tblHistorie h
-     join tblActie a on (a.actId = h.actId)
-    WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."' and a.aan = 1
- ) hin
- left join tblBezet b on (hin.hisId = b.hisId)
- left join (
-    SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.stalId = '".mysqli_real_escape_string($db,$stalId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-    GROUP BY b.bezId, h1.hisId
- ) uit on (uit.hisv = hin.hisId)
-WHERE isnull(uit.hist)
-
-");
-
-while ($zv = mysqli_fetch_assoc($zoek_verblijf_mdr)) { $hok_db = $zv['hokId']; }
-
+    $historie_gateway = new HistorieGateway();
+    $hok_db = $historie_gateway->zoek_verblijf_moeder($stalId);
 }
 // VERBLIJF MOEDER zoeken 
-
 
 // Controleren of ingelezen waardes worden gevonden .
 $dag = $datum ; $dmdag = $date; $kzlHok = $hok_db;

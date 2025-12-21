@@ -1,32 +1,24 @@
-<?php /*15-11-2020 bestand gekopieerd van impGroepsgeboorte.php en diverse imp... bestanden teruggebracht naar dit ene bestand 
+<?php
+
+/*15-11-2020 bestand gekopieerd van impGroepsgeboorte.php en diverse imp... bestanden teruggebracht naar dit ene bestand
 26-11-2022 Als datum is "0001-01-01T00:00:00" dan Null zie taak Aanvoer */
 
-
+// @TODO (BCB) hier een functie van maken
 $cnt_velden = count($velden);
 
-             foreach($inhoud as $index => $waarde) {                 
-            
-//var_dump($waarde);        
-// Inlezen record
-for($h = 0; $h < $cnt_velden; $h++) { // Er zijn 3 elementen
-
-    if($h == 0) { $insert_qry = " INSERT INTO impAgrident SET "; }
-    
-
-
-if($waarde -> {$velden[$h]} == "" || $waarde -> {$velden[$h]} == "0" || $waarde -> {$velden[$h]} == "0001-01-01T00:00:00") {  $insert_qry .= "$velden[$h] = NULL, "; }
-else { $insert_qry .= "$velden[$h] = '" . mysqli_real_escape_string($db, $waarde -> {$velden[$h]} ) . "', "; }
-
-
-} // for($h = 0;
-
-$insert_qry .= ' lidId = ' . mysqli_real_escape_string($db,$lidid) . ';';
-
-echo $insert_qry; mysqli_query($db,$insert_qry) or die (mysqli_error($db));
-
-unset($insert_qry);
-// Einde Inlezen record
-
-             } // Einde foreach($data .....
-
-?>
+foreach ($inhoud as $index => $waarde) {
+    for ($h = 0; $h < $cnt_velden; $h++) { // Er zijn 3 elementen
+        if ($h == 0) {
+            $insert_qry = " INSERT INTO impAgrident SET ";
+        }
+        if ($waarde -> {$velden[$h]} == "" || $waarde -> {$velden[$h]} == "0" || $waarde -> {$velden[$h]} == "0001-01-01T00:00:00") {
+            $insert_qry .= "$velden[$h] = NULL, ";
+        } else {
+            $insert_qry .= "$velden[$h] = '" . mysqli_real_escape_string($db, $waarde -> {$velden[$h]}) . "', ";
+        }
+    }
+    $insert_qry .= ' lidId = ' . mysqli_real_escape_string($db, $lidid) . ';';
+    echo $insert_qry;
+    mysqli_query($db, $insert_qry) or die(mysqli_error($db));
+    unset($insert_qry);
+}

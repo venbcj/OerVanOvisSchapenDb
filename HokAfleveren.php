@@ -14,7 +14,7 @@ $versie = '18-01-2021'; /* Geslacht toegevoegd sql beveiligd met quotes */
 $versie = '30-12-2023'; /* and h.skip = 0 toegevoegd aan tblHistorie */
 $versie = '07-01-2024'; /* Select_all toegevoegd en include kalender; op een andere plek gezet omdat dit elkaar anders bijt. */
 $versie = '20-01-2024'; /* in nestquery 'uit' is 'and a1.aan = 1' uit WHERE gehaald. De hisId die voorkomt in tblBezet volstaat. Bovendien is bij Pieter hisId met actId 3 gekoppeld aan tblBezet en heeft het veld 'aan' in tblActie de waarde 0. De WHERE incl. 'and a1.aan = 1' geeft dus een fout resultaat. */
-$versie = "11-03-2024"; /* Bij geneste query uit 
+$versie = "11-03-2024"; /* Bij geneste query uit
 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 */
@@ -46,12 +46,16 @@ include "login.php"; ?>
                 <TD align = "center" valign = "top">
 <?php
 if (Auth::is_logged_in()) {
+$hok_gateway = new HokGateway();
+$partij_gateway = new PartijGateway();
+$bezet_gateway = new BezetGateway();
+
     if (!(Session::isset('BST'))) Session::set('BST', 1);
     if (!(Session::isset('Fase'))) Session::set('Fase', 1);
     if (!(Session::isset('DT1'))) Session::set('DT1', '1900-01-01');
 
 if(isset($_GET['pstId'])) { Session::set("ID", $_GET['pstId']); } $ID = Session::get("ID"); /* zorgt het Id wordt onthouden bij het opnieuw laden van de pagina */
-if(isset($_POST['knpVerder_']) && isset($_POST['kzlRelall_']))    { 
+if(isset($_POST['knpVerder_']) && isset($_POST['kzlRelall_']))    {
     $datum = $_POST['txtDatumall_']; Session::set("DT1", $datum);
     $bestkeuze = $_POST['kzlRelall_']; Session::set("BST", $bestkeuze);
     $radFase = $_POST['radFase_']; Session::set("Fase", $radFase); }
@@ -61,111 +65,55 @@ if(isset($_POST['knpVerder_']) && isset($_POST['kzlRelall_']))    {
 
 if(isset($_POST['knpSave_'])) { if($pagina == 'Uitscharen') { $actId = 10; } else if($pagina == 'Afleveren') { $actId = 12; } else if($pagina == 'Verkopen') { $actId = 13; } include "save_afleveren.php"; }
 
-$zoek_hok = mysqli_query ($db,"
-SELECT hoknr
-FROM tblHok
-WHERE hokId = '".mysqli_real_escape_string($db,$ID)."'
-") or die (mysqli_error($db));
-    while ($h = mysqli_fetch_assoc($zoek_hok)) { $hoknr = $h['hoknr']; }
-    
+$hoknr = $hok_gateway->findHoknrById($ID);
 
 // Declaratie RELATIE KEUZE
-$qryRelatiekeuze = mysqli_query($db,"SELECT r.relId, concat(p.ubn, ' - ', p.naam) naam
-            FROM tblPartij p
-             join tblRelatie r on (r.partId = p.partId)
-            WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and r.relatie = 'deb' and p.actief = 1 and r.actief = 1
-            ORDER BY p.naam") or die (mysqli_error($db)); 
-
-$index = 0; 
+$qryRelatiekeuze = $partij_gateway->findKlant($lidId);
+$index = 0;
 $relnm = [];
-while ($rel = mysqli_fetch_array($qryRelatiekeuze)) 
-{ 
-   $relId[$index] = $rel['relId']; 
+while ($rel = $qryRelatiekeuze->fetch_array()) {
+   $relId[$index] = $rel['relId'];
    $relnm[$index] = $rel['naam'];
-   $index++; 
-} 
+   $index++;
+}
 unset($index);
-// EINDE Declaratie RELATIE  KEUZE 
+// EINDE Declaratie RELATIE  KEUZE
 
      if( $pagina == 'Afleveren')     { ?> <form action="HokAfleveren.php" method = "post"> <?php }
 else if( $pagina == 'Verkopen')     { ?> <form action="HokVerkopen.php" method = "post"> <?php }
 else if( $pagina == 'Uitscharen') { ?> <form action="HokUitscharen.php" method = "post"> <?php }
-// Opbouwen paginanummering 
-$where = '';
-    if( $pagina == 'Afleveren') {
-    $where = "WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId) and h.skip = 0 and spn.schaapId is not null and isnull(prnt.schaapId)"; }
-
-else if( $pagina == 'Verkopen') { 
-    $where = "WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId) and h.skip = 0 and prnt.schaapId is not null"; }
-
-else if( $pagina == 'Uitscharen' && $radFase == 3) { 
-    $where = "WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId) and h.skip = 0 and prnt.schaapId is not null"; }
-
-else if( $pagina == 'Uitscharen' && $radFase == 1) { 
-    $where = "WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId) and h.skip = 0 and isnull(prnt.schaapId)"; }
-
-else if( $pagina == 'Uitscharen' && $radFase == 4) { 
-    $where = "WHERE b.hokId = '".mysqli_real_escape_string($db,$ID)."' and isnull(uit.bezId) and h.skip = 0"; }
-
-
+// Opbouwen paginanummering
 $velden = "s.schaapId, right(s.levensnummer,'".mysqli_real_escape_string($db,$Karwerk)."') werknr, s.geslacht, s.levensnummer, date_format(max(h.datum),'%Y-%m-%d') dmlst, date_format(max(h.datum),'%d-%m-%Y') lstdm, prnt.schaapId ouder";
 
-$tabel = "tblSchaap s 
- join tblStal st on (st.schaapId = s.schaapId)
- join tblHistorie h on (h.stalId = st.stalId)
- join tblBezet b on (b.hisId = h.hisId)
- left join (
-    SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and b.hokId = '".mysqli_real_escape_string($db,$ID)."'
-    GROUP BY b.bezId, h1.hisId
- ) uit on (uit.bezId = b.bezId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0
- ) spn on (spn.schaapId = st.schaapId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = st.schaapId)";
-
- $WHERE = $where;
+$tabel = $bezet_gateway->getHokAfleverenFrom();
+$WHERE = $bezet_gateway->getHokAfleverenWhere($pagina, $radFase, $lidId, $ID);
 
 include "paginas.php";
+$data = $paginator->fetch_data($velden, "GROUP BY s.levensnummer ORDER BY right(s.levensnummer,'".mysqli_real_escape_string($db,$Karwerk)."')");
+// Einde Opbouwen paginanummering
 
-$data = $page_nums->fetch_data($velden, "GROUP BY s.levensnummer ORDER BY right(s.levensnummer,'".mysqli_real_escape_string($db,$Karwerk)."')"); 
-// Einde Opbouwen paginanummering 
-if(!isset($sess_dag) && !isset($sess_bestm)) { $width = 100; } 
+if(!isset($sess_dag) && !isset($sess_bestm)) { $width = 100; }
 else { $width = 200; } ?>
 <table border = 0 > <!-- tabel1 -->
 <tr>
  <td>
     <table border = 0 > <!-- tabel2 -->
-    <tr> 
+    <tr>
      <td width = <?php echo $width; ?> rowspan = 2 style = "font-size : 18px;">
 <?php # $hoknr wordt nergens gezet. TODO: #0004105 wat moet dit doen? # ?>
   <b> <?php echo $hoknr; ?></b>
      </td>
 
- <?php if(!isset($sess_dag) && !isset($sess_bestm)) { 
+ <?php if(!isset($sess_dag) && !isset($sess_bestm)) {
      include "kalender.php"; ?>
 
-     <td width = 750 style = "font-size : 14px;"> 
- &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Optioneel een datum voor alle schapen 
-     <input id = "datepicker1" type = text name = 'txtDatumall_' size = 8 value = <?php if(isset($sess_dag)) { echo $sess_dag; } ?> > &nbsp 
+     <td width = 750 style = "font-size : 14px;">
+ &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Optioneel een datum voor alle schapen
+     <input id = "datepicker1" type = text name = 'txtDatumall_' size = 8 value = <?php if(isset($sess_dag)) { echo $sess_dag; } ?> > &nbsp
  <?php } else { ?> <td style = "font-size : 14px;">  <?php } ?>
 <!-- Opmaak paginanummering -->
- Regels Per Pagina: <?php echo $kzlRpp;
-if(isset($sess_dag) || isset($sess_bestm)) { ?> </td> <td align = center > <?php echo $page_numbers.'<br>'; ?> </td> <td> <?php } 
+ Regels Per Pagina: <?php echo $paginator->show_rpp();
+if(isset($sess_dag) || isset($sess_bestm)) { ?> </td> <td align = center > <?php echo $paginator->show_page_numbers().'<br>'; ?> </td> <td> <?php }
 // Einde Opmaak paginanummering ?>
      </td>
      <td width = 150 align = center>
@@ -175,7 +123,7 @@ if(isset($sess_dag) || isset($sess_bestm)) { ?> </td> <td align = center > <?php
      <td width = 200 align = 'right'></td>
    <?php }
 else { ?>
-      <input type = submit name = "knpVervers_" value = "Verversen"> 
+      <input type = submit name = "knpVervers_" value = "Verversen">
      </td>
      <td width = 200 align = 'right'>
       <input type = submit name = "knpSave_" value = <?php echo $pagina; ?> >&nbsp &nbsp
@@ -185,7 +133,7 @@ else { ?>
     <tr>
      <td colspan = 7 align = left >
  <?php if(!isset($sess_dag) && !isset($sess_bestm)) { ?>
- Optioneel een bestemming voor alle schapen 
+ Optioneel een bestemming voor alle schapen
  <!-- KZLBESTEMMING KEUZE-->
  <select style="width:150;" name= 'kzlRelall_' value = "" style = "font-size:12px;">
   <option></option>
@@ -198,9 +146,9 @@ for ($i = 0; $i < $count; $i++){
             {
   if ((isset($_POST['kzlRelall_']) && $_POST['kzlRelall_'] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
-  } else { 
-    echo '<option value="' . $key . '" >' . $waarde . '</option>';  
-  }        
+  } else {
+    echo '<option value="' . $key . '" >' . $waarde . '</option>';
+  }
             }
 }
 ?> </select> &nbsp
@@ -230,7 +178,7 @@ for ($i = 0; $i < $count; $i++){
 </tr>
 <tr>
  <td>
-    <table border = 0 id="myTable2" align = left > <!-- tabel3 --> 
+    <table border = 0 id="myTable2" align = left > <!-- tabel3 -->
 <?php if(isset($sess_dag) || isset($sess_bestm)) { ?>
     <tr valign = bottom style = "font-size : 12px;">
      <th><?php echo $pagina; ?><br><b style = "font-size : 10px;">Ja/Nee</b><br> <input type="checkbox" id="selectall" checked /><hr></th>
@@ -246,7 +194,7 @@ for ($i = 0; $i < $count; $i++){
      <th>Bestemming<hr></th>
      <th colspan = 3 ><hr></th>
     </tr>
-<?php  
+<?php
        $fase = '';
 if(isset($data)) {
     foreach($data as $key => $array)
@@ -257,19 +205,19 @@ if(isset($data)) {
         $levnr = $array['levensnummer'];
         $dmmax = $array['dmlst'];
         $maxdm = $array['lstdm'];
-        $ouder = $array['ouder']; 
+        $ouder = $array['ouder'];
 
         if(isset($ouder)) {
-            if($geslacht == 'ooi') { $fase = 'moeder'; } else if($geslacht == 'ram') { $fase = 'vader'; } 
+            if($geslacht == 'ooi') { $fase = 'moeder'; } else if($geslacht == 'ram') { $fase = 'vader'; }
         }
         else { $fase = 'lam'; }
 
 
-if( (isset($_POST['knpVervers_']) || isset($_POST['knpSave_']) ) && !isset($_POST['kzlRelall_']) ) { 
+if( (isset($_POST['knpVervers_']) || isset($_POST['knpSave_']) ) && !isset($_POST['kzlRelall_']) ) {
     $cbKies = $_POST["chbkies_$Id"];
     $datum = $_POST["txtDatum_$Id"];
     $kg = $_POST["txtKg_$Id"];
-    if(!empty($_POST["kzlRel_$Id"])) { $bestkeuze = $_POST["kzlRel_$Id"]; } 
+    if(!empty($_POST["kzlRel_$Id"])) { $bestkeuze = $_POST["kzlRel_$Id"]; }
     /*Na afleveren en bij tonen van volgende hoeveelheid dieren is $_POST["kzlRel_$Id"] leeg maar bestkeuze moet blijven bestaan */
     }
 // Bij de eerste keer openen van deze pagina bestaat als enigste keer het veld kzlRelall_ . txtDatum_$levnr en txtGewicht_$levnr bestaan dan nog niet. Variabalen $datum en $kg kunnen enkel worden gevuld als wordt voldaan aan (isset($_POST['knpVervers_']) && !isset($_POST['kzlRelall_']))  !!!
@@ -287,8 +235,8 @@ if( (isset($_POST['knpVervers_']) || isset($_POST['knpSave_']) ) && !isset($_POS
 
     )
     {$oke = 0; } else { $oke = 1; }
-     
-// EINDE Controleren of ingelezen waardes corretc zijn.  
+
+// EINDE Controleren of ingelezen waardes corretc zijn.
 if (isset($_POST['knpVervers_']) && !isset($_POST['kzlRelall_'])) { $cbKies = $_POST["chbkies_$Id"]; $txtOke = $_POST["txtOke_$Id"]; } else { $cbKies = $oke; $txtOke = $oke; } // $cbKies is tbv het vasthouden van de keuze inlezen of niet ?>
 
 <!--    **************************************
@@ -315,8 +263,8 @@ if (isset($_POST['knpVervers_']) && !isset($_POST['kzlRelall_'])) { $cbKies = $_
 
      <td width = 110 align = center> <?php echo $levnr; ?>
      </td>
-    
-     <td width = 80 align = center style = "font-size : 9px;"> 
+
+     <td width = 80 align = center style = "font-size : 9px;">
          <input type = "text" size = 3 style = "font-size : 11px;" name = <?php echo "txtKg_$Id"; ?> value = <?php if(isset($kg)) { echo $kg; } ?> > </td>
 
      <td width = 100 align = center>
@@ -334,39 +282,39 @@ for ($i = 0; $i < $count; $i++){
             {
   if (( $bestkeuze == $relId[$i]) || (isset($_POST["kzlRel_$Id"]) && $_POST["kzlRel_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
-  } else { 
-    echo '<option value="' . $key . '" >' . $waarde . '</option>';  
-  }        
+  } else {
+    echo '<option value="' . $key . '" >' . $waarde . '</option>';
+  }
             }
 }
 ?> </select>
 
  <!-- EINDE KZLBESTEMMING -->
-    
 
-     <td colspan = 3 style = "color : red"> 
+
+     <td colspan = 3 style = "color : red">
 <?php if($day < $dmmax) { echo 'De datum mag niet voor '.$maxdm.' liggen.';}
  else if(isset($uitvaldm)) { echo 'Dit schaap is reeds overleden.';}
 ?>
-     </td>    
+     </td>
     </tr>
 <!--    **************************************
     **    EINDE OPMAAK GEGEVENS    **
     ************************************** -->
 
-<?php } 
+<?php }
         } // Einde if(isset($data))
       } ?>
     </table> <!-- Einde tabel3 -->
  </td>
 </tr>
 </table> <!-- Einde tabel1 -->
-</form> 
+</form>
 
 
 </TD>
-<?php    
-      include "menu1.php"; } 
+<?php
+      include "menu1.php"; }
 include "table-sort.js.php";
 
 include "select-all.js.php";

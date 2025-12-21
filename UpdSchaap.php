@@ -287,7 +287,7 @@ if(!empty($_POST['kzlRam']) && ((isset($vdr_db) && $_POST['kzlRam'] <> $vdr_db) 
     $newmdrId = $_POST['kzlOoi'];
     $newvdrId = $_POST['kzlRam'];
 // invoer moeder en/of vader
-    $volwas_gateway->insert_ouders($newmdrId, $newvdrId);
+    $volwas_gateway->maak_koppel($newmdrId, $newvdrId);
 
     $volwId = $volwas_gateway->zoek_ouders($newmdrId, $newvdrId);
 // Einde invoer moeder en/of vader

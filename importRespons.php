@@ -47,7 +47,6 @@ if (!isset($fout)) {
         $insert_qry .= ';';
         mysqli_query($db, $insert_qry) or die(mysqli_error($db));
     }
-    //mysqli_set_local_infile_default($db);
     // Einde Inlezen response bestand in tabel impRespons
 
     // ZOEKEN NAAR RESPONSE- EN REQUESTBESTANDEN IN DIV MAPPEN bijv. 1507131_bas_4_respons.txt
@@ -129,33 +128,14 @@ if (!isset($fout)) {
 
     $meldname = array('GER'=>'geboorte','AAN'=>'aanwas', 'AFV'=>'afvoer', 'DOO'=>'uitval', 'VMD'=>'omnummer');
 
-    $zoek_status_request = mysqli_query($db, "
-    SELECT r.def, r.code
-    FROM tblRequest r
-    WHERE reqId = '".mysqli_real_escape_string($db, $reqId)."'
-    ") or die(mysqli_error($db));
-
-    while ($req = mysqli_fetch_assoc($zoek_status_request)) {
+    $request_gateway = new RequestGateway();
+    $req = $request_gateway->findById($reqId);
         $def_req = $req['def'];
         $code = $req['code'];
-    }
 
     $melding = $meldname[$code];
-
-    $zoek_status_response = mysqli_query($db, "
-    SELECT r.def, r.meldnr
-    FROM impRespons r
-     join (
-        SELECT max(respId) respId
-        FROM impRespons
-        WHERE reqId = '".mysqli_real_escape_string($db, $reqId)."'
-     ) lr on (r.respId = lr.respId)
-    ") or die(mysqli_error($db));
-
-    while ($resp = mysqli_fetch_assoc($zoek_status_response)) {
-        $def_resp = $resp['def']; // local
-        $meldnr = $resp['meldnr']; // wordt niet gebruikt
-    }
+        $impresponse_gateway = new ImpResponseGateway();
+$def_resp = $impresponse_gateway->zoek_status_response($reqId);
 
     // bericht als definitieve melding terugkomt als controle melding
     if ($def_req == 'J' && $def_resp == 'N') {
@@ -172,10 +152,8 @@ if (!isset($fout)) {
 
     if ($def_req == 'J' && $def_resp == 'J') {
         $goed = 'De definitieve '.$melding.'melding is verwerkt op '.$datum.' Kijk onder meldingen naar het definitieve resultaat.';
-
         if (isset($response_filedate)) {
-            $opslaan_response_datum = "UPDATE tblRequest SET dmresponse = '".mysqli_real_escape_string($db, $response_filedate)."' where reqId = '".mysqli_real_escape_string($db, $reqId)."' ";
-            mysqli_query($db, $opslaan_response_datum) or die(mysqli_error($db));
+            $request_gateway->update_response_date($reqId, $response_filedate);
         }
     }
 } // Einde Als controles zijn doorstaan

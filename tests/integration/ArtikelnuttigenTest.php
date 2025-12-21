@@ -7,6 +7,11 @@ class ArtikelnuttigenTest extends IntegrationCase {
     public function setup(): void {
         require_once "func_artikelnuttigen.php";
         $this->uses_db();
+        $this->db->begin_transaction();
+    }
+
+    public function teardown(): void {
+        $this->db->rollback();
     }
 
     public function test_inlezen_pil() {

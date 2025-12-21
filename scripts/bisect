@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PHPUNIT="vendor/bin/phpunit"
+FAILING_TEST=$1
+LIST="tests.list"
+
+mapfile -t TESTS < "$LIST"
+
+low=0
+high=${#TESTS[@]}
+
+echo "Bisecting ${#TESTS[@]} tests..."
+
+while (( low < high )); do
+  mid=$(( (low + high) / 2 ))
+
+  echo "▶ Testing with $mid preceding tests"
+
+  {
+    for ((i=0; i<mid; i++)); do
+      echo "${TESTS[$i]}"
+    done
+    echo "$FAILING_TEST"
+  } > subset.list
+
+  if $PHPUNIT --testsuite default --filter "$(paste -sd'|' subset.list)" > /dev/null 2>&1; then
+    # Test PASSED → need more pollution
+    low=$((mid + 1))
+  else
+    # Test FAILED → culprit is in this half
+    high=$mid
+  fi
+done
+
+echo
+echo "💥 Minimal failing prefix size: $low"
+echo "🔍 Suspect test:"
+echo "  ${TESTS[$((low - 1))]}"
+

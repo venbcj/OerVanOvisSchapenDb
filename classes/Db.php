@@ -2,6 +2,11 @@
 
 class Db {
 
+    public const TXT = 'txt';
+    public const INT = 'int';
+    public const BOOL = 'bool';
+    public const DATE = 'date';
+
     private static $instance = null;
     private $connection = null;
     private $logger;
@@ -14,8 +19,11 @@ class Db {
     }
 
     public function __get($name) {
-        if ($name == 'error') {
+        switch ($name) {
+        case 'error':
             return $this->connection->error;
+        case 'insert_id':
+            return $this->connection->insert_id;
         }
         throw new Exception("Unknown property $name");
     }
@@ -25,10 +33,14 @@ class Db {
             $logger = Logger::instance();
         }
         $this->logger = $logger;
+        // duplicated code in basisfuncties:setup_db() en Db::__construct
         include "database.php";
-        $db = mysqli_connect($host, $user, $pw, $dtb);
-        if ($db == false) {
-            throw new Exception('Connectie database niet gelukt');
+        global $db;
+        if (!isset($db) || $db === false) {
+            $db = mysqli_connect($host, $user, $pw, $dtb);
+            if ($db == false) {
+                throw new Exception('Connectie database niet gelukt');
+            }
         }
         $this->connection = $db;
     }
@@ -46,7 +58,7 @@ class Db {
 
     // nieuwe interface in de richting van PDO
 
-    protected function run_query($SQL, $args = []) {
+    public function run_query($SQL, $args = []) {
         return $this->connection->query($this->expand($SQL, $args));
     }
 
@@ -68,12 +80,13 @@ class Db {
             if (count($arg) != 3) {
                 throw new Exception("Query-parameters: een parameter moet twee of drie onderdelen bevatten.");
             }
-            [$key, $value, $format] = $arg;
+            [$name, $value, $format] = $arg;
             if (is_null($value)) {
                 $value = 'NULL';
             } else {
                 switch ($arg[2]) {
                 case self::TXT:
+                case self::DATE:
                     $value = "'" . $this->db->real_escape_string($value) . "'";
                     break;
                 case self::INT:
@@ -84,7 +97,7 @@ class Db {
                     break;
                 }
             }
-            $SQL = str_replace($key, $value, $SQL);
+            $SQL = preg_replace("#$name\b#", $value, $SQL);
         }
         $this->logger->debug($SQL);
         return $SQL;

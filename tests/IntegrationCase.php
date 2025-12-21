@@ -10,6 +10,15 @@ class IntegrationCase extends UnitCase {
     protected $tablecounts = [];
     protected $expectedincrements = [];
 
+    public function setup(): void {
+        $this->uses_db();
+        $this->db->begin_transaction();
+    }
+
+    public function teardown(): void {
+        $this->db->rollback();
+    }
+
     protected function simulateGetRequest($path, $data = []) {
         $_SERVER['HTTP_HOST'] = 'oer-dev';
         $_SERVER['REQUEST_SCHEME'] = 'http';
@@ -43,6 +52,12 @@ class IntegrationCase extends UnitCase {
 
     protected function post($path, $data = []) {
         $this->simulatePostRequest($path, $data);
+        $this->visit($path);
+    }
+
+    protected function patch($path, $data = []) {
+        $this->simulatePostRequest($path, $data);
+        $_SERVER['REQUEST_METHOD'] = 'PATCH';
         $this->visit($path);
     }
 
@@ -145,19 +160,6 @@ class IntegrationCase extends UnitCase {
         $this->assertCount(1, $table, "kan table met id $id niet vinden");
         $rows = $path->query('//table[@id="'.$id.'"]/tr');
         $this->assertCount($count, $rows, "table heeft niet de verwachte $count rijen");
-    }
-
-    protected function expectNewRecordsInTables(array $tables) {
-        foreach ($tables as $table => $expected) {
-            $this->tablecounts[$table] = $this->tableRowcount($table);
-            $this->expectedincrements[$table] = $expected;
-        }
-    }
-
-    protected function assertTablesGrew() {
-        foreach ($this->tablecounts as $table => $count) {
-            $this->assertEquals($this->expectedincrements[$table], $this->tableRowcount($table) - $count, "Unexpected rowcount in $table.");
-        }
     }
 
 }

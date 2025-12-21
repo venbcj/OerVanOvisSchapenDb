@@ -1,54 +1,31 @@
-<!-- 16-6-2018 gemaakt 
+<?php
+
+/*Save_Artikel.php toegpast in :
+- Inkopen.php
+<!-- 16-6-2018 gemaakt
     28-11-2020 velde chkDel tegevoegd
     18-1-2022 SQL beveiligd met quotes
 -->
-
-<?php
-/*Save_Artikel.php toegpast in :
-    - Inkopen.php    */
-
-
-
-
-$array = array();
-
-foreach($_POST as $fldname => $fldvalue) {
-    
+ */
+foreach ($_POST as $fldname => $fldvalue) {
     $multip_array[Url::getIdFromKey($fldname)][Url::getNameFromKey($fldname)] = $fldvalue;
 }
-foreach($multip_array as $recId => $id) {
-//echo '<br>'.'$recId = '.$recId.'<br>';
-    
-unset($updPrijs);
-unset($delRec);
-
-  foreach($id as $key => $value) {
-    
-    if ($key == 'txtPrijs' && !empty($value)){  $updPrijs = str_replace(',', '.', $value);  } 
-    // else if ($key == 'txtPrijs' && empty($value)){ $updPrijs = 'NULL'; }
-
-    if ($key == 'chkDel'){  $delRec = $value;  } 
-
-
-                                    }
-
-if($recId > 0) {
-
-/*Wijzig prijs */
-$wijzig_prijs = "UPDATE tblInkoop set prijs = '".mysqli_real_escape_string($db,$updPrijs)."' WHERE inkId = '".mysqli_real_escape_string($db,$recId)."'     ";
-/*echo $wijzig_prijs.'<br>';*/        mysqli_query($db,$wijzig_prijs) or die (mysqli_error($db));
-
-
-if(isset($delRec)) {
-    $delete_inkoop = "DELETE FROM tblInkoop WHERE inkId = '".mysqli_real_escape_string($db,$recId)."' " ;
-/*echo $delete_inkoop.'<br>';*/    mysqli_query($db,$delete_inkoop) or die (mysqli_error($db));
-
-    
-}
-    
-}
-
+$inkoop_gateway = new InkoopGateway();
+foreach ($multip_array as $recId => $id) {
+    unset($updPrijs);
+    unset($delRec);
+    foreach ($id as $key => $value) {
+        if ($key == 'txtPrijs' && !empty($value)) {
+            $updPrijs = str_replace(',', '.', $value);
+        }
+        if ($key == 'chkDel') {
+            $delRec = $value;
+        }
     }
-                
-
-?>
+    if ($recId > 0) {
+        $inkoop_gateway->set_prijs($updPrijs, $recId);
+        if (isset($delRec)) {
+            $inkoop_gateway->remove($recId);
+        }
+    }
+}

@@ -4,8 +4,8 @@ require_once("autoload.php");
 
 $versie = '29-05-2025'; /* Gekopieerd van Readerversies.php */
 
- Session::start();
- ?>
+Session::start();
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,29 +13,24 @@ $versie = '29-05-2025'; /* Gekopieerd van Readerversies.php */
 <title>Sjabloon</title>
 </head>
 <body>
-
 <?php
 $titel = 'Ingelezen readerbestanden';
 $file = "Readerbestanden.php";
 include "login.php"; ?>
-
         <TD valign = 'top'>
 <?php
-if (Auth::is_logged_in()) { ?>
-
+if (Auth::is_logged_in()) {
+?>
 <form action="Readerbestanden.php" method = "post">
 <?php
 $dir = dirname(__FILE__).'/user_'.$lidId.'/Readerbestanden/';
-//echo $dir;
-// Sort in ascending order - this is default
-//$a = scandir($dir);
-
-// Sort in descending order
-$b = scandir($dir,1);
+$b = scandir($dir, SCANDIR_SORT_DESCENDING);
 
 $array = [];
 foreach ($b as $bestandsnaam) {
-    if (substr($bestandsnaam,7,4) >= $vorigjaar) { // $vorigjaar is gedeclareerd in basisfuncties.php
+    if (substr($bestandsnaam,7,4) >= $vorigjaar) {
+        // $vorigjaar is gedeclareerd in basisfuncties.php
+        // ... je kunt er beter een functie vorig_jaar() van maken dan. Of direct hier date('Y')-1 uitspellen --BCB
         $array[] = $bestandsnaam;
     }
 }
@@ -108,29 +103,22 @@ echo "</div>";
     <h4>Codering van acties</h4>
 <?php
 
-$zoek_acties = mysqli_query($db,"
-SELECT actId, actie
-FROM tblActie
-") or die (mysqli_error($db));
-
-while ($za = mysqli_fetch_array($zoek_acties)) {
+$actie_gateway = new ActieGateway();
+$zoek_acties = $actie_gateway->getList();
+while ($za = $zoek_acties->fetch_array()) {
     $actId = $za['actId'];
     $actie = $za['actie'];
-
-echo $actId.' - '.$actie.'<br>';
+    echo $actId.' - '.$actie.'<br>';
 }
 ?>
  </td>
 </tr>
 </table>
 </form>
-
 </TD>
 <?php
 include "menuBeheer.php"; } ?>
 </tr>
-
 </table>
-
 </body>
 </html>

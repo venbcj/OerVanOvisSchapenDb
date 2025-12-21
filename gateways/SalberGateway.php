@@ -487,4 +487,13 @@ and year(sb.datum) = '". $this->db->real_escape_string($kzlJaar) ."' and r.actie
 ");
     }
 
+    public function update($recId, $waarde) {
+        $this->run_query(
+            <<<SQL
+UPDATE tblSalber set waarde = :waarde WHERE salbId = :salbId
+SQL
+        , [[':salbId', $recId, self::INT], [':waarde', $waarde]]
+        );
+    }
+
 }

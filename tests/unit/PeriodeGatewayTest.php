@@ -20,7 +20,10 @@ class PeriodeGatewayTest extends GatewayCase {
         $this->assertEquals(1, $actual);
     }
 
+    // uit phpunit seed 1765720329 blijkt dat dit een vals-positief is.
+    // Alleen de fixture jaarmaanden-n is NIET GENOEG.
     public function testMeerJaarmaanden() {
+        $this->runfixture('voervoorraad');
         $this->runfixture('jaarmaanden-n');
         $artId = 1;
         $doelId = 1;

@@ -1,0 +1,21 @@
+#!/bin/bash
+if [ -z "$1" ]; then
+    echo synopsis: $0 classname
+    echo Leave out 'GatewayTest' suffix
+    exit
+fi
+TESTFILE=tests/unit/$1GatewayTest.php
+if [ ! -f $TESTFILE ]; then
+CLASSNAME=$1GatewayTest
+cat << TXT > $TESTFILE
+<?php
+
+class $CLASSNAME extends GatewayCase {
+
+    public static \$sutname = '$1';
+
+}
+TXT
+echo $TESTFILE
+fi
+vi -o $TESTFILE gateways/$1Gateway.php

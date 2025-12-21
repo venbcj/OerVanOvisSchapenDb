@@ -4,7 +4,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 class ControllersTest extends IntegrationCase {
 
-    public static function setupBeforeClass(): void {
+    public function setup(): void {
+        parent::setup();
         self::runfixture('hok');
         self::runfixture('partij-1');
         Response::setTest();
@@ -12,12 +13,12 @@ class ControllersTest extends IntegrationCase {
 
     public static function controllers_with_post_include() {
         return [
-            ['InsAanvoer.php', [], ['kzlFase_1' => 1, 'chbkies_1' => 1, 'chbDel_1' => 0, ]],
+            ['InsAanvoer.php', ['impagrident'], ['kzlFase_1' => 1, 'chbkies_1' => 1, 'chbDel_1' => 0, ]],
             ['InsAdoptie.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
             ['InsAfvoer.php', [], []],
             ['InsDekken.php', [], ['chbKies_1' => 1, 'chbDel_1' => 0, ]], // hoofdletter K !?!
             ['InsDracht.php', [], ['chbKies_1' => 1, ]],
-            ['InsGeboortes.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
+            ['InsGeboortes.php', ['impagrident-moeder'], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
             ['InsGrWijzigingUbn.php', [], []],
             ['InsHalsnummers.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
             ['InsLambar.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
@@ -26,9 +27,9 @@ class ControllersTest extends IntegrationCase {
             ['InsOverplaats.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
             # deze checkt fldKies die nooit gezet wordt
             # ['InsSpenen.php', [], ['chbkies_1' => 1, ]],
-            # deze veroorzaakt Unknown column s.rasId in ON, Page_numbers:43
+            # deze veroorzaakt Unknown column s.rasId in ON, Paginator:43
             # ['InsStallijstscan_controle.php', ['impagrident'], ['chbkies_1' => 1, 'kzlFase_1' => 1, 'chbDel_1' => 0, ]],
-            ['InsStallijstscan_nieuwe_klant.php', [], ['chbkies_1' => 1, 'kzlFase_1' => 1, 'chbDel_1' => 0, ]],
+            ['InsStallijstscan_nieuwe_klant.php', ['impagrident'], ['chbkies_1' => 1, 'kzlFase_1' => 1, 'chbDel_1' => 0, ]],
             ['InsTvUitscharen.php', [], ['chbKies_1' => 1, 'chbDel_1' => 0, ]], // hoofdletter K ?!
             ['InsUitscharen.php', [], []],
             ['InsUitval.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
@@ -55,8 +56,6 @@ class ControllersTest extends IntegrationCase {
             ['Inkopen.php', [], []],
             ['InsGeboortes.php', [], []],
             ['InsVoerregistratie.php', [], []],
-            # save_klanten bestaat niet. Kan niet werken.
-            # ['Klanten.php', [], []],
             ['Kostenopgaaf.php', ['opgaaf-1'], ['chbLiq_1' => 0, 'kzlRubr_1' => 1, 'txtDatum_1' => '13-12-2021', 'txtBedrag_1' => 11, 'txtToel_1' => 'kennelijk', ]],
             ['Kostenoverzicht.php', [], []],
             ['Liquiditeit.php', [], []],
@@ -135,10 +134,8 @@ InsUitval.php
 InsVoerregistratie.php
 InsWegen.php
 InvSchaap.php
-Klanten.php
 Kostenopgaaf.php
 Kostenoverzicht.php
-Leveranciers.php
 Liquiditeit.php
 Loslopers.php
 LoslopersVerkopen.php
@@ -202,13 +199,14 @@ TXT
 
     public static function problematic_controllers() {
         // de welkoms doen raar met de sessie
-        // de insstallijstscancontrole maakt een 'unknown column s.rasId in ON' ... ?
+        // de insstallijstscancontrole maakt een 'unknown column s.rasId in ON' ... ? Na bijwerken van de tabelalias `s` naar `stal` faalt de query.
+        //    Need Help.
         // queries in loslopersplaatsen bevatten geen kolom 'aantin', maar daar wordt vervolgens wel naar gevraagd
         return self::txt2ar(<<<TXT
 Welkom.php
 Welkom2.php
-InsStallijstscan_controle.php
 LoslopersPlaatsen.php
+InsStallijstscan_controle.php
 TXT
         );
     }
@@ -240,8 +238,6 @@ TXT
     public static function controllers_missing_tables() {
         return self::txt2ar(<<<TXT
 Gespeenden.php
-Klant.php
-Leverancier.php
 TXT
         );
     }

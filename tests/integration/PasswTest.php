@@ -14,6 +14,11 @@ class PasswTest extends IntegrationCase {
         $_SERVER['REQUEST_SCHEME'] = 'http';
         $_SERVER['REQUEST_URI'] = '';
         $this->uses_db();
+        $this->db->begin_transaction();
+    }
+
+    public function teardown(): void {
+        $this->db->rollback();
     }
 
     public function testGet() {

@@ -57,29 +57,18 @@ if (empty($ubn)) {
     }
 }
 if (!empty($ubn) && !empty($pword) && !empty($ctr_p) && $pword == $ctr_p && (!empty($tel) || (!empty($mail) && $isValid == true) )) {
-    $zoek_ubn = mysqli_query($db, "SELECT count(*) aant FROM tblLeden WHERE ubn = '$ubn' ") or die(mysqli_error($db));
-    while ($zk = mysqli_fetch_assoc($zoek_ubn)) {
-        $aantal = $zk['aant'];
-    }
-    if ($aantal > 0) {
+    $lid_gateway = new LidGateway();
+    if ($lid_gateway->ubn_exists($ubn)) {
         $fout = "Dit ubn bestaat al." ;
-        // } elseif (!empty($ubn) && strlen("$ubn")<> 7) {
-        // $fout = "Dit is geen ubn";
     } elseif (!empty($ubn) && Validate::numeriek($ubn) == 1) {
         $fout = "Dit ubn wordt niet herkend.";
     } elseif ($ubn == 1234567 || $ubn == 2345678 || $ubn == 3456789 || $ubn == 4567890 || $ubn == 0123456) {
         echo "Nee, Dit is geen ubn";
     } else {
         // Nu kan worden ingelezen
-        $insert_tblLeden= "INSERT INTO tblLeden SET login = ".mysqli_real_escape_string($db, $ubn).", passw = '".mysqli_real_escape_string($db, $passw)."', ubn = ".mysqli_real_escape_string($db, $ubn).", meld = 0, tech = 1, fin = 1, tel = '".mysqli_real_escape_string($db, $tel)."', mail = '".mysqli_real_escape_string($db, $mail)."' ";
-        mysqli_query($db, $insert_tblLeden) or die(mysqli_error($db));
+        $lid_gateway->store($ubn, $passw, $tel, $mail);
         // Sessie gegevens ophalen
-        $qrylidId = mysqli_query($db, "SELECT lidId, alias, fin FROM tblLeden 
-            WHERE ubn = '".mysqli_real_escape_string($db, $ubn)."' 
-            and passw = '".mysqli_real_escape_string($db, $passw)."' ;") or die(mysqli_error($db));
-        while ($row = mysqli_fetch_assoc($qrylidId)) {
-            $lidId = $row['lidId'];
-        }
+        $lidId = $lid_gateway->findLididByUbn($ubn);
         Session::set("U1", $ubn);
         Session::set("W1", $passw);
         Session::set("I1", $lidId);

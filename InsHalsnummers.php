@@ -4,7 +4,7 @@ require_once("autoload.php");
 
 $versie = '30-09-2020'; /* Gekopieerd van insOmnummeren.php */
 $versie = '16-05-2021'; /* sql beveiligd met quotes */
-$versie = '31-12-2023'; /* ".mysqli_real_escape_string(db,halsnr)." beveiligd met quotes */
+$versie = '31-12-2023'; /* halsnr beveiligd met quotes */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 
  Session::start();
@@ -21,61 +21,33 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzig
 $titel = 'Inlezen Halsnummers';
 $file = "InsHalsnummers.php";
 include "login.php"; ?>
-
                 <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) { 
+    $impagrident_gateway = new ImpAgridentGateway();
 
 if (isset ($_POST['knpInsert_'])) {
-    
     include "post_readerHalsnum.php";
-    
-    }
-
+}
 
 $velden = "rd.Id, date_format(rd.datum,'%d-%m-%Y') datum, rd.datum sort, rd.levensnummer, rd.kleur, rd.halsnr,
 st.kleur kleur_db, st.halsnr halsnr_db,
 lower(h.actie) actie, h.af, date_format(h.datum,'%d-%m-%Y') maxdatum, h.datum datummax";
 
-$tabel = "
-impAgrident rd
- left join (
-     SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
-     FROM tblSchaap s
-      join tblStal st on (st.schaapId = s.schaapId)
-      join tblHistorie h on (st.stalId = h.stalId)
-     WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
-     GROUP BY s.schaapId, s.levensnummer, s.geslacht
- ) s on (rd.levensnummer = s.levensnummer)
- 
- left join tblStal st on (st.schaapId = s.schaapId and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best))
- left join (
-    SELECT h.hisId, a.actie, a.af, h.datum
-    FROM tblHistorie h
-     join tblActie a on (h.actId = a.actId)
-    WHERE h.skip = 0
- ) h on (h.hisId = s.hisId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 14 and h.skip = 0
- ) hu on (hu.schaapId = s.schaapId)
-";
-
-$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 1717 and isnull(rd.verwerkt) ";
+$tabel = $impagrident_gateway->getInsHalsnummersFrom();
+$WHERE = $impagrident_gateway->getInsHalsnummersWhere($lidId);
 
 include "paginas.php";
+$data = $paginator->fetch_data($velden, "ORDER BY sort, rd.Id");
 
-$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id");
- ?>
+?>
 <table border = 0>
 <tr> <form action="InsHalsnummers.php" method = "post">
  <td colspan = 2 style = "font-size : 13px;">
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
  <td colspan = 2 align = "center" style = "font-size : 14px;"><?php 
-echo $page_numbers; ?></td>
- <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
+echo $paginator->show_page_numbers(); ?></td>
+ <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $paginator->show_rpp(); ?> </td>
  <td colspan = 3 align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
  <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td></tr>
 <tr valign = bottom style = "font-size : 12px;">

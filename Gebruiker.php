@@ -39,12 +39,13 @@ if (Auth::is_logged_in()) {
  // $ID is de gebruiker die op de pagina is opgeroepen
  // $lidId is de gebruiker die is ingelogd
 if (isset($_POST['knpSave'])) {
-    $data = $_POST;
-    $data['lstScanDay'] =  date_format(date_create($_POST['txtIngescand']), 'Y-m-d');
-    if (empty($_POST['txtIngescand'])) {
-        $data['lstScanDay'] = $lid_gateway->zoek_ingescand($ID);
+    $data = $_POST['user'];
+    $data['lidId'] = $ID;
+    $data['ingescand'] =  date_format(date_create($data['ingescand']), 'Y-m-d');
+    if (empty($user['ingescand'])) {
+        $data['ingescand'] = $lid_gateway->zoek_ingescand($ID);
     }
-    $lid_gateway->update_details($ID, $data);
+    $lid_gateway->update_details($data);
 }
 
 if (isset ($_POST['knpUpdate'])) {
@@ -68,17 +69,17 @@ $row = $lid_gateway->get_data($ID);
 </tr>
 <tr>
   <td colspan = 15>
-    Roepnaam : <input type="text" name="txtRoep" id="voornaam" size="10" value="<?php echo $row['roep']; ?>">
-    Tussenvoegsel : <input type="text" name="txtVoeg" id="tussen" size="3" value="<?php echo $row['voegsel']; ?>">
+    Roepnaam : <input type="text" name="user[roep]" id="voornaam" size="10" value="<?php echo $row['roep']; ?>">
+    Tussenvoegsel : <input type="text" name="user[voegsel]" id="tussen" size="3" value="<?php echo $row['voegsel']; ?>">
     &nbsp&nbsp
-    Achternaam : <input type="text" name="txtNaam" id="achternaam" size="27" value="<?php echo $row['naam']; ?>">
+    Achternaam : <input type="text" name="user[naam]" id="achternaam" size="27" value="<?php echo $row['naam']; ?>">
   </td>
 </tr>
 <tr>
   <td colspan = 15 >
-    Telefoonnr : <input type="text" name="txtTel" id="telefoon" size="10" value="<?php echo $row['tel']; ?>">
+    Telefoonnr : <input type="text" name="user[tel]" id="telefoon" size="10" value="<?php echo $row['tel']; ?>">
     &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-    E-mail : <input type="text" name="txtMail" size=50 value="<?php echo $row['mail']; ?>">
+    E-mail : <input type="text" name="user[mail]" size=50 value="<?php echo $row['mail']; ?>">
   </td>
 </tr>
 <tr><td height = 15></td>
@@ -91,13 +92,13 @@ $row = $lid_gateway->get_data($ID);
  <td width = 150 align = 'right'>Ubn :</td>
  <td width = 100> <?php echo $row['ubn']; ?> </td>
  <td width = 100 align = "right" >Gebruikersnaam RVO :</td>
- <td colspan = 2 ><input type = "text" name = "txtUrvo" size = 10 value = <?php echo $row['urvo']; ?> ></td>
+ <td colspan = 2 ><input type = "text" name = "user[urvo]" size = 10 value = <?php echo $row['urvo']; ?> ></td>
 </tr>
 <tr>
  <td width = 150>Relatienummer RVO :</td>
- <td><input type = text name = "txtRelnr" id="relatienummer" size = 10 value = <?php echo $row['relnr']; ?>></td>
+ <td><input type = text name = "user[relnr]" id="relatienummer" size = 10 value = <?php echo $row['relnr']; ?>></td>
  <td width = 160 align = "right">Wachtwoord RVO :</td>
- <td colspan = 2 ><input type = password name = "txtPrvo" size = 10 value = <?php echo $row['prvo']; ?> ></td>
+ <td colspan = 2 ><input type = password name = "user[prvo]" size = 10 value = <?php echo $row['prvo']; ?> ></td>
 
 </tr>
 <tr><td height = 20></td>
@@ -106,14 +107,14 @@ $row = $lid_gateway->get_data($ID);
  <td colspan=>Reader :      
 
      <!-- kzlReader --> 
-<select name="kzlReader" style = "width:80; font-size:13px;">
+<select name="user[reader]" style = "width:80; font-size:13px;">
 <option></option>
 <?php
 $opties = array('Agrident' => 'Agrident', 'Biocontrol' => 'Biocontrol');
 foreach ( $opties as $key => $waarde)
 {
     $selected = '';
-    if((!isset($_POST['knpSave']) && $row['reader'] == $key) || (isset($_POST["kzlReader"]) && $_POST["kzlReader"] == $key) ) {
+    if((!isset($_POST['knpSave']) && $row['reader'] == $key) || (isset($_POST['user']['reader']) && $_POST['user']['reader'] == $key) ) {
         $selected = ' selected';
     }
     echo '<option value="' . $key . '"'.$selected.'>' . $waarde . '</option>';
@@ -143,15 +144,15 @@ if ($row['reader'] == 'Agrident') {
 <tr><th><hr> Module<hr></th><th colspan = 3 align="left"><hr>&nbsp&nbsp<hr></th></tr>
 <tr>
  <td width = 105 >Melden : </td>
- <td> <?php View::janee('radMeld', $_POST['radMeld'] ?? $row['meld']); ?> </td>
+ <td> <?php View::janee('user[meld]', $_POST['user']['meld'] ?? $row['meld']); ?> </td>
 </tr>
 <tr>
  <td width = 105 >Technisch : </td>
- <td> <?php View::janee('radTech', $_POST['radTech'] ?? $row['tech']); ?> </td>
+ <td> <?php View::janee('user[tech]', $_POST['user']['tech'] ?? $row['tech']); ?> </td>
 </tr>
 <tr>
  <td width = 105 >Financieel : </td>
- <td> <?php View::janee('radFin', $_POST['radFin'] ?? $row['fin']); ?> </td>
+ <td> <?php View::janee('user[fin]', $_POST['user']['fin'] ?? $row['fin']); ?> </td>
 </tr>
 <tr>
  <td height="15">
@@ -161,12 +162,12 @@ if ($row['reader'] == 'Agrident') {
  <td width = 105 >Administrator : </td>
  <td>
      <!-- kzlBeheer ja/nee --> 
-<select name="kzlAdm" style="width:60; font-size:13px;">
+<select name="user[beheer]" style="width:60; font-size:13px;">
 <?php
 $opties = array(1 => 'Ja', 0 => 'Nee');
 foreach ( $opties as $key => $waarde)
 {
-    if((!isset($_POST['knpSave']) && $row['beheer'] == $key) || (isset($_POST["kzlAdm"]) && $_POST["kzlAdm"] == $key) ) {
+    if((!isset($_POST['knpSave']) && $row['beheer'] == $key) || (isset($_POST['user']['beheer']) && $_POST['user']['beheer'] == $key) ) {
         echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
     } else {
         echo '<option value="' . $key . '">' . $waarde . '</option>';

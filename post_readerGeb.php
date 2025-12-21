@@ -183,6 +183,7 @@ WHERE Id = '".mysqli_real_escape_string($db,$recId)."'
 #echo '$fldKies = '.$fldKies. 'en $fldDel = '.$fldDel.'<br>';
 
 // Transponder moeder inlezen als deze niet bestaat in tblSchaap
+$mdrTran_sch = $mdrTran_rd;
 $zoek_transp_moeder = mysqli_query($db, "
 SELECT schaapId, transponder
 FROM tblSchaap

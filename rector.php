@@ -10,7 +10,7 @@ use Utils\Rector\Rector\MysqliNumRowsFunctionCallToDbPropertyRector;
 return RectorConfig::configure()
     ->withPaths([
         __DIR__ . '/classes',
-        __DIR__ . '/fpdf',
+        __DIR__ . '/fpdf_stub',
         __DIR__ . '/gateways',
         __DIR__ . '/kladjes',
         __DIR__ . '/tests',

@@ -1,0 +1,2 @@
+rsync -avz coverage-html strato:sites/ovis/
+

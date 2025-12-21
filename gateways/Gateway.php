@@ -35,6 +35,14 @@ class Gateway {
         $result = $this->run_query($parSQL, $parArgs);
 
         return $result->fetch_all(MYSQLI_ASSOC);
+        
+    // returns table row as assoc-array
+    protected function first_record($SQL, $args = [], $default = null) {
+        $view = $this->run_query($SQL, $args);
+        if ($this->view_has_rows($view)) {
+            return $view->fetch_assoc();
+        }
+        return $default;
     }
 
     // returns table row as array with just values
@@ -73,7 +81,7 @@ class Gateway {
     private function expand($SQL, $args = []) {
         foreach ($args as $arg) {
             $arg = $this->validateArg($arg);
-            [$key, $value, $format] = $arg;
+            [$name, $value, $format] = $arg;
             if (is_null($value)) {
                 $value = 'NULL';
             } else {
@@ -90,9 +98,16 @@ class Gateway {
                     break;
                 }
             }
-            $SQL = str_replace($key, $value, $SQL);
+            $SQL = preg_replace("#$name\b#", $value, $SQL);
         }
         return $SQL;
+    }
+
+    protected function struct_to_args($form) {
+        return array_map(function($key, $value) {
+            return [":$key", $value];
+        }, array_keys($form), array_values($form)
+        );
     }
 
     private function validateArg($arg) {

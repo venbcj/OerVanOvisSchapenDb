@@ -84,8 +84,72 @@ FROM tblRequest r
  join tblHistorie h on (h.hisId = m.hisId)
  join tblStal st on (st.stalId = h.stalId)
  join tblUbn u on (st.ubnId = u.ubnId)
-WHERE u.lidId = ".$this->db->real_escape_string($lidId)." and h.skip = 0 and isnull(r.dmmeld) and m.skip <> 1 ");
+WHERE u.lidId = ".$this->db->real_escape_string($lidId)."
+ and h.skip = 0
+ and isnull(r.dmmeld)
+ and m.skip <> 1 ");
 return $vw->fetch_row()[0] > 0;
     }
+
+public function zoek_open_request($lidId, $code) {
+    return $this->first_field(
+        <<<SQL
+SELECT r.reqId
+FROM tblRequest r
+ join tblMelding m on (r.reqId = m.reqId)
+ join tblHistorie h on (m.hisId = h. hisId)
+ join tblStal st on (st.stalId = h.stalId)
+WHERE st.lidId = :lidId
+ and isnull(r.dmmeld)
+ and r.code = :code
+ and h.skip = 0
+GROUP BY r.reqId
+HAVING (count(r.reqId) < 60)
+SQL
+    , [[':lidId', $lidId, self::INT], [':code', $code]]
+    );
+}
+
+public function insert($lidId, $fldCode) {
+    $this->run_query(
+        <<<SQL
+INSERT INTO tblRequest SET lidId_new = :lidId, code = :code
+SQL
+    , [[':lidId', $lidid, self::INT], [':code', $fldCode]]
+    );
+    return $this->db->insert_id;
+}
+
+public function update($reqId) {
+    $this->run_query(
+        <<<SQL
+UPDATE tblRequest SET lidId_new = NULL
+where reqId = :reqId
+SQL
+    , [[':reqId', $reqId, self::INT]]
+    );
+}
+
+public function update_response_date($reqId, $dmresponse) {
+    $this->run_query(
+        <<<SQL
+UPDATE tblRequest SET dmresponse = :dmresponse
+where reqId = :reqId
+SQL
+    , [[':reqId', $reqId, self::INT], [':dmresponse', $dmresponse]]
+    );
+}
+
+public function findById($reqId) {
+    return $this->first_record(
+        <<<SQL
+    SELECT r.def, r.code
+    FROM tblRequest r
+    WHERE reqId = :reqId
+SQL
+    , [[':reqId', $reqId, self::INT]]
+        , ['def' => null, 'code' => null]
+    );
+}
 
 }

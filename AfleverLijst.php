@@ -29,8 +29,8 @@ include "login.php";
         <TD align = "center" valign = "top">
 <?php 
 if (Auth::is_logged_in()) {
-    if (empty($schaap_gateway)) {
-$schaap_gateway = new SchaapGateway();
+    if (!isset($schaap_gateway)) {
+        $schaap_gateway = new SchaapGateway();
     }
 //include vw_Voeding
 
