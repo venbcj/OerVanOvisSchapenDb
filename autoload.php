@@ -6,10 +6,9 @@
     error_reporting(E_ALL);
 # }
 
-$base = __DIR__;
+$base = str_replace('\\', '/', __DIR__);
 
 $app_folders = [
-    $base,
     $base . '/classes',
     $base . '/templates',
     $base . '/fpdf_stub',
