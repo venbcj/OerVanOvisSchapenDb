@@ -33,8 +33,8 @@ class Gateway {
 
     public function explain_run_query($parSQL, $parArgs = []) {
         $result = $this->run_query($parSQL, $parArgs);
-
         return $result->fetch_all(MYSQLI_ASSOC);
+    }
         
     // returns table row as assoc-array
     protected function first_record($SQL, $args = [], $default = null) {
