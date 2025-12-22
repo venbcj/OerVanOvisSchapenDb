@@ -204,8 +204,7 @@ for ($i = 0; $i < $count; $i++) {
  <td align = "center" style ="font-size:12px;"> in gebruik </td>
  <td> <input type = "submit" name= "knpSave_" value = "Opslaan" style = "font-size:12px;"> </td>
  <td width= 100 align = "right">
-     <a href= '<?php echo $url;?>Ras_pdf.php?Id=<?php echo $pdf; ?>' style = 'color : blue'>
-    print pagina </a> 
+<?php echo View::link_to('print pagina', 'Ras_pdf.php?Id='.$pdf, ['style' => 'color: blue']); ?>
  </td>
  <td width="50">
  </td>

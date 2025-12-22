@@ -481,7 +481,7 @@ echo $btw;  ?>
 
 echo $activeer.'<br>';
 $artikel_gateway->activeer($Id);
-        //header("Location:  " .  echo $url;  . "Medicijnen.php");
+        //header("Location:  " .  echo Url::getWebroot();  . "Medicijnen.php");
     } ?>
 <td></td></tr>
 

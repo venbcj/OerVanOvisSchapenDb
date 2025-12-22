@@ -1,12 +1,9 @@
 <?php
+
 /* 22-11-2015 gemaakt 
 20-1-2017 : Query aangepast n.a.v. nieuwe tblDoel        22-1-2017 : tblBezetting gewijzigd naar tblBezet
 11-2-2017 : insert tblPeriode verwijderd 
 29-12-2023 : and h.skip = 0 toegevoegd bij tblHistorie en sql beveiligd met quotes */
-
-include "url.php";
-
-
 
 $array = array();
 

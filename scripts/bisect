@@ -3,38 +3,92 @@ set -euo pipefail
 
 PHPUNIT="vendor/bin/phpunit"
 FAILING_TEST=$1
+SEED=$2
 LIST="tests.list"
 
-mapfile -t TESTS < "$LIST"
+# Lees alle tests in
+mapfile -t ALL < "$LIST"
+TOTAL=${#ALL[@]}
 
-low=0
-high=${#TESTS[@]}
-
-echo "Bisecting ${#TESTS[@]} tests..."
-
-while (( low < high )); do
-  mid=$(( (low + high) / 2 ))
-
-  echo "▶ Testing with $mid preceding tests"
-
-  {
-    for ((i=0; i<mid; i++)); do
-      echo "${TESTS[$i]}"
-    done
-    echo "$FAILING_TEST"
-  } > subset.list
-
-  if $PHPUNIT --testsuite default --filter "$(paste -sd'|' subset.list)" > /dev/null 2>&1; then
-    # Test PASSED → need more pollution
-    low=$((mid + 1))
-  else
-    # Test FAILED → culprit is in this half
-    high=$mid
-  fi
+# Vind de index van de falende test
+FAILING_IDX=-1
+for i in "${!ALL[@]}"; do
+    if [[ "${ALL[i]}" == "$FAILING_TEST" ]]; then
+        FAILING_IDX=$i
+        break
+    fi
 done
 
+if (( FAILING_IDX == -1 )); then
+    echo "❌ Falende test niet gevonden in tests.list"
+    exit 1
+fi
+
+# Variabele om de laatste suite te bewaren
+LAST_SUITE=""
+
+run_prefix() {
+    local n=$1
+    local suite
+    suite=$(mktemp)
+
+    # prefix mag nooit voorbij de falende test gaan
+    local max_idx=$(( FAILING_IDX < n ? FAILING_IDX : n-1 ))
+
+    {
+        echo '<?xml version="1.0" encoding="UTF-8"?>'
+        echo '<phpunit>'
+        echo '  <testsuites>'
+        echo '    <testsuite name="prefix">'
+
+        # prefix-tests
+        for ((i=0; i<=max_idx; i++)); do
+            t=${ALL[i]}
+            class=${t%%::*}
+            method=${t##*::}
+            echo "      <testcase class=\"$class\" name=\"$method\"/>"
+        done
+
+        # falende test altijd als laatste
+        class=${FAILING_TEST%%::*}
+        method=${FAILING_TEST##*::}
+        echo "      <testcase class=\"$class\" name=\"$method\"/>"
+
+        echo '    </testsuite>'
+        echo '  </testsuites>'
+        echo '</phpunit>'
+    } > "$suite"
+
+    $PHPUNIT -c "$suite" --random-order-seed="$SEED" >/dev/null 2>&1
+    status=$?
+
+    LAST_SUITE="$suite"
+    return $status
+}
+
+# Binary search over prefix length
+low=0
+high=$FAILING_IDX
+
+echo "▶ Binary search over ${FAILING_IDX} tests before failing test"
+
+while (( low + 1 < high )); do
+    mid=$(( (low + high) / 2 ))
+    echo "  Testing prefix size $mid"
+
+    if run_prefix "$mid"; then
+        # suite groen, prefix te klein → move low
+        low=$mid
+    else
+        # suite faalt → prefix groot genoeg
+        high=$mid
+    fi
+done
+
+# Laatste run: high geeft eerste prefix die de falende test beïnvloedt
 echo
-echo "💥 Minimal failing prefix size: $low"
-echo "🔍 Suspect test:"
-echo "  ${TESTS[$((low - 1))]}"
+echo "💥 First failing prefix length: $((high+1))"
+echo "Tests in last run:"
+run_prefix "$high" || true
+sed -n 's/.*testcase class="\([^"]*\)" name="\([^"]*\)".*/\1::\2/p' "$LAST_SUITE"
 

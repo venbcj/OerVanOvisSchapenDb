@@ -17,22 +17,22 @@ $versie = '25-07-2019'; /* Gesorteerd op werknr */
 $versie = '20-12-2019'; /* tabelnaam gewijzigd van UIT naar uit tabelnaam */
 $versie = '22-12-2019'; /* Dubbele querys zoek_nu_in_verblijf_geb, zoek_nu_in_verblijf_spn en zoek_nu_in_verblijf_prnt verwijderd */
 $versie = '8-2-2021'; /* zoek_nu_in_verblijf_prnt herschreven i.v.m. dubbele records. Sql beveiligd met quotes 
-h2.actId != 3 uit query hok_inhoud_vanaf_aanwas gehaald zodat aanwas ook uit verblijf wordt gehaald. Dit leverde nl. een dubbele record op i.c.m. een overplaatsing bij schaapId 5856 */
-$versie = '11-7-2021'; /* Schapen uit verblijf herzien. Join gewijzigd van h.hisId = uit.hisv naar b.bezId = uit.bezId */
+    h2.actId != 3 uit query hok_inhoud_vanaf_aanwas gehaald zodat aanwas ook uit verblijf wordt gehaald. Dit leverde nl. een dubbele record op i.c.m. een overplaatsing bij schaapId 5856 */
+    $versie = '11-7-2021'; /* Schapen uit verblijf herzien. Join gewijzigd van h.hisId = uit.hisv naar b.bezId = uit.bezId */
 $versie = '28-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie 14-01-2024 Gemiddelde groei en kg voer weggehaald. Dit is niet te berekenen */
 $versie = '19-01-2024'; /* in nestquery 'uit' is 'and a1.aan = 1' uit WHERE gehaald. De hisId die voorkomt in tblBezet volstaat. Bovendien is bij Pieter hisId met actId 3 gekoppeld aan tblBezet en heeft het veld 'aan' in tblActie de waarde 0. De WHERE incl. 'and a1.aan = 1' geeft dus een fout resultaat. */
 $versie = '03-03-2024'; /*Laatst gewogen gewicht toegevoegd */
 $versie = "11-03-2024"; /* Bij geneste query uit 
-join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
-join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 */
-$versie = "10-11-2024"; /* Uitscharen toegevoegd */
+    join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
+    join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+    I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 */
+    $versie = "10-11-2024"; /* Uitscharen toegevoegd */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '20-01-2025'; /* In subquery hg where clause gewijzigd van h.actId = 1 naar h.actId = 1 and h.skip = 0 */
 $versie = '23-02-2025'; /* Session::set("Fase", NULL) toegevoegd */
 $versie = '13-07-2025'; /* veld Ubn toegevoegd */
- Session::start();
- ?>
+Session::start();
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -49,9 +49,9 @@ include "login.php"; ?>
 <?php
 if (Auth::is_logged_in()) { 
 
-$Id = $_GET['pst'] ?? 0;
+    $Id = $_GET['pst'] ?? 0;
 
-$zoek_hok = mysqli_query ($db,"
+    $zoek_hok = mysqli_query ($db,"
 SELECT hoknr FROM tblHok WHERE hokId = '".mysqli_real_escape_string($db,$Id)."'
 ") or die (mysqli_error($db));
 $hoknr = 0;
@@ -273,7 +273,7 @@ WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' and isnull(uit.bezId)
 and isnull(spn.schaapId)
 and isnull(prnt.schaapId)
 ") or die (mysqli_error($db));
-        
+
     while($nu1 = mysqli_fetch_assoc($zoek_nu_in_verblijf_geb))
         { $aanwezig1 = $nu1['aantin']; }
 
@@ -309,7 +309,7 @@ FROM tblBezet b
 WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' and isnull(uit.bezId)
 and isnull(prnt.schaapId)
 ") or die (mysqli_error($db));
-        
+
     while($nu2 = mysqli_fetch_assoc($zoek_nu_in_verblijf_spn))
         { $aanwezig2 = $nu2['aantin']; }
 
@@ -348,7 +348,7 @@ FROM tblSchaap s
 
 WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' and isnull(uit.bezId) and h.skip = 0
 ") or die (mysqli_error($db));
-        
+
     while($nu3 = mysqli_fetch_assoc($zoek_nu_in_verblijf_prnt))
         { $aanwezig3 = $nu3['aantin']; }
 
@@ -357,7 +357,7 @@ WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' and isnull(uit.bezId) a
 <table border = 0>
 <tr>
  <td colspan = 6 style = "font-size : 15px;"> <b style = "font-size : 19px;"><?php echo $hoknr;?> </b> </td>
- <td><a href= '<?php echo $url;?>Bezet_pdf.php?Id=<?php echo $Id; ?>' style = 'color : blue'>print pagina </a></td>
+ <td><?php echo View::link_to('print pagina', 'Bezet_pdf.php?Id='.$Id, ['style' => 'color: blue']); ?> </td>
  <td> </td>
 </tr>
 
@@ -456,10 +456,8 @@ ORDER BY right(s.levensnummer,$Karwerk)
  <td width = 100 style = "font-size:15px;"> <?php echo $ficdm;?> <br> </td>
  <td width = 80  style = "font-size:15px;"> <?php echo"{$row['mdr']}"; ?> <br> </td>
  <td width = 120 style = "font-size:13px;" align = "left" >
-    <a href='<?php echo $url; ?>UpdSchaap.php?pstschaap=<?php echo $row['schaapId']; ?>' style = "color : blue;" valign= "top"> Gegevens wijzigen </a> </td>
+<?php echo View::link_to('Gegevens wijzigen', 'UpdSchaap.php?pstschaap='.$row['schaapId'], ['style' => 'color: blue', 'valign' => 'top']); ?>
 </tr>                
-
-        
 <?php    }    
 
  }
@@ -562,15 +560,11 @@ ORDER BY right(s.levensnummer,$Karwerk)
  <td width = 80  style = "font-size:15px;"> <br> </td>    
 
        <td width = 180 style = "font-size:13px;" align = "left" >
-
-               <a href='<?php echo $url; ?>UpdSchaap.php?pstschaap=<?php echo $row['schaapId']; ?>' style = "color : blue;" valign= "top">
-            Gegevens wijzigen
-            </a>
-
+<?php echo View::link_to('Gegevens wijzigen', 'UpdSchaap.php?pstschaap='.$row['schaapId'], ['style' => 'color: blue', 'valign' => 'top']); ?>
        </td>
 </tr>                
 
-        
+
 <?php    }    } ?>
 </tr>                
 <!-- Einde gespeende lammeren -->
@@ -672,15 +666,11 @@ ORDER BY right(s.levensnummer,$Karwerk)
  <td width = 100 style = "font-size:15px;">  <br> </td>
  <td width = 80  style = "font-size:15px;"> <br> </td>
  <td width = 180 style = "font-size:13px;" align = "left" >
-
-               <a href='<?php echo $url; ?>UpdSchaap.php?pstschaap=<?php echo $row['schaapId']; ?>' style = "color : blue;" valign= "top">
-            Gegevens wijzigen
-            </a>
-
+<?php echo View::link_to('Gegevens wijzigen', 'UpdSchaap.php?pstschaap='.$row['schaapId'], ['style' => 'color: blue', 'valign' => 'top']); ?>
        </td>
 </tr>                
 
-        
+
 <?php    }    }
 
 if($aanwezig1 == 0 && $aanwezig2 == 0 && $aanwezig3 == 0) { ?>
@@ -713,59 +703,91 @@ if($aanwezig1 == 0 && $aanwezig2 == 0 && $aanwezig3 == 0) { ?>
 <tr>
  <td rowspan = 9 width = 100 align = center>
      <?php echo $hoknr; ?><hr>
- <?php if(isset($aanwezig1) && $aanwezig1 > 0) { Session::set("DT1", NULL); Session::set("BST", NULL); ?>
-     <a href='<?php echo $url; ?>HokSpenen.php?pstId=<?php echo $Id; ?>' style = "color : blue">   
-    Spenen      
- </a> <?php } else { ?> <u style = "color : grey"> Spenen </u> <?php } ?>
+<?php if(isset($aanwezig1) && $aanwezig1 > 0) {
+ Session::set("DT1", NULL);
+ Session::set("BST", NULL);
+ echo View::link_to('Spenen', 'HokSpenen.php?pstId='.$Id, ['style' => 'color: blue']);
+} else {
+?>
+<u style = "color : grey"> Spenen </u>
+<?php 
+}
+?>
  <br>
  <br>
- <?php if(isset($aanwezig2) && $aanwezig2 > 0) { Session::set("DT1", NULL); Session::set("BST", NULL); ?>
- <a href='<?php echo $url; ?>HokAfleveren.php?pstId=<?php echo $Id; ?>' style = "color : blue">   
-    Afleveren     
- </a>  
+<?php
+if(isset($aanwezig2) && $aanwezig2 > 0) {
+    Session::set("DT1", NULL);
+    Session::set("BST", NULL);
+    echo View::link_to('Afleveren', 'HokAfleveren.php?pstId='.$Id, ['style' => 'color: blue']);
+?>
  <br>
  <br>
- <a href='<?php echo $url; ?>HokAanwas.php?pstId=<?php echo $Id; ?>' style = "color : blue">   
-    Aanwas    
- </a> 
- <?php } else { ?> 
+<?php echo View::link_to('Aanwas', 'HokAanwas.php?pstId='.$Id, ['style' => 'color: blue']);
+} else {
+?> 
      <u style = "color : grey"> Afleveren </u> 
  <br>
  <br>
-     <u style = "color : grey"> Aanwas </u> <?php } ?>
+     <u style = "color : grey"> Aanwas </u>
+<?php
+}
+?>
  <br>
  <br>
- <?php 
-if ($aanwezig_geb_spn_aanw > 0) { Session::set("DT1", NULL); Session::set("BST", NULL); ?>
- <a href='<?php echo $url; ?>HokOverpl.php?pstId=<?php echo $Id; ?>' style = "color : blue">    
-    Overplaatsen
- </a> <?php } else { ?> <u style = "color : grey"> Overplaatsen </u> <?php } ?>
+<?php 
+if ($aanwezig_geb_spn_aanw > 0) {
+    Session::set("DT1", NULL);
+    Session::set("BST", NULL);
+    echo View::link_to('Overplaatsen', 'HokOverpl.php?pstId'.$Id, ['style' => 'color: blue']);
+} else {
+?>
+<u style = "color : grey"> Overplaatsen </u> 
+<?php
+}
+?>
  <br>
  <br>
-  <?php 
-if ($aanwezig3 > 0) { Session::set("DT1", NULL); Session::set("BST", NULL); ?>
- <a href='<?php echo $url; ?>HokVerkopen.php?pstId=<?php echo $Id; ?>' style = "color : blue">    
-    Verkopen
- </a> <?php } else { ?> <u style = "color : grey"> Verkopen </u> <?php } ?>
+<?php 
+if ($aanwezig3 > 0) {
+    Session::set("DT1", NULL);
+    Session::set("BST", NULL);
+    echo View::link_to('Verkopen', 'HokVerkopen.php?pstId'.$Id, ['style' => 'color: blue']);
+} else {
+?>
+<u style = "color : grey"> Verkopen </u> 
+<?php
+}
+?>
  <br>
  <br>
-  <?php 
-if ($aanwezig3 > 0) { Session::set("DT1", NULL); Session::set("BST", NULL); ?>
- <a href='<?php echo $url; ?>HokVerlaten.php?pstId=<?php echo $Id; ?>' style = "color : blue">    
-    Uit verblijf halen
- </a> <?php } else { ?> <u style = "color : grey"> Uit verblijf halen </u> <?php } ?>
+<?php 
+if ($aanwezig3 > 0) {
+    Session::set("DT1", NULL);
+    Session::set("BST", NULL);
+    echo View::link_to('Uit verblijf halen', 'HokVerlaten.php?pstId'.$Id, ['style' => 'color: blue']);
+} else {
+?>
+<u style = "color : grey"> Uit verblijf halen </u> 
+<?php
+}
+?>
  <br>
  <br>
-  <?php 
-if ($aanwezig3 > 0) { Session::set("DT1", NULL); Session::set("BST", NULL); Session::set("Fase", NULL) ?>
- <a href='<?php echo $url; ?>HokUitscharen.php?pstId=<?php echo $Id; ?>' style = "color : blue">    
-    Uitscharen
- </a> <?php } else { ?> <u style = "color : grey"> Uitscharen </u> <?php } ?>
+<?php 
+if ($aanwezig3 > 0) {
+    Session::set("DT1", NULL);
+    Session::set("BST", NULL);
+    Session::set("Fase", NULL);
+    echo View::link_to('Uitscharen', 'HokUitscharen.php?pstId'.$Id, ['style' => 'color: blue']);
+} else {
+?>
+<u style = "color : grey"> Uitscharen </u> 
+<?php
+}
+?>
  <br>
  <br>
-
-
-
  </td>
 </tr>
 </table>
@@ -784,7 +806,7 @@ echo 'Totaal : '.$totat_spn.' in gezeten sinds start periode : '.$stopdm_spn.'<b
 
 ?> <u><b> <?php echo 'Volwassen schapen <br>'; ?> </b></u> <?php
 echo 'Totaal : '.$totat_prnt.' in gezeten sinds start periode : '.$stopdm_prnt.'<br><br>';
- ?>
+?>
  </td>
 </tr>
 </table>

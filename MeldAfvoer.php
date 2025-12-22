@@ -48,7 +48,7 @@ include "responscheck.php";
 if (isset($_POST['knpSave_'])) {
     $code = 'AFV';
     include "save_melding.php";
-    Response::redirect($curr_url);
+    Response::redirect(Url::getCurrentUrl());
     return;
 } 
 // include kan niet binnen de loop van $zoek_meldregels om dat de functies binnen 'save_melding' dan vaker wordt aangemaakt en dat kan niet. Via phphulp ben ik hier achter gekomen. bron : http://www.phphulp.nl/php/forum/topic/cannot-redeclare-makequote-previously/67477/

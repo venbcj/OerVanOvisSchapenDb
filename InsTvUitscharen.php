@@ -31,7 +31,6 @@ $impagrident_gateway = new ImpAgridentGateway();
 
 If (isset($_POST['knpInsert_']))  {
     include "post_readerTvUitsch.php"; #Deze include moet voor de vervversing in de functie header()
-    //header("Location: ".$url."InsTvUitscharen.php"); 
     }
 
 $velden = "rd.Id, rd.datum, rd.ubnId ubnId_rd, rd.levensnummer levnr_rd, rd.hokId hok_rd,

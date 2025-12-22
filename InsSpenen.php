@@ -48,7 +48,6 @@ if (Auth::is_logged_in()) {
     $impagrident_gateway = new ImpAgridentGateway();
 
 If (isset($_POST['knpInsert_']))  {
-    include "url.php";
     include "post_readerSpn.php"; #Deze include moet voor de vervversing in de functie header()
 }
 

@@ -121,7 +121,9 @@ while ($row = $result->fetch_array())
 
     <tr align = "center">
      <td style="display:none;" ><?php echo $hoknr; ?></td> <!-- Deze cel is t.b.v. sorteren verblijf zonder link/url-->
-     <td width = 100 style = "font-size:15px;"><a href='<?php echo $url; ?>ResultSchaap.php?pstId=<?php echo $periId; ?>' style = "color : blue"> <?php echo $hoknr; ?> </a></td>
+     <td width = 100 style = "font-size:15px;">
+<?php echo View::link_to($hoknr, 'ResultSchaap.php?pstId='.$periId, ['style' => 'color: blue']); ?>
+</td>
      <td width = 80 style = "font-size:15px;"><?php echo $doelgr; ?></td>
      <td style="display:none;" ><?php echo $indm1_sort; ?></td> <!-- Deze cel is t.b.v. sorteren afsluitdatum o.b.v. jjjjmmdd -->  
      <td width = 100 style = "font-size:15px;"><?php echo $indm1; ?></td>

@@ -1,4 +1,5 @@
 <?php
+
 /*
 <!-- 29-4-2015 : bestand gemaakt 
 4-12-2016 : Response bestand in de map BRIGHT wordt gezocht o.b.v. requestId zonder melddatum (dmmeld) niet meer o.b.v. requestId zonder meldnummer 
@@ -15,8 +16,6 @@
 # - veroorzaakt geen uitvoer
 # - heeft neveneffecten (bestanden hernoemd/verplaatst, database gewijzigd)
 # - zijn er nog andere global-effecten dan $fout en $goed?
-
-include "url.php";
 
 /*** Script ter controle van het bestaan van Response.txt bestanden afkomstig van RVO ***/
 // Lokatie en klant gegegevens Responsbestand ophalen

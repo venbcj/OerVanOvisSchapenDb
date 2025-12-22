@@ -1,9 +1,7 @@
-<?php /* 23-10-2015 : gemaakt 
+<?php
+
+/* 23-10-2015 : gemaakt 
 07-01-2025 : Hidden velden in Kostenopgaaf.php verwijderd en hier lege checkboxen gedefinieerd */
-
-include "url.php";
-
-
 
 $array = array();
 

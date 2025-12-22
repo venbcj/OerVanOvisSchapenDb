@@ -1,6 +1,5 @@
 <?php
 
-include "url.php";
 unset($reqId); // Nodig als er diverse soorten meldingen tegelijk worden aangemaakt. Zie bijv. Afvoerstal.php (alleen module melden)
 $request_gateway = new RequestGateway();
 // *** HET REQUEST ***

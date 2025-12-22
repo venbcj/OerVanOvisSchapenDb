@@ -43,7 +43,7 @@ include "responscheck.php";
 if (isset($_POST['knpSave_'])) {
     $code = 'GER';
     include "save_melding.php";
-    Response::redirect($curr_url);
+    Response::redirect(Url::getCurrentUrl());
 } 
 
 $knptype = "submit";

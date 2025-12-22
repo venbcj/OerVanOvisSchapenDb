@@ -12,8 +12,8 @@ $ditjaar = date('Y');
 $vorigjaar = date('Y')-1;
 
 function leesdatum($date) {
-             return date('d-m-Y', strtotime($date));
-           }
+    return date('d-m-Y', strtotime($date));
+}
 
 function first_field_from_result($SQL) {
     global $db;
@@ -42,9 +42,9 @@ SQL;
 /*Toegepast in :
 - Dekkingen.php
 - Newuser.php
-*/
+ */
 function date_add_months($day, $var) {
-     return date('Y-m-d', strtotime($day . $var .' months'));
+    return date('Y-m-d', strtotime($day . $var .' months'));
 }
 
 function last_day_of_month($d) {
@@ -77,10 +77,10 @@ Toegepast in :
 - post_readerWgn.php */
 
 function zoek_schaapId_in_database($LEVNR) {
- // zie post_readerStalscan.php
-global $db;
+    // zie post_readerStalscan.php
+    global $db;
 
-$zoek_schaap_database = mysqli_query($db, "
+    $zoek_schaap_database = mysqli_query($db, "
 SELECT schaapId
 FROM tblSchaap
 WHERE levensnummer = '".mysqli_real_escape_string($db, $LEVNR)."'
@@ -669,5 +669,44 @@ function setup_versies($db, $persoonlijke_map) {
         $actuele_versie = 'Ja';
     }
     return compact(explode(' ', 'last_versieId Readersetup_bestand Readertaken_bestand appfile_exists takenfile_exists actuele_versie'));
+}
+
+function redirect_if_forbidden() {
+    // TODO: #0004152 whitelisten is veiliger dan dit blacklisten
+    // TODO: dit wordt sowieso nog anders als je eenmaal een front controller hebt. --BCB
+    $forbidden_files = [
+        "connect_db.php",
+        "header.php",
+        "importReader.php",
+        "importRespons.php",
+        "kzl.php",
+        "login.php",
+        "maak_Request.php",
+        "menu1.php",
+        "menuBeheer.php",
+        "menuFinance.php",
+        "menuInkoop.php",
+        "menuRapport.php",
+        "msg.php",
+        "passw.php",
+        "post_readerAanw.php",
+        "post_readerAflev.php",
+        "post_readerGeb.php",
+        "post_readerMed.php",
+        "post_readerOvp.php",
+        "post_readerSpn.php",
+        "post_readerUitv.php",
+        "responscheck.php",
+        "titel.php",
+        "uploadReader.php",
+        "url.php",
+        "vw_Reader.php",
+    ];
+    foreach ($forbidden_files as $controller_name) {
+        if (Url::getCurrentUrl() == Url::getWebroot().$controller_name) {
+            Response::redirect('index.php');
+            break;
+        }
+    }
 }
 

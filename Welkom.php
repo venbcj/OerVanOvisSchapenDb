@@ -57,7 +57,11 @@ Met vriendelijke groeten, </td></tr>
 <tr><td>
 Oer van Ovis 
 </td>
-<td><a href=' <?php echo $url; ?>index.php' style = "color : blue"> Terug </a>&nbsp&nbsp&nbsp <a href=' <?php echo $url; ?>Welkom2.php' style = "color : blue"> Verder </a></td></tr>
+<td>
+<?php echo View::link_to('Terug', 'index.php', ['style' => 'color: blue']); ?>
+&nbsp&nbsp&nbsp 
+<?php echo View::link_to('Verder', 'Welkom2.php', ['style' => 'color: blue']); ?>
+</td></tr>
 <tr><td>
 06-48400813
 </td></tr>

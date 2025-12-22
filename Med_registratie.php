@@ -539,9 +539,7 @@ Medicijnen met artId als key. deze inkId is de laagste inkId waarvan nog voorraa
                  // Zoeken naar historie medicijnen per schaap
                         $medic = $schaap_gateway->tel_medicijn_historie($lidId, $schaapId);
                         if (!empty($medic)) {
-                            ?>
-    <a href='<?php echo $url; ?>MedOverzSchaap.php?pstId=<?php echo $schaapId; ?>' style = "color : blue"> historie </a>
-                            <?php
+                            echo View::link_to('historie', 'MedOverzSchaap.php?pstId='.$schaapId, ['style' => 'color: blue']);
                         }
                     ?>
 <br> </td>

@@ -17,7 +17,7 @@ Session::start();
 
 <center>
 <?php
-if (isset ($_POST['knpUpdate'])) { include "url.php"; header("Location: ".$url."Leveranciers.php"); }
+if (isset ($_POST['knpUpdate'])) { include "url.php"; header("Location: ".Url::getWebroot()."Leveranciers.php"); }
 $titel = 'Crediteuren';
 $subtitel = '';
 # TODO: #0004118 (BV) ik zie Leveranciers nergens in de navigatie. Is dit verlaten code? --BCB
@@ -193,10 +193,10 @@ order by naam
     } ?>    
         <td ><input type = "submit" name= "knpUpdate" value = "Opslaan" ></td>
         <td>
-                    <a href='<?php echo $url; ?>Leverancier.php?pstid=<?php echo$id;?>' style = "color : blue">
+                    <a href='<?php echo Url::getWebroot(); ?>Leverancier.php?pstid=<?php echo$id;?>' style = "color : blue">
             meer gegevens
             </a> <br> 
-                    <a href='<?php echo $url; ?>Contact.php?pstid=<?php echo$id;?>' style = "color : blue">
+                    <a href='<?php echo Url::getWebroot(); ?>Contact.php?pstid=<?php echo$id;?>' style = "color : blue">
             contacten
             </a>  
         

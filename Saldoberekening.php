@@ -48,7 +48,7 @@ if(isset($_POST['kzlJaar_'])) { $kzlJaar = $_POST['kzlJaar_']; } else { $nu_jaar
 if(isset($_POST['knpNext_'])) {
     $salber_gateway->insertJaar($lidId, $nextjaar);
 
-    header("Location: ".$url."Saldoberekening.php"); 
+    header("Location: ".Url::getWebroot()."Saldoberekening.php"); 
     return;
 }
 if(isset($_POST['knpSave_'])) { include "save_saldoberekening.php"; }

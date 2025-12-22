@@ -66,10 +66,10 @@ echo "<h4>Pagina $currentPage van $totalPages</h4>";
 foreach ($itemsToShow as $filename) {
   $bestandsnaam = substr($filename,0,6).' '.substr($filename,15,2).'-'.substr($filename,12,2).'-'.substr($filename,7,4).' '.substr($filename,18,2).':'.substr($filename,21,2).':'.substr($filename,24,2).'u';
 ?>
-
-<a href='<?php echo $url; ?>download.php?file=<?php echo $filename; ?>&id=<?php echo $lidId; ?>' >
+<a href='<?php echo Url::getWebroot(); ?>download.php?file=<?php echo $filename; ?>&id=<?php echo $lidId; ?>' >
 
 <?php
+  // hee, die <a> hierboven gaat nergens dicht.
     echo "$bestandsnaam<br>";
 }
 

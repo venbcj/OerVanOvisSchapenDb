@@ -61,7 +61,9 @@ if (Auth::is_logged_in()) {
    <h2 align="center" style="color:blue";>Hier kun je de gegevens uit de reader verwerken<br> in het managementprogramma.</h2>
 <tr height = 50 ><td></td> </tr>
 <?php
-    $leeg = "<a href=' " . $url . "InlezenReader.php' style = 'color : blue'>";
+    // TODO #0004215 geen slimmigheden met halve html-tags,
+    // maar uitvoeren als View::link_to met een conditionele $path-parameter
+    $leeg = "<a href=' " . Url::getWebroot() . "InlezenReader.php' style = 'color : blue'>";
     if ($aantNewLid > 0 || $stallijstaantal == 0) {
 ?>
 <tr height = 50 valign="top">
@@ -69,7 +71,7 @@ if (Auth::is_logged_in()) {
 <?php
         if (!empty($aantNewLid)) {
 ?>
- <a href='<?= $url;?>InsStallijstscan_nieuwe_klant.php' style = 'color : blue'>
+ <a href='<?= Url::getWebroot();?>InsStallijstscan_nieuwe_klant.php' style = 'color : blue'>
 <?php
         } else {
             echo "$leeg";
@@ -93,7 +95,7 @@ inlezen stallijst nieuwe klant </a>
 <?php
     if (!empty($aantdek)) {
 ?>
- <a href='<?= $url;?>InsDekken.php' style = 'color : blue'>
+ <a href='<?= Url::getWebroot();?>InsDekken.php' style = 'color : blue'>
 <?php
     } else {
         echo "$leeg";
@@ -114,7 +116,7 @@ inlezen dekken </a>
 <?php
     if (!empty($aantdra)) {
 ?>
- <a href='<?= $url;?>InsDracht.php' style = 'color : blue'>
+ <a href='<?= Url::getWebroot();?>InsDracht.php' style = 'color : blue'>
 <?php
     } else {
         echo "$leeg";
@@ -135,7 +137,7 @@ inlezen dracht </a>
 <?php
     if (!empty($aantgeb)) {
 ?>
- <a href='<?= $url;?>InsGeboortes.php' style = 'color : blue'>
+ <a href='<?= Url::getWebroot();?>InsGeboortes.php' style = 'color : blue'>
 <?php
     } else {
         echo "$leeg";
@@ -159,7 +161,7 @@ inlezen geboortes </a>
 <?php
         if (!empty($aantLbar)) {
 ?>
- <a href='<?= $url;?>InsLambar.php' style = 'color : blue'>
+ <a href='<?= Url::getWebroot();?>InsLambar.php' style = 'color : blue'>
 <?php
         } else {
             echo "$leeg";
@@ -183,7 +185,7 @@ inlezen lambar </a>
 <?php
     if (!empty($aantspn)) {
 ?>
- <a href='<?= $url;?>InsSpenen.php' style = 'color : blue'>
+ <a href='<?= Url::getWebroot();?>InsSpenen.php' style = 'color : blue'>
 <?php
     } else {
         echo "$leeg";
@@ -204,7 +206,7 @@ inlezen gespeenden </a>
 <?php
     if (!empty($aantwg)) {
 ?>
- <a href='<?= $url;?>InsWegen.php' style = 'color : blue' >
+ <a href='<?= Url::getWebroot();?>InsWegen.php' style = 'color : blue' >
 <?php
     } else {
         echo "$leeg";
@@ -225,7 +227,7 @@ inlezen wegingen </a>
 <?php
     if (!empty($aantafl)) {
 ?>
-<a href='<?= $url;?>InsAfvoer.php' style = 'color : blue'>
+<a href='<?= Url::getWebroot();?>InsAfvoer.php' style = 'color : blue'>
 <?php
     } else {
         echo "$leeg";
@@ -246,7 +248,7 @@ inlezen afvoer </a>
 <?php
     if (!empty($aantUitsch)) {
 ?>
-<a href='<?= $url;?>InsUitscharen.php' style = 'color : blue'>
+<a href='<?= Url::getWebroot();?>InsUitscharen.php' style = 'color : blue'>
 <?php
     } else {
         echo "$leeg";
@@ -267,7 +269,7 @@ inlezen uitscharen </a>
 <?php
     if (!empty($aantuitv)) {
 ?>
-<a href='<?= $url;?>InsUitval.php' style = 'color : blue'>
+<a href='<?= Url::getWebroot();?>InsUitval.php' style = 'color : blue'>
 <?php
     } else {
         echo "$leeg";
@@ -288,7 +290,7 @@ inlezen uitval </a>
 <?php
     if (!empty($aantaanw)) {
 ?>
- <a href='<?= $url;?>InsAanvoer.php' style = 'color : blue'>
+ <a href='<?= Url::getWebroot();?>InsAanvoer.php' style = 'color : blue'>
 <?php
     } else {
         echo "$leeg";
@@ -309,7 +311,7 @@ inlezen aanvoer </a>
 <?php
     if (!empty($aantTvUitsch)) {
 ?>
- <a href='<?= $url;?>InsTvUitscharen.php' style = 'color : blue'>
+ <a href='<?= Url::getWebroot();?>InsTvUitscharen.php' style = 'color : blue'>
 <?php
     } else {
         echo "$leeg";
@@ -330,7 +332,7 @@ inlezen terug van uitscharen </a>
 <?php
     if (!empty($aantovpl)) {
 ?>
- <a href='<?= $url;?>InsOverplaats.php' style = 'color : blue'>
+ <a href='<?= Url::getWebroot();?>InsOverplaats.php' style = 'color : blue'>
 <?php
     } else {
         echo "$leeg";
@@ -355,7 +357,7 @@ inlezen overplaatsen </a>
 <?php
     if (!empty($aantadop)) {
 ?>
- <a href='<?= $url;?>InsAdoptie.php' style = 'color : blue'>
+ <a href='<?= Url::getWebroot();?>InsAdoptie.php' style = 'color : blue'>
 <?php
     } else {
         echo "$leeg";
@@ -376,7 +378,7 @@ inlezen adoptie </a>
 <?php
     if (!empty($aantpil)) {
 ?>
- <a href='<?= $url;?>InsMedicijn.php' style = 'color : blue' >
+ <a href='<?= Url::getWebroot();?>InsMedicijn.php' style = 'color : blue' >
 <?php
     } else {
         echo "$leeg";
@@ -397,7 +399,7 @@ inlezen medicatie </a>
 <?php
     if (!empty($aantomn)) {
 ?>
- <a href='<?= $url;?>InsOmnummeren.php' style = 'color : blue'>
+ <a href='<?= Url::getWebroot();?>InsOmnummeren.php' style = 'color : blue'>
 <?php
     } else {
         echo "$leeg";
@@ -418,7 +420,7 @@ inlezen omnummeren </a>
 <?php
     if (!empty($aanthals)) {
 ?>
- <a href='<?= $url;?>InsHalsnummers.php' style = 'color : blue'>
+ <a href='<?= Url::getWebroot();?>InsHalsnummers.php' style = 'color : blue'>
 <?php
     } else {
         echo "$leeg";
@@ -439,7 +441,7 @@ inlezen halsnummers </a>
 <?php
     if (!empty($aantvoer)) {
 ?>
- <a href='<?= $url;?>InsVoerregistratie.php' style = 'color : blue'>
+ <a href='<?= Url::getWebroot();?>InsVoerregistratie.php' style = 'color : blue'>
 <?php
     } else {
         echo "$leeg";
@@ -460,7 +462,7 @@ inlezen voerregistratie </a>
 <?php
     if (!empty($aantubn)) {
 ?>
- <a href='<?= $url;?>InsGrWijzigingUbn.php' style = 'color : blue'>
+ <a href='<?= Url::getWebroot();?>InsGrWijzigingUbn.php' style = 'color : blue'>
 <?php
     } else {
         echo "$leeg";
@@ -481,7 +483,7 @@ inlezen ubn wijziging </a>
 <?php
     if (!empty($aantscan)) {
 ?>
- <a href='<?= $url;?>InsStallijstscan_controle.php' style = 'color : blue'>
+ <a href='<?= Url::getWebroot();?>InsStallijstscan_controle.php' style = 'color : blue'>
 <?php
     } else {
         echo "$leeg";

@@ -48,8 +48,7 @@ $hisId = $_POST['kzlPost'] ?? ''; // kzlPost bestaat in ZoekAfldm.php
 <tr>
  <td></td> 
  <td colspan = 10 align =center>
-     <a href= '<?php echo $url;?>AfleverLijst_pdf.php?hisId=<?php echo $hisId; ?>' style = 'color : blue'>
-    print pagina </a>
+     <?php echo View::link_to('print pagina', 'Afleverlijst_pdf.php?hisId='.$hisId, ['style' => 'color: blue;']) ?>
  </td> 
  <td colspan = 2 align = \"left\"><i style = \"font-size:14px;\"> Bestemming :</i></td> 
  <td colspan = 4><b style = \"font-size:15px;\"><?php echo $bestemming; ?> </b></td>

@@ -104,8 +104,9 @@ if (Auth::is_logged_in()) {
  <td width = 1> </td>
  <td width = 100 style = "font-size:14px;"> <?php echo $levnr; ?> <br> </td>
  <td width = 1 style = "font-size:0px;"> <?php echo $werknr; ?> </td>   
- <td width = 100 style = "font-size:14px;"> <a href=' <?php echo $url; ?>Ooikaart.php?pstId=<?php echo $schaapId; ?>' style = "color : blue">
-                <?php echo $werknr; ?></a> <br> </td>
+ <td width = 100 style = "font-size:14px;">
+<?php echo View::link_to($werknr, 'Ooikaart.php?pstId='.$schaapId, ['style' => 'color: blue']); ?>
+<br> </td>
  <td width = 1> </td>
  <td width = 100 style = "font-size:14px;"> <?php echo $ras; ?> <br> </td>
  <td width = 1   style = "font-size:0px;"> <?php echo $dmgeb; ?> </td>              

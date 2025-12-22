@@ -2,10 +2,6 @@
 /* 3-9-2017 aangemaakt 
 8-5-2021 : isset(verwerkt) toegevoegd om dubbele invoer te voorkomen. Verschil tussen kiezen of verwijderen herschreven. SQL beveiligd met quotes */
 
-include "url.php";
-
-
-
 $array = array();
 
 foreach($_POST as $key => $value) {

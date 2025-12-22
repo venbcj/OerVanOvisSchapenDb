@@ -1042,10 +1042,10 @@ WHERE st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and h.actId =
  <table border = 0 > <!-- tabel 4 : voor velden t.b.v. tussenweging -->
 <tr><td colspan = 2 width = 250 align = "center"> <?php    if(!empty($weegid)) { echo "Tussenmetingen"; } ?> </td>
 <td align = "center" >
+<?php # TODO: #0004216 DEZE i GAAT NIET MEER DICHT # ?>
 <i style = "font-size:14px;">
-<a href='<?php echo $url; ?>Wegen.php?pstId=<?php echo $schaapId; ?>' style = "color : blue">
-weging registreren
-            </a>   </td></tr>
+<?php echo View::link_to('weging registreren', 'Wegen.php?pstId='.$schaapId, ['style' => 'color: blue']); ?>
+   </td></tr>
 <?php    
     # TODO: logica traceren; pstlevnr wordt straks gebruikt, ook al is deze if niet waar
 $pstlevnr = '';
@@ -1506,9 +1506,8 @@ for ($i = 0; $i < $count; $i++){
 <tr> 
  <td colspan = 4 align = "center"> <input type= "submit" name= "knpSave" value= "Opslaan" > <br>
 <i style = "font-size:14px;"> <br>  
-<a href='<?php echo $url; ?>Zoeken.php?kzllevnr=<?php echo $pstlevnr; ?>&kzlwerknr=<?php echo $pstwerknr; ?>&knpzoek=zoeken' style = "color : blue">
-terug
-            </a> </i>  
+<?php echo View::link_to('', 'Zoeken.php?kzllevnr='.$pstlevnr.'&kzlwerknr='.$pstwerknr.'&knpzoek=zoeken', ['style' => 'color: blue']); ?>
+ </i>  
 
  </td>       
 </tr>

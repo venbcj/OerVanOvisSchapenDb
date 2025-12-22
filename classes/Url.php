@@ -13,7 +13,7 @@ class Url {
     }
 
     public static function redirect($path) {
-        header("Location: ".self::getWebroot().$path);
+        header("Location: " . self::getWebroot() . $path);
     }
 
     public static function getTagId() {
@@ -22,7 +22,7 @@ class Url {
         case 'oer-dev':
         case 'localhost':
         case 'localhost:8080':
-            $tagid = 'balkOntw';
+                $tagid = 'balkOntw';
             break;
         case 'test.oervanovis.nl':
             $tagid = 'balkTest';
@@ -36,7 +36,6 @@ class Url {
         case 'ovis.alexander-ict.nl':
             $tagid = 'balkTest';
             break;
-
         }
         if (php_uname('n') == 'basq') {
             $tagid = 'balkOntw';
@@ -47,15 +46,19 @@ class Url {
     public static function getWebroot() {
         #$root = "http://localhost:8080/Schapendb/";
         if ($_SERVER['HTTP_HOST'] == 'localhost:8080') {
-            $root = 'http://'.$_SERVER['HTTP_HOST'].'/Schapendb/';
+            $root = 'http://' . $_SERVER['HTTP_HOST'] . '/Schapendb/';
         } else {
-            $root = 'http://'.$_SERVER['HTTP_HOST'].'/';
+            $root = 'http://' . $_SERVER['HTTP_HOST'] . '/';
         }
         #$root = "http://testapp.masterwebsite.nl/";
         if (php_uname('n') == 'basq') {
             $root = 'http://oer-dev/';
         }
         return $root;
+    }
+
+    public static function getCurrentUrl() {
+        return $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . strtok($_SERVER["REQUEST_URI"], '?');
     }
 
 }

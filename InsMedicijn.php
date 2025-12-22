@@ -50,7 +50,6 @@ require_once "func_artikelnuttigen.php";
 
 If (isset ($_POST['knpInsert_'])) {
     include "post_readerMed.php"; #Deze include moet voor de vervversing in de functie header()
-    //header("Location: ".$url."InsMedicijn.php"); 
     } 
 
 if($reader == 'Agrident') {

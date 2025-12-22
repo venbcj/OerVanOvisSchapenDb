@@ -50,12 +50,10 @@ if (isset($_POST['knpVervers_']) || isset($_POST['knpSaveVoer_'])) {
 
 if (isset ($_POST['knpInsert_'])) {
     include "post_readerVoer.php"; #Deze include moet voor de vervversing in de functie header()
-    //header("Location: ".$url."InsOverplaats.php");
     }
 
 if (isset ($_POST['knpSaveVoer_'])) {
     include "save_readerVoer.php"; #Deze include moet voor de vervversing in de functie header()
-    //header("Location: ".$url."InsOverplaats.php");
     }
 
 $velden = "rd.Id, date_format(dmlaatst,'%d-%m-%Y') datum, dmlaatst sort, rd.hokId, rd.artId, md.toedtot, rd.doelId,

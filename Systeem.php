@@ -49,7 +49,9 @@ if (Auth::is_logged_in()) {
  <td width = 150><u><i>Inloggegevens :</i></u></td>
  <td width = 150 align = 'right'>Gebruikersnaam :</td><td width = 100><?php echo Session::get("U1"); ?></td>
  <td width = 100 align = "right">Wachtwoord :</td><td> ************** </td>
- <td> <a href='<?php $url; ?>Wachtwoord.php' style = 'color : blue' > inloggegevens wijzigen </a> </td>
+ <td> 
+<?php echo View::link_to('Inloggegevens wijzigen', 'Wachtwoord.php', ['style' => 'color: blue']); ?>
+ </td>
 </tr>
 <tr><td height = 15></td></tr>
 <tr><td colspan = 8><hr></hr></td></tr>
@@ -155,7 +157,7 @@ for ($i = 0; $i < $count; $i++) {
 ?>></td>
  <td width = 160 align = "right">Wachtwoord RVO :</td><td><input type = password name = "user[prvo]" size = 15 value = <?php echo $prvo; ?> ></td>
  <td>
-     <a href='<?php $url; ?>Ubn_toevoegen.php' style = 'color : blue'> Ubn toevoegen </a>
+<?php echo View::link_to('Ubn toevoegen', 'Ubn_toevoegen.php', ['style' => 'color: blue']); ?>
 </td>
 </tr>
 <tr>
@@ -169,9 +171,7 @@ for ($i = 0; $i < $count; $i++) {
  <td>
 <?php $host = $_SERVER['HTTP_HOST'];
 if ($host == 'demo.oervanovis.nl' && $lidId == 1) {
-?>
-  <a href='<?php $url; ?>demo_database_legen.php' style = 'color : blue' > Database legen </a>
-<?php
+    echo View::link_to('Database legen', 'demo_database_legen.php', ['style' => 'color: blue']);
 }
 ?>
  </td>

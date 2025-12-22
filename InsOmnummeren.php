@@ -29,7 +29,6 @@ if (Auth::is_logged_in()) {
 
 if (isset ($_POST['knpInsert_'])) {
     include "post_readerOmnum.php"; #Deze include moet voor de vervversing in de functie header()
-    //header("Location: ".$url."InsOverplaats.php");
     }
 
 $velden = "rd.Id, date_format(rd.datum,'%d-%m-%Y') datum, rd.datum sort, rd.levensnummer, rd.nieuw_nummer,

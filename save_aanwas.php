@@ -5,8 +5,6 @@
 07-01-2024 : insert_tblBezet uitgezet omdat Aanwas niet aan een verblijf wordt toegekend. Zie het veld aan in tblActie bij actId 3. Dit staat op 0
 20-02-2025 Hidden velden in HokAanwas.php verwijderd en hier lege checkboxen gedefinieerd ondanks dat het niet nodig is! */
 
-include "url.php";
-
 foreach ($_POST as $fldname => $fldvalue) {
     $multip_array[Url::getIdFromKey($fldname)][Url::getNameFromKey($fldname)] = $fldvalue;
 }

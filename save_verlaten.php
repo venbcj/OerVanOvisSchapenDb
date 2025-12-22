@@ -5,8 +5,6 @@
 6-6-2018 : kg met komma wordt omgezet naar kg met punt
 30-12-2023 : sql beveiligd met quotes */
 
-include "url.php";
-
 $array = array();
 foreach ($_POST as $key => $value) {
     $array[Url::getIdFromKey($key)][Url::getNameFromKey($key)] = $value;

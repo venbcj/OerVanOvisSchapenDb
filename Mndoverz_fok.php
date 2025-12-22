@@ -471,8 +471,7 @@ while($kgd = mysqli_fetch_array($kg_per_maand)) { $mndkg = $kgd['kgMnd']; } if(!
  <td width = 1> </td>
  <td width = 100 style = "font-size:15px;"> 
 
-     <a href='<?php echo $url.'Mndoverz_fok.php?jaar='.$kzlJaar.'&maand='.$mndnr; ?>' style = "color : blue ;">
-<?php echo $row['d_vrspeen']; ?> </a>
+<?php echo View::link_to($row['d_vrspeen'], 'Mndoverz_fok.php?jaar='.$kzlJaar.'&maand='.$mndnr, ['style' => 'color: blue']); ?>
 
  <br> </td>
 <?php    if(isset($totVrspn)) {$totVrspn = $totVrspn+$row['d_vrspeen']; } else { $totVrspn = $row['d_vrspeen']; } ?>

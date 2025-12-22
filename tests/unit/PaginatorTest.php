@@ -1,6 +1,6 @@
 <?php
 
-class PageNumbersTest extends UnitCase {
+class PaginatorTest extends UnitCase {
 
     // dependencies. Er zijn (nog) tests die records verwijderen uit tblLeden, en niet opruimen.
     // Daardoor faalt deze test af en toe met een constante voor het ledental.

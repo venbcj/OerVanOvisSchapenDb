@@ -4,7 +4,13 @@ set -euo pipefail
 
 PHPUNIT="vendor/bin/phpunit"
 FAILING_TEST=$1
+SEED=$2
 LIST="tests.list" # default: tests.list
+
+if [[ -z "${SEED:-}" ]]; then
+    echo "Usage: $0 <FailingTest> <RandomSeed>"
+    exit 1
+fi
 
 mapfile -t ALL < "$LIST"
 
@@ -47,7 +53,7 @@ EOF
 </phpunit>
 EOF
 
-  ! $PHPUNIT -c "$suite" >/dev/null 2>&1
+  ! $PHPUNIT -c "$suite" --random-order-seed="$SEED" >/dev/null 2>&1
 }
 
 n=${#PREFIX[@]}

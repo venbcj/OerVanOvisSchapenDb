@@ -73,7 +73,9 @@ include "demo_usercreate.php";
 <tr><td></td><td>Telefoonnummer  </td><td> <input type = text name = 'txtTel' value = <?php if(isset($tel)) { echo $tel;} ?> ></td><td> </td></tr>
 <tr><td></td><td>E-mail </td><td colspan = 2 > <input type = text name = 'txtMail' size = 45 value = <?php if(isset($mail)) { echo $mail;} ?> ></td><td></td></tr>
 <tr><td colspan = 2></td><td align = "center"><input type = submit name = 'knpCreate' value = "Aanmaken" >
- </td><td><a href=' <?php echo $url; ?>Welkom.php' style = "color : blue"> Terug </a></td><td></td></tr>
+ </td><td>
+<?php echo View::link_to('Terug', 'Welkom.php', ['style' => 'color: blue']); ?>
+</td><td></td></tr>
 <tr><td colspan = 5 height = 100></td></tr>
 <tr>
 <td colspan = 2 valign = 'bottom'>

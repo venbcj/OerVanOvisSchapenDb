@@ -93,7 +93,9 @@ if (Auth::is_logged_in()) {
 <tr>
  <td colspan = 3 align = 'right'> <?php echo 'Aantal schapen '.$stapel; ?> </td>
  <td colspan = 2 style = 'font-size:13px';> &nbsp waarvan</td>
- <td width ="150"><a href = '<?php echo $url;?>Stallijst_pdf.php' style = 'color : blue' > print pagina </a></td>
+ <td width ="150">
+<?php echo View::link_to('print pagina', 'Stallijst_pdf.php', ['style' => 'color: blue']); ?>
+</td>
  <td colspan = 2 ><a href="exportStallijst.php?pst=<?php echo $lidId; ?>'"> Export-xlsx </a></td>
 </tr>
 <tr>

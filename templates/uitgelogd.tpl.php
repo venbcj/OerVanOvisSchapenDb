@@ -25,7 +25,7 @@ if (true || $pagina_naam == '/index.php') : ?>
     <input type="submit" value="Inloggen" name="knpLogin">
  </td>
  <td width = 300>
-<?php if ($url == 'https://test.oervanovis.nl/' || $url == 'http://localhost:8080/Schapendb/') : ?>
+<?php if (Url::getWebroot() == 'https://test.oervanovis.nl/' || Url::getWebroot() == 'http://localhost:8080/Schapendb/') : ?>
     <input type="submit" value="Basisgegevens" name="knpBasis">
 <?php endif; ?>
  </td>

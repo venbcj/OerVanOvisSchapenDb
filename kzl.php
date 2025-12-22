@@ -1,5 +1,4 @@
 <?php
-include "url.php";
 
 // TODO: #0004180 een functie (methode in View) maken die de hele select afdrukt.
 // Dit is alleen 1 optie, dat is geen goede abstractie

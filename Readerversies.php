@@ -262,21 +262,27 @@ WHERE Id = '".mysqli_real_escape_string($db,$last_versieId)."'
  <td> </td>
  <td align="center" style="color : grey" > <p id= <?php echo "readerApp_$Id"; ?> class= "<?php echo $Id; ?> selectt" > 
      <?php 
-     if(!isset($setup_bestand)) { echo 'n.v.t.'; } else 
-     if ($afgerond == 'Ja') { echo 'ReaderApp'; } else { ?>
-    <a href='<?php echo $url.'/Readerversies/'.$setup_bestand; ?>' style = 'color : blue'> 
-ReaderApp</a>
- <?php } ?> </p>
+if (!isset($setup_bestand)) {
+    echo 'n.v.t.'; 
+} elseif ($afgerond == 'Ja') {
+    echo 'ReaderApp'; 
+} else {
+    echo View::link_to('ReaderApp', '/Readerversies/'.$setup_bestand, ['style' => 'color: blue']);
+}
+?> </p>
  </td>
 
  <td> </td>
  <td align="center" style="color : grey" > <p class= "<?php echo $Id; ?> selectt" >
      <?php 
-     if(!isset($taken_bestand)) { echo 'n.v.t.'; } else
-     if ($afgerond == 'Ja') { echo 'Readertaken'; } else { ?>
-    <a href='<?php echo $url.'/Readerversies/'.$taken_bestand; ?>' style = 'color : blue'> 
-Readertaken</a>
- <?php } ?> </p>
+if (!isset($taken_bestand)) {
+    echo 'n.v.t.'; 
+} elseif ($afgerond == 'Ja') {
+    echo 'Readertaken'; 
+} else { 
+    echo View::link_to('ReaderTaken', '/Readerversies/'.$taken_bestand, ['style' => 'color: blue']);
+}
+?> </p>
  </td>
 
  <td> </td>

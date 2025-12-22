@@ -149,32 +149,30 @@ WHERE (isnull(b.hokId) or uit.hist is not null)
 <table border = 0>
 <tr>
  <td colspan = 6 style = "font-size : 15px;"> </td>
- <td><a href= '<?php echo $url;?>Loslopers_pdf.php?' style = 'color : blue'>print pagina </a></td>
+ <td><?php echo View::link_to('print pagina', 'Loslopers_pdf.php', ['style' => 'color: blue']); ?></td>
  <td> </td>
  <td rowspan = 6 width = 100 align = "center">
      <hr>
 
  <?php 
-if ($aanwezig_incl > 0) { Session::set("DT1", NULL); Session::set("BST", NULL); ?>
- <a href='<?php echo $url; ?>LoslopersPlaatsen.php?' style = "color : blue">    
-    In verblijf plaatsen
- </a> <?php } ?>
+    if ($aanwezig_incl > 0) {
+        Session::set("DT1", NULL);
+        Session::set("BST", NULL);
+        echo View::link_to('In verblijf plaatsen', 'LoslopersPlaatsen.php', ['style' => 'color: blue']);
+} ?>
  <br>
  <br>
- <?php if(isset($aanwezig3) && $aanwezig3 > 0) { Session::set("DT1", NULL); Session::set("BST", NULL); ?>
- <a href='<?php echo $url; ?>LoslopersVerkopen.php?' style = "color : blue">   
-    Verkopen     
- </a> <?php } else { ?> <u style = "color : grey"> Verkopen </u> <?php } ?>
+ <?php if(isset($aanwezig3) && $aanwezig3 > 0) {
+ Session::set("DT1", NULL);
+ Session::set("BST", NULL);
+        echo View::link_to('Verkopen', 'LoslopersVerkopen.php', ['style' => 'color: blue']);
+ } else { ?> <u style = "color : grey"> Verkopen </u> <?php } ?>
  <br>
  <br>
-
  </td>
 </tr>
-
 <?php
-        
 if($aanwezig1 > 0) { ?>
-
 <tr height = 35 valign =bottom>
  <td colspan = 6><i style = "font-size : 15px;" >Aantal lammeren voor spenen :  &nbsp </i><b style = "font-size:15px;"><?php echo $aanwezig1;?> </b></td>
 </tr>
@@ -245,10 +243,9 @@ ORDER BY right(s.levensnummer,".mysqli_real_escape_string($db,$Karwerk).")
  <td width = 100 style = "font-size:15px;">  <br> </td>
  <td width = 80 style = "font-size:15px;"><br> </td>
  <td width = 120 style = "font-size:13px;" align = "left" >
-    <a href='<?php echo $url; ?>UpdSchaap.php?pstschaap=<?php echo $row['schaapId']; ?>' style = "color : blue;" valign= "top"> Gegevens wijzigen </a> </td>
+<?php echo View::link_to('Gegevens wijzigen', 'UpdSchaap.php?pstschaap='.$row['schaapId'], ['style' => 'color: blue']); ?>
+</td>
 </tr>                
-
-        
 <?php    }    
 
  }
@@ -329,11 +326,7 @@ ORDER BY right(s.levensnummer,".mysqli_real_escape_string($db,$Karwerk).")
  <td width = 80  style = "font-size:15px;"> <br> </td>    
 
        <td width = 180 style = "font-size:13px;" align = "left" >
-
-               <a href='<?php echo $url; ?>UpdSchaap.php?pstschaap=<?php echo $row['schaapId']; ?>' style = "color : blue;" valign= "top">
-            Gegevens wijzigen
-            </a>
-
+<?php echo View::link_to('Gegevens wijzigen', 'UpdSchaap.php?pstschaap='.$row['schaapId'], ['style' => 'color: blue', 'valign' => 'top']); ?>
        </td>
 </tr>                
 
@@ -412,11 +405,7 @@ ORDER BY right(s.levensnummer,".mysqli_real_escape_string($db,$Karwerk).")
  <td width = 100 style = "font-size:15px;">  <br> </td>
  <td width = 80 style = "font-size:15px;"> <br> </td>
  <td width = 180 style = "font-size:13px;" align = "left" >
-
-               <a href='<?php echo $url; ?>UpdSchaap.php?pstschaap=<?php echo $row['schaapId']; ?>' style = "color : blue;" valign= "top">
-            Gegevens wijzigen
-            </a>
-
+<?php echo View::link_to('Gegevens wijzigen', 'UpdSchaap.php?pstschaap='.$row['schaapId'], ['style' => 'color: blue', 'valign' => 'top']); ?>
        </td>
 </tr>                
 

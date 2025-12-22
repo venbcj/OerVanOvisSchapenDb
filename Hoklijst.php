@@ -52,7 +52,8 @@ while($dl = mysqli_fetch_array($zoek_doel)){ $dgroep = $dl['doel']; } ?>
 <td width="200"> </td>
 <td colspan = 15 width = 300 align = "center" valign = "top"> <b style = "font-size : 19px;"><?php echo $dgroep."en";?> </b></td>
 <td width="200" align="right"> 
- <a href= '<?php echo $url;?>HokLijst_pdf.php?Id=<?php echo $pstId; ?>' style = 'color : blue'> print pagina </a></td>
+<?php echo View::link_to('print pagina', 'HokLijst_pdf.php?Id='.$pstId, ['style' => 'color: blue']); ?>
+</td>
 </tr>
 </table>
 <?php

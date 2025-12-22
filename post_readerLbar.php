@@ -1,14 +1,13 @@
-<!-- 3-9-2016 : sql beveiligd
+<?php
+
+/*
+ * <!-- 3-9-2016 : sql beveiligd
 20-1-2017 : Query's aangepast n.a.v. nieuwe tblDoel en hidden velden in insOverplaats.php verwijderd en codering hier aangepast         22-1-2017 : tblBezetting gewijzigd naar tblBezet 
 28-6-2017 : insert tblPeriode verwijderd Priode wordt sinds 12-2-2017 niet meer opgeslagen in tblBezet.
 11-6-2020 : onderscheid gemaakt tussen reader Agrident en Biocontrol
 13-7-2020 : impVerplaatsing gewijzigd in impAgrident 
 7-5-2021 : isset($verwerkt) toegevoegd om dubbele invoer te voorkomen. Verschil tussen kiezen of verwijderen herschreven. SQL beveiligd met quotes. -->
-
-<?php
-include "url.php";
-
-
+*/
 
 $array = array();
 

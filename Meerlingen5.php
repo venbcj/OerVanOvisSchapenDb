@@ -54,17 +54,15 @@ if (Auth::is_logged_in()) {
 <tr align = "center" valign = 'top' ><td colspan = 10>    
 <table border = 0>
 <tr>
-<?php
-        if (isset($raak)) {
-?>
- <td> <a href = '<?php echo $url;?>Meerlingen_pdf.php?Id=<?php echo $raak; ?>' style = 'color : blue' > print pagina </a> </td>
-<?php
-        } elseif (isset($gekozen_ooi)) {
-?>
- <td> <a href = '<?php echo $url;?>Meerlingen_pdf.php?Id=<?php echo $gekozen_ooi; ?>' style = 'color : blue' > print pagina  </a> </td>
-<?php
-        }
-?>
+<?php if (isset($raak)) { ?>
+ <td>
+<?php echo View::link_to('print pagina', 'Meerlingen_pdf.php?Id='.$raak, ['style' => 'color: blue']); ?>
+</td>
+<?php } elseif (isset($gekozen_ooi)) { ?>
+ <td> 
+<?php echo View::link_to('print pagina', 'Meerlingen_pdf.php?Id='.$gekozen_ooi, ['style' => 'color: blue']); ?>
+</td>
+<?php } ?>
 </tr>
 </table>        </td></tr>    
 <tr>
@@ -81,8 +79,7 @@ echo "$worp_van";
   <input type="submit" name="knpZoek" value="Zoek">
  </td>
  <td width= 100 align = "right">
-     <a href= '<?php echo $url;?>Meerlingen5_pdf.php?Id=<?php echo $pdf; ?>&d1=<?php echo $van; ?>&d2=<?php echo $tot; ?>' style = 'color : blue'>
-    print pagina </a>
+<?php echo View::link_to('print pagina', 'Meerlingen5_pdf.php?Id='.$pdf.'&d1='.$van.'&d2='.$tot, ['style' => 'color: blue']); ?>
  </td>
 </tr>
 <tr><td colspan = 10 ><hr></td></tr>

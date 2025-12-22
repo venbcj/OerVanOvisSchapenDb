@@ -53,7 +53,6 @@ include "vw_kzlOoien.php";
 
 If (isset($_POST['knpInsert_']))  {
     include "post_readerDracht.php"; #Deze include moet voor de vervversing in de functie header()
-    //header("Location: ".$url."InsDracht.php"); 
     }
 
 // Array tbv javascript om vader automatisch te tonen

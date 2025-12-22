@@ -97,11 +97,11 @@ if (isset($mdrId_obv_keuze) && ($mdrId_obv_keuze == $mdrId_obv_levnr || $mdrId_o
 <td> </td>
 <td colspan = 3><i><sub> Halsnr </sub></i> </td>
 <td width="150"> </td>
-<?php if (isset($raak)) { ?>
-<td> <a href = '<?php echo $url;?>Ooikaart_pdf.php?Id=<?php echo $raak; ?>' style = 'color : blue' > print pagina </a> </td>
-<?php } else if(isset($gekozen_ooi)) { ?>
-<td> <a href = '<?php echo $url;?>Ooikaart_pdf.php?Id=<?php echo $gekozen_ooi; ?>' style = 'color : blue' > print pagina  </a> </td>
-<?php } ?>
+<td>
+<?php 
+echo View::link_to('print pagina', 'Ooikaart_pdf.php?Id='.($raak ?? $gekozen_ooi ?? ''), ['style' => 'color: blue']);
+?>
+</td>
 </tr>
 
 

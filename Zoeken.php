@@ -315,7 +315,9 @@ $result = $schaap_gateway->zoekresultaat($lidId, $where, $Karwerk);
  <th style = "text-align:center;"valign="bottom";width= 60>Gem Groei aflev<hr></th>
 
  <th style = "text-align:center;"valign="bottom";width= 60>Stamboeknr<hr></th>
- <td width = 60 style = "font-size:15px;" align="center" > <a href=' <?php echo $url; ?>UpdSchaap.php?pstschaap=<?php echo $schaapId; ?>' style = "color : blue">Wijzigen</a> </td>
+ <td width = 60 style = "font-size:15px;" align="center" > 
+<?php echo View::link_to('Wijzigen', 'UpdSchaap.php?pstschaap='.$schaapId, ['style' => 'color: blue']); ?>
+ </td>
 
 </tr>
 
@@ -379,8 +381,9 @@ while($row = mysqli_fetch_assoc($result))
  <td width = 100 style = "font-size:15px;"> <?php echo $vdr; ?> </td>
 
 <?php if($status == 'aanwezig' && $fase == 'moeder') { ?>       
- <td><a href=' <?php echo $url; ?>Ooikaart.php?pstId=<?php echo $schaapId; ?>' style = "color : blue">
-       <?php echo $status; ?></a></td>
+ <td>
+<?php echo View::link_to($status, 'Ooikaart.php?pstId='.$schaapId, ['style' => 'color: blue']); ?>
+</td>
 <?php } else { ?>       
  <td width = 160 style = "font-size:15px;"> <?php echo $status; ?> </td>
 <?php } ?>       
@@ -395,18 +398,16 @@ while($row = mysqli_fetch_assoc($result))
 if ($status == 'aanwezig' || $status == 'uitgeschaard')
 {    ?>
  <td width="450">
-    <a href=' <?php echo $url; ?>OmnSchaap.php?pstschaap=<?php echo $schaapId; ?>' style = "color : blue">Omnummeren</a>
-   </td> <?php
-   
-   
-} ?>
-       
-
-<?php    } // Einde while($row = mysqli_fetch_assoc($result)) ?>                 
-       
+<?php echo View::link_to('Omnummeren', 'OmnSchaap.php?pstschaap='.$schaapId, ['style' => 'color: blue']); ?>
+</td>
+<?php
+}
+?>
+<?php
+} // Einde while($row = mysqli_fetch_assoc($result))
+// ?>                 
 <?php  
-if (!isset($schaapId))
-{ 
+if (!isset($schaapId)) { 
 $fout = "Het zoek criterium heeft geen resultaten opgeleverd. Pas het zoekcriterum eventueel aan.";
 } 
 } ?>

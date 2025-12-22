@@ -69,7 +69,7 @@ else {
 if($fldActief <> $dbActief) {
     $update_ras = "UPDATE tblRasuser SET actief = '". mysqli_real_escape_string($db,$fldActief) ."' WHERE rasId = '". mysqli_real_escape_string($db,$recId) ."'    ";
     mysqli_query($db,$update_ras) or die (mysqli_error($db)); 
-    header("Location:".$url."Ras.php");
+    header("Location:".Url::getWebroot()."Ras.php");
         //echo 'wijzig Actief naar '.$fldActief.' bij '.$recId."<br/>";
  }  
 

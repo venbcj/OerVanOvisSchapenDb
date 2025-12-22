@@ -7,7 +7,6 @@
  */
 // Toegepast in connect_db.php
 
-include "url.php";
 global $passw, $veld;
 if (isset($_POST['knpLogin']) || isset($_POST['knpBasis']) || isset($_POST['knpBasis1']) || isset($_POST['knpBasis2'])) {
     $passw = md5($_POST['txtPassw'].'zfO3puW?Wod/UT<-|=)1VT]+{hgABEK(Yh^!Wv;5{ja{P~wX4t');

@@ -256,8 +256,12 @@ $insert_adres = "INSERT INTO tblAdres set relId = '".mysqli_real_escape_string($
  <td><input type= "text" name= <?php echo "txtdebTel_$Id"; ?> size = 12 style= "font-size : 11px" value = <?php echo " \"$tel\" "; ?> style= "width: 80px;"></td>
  <td><input type = "checkbox" name = <?php echo "chkdebActief_$Id"; ?> id= "c1" style= "font-size : 11px" value= "1" <?php echo $row['actief'] == 1 ? 'checked' : ''; ?>         title = "Is debiteur te gebruiken ja/nee ?"> </td>
         
- <td width = 80> <a href='<?php echo $url; ?>Relatie.php?pstid=<?php echo $partId; ?>' style = "color : blue"> meer gegevens </a> </td>
- <td>              <a href='<?php echo $url; ?>Contact.php?pstid=<?php echo $partId; ?>' style = "color : blue"> contacten </a> </td>
+ <td width = 80>
+<?php echo View::link_to('meer gegevens', 'Relatie.php?pstid='.$partId, ['style' => 'color: blue']); ?>
+ </td>
+ <td>              
+<?php echo View::link_to('contacten', 'Contact.php?pstid='.$partId, ['style' => 'color: blue']); ?>
+</td>
 <?php
 $zoek_cred = mysqli_query($db,"SELECT relId FROM tblRelatie WHERE partId = '".mysqli_real_escape_string($db,$partId)."' and relatie = 'cred' ") or die(mysqli_error($db)); 
     while( $cr = mysqli_fetch_assoc($zoek_cred)) { $cred_exists = $cr['relId']; } 
@@ -384,8 +388,12 @@ $insert_adres = "INSERT INTO tblAdres set relId = '".mysqli_real_escape_string($
  <td>
  <input type = "checkbox" name = <?php echo "chkcreActief_$Id"; ?> id= "c1" style= "font-size : 11px" value= "1" <?php echo $actief == 1 ? 'checked' : ''; if($uitval == 1) { ?> disabled <?php } ?> > </td>
         
- <td width = 80> <a href='<?php echo $url; ?>Relatie.php?pstid=<?php echo $partId; ?>' style = "color : blue"> meer gegevens </a> </td>
- <td>              <a href='<?php echo $url; ?>Contact.php?pstid=<?php echo $partId; ?>' style = "color : blue"> contacten </a> </td>
+ <td width = 80>
+<?php echo View::link_to('meer gegevens', 'Relatie.php?pstid='.$partId, ['style' => 'color: blue']); ?>
+ </td>
+ <td>              
+<?php echo View::link_to('contacten', 'Contact.php?pstid='.$partId, ['style' => 'color: blue']); ?>
+</td>
 <?php
 $zoek_deb = mysqli_query($db,"
 SELECT relId 

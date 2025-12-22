@@ -14,8 +14,6 @@
 23-10-2024 : Invoer nieuwe schapen gewijzigd naar Aanvoer schaap
   */
 
-include "url.php";
-
 $tech_color = 'grey';
 if ($modtech != 0) {
     $tech_color = 'blue';

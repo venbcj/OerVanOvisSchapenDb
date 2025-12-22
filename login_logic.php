@@ -1,6 +1,5 @@
 <?php
 
-include "url.php";
 include "connect_db.php";
 require_once("basisfuncties.php");
 require_once("demo_functions.php");
@@ -49,7 +48,7 @@ $w_werknr
  */
 
 //$host = "localhost"; $user = "bvdvschaapovis"; $pw = "MSenWL44"; $dtb = $db_p;
-if (($url == 'https://test.oervanovis.nl/' || $url == 'https://demo.oervanovis.nl/') && $dtb == 'k36098_bvdvSchapenDb') {
+if ((Url::getWebroot() == 'https://test.oervanovis.nl/' || Url::getWebroot() == 'https://demo.oervanovis.nl/') && $dtb == 'k36098_bvdvSchapenDb') {
     $output[] = 'pasop.tpl.php';
 }
 if (php_uname('n') == 'basq') {

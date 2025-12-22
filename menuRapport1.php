@@ -3,7 +3,6 @@
 <!-- 25-11-2006 : versie weergave toegevoegd
 29-8-2021 : msg.php gewijzigd naar javascriptsAfhandeling.js.php -->
  */
-include "url.php";
 
 $tech_color = 'grey';
 if ($modtech != 0) {

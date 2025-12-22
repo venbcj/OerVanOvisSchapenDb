@@ -22,7 +22,6 @@ Session::start();
 
 <?php
 if (isset($_POST['knpNieuw'])) {
-    include "url.php";
     Url::redirect('Newuser.php');
 }
 
@@ -36,7 +35,7 @@ if (Auth::is_logged_in()) {
     if ($modtech == 1) {
         if (isset($_POST['knpNieuw'])) {
             $form = "Newuser.php";
-            header("Location: " . $url . "Newuser.php");
+            header("Location: " . Url::getWebroot() . "Newuser.php");
         } else {
             $form = "Gebruikers.php";
         }
@@ -120,7 +119,7 @@ if (Auth::is_logged_in()) {
 <tr style ="font-size:14px;" height = 25>
  <td> <?php echo $lid; ?> </td>
             <?php Session::set("DT1", null); ?>
- <td> <a href='<?php echo $url; ?>Gebruiker.php?pstId=<?php echo $lid; ?>' style = 'color : blue'> <?php echo $alias; ?> </a> </td>
+ <td> <?php echo View::link_to($alias, 'Gebruiker.php?pstId='.$lid, ['style' => 'color: blue']); ?> </td>
  <td> <?php echo $login; ?> </td>
  <td> <?php echo $naam; ?> </td>
  <td> <?php echo $ubn; ?> </td>

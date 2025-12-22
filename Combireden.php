@@ -23,7 +23,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 <?php 
 if ( isset($_POST['knpSave_d']) || isset($_POST['knpDelete_d']) || isset($_POST['knpSave_p']) || isset($_POST['knpDelete_p']) ) { 
     
-    if(!isset($fout)) { header("Location: ". $url ."Combireden.php"); }
+    if(!isset($fout)) { header("Location: ". Url::getWebroot() ."Combireden.php"); }
  }
  else 
 
@@ -318,7 +318,6 @@ GROUP BY cr.scan
             mysqli_query($db,$query_bewerk_tblCombireden) or die (mysqli_error($db));    
 
     }
-    //if (empty($fout)) { header("Location: ". $url ."Combireden.php"); }
 }
 
 if (isset($_POST['knpDelete_d']))
@@ -326,7 +325,6 @@ if (isset($_POST['knpDelete_d']))
 $delete_rec = "DELETE FROM tblCombireden WHERE comrId = ".$rowid_d." ";
     mysqli_query($db,$delete_rec) or die (mysqli_error($db));
     
-    //if (empty($fout)) { header("Location: ". $url ."Combireden.php"); }
 }
 
 /**************************************************
@@ -433,8 +431,7 @@ $pdf = '';
 <table border = 0 align =  "left" > 
 <tr> 
  <td width = 100 align =center valign =top > 
-    <a href= '<?php echo $url;?>Combireden_pdf.php?Id=<?php echo $pdf; ?>' style = 'color : blue'>
-    print pagina </a>
+<?php echo View::link_to('print pagina', 'Combireden_pdf.php?Id='. $pdf, ['style' => 'color : blue']) ?>
  <td colspan =  5 align = center> 
  <b>Medicijn met reden :</b><hr> 
  </td>
@@ -735,15 +732,12 @@ GROUP BY cr.scan
             mysqli_query($db,$query_bewerk_tblCombireden) or die (mysqli_error($db));    
 
     }
-    //if (empty($fout)) { header("Location: ". $url ."Combireden.php"); }
 }
 
 if (isset($_POST['knpDelete_p']))
 {
 $delete_rec = "DELETE FROM tblCombireden WHERE comrId = ".$rowid_p." ";
     mysqli_query($db,$delete_rec) or die (mysqli_error($db));
-    
-    //if (empty($fout)) { header("Location: ". $url ."Combireden.php"); }
 }
 
 /**************************************************

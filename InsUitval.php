@@ -44,7 +44,6 @@ $impagrident_gateway = new ImpAgridentGateway();
 
 If (isset($_POST['knpInsert_'])) {
     include "post_readerUitv.php"; #Deze include moet voor de vervversing in de functie header()
-    //header("Location: ".$url."insUitval.php"); 
 }
 if($reader == 'Agrident') {
     $velden = "rd.Id readId, date_format(rd.datum,'%Y-%m-%d') sort, rd.datum, rd.levensnummer levnr, rd.reden reden_uitv, ru.reduId dbreduId,

@@ -44,7 +44,7 @@ if (Auth::is_logged_in()) {
         /* $code bestaat ook in responscheck.php */
         $code = 'AAN';
         include "save_melding.php";
-        Response::redirect($curr_url);
+        Response::redirect(Url::getCurrentUrl());
         return;
     }
 

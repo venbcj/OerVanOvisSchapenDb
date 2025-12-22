@@ -1,4 +1,5 @@
 <?php
+
 /* 22-11-2015 gemaakt 
 20-1-2017 : query aangepast n.a.v. nieuwe tblDoel. Speengewicht niet verplicht gemaakt    22-1-2017 tblBezetting gewijzigd naar tblBezet 
 13-2-2017 : tblPeriode verwijderd en verblijf opgeslagen in tblBezet
@@ -6,8 +7,6 @@
 26-4-2020 : $minDag als extra ontrole weggehaald. Controle zit ook al in HokSpenen.php
 11-4-2021 : extra controle of speendatum al bestaat met isset($actId). Bijv. als pagina meerdere malen wordt verstuurd 
 29-12-2023 : and h.skip = 0 toegevoegd bij tblHistorie */
-
-include "url.php";
 
 $array = array();
 

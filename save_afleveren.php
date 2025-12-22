@@ -1,13 +1,10 @@
 <?php
+
 /* 22-11-2015 gemaakt 
 15-02-2017 : gewicht niet verplicht gemaakt en (extra) controle op 'maximale datum uit historie' verwijderd 
 06-06-2018 : kg met komma wordt omgezet naar kg met punt 
 01-01-2024 :  sql beveiligd met quotes en db_null_input() 
 20-02-2025 Hidden velden in HokAfleveren.php verwijderd en hier lege checkboxen gedefinieerd ondanks dat het niet nodig is! */
-
-include "url.php";
-
-
 
 $array = array();
 

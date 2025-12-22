@@ -261,7 +261,7 @@ WHERE periId = '".mysqli_real_escape_string($db,$recId)."'
 if($count == 1) {
 
     $update_kilo = "UPDATE tblVoeding SET nutat = $fldKilo WHERE periId = '".mysqli_real_escape_string($db,$recId)."'     ";
-        mysqli_query($db,$update_kilo) or die (mysqli_error($db)); //header("Location:".$url."Ras.php");
+        mysqli_query($db,$update_kilo) or die (mysqli_error($db)); //header("Location:".Url::getWebroot()."Ras.php");
         #echo $update_kilo."<br/>";
 }
 else if($count > 1) { 
@@ -288,7 +288,7 @@ FROM tblVoeding v
 if($nutat-$verschil >0 ) { $newNutat = $nutat-$verschil; $verschil = 0; 
 
     $update_kilo = "UPDATE tblVoeding SET nutat = $newNutat WHERE voedId = '".mysqli_real_escape_string($db,$last_v)."'     ";
-        mysqli_query($db,$update_kilo) or die (mysqli_error($db)); //header("Location:".$url."Ras.php");
+        mysqli_query($db,$update_kilo) or die (mysqli_error($db)); //header("Location:".Url::getWebroot()."Ras.php");
         #echo $update_kilo."<br/>";
 
 }
@@ -323,7 +323,7 @@ else { $verschil = $verschil-$nutat;
 
 if(isset($fldDelVoer)) {
     $delete_voeding = "DELETE FROM tblVoeding WHERE periId = '".mysqli_real_escape_string($db,$recId)."'     ";
-        mysqli_query($db,$delete_voeding) or die (mysqli_error($db)); //header("Location:".$url."Ras.php");
+        mysqli_query($db,$delete_voeding) or die (mysqli_error($db)); //header("Location:".Url::getWebroot()."Ras.php");
         //echo $delete_voeding."<br/>";
         unset($fldDelVoer);
  }
@@ -334,7 +334,7 @@ if(isset($fldDelPeri)) {
         mysqli_query($db,$delete_voeding) or die (mysqli_error($db));
         
     $delete_periode = "DELETE FROM tblPeriode WHERE periId = '".mysqli_real_escape_string($db,$recId)."'     ";
-        mysqli_query($db,$delete_periode) or die (mysqli_error($db)); //header("Location:".$url."Ras.php");
+        mysqli_query($db,$delete_periode) or die (mysqli_error($db)); //header("Location:".Url::getWebroot()."Ras.php");
         //echo $delete_periode."<br/>";
 
         unset($fldDelPeri);

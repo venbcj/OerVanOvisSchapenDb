@@ -47,9 +47,13 @@ $jaar4 = $huidigjaar-3;
 <tr>
  
 <?php if (isset($raak)) { ?>
- <td> <a href = '<?php echo $url;?>Meerlingen2_pdf.php?Id=<?php echo $raak; ?>' style = 'color : blue' > print pagina </a> </td>
-<?php } else if(isset($gekozen_ooi)) { ?>
- <td> <a href = '<?php echo $url;?>Meerlingen2_pdf.php?Id=<?php echo $gekozen_ooi; ?>' style = 'color : blue' > print pagina  </a> </td>
+ <td>
+<?php echo View::link_to('print pagina', 'Meerlingen2_pdf.php?Id='.$raak, ['style' => 'color: blue']); ?>
+</td>
+<?php } elseif (isset($gekozen_ooi)) { ?>
+ <td> 
+<?php echo View::link_to('print pagina', 'Meerlingen2_pdf.php?Id='.$gekozen_ooi, ['style' => 'color: blue']); ?>
+</td>
 <?php } ?>
 </tr>
 

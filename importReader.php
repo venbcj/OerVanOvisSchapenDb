@@ -12,8 +12,6 @@
 26-2-2020 : LOAD DATA LOCAL INFILE vervangen door file() -->
 */
 
-include "url.php";
-
 $velden = array('datum','tijd','levnr_geb','teller','rascode','geslacht','moeder','hokcode','gewicht','col10','col11','moment1','col13','moment2','levnr_uitv','teller_uitv','reden_uitv','levnr_afv','teller_afv','ubn_afv','afvoerkg','levnr_aanv','teller_aanv','ubn_aanv','levnr_sp','teller_sp','hok_sp','speenkg','moeder_dr','col30','uitslag','vader_dr','levnr_ovpl','teller_ovpl','hok_ovpl','reden_pil','levnr_pil','teller_pil','col39','col40','col41','weegkg','levnr_weeg','col44');
 $stream = $end_file_reader; //Bestandsnaam bijv reader_1 . Gedeclareerd in InlezenReader.php
 $lok = $Backupnaam; // Gedeclareerd in InlezenReader.php en uploadReader.php

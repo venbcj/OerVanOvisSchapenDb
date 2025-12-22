@@ -1,0 +1,131 @@
+#!/usr/bin/env bash
+set -u -o pipefail
+
+PHPUNIT="vendor/bin/phpunit"
+FAILING_TEST=$1
+SEED=$2
+LIST="tests.list"
+LAST_SUITE=""
+
+mapfile -t ALL < "$LIST"
+TOTAL=${#ALL[@]}
+
+for i in "${!ALL[@]}"; do
+    if [[ "${ALL[i]}" == "$FAILING_TEST" ]]; then
+        FAILING_IDX=$i
+        break
+    fi
+done
+
+run_prefix() {
+    local n=$1
+    local suite
+    suite=$(mktemp)
+
+    # prefix mag nooit voorbij de falende test gaan
+    local max_idx=$(( FAILING_IDX < n ? FAILING_IDX : n-1 ))
+
+    {
+        echo '<?xml version="1.0" encoding="UTF-8"?>'
+        echo '<phpunit>'
+        echo '  <testsuites>'
+        echo '    <testsuite name="prefix">'
+
+        # prefix-tests
+        for ((i=0; i<=max_idx; i++)); do
+            t=${ALL[i]}
+            class=${t%%::*}
+            method=${t##*::}
+            echo "      <testcase class=\"$class\" name=\"$method\"/>"
+        done
+
+        # falende test
+        class=${FAILING_TEST%%::*}
+        method=${FAILING_TEST##*::}
+        echo "      <testcase class=\"$class\" name=\"$method\"/>"
+
+        echo '    </testsuite>'
+        echo '  </testsuites>'
+        echo '</phpunit>'
+    } > "$suite"
+
+    $PHPUNIT -c "$suite" --random-order-seed="$SEED" >/dev/null 2>&1
+    status=$?
+
+    LAST_SUITE="$suite"
+    return $status
+}
+
+# run_prefix() {
+#     local n=$1
+#     local suite
+#     suite=$(mktemp)
+#     for ((i=0; i<n; i++)); do
+#         if [[ "${ALL[i]}" == "$FAILING_TEST" ]]; then
+#             FAILING_ALREADY_IN_PREFIX=true
+#             break
+#         fi
+#     done
+#     {
+#         echo '<?xml version="1.0" encoding="UTF-8"?>'
+#         echo '<phpunit>'
+#         echo '  <testsuites>'
+#         echo '    <testsuite name="prefix">'
+#         for ((i=0; i<n; i++)); do
+#             t=${ALL[i]}
+#             class=${t%%::*}
+#             method=${t##*::}
+#             echo "      <testcase class=\"$class\" name=\"$method\"/>"
+#         done
+#         class=${FAILING_TEST%%::*}
+#         method=${FAILING_TEST##*::}
+#         echo "      <testcase class=\"$class\" name=\"$method\"/>"
+#         echo '    </testsuite>'
+#         echo '  </testsuites>'
+#         echo '</phpunit>'
+#     } > "$suite"
+# 
+#   $PHPUNIT -c "$suite" --random-order-seed="$SEED" >/dev/null 2>&1
+#   status=$?
+# 
+#   LAST_SUITE="$suite"
+#   return $status
+# }
+
+echo "▶ Verifying full prefix fails..."
+if run_prefix "$TOTAL"; then
+  echo "❌ Full prefix does not fail — aborting"
+  exit 1
+fi
+
+low=0
+high=$TOTAL
+
+echo "▶ Binary search over $TOTAL tests"
+
+while (( low + 1 < high )); do
+  mid=$(( (low + high) / 2 ))
+  echo "  Testing prefix size $mid"
+
+  if run_prefix "$mid"; then
+    low=$mid
+  else
+    high=$mid
+  fi
+done
+
+echo
+echo "💥 Failure introduced at prefix length $high"
+echo "Last passing test:"
+[[ $low -gt 0 ]] && echo "  ${ALL[low-1]}"
+
+echo "First failing test:"
+echo "  ${ALL[high-1]}"
+
+echo
+echo "▶ Re-running failing prefix to capture details..."
+run_prefix "$high" || true
+
+echo
+echo "💥 Tests in failing run (in execution order):"
+sed -n 's/.*testcase class="\([^"]*\)" name="\([^"]*\)".*/\1::\2/p' "$LAST_SUITE"

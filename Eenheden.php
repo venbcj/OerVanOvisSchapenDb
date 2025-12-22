@@ -18,8 +18,7 @@ Session::start();
 
 <?php
 if (isset($_POST['knpUpdate'])) {
-    include "url.php";
-    header("Location: " . $url . "Eenheden.php");
+    header("Location: " . Url::getWebroot() . "Eenheden.php");
 }
 
 $titel = 'Verbruikseenheden';

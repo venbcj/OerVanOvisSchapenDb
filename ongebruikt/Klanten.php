@@ -16,7 +16,7 @@ Session::start();
 
 <center>
 <?php
-if (isset ($_POST['knpSave_'])) { /*header("Location: ".$url."Klanten.php");*/ }
+if (isset ($_POST['knpSave_'])) { /*header("Location: ".Url::getWebroot()."Klanten.php");*/ }
 $titel = 'Debiteuren';
 $subtitel = ''; 
 $file = "Klanten.php";
@@ -187,8 +187,8 @@ order by naam
  <td><input type= "text" name= <?php echo "txtTel_$Id"; ?> value = <?php echo " \"$tel\" "; ?> style= "width: 80px;"></td>
  <td><input type = "checkbox" name = <?php echo "chkActief_$Id"; ?> id= "c1" value= "1" <?php echo $row['actief'] == 1 ? 'checked' : ''; ?>         title = "Is debiteur te gebruiken ja/nee ?"> </td>
         
- <td width = 80> <a href='<?php echo $url; ?>Klant.php?pstid=<?php echo $Id; ?>' style = "color : blue"> meer gegevens </a> </td>
- <td>              <a href='<?php echo $url; ?>Contact.php?pstid=<?php echo $Id; ?>' style = "color : blue"> contacten </a> </td>
+ <td width = 80> <a href='<?php echo Url::getWebroot(); ?>Klant.php?pstid=<?php echo $Id; ?>' style = "color : blue"> meer gegevens </a> </td>
+ <td>              <a href='<?php echo Url::getWebroot(); ?>Contact.php?pstid=<?php echo $Id; ?>' style = "color : blue"> contacten </a> </td>
 
     </td>
         

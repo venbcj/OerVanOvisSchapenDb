@@ -36,7 +36,7 @@ if (Auth::is_logged_in()) {
  
         if(isset($_POST['knpSave_'])) {
             include "save_voerrapport.php";  
-        //header("Location: ".$url."Voer_rapportage.php"); 
+        //header("Location: ".Url::getWebroot()."Voer_rapportage.php"); 
     }
     ?>
 

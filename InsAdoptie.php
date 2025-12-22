@@ -34,7 +34,6 @@ $impagrident_gateway = new ImpAgridentGateway();
 
 If (isset ($_POST['knpInsert_'])) {
     include "post_readerAdop.php"; #Deze include moet voor de vervversing in de functie header()
-    //header("Location: ".$url."InsOverplaats.php");
     }
 
 // Declaratie HOKNUMMER            // lower(if(isnull(scan),'6karakters',scan)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.

@@ -1,3 +1,6 @@
+<?php
+
+/*
 <!-- 3-9-2016 : sql beveiligd
 20-1-2017 : Query's aangepast n.a.v. nieuwe tblDoel en hidden velden in insOverplaats.php verwijderd en codering hier aangepast         22-1-2017 : tblBezetting gewijzigd naar tblBezet 
 28-6-2017 : insert tblPeriode verwijderd Priode wordt sinds 12-2-2017 niet meer opgeslagen in tblBezet.
@@ -9,11 +12,7 @@
 join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
 I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 -->
-
-<?php
-include "url.php";
-
-
+ */
 
 $array = array();
 

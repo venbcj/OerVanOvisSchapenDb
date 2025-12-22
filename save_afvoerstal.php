@@ -1,11 +1,8 @@
 <?php
+
 /* 18-9-2016 gemaakt 
 28-12-2023 : and h.skip = 0 toegevoegd bij tblHistorie 
 21-02-2025 Lege checkboxen gedefinieerd ondanks dat het niet nodig is! */
-
-include "url.php";
-
-
 
 $array = array();
 

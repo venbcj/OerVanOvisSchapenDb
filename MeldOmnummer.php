@@ -37,7 +37,7 @@ include "responscheck.php";
 if (isset($_POST['knpSave_'])) {
     $code = 'VMD';
     include "save_melding.php";
-    Response::redirect($curr_url);
+    Response::redirect(Url::getCurrentUrl());
     return;
 }
 
