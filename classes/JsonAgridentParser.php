@@ -20,6 +20,7 @@ class JsonAgridentParser {
         if (!$this->data) {
             return;
         }
+        // de includes die volgen, rekenen erop dat $db bestaat. Vooralsnog.
         $db = Db::instance();
         $lidid = $this->lidId; // "interface" naar de includes
         $taken = array('Worpregistratie', 'Doodgeboren', 'Groepsgeboorte', 'Verplaatsing', 'Spenen', 'Afvoer', 'Aanvoer', 'Omnummeren', 'Medicaties', 'Halsnummers', 'Groepsafvoer', 'Voerregistratie', 'Dekken', 'Dracht');

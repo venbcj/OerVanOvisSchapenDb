@@ -9,6 +9,11 @@ require_once("autoload.php");
 18-12-2021 : Dekken en Dracht toegevoegd
 26-11-2022 : Taak Aanvoer, Afvoer, Spenen en Dracht anders ingericht (andere loop in reader) */
 
+
+
+
+
+
 include "connect_db.php";
 if (!function_exists('getallheaders')) {
     function getallheaders() {
@@ -21,7 +26,6 @@ if (!function_exists('getallheaders')) {
         return $headers;
     }
 }
-
 $string = '';
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     return;
@@ -33,17 +37,16 @@ if (!isset($headers['Authorization'])) { // Als in de headers geen index 'Autori
     return;
 }
 $authorization = explode(" ", $headers['Authorization']);
-if (count($authorization) == 2 && trim($authorization[0]) == "Bearer" && strlen(trim($authorization[1])) == 64) {
-    $lid_gateway = new LidGateway();
-    $lidid = $lid_gateway->findByReaderkey($authorization[1]);
-    if (!$lidid) {
-        http_response_code(401); // Unauthorized
-        echo 'via authorization header wordt de gebruiker niet gevonden.';
-        return;
-    }
-} else {
+if (count($authorization) != 2 || trim($authorization[0]) != "Bearer" || strlen(trim($authorization[1])) != 64) {
     http_response_code(401); // Unauthorized
     echo 'authorization header heeft niet de juiste opmaak.';
+    return;
+}
+$lid_gateway = new LidGateway();
+$lidid = $lid_gateway->findByReaderkey($authorization[1]);
+if (!$lidid) {
+    http_response_code(401); // Unauthorized
+    echo 'via authorization header wordt de gebruiker niet gevonden.';
     return;
 }
 switch ($_SERVER['REQUEST_METHOD']) { // Switch
