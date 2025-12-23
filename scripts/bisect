@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+[ $# -ne 2 ] && echo "$0 <failing_test> <seed>" && exit
 PHPUNIT="vendor/bin/phpunit"
 FAILING_TEST=$1
 SEED=$2

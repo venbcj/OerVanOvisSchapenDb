@@ -341,4 +341,43 @@ SQL
     ]);
 }
 
+public function zoek_doelid($periId) {
+    return $this->first_record(
+        <<<SQL
+SELECT p.hokId, ho.hoknr, p.doelId, d.doel, p.dmafsluit, date_format(p.dmafsluit,'%d-%m-%Y') afsluitdm
+FROM tblPeriode p
+ join tblHok ho on (p.hokId = ho.hokId)
+ join tblDoel d on (p.doelId = d.doelId)
+WHERE periId = :periId
+SQL
+    , [[':periId', $periId, self::INT]]
+        , [
+            'hokId' => null,
+            'hoknr' => null,
+            'doelId' => null,
+            'doel' => null,
+            'dmafsluit' => null,
+            'afsluitdm' => null,
+        ]
+    );
+}
+
+public function zoek_start_periode($hokId, $doelId, $dmafsl) {
+    return $this->first_row(
+        <<<SQL
+SELECT max(dmafsluit) dmStart, date_format(max(dmafsluit),'%d-%m-%Y') Startdm
+FROM tblPeriode
+WHERE hokId = :hokId
+ and doelId = :doelId
+ and dmafsluit < :dmafsluit
+SQL
+    , [
+        [':hokId', $hokId, self::INT],
+        [':doelId', $doelId, self::INT],
+        [':dmafsluit', $dmafsl]
+    ]
+    , [null, null]
+    );
+}
+
 }

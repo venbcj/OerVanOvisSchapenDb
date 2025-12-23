@@ -84,86 +84,27 @@ if (Auth::is_logged_in()) {
 
 $periId = $_GET['pstId'] ?? 0;
 
-$zoek_doelId = mysqli_query($db,"
-SELECT p.hokId, ho.hoknr, p.doelId, d.doel, p.dmafsluit, date_format(p.dmafsluit,'%d-%m-%Y') afsluitdm
-FROM tblPeriode p
- join tblHok ho on (p.hokId = ho.hokId)
- join tblDoel d on (p.doelId = d.doelId)
-WHERE periId = ".mysqli_real_escape_string($db,$periId)."
-") or die (mysqli_error($db));
-$hokId = 0;
-$hok = 0;
-$doelId = 0;
-$groep = 0;
-$dmafsl = 0;
-$afsldm = 0;
-    while($zd = mysqli_fetch_assoc($zoek_doelId))
-    {
+$periode_gateway = new PeriodeGateway();
+$zd = $periode_gateway->zoek_doelid($periId);
      $hokId = $zd['hokId'];
      $hok = $zd['hoknr'];
      $doelId = $zd['doelId'];
      $groep = $zd['doel'];
      $dmafsl = $zd['dmafsluit'];
      $afsldm = $zd['afsluitdm'];
-    }
     if (empty($hokId)) {
         $hokId = 1;
     }
-
-$zoek_start_periode = mysqli_query($db,"
-SELECT max(dmafsluit) dmStart, date_format(max(dmafsluit),'%d-%m-%Y') Startdm
-FROM tblPeriode
-WHERE hokId = '".mysqli_real_escape_string($db,$hokId)."' and doelId = '".mysqli_real_escape_string($db, $doelId)."' and dmafsluit < '".mysqli_real_escape_string($db,$dmafsl)."'
-") or die (mysqli_error($db));
-    while($zsp = mysqli_fetch_assoc($zoek_start_periode))
-    { 
-     $dmStartPeriode = $zsp['dmStart'];
-     $StartPeriodedm = $zsp['Startdm'];
-    }  
+     [$dmStartPeriode, $StartPeriodedm] = $periode_gateway->zoek_start_periode($hokId, $doelId, $dmafsl);
 
     $fase_tijdens_betreden_verblijf = 'true';
 if($doelId == 1) { $fase_tijdens_betreden_verblijf = '( (isnull(spn.datum) and isnull(prnt.datum)) or h.datum < spn.datum)'; }
 if($doelId == 2) { $fase_tijdens_betreden_verblijf = '((h.datum >= spn.datum and (isnull(prnt.datum) or h.datum < prnt.datum)) or (isnull(spn.datum) and h.datum < prnt.datum))'; }
 if($doelId == 3) { $fase_tijdens_betreden_verblijf = '(h.datum >= prnt.datum or ht.datum > prnt.datum)'; }
 
-
-$zoek_periode_met_aantal_schapen = mysqli_query($db,"
-SELECT min(h.datum) dmEerste_in, date_format(min(h.datum),'%d-%m-%Y') eerste_inDm, date_format(max(ht.datum),'%d-%m-%Y') laatste_uit, count(distinct(st.schaapId)) aant_schapen, count(b.bezId) aant_beweging
-FROM tblBezet b
- join tblHistorie h on (b.hisId = h.hisId)
- join tblStal st on (h.stalId = st.stalId)
- left join 
- (
-    SELECT b.bezId, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
-    GROUP BY b.bezId
- ) uit on (uit.bezId = b.bezId)
- left join tblHistorie ht on (ht.hisId = uit.hist)
- left join (
-     SELECT schaapId, datum
-     FROM tblHistorie h
-      join tblStal st on (st.stalId = h.stalId)
-     WHERE actId = 4 and skip = 0
- ) spn on (st.schaapId = spn.schaapId)
- left join (
-     SELECT schaapId, datum
-     FROM tblHistorie h
-      join tblStal st on (st.stalId = h.stalId)
-     WHERE actId = 3 and skip = 0
- ) prnt on (st.schaapId = prnt.schaapId)
-WHERE b.hokId = '".mysqli_real_escape_string($db,$hokId)."' and h.skip = 0
- and ".$fase_tijdens_betreden_verblijf."
- and (h.datum < '".mysqli_real_escape_string($db,$dmafsl)."' and (isnull(ht.datum) or ht.datum > '".mysqli_real_escape_string($db,$dmStartPeriode)."'))
-") or die (mysqli_error($db));
-
-    while($zpmas = mysqli_fetch_assoc($zoek_periode_met_aantal_schapen))
-    { 
+$bezet_gateway = new BezetGateway();
+$zoek_periode_met_aantal_schapen = $bezet_gateway->zoek_periode_met_aantal_schapen($lidId, $hokId, $dmafsl, $dmStartPeriode, $fase_tijdens_betreden_verblijf);
+    while($zpmas = $zoek_periode_met_aantal_schapen->fetch_assoc()) { 
      $schapen = $zpmas['aant_schapen'];
      $bewegingen = $zpmas['aant_beweging'];
      $dmEerste_in = $zpmas['dmEerste_in'];
@@ -189,48 +130,8 @@ if($dmStartPeriode < $dmEerste_in || !isset($dmStartPeriode)) { $StartPeriodedm 
 </table>
 
 <?php
-    /*
-    SELECT right(s.levensnummer,$Karwerk) werknr, r.ras, s.geslacht, date_format(h.datum,'%Y%m%d') indm_sort, date_format(h.datum,'%d-%m-%Y') indm, date_format(ht.datum,'%Y%m%d') uitdm_sort, date_format(ht.datum,'%d-%m-%Y') uitdm, datediff(ht.datum, h.datum) schpdgn, h.kg kgin, ht.kg kguit, round((ht.kg-h.kg)/datediff(ht.datum, h.datum)*1000,2) gemgroei, date_format(hdo.datum,'%Y%m%d') uitvdm_sort, date_format(hdo.datum,'%d-%m-%Y') uitvdm, a.actie status
-    */
-$zoek_inhoud_periode = mysqli_query($db,"
-SELECT right(s.levensnummer,$Karwerk) werknr, r.ras, s.geslacht, date_format(h.datum,'%Y%m%d') indm_sort, date_format(h.datum,'%d-%m-%Y') indm, date_format(ht.datum,'%Y%m%d') uitdm_sort, date_format(ht.datum,'%d-%m-%Y') uitdm, datediff(ht.datum, h.datum) schpdgn, h.kg kgin, ht.kg kguit, round((ht.kg-h.kg)/datediff(ht.datum, h.datum)*1000,2) gemgroei, date_format(hdo.datum,'%Y%m%d') uitvdm_sort, date_format(hdo.datum,'%d-%m-%Y') uitvdm, a.actie status
-FROM tblBezet b
- join tblHistorie h on (b.hisId = h.hisId)
- join tblStal st on (h.stalId = st.stalId)
- join tblSchaap s on (s.schaapId = st.schaapId)
- join tblRas r on (r.rasId = s.rasId)
- left join 
- (
-    SELECT b.bezId, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
-    GROUP BY b.bezId
- ) uit on (uit.bezId = b.bezId)
- left join tblHistorie ht on (ht.hisId = uit.hist)
- left join tblHistorie hdo on (hdo.hisId = uit.hist and hdo.actId = 14)
- left join tblActie a on (a.actId = ht.actId)
- left join (
-     SELECT schaapId, datum
-     FROM tblHistorie h
-      join tblStal st on (st.stalId = h.stalId)
-     WHERE actId = 4 and skip = 0
- ) spn on (st.schaapId = spn.schaapId)
- left join (
-     SELECT schaapId, datum
-     FROM tblHistorie h
-      join tblStal st on (st.stalId = h.stalId)
-     WHERE actId = 3 and skip = 0
- ) prnt on (st.schaapId = prnt.schaapId)
-WHERE b.hokId = '".mysqli_real_escape_string($db,$hokId)."' and h.skip = 0
- and ".$fase_tijdens_betreden_verblijf."
- and (h.datum < '".mysqli_real_escape_string($db,$dmafsl)."' and (isnull(ht.datum) or ht.datum > '".mysqli_real_escape_string($db,$dmStartPeriode)."'))
-ORDER BY st.schaapId, b.hisId
-") or die (mysqli_error($db)); ?>
+    $zoek_inhoud_periode = $bezet_gateway->zoek_inhoud_periode($lidId, $hokId, $dmafsl, $dmStartPeriode, $fase_tijdens_betreden_verblijf, $Karwerk);
+?>
  
 <table Border = 0 id="sortableTable" align = "center">
   <thead> 
@@ -251,8 +152,7 @@ ORDER BY st.schaapId, b.hisId
  </thead>
 <tbody>
 <?php
-        while($zip = mysqli_fetch_array($zoek_inhoud_periode))
-        {     
+        while($zip = $zoek_inhoud_periode->fetch_array()) {     
             $werknr = $zip['werknr'];
             $ras = $zip['ras'];
             $geslacht = $zip['geslacht'];

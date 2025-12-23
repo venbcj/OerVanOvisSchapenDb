@@ -126,4 +126,19 @@ SQL
     );
 }
 
+public function kzlSubrubriek($lidId) {
+    return $this->run_query(
+        <<<SQL
+SELECT ru.rubuId, r.rubriek
+FROM tblRubriekuser ru
+ join tblRubriek r on (ru.rubId = r.rubId)
+WHERE lidId = :lidId
+ and r.actief = 1
+ and ru.actief = 1
+ORDER BY r.rubriek
+SQL
+    , [[':lidId', $lidId, self::INT]]
+    );
+}
+
 }

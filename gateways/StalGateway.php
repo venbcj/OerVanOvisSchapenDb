@@ -478,4 +478,42 @@ SQL
         );
     }
 
+    public function zoek_scan($stalId) {
+        return $this->first_field(
+            <<<SQL
+SELECT scan
+FROM tblStal
+WHERE stalId = :stalId
+SQL
+        , [[':stalId', $stalId, self::INT]]
+        );
+    }
+
+    public function is_dubbel($lidId, $scan) : bool {
+        return $this->first_field(
+            <<<SQL
+SELECT count(*) FROM tblStal WHERE lidId=:lidId AND scan=:scan and scan IS NOT NULL and rel_best IS NULL
+SQL
+        , [[':lidId', $lidId, self::INT], [':scan', $scan]]
+        ) > 0;
+    }
+
+    public function verwijder_scan_afgevoerden($lidId, $scan) {
+        $this->run_query(
+            <<<SQL
+UPDATE tblStal SET scan = NULL WHERE lidId = :lidId and scan = :scan and rel_best is not null
+SQL
+        , [[':lidId', $lidId, self::INT], [':scan', $scan]]
+        );
+    }
+
+    public function update_scan($stalId, $scan) {
+        $this->run_query(
+            <<<SQL
+UPDATE tblStal SET scan = :scan WHERE stalId = :stalId
+SQL
+        , [[':stalId', $stalId, self::INT], [':scan', $scan]]
+        );
+    }
+
 }

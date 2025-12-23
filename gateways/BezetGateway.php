@@ -1168,4 +1168,126 @@ public function getHokAfleverenWhere($pagina, $fase, $lidId, $hokId) {
     ];
 }
 
+public function zoek_periode_met_aantal_schapen($lidId, $hokId, $dmafsl, $dmStartPeriode, $fase_tijdens_betreden_verblijf) {
+    return $this->run_query(
+        <<<SQL
+SELECT min(h.datum) dmEerste_in, date_format(min(h.datum),'%d-%m-%Y') eerste_inDm,
+ date_format(max(ht.datum),'%d-%m-%Y') laatste_uit, count(distinct(st.schaapId)) aant_schapen,
+ count(b.bezId) aant_beweging
+FROM tblBezet b
+ join tblHistorie h on (b.hisId = h.hisId)
+ join tblStal st on (h.stalId = st.stalId)
+ left join 
+ (
+    SELECT b.bezId, min(h2.hisId) hist
+    FROM tblBezet b
+     join tblHistorie h1 on (b.hisId = h1.hisId)
+     join tblActie a1 on (a1.actId = h1.actId)
+     join tblHistorie h2 on (h1.stalId = h2.stalId
+ and ((h1.datum < h2.datum) or (h1.datum = h2.datum
+ and h1.hisId < h2.hisId)) )
+     join tblActie a2 on (a2.actId = h2.actId)
+     join tblStal st on (h1.stalId = st.stalId)
+    WHERE st.lidId = :lidId
+ and a2.uit = 1
+ and h1.skip = 0
+ and h2.skip = 0
+ and h1.actId != 2
+    GROUP BY b.bezId
+ ) uit on (uit.bezId = b.bezId)
+ left join tblHistorie ht on (ht.hisId = uit.hist)
+ left join (
+     SELECT schaapId, datum
+     FROM tblHistorie h
+      join tblStal st on (st.stalId = h.stalId)
+     WHERE actId = 4
+ and skip = 0
+ ) spn on (st.schaapId = spn.schaapId)
+ left join (
+     SELECT schaapId, datum
+     FROM tblHistorie h
+      join tblStal st on (st.stalId = h.stalId)
+     WHERE actId = 3
+ and skip = 0
+ ) prnt on (st.schaapId = prnt.schaapId)
+WHERE b.hokId = :hokId
+ and h.skip = 0
+ and $fase_tijdens_betreden_verblijf
+ and (h.datum < :datum
+ and (isnull(ht.datum) or ht.datum > :startdatum))
+SQL
+    , [
+        [':lidId', $lidId, self::INT],
+        [':hokId', $hokId, self::INT],
+        [':datum', $dmafsl],
+        [':startdatum', $dmStartPeriode],
+    ]
+    );
+}
+
+public function zoek_inhoud_periode($lidId, $hokId, $dmafsl, $dmStartPeriode, $fase_tijdens_betreden_verblijf, $Karwerk) {
+    return $this->run_query(
+        <<<SQL
+SELECT right(s.levensnummer,$Karwerk) werknr, r.ras, s.geslacht, date_format(h.datum,'%Y%m%d') indm_sort,
+ date_format(h.datum,'%d-%m-%Y') indm, date_format(ht.datum,'%Y%m%d') uitdm_sort,
+ date_format(ht.datum,'%d-%m-%Y') uitdm, datediff(ht.datum, h.datum) schpdgn, h.kg kgin, ht.kg kguit,
+ round((ht.kg-h.kg)/datediff(ht.datum, h.datum)*1000,2) gemgroei, date_format(hdo.datum,'%Y%m%d') uitvdm_sort,
+ date_format(hdo.datum,'%d-%m-%Y') uitvdm, a.actie status
+FROM tblBezet b
+ join tblHistorie h on (b.hisId = h.hisId)
+ join tblStal st on (h.stalId = st.stalId)
+ join tblSchaap s on (s.schaapId = st.schaapId)
+ join tblRas r on (r.rasId = s.rasId)
+ left join 
+ (
+    SELECT b.bezId, min(h2.hisId) hist
+    FROM tblBezet b
+     join tblHistorie h1 on (b.hisId = h1.hisId)
+     join tblActie a1 on (a1.actId = h1.actId)
+     join tblHistorie h2 on (h1.stalId = h2.stalId
+ and ((h1.datum < h2.datum) or (h1.datum = h2.datum
+ and h1.hisId < h2.hisId)) )
+     join tblActie a2 on (a2.actId = h2.actId)
+     join tblStal st on (h1.stalId = st.stalId)
+    WHERE st.lidId = :lidId
+ and a2.uit = 1
+ and h1.skip = 0
+ and h2.skip = 0
+ and h1.actId != 2
+    GROUP BY b.bezId
+ ) uit on (uit.bezId = b.bezId)
+ left join tblHistorie ht on (ht.hisId = uit.hist)
+ left join tblHistorie hdo on (hdo.hisId = uit.hist
+ and hdo.actId = 14)
+ left join tblActie a on (a.actId = ht.actId)
+ left join (
+     SELECT schaapId, datum
+     FROM tblHistorie h
+      join tblStal st on (st.stalId = h.stalId)
+     WHERE actId = 4
+ and skip = 0
+ ) spn on (st.schaapId = spn.schaapId)
+ left join (
+     SELECT schaapId, datum
+     FROM tblHistorie h
+      join tblStal st on (st.stalId = h.stalId)
+     WHERE actId = 3
+ and skip = 0
+ ) prnt on (st.schaapId = prnt.schaapId)
+WHERE b.hokId = :hokId
+ and h.skip = 0
+ and $fase_tijdens_betreden_verblijf
+ and (h.datum < :datum
+ and (isnull(ht.datum) or ht.datum > :startdatum))
+ORDER BY st.schaapId, b.hisId
+SQL
+    , [
+        [':lidId', $lidId, self::INT],
+        [':hokId', $hokId, self::INT],
+        [':datum', $dmafsl],
+        [':startdatum', $dmStartPeriode],
+    ]
+    );
+}
+
 }

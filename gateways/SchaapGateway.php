@@ -4690,4 +4690,36 @@ SQL
         );
     }
 
+    public function zoek_dieren() {
+        return $this->run_query(
+            <<<SQL
+SELECT levensnummer, transponder
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join tblHistorie h on (h.stalId = st.stalId)
+ join (
+    SELECT s.volwId, count(s.schaapId) aant
+    FROM tblSchaap s
+     join tblStal st on (s.schaapId = st.schaapId)
+    WHERE lidId = :lidId
+    GROUP BY s.volwId
+ ) w on (s.volwId = w.volwId)
+WHERE s.geslacht = 'ooi'
+ and isnull(st.rel_best)
+ and h.actId = 1
+ and h.skip = 0
+ and h.datum >= :datumvan
+ and h.datum <= :datumtot
+ and w.aant = :aant
+ORDER BY levensnummer
+SQL
+        , [
+            [':lidId', $lidId, self::INT],
+            [':datumvan', $flddagvan],
+            [':datumtot', $flddagtot],
+            [':aant', $recId, self::INT]
+        ]
+        );
+    }
+
 }

@@ -34,4 +34,33 @@ SQL
         );
     }
 
+    public function insert($volgnr, $lidId, $transponder, $recId) {
+        $this->run_query(
+            <<<SQL
+INSERT INTO tblAlertselectie
+set volgnr = '".mysqli_real_escape_string($db,$volgnr)."',
+ lidId = '".mysqli_real_escape_string($db,$lidId)."',
+ transponder = '".mysqli_real_escape_string($db,$transponder)."',
+ alertId = '".mysqli_real_escape_string($db,$recId)."' 
+SQL
+        , [
+            [':volgnr', $volgnr],
+            [':lidId', $lidId, self::INT],
+            [':transponder', $transponder],
+            [':alertId', $recId, self::INT],
+        ]
+        );
+    }
+
+    public function zoek_aantal_selectie($volgnr) {
+        return $this->first_field(
+            <<<SQL
+SELECT count(Id) aant
+FROM tblAlertselectie
+WHERE volgnr = :volgnr
+SQL
+        , [[':volgnr', $volgnr]]
+        );
+    }
+
 }

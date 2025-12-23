@@ -24,7 +24,9 @@ include "login.php"; ?>
 
         <TD valign = "top" align = "center">
 <?php
-if (Auth::is_logged_in()) { if($modfin ==1) {
+if (Auth::is_logged_in()) {
+    if($modfin ==1) {
+        $opgaaf_gateway = new OpgaafGateway();
 
 if(isset($_POST['knpSave_'])) {
  include "save_opgaaf.php"; }
@@ -53,11 +55,7 @@ if(isset($_POST['knpInsert_'])) {
      if(!empty($_POST['insToel_'])) { $toel = $_POST['insToel_']; }
     }
     else {
-        
-        
-    $insert_Opgaaf = "INSERT INTO tblOpgaaf SET rubuId = '".mysqli_real_escape_string($db,$rubr)."', datum = '".mysqli_real_escape_string($db,$day)."', bedrag = '".mysqli_real_escape_string($db,$bedrag)."', toel = '".mysqli_real_escape_string($db,$toel)."', liq = '".mysqli_real_escape_string($db,$insLiq)."' ";
-        
-        /*echo '$insert_Opgaaf = '.$insert_Opgaaf.'<br>';*/ mysqli_query($db,$insert_Opgaaf) or die (mysqli_error($db));
+        $opgaaf_gateway->insert($rubr, $day, $bedrag, $toel, $insLiq);
       }
 }
 else { 
@@ -79,31 +77,22 @@ else {
 <td>
 <?php
 // KzlSubrubriek nieuwe invoer
-$qrySubRubriek = mysqli_query($db,"
-SELECT ru.rubuId, r.rubriek
-FROM tblRubriekuser ru
- join tblRubriek r on (ru.rubId = r.rubId)
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and r.actief = 1 and ru.actief = 1
-ORDER BY r.rubriek
-") or die (mysqli_error($db)); ?>
+$rubriek_gateway = new RubriekGateway();
+$qrySubRubriek = $rubriek_gateway->kzlSubrubriek($lidId);
+?>
  <select name= "insRubr_" style= "width:200;" >
  <option></option>
-<?php    while ( $sub = mysqli_fetch_array($qrySubRubriek)) 
-        {         
-            $opties = array($sub['rubuId'] => $sub['rubriek']);
-            foreach ($opties as $key => $waarde)
-            {
-                        $keuze = '';
-        
-        if(isset($_POST['insRubr_']) && $_POST['insRubr_'] == $key)
-        {
+<?php   
+while ($sub = $qrySubRubriek->fetch_array()) {         
+    $opties = array($sub['rubuId'] => $sub['rubriek']);
+    foreach ($opties as $key => $waarde) {
+        $keuze = '';
+        if(isset($_POST['insRubr_']) && $_POST['insRubr_'] == $key) {
             $keuze = ' selected ';
         }
         echo '<option value="' . $key . '" ' . $keuze .'>' . $waarde . '</option>';
-            }
-        }
-    
-
+    }
+}
 // Einde KzlSubrubriek nieuwe invoer
 ?>
  </select>
@@ -129,13 +118,8 @@ ORDER BY r.rubriek
 <td width = 40 align = "center" style = "font-size : 13px">Verwij-<br>deren</td>
 <td> <input type = 'submit' name = 'knpSave_' value = "Opslaan" > </td><td></td></tr>     
 <?php
-$zoek_inboekingen = mysqli_query($db,"
-SELECT op.opgId, op.rubuId, date_format(op.datum,'%d-%m-%Y') datum, op.bedrag, op.toel, op.liq, op.his
-FROM tblOpgaaf op
- join tblRubriekuser ru on (op.rubuId = ru.rubuId)
-WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (isnull(op.his) or op.his = 0)
-") or die (mysqli_error($db));
-    while ( $zi = mysqli_fetch_assoc($zoek_inboekingen)) {
+$zoek_inboekingen = $opgaaf_gateway->inboekingen($lidId);
+    while ( $zi = $zoek_inboekingen->fetch_assoc()) {
         $Id = $zi['opgId'];
         $rubuId = $zi['rubuId'];
         $datum = $zi['datum'];
@@ -143,51 +127,37 @@ WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (isnull(op.his)
         $toel = $zi['toel']; 
         $liq = $zi['liq']; 
         $his = $zi['his']; 
-        
-        if(isset($POST_["chbLiq_$Id"])) { $liq = $POST_["chbLiq_$Id"]; } ?>
-
-
+        if(isset($POST_["chbLiq_$Id"])) { $liq = $POST_["chbLiq_$Id"]; }
+?>
 <tr>
  <td width = 50 align = "center">
-<?php /*echo $Id;*/ ?>
     <input type = checkbox name = <?php echo "chbLiq_$Id"; ?> value = 1 <?php echo $liq == 1 ? 'checked' : '';  ?> >
  <td>
 <?php
 // KzlSubrubriek
-$qrySubRubriek = mysqli_query($db,"SELECT ru.rubuId, r.rubriek FROM tblRubriekuser ru join tblRubriek r on (ru.rubId = r.rubId) WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and r.actief = 1 and ru.actief = 1 ORDER BY r.rubriek ") or die (mysqli_error($db)); 
-
+$qrySubRubriek = $rubriek_gateway->kzlSubrubriek($lidId);
 $index = 0;
-    while ( $sub = mysqli_fetch_array($qrySubRubriek)) 
-    {
+    while ($sub = $qrySubRubriek->fetch_array()) {
        $rub_Id[$index] = $sub['rubuId'];
        $rubri[$index] = $sub['rubriek'];
        $index++; 
     }
-
 ?>
  <select name= <?php echo "kzlRubr_$Id"; ?> style= "width:200;" >
  <option></option>
-<?php    $count = count($rub_Id);
-for ($i = 0; $i < $count; $i++){ 
-        
-        
-            $opties = array($rub_Id[$i] => $rubri[$i]);
-            foreach ($opties as $key => $waarde)
-            {
-                        $keuze = '';
-        
-        if( (!isset($_POST['knpSave_']) && $rubuId == $rub_Id[$i]) || ( isset($_POST["kzlRubr_$Id"]) && $_POST["kzlRubr_$Id"] == $key) )
-        {
+<?php
+$count = count($rub_Id);
+for ($i = 0; $i < $count; $i++) {
+    $opties = array($rub_Id[$i] => $rubri[$i]);
+    foreach ($opties as $key => $waarde) {
+        $keuze = '';
+        if( (!isset($_POST['knpSave_']) && $rubuId == $rub_Id[$i]) || ( isset($_POST["kzlRubr_$Id"]) && $_POST["kzlRubr_$Id"] == $key) ) {
             echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
+        } else {        
+            echo '<option value="' . $key . '" >' . $waarde . '</option>';
         }
-        else
-        {        
-        echo '<option value="' . $key . '" >' . $waarde . '</option>';
-        }
-            }
+    }
 }
-    
-
 // Einde KzlSubrubriek
 ?>
  </td>

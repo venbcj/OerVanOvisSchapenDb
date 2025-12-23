@@ -173,18 +173,23 @@ return $vw->fetch_row()[0];
 }
 
 public function wegen_invoeren($stalId, $datum, $newkg) {
-    $this->db->query("INSERT INTO tblHistorie
-        SET stalId = '".$this->db->real_escape_string($stalId)."',
- datum = '".$this->db->real_escape_string($datum)."',
- kg = '".$this->db->real_escape_string($newkg)."',
- actId = 9 ");
+    $this->db->query("
+INSERT INTO tblHistorie
+SET stalId = '".$this->db->real_escape_string($stalId)."',
+datum = '".$this->db->real_escape_string($datum)."',
+kg = '".$this->db->real_escape_string($newkg)."',
+actId = 9 "
+);
 }
 
 public function herstel_invoeren($stalId, $datum, $kg, $actId) {
-    $this->db->query("INSERT INTO tblHistorie SET stalId = '".$this->db->real_escape_string($stalId)."', 
-    datum = '".$this->db->real_escape_string($datum)."',
- kg = ".db_null_input($kg).",
- actId = '".$this->db->real_escape_string($actId)."' ");
+    $this->db->query("
+INSERT INTO tblHistorie
+SET stalId = '".$this->db->real_escape_string($stalId)."', 
+datum = '".$this->db->real_escape_string($datum)."',
+kg = ".db_null_input($kg).",
+actId = '".$this->db->real_escape_string($actId)."' "
+);
 }
 
 public function medicijn_invoeren($stalId, $datum) {
@@ -525,7 +530,9 @@ $vw = $this->db->query("
 SELECT max(hisId) vorige_weging
 FROM tblHistorie h
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.schaapId = '".$this->db->real_escape_string($schaapId)."' and h.datum < '".$this->db->real_escape_string($date)."' and h.kg is not null
+WHERE st.schaapId = '".$this->db->real_escape_string($schaapId)."'
+ and h.datum < '".$this->db->real_escape_string($date)."'
+ and h.kg is not null
 ");
 return $vw->fetch_row()[0];
 }
@@ -919,6 +926,52 @@ SQL
         [':datum', $datum],
         [':relId', $relId, self::INT],
     ]);
+}
+
+public function findIdByAct($lidId, $actId) {
+    return $this->first_field(
+        <<<SQL
+SELECT max(hisId) hisId
+FROM tblHistorie h
+ join tblStal st on (st.stalId = h.stalId)
+WHERE st.lidId = :lidId
+ and h.actId = :actId
+SQL
+    , [[':lidId', $lidId, self::INT], [':actId', $actId, self::INT]]
+    );
+}
+
+public function zoek_maxdatum($stalId) {
+    return $this->first_row(
+        <<<SQL
+SELECT datum date, date_format(datum,'%d-%m-%Y') datum
+FROM tblHistorie h
+ join (
+    SELECT max(hisId) hisId
+    FROM tblHistorie
+    WHERE stalId = :stalId
+ and skip = 0
+ ) mh on (h.hisId = mh.hisId)
+SQL
+    , [[':stalId', $stalId, self::INT]]
+        , [null, null]
+    );
+}
+
+public function insert($stalId, $datum, $actId) {
+    $this->run_query(
+        <<<SQL
+INSERT INTO tblHistorie 
+    set stalId = :stalId,
+ datum = :datum,
+ actId = :actId
+SQL
+    , [
+        [':stalId', $stalId, self::INT],
+        [':datum', $datum],
+        [':actId', $actId, self::INT],
+    ]
+    );
 }
 
 }
