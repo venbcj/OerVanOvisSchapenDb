@@ -1068,8 +1068,13 @@ ORDER BY dmin, dmuit
     }
 
 public function insert($hisId, $hokId) {
-    $this->db->query("INSERT INTO tblBezet
- set hisId = '".$this->db->real_escape_string($hisId)."', hokId = '".$this->db->real_escape_string($hokId). "' ");
+    $this->run_query(
+        <<<SQL
+INSERT INTO tblBezet
+ set hisId = :hisId, hokId = :hokId
+SQL
+    , [[':hisId', $hisId, self::INT], [':hokId', $hokId, self::INT]]
+    );
 }
 
 public function zoek_verblijven($lidId) {

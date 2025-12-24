@@ -22,6 +22,15 @@ SQL
         );
     }
 
+    public function set_verwerkt($recId) {
+        $this->run_query(
+            <<<SQL
+UPDATE impAgrident set verwerkt = 1 WHERE Id = :recId
+SQL
+        , [[':recId', $recId, self::INT]]
+        );
+    }
+
     public function getInsAanvoerFrom() {
         return <<<SQL
 impAgrident rd
@@ -1873,6 +1882,29 @@ SQL
             [':doelId', $doelId, self::INT],
             [':artId', $artId, self::INT],
         ]);
+    }
+
+    public function zoek_readerregel_verwerkt($recId) {
+        return $this->first_field(
+            <<<SQL
+SELECT verwerkt
+FROM impAgrident
+WHERE Id = :recId
+SQL
+        , [[':recId', $recId, self::INT]]
+        );
+    }
+
+    public function zoek_levnr_reader($recId) {
+        return $this->first_row(
+            <<<SQL
+SELECT levensnummer levnr_aanv, transponder
+FROM impAgrident
+WHERE Id = :recId
+SQL
+        , [[':recId', $recId, self::INT]]
+            , [null, null]
+        );
     }
 
 }

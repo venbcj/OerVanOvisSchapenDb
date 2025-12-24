@@ -115,7 +115,7 @@ public function insert($lidId, $fldCode) {
         <<<SQL
 INSERT INTO tblRequest SET lidId_new = :lidId, code = :code
 SQL
-    , [[':lidId', $lidid, self::INT], [':code', $fldCode]]
+    , [[':lidId', $lidId, self::INT], [':code', $fldCode]]
     );
     return $this->db->insert_id;
 }

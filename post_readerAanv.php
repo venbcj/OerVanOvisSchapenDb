@@ -1,3 +1,6 @@
+<?php
+
+/*
 <!-- 11-8-2014 : veld type gewijzigd in fase 
  23-11-2014 include Maak_Request toegevoegd 
  9-11-2016 controle op bestaand levensnummer toegevoegd ( isset(schaapId) ) 
@@ -17,19 +20,7 @@
 17-04-2025 : conedring impReader (Biocontrol) verwijderd 
 13-07-2025 : Opslaan ubn in tblStal toegevoegd 
 -->
-
-<?php
-/* post_readerGeb.php toegepast in :
-    - InsUitval.php */
-    
-/*
-include url
-
-include passw
- */
-//include connect_db //Deze include zit ook in login.php maar binnen InsAanvoer.php is include login nog niet gepasseerd. Hier laten staan dus.
-
-
+*/
 
 $array = array();
 
@@ -39,11 +30,6 @@ foreach($_POST as $key => $value) {
 }
 foreach($array as $recId => $id) {
     if (!$recId) continue;
-
-// Id ophalen
-//echo $recId.'<br>'; 
-// Einde Id ophalen
-    
  unset($fldRas);
  unset($fldSekse);
  unset($fldFase);
@@ -89,38 +75,20 @@ if ($key == 'kzlHerk' && !empty($value)) {  $fldHerk = $value; }
                                     }
 
 // (extra) controle of readerregel reeds is verwerkt. Voor als de pagina 2x wordt verstuurd bij fouten op de pagina
-unset($verwerkt);
-$zoek_readerRegel_verwerkt = mysqli_query($db,"
-SELECT verwerkt
-FROM impAgrident
-WHERE Id = '".mysqli_real_escape_string($db,$recId)."'
-") or die (mysqli_error($db)); 
+ $impagrident_gateway = new ImpAgridentGateway();
+ $schaap_gateway = new SchaapGateway();
+ $stal_gateway = new StalGateway();
+ $historie_gateway = new HistorieGateway();
+ $bezet_gateway = new BezetGateway();
+ $volwas_gateway = new VolwasGateway();
+ $verwerkt = $impagrident_gateway->zoek_readerregel_verwerkt($recId);
 
-while($verw = mysqli_fetch_array($zoek_readerRegel_verwerkt))
-{ $verwerkt = $verw['verwerkt']; }
-// Einde (extra) controle of readerregel reeds is verwerkt.
-
-if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt)) { // isset($verwerkt) is een extra controle om dubbele invoer te voorkomen
+if ($fldKies == 1 && $fldDel == 0 && !$verwerkt) { // $verwerkt is een extra controle om dubbele invoer te voorkomen
 
 // Levensnummer ophalen
-$zoek_levnr_reader = mysqli_query($db,"
-SELECT levensnummer levnr_aanv, transponder
-FROM impAgrident
-WHERE Id = '".mysqli_real_escape_string($db,$recId)."'
-") or die (mysqli_error($db));
-
-while ( $zlr = mysqli_fetch_assoc($zoek_levnr_reader)) {
-    $levnr_rd = $zlr['levnr_aanv']; 
-    $transp_rd = $zlr['transponder']; }
-
-$zoek_schaapId = mysqli_query($db,"
-SELECT schaapId
-FROM tblSchaap
-WHERE levensnummer = '".mysqli_real_escape_string($db,$levnr_rd)."'
-") or die (mysqli_error($db));
-    while ( $zs = mysqli_fetch_assoc($zoek_schaapId)) { $schaapId = $zs['schaapId']; }
-
-
+    [$levnr_rd, $transp_rd] = $impagrident_gateway->zoek_levnr_reader($recId);
+$schaapId = $schaap_gateway->zoek_schaapid($levnr_rd);
+// TODO: ... en hier doe je niets mee.
 
 // CONTROLE op alle verplichten velden bij AANVOER MOEDER- EN VADERDIEREN
 if (isset($flddag) && isset($fldUbn) && isset($levnr_rd) && (
@@ -129,107 +97,44 @@ if (isset($flddag) && isset($fldUbn) && isset($levnr_rd) && (
     (isset($levnr_db))
     ) )
 {
-
-$zoek_schaapId = mysqli_query($db,"
-SELECT schaapId, transponder
-FROM tblSchaap
-WHERE levensnummer = '".mysqli_real_escape_string($db,$levnr_rd)."'
-") or die (mysqli_error($db));
-    while ( $sId = mysqli_fetch_assoc($zoek_schaapId)) { 
-        $schaapId = $sId['schaapId']; 
-        $transp_db = $sId['transponder']; }
-
+    [$schaapId, $transp_db] = $schaap_gateway->zoek_schaapid_transponder($levnr_rd);
 if(!isset($schaapId)) {
-// Insert tblSchapen
-    $insert_tblSchaap = "INSERT INTO tblSchaap set levensnummer = '".mysqli_real_escape_string($db,$levnr_rd)."', rasId = " . db_null_input($fldRas) . ", geslacht = " . db_null_input($fldSekse);    
-/*echo $insert_tblSchaap.'<br>';*/        mysqli_query($db,$insert_tblSchaap) or die (mysqli_error($db));    
-// Einde Insert tblSchapen
-
-$zoek_schaapId = mysqli_query($db,"
-SELECT schaapId
-FROM tblSchaap
-WHERE levensnummer = '".mysqli_real_escape_string($db,$levnr_rd)."'
-") or die (mysqli_error($db));
-    while ( $sId = mysqli_fetch_assoc ($zoek_schaapId)) { $schaapId = $sId['schaapId']; }
+    $schaapId = $schaap_gateway->maak_minimaal_schaap($levnr_rd, $fldRas, $fldSekse);
 }
-
-// Transpondernummer inlezen
 if(!isset($transp_db) && isset($transp_rd)) {
-    $update_tblSchaap = "UPDATE tblSchaap set transponder = '".mysqli_real_escape_string($db,$transp_rd)."' WHERE schaapId = '".mysqli_real_escape_string($db,$schaapId)."' ";    
-/*echo $update_tblSchaap.'<br>';*/        mysqli_query($db,$update_tblSchaap) or die (mysqli_error($db));    
+    $schaap_gateway->updateTransponder($schaapId, $transp_rd);
 }
-// Einde Transpondernummer inlezen
 
-// Insert tblStal
-    $insert_tblStal= "INSERT INTO tblStal set lidId = '".mysqli_real_escape_string($db,$lidId)."', ubnId = '".mysqli_real_escape_string($db,$fldUbn)."', schaapId = '".mysqli_real_escape_string($db,$schaapId)."', kleur = " . db_null_input($fldKleur) . ", halsnr = " . db_null_input($fldHnr) . ", rel_herk = " . db_null_input($fldHerk) . " ";
+$stalId = $stal_gateway->insert($lidId, $schaapId, $fldHerk, $fldUbn, $fldKleur, $fldHnr, null);
 
-/*echo $insert_tblStal.'<br>';*/        mysqli_query($db,$insert_tblStal) or die (mysqli_error($db));
-// Einde Insert tblStal
-
-// Insert tblHistorie
-$zoek_stalId = mysqli_query($db,"
-SELECT stalId
-FROM tblStal
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and isnull(rel_best)
-") or die (mysqli_error($db));
-        while ( $stId = mysqli_fetch_assoc ($zoek_stalId)) { $stalId = $stId['stalId']; }
-
-  // Insert geboorte datum
 if(isset($fldGebdag)) {
-    $insert_tblHistorie_geboren = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$fldGebdag)."', actId = 1 ";
-/*echo $insert_tblHistorie_geboren.'<br>';*/        mysqli_query($db,$insert_tblHistorie_geboren) or die (mysqli_error($db));
+$historie_gateway->insert_geboorte($stalId, $fldGebdag);
 }
-  // Einde Insert geboorte datum
   // Insert aanvoer    
-    $insert_tblHistorie_aank = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$flddag)."', kg = " . db_null_input($fldKg) . ", actId = 2 ";
-/*echo $insert_tblHistorie_aank.'<br>';*/        mysqli_query($db,$insert_tblHistorie_aank) or die (mysqli_error($db));
-
+$hisId_aanv = $historie_gateway->herstel_invoeren($stalId, $flddag, $fldKg, 2);
 if(isset($fldHok)) { 
-$zoek_hisId = mysqli_query($db,"
-SELECT hisId
-FROM tblHistorie
-WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."' and actId = 2
-") or die (mysqli_error($db));
-    while ( $aanvId = mysqli_fetch_assoc ($zoek_hisId)) { $hisId_aanv = $aanvId['hisId']; }
-
-    $insert_tblBezet = "INSERT INTO tblBezet set hisId = '".mysqli_real_escape_string($db,$hisId_aanv)."', hokId = '".mysqli_real_escape_string($db,$fldHok)."' ";
-/*echo $insert_tblBezet.'<br>';*/        mysqli_query($db,$insert_tblBezet) or die (mysqli_error($db));
+$bezet_gateway->insert($hisId_aanv, $fldHok);
     }
-  // Einde Insert aanvoer
 
   // Insert aanwas
-$zoek_aanwas_hisId = mysqli_query($db,"
-SELECT hisId
-FROM tblHistorie h
- join tblStal st on (h.stalId = st.stalId)
-WHERE st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and actId = 3 and h.skip = 0
-") or die (mysqli_error($db));
-    while ( $haId = mysqli_fetch_assoc ($zoek_aanwas_hisId)) { $aanwId = $haId['hisId']; }
-
+$aanwId = $historie_gateway->zoek_aanwasdatum($schaapId)[0];
 if(!isset($aanwId)) {    
-    $insert_tblHistorie_aanw = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$flddag)."', actId = 3 ";
-/*echo $insert_tblHistorie_aanw.'<br>';*/        mysqli_query($db,$insert_tblHistorie_aanw) or die (mysqli_error($db));
+    $historie_gateway->insert_afvoer_act($stalId, $flddag, 3);
 }
   // Einde Insert aanwas
-
 // Einde Insert tblHistorie
 
-    $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' ";
+$impagrident_gateway->set_verwerkt($recId);
 
-/*echo $updateReader.'<br>';*/        mysqli_query($db,$updateReader) or die (mysqli_error($db));
-
-if ($modmeld == 1 ) {    // Insert tblMeldingen
-$zoek_hisId = mysqli_query($db,"
-SELECT hisId
-FROM tblHistorie
-WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."' and actId = 2
-") or die (mysqli_error($db));
-        while ( $hId = mysqli_fetch_assoc ($zoek_hisId)) { $hisId = $hId['hisId']; }
+if ($modmeld == 1 ) {
+    // Insert tblMeldingen
+    $hisId = $historie_gateway->zoek_actId($stalId, 2);
 $Melding = 'AAN';
 include "maak_request.php";
     // Einde Insert tblMeldingen    
 }        
-unset($schaapId); }
+unset($schaapId);
+}
 // EINDE CONTROLE op alle verplichten velden bij AANVOER MOEDER- EN VADERDIEREN
 
 // CONTROLE op alle verplichten velden bij AANVOER LAMMEREN
@@ -238,69 +143,22 @@ if (
  ( ($modtech == 1 && isset($fldHok)) || ($modtech == 0) )
 )
 {
-$zoek_schaapId = mysqli_query($db,"
-SELECT schaapId
-FROM tblSchaap
-WHERE levensnummer = '".mysqli_real_escape_string($db,$levnr_rd)."'
-") or die (mysqli_error($db));
-    while ( $sId = mysqli_fetch_assoc($zoek_schaapId)) { $schaapId = $sId['schaapId']; /*echo $schaapId.'<br>';*/ }
+    $schaapId = $schaap_gateway->zoek_schaapid($levnr_rd);
     
 if(!isset($schaapId)) { // Als lam nog niet bestaat in tblSchaap
-    if($modtech == 1) /*{ $volwId = 'NULL'; $fldKg = 'NULL'; }
-    else*/ {
-    $insert_tblVolwas = "INSERT INTO tblVolwas set readId = '".mysqli_real_escape_string($db,$recId)."', mdrId = " . db_null_input($fldMoeder) . " ";/*$recId als Relatie met impReader. Handig om te weten */
-/*echo $insert_tblVolwas.'<br>';*/        mysqli_query($db,$insert_tblVolwas) or die (mysqli_error($db));    
-
-$zoek_volwId = mysqli_query($db,"
-SELECT volwId
-FROM tblVolwas
-WHERE readId = '".mysqli_real_escape_string($db,$recId)."'
-") or die (mysqli_error($db));
-    while ( $vId = mysqli_fetch_assoc($zoek_volwId)) { $volwId = $vId['volwId']; }
+    if($modtech == 1) {
+        $volwId = $volwas_gateway->insert($recId, $fldMoeder);
     }
-    
-    $insert_tblSchaap = "INSERT INTO tblSchaap set levensnummer = '".mysqli_real_escape_string($db,$levnr_rd)."', rasId = " . db_null_input($fldRas) . ", geslacht = " . db_null_input($fldSekse) . ", volwId = '".mysqli_real_escape_string($db,$volwId)."' ";    
-/*echo $insert_tblSchaap.'<br>';*/        mysqli_query($db,$insert_tblSchaap) or die (mysqli_error($db));    
-     
-$zoek_schaapId = mysqli_query($db,"
-SELECT schaapId
-FROM tblSchaap
-WHERE levensnummer = '".mysqli_real_escape_string($db,$levnr_rd)."'
-") or die (mysqli_error($db));
-        while ( $sId = mysqli_fetch_assoc ($zoek_schaapId)) { $schaapId = $sId['schaapId']; }
-}
-    
-    $insert_tblStal = "INSERT INTO tblStal set lidId = '".mysqli_real_escape_string($db,$lidId)."', ubnId = '".mysqli_real_escape_string($db,$fldUbn)."', schaapId = '".mysqli_real_escape_string($db,$schaapId)."', rel_herk = " . db_null_input($fldHerk) . " ";
-/*echo 'lam '.$insert_tblStal.'<br>';*/        mysqli_query($db,$insert_tblStal) or die (mysqli_error($db));
-
-$zoek_stalId = mysqli_query($db,"
-SELECT stalId
-FROM tblStal
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and isnull(rel_best)
-") or die (mysqli_error($db));
-        while ( $stId = mysqli_fetch_assoc ($zoek_stalId)) { $stalId = $stId['stalId']; }
-    
-    $insert_tblHistorie_aank = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$flddag)."', kg = " . db_null_input($fldKg) . ", actId = 2 ";
-/*echo $insert_tblHistorie_aank.'<br>';*/        mysqli_query($db,$insert_tblHistorie_aank) or die (mysqli_error($db));
-
+        $schaapId = $schaap_gateway->maak_schaap($levnr_rd, $fldRas, $fldSekse, $volwId, null, null);
+    }
+    $stalId = $stal_gateway->insert($lidId, $fldUbn, $schaapId, $fldHerk);
 // $zoek_hisId is voor tblBezet én tblMelding
-$zoek_hisId = mysqli_query($db,"
-SELECT hisId
-FROM tblHistorie
-WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."' and actId = 2
-") or die (mysqli_error($db));
-        while ( $hId = mysqli_fetch_assoc ($zoek_hisId)) { $hisId = $hId['hisId']; }
-        
+$hisId = $historie_gateway->herstel_invoeren($stalId, $flddag, $fldKg, 2);    
 if($modtech == 1) {
-    
-    $insert_tblBezet = "INSERT INTO tblBezet set hokId = '".mysqli_real_escape_string($db,$fldHok)."', hisId = '".mysqli_real_escape_string($db,$hisId)."' " ;
-/*echo $insert_tblBezet.'<br>';*/        mysqli_query($db,$insert_tblBezet) or die (mysqli_error($db));    
-// Einde Insert tblBezet            
+$bezet_gateway->insert($hisId, $fldHok);    
     }
 
-    $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' ";
-
-/*echo $updateReader.'<br>';*/        mysqli_query($db,$updateReader) or die (mysqli_error($db));
+$impagrident_gateway->set_verwerkt($recId);
 
 if ($modmeld == 1 ) {        // Insert tblMeldingen
 $Melding = 'AAN';
@@ -311,24 +169,9 @@ unset($schaapId);
 unset($periId);    
 }
 // EINDE CONTROLE op alle verplichten velden bij AANVOER LAMMEREN
-
-    
     } // Einde if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt))                    
-
-    
   if($fldKies == 0 && $fldDel == 1) {    
-    
-    $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' " ;
-
-/*echo $updateReader.'<br>';*/        mysqli_query($db,$updateReader) or die (mysqli_error($db));
+$impagrident_gateway->set_verwerkt($recId);
     }
-
-
-
-
-
 unset($levnr_rd);
     } // Einde foreach($array as $recId => $id)
-?>
-                    
-    

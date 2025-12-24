@@ -292,6 +292,16 @@ SQL
         );
     }
 
+    public function insert($recId, $mdrId) {
+        $this->run_query(
+            <<<SQL
+INSERT INTO tblVolwas set readId = :recId, mdrId = :mdrId
+SQL
+        , [[':recId', $recId, self::INT], [':mdrId', $mdrId, self::INT]]
+        );
+        return $this->db->insert_id;
+    }
+
     public function zoek_recentste_id($mdrId) {
         return $this->first_field(
             <<<SQL

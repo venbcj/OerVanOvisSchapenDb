@@ -15,6 +15,18 @@ SQL
         );
     }
 
+    public function zoek_schaapid_transponder($levnr) {
+        return $this->first_row(
+            <<<SQL
+SELECT schaapId, transponder
+FROM tblSchaap
+WHERE levensnummer = :levnr
+SQL
+        , [[':levnr', $levnr]]
+            , [null, null]
+        );
+    }
+
     public function zoek_stalid($lidId) {
         return $this->first_field(
             <<<SQL
@@ -138,6 +150,20 @@ SQL
             [
                 [':levensnummer', $levensnummer],
                 [':geslacht', $geslacht]
+            ]
+        );
+    }
+
+    public function updateTransponder($schaapId, $transponder) {
+        $this->run_query(
+            <<<SQL
+UPDATE tblSchaap SET transponder = :transponder
+        WHERE schaapId = :schaapId
+SQL
+        ,
+            [
+                [':schaapId', $schaapId],
+                [':transponder', $transponder]
             ]
         );
     }
@@ -3241,11 +3267,11 @@ SQL
         return [null, null];
     }
 
-    public function maak_schaap($ubn, $rasId, $geslacht, $volwId, $momId, $redId) {
+    public function maak_schaap($levnr, $rasId, $geslacht, $volwId, $momId, $redId) {
         $this->run_query(
             <<<SQL
 INSERT INTO tblSchaap SET
- levensnummer = :ubn,
+ levensnummer = :levnr,
  rasId = :rasId,
  geslacht = :geslacht,
  volwId = :volwId,
@@ -3254,7 +3280,7 @@ INSERT INTO tblSchaap SET
 SQL
         ,
             [
-                [':ubn', $ubn],
+                [':levnr', $levnr],
                 [':rasId', $rasId],
                 [':geslacht', $geslacht],
                 [':volwId', $volwId],
@@ -3262,6 +3288,23 @@ SQL
                 [':redId', $redId],
             ]
         );
+        return $this->db->insert_id;
+    }
+
+    public function maak_minimaal_schaap($levnr, $ras, $sekse) {
+        $this->run_query(
+            <<<SQL
+INSERT INTO tblSchaap set levensnummer = :levnr
+ rasId = :rasId
+ geslacht = :sekse
+SQL
+        , [
+            [':levnr', $levnr],
+            [':rasId', $ras, self::INT],
+            [':sekse', $sekse]
+        ]
+        );
+        return $this->db->insert_id;
     }
 
     public function wis_levensnummer($ubn) {

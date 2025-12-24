@@ -190,6 +190,7 @@ datum = '".$this->db->real_escape_string($datum)."',
 kg = ".db_null_input($kg).",
 actId = '".$this->db->real_escape_string($actId)."' "
 );
+    return $this->db->insert_id;
 }
 
 public function medicijn_invoeren($stalId, $datum) {
@@ -1061,6 +1062,18 @@ FROM tblHistorie h
 WHERE h.actId = 12 and h.skip = 0 and date_format(h.datum,'%Y%u') >= :van and date_format(h.datum,'%Y%u') <= :tot and st.lidId = :lidId
 SQL
     , [[':lidId', $lidId, self::INT], [':van', $van], [':tot', $tot]]
+    );
+}
+
+public function zoek_actId($stalId, $actId) {
+    // TODO: is deze WHERE volledig? Er zijn toch wel meer regels met actid=2?
+    return $this->first_field(
+        <<<SQL
+SELECT hisId
+FROM tblHistorie
+WHERE stalId = :stalId and actId = :actId
+SQL
+    , [[':stalId', $stalId, self::INT], [':actId', $actId, self::INT]]
     );
 }
 

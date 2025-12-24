@@ -172,13 +172,22 @@ WHERE hisId = :hisId
 SQL;
     }
 
-    public function insert($lidId, $schaapId, $rel_herk) {
-        $this->db->query("INSERT INTO tblStal set lidId = '" . $this->db->real_escape_string($lidId) . "',
-        schaapId = '" . $this->db->real_escape_string($schaapId) . "',
-        rel_herk = '" . $this->db->real_escape_string($rel_herk) . "' ");
+    public function insert($lidId, $ubnId, $schaapId, $rel_herk) {
+        $this->run_query(
+            <<<SQL
+INSERT INTO tblStal set lidId = :lidId, ubnId = :ubnId, schaapId = :schaapId, rel_herk = :rel_herk
+SQL
+        , [
+            [':lidId', $lidId, self::INT],
+            [':ubnId', $ubnId, self::INT],
+            [':schaapId', $schaapId, self::INT],
+            [':rel_herk', $rel_herk],
+        ]
+        );
+        return $this->db->insert_id;
     }
 
-    public function insert_uitgebreid() {
+    public function insert_uitgebreid($lidId, $schaapId, $rel_herk, $ubnId, $kleur, $halsnr, $rel_best) {
         $this->run_query(<<<SQL
 INSERT INTO tblStal SET
     lidId = :lidId,
@@ -200,6 +209,7 @@ SQL
                 [':rel_best', $rel_best],
             ]
         );
+        return $this->db->insert_id;
     }
 
     public function zoek_laatste_stal($lidId, $schaapId) {

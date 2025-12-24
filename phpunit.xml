@@ -23,7 +23,7 @@
         <directory>tests</directory>
         <directory>vendor</directory>
       </exclude>
-      <directory>.</directory>
+      <file>./post_readerAanv.php</file>
     </whitelist>
   </filter>
 </phpunit>
