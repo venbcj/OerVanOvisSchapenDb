@@ -141,4 +141,26 @@ SQL
     );
 }
 
+public function zoek_rubuId($lidId) {
+    return $this->run_query(
+        <<<SQL
+SELECT rubuId
+FROM tblRubriekuser
+WHERE lidId = :lidId
+SQL
+    , [[':lidId', $lidId, self::INT]]
+    );
+}
+
+public function zoek_rubriek_verkooplammeren($lidId) {
+    return $this->first_field(
+        <<<SQL
+SELECT rubuId
+FROM tblRubriekuser
+WHERE rubId = 39 and lidId = :lidId
+SQL
+    , [[':lidId', $lidId, self::INT]]
+    );
+}
+
 }

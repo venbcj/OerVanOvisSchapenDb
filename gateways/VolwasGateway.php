@@ -631,4 +631,45 @@ SQL
         );
     }
 
+    public function zoek_dekkingen_voor_week1($lidId, $jaar, $datum) {
+        return $this->first_field(
+            <<<SQL
+SELECT count(volwId) aant
+FROM tblVolwas v
+ join tblHistorie h on (v.hisId = h.hisId)
+ join tblStal st on (h.stalId = st.stalId)
+WHERE h.skip = 0 and st.lidId = :lidId and year(h.datum) = :jaar and h.datum < :datum
+SQL
+        , [[':lidId', $lidId, self::INT], [':jaar', $jaar], [':datum', $datum]]
+        );
+    }
+
+    public function zoek_aantal_dekkingen($lidId, $jaarweek) {
+        return $this->first_field(
+            <<<SQL
+SELECT count(v.volwId) aant
+FROM tblVolwas v 
+ join tblHistorie h on (v.hisId = h.hisId)
+ join tblStal st on (h.stalId = st.stalId)
+WHERE h.skip = 0
+ and date_format(h.datum,'%Y%u') = :jaarweek
+ and st.lidId = :lidId
+SQL
+        , [[':lidId', $lidId, self::INT], [':jaarweek', $jaarweek]]
+        );
+    }
+
+    public function zoek_aantal_dekkingen_per_maand($lidId, $van, $tot) {
+        return $this->first_field(
+            <<<SQL
+SELECT count(v.volwId) aant
+FROM tblVolwas v 
+ join tblHistorie h on (v.hisId = h.hisId)
+ join tblStal st on (h.stalId = st.stalId)
+WHERE h.skip = 0 and date_format(h.datum,'%Y%u') >= :van and date_format(h.datum,'%Y%u') <= :tot and st.lidId = :lidId
+SQL
+        , [[':lidId', $lidId, self::INT], [':van', $van], [':tot', $tot]]
+        );
+    }
+
 }

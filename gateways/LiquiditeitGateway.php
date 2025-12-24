@@ -55,6 +55,25 @@ SQL
         );
     }
 
+    public function update_datum_bedrag($lidId, $day, $bedrag) {
+        $this->run_query(
+            <<<SQL
+UPDATE tblLiquiditeit li
+join tblRubriekuser ru on (li.rubuId = ru.rubuId)
+join tblRubriek r on (ru.rubId = r.rubId)
+SET bedrag = :bedrag
+WHERE ru.lidId = :lidId
+ and r.rubId = 39
+ and datum = :day
+SQL
+        , [
+            [':lidId', $lidId, self::INT],
+            [':day', $day, self::DATE],
+            [':bedrag', $bedrag]
+        ]
+        );
+    }
+
     public function insert($rub_user, $datum) {
         $this->run_query(
             <<<SQL
@@ -272,6 +291,19 @@ SQL
             [':jaar', $jaar],
             [':maand', $maand],
         ]
+        );
+    }
+
+    public function deklijst_zoek_jaar($lidId, $jaar) {
+        return $this->first_field(
+            <<<SQL
+SELECT count(*) aant
+FROM tblLiquiditeit li
+ join tblRubriekuser ru on (li.rubuId = ru.rubuId)
+WHERE ru.lidId = :lidId
+ and year(li.datum) = :jaar
+SQL
+        , [[':lidId', $lidId, self::INT], [':jaar', $jaar]]
         );
     }
 

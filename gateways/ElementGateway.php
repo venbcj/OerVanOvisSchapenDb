@@ -21,4 +21,43 @@ SQL
         );
     }
 
+    public function zoek_prijs_lam($lidId) {
+        return $this->first_row(
+            <<<SQL
+SELECT e.element, eu.waarde
+FROM tblElement e
+ join tblElementuser eu on (e.elemId = eu.elemId)
+WHERE eu.lidId = :lidId and e.elemId = 10
+SQL
+        , [[':lidId', $lidId, self::INT]]
+            , [null, null]
+        );
+    }
+
+    public function zoek_worpgrootte($lidId) {
+        return $this->first_row(
+            <<<SQL
+SELECT e.element, eu.waarde
+FROM tblElement e
+ join tblElementuser eu on (e.elemId = eu.elemId)
+WHERE eu.lidId = :lidId and e.elemId = 19
+SQL
+        , [[':lidId', $lidId, self::INT]]
+            , [null, null]
+        );
+    }
+
+    public function zoek_sterfte($lidId) {
+        return $this->first_row(
+            <<<SQL
+SELECT e.element, eu.waarde
+FROM tblElement e
+ join tblElementuser eu on (e.elemId = eu.elemId)
+WHERE eu.lidId = :lidId and e.elemId = 12
+SQL
+        , [[':lidId', $lidId, self::INT]]
+            , [null, null]
+        );
+    }
+
 }

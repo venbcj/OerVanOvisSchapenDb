@@ -43,4 +43,29 @@ SQL
         );
     }
 
+    public function jaaropbrengst($rubuId, $jaar) {
+        return $this->first_field(
+            <<<SQL
+SELECT sum(bedrag) bedrag 
+FROM tblOpgaaf o
+WHERE rubuId = :rubuId and date_format(datum,'%Y') = :jaar
+SQL
+        , [
+            [':rubuId', $rubuId, self::INT],
+            [':jaar', $jaar]
+        ]
+        );
+    }
+
+    public function zoek_afleverbedrag_per_maand($rubuId, $van, $tot) {
+        return $this->first_field(
+            <<<SQL
+SELECT sum(bedrag) bedrag 
+FROM tblOpgaaf o
+WHERE rubuId = :rubuId and date_format(datum,'%Y%u') >= :van and date_format(datum,'%Y%u') <= :tot
+SQL
+        , [[':rubuId', $rubuId, self::INT], [':van', $van], [':tot', $tot]]
+        );
+    }
+
 }

@@ -12,6 +12,17 @@ class HokGateway extends Gateway {
         return $this->first_field("SELECT hoknr FROM tblHok WHERE hokId = ".((int)$hokId));
     }
 
+    public function is_aanwezig($lidId, $hok) {
+        return 0 < $this->first_field(
+            <<<SQL
+SELECT count(*)
+FROM tblHok
+WHERE lidId = :lidId and hoknr = :hoknr
+SQL
+        , [[':lidId', $lidId, self::INT], [':hoknr', $hok]]
+        );
+    }
+
     public function kzlHok($lidId) {
         return $this->run_query(
             <<<SQL
@@ -126,6 +137,18 @@ public function zoek_hok($schaapId) {
     while( $hk = $zoek_hok->fetch_assoc()) { $hok = $hk['hoknr']; }
      return $hok ?? null;
         }
+
+public function zoek_lid_hok($lidId) {
+    return $this->run_query(
+        <<<SQL
+SELECT hokId
+FROM tblHok
+WHERE lidId = :lidId
+ORDER BY sort, hokId
+SQL
+    , [[':lidId', $lidId, self::INT]]
+    );
+}
 
 public function nummers_bij_lid($lidId) {
     return $this->run_query(
@@ -332,5 +355,65 @@ SQL
         , [[':lidId', $lidId, self::INT]]
         );
     }
+
+public function insert($lidId, $hoknr, $sort) {
+    $this->run_query(
+        <<<SQL
+INSERT INTO tblHok 
+SET lidId = :lidId,
+  hoknr = :hoknr,
+  sort = :sort
+SQL
+    , [
+        [':lidId', $lidId, self::INT],
+        [':hoknr', $hoknr],
+        [':sort', $sort],
+    ]
+    );
+}
+
+public function countHokRelatiesAlle($lidId, $actief) {
+    return $this->first_field(
+        <<<SQL
+SELECT count(h.hokId) aant
+FROM tblHok h
+ left join tblBezet b on (h.hokId = b.hokId)
+ left join tblPeriode p on (h.hokId = p.hokId)
+WHERE h.lidId = :lidId
+ and actief > :actief
+ and isnull(b.hokId)
+ and isnull(p.hokId)
+SQL
+    , [[':lidId', $lidId, self::INT], [':actief', $actief]]
+    );
+}
+
+public function zoekRelatiesAlle($lidId, $actief) {
+    return $this->run_query(
+        <<<SQL
+SELECT hokId, hoknr, scan, sort, actief
+FROM tblHok
+WHERE lidId = :lidId
+ and actief > :actief
+ORDER BY coalesce(sort, hoknr)
+SQL
+    , [[':lidId', $lidId, self::INT], [':actief', $actief]]
+    );
+}
+
+public function zoek_relatie($hokId) {
+    return $this->first_field(
+        <<<SQL
+SELECT h.hokId
+FROM tblHok h
+ left join tblBezet b on (h.hokId = b.hokId)
+ left join tblPeriode p on (h.hokId = p.hokId)
+WHERE h.hokId = :hokId
+ and isnull(b.hokId)
+ and isnull(p.hokId)
+SQL
+    , [[':hokId', $hokId, self::INT]]
+    );
+}
 
 }

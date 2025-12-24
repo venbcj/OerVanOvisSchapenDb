@@ -4722,4 +4722,20 @@ SQL
         );
     }
 
+    public function jaarworp($lidId, $jaar) {
+        return $this->first_field(
+            <<<SQL
+SELECT count(distinct s.volwId) aant
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join tblHistorie h on (h.stalId = st.stalId)
+WHERE h.actId = 1
+ and h.skip = 0
+ and date_format(h.datum,'%Y') = :jaar
+ and st.lidId = :lidId
+SQL
+        , [[':lidId', $lidId, self::INT], [':jaar', $jaar]]
+        );
+    }
+
 }

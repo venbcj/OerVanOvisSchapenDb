@@ -516,4 +516,34 @@ SQL
         );
     }
 
+    public function jaargeboortes($lidId, $jaar) {
+        return $this->first_field(
+            <<<SQL
+SELECT count(st.schaapId) aant
+FROM tblStal st
+ join tblHistorie h on (h.stalId = st.stalId)
+WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y') = :jaar and st.lidId = :lidId
+SQL
+        , [[':lidId', $lidId, self::INT], [':jaar', $jaar]]
+        );
+    }
+
+    public function jaarsterfte($lidId, $jaar) {
+        return $this->first_field(
+            <<<SQL
+SELECT count(st.schaapId) aant
+FROM tblStal st
+ join tblHistorie h on (h.stalId = st.stalId)
+ join (
+     SELECT st.schaapId
+    FROM tblStal st
+     join tblHistorie h on (h.stalId = st.stalId)
+    WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y') = :jaar and st.lidId = :lidId
+ ) geb on (geb.schaapId = st.schaapId)
+WHERE h.actId = 14 and h.skip = 0 and date_format(h.datum,'%Y') = :jaar and st.lidId = :lidId
+SQL
+        , [[':lidId', $lidId, self::INT], [':jaar', $jaar]]
+        );
+    }
+
 }

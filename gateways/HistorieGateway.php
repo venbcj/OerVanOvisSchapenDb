@@ -974,4 +974,94 @@ SQL
     );
 }
 
+public function zoek_aantal_afleveren_per_jaar($lidId, $jaar) {
+    return $this->first_field(
+        <<<SQL
+SELECT count(h.hisId) aant
+FROM tblHistorie h
+ join tblStal st on (h.stalId = st.stalId)
+WHERE h.actId = 12
+ and h.skip = 0
+ and date_format(h.datum,'%Y') = :jaar
+ and st.lidId = :lidId
+SQL
+    , [
+        [':lidId', $lidId, self::INT],
+        [':jaar', $jaar],
+    ]
+    );
+}
+
+public function zoek_aantal_lammeren($lidId, $jaarweek) {
+    return $this->first_field(
+        <<<SQL
+SELECT count(h.hisId) aant
+FROM tblHistorie h
+ join tblStal st on (h.stalId = st.stalId)
+WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y%u') = :jaarweek and st.lidId = :lidId
+SQL
+    , [[':lidId', $lidId, self::INT], [':jaarweek', $jaarweek]]
+    );
+}
+
+public function zoek_aantal_afvoer($lidId, $jaarweek) {
+    return $this->first_field(
+        <<<SQL
+SELECT count(h.hisId) aant
+FROM tblHistorie h
+ join tblStal st on (h.stalId = st.stalId)
+WHERE h.actId = 12 and h.skip = 0 and date_format(h.datum,'%Y%u') = :jaarweek and st.lidId = :lidId
+SQL
+    , [[':lidId', $lidId, self::INT], [':jaarweek', $jaarweek]]
+    );
+}
+
+public function zoek_aantal_geboortes_per_week($lidId, $jaarweek) {
+    return $this->first_field(
+        <<<SQL
+SELECT count(h.hisId) aant
+FROM tblHistorie h
+ join tblStal st on (h.stalId = st.stalId)
+WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y%u') = :jaarweek and st.lidId = :lidId
+SQL
+    , [[':lidId', $lidId, self::INT], [':jaarweek', $jaarweek]]
+    );
+}
+
+public function zoek_aantal_afvoer_per_week($lidId, $jaarweek) {
+return $this->first_field(
+    <<<SQL
+SELECT count(h.hisId) aant
+FROM tblHistorie h
+ join tblStal st on (h.stalId = st.stalId)
+WHERE h.actId = 12 and h.skip = 0 and date_format(h.datum,'%Y%u') = :jaarweek and st.lidId = :lidId
+SQL
+, [[':lidId', $lidId, self::INT], [':jaarweek', $jaarweek]]
+);
+}
+
+public function zoek_aantal_lammeren_per_maand($lidId, $van, $tot) {
+    return $this->first_field(
+        <<<SQL
+SELECT count(h.hisId) aant
+FROM tblHistorie h
+ join tblStal st on (h.stalId = st.stalId)
+WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y%u') >= :van and date_format(h.datum,'%Y%u') <= :tot and st.lidId = :lidId
+SQL
+    , [[':lidId', $lidId, self::INT], [':van', $van], [':tot', $tot]]
+    );
+}
+
+public function zoek_aantal_afleveren_per_maand($lidId, $van, $tot) {
+    return $this->first_field(
+        <<<SQL
+SELECT count(h.hisId) aant
+FROM tblHistorie h
+ join tblStal st on (h.stalId = st.stalId)
+WHERE h.actId = 12 and h.skip = 0 and date_format(h.datum,'%Y%u') >= :van and date_format(h.datum,'%Y%u') <= :tot and st.lidId = :lidId
+SQL
+    , [[':lidId', $lidId, self::INT], [':van', $van], [':tot', $tot]]
+    );
+}
+
 }

@@ -1290,4 +1290,168 @@ SQL
     );
 }
 
+public function zoek_hok_ingebruik_geb($lidId) {
+    return $this->run_query(
+        <<<SQL
+SELECT ho.hokId, ho.hoknr
+FROM tblBezet b
+ join tblHok ho on (b.hokId = ho.hokId)
+ join tblHistorie h on (b.hisId = h.hisId)
+ join tblStal st on (st.stalId = h.stalId)
+ join tblSchaap s on (s.schaapId = st.schaapId)
+ left join tblRas r on (s.rasId = r.rasId)
+ left join 
+ (
+    SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
+    FROM tblBezet b
+     join tblHistorie h1 on (b.hisId = h1.hisId)
+     join tblActie a1 on (a1.actId = h1.actId)
+     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+     join tblActie a2 on (a2.actId = h2.actId)
+     join tblStal st on (h1.stalId = st.stalId)
+    WHERE st.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+    GROUP BY b.bezId, h1.hisId
+ ) uit on (uit.hisv = b.hisId)
+ left join (
+    SELECT st.schaapId
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 4 and h.skip = 0
+ ) spn on (spn.schaapId = st.schaapId)
+ left join (
+    SELECT st.schaapId
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
+ ) prnt on (prnt.schaapId = st.schaapId)
+WHERE st.lidId = :lidId and h.skip = 0 and isnull(uit.bezId) and isnull(spn.schaapId) and isnull(prnt.schaapId)
+GROUP BY ho.hokId, ho.hoknr
+SQL
+    , [[':lidId', $lidId, self::INT]]
+    );
+}
+
+public function zoek_hok_ingebruik_spn($lidId) {
+    return $this->run_query(
+        <<<SQL
+SELECT ho.hokId, ho.hoknr
+FROM tblBezet b
+ join tblHok ho on (b.hokId = ho.hokId)
+ join tblHistorie h on (b.hisId = h.hisId)
+ join tblStal st on (st.stalId = h.stalId)
+ join tblSchaap s on (s.schaapId = st.schaapId)
+ left join tblRas r on (s.rasId = r.rasId)
+ left join 
+ (
+    SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
+    FROM tblBezet b
+     join tblHistorie h1 on (b.hisId = h1.hisId)
+     join tblActie a1 on (a1.actId = h1.actId)
+     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+     join tblActie a2 on (a2.actId = h2.actId)
+     join tblStal st on (h1.stalId = st.stalId)
+    WHERE st.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+    GROUP BY b.bezId, h1.hisId
+ ) uit on (uit.hisv = b.hisId)
+ join (
+    SELECT st.schaapId
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 4 and h.skip = 0
+ ) spn on (spn.schaapId = st.schaapId)
+ left join (
+    SELECT st.schaapId
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
+ ) prnt on (prnt.schaapId = st.schaapId)
+WHERE st.lidId = :lidId and h.skip = 0 and isnull(uit.bezId) and isnull(prnt.schaapId)
+GROUP BY ho.hokId, ho.hoknr
+SQL
+    , [[':lidId', $lidId, self::INT]]
+    );
+}
+
+public function hoklijst_zoek_nu_in_verblijf_geb($hokId) {
+    return $this->run_query(
+        <<<SQL
+SELECT ho.hoknr, count(b.bezId) nu, r.ras, s.geslacht
+FROM tblBezet b
+ join tblHok ho on (b.hokId = ho.hokId)
+ join tblHistorie h on (b.hisId = h.hisId)
+ join tblStal st on (st.stalId = h.stalId)
+ join tblSchaap s on (s.schaapId = st.schaapId)
+ left join tblRas r on (s.rasId = r.rasId)
+ left join 
+ (
+    SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
+    FROM tblBezet b
+     join tblHistorie h1 on (b.hisId = h1.hisId)
+     join tblActie a1 on (a1.actId = h1.actId)
+     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+     join tblActie a2 on (a2.actId = h2.actId)
+     join tblStal st on (h1.stalId = st.stalId)
+    WHERE b.hokId = :hokId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+    GROUP BY b.bezId, h1.hisId
+ ) uit on (uit.hisv = b.hisId)
+ left join (
+    SELECT st.schaapId
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 4 and h.skip = 0
+ ) spn on (spn.schaapId = st.schaapId)
+ left join (
+    SELECT st.schaapId
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
+ ) prnt on (prnt.schaapId = st.schaapId)
+WHERE b.hokId = :hokId and h.skip = 0 and isnull(uit.bezId) and isnull(spn.schaapId) and isnull(prnt.schaapId)
+GROUP BY ho.hoknr, r.ras, s.geslacht
+SQL
+    , [[':hokId', $hokId, self::INT]]
+    );
+}
+
+public function hoklijst_zoek_nu_in_verblijf_spn($hokId) {
+    return $this->run_query(
+        <<<SQL
+SELECT ho.hoknr, count(b.bezId) nu, r.ras, s.geslacht
+FROM tblBezet b
+ join tblHok ho on (b.hokId = ho.hokId)
+ join tblHistorie h on (b.hisId = h.hisId)
+ join tblStal st on (st.stalId = h.stalId)
+ join tblSchaap s on (s.schaapId = st.schaapId)
+ left join tblRas r on (s.rasId = r.rasId)
+ left join 
+ (
+    SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
+    FROM tblBezet b
+     join tblHistorie h1 on (b.hisId = h1.hisId)
+     join tblActie a1 on (a1.actId = h1.actId)
+     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+     join tblActie a2 on (a2.actId = h2.actId)
+     join tblStal st on (h1.stalId = st.stalId)
+    WHERE b.hokId = :hokId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+    GROUP BY b.bezId, h1.hisId
+ ) uit on (uit.hisv = b.hisId)
+ join (
+    SELECT st.schaapId
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 4 and h.skip = 0
+ ) spn on (spn.schaapId = st.schaapId)
+ left join (
+    SELECT st.schaapId
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
+ ) prnt on (prnt.schaapId = st.schaapId)
+WHERE b.hokId = :hokId and h.skip = 0 and isnull(uit.bezId) and isnull(prnt.schaapId)
+GROUP BY ho.hoknr, r.ras, s.geslacht
+SQL
+    , [[':hokId', $hokId, self::INT]]
+    );
+}
+
 }
