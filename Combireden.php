@@ -22,10 +22,10 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 
 <?php 
 if ( isset($_POST['knpSave_d']) || isset($_POST['knpDelete_d']) || isset($_POST['knpSave_p']) || isset($_POST['knpDelete_p']) ) { 
-    
-    if(!isset($fout)) { header("Location: ". Url::getWebroot() ."Combireden.php"); }
+    // @TODO: hoe moet dit nou werken? $fout kan nooit gezet zijn op dit punt.
+    # if(!isset($fout)) { header("Location: ". Url::getWebroot() ."Combireden.php"); }
  }
- else 
+ else $hier_mist_een_brace = true;
 
 $titel = 'Combinaties met redenen';
 $file = "Combireden.php";
@@ -34,6 +34,9 @@ include "login.php"; ?>
             <TD valign = "top" align = "center">
 <?php
 if (Auth::is_logged_in()) { 
+$combireden_gateway = new CombiredenGateway();
+    $artikel_gateway = new ArtikelGateway();
+        $reden_gateway = new RedenGateway();
 
 //***********************************
 // NIEUWE COMBINATIE INLEZEN (PHP)    Zowel combinaties t.b.v. uitval als t.b.v. medicijnen  
@@ -46,13 +49,8 @@ if (isset($_POST['knpInsert_p']))
     { $insScan = $_POST['insScan_p']; $insArtId = $_POST['insPil']; $insRed = $_POST['insReden_p']; $fldTbl = 'p'; $insStdat = $_POST['insStdat']; 
 
 if(!empty($insArtId)) {
-$zoek_stdat = mysqli_query($db,"
-SELECT round(a.stdat) stdat
-FROM tblArtikel a
-WHERE a.artId = ".mysqli_real_escape_string($db,$insArtId)."
-") or die (mysqli_error($db));
-    while ( $row_stdat = mysqli_fetch_assoc($zoek_stdat))  { $dbStdat = $row_stdat['stdat']; }
-    }
+    $dbStdat = $artikel_gateway->zoek_stdat($insArtId);
+}
 } //Einde isset($_POST['knpInsert_p'])) 
 // Variabele t.b.v. de controle query's
 if (empty($insScan)) 
@@ -73,22 +71,8 @@ if (empty($insRed))
      { $fldReden = 'reduId = NULL'; $whereRed = 'ISNULL(reduId)';    }
 else { $fldReden = "reduId = $insRed ";    $whereRed = "reduId = $insRed "; }
 
-$bestaat_combireden_al = mysqli_query($db,"
-SELECT cr.comrId
-FROM tblCombireden cr
-WHERE $whereArtId and $whereStdat and $whereRed and cr.tbl = '$fldTbl'
-GROUP BY cr.artId, cr.reduId
-") or die (mysqli_error($db));
-                $rows = mysqli_num_rows($bestaat_combireden_al);
-    
-$bestaat_scannr_al = mysqli_query($db,"
-SELECT cr.comrId
-FROM tblCombireden cr
- join tblRedenuser ru on (cr.reduId = ru.reduId)
-WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and $whereScan and cr.tbl = '$fldTbl'
-GROUP BY cr.scan
-") or die (mysqli_error($db));
-            $rows_scan = mysqli_num_rows($bestaat_scannr_al);
+$rows = $combireden_gateway->bestaat_reden($whereArtId, $whereStdat, $whereRed, $fldTbl);
+$rows_scan = $combireden_gateway->bestaat_scannr($lidId, $whereScan, $fldTbl);
 
 if(!empty($insArtId) && empty($insStdat) && $fldTbl == 'p') {  $insStdat = $dbStdat; }
 if(!empty($insArtId) && $fldTbl == 'd')                     {  $insStdat = 'NULL'; }
@@ -100,9 +84,7 @@ if(!empty($insArtId) && $fldTbl == 'd')                     {  $insStdat = 'NULL
     else 
     {
         if(empty($insRed)) { $insRed = 'NULL'; }        if(empty($insScan)) { $insScan = 'NULL'; }
-        $query_insert_tblCombireden = "INSERT INTO tblCombireden SET tbl = '$fldTbl', artId = ".$insArtId.", stdat = ".$insStdat.", reduId = ".$insRed.", scan = ".$insScan." ";
-                                    
-            mysqli_query($db,$query_insert_tblCombireden) or die (mysqli_error($db));
+        $combireden_gateway->insert($fldTbl, $insArtId, $insStdat, $insRed, $insScan);
         unset($insScan);
     }
 
@@ -151,36 +133,17 @@ In gebruik :
  </tr> 
 <?php        
 // START LOOP
-$zoek_reden_uitval = mysqli_query($db,"
-SELECT cr.comrId
-FROM tblCombireden cr
- join tblRedenuser ru on (cr.reduId = ru.reduId)
-WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and cr.tbl = 'd'
-ORDER BY cr.scan
-") or die (mysqli_error($db));
-
-    while($lus = mysqli_fetch_assoc($zoek_reden_uitval))
-    {
+    $zoek_reden_uitval = $combireden_gateway->zoek_reden_uitval_combi($lidId);
+    while($lus = $zoek_reden_uitval->fetch_assoc()) {
             $Id = $lus['comrId'];  
 
 if (empty($_POST['txtId_d']))        {    $rowid_d = NULL;    }
   else        {    $rowid_d = $_POST['txtId_d'];    }
   
-
-
-$query = mysqli_query($db,"
-SELECT scan, artId, reduId
-FROM tblCombireden
-WHERE comrId = ".mysqli_real_escape_string($db,$Id)."
-ORDER BY scan
-") or die (mysqli_error($db));
-
-    while($row = mysqli_fetch_assoc($query))
-    {
+            $query = $combireden_gateway->find($Id);
+    while($row = $query->fetch_assoc()) {
         $scan = $row['scan'];
         $reduId = $row['reduId'];
-        
-
 ?>
 <form action="Combireden.php" method="post" > 
         <tr style = "font-size:12px;">
@@ -193,30 +156,12 @@ ORDER BY scan
 </td>    
 <td>
 <?php
-// Declaratie REDEN  Met union all kan ik een niet actieve (aangeduid als pil) reden toch tonen en kan dit (en andere) inactieve artikelen niet worden gekozen !!
-$qryReden = ("
-SELECT u.reduId, u.reden
-FROM (
-    SELECT ru.reduId, r.reden
-    FROM tblReden r
-     join tblRedenuser ru on (r.redId = ru.redId)
-    WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and ru.uitval = 1 
-   Union all
-    SELECT ru.reduId, r.reden
-    FROM tblReden r
-     join tblRedenuser ru on (r.redId = ru.redId)
-    WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and ru.reduId = '$reduId'
-) u
-GROUP BY u.reduId, u.reden
-ORDER BY u.reden
-") ; 
-$qReden = mysqli_query($db,$qryReden) or die (mysqli_error($db));
-
-$count = mysqli_num_rows($qReden);
+        $qReden = $reden_gateway->kzlReden_combi($lidId, $reduId);
+        // TODO: vervalt
+$count = $qReden->num_rows;
 
 $index = 0; 
-while ($red = mysqli_fetch_array($qReden)) 
-{ 
+while ($red = $qReden->fetch_array()) { 
    $redId_1[$index] = $red['reduId'];
    $redn_1[$index] = $red['reden'];
    $index++;  
@@ -229,6 +174,7 @@ unset($index);
  <select style="width:145;" <?php echo " name=\"kzlReden_d\" "; ?> value = "" style = "font-size:12px;">
   <option></option>
 <?php
+// TODO: hier is $count niet nodig als je foreach toepast.
 for ($i = 0; $i < $count; $i++){
 
     $opties = array($redId_1[$i]=>$redn_1[$i]);
@@ -250,16 +196,7 @@ for ($i = 0; $i < $count; $i++){
 </tr>
 <?php
 // Controle of reden bij uitval hoort
-$reden_actief = mysqli_query($db,"
-SELECT r.reden, ru.uitval
-FROM tblReden r
- join tblRedenuser ru on (r.redId = ru.redId)
-WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and ru.reduId = '$reduId'
-") or die (mysqli_error($db));
-    while ($red_act = mysqli_fetch_assoc($reden_actief))
-    {    $redActief = $red_act['uitval'];    
-        $reden = $red_act['reden'];    }
-// Controle of reden bij uitval hoort
+[$reden, $redActief] = $reden_gateway->reden_actief($lidId, $reduId);
 
 ?>
 <tr>
@@ -287,24 +224,8 @@ If (isset($_POST['knpSave_d']))    {
 if (empty($txtScan)) {    $fldScan = 'scan = NULL';    $whereScan = 'ISNULL(scan)';    }  else    { $fldScan = "scan = $txtScan ";    $whereScan = $fldScan;}
 if (empty($txtRed))     {    $fldReden = 'reduId = NULL'; $whereRed = 'ISNULL(ru.reduId)';}  else    { $fldReden = "reduId = $txtRed ";    $whereRed = "ru.reduId = $txtRed "; }
 
-$bestaat_combireden_al = mysqli_query($db,"
-SELECT cr.comrId 
-FROM tblCombireden cr
- join tblRedenuser ru on (cr.reduId = ru.reduId)
-WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and $whereRed and cr.comrId != ".$rowid_d." and cr.tbl = 'd'
-GROUP BY cr.artId, cr.reduId
-") or die (mysqli_error($db));
-            $rows = mysqli_num_rows($bestaat_combireden_al);
-
-$bestaat_scannr_al = mysqli_query($db,"
-SELECT cr.comrId
-FROM tblCombireden cr
- join tblRedenuser ru on (cr.reduId = ru.reduId)
-WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and $whereScan and cr.comrId != $rowid_d and cr.tbl = 'd'
-GROUP BY cr.scan
-") or die (mysqli_error($db));
-            $rows_scan = mysqli_num_rows($bestaat_scannr_al);
-
+$rows = $combireden_gateway->bestaat_combireden2($lidId, $whereRed, $rowid_d);
+$rows_scan = $combireden_gateway->bestaat_scannr2($lidId, $whereScan, $rowid_d);
     if ($rows > 0)
     {         $fout = "Deze combinatie bestaat al.";    }
     else if ($rows_scan > 0)
@@ -312,19 +233,12 @@ GROUP BY cr.scan
 
     else if (empty($fout))
     {
-
-        $query_bewerk_tblCombireden = "UPDATE tblCombireden set ".$fldScan.", ".$fldReden." WHERE comrId = ".$rowid_d."     " ;
-            
-            mysqli_query($db,$query_bewerk_tblCombireden) or die (mysqli_error($db));    
-
+        $combireden_gateway->update($rowid_d, $fldScan, $fldReden);
     }
 }
 
-if (isset($_POST['knpDelete_d']))
-{
-$delete_rec = "DELETE FROM tblCombireden WHERE comrId = ".$rowid_d." ";
-    mysqli_query($db,$delete_rec) or die (mysqli_error($db));
-    
+if (isset($_POST['knpDelete_d'])) {
+    $combireden_gateway->delete($rowid_d);
 }
 
 /**************************************************
@@ -352,21 +266,11 @@ $delete_rec = "DELETE FROM tblCombireden WHERE comrId = ".$rowid_d." ";
 <td>
 <?php
 // Declaratie REDEN
-$qryReden = ("
-SELECT ru.reduId, r.reden
-FROM tblReden r
- join tblRedenuser ru on (r.redId = ru.redId)
-WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and ru.uitval = 1
-ORDER BY r.reden
-");
-$qReden = mysqli_query($db,$qryReden) or die (mysqli_error($db));
-
-$count = mysqli_num_rows($qReden);
-
+    $qReden = $reden_gateway->uitval_lijst_voor($lidId);
+$count = $qReden->num_rows;
 $index = 0; 
-while ($red = mysqli_fetch_array($qReden)) 
-{ 
-   $redId_2[$index] = $red['reduId'];
+while ($red = $qReden->fetch_array()) { 
+   $redId_2[$index] = $red['redId']; // gateway-method hergebruikt, zelfde betekenis, andere kant van de join
    $redn_2[$index] = $red['reden'];
    $index++;  
 } 
@@ -412,19 +316,17 @@ for ($i = 0; $i < $count; $i++){
 
 if($modtech == 1) {
 
-
-
-
 /***************************************
 ** COMBINATIES IN GEBRUIK TONEN (HTML)
 ***************************************/
+    $stal_gateway = new StalGateway();
+// TODO: #0004218 lijst-query levert toch wel meer dan 1 record? wat is hier de bedoeling?
 $zoek_stalId = mysqli_query($db,"
 SELECT st.stalId
 FROM tblStal st
  join tblUbn u on (st.ubnId = u.ubnId)
 WHERE u.lidId = ".mysqli_real_escape_string($db,$lidId)."  
 ") or die (mysqli_error($db));
-
 $pdf = '';
     while($record = mysqli_fetch_assoc($zoek_stalId)) { $pdf = $record['stalId']; }
 ?>
@@ -454,43 +356,20 @@ Combinaties in gebruik :
 </tr> 
 <?php        
 // START LOOP
-$loop = mysqli_query($db,"
-SELECT cr.comrId
-FROM tblCombireden cr
- join tblArtikel a on (cr.artId = a.artId)
- join tblEenheiduser eu on (eu.enhuId = a.enhuId)
-WHERE eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and cr.tbl = 'p'
-ORDER BY cr.scan
-") or die (mysqli_error($db));
+$loop = $combireden_gateway->p_list_for($lidId);
 
-    while($lus = mysqli_fetch_assoc($loop))
-    {
+    while($lus = $loop->fetch_assoc()) {
             $Id = $lus['comrId'];  
-
 if (empty($_POST['txtId_p']))        {    $rowid_p = NULL;    }
   else        {    $rowid_p = $_POST['txtId_p'];    }
-  
 
+            $query1 = $combireden_gateway->c_list_for($lidId, $Id);
 
-$query = 
-"SELECT cr.scan, cr.artId, cr.stdat, cr.reduId
-FROM tblCombireden cr
- join tblArtikel a on (cr.artId = a.artId)
- join tblEenheiduser eu on (eu.enhuId = a.enhuId)
-WHERE eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and cr.comrId = ".mysqli_real_escape_string($db,$Id)."
-ORDER BY cr.scan";
-
-//echo $query;
-$query1 = mysqli_query($db,$query) or die (mysqli_error($db));
-
-    while($row = mysqli_fetch_assoc($query1))
-    {
+    while($row = $query1->fetch_assoc()) {
         $scan = $row['scan'];
         $artId = $row['artId'];
         $stdat = $row['stdat'];
         $reduId = $row['reduId'];
-        
-
 ?>
 <form action="Combireden.php" method="post" > 
         <tr style = "font-size:12px;">
@@ -498,36 +377,13 @@ $query1 = mysqli_query($db,$query) or die (mysqli_error($db));
 <td ><input type= "hidden" name= "txtId_p" size = 1 value = <?php echo "$Id";?> > <!--hiddden-->
 <!-- Scannummer -->
 <input type= "text" name= "txtScan_p" size = 1 style = "font-size:12px;" title = "Nummer voor in de reader" value = <?php echo $scan; ?> >
-        
-
 </td><td>
 <?php
-// Declaratie MEDICIJN  Met union all kan ik een niet actief/pil reden toch tonen en kan dit en andere inactieve artikelen niet worden gekozen !!
-$qryMedicijn = ("
-SELECT u.artId, u.naam
-FROM (
-    SELECT a.artId, a.naam
-    FROM tblEenheid e
-     join tblEenheiduser eu on (e.eenhId = eu.eenhId)
-     join tblArtikel a on (eu.enhuId = a.enhuId)
-    Where eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and a.soort = 'pil' and a.actief = 1
-    Union all
-    SELECT a.artId, a.naam
-    FROM tblEenheid e
-     join tblEenheiduser eu on (e.eenhId = eu.eenhId)
-     join tblArtikel a on (eu.enhuId = a.enhuId)
-    WHERE eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and a.artId = '$artId'
-    ) u
-GROUP BY u.artId, u.naam
-ORDER BY u.naam
-"); 
-$pillen = mysqli_query($db,$qryMedicijn) or die (mysqli_error($db)); 
-
-$count = mysqli_num_rows($pillen);
+        $pillen = $artikel_gateway->kzlMedicijn_combi($lidId, $artId);
+$count = $pillen->num_rows;
 
 $index = 0; 
-while ($pil = mysqli_fetch_array($pillen)) 
-{ 
+while ($pil = $pillen->fetch_array()) { 
    $pilId[$index] = $pil['artId'];
    $pilln[$index] = $pil['naam'];
    //$pilRaak[$index] = $pil['itemId'];
@@ -565,40 +421,15 @@ for ($i = 0; $i < $count; $i++){
 <td>
 <?php
 // Declaratie REDEN  Met union all kan ik een niet actieve (aangeduid als pil) reden toch tonen en kan dit (en andere) inactieve artikelen niet worden gekozen !!
-if(!empty($reduId)) {
-$qryReden = ("
-SELECT u.reduId, u.reden
-FROM (
-    SELECT ru.reduId, r.reden
-    FROM tblReden r
-     join tblRedenuser ru on (r.redId = ru.redId)
-    WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and ru.pil = 1 
-   union all
-    SELECT ru.reduId, r.reden
-    FROM tblReden r
-     join tblRedenuser ru on (r.redId = ru.redId)
-    WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and ru.reduId = ".mysqli_real_escape_string($db,$reduId)."
-) u
-GROUP BY u.reduId, u.reden
-ORDER BY u.reden") ;
-}
-else // als reden leeg is
-{
-$qryReden = ("
-SELECT ru.reduId, r.reden
-FROM tblReden r
- join tblRedenuser ru on (r.redId = ru.redId)
-WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and ru.pil = 1 
-ORDER BY r.reden
-") ;
+if(empty($reduId)) {
+    $qReden = $reden_gateway->pil_lijst_voor($lidId);
+} else {
+    $qReden = $reden_gateway->kzlReden_combi($lidId, $reduId);
 } 
-$qReden = mysqli_query($db,$qryReden) or die (mysqli_error($db));
 
-$count = mysqli_num_rows($qReden);
-
+$count = $qReden->num_rows;
 $index = 0; 
-while ($red = mysqli_fetch_array($qReden)) 
-{ 
+while ($red = $qReden->fetch_array()) { 
    $redId_3[$index] = $red['reduId'];
    $redn_3[$index] = $red['reden'];
    $index++;  
@@ -634,28 +465,12 @@ for ($i = 0; $i < $count; $i++){
 </tr>
 <?php
 // Controle of medicijn actief is
-$medicijn_actief = mysqli_query($db,"
-SELECT a.naam, a.actief 
-FROM tblEenheid e
- join tblEenheiduser eu on (e.eenhId = eu.eenhId)
- join tblArtikel a on (a.enhuId = eu.enhuId)
-WHERE eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and a.artId = '$artId'
-") or die (mysqli_error($db));
-    while ($med_act = mysqli_fetch_assoc($medicijn_actief))
-    {    $pilActief = $med_act['actief'];    
-        $medicijn = $med_act['naam'];    }
+[$pilActief, $medicijn] = $artikel_gateway->medicijn_actief($lidId, $artId);
 // Controle of medicijn actief is
 // Controle of reden bij medicijn hoort
+// TODO: uitzoeken of vorige assignment van redActief hier niet in lekt
 if(!empty($reduId)) {
-$reden_actief = mysqli_query($db,"
-SELECT r.reden, ru.pil
-FROM tblReden r
- join tblRedenuser ru on (r.redId = ru.redId)
-WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and ru.reduId = ".mysqli_real_escape_string($db,$reduId)."
-") or die (mysqli_error($db));
-    while ($red_act = mysqli_fetch_assoc($reden_actief))
-    {    $redActief = $red_act['pil'];    
-        $reden = $red_act['reden'];    }
+    [$redActief, $reden] = $reden_gateway->pil_actief($lidId, $reduId);
 }
 // Controle of reden bij medicijn hoort
 
@@ -685,39 +500,17 @@ If (isset($_POST['knpSave_p']))    {
     $txtScan = $_POST['txtScan_p'];  $kzlPil = $_POST['kzlPil'];  $txtStdat = $_POST['txtStdat']; $txtRed = $_POST['kzlReden_p']; 
 
 if(!empty($kzlPil)) {
-$zoek_stdat = mysqli_query($db,"
-SELECT round(a.stdat) stdat
-FROM tblArtikel a
-WHERE a.artId = ".mysqli_real_escape_string($db,$kzlPil)."
-") or die (mysqli_error($db));
-    while ( $row_stdat = mysqli_fetch_assoc($zoek_stdat))  { $dbStdat = $row_stdat['stdat']; }
-    }
+    $dbStdat = $artikel_gateway->zoek_stdat($kzlPil);
+}
     
 if (empty($txtScan)) {    $fldScan = 'scan = NULL';    $whereScan = 'ISNULL(scan)';    }  else    { $fldScan = "scan = $txtScan ";    $whereScan = $fldScan;}
 if (empty($kzlPil))     {    $fldArtId = 'artId = NULL';    $whereArtId = 'ISNULL(artId)';    }  else    { $fldArtId = "artId = $kzlPil ";    $whereArtId = $fldArtId; }
 if (empty($txtStdat)){    $fldStdat = "stdat = $dbStdat"; $whereStdat = $fldStdat; } else { $fldStdat = "stdat = $txtStdat"; $whereStdat = $fldStdat; }
 if (empty($txtRed))     {    $fldReden = 'reduId = NULL'; $whereRed = 'ISNULL(ru.reduId)';}  else    { $fldReden = "reduId = $txtRed ";    $whereRed = "ru.reduId = $txtRed "; }
+$rows = $combireden_gateway->bestaat_combireden3($lidId, $whereStdat, $whereRed, $rowid_p);
+$rows_scan = $combireden_gateway->bestaat_scan3($lidId, $fldScan, $rowid_p);
 
-$bestaat_combireden_al = mysqli_query($db,"
-SELECT cr.comrId
-FROM tblCombireden cr
- join tblRedenuser ru on (cr.reduId = ru.reduId)
-WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and $whereStdat and $whereRed and cr.comrId != $rowid_p and cr.tbl = 'p'
-GROUP BY cr.artId, cr.reduId
-") or die (mysqli_error($db));
-            $rows = mysqli_num_rows($bestaat_combireden_al);
-
-$bestaat_scannr_al = mysqli_query($db,"
-SELECT cr.comrId
-FROM tblCombireden cr
- join tblRedenuser ru on (cr.reduId = ru.reduId)
-WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and $fldScan and cr.comrId != $rowid_p and cr.tbl = 'p'
-GROUP BY cr.scan
-") or die (mysqli_error($db));
-            $rows_scan = mysqli_num_rows($bestaat_scannr_al);
-
-    if (empty($kzlPil))
-    {         $fout = "Medicijn is niet geselecteerd.";    }
+    if (empty($kzlPil)) {         $fout = "Medicijn is niet geselecteerd.";    }
 
     else if ($rows > 0)
     {         $fout = "Deze combinatie bestaat al.";    }
@@ -726,18 +519,12 @@ GROUP BY cr.scan
 
     else if (empty($fout))
     {
-
-        $query_bewerk_tblCombireden = "UPDATE tblCombireden set ".$fldScan.", ".$fldArtId.", ".$fldStdat.", ".$fldReden." WHERE comrId = ".$rowid_p."     " ;
-            
-            mysqli_query($db,$query_bewerk_tblCombireden) or die (mysqli_error($db));    
-
+        $combireden_gateway->update2($rowid_p, $fldScan, $fldArtId, $fldStdat, $fldReden);
     }
 }
 
-if (isset($_POST['knpDelete_p']))
-{
-$delete_rec = "DELETE FROM tblCombireden WHERE comrId = ".$rowid_p." ";
-    mysqli_query($db,$delete_rec) or die (mysqli_error($db));
+if (isset($_POST['knpDelete_p'])) {
+    $combireden_gateway->delete($rowid_p);
 }
 
 /**************************************************
@@ -773,20 +560,10 @@ $delete_rec = "DELETE FROM tblCombireden WHERE comrId = ".$rowid_p." ";
 
 <?php 
 // Declaratie MEDICIJN 
-$qryNewMedicijn = ("
-SELECT a.artId, a.naam
-FROM tblEenheid e
- join tblEenheiduser eu on (e.eenhId = eu.eenhId)
- join tblArtikel a on (a.enhuId = eu.enhuId)
-WHERE eu.lidId = ".mysqli_real_escape_string($db,$lidId)." and a.soort = 'pil' and a.actief = 1
-ORDER BY a.naam "); 
-$pillen = mysqli_query($db,$qryNewMedicijn) or die (mysqli_error($db)); 
-
-$count = mysqli_num_rows($pillen);
-
+$pillen = $artikel_gateway->new_medicijn($lidId);
+$count = $pillen->num_rows;
 $index = 0; 
-while ($pil = mysqli_fetch_array($pillen)) 
-{ 
+while ($pil = $pillen->fetch_array()) { 
    $pilId[$index] = $pil['artId'];
    $pilln[$index] = $pil['naam'];
    //$pilRaak[$index] = $pil['itemId'];
@@ -821,20 +598,10 @@ for ($i = 0; $i < $count; $i++){
  <td>
 <?php
 // Declaratie REDEN
-$qryReden = ("
-SELECT ru.reduId, r.reden
-FROM tblReden r
- join tblRedenuser ru on (r.redId = ru.redId)
-WHERE ru.lidId = ".mysqli_real_escape_string($db,$lidId)." and ru.pil = 1
-ORDER BY reden
-") ;
-$qReden = mysqli_query($db,$qryReden) or die (mysqli_error($db));
-
-$count = mysqli_num_rows($qReden);
-
+$qReden = $reden_gateway->alle_lijst_voor($lidId);
+$count = $qReden->num_rows;
 $index = 0; 
-while ($red = mysqli_fetch_array($qReden)) 
-{ 
+while ($red = $qReden->fetch_array()) { 
    $redId_4[$index] = $red['reduId'];
    $redn_4[$index] = $red['reden'];
    $index++;  

@@ -3,8 +3,7 @@
 class CombiredenGateway extends Gateway {
 
     public function zoek_reden_uitval($lidId) {
-        return $this->run_query(
-            <<<SQL
+        return $this->run_query(<<<SQL
 SELECT cr.scan, r.reden
 from tblCombireden cr
  join tblRedenuser ru on (cr.reduId = ru.reduId)
@@ -31,6 +30,159 @@ where eu.lidId = :lidId
 order by cr.scan
 SQL
         , [[':lidId', $lidId, self::INT]]
+        );
+    }
+
+    public function bestaat_reden($whereArtId, $whereStdat, $whereRed, $fldTbl) {
+        return $this->run_query(
+            <<<SQL
+SELECT cr.comrId
+FROM tblCombireden cr
+WHERE $whereArtId and $whereStdat and $whereRed and cr.tbl = '$fldTbl'
+GROUP BY cr.artId, cr.reduId
+SQL
+        )->num_rows;
+    }
+
+    public function bestaat_scannr($lidId, $whereScan, $fldTbl) {
+        return $this->run_query(
+            <<<SQL
+SELECT cr.comrId
+FROM tblCombireden cr
+ join tblRedenuser ru on (cr.reduId = ru.reduId)
+WHERE ru.lidId = :lidId and $whereScan and cr.tbl = '$fldTbl'
+GROUP BY cr.scan
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        )->num_rows;
+    }
+
+    public function insert($fldTbl, $insArtId, $insStdat, $insRed, $insScan) {
+        $this->run_query(<<<SQL
+INSERT INTO tblCombireden SET tbl = '$fldTbl', artId = '$insArtId', stdat = '$insStdat', reduId = '$insRed', scan = '$insScan'
+SQL
+        );
+    }
+
+    public function zoek_reden_uitval_combi($lidId) {
+        return $this->run_query(<<<SQL
+SELECT cr.comrId
+FROM tblCombireden cr
+ join tblRedenuser ru on (cr.reduId = ru.reduId)
+WHERE ru.lidId = :lidId and cr.tbl = 'd'
+ORDER BY cr.scan
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
+
+    public function find($comrId) {
+        return $this->run_query(<<<SQL
+SELECT scan, artId, reduId
+FROM tblCombireden
+WHERE comrId = :comrId
+ORDER BY scan
+SQL
+        , [[':comrId', $comrId, self::INT]]
+        );
+    }
+
+    public function bestaat_combireden2($lidId, $whereRed, $rowid_d) {
+        return $this->run_query(<<<SQL
+SELECT cr.comrId 
+FROM tblCombireden cr
+ join tblRedenuser ru on (cr.reduId = ru.reduId)
+WHERE ru.lidId = :lidId and $whereRed and cr.comrId != $rowid_d and cr.tbl = 'd'
+GROUP BY cr.artId, cr.reduId
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        )->num_rows;
+    }
+
+    public function bestaat_scannr2($lidId, $whereScan, $rowid_d) {
+        return $this->run_query(<<<SQL
+SELECT cr.comrId
+FROM tblCombireden cr
+ join tblRedenuser ru on (cr.reduId = ru.reduId)
+WHERE ru.lidId = :lidId and $whereScan and cr.comrId != $rowid_d and cr.tbl = 'd'
+GROUP BY cr.scan
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        )->num_rows;
+    }
+
+    public function update($rowid_d, $fldScan, $fldReden) {
+        $this->run_query(<<<SQL
+UPDATE tblCombireden set $fldScan, $fldReden WHERE comrId = $rowid_d
+SQL
+        );
+    }
+
+    public function update2($rowid_p, $fldScan, $fldArtId, $fldStdat, $fldReden) {
+        $this->run_query(<<<SQL
+UPDATE tblCombireden set $fldScan, $fldArtId, $fldStdat, $fldReden WHERE comrId = $rowid_p
+SQL
+        );
+    }
+
+    public function delete($comrId) {
+        $this->run_query(<<<SQL
+DELETE FROM tblCombireden WHERE comrId = :comrId
+SQL
+        , [[':comrId', $comrId, self::INT]]
+        );
+    }
+
+    public function p_list_for($lidId) {
+        return $this->run_query(<<<SQL
+SELECT cr.comrId
+FROM tblCombireden cr
+ join tblArtikel a on (cr.artId = a.artId)
+ join tblEenheiduser eu on (eu.enhuId = a.enhuId)
+WHERE eu.lidId = :lidId and cr.tbl = 'p'
+ORDER BY cr.scan
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
+
+    public function c_list_for($lidId, $comrId) {
+        return $this->run_query(<<<SQL
+SELECT cr.scan, cr.artId, cr.stdat, cr.reduId
+FROM tblCombireden cr
+ join tblArtikel a on (cr.artId = a.artId)
+ join tblEenheiduser eu on (eu.enhuId = a.enhuId)
+WHERE eu.lidId = :lidId and cr.comrId = :comrId
+ORDER BY cr.scan
+SQL
+        , [[':lidId', $lidId, self::INT], [':comrId', $comrId, self::INT]]
+        );
+    }
+
+    public function bestaat_combireden3($lidId, $whereStdat, $whereRed, $rowid_p) {
+        return $this->first_field(<<<SQL
+SELECT count(*)
+FROM tblCombireden cr
+ join tblRedenuser ru on (cr.reduId = ru.reduId)
+WHERE ru.lidId = :lidId and $whereStdat and $whereRed and cr.comrId != :comrId and cr.tbl = 'p'
+GROUP BY cr.artId, cr.reduId
+SQL
+        , [[':lidId', $lidId, self::INT], [':comrId', $rowid_p, self::INT]]
+        );
+    }
+
+    public function bestaat_scan3($lidId, $whereScan, $comrId) {
+        return $this->first_field(<<<SQL
+SELECT count(*)
+FROM tblCombireden cr
+ join tblRedenuser ru on (cr.reduId = ru.reduId)
+WHERE ru.lidId = :lidId and $whereScan and cr.comrId != :comrId and cr.tbl = 'p'
+GROUP BY cr.scan
+SQL
+        , [
+            [':lidId', $lidId, self::INT],
+            [':comrId', $comrId, self::INT],
+        ]
         );
     }
 

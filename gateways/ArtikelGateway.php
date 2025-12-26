@@ -20,6 +20,19 @@ SQL
         );
     }
 
+    public function new_medicijn($lidId) {
+        return $this->run_query(<<<SQL
+SELECT a.artId, a.naam
+FROM tblEenheid e
+ join tblEenheiduser eu on (e.eenhId = eu.eenhId)
+ join tblArtikel a on (a.enhuId = eu.enhuId)
+WHERE eu.lidId = :lidId and a.soort = 'pil' and a.actief = 1
+ORDER BY a.naam
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
+
     public function zoek_soort($artId) {
         return $this->first_field(
             <<<SQL
@@ -27,8 +40,7 @@ SELECT a.soort
 FROM tblArtikel a
 WHERE a.artId = :artId
 SQL
-            ,
-            [[':artId', $artId, self::INT]]
+            , [[':artId', $artId, self::INT]]
         );
     }
 
@@ -481,6 +493,54 @@ GROUP BY a.artId, a.naam
 ORDER BY a.naam
 SQL
         , [[':lidId', $lidId, self::INT]]
+        );
+    }
+
+    public function zoek_stdat($artId) {
+        return $this->first_field(
+            <<<SQL
+SELECT round(a.stdat) stdat
+FROM tblArtikel a
+WHERE a.artId = :artId
+SQL
+        , [[':artId', $artId, self::INT]]
+        );
+    }
+
+    public function kzlMedicijn_combi($lidId, $artId) {
+        // Declaratie MEDICIJN  Met union all kan ik een niet actief/pil reden toch tonen en kan dit en andere inactieve artikelen niet worden gekozen !!
+        return $this->run_query(<<<SQL
+SELECT u.artId, u.naam
+FROM (
+    SELECT a.artId, a.naam
+    FROM tblEenheid e
+     join tblEenheiduser eu on (e.eenhId = eu.eenhId)
+     join tblArtikel a on (eu.enhuId = a.enhuId)
+    Where eu.lidId = :lidId and a.soort = 'pil' and a.actief = 1
+    Union all
+    SELECT a.artId, a.naam
+    FROM tblEenheid e
+     join tblEenheiduser eu on (e.eenhId = eu.eenhId)
+     join tblArtikel a on (eu.enhuId = a.enhuId)
+    WHERE eu.lidId = :lidId and a.artId = :artId
+    ) u
+GROUP BY u.artId, u.naam
+ORDER BY u.naam
+SQL
+        , [[':lidId', $lidId, self::INT], [':artId', $artId, self::INT]]
+        );
+    }
+
+    public function medicijn_actief($lidId, $artId) {
+        return $this->first_row(<<<SQL
+SELECT a.naam, a.actief 
+FROM tblEenheid e
+ join tblEenheiduser eu on (e.eenhId = eu.eenhId)
+ join tblArtikel a on (a.enhuId = eu.enhuId)
+WHERE eu.lidId = :lidId and a.artId = :artId
+SQL
+        , [[':lidId', $lidId, self::INT], [':artId', $artId, self::INT]]
+            , [null, null]
         );
     }
 

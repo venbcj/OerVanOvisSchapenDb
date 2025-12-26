@@ -18,3 +18,6 @@ MenusTest::testMenuMeldenBlauw
 
 1766178220
 SchaapGatewayTest::testZoekresultaat
+
+1766749124
+NewUserTest::testSave
