@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Registratie</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>jQuery UI Datepicker - Default functionality</title>
+
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+  <link rel="stylesheet" href="/resources/demos/style.css">
+
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+  <script>
+
+
+
+$(document).ready(function() {
+
+  var options = {
+    dateFormat: "dd-mm-yy",
+    dayNamesMin: [ "zo", "ma", "di", "wo", "do", "vr", "za" ],
+    monthNames: [ "Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December" ]
+    }
+        
+    $('#datepicker1').datepicker(options);
+    $('#datepicker2').datepicker(options);
+    $('#datepicker3').datepicker(options);
+    $('#datepicker4').datepicker(options);
+    $('#datepicker5').datepicker(options);
+    $('#datepicker6').datepicker(options);
+
+      /*$('#datepicker2').datepicker({
+      dateFormat: "dd-mm-yy",
+      dayNamesMin: [ "zo", "ma", "di", "wo", "do", "vr", "za" ],
+      monthNames: [ "Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December" ]
+    });*/
+    
+    
+});
+
+  </script>
+
+</head>
+<body>
+
+<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" type="text/css" href="menu.css">
+
+<!-- BackToTop button javascript 
+    bron : https://www.wpromotions.eu/nl/hoe-een-scroll-to-top-knop-toevoegen-aan-website-in-webnode/    -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- Deze links komen uit Zoeken.php per 14-12-2024 -->
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+<!-- Einde Deze links komen uit Zoeken.php per 14-12-2024 -->
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $(window).scroll(function(){
+        if($(this).scrollTop() > 100){
+            $('#scroll').fadeIn();
+        }else{
+            $('#scroll').fadeOut();
+        }
+    });
+    $('#scroll').click(function(){
+        $("html, body").animate({ scrollTop: 0 }, 600);
+        return false;
+    });
+});
+</script>
+
+<a href="javascript;" id="scroll" title="Scroll to Top" style="display: none;">Top<span></span></a> 
+<!-- Einde BackToTop button javascript -->
+
+<div id = "rechts_uitlijnen" class = 'header_breed'>
+    <section style="text-align : center">
+        Aanvoer schaap&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    </section>
+    <img src='OER_van_OVIS.jpg' />
+</div>
+
+<ul class="header_smal topnav" id = balkOntw >
+    <li class="dropdown">
+<a href="http://oer-dev/Home.php" class="black">Home</a>
+</li>
+    <li class="dropdown"><span>Registratie</span>
+        <div class="dropdown-content">
+            <a href="http://oer-dev/InvSchaap.php" class="black">Aanvoer schaap</a>
+            <a href="http://oer-dev/Med_registratie.php" class="blue">Medicijn toediening</a>
+            <a href="http://oer-dev/Dekkingen.php" class="blue">Dekkingen / Dracht</a>
+        </div>
+    </li>
+
+    <li class="dropdown"><span>Reader</span>
+        <div class="dropdown-content-smal">
+            <a href="http://oer-dev/InlezenReader.php" class="black">Inlezen reader</a>
+ 
+            <a href="http://oer-dev/Alerts.php" class="black">Raederalerts</a>
+        </div>
+    </li>
+
+    <li class="dropdown"><span style = "color : black ;">RVO</span>
+        <div class="dropdown-content-smal">
+            <a href="http://oer-dev/Melden.php" class="black">Melden RVO</a>
+            <a href="http://oer-dev/Meldingen.php" class="black">Meldingen</a>
+        </div>
+    </li>
+
+    <li class="dropdown"><span>RAADPLEGEN</span>
+        <div class="dropdown-content">
+                        <a href="http://oer-dev/Bezet.php" class="black">Verblijven in gebruik</a>
+                        <a href="http://oer-dev/Zoeken.php" class="black">Schaap opzoeken</a>
+            <a href="http://oer-dev/Stallijst.php" class="black">Stallijst</a>
+            <a href="http://oer-dev/ZoekAfldm.php" class="black">Afleverlijst</a>
+        </div>
+    </li>
+
+    <li class="dropdown"><span>Rapporten</span>
+        <div class="dropdown-content-breed">
+            <a href="http://oer-dev/Mndoverz_fok.php" class="blue">Maandoverz. fokkerij</a>
+            <a href="http://oer-dev/Mndoverz_vlees.php" class="blue">Maandoverz. vleeslam.</a>
+            <a href="http://oer-dev/Med_rapportage.php" class="blue">Medicijn rapportage</a>
+            <a href="http://oer-dev/Voer_rapportage.php" class="blue">Voer rapportage</a>
+            <a href="http://oer-dev/MaandTotalen.php" class="blue">Maandtotalen</a>
+            <a href="http://oer-dev/GroeiresultaatSchaap.php" class="blue">Groeiresultaten per schaap</a>
+            <a href="http://oer-dev/GroeiresultaatWeging.php" class="blue">Groeiresultaten per weging</a>
+                        <a href="http://oer-dev/ResultHok.php" class="blue">Periode resultaten</a>
+
+        <ul class="nested-dropdown">
+        <li class="dropdown2"><span>Ooi rapporten</span>
+            <div class="dropdown-content2">
+                <a href="http://oer-dev/Ooikaart.php" class="blue">Ooikaart detail</a>
+                <a href="http://oer-dev/OoikaartAll.php" class="blue">Ooikaart moeders</a>
+                <a href="http://oer-dev/Meerlingen5.php" class="blue">Meerling in periode</a>
+                <a href="http://oer-dev/Meerlingen.php" class="blue">Meerling per geslacht</a>
+                <a href="http://oer-dev/Meerlingen2.php" class="blue">Meerlingen per jaar</a>
+                <a href="http://oer-dev/Meerlingen3.php" class="blue">Meerling oplopend</a>
+                <a href="http://oer-dev/Meerlingen4.php" class="blue">Meerlingen aanwezig</a>
+            </div>
+        </li>
+        </ul>
+
+        </div>
+    </li>
+
+    <li class="dropdown"><span>Voorraadbeheer</span>
+        <div class="dropdown-content">
+            <a href="http://oer-dev/Medicijnen.php" class="blue">Medicijnenbestand</a>
+            <a href="http://oer-dev/Voer.php" class="blue">Voerbestand</a>
+            <a href="http://oer-dev/Inkopen.php" class="blue">Inkopen</a>
+            <a href="http://oer-dev/Voorraad.php" class="blue">Voorraad</a>
+        </div>
+    </li>
+
+    <li class="dropdown"><span>Financieel</span>
+        <div class="dropdown-content">
+            <a href="http://oer-dev/Kostenopgaaf.php" class="black">Inboeken</a>
+            <a href="http://oer-dev/Deklijst.php" class="black">Deklijst</a>
+            <a href="http://oer-dev/Liquiditeit.php" class="black">Liquiditeit</a>
+            <a href="http://oer-dev/Saldoberekening.php" class="black">Saldoberekening</a>
+            <a href="http://oer-dev/Rubrieken.php" class="black">Rubrieken</a>
+            <a href="http://oer-dev/Componenten.php" class="black">Componenten</a>
+            <a href="http://oer-dev/Kostenoverzicht.php" class="black">Betaalde posten</a>
+        </div>
+    </li>
+
+    <li class="dropdown"><span style = 'color : black'>Beheer</span>
+        <div class="dropdown-content">
+            <a href="http://oer-dev/Hok.php" class="blue">Verblijven</a>
+            <a href="http://oer-dev/Ras.php" class="black">Rassen</a>
+            <a href="http://oer-dev/Uitval.php" class="black">Redenen en momenten</a>
+            <a href="http://oer-dev/Combireden.php" class="black">Combi redenen</a>
+            <a href="http://oer-dev/Vader.php" class="black">Dekrammen</a>
+            <a href="http://oer-dev/Eenheden.php" class="blue">Eenheden</a>
+            <a href="http://oer-dev/Relaties.php" class="black">Relaties</a>
+            <a href="http://oer-dev/Readerversies.php" class="red">Readerversies</a>
+            <a href="http://oer-dev/bestanden.php" class="black">Readerbestanden</a>
+                        <a href="http://oer-dev/Gebruikers.php" class="black">Gebruikers</a>
+                        <a href="http://oer-dev/Systeem.php" class="blue">Instellingen</a>
+        </div>
+    </li>
+    <li id = "rechts_uitlijnen">
+        <a href="http://oer-dev/index.php" class="black">Uitloggen</a>
+    </li>
+</ul>
+
+<table id ="table1" align="center">
+<tbody>
+<tr height = 90> </tr>
+<TR>
+
+            <TD valign = "top">
+<script type="text/javascript">
+function verplicht_bij_zoeken() {
+var levnr = document.getElementById("levnr");         var levnr_v = levnr.value;
+
+if(levnr_v.length == 0) levnr.focus()     + alert("Levensnummer moet zijn ingevuld.");
+}
+
+function verplicht() {
+var levnr = document.getElementById("levnr");         var levnr_v = levnr.value;
+var fase  = document.getElementById("fase");        var fase_v = fase.value;
+var sekse = document.getElementById("sekse");        var sekse_v = sekse.value;
+var gebdm = document.getElementById("datepicker1");    var gebdm_v = gebdm.value;
+var gewicht = document.getElementById("gewicht");    if(gewicht) { var gewicht_v = gewicht.value; } // bij modtech bestaat variable gewicht niet. Daardoor werkt deze functie niet.
+var verblijf = document.getElementById("verblijf");    if(verblijf) { var verblijf_v = verblijf.value; } // bij modtech bestaat variable verblijf niet. Daardoor werkt deze functie niet.
+var moment = document.getElementById("moment");        var moment_v = moment.value;
+var uitvdm = document.getElementById("datepicker3"); var uitvdm_v = uitvdm.value;
+var reden = document.getElementById("reden");         var reden_v = reden.value;
+var aanvdm = document.getElementById("datepicker2"); var aanvdm_v = aanvdm.value;
+
+
+     if(levnr_v.length > 0 && levnr_v.length != 12) levnr.focus()     + alert("Het levensnummer moet uit 12 cijfers bestaan.");
+
+else if(isNaN(levnr_v)) levnr.focus()     + alert("Het levensnummer bevat een letter.");
+
+else if(fase_v.length == 0) fase.focus()     + alert("Generatie moet zijn ingevuld.");
+
+else if((fase_v == 'moeder' && sekse_v == 'ram') || (fase_v == 'vader' && sekse_v == 'ooi')) fase.focus()     + alert("Geslacht en generatie zijn tegenstrijdig !");
+
+else if(window.getComputedStyle(gebdm).display === "inline-block" && gebdm_v.length == 0 && fase_v == 'lam') gebdm.focus()     + alert("De geboortedatum moet zijn ingevuld.");
+
+else if(levnr_v.length > 0 && gewicht_v.length == 0 && fase_v == 'lam' && moment_v.length == 0 && uitvdm_v.length == 0 && reden_v.length == 0) gewicht.focus()     + alert("Het gewicht moet zijn ingevuld.");
+
+else if(verblijf_v.length > 0 && (moment_v.length > 0 || uitvdm_v.length > 0 || reden_v.length > 0))  verblijf.focus()     + alert("U kunt geen dood schaap in een verblijf plaatsen !");
+
+else if(fase_v == 'lam' && aanvdm_v.length > 0)  aanvdm.focus()  + alert("Alleen volwassen dieren kunnen worden aangekocht.");
+
+else if(fase_v != 'lam' && gewicht_v.length > 0)  gewicht.focus()  + alert("Bij invoer van een volwassen dier mag geen gewicht worden ingevoerd.");
+
+}
+
+function kies_generatie() {
+
+var fase  = document.getElementById("fase");        var fase_v = fase.value;
+
+if(fase_v.length == 0) fase.focus()     + alert("Kies eerst een generatie.");
+
+}
+
+function toon_dracht() {
+
+var moeder = document.getElementById("moeder");        var moeder_v = moeder.value;
+
+
+ if(moeder_v.length > 0) toon_vader_uit_koppel(moeder_v); toon_werpdatum(moeder_v);
+
+}
+
+ var jArray_vdr = [];
+
+function toon_vader_uit_koppel(m) {
+    //document.getElementById('result_vader').innerHTML = jArray_vdr[m];
+
+    var fase = document.getElementById("fase");        var fase_v = fase.value;
+
+     if(jArray_vdr[m] != null && fase_v == 'lam')
+     {
+    document.getElementById('vader').style.display = "none";
+      document.getElementById('vader').value = null; // veld leegmaken indien gevuld
+      document.getElementById('result_vader').innerHTML = jArray_vdr[m];
+    }
+      else 
+      {
+      //document.getElementById('vader').style.display = "block";
+    document.getElementById('vader').style.display= "inline-block";
+    document.getElementById('result_vader').innerHTML = "";
+      }
+}
+
+var jArray_worp = [];
+
+function toon_werpdatum(m) {
+
+  var fase = document.getElementById("fase");        var fase_v = fase.value;
+
+  if(jArray_worp[m] != null && fase_v == 'lam')
+  {
+  document.getElementById('datepicker1').style.display = "none";
+  document.getElementById('datepicker1').value = null; // veld leegmaken indien gevuld
+  document.getElementById('result_werpdatum').innerHTML = jArray_worp[m];
+  document.getElementById('bijschrift').innerHTML = "";
+  }
+  else
+  {
+  document.getElementById('datepicker1').style.display = "inline-block";
+  document.getElementById('result_werpdatum').innerHTML = "";
+  document.getElementById('bijschrift').innerHTML = "&nbsp* / **";
+  }
+}
+</script>
+
+<form action="InvSchaap.php" method="post">
+<table border = 0>
+<tr valign="top">
+ <td>    
+<!-- ********************
+         OPMAAK LINKS 
+     ******************** -->
+    <table border = 0>
+    <tr>
+     <td> Ubn : </td>
+     <td>
+    <!-- KZLUBN -->
+<select name="kzlUbn" style="width: 62;">
+<option></option><option value="1">63</option><option value="3">393</option> 
+</select>
+    <!-- Einde KZLUBN -->
+     </td>
+    </tr>
+    <tr>
+     <td> Levensnummer : </td>
+     <td><input type="text" name="txtLevnr" autofocus id="levnr" onfocus="toon_dracht()" onchange="toon_dracht()" value =  ></td>
+     <td> <input type="submit" name="knpZoek" onfocus = "verplicht_bij_zoeken()" value="Zoek levensnummer"> </td>
+    </tr>
+<!-- HALSNUMMER -->
+    <tr>
+     <td>Halsnr : </td>
+     <td>
+     <select name= "kzlKleur" style= "width:62;" > 
+    <option value="" selected></option><option value="blauw">blauw</option><option value="geel">geel</option><option value="groen">groen</option><option value="oranje">oranje</option><option value="paars">paars</option><option value="rood">rood</option><option value="wit">wit</option><option value="zwart">zwart</option>    </select>  
+     <input type = text name = "txtHalsnr" style = "text-align : right" size = 1 value =  > </td>
+    </tr>
+<!-- KZLGENERATIE -->
+    <tr>
+    <td>Generatie : </td>
+    <td>
+            <select name= "kzlFase" id ="fase" onchange="toon_dracht()" style= "width:76;" > <option value=""></option><option value="lam">lam</option><option value="moeder">moeder</option><option value="vader">vader</option>    
+        </select>
+    <sup> *</sup>
+         </td>
+    </tr>
+
+<!-- KZLGESLACHT -->
+    <tr>
+    <td> Geslacht :</td>
+    <td>
+    
+     <select name= "kzlSekse" id = "sekse" style= "width:59;" > 
+    <option value="" ></option><option value="ooi" >ooi</option><option value="ram" >ram</option><option value="kween" >kween</option>     </select> 
+    <sup> *</sup>
+         </td>
+    </tr>
+
+<!-- KZLRAS -->
+    <tr>
+    <td>Ras :</td>
+    <td>
+         <select name= "kzlRas" id = "ras" style= "width:80;" >
+     <option></option>
+     <option value="119" >38%PoL12%IL25%RL12%NH12%OV</option><option value="117" >38%Pol12%iL25%RL25%SCH</option><option value="120" >38%Pol12%IL25%SuF25%Sch</option><option value="118" >38%PoL12%IL38%RL12%Sch</option><option value="135" >38%Poll 12%ill 25%NH</option><option value="133" >50% CH 25% NH</option><option value="131" >50%CH</option><option value="139" >50%CH 25%RL 25%Sch</option><option value="124" >50%CH50%SCH</option><option value="108" >50%NH50%OV</option><option value="116" >50%POLL25%FL25%RL</option><option value="134" >50%RL 38%Poll 12%IL</option><option value="111" >50%RL 50% OV</option><option value="140" >50%RL 50%CH</option><option value="113" >50%RL25%FL25%POLL</option><option value="107" >50%RL25%NH25%ov</option><option value="122" >50%RL25%SU25%CH</option><option value="121" >50%RL25%SU25%SCH</option><option value="114" >50%RL50%FL</option><option value="115" >50%RL50%POLL</option><option value="105" >50%RL50%Sch</option><option value="123" >50%SU50%sch</option><option value="132" >75%CH</option><option value="110" >75%NH25%OV</option><option value="109" >75%NH25OV</option><option value="112" >75%PollDor25%IlledeFr</option><option value="127" >75%RL 12,5%P 12,5% FL</option><option value="138" >75%RL 12,5NH 12,5OV</option><option value="128" >75%RL 25%FL</option><option value="129" >75%RL 25%Poll</option><option value="106" >75%RL25%Sch</option><option value="137" >87,5%RL 12,5%Sch</option><option value="125" >??</option><option value="2" >Ardense voskop</option><option value="3" >Assaf</option><option value="4" >Awassi</option><option value="5" >Barbados blackb</option><option value="6" >Belgisch melksc</option><option value="7" >Beltex</option><option value="8" >Bentheimer land</option><option value="9" >Black Welsh mou</option><option value="10" >Blauwe Texelaar</option><option value="11" >Bleu du Maine</option><option value="12" >Border Leiceste</option><option value="13" >Boulonnais</option><option value="14" >Cambridge</option><option value="15" >Castlemilk moor</option><option value="16" >Charollais</option><option value="17" >Cheviot</option><option value="18" >Clun Forest</option><option value="19" >Coburger fuchs</option><option value="20" >Cotswold</option><option value="22" >Dassenkop</option><option value="23" >Devon & Cornwal</option><option value="24" >Dormer</option><option value="25" >Dorper</option><option value="26" >Dorset</option><option value="21" >Drents heidesch</option><option value="28" >Duitse witkop</option><option value="29" >Duitse zwartkop</option><option value="30" >Entre-Sambre-et</option><option value="31" >Exmoor horn</option><option value="32" >Fins landschaap</option><option value="33" >Flevolander</option><option value="34" >Fries melkschaa</option><option value="35" >Gotlandpelsscha</option><option value="36" >GuteFar</option><option value="37" >Hampshire down</option><option value="38" >Hebridean</option><option value="39" >Heidschnucke</option><option value="40" >Herdwick</option><option value="41" >Houtlandschaap</option><option value="43" >IJslander</option><option value="42" >Ile de France</option><option value="44" >Jacobsschaap</option><option value="46" >Kameroenschaap</option><option value="47" >Karakoelschaap</option><option value="48" >Karntner brilsc</option><option value="45" >Katahdin</option><option value="49" >Kempens schaap</option><option value="50" >Kerry hill</option><option value="51" >Lacauneschaap</option><option value="52" >Lakens schaap</option><option value="53" >Leicester Longw</option><option value="54" >Lincoln</option><option value="55" >Lleyn</option><option value="56" >Lovenaar</option><option value="57" >Manx Loghtan</option><option value="58" >Meatlinc</option><option value="59" >Mergellandschaa</option><option value="60" >Merino</option><option value="61" >Moeflon</option><option value="62" >Montadale</option><option value="63" >Navajo churro</option><option value="130" >NHxCH</option><option value="1" >NL bont</option><option value="65" >Nolana</option><option value="64" >Noordhollander</option><option value="66" >Norfolk horn</option><option value="67" >Norsk Spelsau</option><option value="68" >North Ronaldsay</option><option value="70" >Ouessantschaap</option><option value="69" >OuessantschaapO</option><option value="71" >Persian Blackhe</option><option value="72" >Poll Dorset</option><option value="73" >Polwarth</option><option value="74" >Portland</option><option value="75" >Rackaschaap</option><option value="76" >Rambouillet</option><option value="77" >Rijnlam</option><option value="126" >Romane</option><option value="78" >Romanov</option><option value="79" >Romney</option><option value="80" >Rouge de l Oues</option><option value="81" >Ryeland</option><option value="82" >Saeftingher</option><option value="83" >Schoonebeker he</option><option value="84" >Scottish blackf</option><option value="85" >Shetlandschaap</option><option value="86" >Shropshire</option><option value="87" >Skudde</option><option value="88" >Soay</option><option value="89" >Solognote</option><option value="90" >Southdown</option><option value="91" >Suffolk</option><option value="92" >Swifter</option><option value="93" >Texelaar</option><option value="94" >Tiroler steensc</option><option value="95" >Veluws heidesch</option><option value="96" >Vetstaart</option><option value="97" >Vlaams kuddesch</option><option value="98" >Vlaams schaap</option><option value="99" >Walliser Schwar</option><option value="100" >Wensleydale</option><option value="101" >Wiltipoll</option><option value="102" >Wiltshire horn</option><option value="103" >Zeeuws melkscha</option><option value="136" >Zoekram</option><option value="104" >Zwartbles</option>     </select>
+
+    <sup> *</sup>
+         </td>
+    </tr>
+
+<!-- KZLOOI -->
+    <tr>
+     <td> </td>    
+     <td>
+            <i><sub> Werknr - lammeren - halsnr </sub></i>
+         </td>
+    </tr>
+
+    <tr>
+     <td> Werknr ooi (moeder) : </td>
+     <td>
+    
+     <select name="kzlOoi" id ="moeder" style="width:100;" onfocus="kies_generatie()" onchange="toon_dracht()" >
+     <option></option>    
+         </select> 
+      <sup> * / **</sup>      <input type = "hidden" name = "txtMaxmdr" size = 8 value =  >
+     <!--<input type = "submit" name = "knpDracht" value = "Zoek vader" > (via dracht) -->
+
+         </td> <!-- hiddden -->
+    </tr>
+
+<!-- KZLRAM -->
+    <tr> <td> Werknr ram (vader) : </td>
+
+     <td>      <select name= "kzlRam" style= "width:100; text-align:left;" id="vader" onfocus="toon_dracht()" >
+     <option></option>    
+         </select><div id="result_vader"></div> 
+         </td>
+    </tr>
+
+<!--Geboortedatum -->
+    <tr height = 40 > 
+     <td valign = "bottom">Geboortedatum :</td>
+     <td valign = "bottom">
+    
+        <input id="datepicker1" name="txtGebdm" type="text" value =  > <div id="result_werpdatum"></div> 
+         </td>
+    </tr>
+
+    <tr>
+     <td>Gewicht :</td>
+     <td><input type= "text" id = "gewicht" name= "txtGebkg"  value =  > <sup> *</sup> </td>
+    </tr>
+    <tr>
+     <td>Aanvoerdatum :</td>
+     <td><input type= "text" id="datepicker2" name= "txtAanv" value =  ></td>
+    </tr>
+    </table>
+
+ </td>
+ <td width = 160> </td>
+ <td valign = "top">
+
+<!-- ********************* 
+          OPMAAK MIDDEN 
+      *********************-->
+    <table border = 0>
+    <th colspan = 2><i> UITVAL</i>
+    </th>
+<!-- moment uitval -->
+    <tr>
+     <td>Moment uitval :</td>
+     <td>
+         <select name="kzlMoment" id="moment" style="width:180;" >
+     <option></option>    
+         </select>
+        <sup> **</sup>
+     </td>
+    </tr>
+
+<!-- datum uitval -->
+    <tr>
+    <td>Datum uitval : </td>
+    <td><input id="datepicker3" name="txtUitvdm" type="text" height= 50 value =  ><sup> **</sup></td>
+    </tr>
+
+
+<!-- KZLREDEN -->
+    <tr>
+     <td> Reden uitval :</td>
+     <td>      <select name= "kzlReden" id= "reden" style= "width:145;" >
+     <option></option>
+    <option value="42" >In het vlies</option><option value="8" >Klem gezeten</option><option value="43" >Misvormd</option><option value="13" >Onbekend</option><option value="44" >Verkeerde ligging</option><option value="22" >Zwak</option>     </select>
+     </td>
+    </tr>
+    <tr>
+     <td height = 50> </td>
+    </tr>
+
+<!-- KZLHOK -->
+    <tr>
+     <td>Verblijf :</td>
+     <td>
+         <select name="kzlHok" id="verblijf" style="width:100;" >
+     <option></option>    
+    <option value="1" >1</option>     </select> <sup> *</sup>
+     </td>
+    </tr>
+
+    <tr height = 50>
+     <td></td>
+    </tr>
+
+    <tr>
+     <td colspan = 2>
+     * Verplichte velden bij geboren lammeren.<br/>
+     ** Verplicht bij overlijden.
+     </td> 
+    </tr>
+    </table>
+
+ </td>
+ </tr>
+<tr> 
+ <td colspan = 4 align = "center"><input type = "submit" name = "knpSave" onfocus = "verplicht()" value = "Opslaan" ></td>
+</tr>
+</form>
+
+</table>
+
+
+        </TD>    
+    
+<!-- menu1 -->
+
+<script>
+$('#datepicker1').attr('autocomplete','off');
+$('#datepicker2').attr('autocomplete','off');
+$('#datepicker3').attr('autocomplete','off');
+$('#datepicker4').attr('autocomplete','off');
+$('#datepicker5').attr('autocomplete','off');
+</script>
+
+<link rel="stylesheet" href="menu.css">
+<td width = '150' height = '100' valign='top'>
+Menu : <br>
+<hr class="blue">
+
+<a href="http://oer-dev/Home.php" class="blue">Home</a>
+
+<hr class="grey">
+<a href="http://oer-dev/InvSchaap.php" class="blue">Aanvoer schaap</a>
+
+<hr class="grey">
+<a href="http://oer-dev/InlezenReader.php" class="blue">Inlezen reader</a>
+
+<hr class="grey">
+<a href="http://oer-dev/Melden.php" class="blue">RVO</a>
+
+<hr class="grey">
+<a href="http://oer-dev/Bezet.php" class="blue">Verblijven in gebruik</a>
+
+<hr class="grey">
+<a href="http://oer-dev/Zoeken.php" class="blue">Schaap opzoeken</a>
+
+<hr class="grey">
+<a href="http://oer-dev/Med_registratie.php" class="blue">Medicijn toediening</a>
+
+<hr class="grey">
+<a href="http://oer-dev/Dekkingen.php" class="blue">Dekkingen / Dracht</a>
+
+<hr class="grey">
+<a href="http://oer-dev/Alerts.php" class="blue">Raederalerts</a>
+
+<hr class="grey">
+<a href="http://oer-dev/Rapport.php" class="blue">Rapporten</a>
+
+<hr class="grey">
+<a href="http://oer-dev/Beheer.php" class="blue">Beheer</a>
+
+<hr class="grey">
+<a href="http://oer-dev/Inkoop.php" class="blue">Voorraadbeheer</a>
+
+<hr class="grey">
+<a href="http://oer-dev/Finance.php" class="blue">Financiëel</a>
+
+<hr class="grey">
+
+<i style = "color : #E2E2E2;">versie : 10-07-2025 </i> <br>
+<i style = "color : #E2E2E2;">ingelogd : 1</i>
+</td>
+</tr>
+
+</table>
+
+</body>
+</html>

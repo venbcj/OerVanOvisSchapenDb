@@ -29,4 +29,8 @@ SQL
         );
     }
 
+    public function rassenKV($lidId) {
+        return $this->KV($this->rassen($lidId));
+    }
+
 }

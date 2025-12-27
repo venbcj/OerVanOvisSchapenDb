@@ -62,6 +62,20 @@ class Gateway {
         return $default;
     }
 
+    protected function KV($vw, $row_former = null) {
+        $res = [];
+        if (is_null($row_former)) {
+            $row_former = function ($rec) {
+                return $rec;
+            };
+        }
+        while ($rec = $vw->fetch_array()) {
+            $row = $row_former($rec);
+            $res[$row[0]] = $row[1];
+        }
+        return $res;
+    }
+
     private function view_has_rows($view) {
         if ($view === false || $view === true) {
             return false;

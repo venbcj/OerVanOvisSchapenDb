@@ -4781,4 +4781,57 @@ SQL
         );
     }
 
+    public function zoek_gegevens_schaap($schaapId, $Karwerk) {
+        return $this->run_query(<<<SQL
+SELECT prnt.hisId aanwId, s.geslacht, r.ras, right(mdr.levensnummer,$Karwerk) werknr_ooi,
+right(vdr.levensnummer,$Karwerk) werknr_ram, date_format(hgeb.datum,'%d-%m-%Y') gebdm
+FROM tblSchaap s
+ left join (
+     SELECT h.hisId, st.schaapId
+     FROM tblHistorie h
+      join tblStal st on (st.stalId = h.stalId)
+     WHERE actId = 3 and schaapId = :schaapId
+ ) prnt on (s.schaapId = prnt.schaapId)
+ left join tblRas r on (r.rasId = s.rasId)
+ left join tblVolwas v on (s.volwId = v.volwId)
+ left join tblSchaap mdr on (mdr.schaapId = v.mdrId)
+ left join tblSchaap vdr on (vdr.schaapId = v.mdrId)
+ left join (
+     SELECT h.datum, st.schaapId
+     FROM tblHistorie h
+      join tblStal st on (st.stalId = h.stalId)
+     WHERE actId = 1 and schaapId = :schaapId
+ ) hgeb on (s.schaapId = hgeb.schaapId)
+WHERE s.schaapId = :schaapId
+SQL
+        , [[':schaapId', $schaapId, self::INT]]
+        );
+    }
+
+    public function zoek_vandaag_ingevoerd_met_levnr($lidId) {
+        return $this->first_field(<<<SQL
+SELECT count(s.schaapId) aant
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+WHERE s.levensnummer is not null
+ and date_format(s.dmcreatie,'%Y-%m-%d') = CURRENT_DATE()
+ and st.lidId = :lidId
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
+
+    public function zoek_vandaag_ingevoerd_zonder_levnr($lidId) {
+        return $this->first_field(<<<SQL
+SELECT count(s.schaapId) aant
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+WHERE isnull(s.levensnummer)
+ and date_format(s.dmcreatie,'%Y-%m-%d') = CURRENT_DATE()
+ and st.lidId = :lidId
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
+
 }

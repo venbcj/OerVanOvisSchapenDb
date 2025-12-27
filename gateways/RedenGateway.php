@@ -43,6 +43,9 @@ SQL
         );
     }
 
+    public function KV_uitval_lijst_voor($lidId) {
+        return $this->KV($this->uitval_lijst_voor($lidId));
+    }
     // @TODO: afvoer-lijst gebruikt reduId, uitval-lijst gebruikt redId. Waarom dat verschil?
     public function afvoer_lijst_voor($lidId) {
         return $this->run_query(

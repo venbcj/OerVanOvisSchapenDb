@@ -26,6 +26,7 @@ foreach (
         'tblElement',
         'tblMoment',
         'tblRas',
+        'tblRasuser',
         'tblReden',
         'tblRubriek',
         // minimale vulling

@@ -197,6 +197,30 @@ class InvSchaapTest extends IntegrationCase {
     // TODO: test voor knpZoek
 
     // TODO: case aantal_ubn > 1
+    public function testMeerdereUbnsToontKeuzelijst() {
+        $this->runfixture('user-1-more-ubns');
+        $this->get('/InvSchaap.php', ['ingelogd' => 1]);
+        $this->assertOptieCount('kzlUbn', 3);
+    }
+
+    // TODO ontruisen: test gaat over ubn, maar neemt het formulier van een validatiefout uit GeborenNaAfvoer
+    public function testMeerdereUbnsKeuze() {
+        $this->runfixture('schaap-4');
+        $this->runfixture('moeder-4-afgevoerd');
+        $this->post("/InvSchaap.php", $this->minimal([
+            'txtLevnr' => self::LEVNR_NIET_IN_DB,
+            'kzlSekse' => 'ram',
+            'kzlFase' => 'lam',
+            'kzlRas' => self::EEN_RAS,
+            'txtGebdm' => '5-5-1980', // schaap 9, de moeder, is in 1970 afgevoerd volgens fixture moeder-4-afgevoerd
+            'kzlHok' => 3,
+            'kzlOoi' => 9,
+            'kzlUbn' => 1,
+        ]));
+        $this->assertNoNoise();
+        $this->assertFout('Geboortedatum kan niet na afvoerdatum van moederdier liggen.');
+    }
+
 
     // TODO: fixtures voor tblRas, tblRasuser; vw_kzlOoien; resultvader; moment uitval; reden uitval; tblHok
     // ==> welke asserts passen daar bij? aantal option-tags tellen binnen een benoemde select?

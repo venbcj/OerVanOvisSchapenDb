@@ -1402,4 +1402,170 @@ SQL
     );
 }
 
+public function zoek_hisId_tbv_tblBezet($stalId) {
+    return $this->first_field(<<<SQL
+SELECT max(hisId) hisId
+FROM tblHistorie h
+ join tblActie a on (h.actId = a.actId)
+WHERE h.skip = 0 and a.aan = 1 and stalId = :stalId
+SQL
+    , [[':stalId', $stalId, self::INT]]
+    );
+}
+
+public function zoek_hisIdaanv($stalId, $actId) {
+    return $this->first_field(<<<SQL
+SELECT hisId
+FROM tblHistorie
+WHERE skip = 0
+ and stalId = :stalId
+ and actId = :actId
+SQL
+    , [[':stalId', $stalId, self::INT], [':actId', $actId, self::INT]]
+    );
+}
+
+// @TODO: #0004219 koppelen via ubn
+public function historie_invschaap($lidId, $schaapId) {
+    return $this->run_query(<<<SQL
+    SELECT date_format(datum,'%d-%m-%Y') dag, h.actId, actie, datum
+    FROM tblSchaap s
+     join tblStal st on (s.schaapId = st.schaapId)
+     join tblHistorie h on (st.stalId = h.stalId)
+     join tblActie a on (a.actId = h.actId)
+    WHERE st.lidId = :lidId
+ and s.schaapId = :schaapId
+ and h.skip = 0
+
+ and not exists (
+        SELECT datum 
+        FROM tblHistorie geenAanwas 
+         join tblStal st on (geenAanwas.stalId = st.stalId)
+        WHERE actId = 2
+ and h.datum = geenAanwas.datum
+ and h.actId = geenAanwas.actId+1
+ and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)/* bij aankoop incl. aanwas wordt aanwas niet getoond */."')
+
+    union
+
+    SELECT date_format(datum,'%d-%m-%Y') dag, h.actId, actie, datum
+    FROM tblSchaap s
+     join tblStal st on (s.schaapId = st.schaapId)
+     join tblHistorie h on (st.stalId = h.stalId)
+     join tblActie a on (a.actId = h.actId)
+    WHERE h.actId = 1
+ and h.skip = 0
+ and s.schaapId = :schaapId
+
+    union
+
+    SELECT date_format(p.dmafsluit,'%d-%m-%Y') dag, h.actId, 'Gevoerd' actie, p.dmafsluit
+    FROM tblVoeding v    
+     join tblPeriode p on (p.periId = v.periId)
+     join tblBezet b on (p.periId = b.periId)
+     join tblHistorie h on (h.hisId = b.hisId)
+     join tblStal st on (st.stalId = h.stalId)
+     join tblSchaap s on (s.schaapId =st.schaapId)
+    WHERE h.skip = 0
+ and st.lidId = :lidId
+ and s.schaapId = :schaapId
+
+    union
+
+    SELECT date_format(min(h.datum),'%d-%m-%Y') dag, h.actId, 'Eerste worp' actie, min(h.datum) datum
+    FROM tblSchaap s
+     join tblVolwas v on (s.schaapId = v.mdrId)
+     join tblSchaap lam on (v.volwId = lam.volwId)
+     join tblStal st on (st.schaapId = lam.schaapId)
+     join tblHistorie h on (st.stalId = h.stalId
+ and h.actId = 1
+ and h.skip = 0)
+    WHERE st.lidId = :lidId
+ and s.schaapId = :schaapId
+    GROUP BY h.actId
+
+    union
+
+    SELECT date_format(max(h.datum),'%d-%m-%Y') dag, h.actId, 'Laatste worp' actie, max(h.datum) datum
+    FROM tblSchaap s
+     join tblVolwas v on (s.schaapId = v.mdrId)
+     join tblSchaap lam on (v.volwId = lam.volwId)
+     join tblStal st on (st.schaapId = lam.schaapId)
+     join tblHistorie h on (st.stalId = h.stalId
+ and h.actId = 1
+ and h.skip = 0)
+    WHERE st.lidId = :lidId
+ and s.schaapId = :schaapId
+    GROUP BY h.actId
+    HAVING (max(h.datum) > min(h.datum))
+
+    union
+
+    SELECT date_format(rs.dmcreate,'%d-%m-%Y') dag, h.actId, 'Geboorte gemeld' actie, rs.dmcreate
+    FROM impRespons rs
+     join tblMelding m on (rs.reqId = m.reqId)
+     join tblHistorie h on (m.hisId = h.hisId)
+     join tblStal st on (st.stalId = h.stalId)
+     join tblSchaap s on (s.schaapId = st.schaapId
+ and s.levensnummer = rs.levensnummer)
+    WHERE rs.melding = 'GER'
+ and rs.meldnr is not null
+ and h.skip = 0
+ and st.lidId = :lidId
+ and s.schaapId = :schaapId
+
+    union
+
+    SELECT date_format(rs.dmcreate,'%d-%m-%Y') dag, h.actId, 'Aanvoer gemeld' actie, rs.dmcreate
+    FROM impRespons rs
+     join tblMelding m on (rs.reqId = m.reqId)
+     join tblHistorie h on (m.hisId = h.hisId)
+     join tblStal st on (st.stalId = h.stalId)
+     join tblSchaap s on (s.schaapId = st.schaapId
+ and s.levensnummer = rs.levensnummer)
+    WHERE rs.melding = 'AAN'
+ and rs.meldnr is not null
+ and h.skip = 0
+ and st.lidId = :lidId
+ and s.schaapId = :schaapId
+
+    union
+
+    SELECT date_format(rs.dmcreate,'%d-%m-%Y') dag, h.actId, 'Afvoer gemeld' actie, rs.dmcreate
+    FROM impRespons rs
+     join tblMelding m on (rs.reqId = m.reqId)
+     join tblHistorie h on (m.hisId = h.hisId)
+     join tblStal st on (st.stalId = h.stalId)
+     join tblSchaap s on (s.schaapId = st.schaapId
+ and s.levensnummer = rs.levensnummer)
+    WHERE rs.melding = 'AFV'
+ and rs.meldnr is not null
+ and h.skip = 0
+ and st.lidId = :lidId
+ and s.schaapId = :schaapId
+
+    union
+
+    SELECT date_format(rs.dmcreate,'%d-%m-%Y') dag, h.actId, 'Uitval gemeld' actie, rs.dmcreate
+    FROM impRespons rs
+     join tblMelding m on (rs.reqId = m.reqId)
+     join tblHistorie h on (m.hisId = h.hisId)
+     join tblStal st on (st.stalId = h.stalId)
+     join tblSchaap s on (s.schaapId = st.schaapId
+ and s.levensnummer = rs.levensnummer)
+    WHERE rs.melding = 'DOO'
+ and rs.meldnr is not null
+ and h.skip = 0
+ and st.lidId = :lidId
+ and s.schaapId = :schaapId
+
+    ORDER BY datum desc, actId desc
+SQL
+    , [
+        [':lidId', $lidId, self::INT],
+        [':schaapId', $schaapId, self::INT],
+    ]
+);
+}
+
 }

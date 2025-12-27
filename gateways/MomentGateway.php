@@ -18,4 +18,22 @@ SQL
         );
     }
 
+    public function moment_invschaap($lidId) {
+        return $this->run_query(<<<SQL
+    SELECT m.momId, m.moment
+    FROM tblMoment m
+     join tblMomentuser mu on (m.momId = mu.momId)
+    WHERE mu.lidId = :lidId
+ and m.actief = 1
+ and mu.actief = 1
+    ORDER BY m.momId
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
+
+    public function kzlMoment_invschaap($lidId) {
+        return $this->KV($this->moment_invschaap($lidId));
+    }
+
 }

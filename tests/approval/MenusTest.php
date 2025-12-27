@@ -2,15 +2,6 @@
 
 class MenusTest extends IntegrationCase {
 
-    public function setup(): void {
-        $this->uses_db();
-        $this->db->begin_transaction();
-    }
-
-    public function teardown(): void {
-        $this->db->rollback();
-    }
-
     public function testMenuMeldenRood() {
         $this->runfixture('request-lid-codes');
         $this->get('/Melden.php', ['ingelogd' => 1]);

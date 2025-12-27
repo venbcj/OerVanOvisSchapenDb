@@ -2,6 +2,9 @@
 
 class UbnGateway extends Gateway {
 
+    // NOTE in LidGateway zit findUbn
+    // Die zou ook hier mogen wonen.
+
     public function exists($ubn) {
         // zou ook met count() kunnen
         return 0 < $this->run_query(<<<SQL
@@ -106,6 +109,10 @@ ORDER BY ubn
 SQL
         , [[':lidId', $lidId, self::INT]]
         );
+    }
+
+    public function lijstKV($lidId) {
+        return $this->KV($this->lijst($lidId));
     }
 
     public function countPerLid($lidId) {

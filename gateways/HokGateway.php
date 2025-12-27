@@ -35,6 +35,10 @@ SQL
         );
     }
 
+    public function kzlHokKV($lidId) {
+        return $this->KV($this->kzlHok($lidId));
+    }
+
     public function items_without_one($lidId, $hokId) {
         $vw = $this->run_query(
             <<<SQL

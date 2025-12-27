@@ -37,6 +37,11 @@ WHERE st.schaapId = '" . $this->db->real_escape_string($schaapId) . "' and u.lid
         );
     }
 
+    public function ooien_invschaap($lidId, $Karwerk, $row_former) {
+        $vw = $this->kzlOoien($lidId, $Karwerk);
+        return $this->KV($vw, $row_former);
+    }
+
     private function kzl_ooien_statement() {
         return <<<SQL
 SELECT st.stalId, st.schaapId, s.levensnummer, right(s.levensnummer,:Karwerk) werknr, count(lam.schaapId) lamrn,
@@ -71,6 +76,38 @@ GROUP BY st.stalId, st.schaapId, s.levensnummer, right(s.levensnummer,:Karwerk)
 ORDER BY right(s.levensnummer,:Karwerk), count(lam.schaapId)
 SQL
         ;
+    }
+
+    public function rammen_invschaap($lidId, $Karwerk, $row_former) {
+        $vw = $this->kzlRammen($lidId, $Karwerk);
+        return $this->KV($vw, $row_former);
+    }
+
+    public function kzlRammen($lidId, $Karwerk) {
+        return $this->run_query(<<<SQL
+SELECT st.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr, s.indx
+FROM tblStal st 
+join tblSchaap s on (st.schaapId = s.schaapId)
+join tblHistorie h on (h.stalId = st.stalId)
+WHERE s.geslacht = 'ram'
+and h.actId = 3
+and h.skip = 0
+and lidId = :lidId
+and not exists (
+SELECT st.schaapId
+FROM tblStal stal 
+ join tblHistorie h on (h.stalId = stal.stalId)
+ join tblActie  a on (a.actId = h.actId)
+WHERE stal.schaapId = s.schaapId
+and a.af = 1
+and h.datum < DATE_ADD(CURDATE(), interval -1 year)
+and h.skip = 0
+and lidId = :lidId
+)
+ORDER BY right(s.levensnummer,$Karwerk)
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        );
     }
 
     public function zoek_laatste_stalId($lidId, $schaapId) {

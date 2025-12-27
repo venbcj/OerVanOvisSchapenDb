@@ -21,6 +21,7 @@ $versie = '10-03-2024'; /* Als alle regels moeten worden verwijderd kan dit vana
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top"> gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
 $versie = '13-07-2025'; /* Ubn van gebruiker per regel getoond omdat een gebruiker per deze versie meerdere ubn's kan hebben */
 
+Session::start();
 ?>
 <!DOCTYPE html>
 <html>
@@ -114,21 +115,12 @@ if (Auth::is_logged_in()) {
     if (isset($zoekControle) && $zoekControle > 0 && $aantMeld > 0) {
         /* Als er een controlemelding is gedaan en er zijn schapen te melden */
         // TODO: (BCB) #0004148 dit uitvoeren met collection_select
-?>
-    <!-- KZLDefinitief --> 
-    <select <?php echo "name=\"kzlDef_\" "; ?> style = "width:100; font-size:13px;">
-<?php
-        $opties = array('N'=>'Controle', 'J'=>'Vastleggen');
-        foreach ($opties as $key => $waarde) {
-            $selected = '';
-            if ((!isset($_POST['knpSave_']) && $def == $key) || (isset($_POST["kzlDef_"]) && $_POST["kzlDef_"] == $key)) {
-                $selected = ' selected="selected"';
-            }
-            echo '<option value="' . $key . '"' . $selected . '>' . $waarde . '</option>';
-        }
-?> 
-    </select> <!-- EINDE KZLDefinitief -->
-<?php
+        $name = 'kzlDef_';
+        $collection = array('N'=>'Controle', 'J'=>'Vastleggen');
+        $selected = (isset($_POST['kzlDef_'])) ? $_POST['kzlDef'] : $def;
+        // selected is afgeleid van:
+        // if ((!isset($_POST['knpSave_']) && $def == $key) || (isset($_POST["kzlDef_"]) && $_POST["kzlDef_"] == $key)) {
+        View::select($name, $collection, false, $selected, ['style' => 'width: 100; font-size: 13px']);
     } elseif ($aantMeld > 0) {
         echo 'Controle ';
     }
