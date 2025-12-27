@@ -252,7 +252,7 @@ if(!isset($max_worp) || (isset($dmwerp_plus_60dgn) && $dmwerp_plus_60dgn <= $txt
 // Inlezen dekking door kzlVdr bij ooien in verblijf kzlHok
 
 
-$stalId = zoek_stalId_in_stallijst($lidId,$mdrId);
+$stalId = $stal_gateway->zoek_stal($lidId,$mdrId);
 
 insert_tblHistorie($stalId,$txtDay,18);
 

@@ -382,13 +382,14 @@ SQL
         );
     }
 
-    public function zoek_stal($schaapId, $lidId) {
+    public function zoek_stal($lidId, $schaapId) {
         return $this->first_field(
             <<<SQL
 SELECT stalId
-FROM tblStal
+FROM tblStal st
+ join tblUbn u on (st.ubnId = u.ubnId)
 WHERE schaapId = :schaapId
- and lidId = :lidId
+ and u.lidId = :lidId
  and isnull(rel_best)
 SQL
         , [[':lidId', $lidId, self::INT], [':schaapId', $schaapId, self::INT]]
@@ -553,6 +554,16 @@ FROM tblStal st
 WHERE h.actId = 14 and h.skip = 0 and date_format(h.datum,'%Y') = :jaar and st.lidId = :lidId
 SQL
         , [[':lidId', $lidId, self::INT], [':jaar', $jaar]]
+        );
+    }
+
+    public function zoek_startjaar_user($lidId) {
+        return $this->first_field(<<<SQL
+SELECT date_format(min(dmcreatie),'%Y') jaar 
+FROM tblStal
+WHERE lidId = :lidId
+SQL
+        , [[':lidId', $lidId, self::INT]]
         );
     }
 

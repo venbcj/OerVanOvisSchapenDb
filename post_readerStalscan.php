@@ -18,6 +18,8 @@ foreach($_POST as $key => $value) {
     
     $array[Url::getIdFromKey($key)][Url::getNameFromKey($key)] = $value;
 }
+$schaap_gateway = new SchaapGateway();
+$stal_gateway = new StalGateway();
 foreach($array as $recId => $id) {
     if (!$recId) continue; // dit stond hier niet. Hoe kan dat gewerkt hebben? --BCB
 
@@ -111,7 +113,7 @@ WHERE Id = '".mysqli_real_escape_string($db,$recId)."'
 
 // SchaapId ophalen uit database (t.b.v. inlezen stallijst nieuwe klanten)
 
-$schaapId_db      = zoek_schaapId_in_database($Levnr_rd);
+$schaapId_db      = $schaap_gateway->zoek_schaapid($Levnr_rd);
 $schaapId_stal = zoek_schaapId_in_stallijst($lidId,$Levnr_rd);
 $transp_db        = zoek_transponder_in_database($Levnr_rd);
 
@@ -127,7 +129,7 @@ if(!isset($transp_db) && isset($transp_rd)) {
 }
 // Einde Transpondernummer inlezen
 
-$stalId = zoek_stalId_in_stallijst($lidId,$schaapId_stal);
+$stalId = $stal_gateway->zoek_stal($lidId,$schaapId_stal);
 
 // Insert historie stallijstscan
     $insert_tblHistorie_scan = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$fldDay)."', actId = '".mysqli_real_escape_string($db,$actId)."' ";
@@ -159,7 +161,7 @@ else if (!isset($schaapId_db) && isset($fldDay) && isset($fldUbn) && isset($Levn
 /*echo $insert_tblSchaap.'<br>';*/        mysqli_query($db,$insert_tblSchaap) or die (mysqli_error($db));    
 // Einde Insert tblSchapen
 
-$schaapId_db = zoek_schaapId_in_database($Levnr_rd);
+$schaapId_db = $schaap_gateway->zoek_schaapid($Levnr_rd);
 
 // Transpondernummer inlezen
 if(isset($transp_rd)) {
@@ -175,7 +177,7 @@ if(isset($transp_rd)) {
 // Einde Insert tblStal
 
 
-$stalId = zoek_stalId_in_stallijst($lidId,$schaapId_db);
+$stalId = $stal_gateway->zoek_stal($lidId,$schaapId_db);
 
   // Insert historie stallijstscan
     $insert_tblHistorie_scan = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$fldDay)."', actId = '".mysqli_real_escape_string($db,$actId)."' ";
@@ -256,7 +258,7 @@ if(!isset($transp_db) && isset($transp_rd)) {
 // Einde Insert tblStal
 
 
-$stalId = zoek_stalId_in_stallijst($lidId,$schaapId_db);
+$stalId = $stal_gateway->zoek_stal($lidId,$schaapId_db);
 
   // Insert historie stallijstscan
     $insert_tblHistorie_scan = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$fldDay)."', actId = '".mysqli_real_escape_string($db,$actId)."' ";

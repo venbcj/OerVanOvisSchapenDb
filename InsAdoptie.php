@@ -97,7 +97,7 @@ echo $paginator->show_page_numbers(); ?></td>
 
 // VERBLIJF MOEDER zoeken
     $stal_gateway = new StalGateway();
-    $stalId = $stal_gateway->zoek_stal($mdr_db, $lidId);
+    $stalId = $stal_gateway->zoek_stal($lidId, $mdr_db);
 unset($hok_db);
 
 if(isset($stalId)) {

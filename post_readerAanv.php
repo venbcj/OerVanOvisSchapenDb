@@ -11,11 +11,11 @@
 9-7-2020 : Onderscheid gemaakt tussen reader Agrident en Biocontrol 
 5-5-2021 : isset(verwerkt) toegevoegd om dubbele invoer te voorkomen. SQL beveiligd met quotes. Verschil tussen kiezen of verwijderen herschreven 
 26-11-2022 Invoer geboortedatum toegevoegd 
-06-08-2023 : Fout gevonden in update_tblSchaap . WHERE schaapId = '".mysqli_real_escape_string(db,schaapId)."' toegevoegd
+06-08-2023 : Fout gevonden in update_tblSchaap . WHERE schaapId = schaapId)."' toegevoegd
 25-09-2023 : Fout hersteld in  zoek_stalId Van 
-    mysqli_query(db,"SELECT stalId FROM tblStal WHERE lidId = '".mysqli_real_escape_string(db,lidId)."' , schaapId = '".mysqli_real_escape_string(db,schaapId)."' and isnull(rel_best) ") 
+    query(db,"SELECT stalId FROM tblStal WHERE lidId = lidId)."' , schaapId = schaapId)."' and isnull(rel_best) ") 
     naar
-     mysqli_query(db,"SELECT stalId FROM tblStal WHERE lidId = '".mysqli_real_escape_string(db,lidId)."' and schaapId = '".mysqli_real_escape_string(db,schaapId)."' and isnull(rel_best) ")
+     (db,"SELECT stalId FROM tblStal WHERE lidId = '".lidId)."' and schaapId = '".schaapId)."' and isnull(rel_best) ")
 31-12-2023 : and h.skip = 0 bij een enkele query toegevoegd 
 17-04-2025 : conedring impReader (Biocontrol) verwijderd 
 13-07-2025 : Opslaan ubn in tblStal toegevoegd 

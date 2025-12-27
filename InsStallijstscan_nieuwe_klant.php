@@ -26,12 +26,17 @@ include "login.php"; ?>
         <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) {
+    $schaap_gateway = new SchaapGateway();
+    $impagrident_gateway = new ImpAgridentGateway();
+    $lid_gateway = new LidGateway();
+    $ubn_gateway = new UbnGateway();
+    $ras_gateway = new RasGateway();
+    $hok_gateway = new HokGateway();
 
 If (isset($_POST['knpInsert_']))  {
     include "post_readerStalscan.php";
     }
 
-$lid_gateway = new LidGateway();
 $lstScan = $lid_gateway->zoek_ingescand($lidId);
 $lstScanDag = date('d-m-Y', strtotime($lstScan));
 if($lstScan >= $today) { //$today is gedeclareerd in bsisfuncties.php
@@ -42,7 +47,6 @@ $inleesstatus = "Je had t/m " . $lstScanDag . " de mogelijkheid de stallijst in 
 
 $velden = "rd.actId, rd.Id readId, rd.datum, rd.ubnId ubnId_rd, rd.levensnummer levnr_rd, rd.rasId rasId_rd, rd.geslacht geslacht_rd, rd.hokId hokId_rd, rd.doelId, dup.dubbelen, ho.hoknr hoknr_rd";
 
-$impagrident_gateway = new ImpAgridentGateway();
 $tabel = $impagrident_gateway->getInsStallijstscanNieuweklantFrom();
 $WHERE = $impagrident_gateway->getInsStallijstscanNieuweklantWhere($lidId);
 
@@ -90,7 +94,6 @@ echo $paginator->show_page_numbers(); ?></td>
 
 <?php
 // Declaratie ubn
-    $ubn_gateway = new UbnGateway();
 $declaratie_kzlUbn = $ubn_gateway->lijst($lidId);
 $index = 0; 
 while ($du = $declaratie_kzlUbn->fetch_array()) {
@@ -102,7 +105,6 @@ unset($index);
 // Einde Declaratie ubn
 
 // Declaratie ras
-$ras_gateway = new RasGateway();
 $RAS = $ras_gateway->rassen($lidId);
 $index = 0; 
 $rasId = [];
@@ -119,7 +121,6 @@ unset($index);
 if($modtech == 1) {
 
 // Declaratie HOKNUMMER            // lower(if(isnull(scan),'6karakters',scan)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.
-    $hok_gateway = new HokGateway();
 $qryHoknummer = $hok_gateway->kzlHok($lidId);
 $index = 0; 
 while ($hknr = $qryHoknummer->fetch_assoc()) { 
@@ -160,7 +161,7 @@ $schaapId_st = zoek_schaapId_in_stallijst($lidId,$levnr_rd);
 
 if(!isset($schaapId_st)) {
 
-$schaapId_db = zoek_schaapId_in_database($levnr_rd);
+$schaapId_db = $schaap_gatewau->zoek_schaapid($levnr_rd);
 $schaapId = $schaapId_db;
 }
 else
@@ -180,7 +181,6 @@ unset($ras_db);
 if(isset($schaapId)) {
 #echo $schaapId.'<br>';
 
-    $schaap_gateway = new SchaapGateway();
     $zoek_levnr_db = $schaap_gateway->zoek_levnr_db($schaapId);
 while ($zld = $zoek_levnr_db->fetch_assoc()) { 
   $gebdag_db = $zld['gebdag'];

@@ -31,98 +31,11 @@ if (Auth::is_logged_in()) { if($modtech ==1) { ?>
 <?php
 // Omdat jaartal en maanden aflopend zijn moet de cumulatieven aantal ooien aflopend zijn i.p.v. oplopend. Het aantal cumulatief begint dus niet bij 0 maar bij het huidig aantal ooien en rammen.
 // query maximaal aantal ooien cumulatief
-$huidig_aantal_ooien_persaldo = mysqli_query($db,"
-SELECT sum(coalesce(aanv_m.mdrs,0) - coalesce(afv_m.mdrs,0) - coalesce(doo_m.mdrs,0)) saldo_ooi_end
-FROM (
-    SELECT date_format(datum,'%Y%m') jrmnd
-    FROM tblHistorie
-    WHERE skip = 0
-    GROUP BY date_format(datum,'%Y%m')
-    ) nr    
-left join (
-    SELECT date_format(h.datum,'%Y%m') jrmnd, count(s.schaapId) mdrs
-    FROM tblHistorie h
-     join tblStal st on (h.stalId = st.stalId)
-     join tblSchaap s on (s.schaapId = st.schaapId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 3 and s.geslacht = 'ooi' and skip = 0
-    GROUP BY date_format(h.datum,'%Y%m')
-) aanv_m on (nr.jrmnd = aanv_m.jrmnd)
-left join (
-    SELECT date_format(h.datum,'%Y%m') jrmnd, count(s.schaapId) mdrs
-    FROM tblHistorie h
-     join tblStal st on (h.stalId = st.stalId)
-     join tblSchaap s on (s.schaapId = st.schaapId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 13 and s.geslacht = 'ooi' and skip = 0
-    GROUP BY date_format(h.datum,'%Y%m')
-) afv_m on (nr.jrmnd = afv_m.jrmnd)
-left join (
-    SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) mdrs
-    FROM tblHistorie h
-     join tblStal st on (h.stalId = st.stalId)
-     join tblSchaap s on (s.schaapId = st.schaapId)
-     join (
-        SELECT schaapId
-        FROM tblStal st
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 3 and skip = 0
-     ) ouder on (ouder.schaapId = st.schaapId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 14
-     and s.geslacht = 'ooi' and skip = 0
-    GROUP BY date_format(h.datum,'%Y%m')
-) doo_m on (nr.jrmnd = doo_m.jrmnd)
-") or die (mysqli_error($db));
-
-        while($cu = mysqli_fetch_array($huidig_aantal_ooien_persaldo))/*    $row zorgt voor de waardes per maand     */
-        { $cumm_m = $cu['saldo_ooi_end'];  }
-// Einde query maximaal aantal ooien cumulatief
-
+    $historie_gateway = new HistorieGateway();
+$cumm_m = $historie_gateway->huidig_aantal_ooien_persaldo($lidId);
 
 // query maximaal aantal rammen cumulatief
-$huidig_aantal_rammen_persaldo = mysqli_query($db,"
-SELECT sum(coalesce(aanv_v.vdrs,0) - coalesce(afv_v.vdrs,0) - coalesce(doo_v.vdrs,0)) saldo_ram_end
-FROM (
-    SELECT date_format(datum,'%Y%m') jrmnd
-    FROM tblHistorie
-    WHERE skip = 0
-    GROUP BY date_format(datum,'%Y%m')
-    ) nr    
-left join (
-    SELECT date_format(h.datum,'%Y%m') jrmnd, count(s.schaapId) vdrs
-    FROM tblHistorie h
-     join tblStal st on (h.stalId = st.stalId)
-     join tblSchaap s on (s.schaapId = st.schaapId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 3 and s.geslacht = 'ram' and skip = 0
-    GROUP BY date_format(h.datum,'%Y%m')
-) aanv_v on (nr.jrmnd = aanv_v.jrmnd)
-left join (
-    SELECT date_format(h.datum,'%Y%m') jrmnd, count(s.schaapId) vdrs
-    FROM tblHistorie h
-     join tblStal st on (h.stalId = st.stalId)
-     join tblSchaap s on (s.schaapId = st.schaapId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 13 and s.geslacht = 'ram' and skip = 0
-    GROUP BY date_format(h.datum,'%Y%m')
-) afv_v on (nr.jrmnd = afv_v.jrmnd)
-left join (
-    SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) vdrs
-    FROM tblHistorie h
-     join tblStal st on (h.stalId = st.stalId)
-     join tblSchaap s on (s.schaapId = st.schaapId)
-     join (
-        SELECT schaapId
-        FROM tblStal st
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 3 and skip = 0
-     ) ouder on (ouder.schaapId = st.schaapId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 14
-     and s.geslacht = 'ram' and skip = 0
-    GROUP BY date_format(h.datum,'%Y%m')
-) doo_v on (nr.jrmnd = doo_v.jrmnd)
-") or die (mysqli_error($db));
-
-        while($cu = mysqli_fetch_array($huidig_aantal_rammen_persaldo))/*    $row zorgt voor de waardes per maand     */
-        { $cumm_v = $cu['saldo_ram_end'];  }
-// Einde query maximaal aantal rammen cumulatief
-
+$cumm_v = $historie_gateway->huidig_aantal_rammen_persaldo($lidId);
 
 // Verticale lijn toevoegen. Binnen de loop wordt de lijn meerdere malen getoond
 ?>
@@ -144,24 +57,10 @@ left join (
 <?php
 // Einde Verticale lijn toevoegen.
 
-
-
-$zoek_startjaar_user = mysqli_query($db,"
-SELECT date_format(min(dmcreatie),'%Y') jaar 
-FROM tblStal
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
-") or die (mysqli_error($db));
-    while($jr1 = mysqli_fetch_array($zoek_startjaar_user)) { $jaar1 = $jr1['jaar']; }
-    
-    
-$qry_eerstejaar_tbv_testen = mysqli_query($db,"
-SELECT min(year(h.datum)) minjaar
-FROM tblHistorie h
- join tblStal st on (st.stalId = h.stalId)
- join tblSchaap s on (s.schaapId = st.schaapId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.datum > 0 and h.actId = 3 and s.geslacht = 'ooi' and skip = 0
-") or die (mysqli_error($db));
-while ($jr1 = mysqli_fetch_assoc($qry_eerstejaar_tbv_testen)) { $startjaar = $jr1['minjaar']; }
+$stal_gateway = new StalGateway();
+$jaar1 = $stal_gateway->zoek_startjaar_user($lidId);
+$startjaar = $historie_gateway->eerste_jaar_tbv_testen($lidId);
+// ennn dit gooien we weg. Waarom? TODO FIXME
 $startjaar = date("Y")-2; if($jaar1 > $startjaar && $dtb == $db_p) { $startjaar = $jaar1; } // Alleen in productieomg rapport tonen vanaf startjaar user
 $endjaar = date("Y");
 $endjrmnd = date("Ym");
@@ -215,180 +114,9 @@ for($j = $endjaar; $j>=$startjaar; $j--) { ?>
  <?php
 $i = 1;
 for($i=1;$i<13;$i++) { $m=13-$i; $jm = ($j*100)+($m);
-        
- 
     $mndnaam = array('','januari', 'februari', 'maart','april','mei','juni','juli','augustus','september','oktober','november','december');
-
-$result_permaand = mysqli_query($db,"
-
-    SELECT nr.jrmnd jm, nr.jaar, aanv_m.jrmnd, aanv_m.mdrs mdrs_aanv, afv_m.mdrs mdrs_afv, doo_m.mdrs mdrs_doo,
-     coalesce(aanw_m.oudrs_m,0) + coalesce(aanv_m.mdrs,0) - coalesce(afv_m.mdrs,0) - coalesce(doo_m.mdrs,0) saldo_ooi,
-
-     gebrn.aant gebrn, aanw_m.oudrs_m, afv_lam.afv afv_lam, doo_lam.lam doo_lam,
-     
-     aanv_v.vdrs vdrs_aanv, afv_v.vdrs vdrs_afv, doo_v.vdrs vdrs_doo,
-     coalesce(aanw_v.oudrs_v,0) + coalesce(aanv_v.vdrs,0) - coalesce(afv_v.vdrs,0) - coalesce(doo_v.vdrs,0) saldo_ram,
-
-     aanw_v.oudrs_v
-    FROM (
-        SELECT '".mysqli_real_escape_string($db,$jm)."' jrmnd, '".mysqli_real_escape_string($db,$j)."' jaar
-        FROM dual
-        WHERE '".mysqli_real_escape_string($db,$jm)."' <= '".mysqli_real_escape_string($db,$endjrmnd)."'
-    ) nr    
-    left join (
-        SELECT date_format(h.datum,'%Y%m') jrmnd, count(distinct s.schaapId) mdrs
-        FROM tblHistorie h
-         join tblStal st on (h.stalId = st.stalId)
-         join tblSchaap s on (s.schaapId = st.schaapId)
-         join (
-            SELECT st.schaapId, h.datum
-            FROM tblStal st
-             join tblHistorie h on (st.stalId = h.stalId)
-            WHERE h.actId = 3 and skip = 0
-         ) ouder on (ouder.schaapId = s.schaapId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(h.datum,'%Y%m') = '".mysqli_real_escape_string($db,$jm)."' and (h.actId = 2 or h.actId = 11) and skip = 0 and s.geslacht = 'ooi' and ouder.datum <= h.datum
-        GROUP BY date_format(h.datum,'%Y%m')
-    ) aanv_m on (nr.jrmnd = aanv_m.jrmnd)
-    left join (
-        SELECT date_format(h.datum,'%Y%m') jrmnd, count(distinct s.schaapId) mdrs
-        FROM tblHistorie h
-         join tblStal st on (h.stalId = st.stalId)
-         join tblSchaap s on (s.schaapId = st.schaapId)
-         join (
-            SELECT st.schaapId, h.datum
-            FROM tblStal st
-             join tblHistorie h on (st.stalId = h.stalId)
-            WHERE h.actId = 3 and skip = 0
-         ) ouder on (ouder.schaapId = s.schaapId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(h.datum,'%Y%m') = '".mysqli_real_escape_string($db,$jm)."' and (h.actId = 10 or h.actId = 13) and skip = 0 and s.geslacht = 'ooi' and ouder.datum <= h.datum
-        GROUP BY date_format(h.datum,'%Y%m')
-    ) afv_m on (nr.jrmnd = afv_m.jrmnd)
-    left join (
-        SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) mdrs
-        FROM tblHistorie h
-         join tblStal st on (h.stalId = st.stalId)
-         join tblSchaap s on (s.schaapId = st.schaapId)
-         join (
-            SELECT schaapId
-            FROM tblStal st
-             join tblHistorie h on (st.stalId = h.stalId)
-            WHERE h.actId = 3 and skip = 0
-         ) ouder on (ouder.schaapId = st.schaapId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(h.datum,'%Y%m') = '".mysqli_real_escape_string($db,$jm)."' and h.actId = 14 and skip = 0
-         and s.geslacht = 'ooi'
-        GROUP BY date_format(h.datum,'%Y%m')
-    ) doo_m on (nr.jrmnd = doo_m.jrmnd)
-    left join (
-        SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) oudrs_m
-        FROM tblHistorie h
-         join tblStal st on (h.stalId = st.stalId)
-         join tblSchaap s on (s.schaapId = st.schaapId)
-         left join (
-            SELECT h.stalId, datum
-            FROM tblHistorie h
-             join tblStal st on (st.stalId = h.stalId)
-            WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 2 and skip = 0
-         ) aanv on (aanv.stalId = h.stalId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.geslacht = 'ooi' and date_format(h.datum,'%Y%m') = '".mysqli_real_escape_string($db,$jm)."' and h.actId = 3 and skip = 0 and coalesce(aanv.datum, date_add(h.datum, INTERVAL 10 DAY)) <> h.datum
-        GROUP BY date_format(h.datum,'%Y%m')
-    ) aanw_m on (nr.jrmnd = aanw_m.jrmnd)
-
-    left join (
-        SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) aant
-        FROM tblHistorie h
-         join tblStal st on (h.stalId = st.stalId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(h.datum,'%Y%m') = '".mysqli_real_escape_string($db,$jm)."' and h.actId = 1 and skip = 0
-        GROUP BY date_format(h.datum,'%Y%m')
-    ) gebrn on (nr.jrmnd = gebrn.jrmnd)
-    left join (
-        SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) afv
-        FROM tblHistorie h
-         join tblStal st on (h.stalId = st.stalId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(h.datum,'%Y%m') = '".mysqli_real_escape_string($db,$jm)."' and h.actId = 12 and skip = 0
-        GROUP BY date_format(h.datum,'%Y%m')
-    ) afv_lam on (nr.jrmnd = afv_lam.jrmnd)
-    left join (
-        SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) lam
-        FROM tblHistorie h
-         join tblStal st on (h.stalId = st.stalId)
-         left join (
-            SELECT schaapId
-            FROM tblStal st
-             join tblHistorie h on (st.stalId = h.stalId)
-            WHERE h.actId = 3 and skip = 0
-         ) ouder on (ouder.schaapId = st.schaapId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(h.datum,'%Y%m') = '".mysqli_real_escape_string($db,$jm)."' and h.actId = 14 and skip = 0 and isnull(ouder.schaapId)
-        GROUP BY date_format(h.datum,'%Y%m')
-    ) doo_lam on (nr.jrmnd = doo_lam.jrmnd)
-
-    left join (
-    SELECT date_format(h.datum,'%Y%m') jrmnd, count(distinct s.schaapId) vdrs
-    FROM tblHistorie h
-     join tblStal st on (h.stalId = st.stalId)
-     join tblSchaap s on (s.schaapId = st.schaapId)
-     join (
-        SELECT st.schaapId, h.datum
-        FROM tblStal st
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 3 and skip = 0
-     ) ouder on (ouder.schaapId = s.schaapId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(h.datum,'%Y%m') = '".mysqli_real_escape_string($db,$jm)."' and (h.actId = 2 or h.actId = 11) and skip = 0 and s.geslacht = 'ram' and ouder.datum <= h.datum
-    GROUP BY date_format(h.datum,'%Y%m')
-    ) aanv_v on (nr.jrmnd = aanv_v.jrmnd)
-    left join (
-        SELECT date_format(h.datum,'%Y%m') jrmnd, count(distinct s.schaapId) vdrs
-        FROM tblHistorie h
-         join tblStal st on (h.stalId = st.stalId)
-         join tblSchaap s on (s.schaapId = st.schaapId)
-         join (
-            SELECT st.schaapId, h.datum
-            FROM tblStal st
-             join tblHistorie h on (st.stalId = h.stalId)
-            WHERE h.actId = 3 and skip = 0
-         ) ouder on (ouder.schaapId = s.schaapId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(h.datum,'%Y%m') = '".mysqli_real_escape_string($db,$jm)."' and (h.actId = 10 or h.actId = 13) and skip = 0 and s.geslacht = 'ram' and ouder.datum <= h.datum
-        GROUP BY date_format(h.datum,'%Y%m')
-    ) afv_v on (nr.jrmnd = afv_v.jrmnd)
-    left join (
-        SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) vdrs
-        FROM tblHistorie h
-         join tblStal st on (h.stalId = st.stalId)
-         join tblSchaap s on (s.schaapId = st.schaapId)
-         join (
-            SELECT schaapId
-            FROM tblStal st
-             join tblHistorie h on (st.stalId = h.stalId)
-            WHERE h.actId = 3 and skip = 0
-         ) ouder on (ouder.schaapId = st.schaapId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(h.datum,'%Y%m') = '".mysqli_real_escape_string($db,$jm)."' and h.actId = 14 and skip = 0
-         and s.geslacht = 'ram'
-        GROUP BY date_format(h.datum,'%Y%m')
-    ) doo_v on (nr.jrmnd = doo_v.jrmnd)
-    left join (
-        SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) oudrs_v
-        FROM tblHistorie h
-         join tblStal st on (h.stalId = st.stalId)
-         join tblSchaap s on (s.schaapId = st.schaapId)
-         left join (
-            SELECT h.stalId, datum
-            FROM tblHistorie h
-             join tblStal st on (st.stalId = h.stalId)
-            WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 2 and skip = 0
-         ) aanv on (aanv.stalId = h.stalId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.geslacht = 'ram' and date_format(h.datum,'%Y%m') = '".mysqli_real_escape_string($db,$jm)."' and h.actId = 3 and skip = 0 and coalesce(aanv.datum, date_add(h.datum, INTERVAL 10 DAY)) <> h.datum
-        GROUP BY date_format(h.datum,'%Y%m')
-    ) aanw_v on (nr.jrmnd = aanw_v.jrmnd)
-
-    WHERE jaar = '".mysqli_real_escape_string($db,$j)."'
-    ORDER BY jrmnd desc
-") or die (mysqli_error($db));
-
-    while($row = mysqli_fetch_array($result_permaand))/*    $row zorgt voor de waardes per maand     */
-    { 
-
-/*echo '$saldo_m = '.$saldo_m.'<br>';
-echo '$cumm_m = '.$cumm_m.'<br>';
-echo '<br>';*/
+$result_permaand = $historie_gateway->result_per_maand($j, $jm, $endjrmnd, $lidId);
+    while($row = $result_permaand->fetch_array()) { 
 
 $saldo_m = $row['saldo_ooi'];    if(isset($cumm_m))                    { $cumm_m = $cumm_m-$saldo_m; }             else { $cumm_m = $saldo_m; } 
                               if(isset($totSaldo_m)   && $m != 12) { $totSaldo_m = $totSaldo_m+$saldo_m; }    else { $totSaldo_m = $saldo_m; }

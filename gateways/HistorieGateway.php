@@ -1077,4 +1077,329 @@ SQL
     );
 }
 
+public function huidig_aantal_ooien_persaldo($lidId) {
+    return $this->first_field(<<<SQL
+SELECT sum(coalesce(aanv_m.mdrs,0) - coalesce(afv_m.mdrs,0) - coalesce(doo_m.mdrs,0)) saldo_ooi_end
+FROM (
+    SELECT date_format(datum,'%Y%m') jrmnd
+    FROM tblHistorie
+    WHERE skip = 0
+    GROUP BY date_format(datum,'%Y%m')
+    ) nr    
+left join (
+    SELECT date_format(h.datum,'%Y%m') jrmnd, count(s.schaapId) mdrs
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+     join tblSchaap s on (s.schaapId = st.schaapId)
+    WHERE st.lidId = :lidId and h.actId = 3 and s.geslacht = 'ooi' and skip = 0
+    GROUP BY date_format(h.datum,'%Y%m')
+) aanv_m on (nr.jrmnd = aanv_m.jrmnd)
+left join (
+    SELECT date_format(h.datum,'%Y%m') jrmnd, count(s.schaapId) mdrs
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+     join tblSchaap s on (s.schaapId = st.schaapId)
+    WHERE st.lidId = :lidId and h.actId = 13 and s.geslacht = 'ooi' and skip = 0
+    GROUP BY date_format(h.datum,'%Y%m')
+) afv_m on (nr.jrmnd = afv_m.jrmnd)
+left join (
+    SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) mdrs
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+     join tblSchaap s on (s.schaapId = st.schaapId)
+     join (
+        SELECT schaapId
+        FROM tblStal st
+         join tblHistorie h on (st.stalId = h.stalId)
+        WHERE h.actId = 3 and skip = 0
+     ) ouder on (ouder.schaapId = st.schaapId)
+    WHERE st.lidId = :lidId and h.actId = 14
+     and s.geslacht = 'ooi' and skip = 0
+    GROUP BY date_format(h.datum,'%Y%m')
+) doo_m on (nr.jrmnd = doo_m.jrmnd)
+SQL
+    , [[':lidId', $lidId, self::INT]]
+    );
+}
+
+public function eerste_jaar_tbv_testen($lidId) {
+    return $this->first_field(<<<SQL
+SELECT min(year(h.datum)) minjaar
+FROM tblHistorie h
+ join tblStal st on (st.stalId = h.stalId)
+ join tblSchaap s on (s.schaapId = st.schaapId)
+WHERE st.lidId = :lidId and h.datum > 0 and h.actId = 3 and s.geslacht = 'ooi' and skip = 0
+SQL
+    , [[':lidId', $lidId, self::INT]]
+    );
+}
+
+public function huidig_aantal_rammen_persaldo($lidId) {
+    return $this->first_field(<<<SQL
+SELECT sum(coalesce(aanv_v.vdrs,0) - coalesce(afv_v.vdrs,0) - coalesce(doo_v.vdrs,0)) saldo_ram_end
+FROM (
+    SELECT date_format(datum,'%Y%m') jrmnd
+    FROM tblHistorie
+    WHERE skip = 0
+    GROUP BY date_format(datum,'%Y%m')
+    ) nr    
+left join (
+    SELECT date_format(h.datum,'%Y%m') jrmnd, count(s.schaapId) vdrs
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+     join tblSchaap s on (s.schaapId = st.schaapId)
+    WHERE st.lidId = :lidId and h.actId = 3 and s.geslacht = 'ram' and skip = 0
+    GROUP BY date_format(h.datum,'%Y%m')
+) aanv_v on (nr.jrmnd = aanv_v.jrmnd)
+left join (
+    SELECT date_format(h.datum,'%Y%m') jrmnd, count(s.schaapId) vdrs
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+     join tblSchaap s on (s.schaapId = st.schaapId)
+    WHERE st.lidId = :lidId and h.actId = 13 and s.geslacht = 'ram' and skip = 0
+    GROUP BY date_format(h.datum,'%Y%m')
+) afv_v on (nr.jrmnd = afv_v.jrmnd)
+left join (
+    SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) vdrs
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+     join tblSchaap s on (s.schaapId = st.schaapId)
+     join (
+        SELECT schaapId
+        FROM tblStal st
+         join tblHistorie h on (st.stalId = h.stalId)
+        WHERE h.actId = 3 and skip = 0
+     ) ouder on (ouder.schaapId = st.schaapId)
+    WHERE st.lidId = :lidId and h.actId = 14
+     and s.geslacht = 'ram' and skip = 0
+    GROUP BY date_format(h.datum,'%Y%m')
+) doo_v on (nr.jrmnd = doo_v.jrmnd)
+SQL
+    , [[':lidId', $lidId, self::INT]]
+    );
+}
+
+public function result_per_maand($j, $jm, $endjrmnd, $lidId) {
+    return $this->run_query(<<<SQL
+    SELECT nr.jrmnd jm, nr.jaar, aanv_m.jrmnd, aanv_m.mdrs mdrs_aanv, afv_m.mdrs mdrs_afv, doo_m.mdrs mdrs_doo,
+     coalesce(aanw_m.oudrs_m,0) + coalesce(aanv_m.mdrs,0) - coalesce(afv_m.mdrs,0) - coalesce(doo_m.mdrs,0) saldo_ooi,
+     gebrn.aant gebrn, aanw_m.oudrs_m, afv_lam.afv afv_lam, doo_lam.lam doo_lam,
+     aanv_v.vdrs vdrs_aanv, afv_v.vdrs vdrs_afv, doo_v.vdrs vdrs_doo,
+     coalesce(aanw_v.oudrs_v,0) + coalesce(aanv_v.vdrs,0) - coalesce(afv_v.vdrs,0) - coalesce(doo_v.vdrs,0) saldo_ram,
+     aanw_v.oudrs_v
+    FROM (
+        SELECT :jm jrmnd, :j jaar
+        FROM dual
+        WHERE :jm <= :endjrmnd
+    ) nr    
+    left join (
+        SELECT date_format(h.datum,'%Y%m') jrmnd, count(distinct s.schaapId) mdrs
+        FROM tblHistorie h
+         join tblStal st on (h.stalId = st.stalId)
+         join tblSchaap s on (s.schaapId = st.schaapId)
+         join (
+            SELECT st.schaapId, h.datum
+            FROM tblStal st
+             join tblHistorie h on (st.stalId = h.stalId)
+            WHERE h.actId = 3
+ and skip = 0
+         ) ouder on (ouder.schaapId = s.schaapId)
+        WHERE st.lidId = :lidId
+ and date_format(h.datum,'%Y%m') = :jm
+ and (h.actId = 2 or h.actId = 11)
+ and skip = 0
+ and s.geslacht = 'ooi'
+ and ouder.datum <= h.datum
+        GROUP BY date_format(h.datum,'%Y%m')
+    ) aanv_m on (nr.jrmnd = aanv_m.jrmnd)
+    left join (
+        SELECT date_format(h.datum,'%Y%m') jrmnd, count(distinct s.schaapId) mdrs
+        FROM tblHistorie h
+         join tblStal st on (h.stalId = st.stalId)
+         join tblSchaap s on (s.schaapId = st.schaapId)
+         join (
+            SELECT st.schaapId, h.datum
+            FROM tblStal st
+             join tblHistorie h on (st.stalId = h.stalId)
+            WHERE h.actId = 3
+ and skip = 0
+         ) ouder on (ouder.schaapId = s.schaapId)
+        WHERE st.lidId = :lidId
+ and date_format(h.datum,'%Y%m') = :jm
+ and (h.actId = 10 or h.actId = 13)
+ and skip = 0
+ and s.geslacht = 'ooi'
+ and ouder.datum <= h.datum
+        GROUP BY date_format(h.datum,'%Y%m')
+    ) afv_m on (nr.jrmnd = afv_m.jrmnd)
+    left join (
+        SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) mdrs
+        FROM tblHistorie h
+         join tblStal st on (h.stalId = st.stalId)
+         join tblSchaap s on (s.schaapId = st.schaapId)
+         join (
+            SELECT schaapId
+            FROM tblStal st
+             join tblHistorie h on (st.stalId = h.stalId)
+            WHERE h.actId = 3
+ and skip = 0
+         ) ouder on (ouder.schaapId = st.schaapId)
+        WHERE st.lidId = :lidId
+ and date_format(h.datum,'%Y%m') = :jm
+ and h.actId = 14
+ and skip = 0
+ and s.geslacht = 'ooi'
+        GROUP BY date_format(h.datum,'%Y%m')
+    ) doo_m on (nr.jrmnd = doo_m.jrmnd)
+    left join (
+        SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) oudrs_m
+        FROM tblHistorie h
+         join tblStal st on (h.stalId = st.stalId)
+         join tblSchaap s on (s.schaapId = st.schaapId)
+         left join (
+            SELECT h.stalId, datum
+            FROM tblHistorie h
+             join tblStal st on (st.stalId = h.stalId)
+            WHERE st.lidId = :lidId
+ and h.actId = 2
+ and skip = 0
+         ) aanv on (aanv.stalId = h.stalId)
+        WHERE st.lidId = :lidId
+ and s.geslacht = 'ooi'
+ and date_format(h.datum,'%Y%m') = :jm
+ and h.actId = 3
+ and skip = 0
+ and coalesce(aanv.datum, date_add(h.datum, INTERVAL 10 DAY)) <> h.datum
+        GROUP BY date_format(h.datum,'%Y%m')
+    ) aanw_m on (nr.jrmnd = aanw_m.jrmnd)
+    left join (
+        SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) aant
+        FROM tblHistorie h
+         join tblStal st on (h.stalId = st.stalId)
+        WHERE st.lidId = :lidId
+ and date_format(h.datum,'%Y%m') = :jm
+ and h.actId = 1
+ and skip = 0
+        GROUP BY date_format(h.datum,'%Y%m')
+    ) gebrn on (nr.jrmnd = gebrn.jrmnd)
+    left join (
+        SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) afv
+        FROM tblHistorie h
+         join tblStal st on (h.stalId = st.stalId)
+        WHERE st.lidId = :lidId
+ and date_format(h.datum,'%Y%m') = :jm
+ and h.actId = 12
+ and skip = 0
+        GROUP BY date_format(h.datum,'%Y%m')
+    ) afv_lam on (nr.jrmnd = afv_lam.jrmnd)
+    left join (
+        SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) lam
+        FROM tblHistorie h
+         join tblStal st on (h.stalId = st.stalId)
+         left join (
+            SELECT schaapId
+            FROM tblStal st
+             join tblHistorie h on (st.stalId = h.stalId)
+            WHERE h.actId = 3
+ and skip = 0
+         ) ouder on (ouder.schaapId = st.schaapId)
+        WHERE st.lidId = :lidId
+ and date_format(h.datum,'%Y%m') = :jm
+ and h.actId = 14
+ and skip = 0
+ and isnull(ouder.schaapId)
+        GROUP BY date_format(h.datum,'%Y%m')
+    ) doo_lam on (nr.jrmnd = doo_lam.jrmnd)
+    left join (
+    SELECT date_format(h.datum,'%Y%m') jrmnd, count(distinct s.schaapId) vdrs
+    FROM tblHistorie h
+     join tblStal st on (h.stalId = st.stalId)
+     join tblSchaap s on (s.schaapId = st.schaapId)
+     join (
+        SELECT st.schaapId, h.datum
+        FROM tblStal st
+         join tblHistorie h on (st.stalId = h.stalId)
+        WHERE h.actId = 3
+ and skip = 0
+     ) ouder on (ouder.schaapId = s.schaapId)
+    WHERE st.lidId = :lidId
+ and date_format(h.datum,'%Y%m') = :jm
+ and (h.actId = 2 or h.actId = 11)
+ and skip = 0
+ and s.geslacht = 'ram'
+ and ouder.datum <= h.datum
+    GROUP BY date_format(h.datum,'%Y%m')
+    ) aanv_v on (nr.jrmnd = aanv_v.jrmnd)
+    left join (
+        SELECT date_format(h.datum,'%Y%m') jrmnd, count(distinct s.schaapId) vdrs
+        FROM tblHistorie h
+         join tblStal st on (h.stalId = st.stalId)
+         join tblSchaap s on (s.schaapId = st.schaapId)
+         join (
+            SELECT st.schaapId, h.datum
+            FROM tblStal st
+             join tblHistorie h on (st.stalId = h.stalId)
+            WHERE h.actId = 3
+ and skip = 0
+         ) ouder on (ouder.schaapId = s.schaapId)
+        WHERE st.lidId = :lidId
+ and date_format(h.datum,'%Y%m') = :jm
+ and (h.actId = 10 or h.actId = 13)
+ and skip = 0
+ and s.geslacht = 'ram'
+ and ouder.datum <= h.datum
+        GROUP BY date_format(h.datum,'%Y%m')
+    ) afv_v on (nr.jrmnd = afv_v.jrmnd)
+    left join (
+        SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) vdrs
+        FROM tblHistorie h
+         join tblStal st on (h.stalId = st.stalId)
+         join tblSchaap s on (s.schaapId = st.schaapId)
+         join (
+            SELECT schaapId
+            FROM tblStal st
+             join tblHistorie h on (st.stalId = h.stalId)
+            WHERE h.actId = 3
+ and skip = 0
+         ) ouder on (ouder.schaapId = st.schaapId)
+        WHERE st.lidId = :lidId
+ and date_format(h.datum,'%Y%m') = :jm
+ and h.actId = 14
+ and skip = 0
+ and s.geslacht = 'ram'
+        GROUP BY date_format(h.datum,'%Y%m')
+    ) doo_v on (nr.jrmnd = doo_v.jrmnd)
+    left join (
+        SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) oudrs_v
+        FROM tblHistorie h
+         join tblStal st on (h.stalId = st.stalId)
+         join tblSchaap s on (s.schaapId = st.schaapId)
+         left join (
+            SELECT h.stalId, datum
+            FROM tblHistorie h
+             join tblStal st on (st.stalId = h.stalId)
+            WHERE st.lidId = :lidId
+ and h.actId = 2
+ and skip = 0
+         ) aanv on (aanv.stalId = h.stalId)
+        WHERE st.lidId = :lidId
+ and s.geslacht = 'ram'
+ and date_format(h.datum,'%Y%m') = :jm
+ and h.actId = 3
+ and skip = 0
+ and coalesce(aanv.datum, date_add(h.datum, INTERVAL 10 DAY)) <> h.datum
+        GROUP BY date_format(h.datum,'%Y%m')
+    ) aanw_v on (nr.jrmnd = aanw_v.jrmnd)
+    WHERE jaar = :j
+    ORDER BY jrmnd desc
+SQL
+    , [
+        [':lidId', $lidId, self::INT],
+        [':jm', $jm, self::INT],
+        [':j', $j, self::INT],
+        [':endjrmnd', $endjrmnd, self::INT],
+    ]
+    );
+}
+
 }

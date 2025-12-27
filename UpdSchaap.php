@@ -216,7 +216,7 @@ if(isset ($_POST['knpSave'])) {
             if($dbDate1 < $txtDate) {
                 $fout = "De geboortedatum mag niet na ".$dbDatum1." liggen. Zie ook de historie."; 
             } else {
-                $stalId = zoek_stalId_in_stallijst($lidId,$schaapId);
+                $stalId = $stal_gateway->zoek_stal($lidId,$schaapId);
                 $historie_gateway->insert_geboorte($stalId, $txtDate);
             }
         }
@@ -262,7 +262,7 @@ SELECT v.volwId, v.vdrId
 FROM tblVolwas v
  join tblSchaap s on (v.volwId = s.volwId)
 WHERE schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-") or die (mysqli_error($db));
+") ;
     while( $vdr = mysqli_fetch_assoc($zoek_vdrId)) { $volwId = $vdr['volwId']; $vdr_db = $vdr['vdrId']; }
 
 if(isset($volwId)) {
@@ -390,7 +390,7 @@ else if(isset($_POST['radAfv'])) { // Bij schapen zonder levensnummer bestaat di
 
 $date = date_create($_POST['txtEinddm']); $dmafv = date_format($date, 'Y-m-d');
 
-$stalId = zoek_stalId_in_stallijst($lidId,$schaapId);
+$stalId = $stal_gateway->zoek_stal($lidId,$schaapId);
 
 // Is er een schaap aanwezig en eerder al afgevoerd met een definitieve melding ? In dat geval wordt geïnformeerd dat er geen melding aan de RVO wordt aangemaakt 
 $def_aant = $request_gateway->zoek_definitieve_afvoermelding($stalId);

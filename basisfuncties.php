@@ -72,27 +72,6 @@ function db_null_filter($field, $var){
 
 /*****************************************************************************************************
 Toegepast in :
-- InsStallijstscan_nieuwe_klant.php
-- post_readerStalscan.php
-- post_readerWgn.php */
-
-function zoek_schaapId_in_database($LEVNR) {
-    // zie post_readerStalscan.php
-    global $db;
-
-    $zoek_schaap_database = mysqli_query($db, "
-SELECT schaapId
-FROM tblSchaap
-WHERE levensnummer = '".mysqli_real_escape_string($db, $LEVNR)."'
-") or die(mysqli_error($db));
-
-    while ($zsd = mysqli_fetch_assoc($zoek_schaap_database)) {
-return $zsd['schaapId'];
-    }
-}
-
-/*****************************************************************************************************
-Toegepast in :
 - post_readerStalscan.php */
 
 function zoek_transponder_in_database($LEVNR) {
@@ -129,33 +108,6 @@ WHERE levensnummer = '".mysqli_real_escape_string($db, $LEVNR)."' and u.lidId = 
     while ($zss = mysqli_fetch_assoc($zoek_schaap_stallijst)) {
 return $zss['schaapId'];
     }
-}
-
-/*****************************************************************************************************
-Toegepast in :
-- Dekkingen.php
-- InsTvUitscharen.php
-- post_readerStalscan.php
-- post_readerWgn.php
-- UpdSchaap.php */
-
-function zoek_stalId_in_stallijst(int $LIDID, int $Schaapid) : ?int {
-global $db;
-
-$stalId = null;
-
-$zoek_stalId = mysqli_query($db, "
-SELECT st.stalId
-FROM tblStal st
- join tblUbn u on (st.ubnId = u.ubnId)
-WHERE u.lidId = '".mysqli_real_escape_string($db, $LIDID)."' and st.schaapId = '".mysqli_real_escape_string($db, $Schaapid)."' and isnull(rel_best)
-") or die(mysqli_error($db));
-
-while ($zst = mysqli_fetch_assoc($zoek_stalId)) {
-        $stalId = $zst['stalId'];
-}
-
-return $stalId;
 }
 
 /*****************************************************************************************************
@@ -263,18 +215,9 @@ Toegepast in :
 function insert_tblHistorie($STALID, $DATUM, $ACTID){
 global $db;
 
-$insert_tblHistorie = "INSERT INTO tblHistorie SET stalId = '".mysqli_real_escape_string($db, $STALID)."', datum = '".mysqli_real_escape_string($db, $DATUM)."', actId = '".mysqli_real_escape_string($db, $ACTID)."' ";
-/*echo $insert_tblHistorie.'<br>';*/        return mysqli_query($db, $insert_tblHistorie);
-}
-
-/*
-Toegepast in :
-- post_readerWgn.php */
-
-function insert_tblHistorie_kg($STALID, $DATUM, $ACTID, $KG){
-global $db;
-
-$insert_tblHistorie = "INSERT INTO tblHistorie SET stalId = '".mysqli_real_escape_string($db, $STALID)."', datum = '".mysqli_real_escape_string($db, $DATUM)."', actId = '".mysqli_real_escape_string($db, $ACTID)."', kg = '".mysqli_real_escape_string($db, $KG)."' ";
+$insert_tblHistorie = "INSERT INTO tblHistorie SET stalId = '".mysqli_real_escape_string($db, $STALID)."',
+    datum = '".mysqli_real_escape_string($db, $DATUM)."',
+actId = '".mysqli_real_escape_string($db, $ACTID)."' ";
 /*echo $insert_tblHistorie.'<br>';*/        return mysqli_query($db, $insert_tblHistorie);
 }
 

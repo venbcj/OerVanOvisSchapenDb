@@ -25,6 +25,7 @@ include "login.php"; ?>
             <TD valign = "top">
 <?php
 if (Auth::is_logged_in()) {
+    $stal_gateway = new StalGateway();
  
 include "vw_kzlOoien.php";
 $impagrident_gateway = new ImpAgridentGateway();
@@ -235,7 +236,7 @@ WHERE r.relatie = 'cred' and p.ubn = '".mysqli_real_escape_string($db,$ubn_best)
 while ($zcu = mysqli_fetch_assoc($zoek_crediteur_van_ubn)) { $relId_herk = $zcu['relId']; }
 
 unset($opStal);
-$opStal = zoek_stalId_in_stallijst($lidId,$schaapId);
+$opStal = $stal_gateway->zoek_stal($lidId,$schaapId);
 
 #echo '$opStal = '.$opStal.'<br>';
 
