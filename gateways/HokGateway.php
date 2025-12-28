@@ -496,4 +496,23 @@ SQL
     );
 }
 
+public function zoek_lambar($lidId) {
+    return $this->first_field(<<<SQL
+SELECT hokId
+FROM tblHok
+WHERE hoknr = 'Lambar' and lidId = :lidId
+SQL
+    , [[':lidId', $lidId, self::INT]]
+    );
+}
+
+public function insert_lambar($lidId) {
+    $this->run_query(<<<SQL
+INSERT INTO tblHok set hoknr = 'Lambar', lidId = :lidId
+SQL
+    , [[':lidId', $lidId, self::INT]]
+    );
+    return $this->db->insert_id;
+}
+
 }

@@ -23,9 +23,7 @@
         <directory>tests</directory>
         <directory>vendor</directory>
       </exclude>
-      <file>./post_readerAanv.php</file>
-      <file>./Combireden.php</file>
-      <file>./InvSchaap.php</file>
+      <directory>.</directory>
     </whitelist>
   </filter>
 </phpunit>

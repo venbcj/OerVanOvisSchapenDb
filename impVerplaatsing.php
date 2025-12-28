@@ -16,44 +16,22 @@ foreach ($inhoud as $index => $waarde) {
         if ($waarde -> {$velden[$h]} == "" || $waarde -> {$velden[$h]} == "0") {
             $insert_qry .= "$velden[$h] = NULL, ";
         } else {
-            $insert_qry .= "$velden[$h] = '" . mysqli_real_escape_string($db, $waarde -> {$velden[$h]}) . "', ";
+            $insert_qry .= "$velden[$h] = '" . $db->real_escape_string($waarde -> {$velden[$h]}) . "', ";
         }
     }
-    $insert_qry .= ' lidId = ' . mysqli_real_escape_string($db, $lidid) . ';';
-    echo $insert_qry;
-    mysqli_query($db, $insert_qry) or die(mysqli_error($db));
+    $insert_qry .= ' lidId = ' . $db->real_escape_string($lidid) . ';';
+    echo $insert_qry; // de tests in JsonAgridentParserTest leunen nu op deze uitvoer, maar dat moet veranderen.
+    $db->query($insert_qry);
     unset($insert_qry);
 // update record t.b.v. verblijf lambar
-    $zoek_lambar_record = mysqli_query($db, "
-SELECT max(Id) Id
-FROM impAgrident
-WHERE actId = 16 and isnull(hokId) and lidId = '" . mysqli_real_escape_string($db, $lidid) . "' and isnull(verwerkt)
-") or die(mysqli_error($db));
-    while ($rec = mysqli_fetch_assoc($zoek_lambar_record)) {
-        $lbarId = $rec['Id'];
-    }
+    $impagrident_gateway = new ImpAgridentGateway();
+    $lbarId = $impagrident_gateway->zoek_lambar_record($lidid);
     if (isset($lbarId)) {
-        $zoek_Lambar = mysqli_query($db, "
-SELECT hokId
-FROM tblHok
-WHERE hoknr = 'Lambar' and lidId = '" . mysqli_real_escape_string($db, $lidid) . "'
-") or die(mysqli_error($db));
-        while ($h = mysqli_fetch_assoc($zoek_Lambar)) {
-            $hokId = $h['hokId'];
-        }
+        $hok_gateway = new HokGateway();
+        $hokId = $hok_gateway->zoek_lambar($lidid);
         if (!isset($hokId)) {
-            $insert_tblHok = "INSERT INTO tblHok set hoknr = 'Lambar', lidId = '" . mysqli_real_escape_string($db, $lidid) . "' ";
-            mysqli_query($db, $insert_tblHok) or die(mysqli_error($db));
-            $zoek_Lambar = mysqli_query($db, "
-    SELECT hokId
-    FROM tblHok
-    WHERE hoknr = 'Lambar' and lidId = '" . mysqli_real_escape_string($db, $lidid) . "'
-    ") or die(mysqli_error($db));
-            while ($h = mysqli_fetch_assoc($zoek_Lambar)) {
-                $hokId = $h['hokId'];
-            }
+            $hokId = $hok_gateway->insert_lambar($lidid);
         }
-        $update_impAgrident = "UPDATE impAgrident SET hokId = '" . mysqli_real_escape_string($db, $hokId) . "' WHERE Id = '" . mysqli_real_escape_string($db, $lbarId) . "' ";
-        mysqli_query($db, $update_impAgrident) or die(mysqli_error($db));
+        $impagrident_gateway->update_hok($lbarId, $hokId);
     }
 }

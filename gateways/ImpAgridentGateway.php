@@ -31,6 +31,14 @@ SQL
         );
     }
 
+    public function update_hok($Id, $hokId) {
+        $this->run_query(<<<SQL
+UPDATE impAgrident SET hokId = :hokId WHERE Id = :Id
+SQL
+        , [[':Id', $Id, self::INT], [':hokId', $hokId, self::INT]]
+        );
+    }
+
     public function getInsAanvoerFrom() {
         return <<<SQL
 impAgrident rd
@@ -1904,6 +1912,16 @@ WHERE Id = :recId
 SQL
         , [[':recId', $recId, self::INT]]
             , [null, null]
+        );
+    }
+
+    public function zoek_lambar_record($lidId) {
+        return $this->first_field(<<<SQL
+SELECT max(Id) Id
+FROM impAgrident
+WHERE actId = 16 and isnull(hokId) and lidId = :lidId and isnull(verwerkt)
+SQL
+        , [[':lidId', $lidId, self::INT]]
         );
     }
 
