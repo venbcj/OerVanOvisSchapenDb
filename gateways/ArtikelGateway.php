@@ -33,7 +33,7 @@ SQL
         );
     }
 
-    public function zoek_soort($artId) {
+    public function zoek_soort($artId): ?string {
         return $this->first_field(
             <<<SQL
 SELECT a.soort
@@ -178,7 +178,7 @@ SQL
         );
     }
 
-    public function countVoerByName($lidId, $naam) {
+    public function countVoerByName($lidId, $naam): ?int {
        return $this->first_field(
             <<<SQL
 SELECT count(naam) aantal
@@ -195,7 +195,7 @@ SQL
         );
     }
 
-    public function store($insNaam, $insStdat, $insNhd, $insBtw, $insRelatie, $insRubriek) {
+    public function store($insNaam, $insStdat, $insNhd, $insBtw, $insRelatie, $insRubriek): void {
         $this->run_query(
             <<<SQL
 INSERT INTO tblArtikel SET
@@ -269,7 +269,7 @@ SQL
         );
     }
 
-    public function tel_niet_in_gebruik($lidId) {
+    public function tel_niet_in_gebruik($lidId): ?int {
         return $this->first_field(
             <<<SQL
 SELECT count(artId) aant 
@@ -299,11 +299,10 @@ ORDER BY a.actief desc, a.naam
 SQL
         ,
             [[':lidId', $lidId, self::INT]]
-            []
         );
     }
 
-    public function activeer($artId) {
+    public function activeer($artId): void {
         $this->run_query(
             <<<SQL
 Update tblArtikel set actief = 1 WHERE artId = :artId
@@ -337,7 +336,7 @@ SQL
         );
     }
 
-    public function zoek($artId) {
+    public function zoek($artId): array {
         return $this->first_row(
             <<<SQL
 SELECT replace(a.stdat, '.00', '') stdrd, a.naam, e.eenheid, a.stdat
@@ -365,7 +364,7 @@ SQL
         );
     }
 
-    public function voorraad($artId) {
+    public function voorraad($artId): ?int {
         return $this->first_field(
             <<<SQL
 SELECT sum(i.inkat-coalesce(n.vbrat,0)) vrdat
@@ -412,7 +411,7 @@ SQL
 
     // gebruikt dezelfde query als periodes(), alleen om het aantal rijen te tellen
     // @TODO @REFACTOR dat kun je ook aan de periodes-query zelf zien
-    public function aantal_periodes($lidId, $minjaar, $maxjaar, $artId) {
+    public function aantal_periodes($lidId, $minjaar, $maxjaar, $artId): int {
         $vw = $this->run_query(
             <<<SQL
 SELECT jrmnd FROM (
@@ -496,7 +495,7 @@ SQL
         );
     }
 
-    public function zoek_stdat($artId) {
+    public function zoek_stdat($artId): ?int {
         return $this->first_field(
             <<<SQL
 SELECT round(a.stdat) stdat
@@ -531,7 +530,7 @@ SQL
         );
     }
 
-    public function medicijn_actief($lidId, $artId) {
+    public function medicijn_actief($lidId, $artId): array {
         return $this->first_row(<<<SQL
 SELECT a.naam, a.actief 
 FROM tblEenheid e

@@ -1,5 +1,10 @@
 <?php
 
+/*
+ * Geef in je afgeleide klassen het return-type van de methode, tenzij dat mysqli_result is
+ * (we streven ernaar zulke methoden af te voeren, en alleen resultsets terug te geven)
+ */
+
 class Gateway {
 
     protected const TXT = 'txt';

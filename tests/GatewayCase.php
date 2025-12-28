@@ -10,7 +10,7 @@ class GatewayCase extends UnitCase {
     public function setup(): void {
         $this->uses_db();
         $this->db->begin_transaction();
-        $this->assertNotEquals('', static::$sutname, 'Vul $sutname in je testcase');
+        $this->assertNotEquals('', static::$sutname, 'Voeg `protected static $sutname = \'\'` toe in je testcase (en vul de naam in)');
         $this->sut = new static::$sutname($this->db);
     }
 
