@@ -45,10 +45,9 @@ If (isset ($_POST['knpInsert_'])) {
 	}
 
 
-if($reader == 'Agrident') {
 $velden = "rd.Id readId, str_to_date(rd.datum,'%Y-%m-%d') sort , rd.datum, rd.verwerkt, rd.levensnummer levnr, rd.hokId hok_rd, hb.hokId hok_db,
 rs.Id readId_sp,
-h.actie status, h.af, spn.schaapId spn, prnt.schaapId prnt, s.geslacht, date_format(h.datum,'%d-%m-%Y') maxdatum, h.datum datummax";
+h.actie status, h.af, spn.schaapId spn, prnt.schaapId prnt, s.geslacht, date_format(h.datum,'%d-%m-%Y') maxdatum, h.datum datummax, dup.dubbelen";
 
 $tabel = "
 impAgrident rd
@@ -96,6 +95,12 @@ impAgrident rd
 	FROM tblHok
 	WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief = 1
  ) hb on (rd.hokId = hb.hokId)
+ left join (
+ 	SELECT rd.Id, count(dup.Id) dubbelen
+	FROM impAgrident rd
+	 join impAgrident dup on (rd.lidId = dup.lidId and rd.levensnummer = dup.levensnummer and rd.Id <> dup.Id and rd.actId = 5 and dup.actId = 5 and isnull(dup.verwerkt))
+	GROUP BY rd.Id
+ ) dup on (rd.Id = dup.Id)
 ";
 
 $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 5 and isnull(rd.verwerkt) and isnull(rs.Id) ";
@@ -103,66 +108,7 @@ $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.ac
 include "paginas.php";
 
 $data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id");
-}
-else {
-$velden = "rd.readId, str_to_date(rd.datum,'%d/%m/%Y') sort , rd.datum, rd.verwerkt, rd.levnr_ovpl levnr, rd.hok_ovpl hok_rd, hb.scan hok_db, 
-rs.readId readId_sp,
-h.actie status, h.af, spn.schaapId spn, prnt.schaapId prnt, s.geslacht, date_format(h.datum,'%d-%m-%Y') maxdatum, h.datum datummax";
 
-$tabel = "
-impReader rd
- left join (
-	SELECT levnr_sp, readId 
-	FROM impReader 
-	WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and teller_sp is not null and isnull(verwerkt)
- ) rs on (rd.levnr_ovpl = rs.levnr_sp)
- left join (
-	 SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
-	 FROM tblSchaap s
-	  join tblStal st on (st.schaapId = s.schaapId)
-	  join tblHistorie h on (st.stalId = h.stalId)
-	 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
-	 GROUP BY s.schaapId, s.levensnummer, s.geslacht
- ) s on (rd.levnr_ovpl = s.levensnummer)
- 
- left join tblStal st on (st.schaapId = s.schaapId and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best))
- left join (
-	SELECT h.hisId, a.actie, a.af, h.datum
-	FROM tblHistorie h
-	 join tblActie a on (h.actId = a.actId)
-	WHERE h.skip = 0
- ) h on (h.hisId = s.hisId)
- left join (
-	SELECT st.schaapId
-	FROM tblStal st
-	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 4 and h.skip = 0
- ) spn on (spn.schaapId = s.schaapId)
- left join (
-	SELECT st.schaapId
-	FROM tblStal st
-	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = s.schaapId)
- left join (
-	SELECT st.schaapId, h.datum
-	FROM tblStal st
-	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 14 and h.skip = 0
- ) hu on (hu.schaapId = s.schaapId)
- left join (
-	SELECT scan
-	FROM tblHok
-	WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief = 1
- ) hb on (rd.hok_ovpl = hb.scan)
-";
-
-$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.teller_ovpl is not null and isnull(rd.verwerkt) and isnull(rs.readId) ";
-
-include "paginas.php";
-
-$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.readId");
-}
  ?>
 <table border = 0>
 <tr> <form action="InsOverplaats.php" method = "post">
@@ -212,7 +158,8 @@ $datum = date('d-m-Y', strtotime($date));
 $dm	   = date('Y-m-d', strtotime($date));
 	
 	$Id = $array['readId'];
-	$levnr = $array['levnr']; if (strlen($levnr)== 11) {$levnr = '0'.$array['levnr'];}
+	$levnr_rd = $array['levnr']; if (strlen($levnr_rd)== 11) {$levnr_rd = '0'.$array['levnr'];}
+	$levnr_dupl = $array['dubbelen']; // twee keer in reader bestand
 	$hok_rd = $array['hok_rd'];
 	$hok_db = $array['hok_db'];
 	$geslacht = $array['geslacht'];
@@ -230,17 +177,17 @@ if (isset($_POST['knpVervers_'])) { $dag = $_POST["txtOvpldag_$Id"]; $kzlHok = $
 	$makeday = date_create($_POST["txtOvpldag_$Id"]); $dmdag =  date_format($makeday, 'Y-m-d');
 }
 
-	 If	 
-	 ( ((isset($af) && $af == 1) || !isset($status))	|| /*levensnummer moet bestaan*/	
-		 empty($dag)				|| # of datum is leeg
-		 $dmdag < $dmmax			|| # of datum ligt voor de laatst geregistreerde datum van het schaap
-		 empty($kzlHok) 			   # of hok is onbekend of leeg						 
+if ((isset($af) && $af == 1) || !isset($status))	{ $color = 'red';  $onjuist = 'Levensnummer is onbekend'; }	
+else if (isset($levnr_dupl) )       { $color = 'blue'; $onjuist = 'Dubbel in de reader.'; }
+else if (empty($dag)) 		{ $color = 'red';  $onjuist = 'Datum is onbekend'; }
+else if	($dmdag < $dmmax)	{ $color = 'red';  $onjuist = "Datum ligt voor $maxdm ."; } # of datum ligt voor de laatst geregistreerde datum van het schaap
+else if	(empty($kzlHok)) 	{ $color = 'red';  $onjuist = 'Verblijf is onbekend'; }		   # of hok is onbekend of leeg						 
 	 											
-	 )
-	 {	$oke = 0;	} else {	$oke = 1;	} // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
+	 
+	if (isset($onjuist)) {	$oke = 0;	} else {	$oke = 1;	} // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
 // EINDE Controleren of ingelezen waardes worden gevonden .  
 
-	 if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1) /* Als onvolledig is gewijzigd naar volledig juist */ {$cbKies = 1; $cbDel = $_POST["chbDel_$Id"]; }
+if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1) /* Als onvolledig is gewijzigd naar volledig juist */ {$cbKies = 1; $cbDel = $_POST["chbDel_$Id"]; }
 else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDel = $_POST["chbDel_$Id"]; } 
    else { $cbKies = $oke; } // $cbKies is tbv het vasthouden van de keuze inlezen of niet ?>
 
@@ -266,7 +213,7 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 	<input type = "text" size = 9 style = "font-size : 11px;" name = <?php echo "txtOvpldag_$Id"; ?> value = <?php echo $dag; ?> >
  </td>
 
-<?php if(!empty($status)) { ?> <td> <?php echo $levnr; } else { ?> <td style = "color : red"> <?php echo $levnr;} ?>
+<?php if(!empty($status)) { ?> <td> <?php echo $levnr_rd; } else { ?> <td style = "color : red"> <?php echo $levnr_rd;} ?>
  </td>
  <td>
 
@@ -295,20 +242,16 @@ for ($i = 0; $i < $count; $i++){
 
 
 
-if( isset($hok_rd) && empty($hok_db) && empty($_POST["kzlHok_$Id"]) && $levnr > 0 ) {echo $hok_rd; ?> <b style = "color : red;"> ! </b>  <?php } ?>
+if( isset($hok_rd) && empty($hok_db) && empty($_POST["kzlHok_$Id"]) && $levnr_rd > 0 ) {echo $hok_rd; ?> <b style = "color : red;"> ! </b>  <?php } ?>
  </td> <!-- EINDE KZLHOKNR -->
  <td><?php echo $doelgr ; ?>
  </td>	
- <td style = "color : red" align="center"> 
- <?php 
- 		 if (empty($status)) 		{ echo "Levensnummer onbekend"; } 
- 	else if(isset($af) && $af == 1) { echo $status; } ?>
+ <td style = "color : <?php echo $color; ?> ; font-size : 11px;" >  <?php 
 
-	<input type = "hidden" size = 8 style = "font-size : 9px;" name = <?php echo "txtStatus_$Id"; ?> value = <?php echo $status; ?> > <!--hiddden-->
+ if (isset($onjuist)) { echo $onjuist; } ?>
+
  </td>
- <td style = "color : red"> <?php 
-if($dmdag < $dmmax) { echo "Datum ligt voor $maxdm ."; } ?>
- </td>	
+	
 </tr>
 <!--	**************************************
 	**	EINDE OPMAAK GEGEVENS	**
