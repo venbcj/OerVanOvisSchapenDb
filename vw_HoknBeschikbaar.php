@@ -9,6 +9,8 @@ I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkend
 Toegepast in : 
     -    save_hok.php via Hok.php
     -    
+
+    DEPRECATED. gebruik HokGateway::hokn_beschikbaar()
 */
 
 $vw_HoknBeschikbaar =

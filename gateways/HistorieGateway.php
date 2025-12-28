@@ -524,6 +524,7 @@ public function insert_afvoer_act($stalId, $datum, $actId) {
     $this->db->query("INSERT INTO tblHistorie set stalId = '".$this->db->real_escape_string($stalId)."',
         datum = '".$this->db->real_escape_string($datum)."',
         actId = '".$this->db->real_escape_string($actId)."' ");
+return $this->db->insert_id;
 }
 
 public function zoek_vorige_weging($schaapId, $date) {

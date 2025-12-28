@@ -3,42 +3,43 @@
 class PeriodeGateway extends Gateway {
 
     public function zoek_laatste_afsluitdm_geb($hokId) {
-$vw = $this->db->query("
+        return $this->first_field(<<<SQL
 SELECT max(dmafsluit) dmstop
 FROM tblPeriode
-WHERE hokId = '".$this->db->real_escape_string($hokId)."' and doelId = 1 and dmafsluit is not null
-");
-if ($vw->num_rows == 0) {
-    return null;
-}
-return $vw->fetch_row()[0];
+WHERE hokId = :hokId and doelId = 1 and dmafsluit is not null
+SQL
+        , [[':hokId', $hokId, self::INT]]
+        );
     }
 
     public function zoek_laatste_afsluitdm_spn($hokId) {
-$vw = $this->db->query("
+        return $this->first_field(<<<SQL
 SELECT max(dmafsluit) dmstop
 FROM tblPeriode
-WHERE hokId = '".$this->db->real_escape_string($hokId)."' and doelId = 2 and dmafsluit is not null
-");
-if ($vw->num_rows == 0) {
-    return null;
-}
-return $vw->fetch_row()[0];
+WHERE hokId = :hokId and doelId = 2 and dmafsluit is not null
+SQL
+        , [[':hokId', $hokId, self::INT]]
+        );
     }
 
     public function aantal_jaarmaanden($lidId, $artId, $doelId) {
-// $aantjaarmaanden zoekt het aantal jaarmaanden in tblPeriode o.b.v. lidId, al dan niet het voer en de doelgroep
-$vw = $this->db->query(" 
+        // $aantjaarmaanden zoekt het aantal jaarmaanden in tblPeriode o.b.v. lidId, al dan niet het voer en de doelgroep
+        return $this->first_field(<<<SQL
 SELECT count(date_format(p.dmafsluit,'%Y%m')) jrmnd
 FROM tblPeriode p
  join tblHok h on (p.hokId = h.hokId)
  left join tblVoeding v on (p.periId = v.periId)
  left join tblInkoop i on (i.inkId = v.inkId) 
-WHERE h.lidId = '".$this->db->real_escape_string($lidId)."'
- and ".db_null_filter('i.artId', $artId)."
- and p.doelId = $doelId
-");
-return $vw->fetch_row()[0];
+WHERE h.lidId = :lidId
+ and i.artId = :artId
+ and p.doelId = :doelId
+SQL
+        , [
+            [':lidId', $lidId, self::INT],
+            [':artId', $artId, self::INT],
+            [':doelId', $doelId, self::INT],
+        ]
+        );
     }
 
     public function kzlJaarmaand($lidId, $fldVoer) {
@@ -378,6 +379,18 @@ SQL
     ]
     , [null, null]
     );
+}
+
+public function insert($hokId, $doelId, $dmafsluit) {
+    $this->run_query(<<<SQL
+INSERT INTO tblPeriode set hokId = :hokId, doelId= :doelId, dmafsluit = :dmafsluit
+SQL
+    , [
+        [':hokId', $hokId, self::INT],
+        [':doelId', $doelId, self::INT],
+        [':dmafsluit', $dmafsluit, self::DATE],
+    ]);
+    return $this->db->insert_id;
 }
 
 }

@@ -12,6 +12,24 @@ class HokGateway extends Gateway {
         return $this->first_field("SELECT hoknr FROM tblHok WHERE hokId = ".((int)$hokId));
     }
 
+    public function findSortActief($hokId) {
+        return $this->first_row(<<<SQL
+SELECT sort, actief
+FROM tblHok
+WHERE hokId = :hokId
+SQL
+        , [[':hokId', $hokId, self::INT]]
+        );
+    }
+
+    public function updateSort($hokId, $sort) {
+        $this->run_query(<<<SQL
+UPDATE tblHok SET sort = :sort WHERE hokId = :hokId 
+SQL
+        , [[':hokId', $hokId, self::INT], [':sort', $sort]]
+        );
+    }
+
     public function is_aanwezig($lidId, $hok) {
         return 0 < $this->first_field(
             <<<SQL
@@ -415,6 +433,64 @@ FROM tblHok h
 WHERE h.hokId = :hokId
  and isnull(b.hokId)
  and isnull(p.hokId)
+SQL
+    , [[':hokId', $hokId, self::INT]]
+    );
+}
+
+public function hokn_beschikbaar($lidId, $hokId) {
+    return $this->first_row(<<<SQL
+SELECT hoknr, nu aantal FROM (
+SELECT h.hokId, h.hoknr, coalesce(inhok.doelId,'niet in gebruik') doel, inhok.nu, h.scan
+FROM tblHok h
+left join (
+    Select p.periId, p.hokId, p.doelId, count(b.bezId)-coalesce(uit.weg,0) nu
+    From tblHok h
+    join tblPeriode p on (h.hokId = p.hokId)
+    join tblDoel d on (d.doelId = p.doelId)
+    join tblBezet b on (p.periId = b.periId)
+    left join (
+        Select b.periId, count(uit.bezId) weg
+        From tblBezet b
+        join
+        (
+            select b.bezId, h1.hisId hisv, min(h2.hisId) hist
+            from tblBezet b
+             join tblHistorie h1 on (b.hisId = h1.hisId)
+             join tblActie a1 on (a1.actId = h1.actId)
+             join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+             join tblActie a2 on (a2.actId = h2.actId)
+             join tblStal st on (h1.stalId = st.stalId)
+             join tblPeriode p on (p.periId = b.periId)
+            where st.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and isnull(p.dmafsluit)
+            group by b.bezId, h1.hisId
+        ) uit
+        on (uit.bezId = b.bezId)
+        Group by b.periId
+    ) uit
+    on (p.periId = uit.periId)
+    Where h.lidId = :lidId and isnull(p.dmafsluit)
+    Group by p.periId, p.hokId, p.doelId, uit.weg
+) inhok
+on (h.hokId = inhok.hokId)
+WHERE h.lidId = :lidId and h.actief = 1
+) hb WHERE hokId = :hokId
+SQL
+    , [[':lidId', $lidId, self::INT], [':hokId', $hokId, self::INT]]
+    );
+}
+
+public function set_actief($hokId, $actief) {
+    $this->run_query(<<<SQL
+UPDATE tblHok SET actief = :actief WHERE hokId = :hokId
+SQL
+    , [[':hokId', $hokId, self::INT], [':actief', $actief]]
+    );
+}
+
+public function delete($hokId) {
+    $this->run_query(<<<SQL
+DELETE FROM tblHok WHERE hokId = :hokId
 SQL
     , [[':hokId', $hokId, self::INT]]
     );

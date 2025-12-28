@@ -30,7 +30,6 @@ include "login.php"; ?>
 <?php
 if (Auth::is_logged_in()) {
     if ($modtech == 1) {
-        include "vw_HoknBeschikbaar.php"; // toegepast in save_hok.php
 
         if (isset($_POST['knpSave_'])) {
             include "save_hok.php";

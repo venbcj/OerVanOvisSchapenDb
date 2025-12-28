@@ -4834,4 +4834,22 @@ SQL
         );
     }
 
+    public function zoek_mindag($schaapId) {
+        return $this->first_field(<<<SQL
+SELECT hm.datum
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join (
+    SELECT max(hisId) hisId, stalId
+    FROM tblHistorie
+    WHERE skip = 0
+    GROUP BY stalId
+ ) hmax on (hmax.stalId = st.stalId)
+ join tblHistorie hm on (hm.hisId = hmax.hisId)
+WHERE s.schaapId = :schaapId
+SQL
+        , [[':schaapId', $schaapId, self::INT]]
+        );
+    }
+
 }
