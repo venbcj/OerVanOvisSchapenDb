@@ -6,6 +6,7 @@ class MedRegistratiePageTest extends IntegrationCase {
 
     public function tearDown(): void {
         unset ($GLOBALS['schaap_gateway']);
+        parent::tearDown();
     }
 
     public function testToonMedregistratieGeenSchaap() {

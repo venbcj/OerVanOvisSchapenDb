@@ -2,15 +2,6 @@
 
 class GebruikerPageTest extends IntegrationCase {
 
-    public function setup(): void {
-        $this->uses_db();
-        $this->db->begin_transaction();
-    }
-
-    public function teardown(): void {
-        $this->db->rollback();
-    }
-
     public function testGebruikerPageForm() {
         $this->runsetup('tblLeden');
         $this->runfixture('user-kobus');

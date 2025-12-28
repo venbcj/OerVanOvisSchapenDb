@@ -141,6 +141,7 @@ ORDER BY r.ras
  ") or die (mysqli_error($db));
 
    $index = 0; 
+    $rasId = [];
 while ($qr = mysqli_fetch_assoc($qryRas)) 
 { 
    $rasId[$index] = $qr['rasId'];

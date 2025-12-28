@@ -3,7 +3,8 @@
 class PasswTest extends IntegrationCase {
 
     public static function setupBeforeClass(): void {
-        self::runsetup('user-1');
+        # self::runsetup('user-1');
+        # Lijkt niet meer nodig nu tests in een transactie draaien
     }
 
     public function setup(): void {
@@ -13,12 +14,7 @@ class PasswTest extends IntegrationCase {
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['REQUEST_SCHEME'] = 'http';
         $_SERVER['REQUEST_URI'] = '';
-        $this->uses_db();
-        $this->db->begin_transaction();
-    }
-
-    public function teardown(): void {
-        $this->db->rollback();
+        parent::setup();
     }
 
     public function testGet() {

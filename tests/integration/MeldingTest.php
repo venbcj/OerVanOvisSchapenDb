@@ -5,9 +5,9 @@ class MeldingTest extends IntegrationCase {
     # Nu teveel gedoe om dat in een trait te stoppen
 
     public function setup(): void {
+        parent::setup();
         $this->runfixture('melding-4');
         require_once "basisfuncties.php";
-        $this->uses_db();
         $_SERVER['HTTP_HOST'] = 'basq';
         $_SERVER['REQUEST_SCHEME'] = 'http';
         $_SERVER['REQUEST_URI'] = 'Meldingen.php';

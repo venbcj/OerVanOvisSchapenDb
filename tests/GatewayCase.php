@@ -8,9 +8,9 @@ class GatewayCase extends UnitCase {
     protected static $sutname = '';
 
     public function setup(): void {
-        $this->assertNotEquals('', static::$sutname, 'Vul $sutname in je testcase');
         $this->uses_db();
         $this->db->begin_transaction();
+        $this->assertNotEquals('', static::$sutname, 'Vul $sutname in je testcase');
         $this->sut = new static::$sutname($this->db);
     }
 

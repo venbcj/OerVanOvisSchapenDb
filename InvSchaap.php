@@ -758,16 +758,8 @@ View::select(
 <!-- KZLREDEN -->
     <tr>
      <td> Reden uitval :</td>
-     <td> <?php
-    $result = mysqli_query($db, "
-    SELECT ru.redId, r.reden
-    FROM tblReden r
-     join tblRedenuser ru on (r.redId = ru.redId)
-    WHERE r.actief = 1
- and ru.lidId = '".mysqli_real_escape_string($db,$lidId)."'
- and ru.uitval = 1
-    ORDER BY r.reden
-    "); # or die (mysqli_error($db));
+     <td>
+<?php
     View::select(
         'kzlReden',
         $reden_gateway->KV_uitval_lijst_voor($lidId),

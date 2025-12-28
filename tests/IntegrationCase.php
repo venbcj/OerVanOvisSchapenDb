@@ -145,7 +145,7 @@ class IntegrationCase extends UnitCase {
         $dom->loadHTML($this->output);
         $path = new DOMXPath($dom);
         $select = $path->query('//select[@name="'.$name.'"]');
-        $this->assertCount(1, $select, "kan select met name $name niet vinden");
+        $this->assertCount(1, $select, "kan select met name=$name niet vinden");
         $options = $path->query('//select[@name="'.$name.'"]/option');
         $this->assertCount($count, $options, "select heeft niet de verwachte $count opties");
     }

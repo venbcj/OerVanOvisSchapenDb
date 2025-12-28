@@ -6,17 +6,12 @@ class ArtikelnuttigenTest extends IntegrationCase {
 
     public function setup(): void {
         require_once "func_artikelnuttigen.php";
-        $this->uses_db();
-        $this->db->begin_transaction();
-    }
-
-    public function teardown(): void {
-        $this->db->rollback();
+        parent::setup();
     }
 
     public function test_inlezen_pil() {
         // GIVEN
-        $this->setArtikelPilFixture();
+        $this->runfixture('pil-inkoop');
         $this->expectNewRecordsInTables([
             'tblNuttig' => 1,
         ]);
@@ -33,7 +28,7 @@ class ArtikelnuttigenTest extends IntegrationCase {
 
     public function test_inlezen_pil_meerDan() {
         // GIVEN
-        $this->setArtikelPilFixture();
+        $this->runfixture('pil-inkoop');
         // als je onvoldoende inkoopt, klapt de test eruit. 3 is genoeg. Nee 4. Waarom?
         $this->runSQL("INSERT INTO tblInkoop(inkId, dmink, artId, inkat, enhuId, prijs)
             VALUES(2, '2012-01-01', " . self::ARTID . ", 4, 1, 1)");
@@ -52,14 +47,14 @@ class ArtikelnuttigenTest extends IntegrationCase {
     }
 
     public function test_volgende_inkoop_pil_throws_exception_when_insufficient_voorraad() {
-        $this->setArtikelPilFixture();
+        $this->runfixture('pil-inkoop');
         $artid = self::ARTID;
         $this->expectException(Exception::class);
         $actual = volgende_inkoop_pil($artid);
     }
 
     public function test_volgende_inkoop_pil() {
-        $this->setArtikelPilFixture();
+        $this->runfixture('pil-inkoop');
         $this->runSQL("INSERT INTO tblInkoop(inkId, dmink, artId, inkat, enhuId, prijs) VALUES(2, '2012-01-01', " . self::ARTID . ", 1, 1, 1)");
         $artid = self::ARTID;
         $actual = volgende_inkoop_pil($artid);
@@ -72,7 +67,7 @@ class ArtikelnuttigenTest extends IntegrationCase {
         // zet de database goed
         // Voor het eerste scenario vind ik het belangrijk dat we niet verder afdalen
         //   in volgende_inkoop_pil.
-        $this->setArtikelPilFixture();
+        $this->runfixture('pil-inkoop');
         // WHEN
         // voer de methode uit
         $artid = self::ARTID;
@@ -84,7 +79,7 @@ class ArtikelnuttigenTest extends IntegrationCase {
     }
 
     public function test_inlezen_voer() {
-        $this->setArtikelVoerFixture();
+        $this->runfixture('voer-inkoop');
         $this->expectNewRecordsInTables([
             'tblVoeding' => 1,
         ]);
@@ -98,7 +93,7 @@ class ArtikelnuttigenTest extends IntegrationCase {
     }
 
     public function test_inlezen_voer_meerDan() {
-        $this->setArtikelVoerFixture();
+        $this->runfixture('voer-inkoop');
         $this->runSQL("INSERT INTO tblInkoop(inkId, dmink, artId, inkat, enhuId, prijs)
             VALUES(2, '2012-01-01', " . self::ARTID . ", 4, 1, 1)");
         $this->expectNewRecordsInTables([
@@ -116,13 +111,5 @@ class ArtikelnuttigenTest extends IntegrationCase {
     # TODO: scenarios voor:
     # volgende_inkoop_voer
     # zoek_voorraad_oudste_inkoop_voer
-
-    private function setArtikelPilFixture() {
-        $this->runfixture('pil-inkoop');
-    }
-
-    private function setArtikelVoerFixture() {
-        $this->runfixture('voer-inkoop');
-    }
 
 }

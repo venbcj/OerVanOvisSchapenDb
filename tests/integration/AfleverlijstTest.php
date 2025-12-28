@@ -5,7 +5,8 @@ class AfleverlijstTest extends IntegrationCase {
     use Expectations;
 
     public function teardown(): void {
-        unset ($GLOBALS['schaap_gateway']);
+        unset($GLOBALS['schaap_gateway']);
+        parent::teardown();
     }
 
     public function test_bestemming_ingevuld() {

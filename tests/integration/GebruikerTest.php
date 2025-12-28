@@ -7,10 +7,7 @@ class GebruikerTest extends IntegrationCase {
     public function tearDown(): void {
         # zodat geen 9 blijft hangen in sessie
         $this->get('/Home.php', ['ingelogd' => 1, 'uid' => 1]);
-    }
-
-    public static function teardownAfterClass(): void {
-        self::runsetup('tblLeden');
+        parent::tearDown();
     }
 
     // deze vier tests dekken de radioknop "melden: Ja"
