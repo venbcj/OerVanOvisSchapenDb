@@ -9,4 +9,17 @@ class EenheidGatewayTest extends GatewayCase {
         $this->assertEquals(4, $actual->num_rows); // kennelijk zitten er 4 eenheden bij de gebruiker, in de standaard-fixture
     }
 
+    public function test_all() {
+        $lidId = null;
+        $result = $this->sut->all($lidId);
+        $this->assertNotFalse($result);
+    }
+
+    public function test_get() {
+        $lidId = null;
+        $id = null;
+        $result = $this->sut->get($lidId, $id);
+        $this->assertNotFalse($result);
+    }
+
 }

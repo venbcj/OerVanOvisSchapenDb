@@ -3,31 +3,44 @@
 class StalGateway extends Gateway {
 
     public function updateHerkomstByMelding($recId, $fldHerk) {
-        $this->run_query("
+        $this->run_query(<<<SQL
             UPDATE tblStal st
              join tblHistorie h on (h.stalId = st.stalId)
              join tblMelding m on (m.hisId = h.hisId)
-            set st.rel_herk = '" . $this->db->real_escape_string($fldHerk) . "' 
-            WHERE m.meldId = '$recId'
-            ");
+            set st.rel_herk = :fldHerk 
+            WHERE m.meldId = :recId
+SQL
+        , [
+            [':recId', $recId, self::INT],
+            [':fldHerk', $fldHerk],
+        ]);
     }
 
     public function updateBestemmingByMelding($recId, $fldBest) {
-            $this->db->query("
+        $this->run_query(<<<SQL
             UPDATE tblStal st
              join tblHistorie h on (h.stalId = st.stalId)
              join tblMelding m on (m.hisId = h.hisId)
-            set st.rel_best = '" . $this->db->real_escape_string($fldBest) . "'
-            WHERE m.meldId = '$recId'
-            ");
+            set st.rel_best = :fldBest
+            WHERE m.meldId = :recId
+SQL
+        , [
+            [':recId', $recId, self::INT],
+            [':fldBest', $fldBest],
+        ]);
     }
 
     public function tel_stallijsten($lidId, $schaapId) {
-        return $this->first_field("
+        return $this->first_field(<<<SQL
 SELECT count(st.stalId) stalId
 FROM tblStal st
  join tblUbn u on (st.ubnId = u.ubnId)
-WHERE st.schaapId = '" . $this->db->real_escape_string($schaapId) . "' and u.lidId <> '" . $this->db->real_escape_string($lidId) . "'");
+WHERE st.schaapId = :schaapId and u.lidId <> :lidId
+SQL
+        , [
+            [':lidId', $lidId, self::INT],
+            [':schaapId', $schaapId, self::INT],
+        ]);
     }
 
     public function kzlOoien($lidId, $Karwerk) {
@@ -111,83 +124,95 @@ SQL
     }
 
     public function zoek_laatste_stalId($lidId, $schaapId) {
-        $vw = $this->db->query("
+        return $this->first_field(<<<SQL
 SELECT max(st.stalId) stalId
 FROM tblStal st
  join tblUbn u on (st.ubnId = u.ubnId)
-WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and st.schaapId = '".$this->db->real_escape_string($schaapId)."' 
-");
-return $vw->fetch_row()[0];
-}
+WHERE u.lidId = :lidId and st.schaapId = :schaapId 
+SQL
+        , [
+            [':lidId', $lidId, self::INT],
+            [':schaapId', $schaapId, self::INT],
+        ]);
+    }
 
-public function findLidByStal($stalId) {
-    return $this->first_field(
-        <<<SQL
+    public function findLidByStal($stalId) {
+        return $this->first_field(
+            <<<SQL
 SELECT u.lidId
 FROM tblStal st
  join tblUbn u on (st.ubnId = u.ubnId)
 WHERE st.stalId = :stalId
 SQL
-    , [[':stalId', $stalId, self::INT]]
-    );
-}
+        , [[':stalId', $stalId, self::INT]]
+        );
+    }
 
-public function zoekKleurHalsnr($lidId, $schaapId) {
-    $vw = $this->db->query("
+    public function zoekKleurHalsnr($lidId, $schaapId) {
+        return $this->first_record(<<<SQL
 SELECT stalId, kleur, halsnr
 FROM tblStal st
  join tblUbn u on (st.ubnId = u.ubnId)
-WHERE u.lidId = '".$this->db->real_escape_string($lidId)."'
- and st.schaapId = '".$this->db->real_escape_string($schaapId)."'
+WHERE u.lidId = :lidId
+ and st.schaapId = :schaapId
  and isnull(st.rel_best)
-");
-if ($vw->num_rows) {
-    return $vw->fetch_assoc();
-}
-return ['stalId' => null, 'kleur' => null, 'halsnr' => null];
-}
+SQL
+        , [
+            [':lidId', $lidId, self::INT],
+            [':schaapId', $schaapId, self::INT],
+        ], ['stalId' => null, 'kleur' => null, 'halsnr' => null]
+        );
+    }
 
-public function zoek_kleuren_halsnrs($lidId) {
-    return $this->run_query(<<<SQL
+    public function zoek_kleuren_halsnrs($lidId) {
+        return $this->run_query(<<<SQL
 SELECT schaapId, concat(kleur,' ',halsnr) halsnr
 FROM tblStal st
 INNER JOIN tblUbn u USING (ubnId)
 WHERE u.lidId = :lidId and isnull(rel_best) and (kleur is not null or halsnr is not null)
 ORDER BY concat(kleur,' ',halsnr)
 SQL
-    , [[':lidId', $lidId, self::INT]]
-    );
-}
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
 
-public function updateKleurHalsnr($stalId, $kleur, $halsnr) {
-    $this->db->query("UPDATE tblStal set kleur = ". db_null_input($kleur) .", halsnr = ". db_null_input($halsnr)." WHERE stalId = '".$this->db->real_escape_string($stalId)."' ");
-}
+    public function updateKleurHalsnr($stalId, $kleur, $halsnr) {
+        $this->run_query(<<<SQL
+UPDATE tblStal set kleur = :kleur, halsnr = :halsnr WHERE stalId = :stalId
+SQL
+        , [
+            [':stalId', $stalId, self::INT],
+            [':kleur', $kleur],
+            [':halsnr', $halsnr, self::INT],
+        ]);
+    }
 
-public function zoek_relid($lidId, $schaapId) {
-    $vw = $this->db->query("
+    public function zoek_relid($lidId, $schaapId) {
+        return $this->first_row(<<<SQL
 SELECT st.stalId, st.rel_best
 FROM (
     SELECT max(st.stalId) stalId
     FROM tblStal st
      join tblUbn u on (st.ubnId = u.ubnId)
-    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and st.schaapId = '".$this->db->real_escape_string($schaapId)."'
+    WHERE u.lidId = :lidId and st.schaapId = :schaapId
  ) mst
  join tblStal st on (mst.stalId = st.stalId)
-");
-if ($vw->num_rows) {
-    return $vw->fetch_row();
-}
-return [null, null];
-}
+SQL
+        , [
+            [':lidId', $lidId, self::INT],
+            [':schaapId', $schaapId, self::INT],
+        ], [null, null]
+        );
+    }
 
-public function update_relbest($stalId, $rel_best) {
-    $this->run_query($this->update_relbest_statement(),
-     [[':stalId', $stalId, self::INT], [':rel_best', $rel_best]]
-    );
-}
+    public function update_relbest($stalId, $rel_best) {
+        $this->run_query($this->update_relbest_statement(),
+            [[':stalId', $stalId, self::INT], [':rel_best', $rel_best]]
+        );
+    }
 
-private function update_relbest_statement() {
-    return <<<SQL
+    private function update_relbest_statement() {
+        return <<<SQL
 UPDATE tblStal
 SET rel_best = :rel_best
 WHERE stalId = :stalId

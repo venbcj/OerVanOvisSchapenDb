@@ -34,7 +34,7 @@ INSERT INTO tblUbn SET lidId = :lidId, ubn = :ubn,
 SQL
         , [
             [':lidId', $lidId, self::INT],
-            [':ubn', $ubn], // default type is txt
+            [':ubn', $new_ubn], // default type is txt
             [':adres', $new_adres],
             [':plaats', $new_plaats],
         ]);
@@ -51,21 +51,20 @@ SQL
     }
 
     public function zoek_op_id_met_plaats($ubnId) {
-        $vw = $this->run_query(<<<SQL
+        return $this->first_record(<<<SQL
 SELECT adres, plaats, actief
 FROM tblUbn
 WHERE ubnId = :ubnId
 ORDER BY actief desc, ubn
 SQL
-        , [[':ubnId', $ubnId, self::INT]]);
-        if ($vw->num_rows) {
-            return $vw->fetch_assoc();
-        }
-        return [
-            'adres' => '',
-            'plaats' => '',
-            'actief' => '',
-        ];
+        , [[':ubnId', $ubnId, self::INT]]
+            ,
+            [
+                'adres' => '',
+                'plaats' => '',
+                'actief' => '',
+            ]
+        );
     }
 
     public function zoek_relatie($ubnId) {

@@ -335,7 +335,7 @@ SQL
     }
 
     public function zoek_laatste_worp_voor_geboortedatum($mdrId, $datum) {
-        $vw = $this->run_query(
+        return $this->first_row(
             <<<SQL
 SELECT max(h.datum) datum, date_format(max(h.datum),'%d-%m-%Y') dag
 FROM tblSchaap l
@@ -349,11 +349,8 @@ WHERE v.mdrId = :mdrId
 SQL
         ,
             [[':mdrId', $mdrId, self::INT], [':datum', $datum, self::DATE]]
+            , [null, null]
         );
-        if ($vw->num_rows) {
-            return $vw->fetch_row();
-        }
-        return [null, null];
     }
 
     public function zoek_volgende_worp_na_geboortedatum($mdrId, $datum) {
@@ -430,6 +427,7 @@ SQL
         );
     }
 
+    // TODO: dit levert een KV mdrid->lev op; er kunnen dus velden weg uit de SELECT
     public function zoek_laatste_dekkingen_met_vader_zonder_werpdatum($lidId, $Karwerk) {
         // Zoek de laatste dekkingen. Deze laatste dekking moet een vader hebben geregistreerd
         // Er moet óf een dekking bestaan (tblVolwas.hisId) óf een dracht (tblDracht.hisId)
@@ -489,6 +487,7 @@ SQL
         return $res;
     }
 
+    // TODO: dit levert een KV mdrid->lev op. Overige velden kunnen dus weg uit de SELECT.
     public function zoek_laatste_werpdatum($lidId, $Karwerk) {
         $vw = $this->run_query(
             <<<SQL

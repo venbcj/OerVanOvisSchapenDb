@@ -57,14 +57,20 @@ class UnitCase extends TestCase {
         $this->assertEquals('', $this->db->error, "$SQL\nFout in query");
     }
 
-    protected function assertTableWithPK($table, $pk, $id, $values = []) {
-        $vw = $this->db->query("SELECT * FROM $table WHERE $pk=$id");
+    protected function assertTableWhereHas($table, $where = [], $has_values = []) {
+        $where_clause = implode(' AND ', array_map(function ($field, $val) { return "$field = '$val'"; }, array_keys($where), array_values($where)));
+        $vw = $this->db->query("SELECT * FROM $table WHERE $where_clause");
         $this->assertInstanceOf(mysqli_result::class, $vw, $this->db->error);
-        $this->assertEquals(1, $vw->num_rows, "kan record met $pk=$id niet vinden");
+        $this->assertEquals(1, $vw->num_rows, "kan record met $where_clause niet vinden");
         $row = $vw->fetch_assoc();
-        foreach ($values as $key => $expected) {
-            $this->assertEquals($expected, $row[$key], "verwacht $table:$pk($id) $key=$expected");
+        foreach ($has_values as $key => $expected) {
+            $this->assertEquals($expected, $row[$key], "verwacht $table:$where_clause $key=$expected");
         }
+    }
+
+    // TODO alle callers omleiden naar assertTableWhereHas
+    protected function assertTableWithPK($table, $pk, $id, $values = []) {
+        return $this->assertTableWhereHas($table, [$pk => $id], $values);
     }
 
     protected function assertTableRowcount($table, $count) {

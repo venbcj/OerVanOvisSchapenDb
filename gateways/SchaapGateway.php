@@ -108,7 +108,7 @@ SQL
     }
 
     public function levnr_exists_outside($fldLevnr, $schaapId): bool {
-        $vw = $this->run_query(
+        return 0 < $this->first_field(
             <<<SQL
 SELECT count(*) aant
 FROM tblSchaap
@@ -121,8 +121,6 @@ SQL
                 [':schaapId', $schaapId, self::INT]
             ]
         );
-        $rec = $vw->fetch_row();
-        return $rec[0] > 0;
     }
 
     // deze handeling heet "change" omdat het sleutelveld verandert
@@ -2124,6 +2122,7 @@ SQL
 SELECT date_format(datum, '%d-%m-%Y') dag, h.actId, actie, datum
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
+ join tblUbn u USING (ubnId)
  join tblHistorie h on (st.stalId = h.stalId)
  join tblActie a on (a.actId = h.actId)
 WHERE u.lidId = :lidId
@@ -2157,6 +2156,7 @@ FROM tblVoeding v
  join tblBezet b on (p.periId = b.periId)
  join tblHistorie h on (h.hisId = b.hisId)
  join tblStal st on (st.stalId = h.stalId)
+ join tblUbn u USING (ubnId)
  join tblSchaap s on (s.schaapId =st.schaapId)
 WHERE h.skip = 0
  and u.lidId = :lidId
@@ -2169,6 +2169,7 @@ FROM tblSchaap s
  join tblVolwas v on (s.schaapId = v.mdrId)
  join tblSchaap lam on (v.volwId = lam.volwId)
  join tblStal st on (st.schaapId = lam.schaapId)
+ join tblUbn u USING (ubnId)
  join tblHistorie h on (st.stalId = h.stalId
  and h.actId = 1
  and h.skip = 0)
@@ -2183,6 +2184,7 @@ FROM tblSchaap s
  join tblVolwas v on (s.schaapId = v.mdrId)
  join tblSchaap lam on (v.volwId = lam.volwId)
  join tblStal st on (st.schaapId = lam.schaapId)
+ join tblUbn u USING (ubnId)
  join tblHistorie h on (st.stalId = h.stalId
  and h.actId = 1
  and h.skip = 0)
@@ -2198,6 +2200,7 @@ FROM impRespons rs
  join tblMelding m on (rs.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
+ join tblUbn u USING (ubnId)
  join tblSchaap s on (s.schaapId = st.schaapId
  and s.levensnummer = rs.levensnummer)
 WHERE rs.melding = 'GER'
@@ -2213,6 +2216,7 @@ FROM impRespons rs
  join tblMelding m on (rs.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
+ join tblUbn u USING (ubnId)
  join tblSchaap s on (s.schaapId = st.schaapId
  and s.levensnummer = rs.levensnummer)
 WHERE rs.melding = 'AAN'
@@ -2228,6 +2232,7 @@ FROM impRespons rs
  join tblMelding m on (rs.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
+ join tblUbn u USING (ubnId)
  join tblSchaap s on (s.schaapId = st.schaapId
  and s.levensnummer = rs.levensnummer)
 WHERE rs.melding = 'AFV'
@@ -2243,6 +2248,7 @@ FROM impRespons rs
  join tblMelding m on (rs.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
+ join tblUbn u USING (ubnId)
  join tblSchaap s on (s.schaapId = st.schaapId
  and s.levensnummer = rs.levensnummer)
 WHERE rs.melding = 'DOO'
@@ -2895,7 +2901,7 @@ SQL
         );
     }
 
-    public function zoek_pil() {
+    public function zoek_pil($lidId, $date, $schaapId) {
         return $this->run_query(
             <<<SQL
 SELECT date_format(h.datum,'%d-%m-%Y') datum, art.naam, DATEDIFF( (h.datum + interval art.wdgn_v day), :date) resterend
@@ -3904,7 +3910,7 @@ SQL
         );
     }
 
-    public function zoek_info() {
+    public function zoek_info($lidId, $Karwerk) {
         return $this->run_query(
             <<<SQL
 SELECT concat(transponder,levensnummer) tran, coalesce(s.geslacht,'Onbekend') geslacht, coalesce(r.ras,'Onbekend') ras,
@@ -4733,7 +4739,8 @@ SQL
         );
     }
 
-    public function zoek_dieren() {
+    // TODO: hier komt voor $aant iets binnen dat $recId heet. Klopt alles nog?
+    public function zoek_dieren($lidId, $datumvan, $datumtot, $aant) {
         return $this->run_query(
             <<<SQL
 SELECT levensnummer, transponder
@@ -4758,9 +4765,9 @@ ORDER BY levensnummer
 SQL
         , [
             [':lidId', $lidId, self::INT],
-            [':datumvan', $flddagvan],
-            [':datumtot', $flddagtot],
-            [':aant', $recId, self::INT]
+            [':datumvan', $datumvan],
+            [':datumtot', $datumtot],
+            [':aant', $aant, self::INT]
         ]
         );
     }

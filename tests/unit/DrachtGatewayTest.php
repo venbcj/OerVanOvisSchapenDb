@@ -2,7 +2,14 @@
 
 class DrachtGatewayTest extends GatewayCase {
 
-    protected static $sutname = 'DrachtGateway';
+    public static $sutname = 'DrachtGateway';
+
+    public function test_insert_dracht() {
+        $volwId = null;
+        $hisId = null;
+        $result = $this->sut->insert_dracht($volwId, $hisId);
+        $this->assertNotFalse($result);
+    }
 
     public function test_insert() {
         $this->expectNewRecordsInTables([

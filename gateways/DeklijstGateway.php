@@ -2,7 +2,7 @@
 
 class DeklijstGateway extends Gateway {
 
-    public function insert($lidId, $datum) {
+    public function insert($lidId, $datum): void {
         $this->run_query(
             <<<SQL
 INSERT INTO tblDeklijst
@@ -17,7 +17,7 @@ SQL
         );
     }
 
-    public function find_aantal($dekId) {
+    public function find_aantal($dekId): ?int {
         return $this->first_field(
             <<<SQL
 SELECT dekat
@@ -28,16 +28,16 @@ SQL
         );
     }
 
-    public function update($dekId, $flddekat) {
+    public function update($dekId, $dekat): void {
         $this->run_query(
             <<<SQL
-UPDATE tblDeklijst SET dekat = ".db_null_input($flddekat)." WHERE dekId = '".mysqli_real_escape_string($db,$recId)."'
+UPDATE tblDeklijst SET dekat = :dekat WHERE dekId = :dekId
 SQL
         , [[':dekat', $dekat], [':dekId', $dekId]]
         );
     }
 
-    public function zoek_laatste_jaar($lidId) {
+    public function zoek_laatste_jaar($lidId): ?int {
         return $this->first_field(
             <<<SQL
 SELECT max(year(dmdek)) maxjaar
@@ -48,7 +48,7 @@ SQL
         );
     }
 
-    public function zoek_max_dekjaar($lidId, $jaar) {
+    public function zoek_max_dekjaar($lidId, $jaar): ?int {
         return $this->first_field(
             <<<SQL
 SELECT max(year(dmdek + interval 9 month)) maxjaar
@@ -76,7 +76,8 @@ SQL
         );
     }
 
-    public function zoek_dekjaar($lidId, $jaar) {
+    // return type is eigenlijk Records, maar dat type moet nog geschreven worden
+    public function zoek_dekjaar($lidId, $jaar): array {
         return $this->first_record(
             <<<SQL
 SELECT sum(dekat) dektot, liq.bedrag 
@@ -90,7 +91,10 @@ FROM tblDeklijst dek
 WHERE lidId = :lidId and year(dmdek) = :jaar
 GROUP BY liq.jrmnd, liq.bedrag
 SQL
-        , [[':lidId', $lidId, self::INT], [':jaar', $jaar]]
+        , [
+            [':lidId', $lidId, self::INT],
+            [':jaar', $jaar],
+        ]
             , ['dektot' => null, 'bedrag' => null]
         );
     }
@@ -108,7 +112,8 @@ SQL
         );
     }
 
-    public function zoek_eerste_datum_week1($lidId, $jaar) {
+    // TODO hier een eenduidige datum teruggeven? ipv string
+    public function zoek_eerste_datum_week1($lidId, $jaar): ?string {
         return $this->first_field(
             <<<SQL
 SELECT min(dmdek) dmdek1
@@ -172,7 +177,7 @@ SQL
         );
     }
 
-    public function zoek_aantal_dekkingen_per_week($lidId, $jaarweek) {
+    public function zoek_aantal_dekkingen_per_week($lidId, $jaarweek): ?int {
         return $this->first_field(
             <<<SQL
 SELECT count(v.volwId) aant

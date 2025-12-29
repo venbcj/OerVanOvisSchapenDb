@@ -3,13 +3,15 @@
 class HokGateway extends Gateway {
 
     public function findLongestHoknr($lidId) {
-        return $this->db
-                    ->query("SELECT max(length(hoknr)) lengte FROM`tblHok`WHERE lidId ='".$this->db->real_escape_string($lidId)."' ")
-                    ->fetch_row()[0];
+        return $this->first_field(<<<SQL
+SELECT max(length(hoknr)) lengte FROM tblHok WHERE lidId = :lidId
+SQL
+    , [[':lidId', $lidId, self::INT]]
+        );
     }
 
     public function findHoknrById($hokId) {
-        return $this->first_field("SELECT hoknr FROM tblHok WHERE hokId = ".((int)$hokId));
+        return $this->first_field("SELECT hoknr FROM tblHok WHERE hokId = :hokId", [[':hokId', $hokId, self::INT]]);
     }
 
     public function findSortActief($hokId) {
@@ -57,6 +59,7 @@ SQL
         return $this->KV($this->kzlHok($lidId));
     }
 
+    // TODO REFACTOR gebruik KV
     public function items_without_one($lidId, $hokId) {
         $vw = $this->run_query(
             <<<SQL
@@ -84,66 +87,76 @@ SQL
         return [$hoknId, $hoknum];
     }
 
-public function lidIdByHokId($hok) {
-$vw = $this->db->query("
+    public function lidIdByHokId($hok) {
+        return $this->first_field(<<<SQL
 SELECT lidId
 FROM tblHok
-WHERE hokId = ".$this->db->real_escape_string($hok)." 
-");
-while ($row = $vw->fetch_assoc()) { $lidId = $row['lidId']; }
-return $lidId;
-}
+WHERE hokId = :hokId
+SQL
+        , [[':hokId', $hok, self::INT]]
+        );
+    }
 
-public function zoek_verblijf($lidId) {
-    return $this->db->query("
+    public function zoek_verblijf($lidId) {
+        return $this->run_query(<<<SQL
 SELECT hoknr, scan
 FROM tblHok
-WHERE actief = 1 and lidId = ".$this->db->real_escape_string($lidId)."
+WHERE actief = 1 and lidId = :lidId
 ORDER BY hoknr
-");
-}
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
 
-// lijkt erg op kzlHok
-public function hoknummer($lidId) {
-    return $this->run_query(
-        <<<SQL
+    // lijkt erg op kzlHok
+    public function hoknummer($lidId) {
+        return $this->run_query(
+            <<<SQL
 SELECT hokId, hoknr, lower(if(isnull(scan),'6karakters',scan)) scan
 FROM tblHok
 WHERE lidId = :lidId and actief = 1
 ORDER BY hoknr
 SQL
-, [[':lidId', $lidId, self::INT]]
-);
-}
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
 
-public function countVerblijven($lidId, $artId, $doelId) {
-    $vw = $this->db->query("
+    public function countVerblijven($lidId, $artId, $doelId) {
+        return $this->first_field(<<<SQL
 SELECT count(p.periId) aant
 FROM tblHok h
  join tblPeriode p on (p.hokId = h.hokId)
  left join tblVoeding v on (p.periId = v.periId)
  left join tblInkoop i on (i.inkId = v.inkId)
-WHERE h.lidId = '".$this->db->real_escape_string($lidId)."'
- and ".db_null_filter('i.artId', $artId)."
- and p.doelId = $doelId
-");
-return $vw->fetch_row()[0];
-}
+WHERE h.lidId = :lidId
+ and i.artId = :artId
+ and p.doelId = :doelId
+SQL
+        , [
+            [':lidId', $lidId, self::INT],
+            [':artId', $artId, self::INT],
+            [':doelId', $doelId, self::INT],
+        ]);
+    }
 
-public function kzlHokVoer($lidId, $artId) {
-    return $this->db->query("
+    public function kzlHokVoer($lidId, $artId) {
+        return $this->run_query(<<<SQL
 SELECT h.hokId, h.hoknr
 FROM tblHok h
  join tblPeriode p on (p.hokId = h.hokId)
  left join tblVoeding v on (p.periId = v.periId)
  left join tblInkoop i on (i.inkId = v.inkId)
-WHERE h.lidId = '".$this->db->real_escape_string($lidId)."' and ".db_null_filter('i.artId', $artId)."
+WHERE h.lidId = :lidId and i.artId = :artId
 GROUP BY h.hoknr
-");
-}
+SQL
+        , [
+            [':lidId', $lidId, self::INT],
+            [':artId', $artId, self::INT],
+        ]);
+    }
 
-public function zoek_hok($schaapId) {
-    $zoek_hok = $this->db->query("
+    public function zoek_hok($schaapId) {
+        return $this->first_field(<<<SQL
      SELECT hk.hoknr
      FROM tblHok hk
       join tblPeriode p on (hk.hokId = p.hokId)
@@ -153,58 +166,59 @@ public function zoek_hok($schaapId) {
         FROM tblBezet b
          join tblHistorie h on (b.hisId = h.hisId)
          join tblStal st on (st.stalId = h.stalId)
-        WHERE h.skip = 0 and st.schaapId = '".$this->db->real_escape_string($schaapId)."'
+        WHERE h.skip = 0 and st.schaapId = :schaapId
       ) mb on (mb.bezId = b.bezId)
-      ");
-    while( $hk = $zoek_hok->fetch_assoc()) { $hok = $hk['hoknr']; }
-     return $hok ?? null;
-        }
+SQL
+        , [
+            [':schaapId', $schaapId, self::INT],
+        ]);
+    }
 
-public function zoek_lid_hok($lidId) {
-    return $this->run_query(
-        <<<SQL
+    public function zoek_lid_hok($lidId) {
+        return $this->run_query(
+            <<<SQL
 SELECT hokId
 FROM tblHok
 WHERE lidId = :lidId
 ORDER BY sort, hokId
 SQL
-    , [[':lidId', $lidId, self::INT]]
-    );
-}
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
 
-public function nummers_bij_lid($lidId) {
-    return $this->run_query(
-        <<<SQL
+    public function nummers_bij_lid($lidId) {
+        return $this->run_query(
+            <<<SQL
 SELECT h.hokId, hoknr, lower(coalesce(scan,'6karakters')) scan
 FROM tblHok h
 WHERE h.lidId = :lidId
 ORDER BY hoknr
 SQL
-    , [[':lidId', $lidId, self::INT]]
-    );
-}
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
 
-public function actieve_nummers_bij_lid($lidId) {
-    return $this->run_query(
-        <<<SQL
+    public function actieve_nummers_bij_lid($lidId) {
+        return $this->run_query(
+            <<<SQL
 SELECT h.hokId, hoknr, lower(coalesce(scan,'6karakters')) scan
 FROM tblHok h
 WHERE h.lidId = :lidId
  and actief = 1
 ORDER BY hoknr
 SQL
-    , [[':lidId', $lidId, self::INT]]
-    );
-}
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
 
     /* Binnen subquery hokIn zit een union t.b.v. doelId 3.
      *  In die Where cluse is h.datum >= prnt.datum toegepast
      *   i.p.v. (h.datum >= prnt.datum or ht.datum > prnt.datum)
      *    Schapen die in een verblijf een aanwasdatum krijgen worden niet meegeteld
      *    als doelgroep 3 zijnde 'Stallijst'. Deze vallen dus enkel in de doelgroep gespeend */
-public function resultaten($lidId) {
-    return $this->run_query(
-        <<<SQL
+    public function resultaten($lidId) {
+        return $this->run_query(
+            <<<SQL
 SELECT result.periId, h.hokId, h.hoknr, result.doelId, d.doel,
     min(result.dm_in) dmeerste_in, date_format(min(result.dm_in),'%Y%m%d') eertse_in_sort, date_format(min(result.dm_in),'%d-%m-%Y') eertse_in, 
         count(distinct result.schaapId) aant, 
@@ -255,9 +269,7 @@ FROM tblHok h
  and h.skip = 0
  and ( (isnull(spn.datum)
  and isnull(prnt.datum)) or h.datum < spn.datum)
-
         UNION
-
         SELECT st.schaapId, b.hokId, 2 doelId, h.datum dm_in, ht.datum dm_uit
         FROM tblBezet b
          join tblHistorie h on (b.hisId = h.hisId)
@@ -300,9 +312,7 @@ FROM tblHok h
  and ((h.datum >= spn.datum
  and (isnull(prnt.datum) or h.datum < prnt.datum)) or (isnull(spn.datum)
  and h.datum < prnt.datum))
-
         UNION
-
         SELECT st.schaapId, b.hokId, 3 doelId, h.datum dm_in, ht.datum dm_uit
         FROM tblBezet b
          join tblHistorie h on (b.hisId = h.hisId)
@@ -349,9 +359,7 @@ FROM tblHok h
          ) p2 on (p.hokId = p2.hokId
  and p.doelId = p2.doelId
  and p.dmafsluit = p2.dmafsluit)
-
         UNION
-
         SELECT p1.hokId, p1.doelId, p2.periId, p1.dmafsluit dmafsluit1, p2.dmafsluit dmafsluit2
         FROM (
             SELECT p1.periId periId1, min(p2.periId) periId2
@@ -378,25 +386,25 @@ SQL
         );
     }
 
-public function insert($lidId, $hoknr, $sort) {
-    $this->run_query(
-        <<<SQL
+    public function insert($lidId, $hoknr, $sort) {
+        $this->run_query(
+            <<<SQL
 INSERT INTO tblHok 
 SET lidId = :lidId,
   hoknr = :hoknr,
   sort = :sort
 SQL
-    , [
-        [':lidId', $lidId, self::INT],
-        [':hoknr', $hoknr],
-        [':sort', $sort],
-    ]
-    );
-}
+        , [
+            [':lidId', $lidId, self::INT],
+            [':hoknr', $hoknr],
+            [':sort', $sort],
+        ]
+        );
+    }
 
-public function countHokRelatiesAlle($lidId, $actief) {
-    return $this->first_field(
-        <<<SQL
+    public function countHokRelatiesAlle($lidId, $actief) {
+        return $this->first_field(
+            <<<SQL
 SELECT count(h.hokId) aant
 FROM tblHok h
  left join tblBezet b on (h.hokId = b.hokId)
@@ -406,26 +414,26 @@ WHERE h.lidId = :lidId
  and isnull(b.hokId)
  and isnull(p.hokId)
 SQL
-    , [[':lidId', $lidId, self::INT], [':actief', $actief]]
-    );
-}
+        , [[':lidId', $lidId, self::INT], [':actief', $actief]]
+        );
+    }
 
-public function zoekRelatiesAlle($lidId, $actief) {
-    return $this->run_query(
-        <<<SQL
+    public function zoekRelatiesAlle($lidId, $actief) {
+        return $this->run_query(
+            <<<SQL
 SELECT hokId, hoknr, scan, sort, actief
 FROM tblHok
 WHERE lidId = :lidId
  and actief > :actief
 ORDER BY coalesce(sort, hoknr)
 SQL
-    , [[':lidId', $lidId, self::INT], [':actief', $actief]]
-    );
-}
+        , [[':lidId', $lidId, self::INT], [':actief', $actief]]
+        );
+    }
 
-public function zoek_relatie($hokId) {
-    return $this->first_field(
-        <<<SQL
+    public function zoek_relatie($hokId) {
+        return $this->first_field(
+            <<<SQL
 SELECT h.hokId
 FROM tblHok h
  left join tblBezet b on (h.hokId = b.hokId)
@@ -434,12 +442,12 @@ WHERE h.hokId = :hokId
  and isnull(b.hokId)
  and isnull(p.hokId)
 SQL
-    , [[':hokId', $hokId, self::INT]]
-    );
-}
+        , [[':hokId', $hokId, self::INT]]
+        );
+    }
 
-public function hokn_beschikbaar($lidId, $hokId) {
-    return $this->first_row(<<<SQL
+    public function hokn_beschikbaar($lidId, $hokId) {
+        return $this->first_row(<<<SQL
 SELECT hoknr, nu aantal FROM (
 SELECT h.hokId, h.hoknr, coalesce(inhok.doelId,'niet in gebruik') doel, inhok.nu, h.scan
 FROM tblHok h
@@ -476,43 +484,43 @@ on (h.hokId = inhok.hokId)
 WHERE h.lidId = :lidId and h.actief = 1
 ) hb WHERE hokId = :hokId
 SQL
-    , [[':lidId', $lidId, self::INT], [':hokId', $hokId, self::INT]]
-    );
-}
+        , [[':lidId', $lidId, self::INT], [':hokId', $hokId, self::INT]]
+        );
+    }
 
-public function set_actief($hokId, $actief) {
-    $this->run_query(<<<SQL
+    public function set_actief($hokId, $actief) {
+        $this->run_query(<<<SQL
 UPDATE tblHok SET actief = :actief WHERE hokId = :hokId
 SQL
-    , [[':hokId', $hokId, self::INT], [':actief', $actief]]
-    );
-}
+        , [[':hokId', $hokId, self::INT], [':actief', $actief]]
+        );
+    }
 
-public function delete($hokId) {
-    $this->run_query(<<<SQL
+    public function delete($hokId) {
+        $this->run_query(<<<SQL
 DELETE FROM tblHok WHERE hokId = :hokId
 SQL
-    , [[':hokId', $hokId, self::INT]]
-    );
-}
+        , [[':hokId', $hokId, self::INT]]
+        );
+    }
 
-public function zoek_lambar($lidId) {
-    return $this->first_field(<<<SQL
+    public function zoek_lambar($lidId) {
+        return $this->first_field(<<<SQL
 SELECT hokId
 FROM tblHok
 WHERE hoknr = 'Lambar' and lidId = :lidId
 SQL
-    , [[':lidId', $lidId, self::INT]]
-    );
-}
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
 
-public function insert_lambar($lidId) {
-    $this->run_query(<<<SQL
+    public function insert_lambar($lidId) {
+        $this->run_query(<<<SQL
 INSERT INTO tblHok set hoknr = 'Lambar', lidId = :lidId
 SQL
-    , [[':lidId', $lidId, self::INT]]
-    );
-    return $this->db->insert_id;
-}
+        , [[':lidId', $lidId, self::INT]]
+        );
+        return $this->db->insert_id;
+    }
 
 }

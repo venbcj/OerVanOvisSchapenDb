@@ -3,7 +3,7 @@
 class VersieGateway extends Gateway {
 
     public function zoek_laatste_versie() {
-    $vw = $this->db->query("
+        return $this->first_field(<<<SQL
 SELECT max(Id) lstId
 FROM (
     SELECT a.Id
@@ -23,35 +23,30 @@ FROM (
     FROM tblVersiebeheer 
     WHERE app = 'Reader' and isnull(versieId)
 ) a
-    ");
-    while ($zlv = $vw->fetch_assoc()) {
-         return $zlv['lstId'];
-    }
-    return null;
+SQL
+        );
     }
 
     public function zoek_readersetup_in($last_versieId) {
-        $vw =  $this->db->query("
+        return $this->first_field(<<<SQL
 SELECT bestand
 FROM tblVersiebeheer 
-WHERE app = 'App' and Id = '".$this->db->real_escape_string($last_versieId)."'
-");
-    while ($zrv = $vw->fetch_assoc()) {
-         return $zrv['bestand'];
-    }
-    return null;
+WHERE app = 'App' and Id = :id
+SQL
+        , [
+            [':id', $last_versieId, self::INT],
+        ]);
     }
 
     public function zoek_readertaken_in($last_versieId) {
-        $vw =  $this->db->query("
+        return $this->first_field(<<<SQL
 SELECT bestand
 FROM tblVersiebeheer 
-WHERE app = 'Reader' and (Id = '".$this->db->real_escape_string($last_versieId)."' or versieId = '".$this->db->real_escape_string($last_versieId)."')
-");
-    while ($zrv = $vw->fetch_assoc()) {
-         return $zrv['bestand'];
-    }
-    return null;
+WHERE app = 'Reader' and (Id = :id or versieId = :id)
+SQL
+        , [
+            [':id', $last_versieId, self::INT],
+        ]);
     }
 
 }

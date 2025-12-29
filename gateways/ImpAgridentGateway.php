@@ -18,7 +18,7 @@ SQL
             <<<SQL
 UPDATE impAgrident set toedat_upd = :aantal WHERE Id = :id
 SQL
-        , [[':id', $recId, self::INT], [':aantal', $aantal]]
+        , [[':id', $id, self::INT], [':aantal', $aantal]]
         );
     }
 
@@ -1874,7 +1874,7 @@ SQL
         ];
     }
 
-    public function zoek_voerregels_reader($hokid, $artId, $doelId) {
+    public function zoek_voerregels_reader($hokId, $artId, $doelId) {
         return $this->run_query(
             <<<SQL
 SELECT Id, date_format(datum,'%d-%m-%Y') dag, hokId, artId, coalesce(toedat_upd, toedat) toedat, doelId

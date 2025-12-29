@@ -13,7 +13,7 @@ if [ ! -f $TESTFILE ]; then
 
 class $CLASSNAME extends GatewayCase {
 
-    public static \$sutname = '$1Gateway';
+    protected static \$sutname = '$1Gateway';
 
 TXT
 
@@ -39,5 +39,5 @@ done
 echo '}' >> $TESTFILE
 echo $TESTFILE
 fi
-tmux split-window -h -l80 "cover-include none; cover-include gateways/$1Gateway.php; cover on; ./watcher $TESTFILE"
+tmux split-window -h -l80 "cover-include none; cover-include gateways; cover on; ./watcher $TESTFILE"
 vi -o $TESTFILE gateways/$1Gateway.php

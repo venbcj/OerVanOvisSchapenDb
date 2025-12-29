@@ -322,28 +322,40 @@ SQL
         );
     }
 
+    // Dit is eigenlijk geen Gateway-methode meer, maar een Transaction-methode
     public function storeUitvalOm($lidId, $redId) {
         if ($this->heeftReden($lidId, $redId)) {
-            $SQL = "UPDATE tblRedenuser set uitval = 1 WHERE redId = '".$this->db->real_escape_string($redId)."' and lidId = '".$this->db->real_escape_string($lidId)."' ";
+            $SQL = <<<SQL
+UPDATE tblRedenuser set uitval = 1 WHERE redId = :redId and lidId = :lidId
+SQL;
         } else {
-            $SQL = "INSERT INTO tblRedenuser set uitval=1, redId = '".$this->db->real_escape_string($redId)."', lidId = '".$this->db->real_escape_string($lidId)."' ";
+            $SQL = <<<SQL
+INSERT INTO tblRedenuser set uitval=1, redId = :redId, lidId = :lidId
+SQL;
         }
-        $this->run_query($SQL);
+        $this->run_query($SQL, [[':lidId', $lidId, self::INT], [':redId', $redId, self::INT]]);
+        return $this->db->insert_id;
     }
 
+    // Dit is eigenlijk geen Gateway-methode meer, maar een Transaction-methode
     public function storeAfvoerOm($lidId, $redId) {
-        if($this->heeftReden($lidId, $redId)) {
-            $SQL = "UPDATE tblRedenuser set afvoer = 1 WHERE redId = '".$this->db->real_escape_string($redId)."' and lidId = '".$this->db->real_escape_string($lidId)."'";
+        if ($this->heeftReden($lidId, $redId)) {
+            $SQL = <<<SQL
+UPDATE tblRedenuser set afvoer = 1 WHERE redId = :redId and lidId = :lidId
+SQL;
         } else {
-            $SQL = "INSERT INTO tblRedenuser set afvoer = 1, redId = '".$this->db->real_escape_string($redId)."', lidId = '".$this->db->real_escape_string($lidId)."'";
+            $SQL = <<<SQL
+INSERT INTO tblRedenuser set afvoer = 1, redId = :redId, lidId = :lidId
+SQL;
         }
-        $this->run_query($SQL);
+        $this->run_query($SQL, [[':lidId', $lidId, self::INT], [':redId', $redId, self::INT]]);
+        return $this->db->insert_id;
     }
 
     private function heeftReden($lidId, $redId) {
         $vw = $this->run_query(
             <<<SQL
-SELECT redId
+SELECT reduId
 FROM tblRedenuser
 WHERE redId = :redId and lidId = :lidId
 SQL
@@ -640,7 +652,7 @@ SQL
     public function ubn_exists($ubn) {
         return 0 < $this->first_field(
             <<<SQL
-SELECT count(*) aant FROM tblLeden WHERE ubn = :ubn
+SELECT count(*) aant FROM tblUbn WHERE ubn = :ubn
 SQL
         , [[':ubn', $ubn]]
         );

@@ -93,7 +93,6 @@ WHERE m.reqId = :reqId
  and h.skip = 0                            
 SQL
         , [[':reqId', $fldReqId, self::INT]]
-            , false
         );
     }
 
@@ -124,7 +123,6 @@ WHERE m.reqId = :reqId
  and h.skip = 0
 SQL
         , [[':reqId', $reqId, self::INT]]
-            , false
         );
     }
 
