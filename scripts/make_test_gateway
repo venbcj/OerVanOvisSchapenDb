@@ -25,13 +25,13 @@ METHOD=$(sed -E 's/.*public function ([^(]+)\(.*/\1/' <<< "$line")
 PARAMS_RAW=$(sed -E 's/.*public function [^(]+\(([^)]*)\).*/\1/' <<< "$line")
 PARAM_VARS=$(grep -o '\$[a-zA-Z_][a-zA-Z0-9_]*' <<< "$PARAMS_RAW")
 CALL_ARGS=$(echo "$PARAM_VARS" | sed ':a;N;$!ba;s/\n/, /g')
-INIT_LINES=$(echo "$PARAM_VARS" | sed 's/$/ = null;/' | sed 's/\(.*\)/        \1/')
+INIT_LINES=$(echo "$PARAM_VARS" | sed 's/^\(.\+\)$/\1 = null;/' | sed 's/\(.*\)/        \1/')
 
     cat << TXT >> $TESTFILE
     public function test_${METHOD}() {
 $INIT_LINES
         \$result = \$this->sut->$METHOD($CALL_ARGS);
-        \$this->assertNotNull(\$result);
+        \$this->assertNotFalse(\$result);
     }
 
 TXT

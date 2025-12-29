@@ -33,7 +33,7 @@ SQL
         );
     }
 
-    public function bestaat_reden($whereArtId, $whereStdat, $whereRed, $fldTbl) {
+    public function bestaat_reden($whereArtId, $whereStdat, $whereRed, $fldTbl): int {
         return $this->run_query(
             <<<SQL
 SELECT cr.comrId
@@ -41,10 +41,10 @@ FROM tblCombireden cr
 WHERE $whereArtId and $whereStdat and $whereRed and cr.tbl = '$fldTbl'
 GROUP BY cr.artId, cr.reduId
 SQL
-        )->num_rows;
+        )->num_rows ?? 0;
     }
 
-    public function bestaat_scannr($lidId, $whereScan, $fldTbl) {
+    public function bestaat_scannr($lidId, $whereScan, $fldTbl): int {
         return $this->run_query(
             <<<SQL
 SELECT cr.comrId
@@ -54,10 +54,10 @@ WHERE ru.lidId = :lidId and $whereScan and cr.tbl = '$fldTbl'
 GROUP BY cr.scan
 SQL
         , [[':lidId', $lidId, self::INT]]
-        )->num_rows;
+        )->num_rows ?? 0;
     }
 
-    public function insert($fldTbl, $insArtId, $insStdat, $insRed, $insScan) {
+    public function insert($fldTbl, $insArtId, $insStdat, $insRed, $insScan): void {
         $this->run_query(<<<SQL
 INSERT INTO tblCombireden SET tbl = '$fldTbl', artId = '$insArtId', stdat = '$insStdat', reduId = '$insRed', scan = '$insScan'
 SQL
@@ -87,7 +87,7 @@ SQL
         );
     }
 
-    public function bestaat_combireden2($lidId, $whereRed, $rowid_d) {
+    public function bestaat_combireden2($lidId, $whereRed, $rowid_d): int {
         return $this->run_query(<<<SQL
 SELECT cr.comrId 
 FROM tblCombireden cr
@@ -96,10 +96,10 @@ WHERE ru.lidId = :lidId and $whereRed and cr.comrId != $rowid_d and cr.tbl = 'd'
 GROUP BY cr.artId, cr.reduId
 SQL
         , [[':lidId', $lidId, self::INT]]
-        )->num_rows;
+        )->num_rows ?? 0;
     }
 
-    public function bestaat_scannr2($lidId, $whereScan, $rowid_d) {
+    public function bestaat_scannr2($lidId, $whereScan, $rowid_d): int {
         return $this->run_query(<<<SQL
 SELECT cr.comrId
 FROM tblCombireden cr
@@ -108,24 +108,24 @@ WHERE ru.lidId = :lidId and $whereScan and cr.comrId != $rowid_d and cr.tbl = 'd
 GROUP BY cr.scan
 SQL
         , [[':lidId', $lidId, self::INT]]
-        )->num_rows;
+        )->num_rows ?? 0;
     }
 
-    public function update($rowid_d, $fldScan, $fldReden) {
+    public function update($rowid_d, $fldScan, $fldReden): void {
         $this->run_query(<<<SQL
 UPDATE tblCombireden set $fldScan, $fldReden WHERE comrId = $rowid_d
 SQL
         );
     }
 
-    public function update2($rowid_p, $fldScan, $fldArtId, $fldStdat, $fldReden) {
+    public function update2($rowid_p, $fldScan, $fldArtId, $fldStdat, $fldReden): void {
         $this->run_query(<<<SQL
 UPDATE tblCombireden set $fldScan, $fldArtId, $fldStdat, $fldReden WHERE comrId = $rowid_p
 SQL
         );
     }
 
-    public function delete($comrId) {
+    public function delete($comrId): void {
         $this->run_query(<<<SQL
 DELETE FROM tblCombireden WHERE comrId = :comrId
 SQL
@@ -159,7 +159,8 @@ SQL
         );
     }
 
-    public function bestaat_combireden3($lidId, $whereStdat, $whereRed, $rowid_p) {
+    // TODO niet meer null teruggeven. Dwz die where-clauses binnen boord samenstellen
+    public function bestaat_combireden3($lidId, $whereStdat, $whereRed, $rowid_p): ?int {
         return $this->first_field(<<<SQL
 SELECT count(*)
 FROM tblCombireden cr
@@ -171,7 +172,7 @@ SQL
         );
     }
 
-    public function bestaat_scan3($lidId, $whereScan, $comrId) {
+    public function bestaat_scan3($lidId, $whereScan, $comrId): ?int {
         return $this->first_field(<<<SQL
 SELECT count(*)
 FROM tblCombireden cr

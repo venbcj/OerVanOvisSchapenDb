@@ -23,7 +23,7 @@
         <directory>tests</directory>
         <directory>vendor</directory>
       </exclude>
-      <file>./gateways/ArtikelGateway.php</file>
+      <file>./gateways/CombiredenGateway.php</file>
     </whitelist>
   </filter>
 </phpunit>

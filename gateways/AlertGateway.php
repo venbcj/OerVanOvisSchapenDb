@@ -12,7 +12,7 @@ SQL
         );
     }
 
-    public function laatste_selectie($lidId) {
+    public function laatste_selectie($lidId): ?int {
         return $this->first_field(
             <<<SQL
 SELECT max(volgnr) volgnr
@@ -34,14 +34,14 @@ SQL
         );
     }
 
-    public function insert($volgnr, $lidId, $transponder, $recId) {
+    public function insert($volgnr, $lidId, $transponder, $recId): void {
         $this->run_query(
             <<<SQL
 INSERT INTO tblAlertselectie
-set volgnr = '".mysqli_real_escape_string($db,$volgnr)."',
- lidId = '".mysqli_real_escape_string($db,$lidId)."',
- transponder = '".mysqli_real_escape_string($db,$transponder)."',
- alertId = '".mysqli_real_escape_string($db,$recId)."' 
+set volgnr = :volgnr,
+ lidId = :lidId,
+ transponder = :transponder,
+ alertId = :alertId 
 SQL
         , [
             [':volgnr', $volgnr],
@@ -52,7 +52,7 @@ SQL
         );
     }
 
-    public function zoek_aantal_selectie($volgnr) {
+    public function zoek_aantal_selectie($volgnr): ?int {
         return $this->first_field(
             <<<SQL
 SELECT count(Id) aant

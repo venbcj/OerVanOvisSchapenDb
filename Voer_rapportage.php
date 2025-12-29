@@ -304,7 +304,7 @@ if(isset($_POST["radSchaap_$Id"]) && $_POST["radSchaap_$Id"]==1 ) {
     }
         unset($kilo); 
     $bezet_gateway = new BezetGateway();
-    $schaap_gegevens = $bezet_gateway->schaap_gegevens($lidId, $hokId, $dmbegin, $dmeind, $dagkg, $filterDoel);
+    $schaap_gegevens = $bezet_gateway->schaap_gegevens($lidId, $hokId, $dmbegin, $dmeind, $dagkg, $filterDoel, $_POST['kzlDoel_']);
 ?>
 <tr height = 10><td>    </td></tr>
 <?php

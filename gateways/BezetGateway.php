@@ -3,7 +3,7 @@
 class BezetGateway extends Gateway {
 
     public function zoek_verblijven_ingebruik_zonder_speendm($lidId) {
-       $vw = $this->db->query("
+        return $this->first_field(<<<SQL
 SELECT count(distinct hokId) aant
 FROM tblBezet b
  join tblHistorie h on (b.hisId = h.hisId)
@@ -31,7 +31,7 @@ FROM tblBezet b
          join tblHistorie h on (st.stalId = h.stalId)
         WHERE h.actId = 3
      ) prnt on (prnt.schaapId = st.schaapId)
-    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+    WHERE u.lidId = :lidId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
      and h1.datum <= coalesce(dmspn, coalesce(dmprnt,'2200-01-01'))
     GROUP BY b.bezId, st.schaapId, h1.hisId
  ) uit on (b.hisId = uit.hisv)
@@ -47,16 +47,14 @@ FROM tblBezet b
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(uit.bezId) and isnull(spn.schaapId) and isnull(prnt.schaapId) and h.skip = 0
-");
-if ($vw->num_rows == 0) {
-    return 0;
-}
-return $vw->fetch_array()['aant'];
+WHERE u.lidId = :lidId and isnull(uit.bezId) and isnull(spn.schaapId) and isnull(prnt.schaapId) and h.skip = 0
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        );
     }
 
     public function zoek_verblijven_ingebruik_met_speendm($lidId) {
-        $vw = $this->db->query("
+        return $this->first_field(<<<SQL
 SELECT count(distinct hokId) aant
 FROM tblBezet b
  join tblHistorie h on (b.hisId = h.hisId)
@@ -72,7 +70,7 @@ FROM tblBezet b
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
      join tblUbn u on (st.ubnId = u.ubnId)
-    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+    WHERE u.lidId = :lidId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
     GROUP BY b.bezId, st.schaapId, h1.hisId
  ) uit on (b.hisId = uit.hisv)
  join (
@@ -87,16 +85,14 @@ FROM tblBezet b
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(uit.bezId) and isnull(prnt.schaapId) and h.skip = 0
-");
-if ($vw->num_rows == 0) {
-    return 0;
-}
-return $vw->fetch_array()['aant'];
+WHERE u.lidId = :lidId and isnull(uit.bezId) and isnull(prnt.schaapId) and h.skip = 0
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        );
     }
 
     public function zoek_schapen_zonder_verblijf($lidId) {
-       $vw = $this->db->query("
+       return $this->first_field(<<<SQL
 SELECT count(hin.schaapId) aantin
 FROM (
     SELECT st.schaapId, max(hisId) hisId
@@ -104,7 +100,7 @@ FROM (
      join tblUbn u on (st.ubnId = u.ubnId)
      join tblHistorie h on (st.stalId = h.stalId)
      join tblActie a on (a.actId = h.actId) 
-    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(st.rel_best) and a.aan = 1 and h.skip = 0
+    WHERE u.lidId = :lidId and isnull(st.rel_best) and a.aan = 1 and h.skip = 0
     GROUP BY st.schaapId
  ) hin
  left join tblBezet b on (hin.hisId = b.hisId)
@@ -117,7 +113,7 @@ FROM (
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
      join tblUbn u on (st.ubnId = u.ubnId)
-    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+    WHERE u.lidId = :lidId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
     GROUP BY b.bezId, st.schaapId, h1.hisId
  ) uit on (uit.hisv = hin.hisId)
  left join (
@@ -133,10 +129,9 @@ FROM (
     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = hin.schaapId)
 WHERE (isnull(b.hokId) or uit.hist is not null)
-");
-
-while($row = $vw->fetch_assoc()) { $zVerb = $row['aantin']; }
-return $zVerb;
+SQL
+       , [[':lidId', $lidId, self::INT]]
+       );
     }
 
 // Zoek alle verblijven die in gebruik zijn 
@@ -148,7 +143,7 @@ return $zVerb;
     schaap met aanwasdatum zit nu in hok 
     schaap met aanwasdatum is uit het hok gegaan na afsluitdatum doelgroep 3 */
     public function zoek_verblijven_in_gebruik($lidId) {
-$vw = $this->db->query("
+        return $this->run_query(<<<SQL
 SELECT h.hokId, h.hoknr, count(distinct schaap_geb) maxgeb, count(distinct schaap_spn) maxspn, count(distinct schaap_prnt) maxprnt, min(dmin) eerste_in, max(dmuit) laatste_uit
 FROM (
     SELECT b.hokId, st.schaapId schaap_geb, NULL schaap_spn, NULL schaap_prnt, h.datum dmin, NULL dmuit
@@ -166,7 +161,7 @@ FROM (
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
          join tblUbn u on (st.ubnId = u.ubnId)
-        WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+        WHERE u.lidId = :lidId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
         GROUP BY b.bezId
      ) uit on (uit.bezId = b.bezId)
      left join (
@@ -181,7 +176,7 @@ FROM (
          join tblHistorie h on (st.stalId = h.stalId)
         WHERE h.actId = 3 and h.skip = 0
      ) prnt on (prnt.schaapId = st.schaapId)
-    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(uit.bezId)
+    WHERE u.lidId = :lidId and isnull(uit.bezId)
     and isnull(spn.schaapId)
     and isnull(prnt.schaapId)
      and h.skip = 0
@@ -201,7 +196,7 @@ FROM (
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
          join tblUbn u on (st.ubnId = u.ubnId)
-        WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
+        WHERE u.lidId = :lidId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
         GROUP BY b.bezId
      ) uit on (uit.bezId = b.bezId)
      join tblHistorie ht on (ht.hisId = uit.hist)
@@ -223,10 +218,10 @@ FROM (
         SELECT p.hokId, max(p.dmafsluit) dmstop
         FROM tblPeriode p
          join tblHok h on (h.hokId = p.hokId)
-        WHERE h.lidId = '".$this->db->real_escape_string($lidId)."' and p.doelId = 1 and dmafsluit is not null
+        WHERE h.lidId = :lidId and p.doelId = 1 and dmafsluit is not null
         GROUP BY p.hokId
      ) endgeb on (endgeb.hokId = b.hokId)
-    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and ht.datum > coalesce(dmstop,'1973-09-11') 
+    WHERE u.lidId = :lidId and ht.datum > coalesce(dmstop,'1973-09-11') 
      and ( isnull(spn.schaapId)  or (spn.datum  > coalesce(dmstop,'1973-09-11') and 
              ( h.datum < spn.datum || (h.datum = spn.datum && h.hisId < spn.hisId) ) )
           )
@@ -250,7 +245,7 @@ FROM (
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
          join tblUbn u on (st.ubnId = u.ubnId)
-        WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
+        WHERE u.lidId = :lidId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
         GROUP BY b.bezId
      ) uit on (uit.bezId = b.bezId)
      join (
@@ -265,7 +260,7 @@ FROM (
          join tblHistorie h on (st.stalId = h.stalId)
         WHERE h.actId = 3 and h.skip = 0
      ) prnt on (prnt.schaapId = st.schaapId)
-    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(uit.bezId)
+    WHERE u.lidId = :lidId and isnull(uit.bezId)
     and (isnull(prnt.schaapId) or h.datum < prnt.datum)
     and h.skip = 0
 
@@ -284,7 +279,7 @@ FROM (
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
          join tblUbn u on (st.ubnId = u.ubnId)
-        WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+        WHERE u.lidId = :lidId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
         GROUP BY b.bezId
      ) uit on (uit.bezId = b.bezId)
      join tblHistorie ht on (ht.hisId = uit.hist)
@@ -306,11 +301,10 @@ FROM (
         SELECT p.hokId, max(p.dmafsluit) dmstop
         FROM tblPeriode p
          join tblHok h on (h.hokId = p.hokId)
-        WHERE h.lidId = '".$this->db->real_escape_string($lidId)."' and p.doelId = 2 and dmafsluit is not null
+        WHERE h.lidId = :lidId and p.doelId = 2 and dmafsluit is not null
         GROUP BY p.hokId
      ) endspn on (endspn.hokId = b.hokId)
-    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."'
-    -- 9-1-2019 weggehaald and (isnull(prnt.schaapId) or prnt.datum > coalesce(dmstop,'1973-09-11'))
+    WHERE u.lidId = :lidId
      and ht.datum > coalesce(dmstop,'1973-09-11') 
      and (h.datum > spn.datum || (h.datum = spn.datum && h.hisId >= spn.hisId) )
      and (isnull(prnt.schaapId) or h.datum < prnt.datum)
@@ -333,7 +327,7 @@ FROM (
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
          join tblUbn u on (st.ubnId = u.ubnId)
-        WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+        WHERE u.lidId = :lidId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
         GROUP BY b.bezId
      ) uit on (uit.bezId = b.bezId)
      join (
@@ -342,7 +336,7 @@ FROM (
          join tblHistorie h on (st.stalId = h.stalId)
         WHERE h.actId = 3 and h.skip = 0
      ) prnt on (prnt.schaapId = st.schaapId)
-    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and isnull(uit.bezId) and h.skip = 0
+    WHERE u.lidId = :lidId and isnull(uit.bezId) and h.skip = 0
 
     UNION
 
@@ -359,7 +353,7 @@ FROM (
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
          join tblUbn u on (st.ubnId = u.ubnId)
-        WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+        WHERE u.lidId = :lidId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
         GROUP BY b.bezId, st.schaapId, h1.hisId
      ) uit on (uit.bezId = b.bezId)
      join tblHistorie ht on (ht.hisId = uit.hist)
@@ -375,17 +369,18 @@ FROM (
         SELECT p.hokId, max(p.dmafsluit) dmstop
         FROM tblPeriode p
          join tblHok h on (h.hokId = p.hokId)
-        WHERE h.lidId = '".$this->db->real_escape_string($lidId)."' and p.doelId = 3 and dmafsluit is not null
+        WHERE h.lidId = :lidId and p.doelId = 3 and dmafsluit is not null
         GROUP BY p.hokId
      ) endspn on (endspn.hokId = b.hokId)
-    WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and ht.datum > coalesce(dmstop,'1973-09-11') 
+    WHERE u.lidId = :lidId and ht.datum > coalesce(dmstop,'1973-09-11') 
      and (h.datum > prnt.datum || (h.datum = prnt.datum && h.hisId >= prnt.hisId) ) and h.skip = 0
  ) ingebr
  join tblHok h on (ingebr.hokId = h.hokId)
 GROUP BY h.hokId, h.hoknr
 ORDER BY hoknr
-");
-return $vw;
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        );
     }
 
     public function zoek_nu_in_verblijf_geb_spn($hokId) {
@@ -424,12 +419,12 @@ WHERE b.hokId = :hokId
  and isnull(uit.bezId)
  and isnull(prnt.schaapId)
 SQL
-        , [['hokId', $hokId, self::INT]]
+        , [[':hokId', $hokId, self::INT]]
         );
     }
 
     public function zoek_nu_in_verblijf_geb($hokId) {
-$vw = $this->db->query("
+        return $this->first_field(<<<SQL
 SELECT count(b.bezId) aantin
 FROM tblBezet b
  join tblHistorie h on (b.hisId = h.hisId)
@@ -443,7 +438,7 @@ FROM tblBezet b
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE b.hokId = '".$this->db->real_escape_string($hokId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+    WHERE b.hokId = :hokId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
     GROUP BY b.bezId
  ) uit on (uit.bezId = b.bezId)
  left join (
@@ -458,19 +453,17 @@ FROM tblBezet b
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE b.hokId = '".$this->db->real_escape_string($hokId)."' and isnull(uit.bezId)
+WHERE b.hokId = :hokId and isnull(uit.bezId)
 and isnull(spn.schaapId)
 and isnull(prnt.schaapId)
 and h.skip = 0
-");
-if ($vw->num_rows == 0) {
-    return null;
-}
-return $vw->fetch_row()[0];
+SQL
+        , [[':hokId', $hokId, self::INT]]
+        );
     }
 
     public function zoek_nu_in_verblijf_spn($hokId) {
-$vw = $this->db->query("
+        return $this->first_field(<<<SQL
 SELECT count(b.bezId) aantin
 FROM tblBezet b
  join tblHistorie h on (b.hisId = h.hisId)
@@ -484,7 +477,7 @@ FROM tblBezet b
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE b.hokId = '".$this->db->real_escape_string($hokId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+    WHERE b.hokId = :hokId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
     GROUP BY b.bezId
  ) uit on (uit.bezId = b.bezId)
  join (
@@ -499,21 +492,18 @@ FROM tblBezet b
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE b.hokId = '".$this->db->real_escape_string($hokId)."' and isnull(uit.bezId)
+WHERE b.hokId = :hokId and isnull(uit.bezId)
 and isnull(prnt.schaapId)
 and h.skip = 0
-");
-if ($vw->num_rows == 0) {
-    return null;
-}
-return $vw->fetch_row()[0];
+SQL
+        , [[':hokId', $hokId, self::INT]]
+        );
     }
 
     // uit Bezet
     // (iets met dezelfde titel staat ook in Hoklijsten. Is het dezelfde query?)
     public function zoek_nu_in_verblijf_prnt($hokId) {
-        return $this->first_field(
-            <<<SQL
+        return $this->first_field(<<<SQL
 SELECT count(distinct(st.schaapId)) aantin
 FROM tblStal st
  join tblHistorie h on (h.stalId = st.stalId)
@@ -604,7 +594,7 @@ SQL
     }
 
     public function zoek_verlaten_geb_excl_overpl_en_uitval($hokId, $dmstopgeb) {
-$vw = $this->db->query("
+        return $this->first_field(<<<SQL
 SELECT count(uit.bezId) aantuit
 FROM tblBezet b
  join tblHistorie h on (h.hisId = b.hisId)
@@ -618,7 +608,7 @@ FROM tblBezet b
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE b.hokId = '".$this->db->real_escape_string($hokId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+    WHERE b.hokId = :hokId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
     GROUP BY b.bezId, st.schaapId, h1.hisId
  ) uit on (uit.bezId = b.bezId)
  join tblHistorie ht on (ht.hisId = uit.hist)
@@ -634,19 +624,17 @@ FROM tblBezet b
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE b.hokId = '".$this->db->real_escape_string($hokId)."' and ht.datum > '".$this->db->real_escape_string($dmstopgeb)."' and ht.actId != 5 and ht.actId != 14
+WHERE b.hokId = :hokId and ht.datum > :dmstopgeb and ht.actId != 5 and ht.actId != 14
 and (isnull(spn.schaapId) or ht.datum = spn.datum)
 and (isnull(prnt.schaapId) or ht.datum < prnt.datum)
 and h.skip = 0
-");
-if ($vw->num_rows == 0) {
-    return null;
-}
-return $vw->fetch_row()[0];
+SQL
+        , [[':hokId', $hokId, self::INT], [':dmstopgeb', $dmstopgeb, self::DATE]]
+        );
     }
 
     public function zoek_verlaten_spn_excl_overpl_en_uitval($hokId, $dmstopspn) {
-       $vw = $this->db->query("
+        return $this->first_field(<<<SQL
 SELECT count(b.bezId) aantuit
 FROM tblBezet b
  join tblHistorie h on (h.hisId = b.hisId)
@@ -660,7 +648,7 @@ FROM tblBezet b
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE b.hokId = '".$this->db->real_escape_string($hokId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+    WHERE b.hokId = :hokId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
     GROUP BY b.bezId
  ) uit on (uit.bezId = b.bezId)
  left join tblHistorie ht on (ht.hisId = uit.hist)
@@ -676,21 +664,18 @@ FROM tblBezet b
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE b.hokId = '".$this->db->real_escape_string($hokId)."' 
-and ((isnull(ht.datum) and prnt.schaapId is not null) or ht.datum > '".$this->db->real_escape_string($dmstopspn)."')
+WHERE b.hokId = :hokId 
+and ((isnull(ht.datum) and prnt.schaapId is not null) or ht.datum > :dmstopspn)
 and (isnull(ht.actId) or (ht.actId != 4 and ht.actId != 5 and ht.actId != 14))
 and (ht.datum >= spn.datum or (isnull(uit.bezId) and prnt.schaapId is not null and h.datum < spn.datum))
-
 and h.skip = 0
-");
-if ($vw->num_rows == 0) {
-    return null;
-}
-return $vw->fetch_row()[0];
+SQL
+        , [[':hokId', $hokId, self::INT], [':dmstopspn', $dmstopspn, self::DATE]]
+        );
     }
 
     public function zoek_overplaatsing_geb($hokId, $dmstopgeb) {
-$vw = $this->db->query("
+        return $this->first_field(<<<SQL
 SELECT count(uit.bezId) aant
 FROM tblBezet b
  join tblHistorie h on (h.hisId = b.hisId)
@@ -704,7 +689,7 @@ FROM tblBezet b
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE b.hokId = '".$this->db->real_escape_string($hokId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+    WHERE b.hokId = :hokId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
     GROUP BY b.bezId
  ) uit on (uit.bezId = b.bezId)
  join tblHistorie ht on (ht.hisId = uit.hist)
@@ -720,25 +705,23 @@ FROM tblBezet b
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE b.hokId = '".$this->db->real_escape_string($hokId)."' and ht.actId = 5
+WHERE b.hokId = :hokId and ht.actId = 5
   and (
-    ht.datum > '".$this->db->real_escape_string($dmstopgeb)."'
-    or (ht.datum = '".$this->db->real_escape_string($dmstopgeb)."'
-        and h.datum = '".$this->db->real_escape_string($dmstopgeb)."'
+    ht.datum > :dmstopgeb
+    or (ht.datum = :dmstopgeb
+        and h.datum = :dmstopgeb
         and h.hisId < ht.hisId)
   )
 and (isnull(spn.schaapId) or ht.datum < spn.datum or (ht.datum = spn.datum and his_spn > hist))
 and (isnull(prnt.schaapId) or ht.datum < prnt.datum)
 and h.skip = 0
-");
-if ($vw->num_rows == 0) {
-    return null;
-}
-return $vw->fetch_row()[0];
+SQL
+        , [[':hokId', $hokId, self::INT], [':dmstopgeb', $dmstopgeb, self::DATE]]
+        );
     }   
 
     public function zoek_overplaatsing_spn($hokId, $dmstopspn) {
-       $vw = $this->db->query("
+        return $this->first_field(<<<SQL
 SELECT count(uit.bezId) aant
 FROM tblBezet b
  join tblHistorie h on (h.hisId = b.hisId)
@@ -752,7 +735,7 @@ FROM tblBezet b
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE b.hokId = '".$this->db->real_escape_string($hokId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+    WHERE b.hokId = :hokId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
     GROUP BY b.bezId
  ) uit on (uit.bezId = b.bezId)
  join tblHistorie ht on (ht.hisId = uit.hist)
@@ -768,20 +751,18 @@ FROM tblBezet b
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE b.hokId = '".$this->db->real_escape_string($hokId)."' and ht.actId = 5
- and (ht.datum > '".$this->db->real_escape_string($dmstopspn)."' or (ht.datum = '".$this->db->real_escape_string($dmstopspn)."' and h.datum = '".$this->db->real_escape_string($dmstopspn /* or (ht.datum = spn.datum and his_spn < hist) is voor als speendatum == overplaatsing en overplaatsing heeft eerder plaatsgevonden */)."' and h.hisId < ht.hisId))
+WHERE b.hokId = :hokId and ht.actId = 5
+ and (ht.datum > :dmstopspn or (ht.datum = :dmstopspn and h.datum = :dmstopspn and h.hisId < ht.hisId))
 and (ht.datum > spn.datum or (ht.datum = spn.datum and his_spn < hist))
 and (isnull(prnt.schaapId) or h.datum < prnt.datum)
 and h.skip = 0
-");
-if ($vw->num_rows == 0) {
-    return null;
-}
-return $vw->fetch_row()[0];
+SQL
+        , [[':hokId', $hokId, self::INT], [':dmstopspn', $dmstopspn, self::DATE]]
+        );
     }
 
     public function zoek_overleden_geb($hokId, $dmstopgeb) {
-$vw = $this->db->query("
+       return $this->first_field(<<<SQL
 SELECT count(uit.bezId) aantuit
 FROM tblBezet b
  join 
@@ -793,7 +774,7 @@ FROM tblBezet b
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE b.hokId = '".$this->db->real_escape_string($hokId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+    WHERE b.hokId = :hokId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
     GROUP BY b.bezId
  ) uit on (uit.bezId = b.bezId)
  join tblHistorie ht on (ht.hisId = uit.hist)
@@ -811,20 +792,18 @@ FROM tblBezet b
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE b.hokId = '".$this->db->real_escape_string($hokId)."' and ht.actId = 14
- and ht.datum > '".$this->db->real_escape_string($dmstopgeb)."'
+WHERE b.hokId = :hokId and ht.actId = 14
+ and ht.datum > :dmstopgeb
  and isnull(spn.schaapId)
  and isnull(prnt.schaapId)
  and h.skip = 0
-");
-if ($vw->num_rows == 0) {
-    return null;
-}
-return $vw->fetch_row()[0];
+SQL
+        , [[':hokId', $hokId, self::INT], [':dmstopgeb', $dmstopgeb, self::DATE]]
+       );
     }
 
     public function zoek_overleden_spn($hokId, $dmstopspn) {
-$vw = $this->db->query("
+        return $this->first_field(<<<SQL
 SELECT count(uit.bezId) aantuit
 FROM tblBezet b
  join 
@@ -836,7 +815,7 @@ FROM tblBezet b
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE b.hokId = '".$this->db->real_escape_string($hokId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+    WHERE b.hokId = :hokId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
     GROUP BY b.bezId
  ) uit on (uit.bezId = b.bezId)
  join tblHistorie ht on (ht.hisId = uit.hist)
@@ -854,19 +833,17 @@ FROM tblBezet b
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE b.hokId = '".$this->db->real_escape_string($hokId)."' and ht.actId = 14
- and ht.datum > '".$this->db->real_escape_string($dmstopspn)."'
+WHERE b.hokId = :hokId and ht.actId = 14
+ and ht.datum > :dmstopspn
  and isnull(prnt.schaapId)
  and h.skip = 0
-");
-if ($vw->num_rows == 0) {
-    return null;
-}
-return $vw->fetch_row()[0];
+SQL
+        , [[':hokId', $hokId, self::INT], [':dmstopspn', $dmstopspn, self::DATE]]
+        );
     }
 
     public function zoek_moeders_van_lam($hokId) {
-      $vw = $this->db->query("
+        return $this->first_field(<<<SQL
 SELECT count(distinct v.mdrId) aantmdr
 FROM tblBezet b
  left join 
@@ -878,7 +855,7 @@ FROM tblBezet b
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE b.hokId = '".$this->db->real_escape_string($hokId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+    WHERE b.hokId = :hokId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
     GROUP BY b.bezId
  ) uit on (uit.bezId = b.bezId)
  join tblHistorie h on (b.hisId = h.hisId)
@@ -897,20 +874,20 @@ FROM tblBezet b
  ) prnt on (prnt.schaapId = st.schaapId)
  join tblSchaap s on (st.schaapId = s.schaapId)
  join tblVolwas v on (s.volwId = v.volwId)
-WHERE b.hokId = '".$this->db->real_escape_string($hokId)."' and isnull(uit.bezId)
+WHERE b.hokId = :hokId and isnull(uit.bezId)
  and isnull(spn.schaapId)
  and isnull(prnt.schaapId)
  and h.skip = 0
-");
-if ($vw->num_rows == 0) {
-    return null;
-}
-return $vw->fetch_row()[0];
-}
+SQL
+        , [
+            [':hokId', $hokId, self::INT],
+        ]
+        );
+    }
 
     public function aantal_laatste_dekkingen_van_moeders_uit_gekozen_verblijf_met_laatste_dekkingen_met_gekozen_vader($txtDay, $kzlHok, $kzlVdr) {
-       $vw = $this->db->query("
-SELECT count(mdrs.mdrId) aant, datediff('".$this->db->real_escape_string($txtDay)."', h.datum) verschil
+        return $this->first_row(<<<SQL
+SELECT count(mdrs.mdrId) aant, datediff(:txtDay, h.datum) verschil
 FROM (
     SELECT st.schaapId mdrId
     FROM tblBezet b
@@ -926,7 +903,7 @@ FROM (
          join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
-        WHERE b.hokId = '".$this->db->real_escape_string($kzlHok)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+        WHERE b.hokId = :kzlHok and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
         GROUP BY b.bezId
      ) uit on (uit.bezId = b.bezId)
      join (
@@ -935,13 +912,13 @@ FROM (
          join tblHistorie h on (st.stalId = h.stalId)
         WHERE h.actId = 3 and h.skip = 0
      ) prnt on (prnt.schaapId = st.schaapId)
-    WHERE s.geslacht = 'ooi' and b.hokId = '".$this->db->real_escape_string($kzlHok)."' and isnull(uit.bezId) and h.skip = 0
+    WHERE s.geslacht = 'ooi' and b.hokId = :kzlHok and isnull(uit.bezId) and h.skip = 0
  ) mdrs
  join (
     SELECT v.mdrId, max(v.volwId) mxvolwId
     FROM tblVolwas v
      join tblHistorie h on (v.hisId = h.hisId)
-    WHERE v.vdrId = '". $this->db->real_escape_string($kzlVdr) ."' and h.skip = 0
+    WHERE v.vdrId = :kzlVdr and h.skip = 0
     GROUP BY v.mdrId
  ) vmax_mdr_met_vdr on (mdrs.mdrId = vmax_mdr_met_vdr.mdrId)
  join (
@@ -953,12 +930,18 @@ FROM (
  join tblHistorie h on (h.hisId = v.hisId)
  GROUP BY h.datum
  HAVING (count(mdrs.mdrId)) >= 5
-");
-    return $vw->fetch_row();
+SQL
+        , [
+            [':txtDay', $txtDay],
+            [':kzlHok', $kzlHok, self::INT],
+            [':kzlVdr', $kzlVdr, self::INT],
+        ]
+        , [null, null]
+        );
     }
 
-public function zoek_moeders_in_verblijf($kzlHok) {
-   return $this->db->query("
+    public function zoek_moeders_in_verblijf($kzlHok) {
+        return $this->run_query(<<<SQL
 SELECT st.schaapId mdrId
     FROM tblBezet b
      join tblHistorie h on (b.hisId = h.hisId)
@@ -974,7 +957,7 @@ SELECT st.schaapId mdrId
              and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
-        WHERE b.hokId = '".$this->db->real_escape_string($kzlHok)."'
+        WHERE b.hokId = :kzlHok
          and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
         GROUP BY b.bezId
      ) uit on (uit.bezId = b.bezId)
@@ -985,36 +968,37 @@ SELECT st.schaapId mdrId
         WHERE h.actId = 3 and h.skip = 0
      ) prnt on (prnt.schaapId = st.schaapId)
     WHERE s.geslacht = 'ooi'
- and b.hokId = '".$this->db->real_escape_string($kzlHok)."'
+ and b.hokId = :kzlHok
  and isnull(uit.bezId)
  and h.skip = 0
-");
-}
+SQL
+ , [[':kzlHok', $kzlHok, self::INT]]
+        );
+    }
 
-public function schaap_gegevens($lidId, $hokId, $dmbegin, $dmeind, $dagkg, $filterDoel) {
-    return $this->db->query("
+    public function schaap_gegevens($lidId, $hokId, $dmbegin, $dmeind, $dagkg, $filterDoel, $doelId) {
+        return $this->run_query(<<<SQL
 SELECT s.levensnummer, his_in.datum dmin, date_format(his_in.datum,'%d-%m-%Y') indm,
- coalesce(his_uit.datum,'".$this->db->real_escape_string($dmeind)."') dmuit,
- date_format(coalesce(his_uit.datum,'".$this->db->real_escape_string($dmeind)."'),'%d-%m-%Y') uitdm,
-datediff(coalesce(his_uit.datum,'".$this->db->real_escape_string($dmeind)."'),his_in.datum) dgn,
-round(datediff(coalesce(his_uit.datum,'".$this->db->real_escape_string($dmeind)."'),his_in.datum)*".$this->db->real_escape_string($dagkg).",2) kg
+ coalesce(his_uit.datum, :dmeind) dmuit,
+ date_format(coalesce(his_uit.datum, :dmeind),'%d-%m-%Y') uitdm,
+datediff(coalesce(his_uit.datum, :dmeind),his_in.datum) dgn,
+round(datediff(coalesce(his_uit.datum, :dmeind),his_in.datum) * :dagkg, 2) kg
 FROM tblBezet b
  join (
-     SELECT h.hisId, h.stalId, '".$this->db->real_escape_string($dmbegin)."' datum
+     SELECT h.hisId, h.stalId, :dmbegin datum
      FROM tblHistorie h
       join tblStal st on (st.stalId = h.stalId)
       join tblUbn u on (st.ubnId = u.ubnId)
       join tblBezet alleen_his_uit_bez on (alleen_his_uit_bez.hisId = h.hisId)
-     WHERE h.skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."' and h.datum < '".$this->db->real_escape_string($dmbegin)."'
+     WHERE h.skip = 0 and u.lidId = :lidId and h.datum < :dmbegin
      union 
      SELECT h.hisId, h.stalId, h.datum
      FROM tblHistorie h
       join tblStal st on (st.stalId = h.stalId)
       join tblUbn u on (st.ubnId = u.ubnId)
       join tblBezet alleen_his_uit_bez on (alleen_his_uit_bez.hisId = h.hisId)
-     WHERE h.skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."' and h.datum >= '".$this->db->real_escape_string($dmbegin)."'
+     WHERE h.skip = 0 and u.lidId = :lidId and h.datum >= :dmbegin
  ) his_in on (his_in.hisId = b.hisId)
-
  join tblStal st on (st.stalId = his_in.stalId)
  join tblSchaap s on (st.schaapId = s.schaapId)
  left join 
@@ -1027,58 +1011,65 @@ FROM tblBezet b
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
          join tblUbn u on (st.ubnId = u.ubnId)
-        WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+        WHERE u.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
         GROUP BY b.bezId, st.schaapId, h1.hisId
      ) uit on (uit.hisv = b.hisId)
  left join (
-     SELECT h.hisId, h.stalId, '".$this->db->real_escape_string($dmeind)."' datum
+     SELECT h.hisId, h.stalId, :dmeind datum
      FROM tblHistorie h
       join tblStal st on (st.stalId = h.stalId)
       join tblUbn u on (st.ubnId = u.ubnId)
-     WHERE h.skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."' and h.datum > '".$this->db->real_escape_string($dmeind)."'
+     WHERE h.skip = 0 and u.lidId = :lidId and h.datum > :dmeind
      union 
      SELECT h.hisId, h.stalId, h.datum
      FROM tblHistorie h
       join tblStal st on (st.stalId = h.stalId)
       join tblUbn u on (st.ubnId = u.ubnId)
-     WHERE h.skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."' and h.datum <= '".$this->db->real_escape_string($dmeind)."'
+     WHERE h.skip = 0 and u.lidId = :lidId and h.datum <= :dmeind
  ) his_uit on (his_uit.hisId = uit.hist)
-
  left join (
     SELECT st.schaapId, h.datum
     FROM tblStal st
      join tblUbn u on (st.ubnId = u.ubnId)
      join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."'
+    WHERE h.actId = 4 and h.skip = 0 and u.lidId = :lidId
  ) spn on (spn.schaapId = st.schaapId)
   left join (
     SELECT st.schaapId, h.datum
     FROM tblStal st
      join tblUbn u on (st.ubnId = u.ubnId)
      join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0 and u.lidId = '".$this->db->real_escape_string($lidId)."'
+    WHERE h.actId = 3 and h.skip = 0 and u.lidId = :lidId
  ) prn on (prn.schaapId = st.schaapId)
- join tblPeriode p on (p.hokId = b.hokId and p.dmafsluit = '".$this->db->real_escape_string($dmeind)."')
-WHERE b.hokId = '".$this->db->real_escape_string($hokId)."'
- and his_in.datum < '".$this->db->real_escape_string($dmeind)."'
- and (isnull(uit.bezId) or his_uit.datum > '".$this->db->real_escape_string($dmbegin)."')
- and p.doelId = $_POST[kzlDoel_] ".$this->db->real_escape_string($filterDoel)."
+ join tblPeriode p on (p.hokId = b.hokId and p.dmafsluit = :dmeind)
+WHERE b.hokId = :hokId
+ and his_in.datum < :dmeind
+ and (isnull(uit.bezId) or his_uit.datum > :dmbegin)
+ and p.doelId = :doelId $filterDoel
 ORDER BY dmin, dmuit
-");
+SQL
+        , [
+            [':lidId', $lidId, self::INT],
+            [':hokId', $hokId, self::INT],
+            [':doelId', $doelId, self::INT],
+            [':dagkg', $dagkg, self::FLOAT],
+            [':dmbegin', $dmbegin, self::DATE],
+            [':dmeind', $dmeind, self::DATE],
+        ]);
     }
 
-public function insert($hisId, $hokId) {
-    $this->run_query(
-        <<<SQL
+    public function insert($hisId, $hokId) {
+        $this->run_query(
+            <<<SQL
 INSERT INTO tblBezet
  set hisId = :hisId, hokId = :hokId
 SQL
-    , [[':hisId', $hisId, self::INT], [':hokId', $hokId, self::INT]]
-    );
-}
+        , [[':hisId', $hisId, self::INT], [':hokId', $hokId, self::INT]]
+        );
+    }
 
-public function zoek_verblijven($lidId) {
-    return $this->run_query(<<<SQL
+    public function zoek_verblijven($lidId) {
+        return $this->run_query(<<<SQL
 SELECT b.hokId, hk.hoknr, count(b.bezId) nu
 FROM tblBezet b
  join tblHistorie h on (b.hisId = h.hisId)
@@ -1105,12 +1096,12 @@ WHERE hk.lidId = :lidId and isnull(uit.bezId) and h.skip = 0
 GROUP BY b.hokId, hk.hoknr
 ORDER BY hk.hoknr
 SQL
-    , [[':lidId', $lidId, self::INT]]
-    );
-}
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
 
-public function getHokAfleverenFrom() {
-    return <<<SQL
+    public function getHokAfleverenFrom() {
+        return <<<SQL
 tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
  join tblHistorie h on (h.stalId = st.stalId)
@@ -1143,39 +1134,39 @@ tblSchaap s
     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
 SQL;
-}
+    }
 
-public function getHokAfleverenWhere($pagina, $fase, $lidId, $hokId) {
-    $where = "WHERE b.hokId = :hokId and isnull(uit.bezId) and h.skip = 0";
-    switch ($pagina) {
-    case 'Afleveren':
-        $where .= " and spn.schaapId is not null and prnt.schaapId is null";
-        break;
-    case 'Verkopen':
-        break;
-        $where .= " and prnt.schaapId is not null";
-    case 'Uitscharen':
-        switch ($fase) {
-        case 3:
+    public function getHokAfleverenWhere($pagina, $fase, $lidId, $hokId) {
+        $where = "WHERE b.hokId = :hokId and isnull(uit.bezId) and h.skip = 0";
+        switch ($pagina) {
+        case 'Afleveren':
+            $where .= " and spn.schaapId is not null and prnt.schaapId is null";
+            break;
+        case 'Verkopen':
             $where .= " and prnt.schaapId is not null";
             break;
-        case 1:
-            $where .= " and prnt.schaapId is null";
-            break;
+        case 'Uitscharen':
+            switch ($fase) {
+            case 3:
+                $where .= " and prnt.schaapId is not null";
+                break;
+            case 1:
+                $where .= " and prnt.schaapId is null";
+                break;
+            }
         }
+        return [
+            $where,
+            [
+                [':hokId', $hokId, self::INT],
+                [':lidId', $lidId, self::INT],
+            ]
+        ];
     }
-    return [
-        $where,
-        [
-            [':hokId', $hokId, self::INT],
-            [':lidId', $lidId, self::INT],
-        ]
-    ];
-}
 
-public function zoek_periode_met_aantal_schapen($lidId, $hokId, $dmafsl, $dmStartPeriode, $fase_tijdens_betreden_verblijf) {
-    return $this->run_query(
-        <<<SQL
+    public function zoek_periode_met_aantal_schapen($lidId, $hokId, $dmafsl, $dmStartPeriode, $fase_tijdens_betreden_verblijf) {
+        return $this->run_query(
+            <<<SQL
 SELECT min(h.datum) dmEerste_in, date_format(min(h.datum),'%d-%m-%Y') eerste_inDm,
  date_format(max(ht.datum),'%d-%m-%Y') laatste_uit, count(distinct(st.schaapId)) aant_schapen,
  count(b.bezId) aant_beweging
@@ -1221,18 +1212,18 @@ WHERE b.hokId = :hokId
  and (h.datum < :datum
  and (isnull(ht.datum) or ht.datum > :startdatum))
 SQL
-    , [
-        [':lidId', $lidId, self::INT],
-        [':hokId', $hokId, self::INT],
-        [':datum', $dmafsl],
-        [':startdatum', $dmStartPeriode],
-    ]
-    );
-}
+        , [
+            [':lidId', $lidId, self::INT],
+            [':hokId', $hokId, self::INT],
+            [':datum', $dmafsl],
+            [':startdatum', $dmStartPeriode],
+        ]
+        );
+    }
 
-public function zoek_inhoud_periode($lidId, $hokId, $dmafsl, $dmStartPeriode, $fase_tijdens_betreden_verblijf, $Karwerk) {
-    return $this->run_query(
-        <<<SQL
+    public function zoek_inhoud_periode($lidId, $hokId, $dmafsl, $dmStartPeriode, $fase_tijdens_betreden_verblijf, $Karwerk) {
+        return $this->run_query(
+            <<<SQL
 SELECT right(s.levensnummer,$Karwerk) werknr, r.ras, s.geslacht, date_format(h.datum,'%Y%m%d') indm_sort,
  date_format(h.datum,'%d-%m-%Y') indm, date_format(ht.datum,'%Y%m%d') uitdm_sort,
  date_format(ht.datum,'%d-%m-%Y') uitdm, datediff(ht.datum, h.datum) schpdgn, h.kg kgin, ht.kg kguit,
@@ -1249,9 +1240,7 @@ FROM tblBezet b
     FROM tblBezet b
      join tblHistorie h1 on (b.hisId = h1.hisId)
      join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId
- and ((h1.datum < h2.datum) or (h1.datum = h2.datum
- and h1.hisId < h2.hisId)) )
+     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
     WHERE st.lidId = :lidId
@@ -1262,8 +1251,7 @@ FROM tblBezet b
     GROUP BY b.bezId
  ) uit on (uit.bezId = b.bezId)
  left join tblHistorie ht on (ht.hisId = uit.hist)
- left join tblHistorie hdo on (hdo.hisId = uit.hist
- and hdo.actId = 14)
+ left join tblHistorie hdo on (hdo.hisId = uit.hist and hdo.actId = 14)
  left join tblActie a on (a.actId = ht.actId)
  left join (
      SELECT schaapId, datum
@@ -1282,22 +1270,22 @@ FROM tblBezet b
 WHERE b.hokId = :hokId
  and h.skip = 0
  and $fase_tijdens_betreden_verblijf
- and (h.datum < :datum
- and (isnull(ht.datum) or ht.datum > :startdatum))
+ and (h.datum < :datum)
+ and (isnull(ht.datum) or ht.datum > :startdatum)
 ORDER BY st.schaapId, b.hisId
 SQL
-    , [
-        [':lidId', $lidId, self::INT],
-        [':hokId', $hokId, self::INT],
-        [':datum', $dmafsl],
-        [':startdatum', $dmStartPeriode],
-    ]
-    );
-}
+        , [
+            [':lidId', $lidId, self::INT],
+            [':hokId', $hokId, self::INT],
+            [':datum', $dmafsl],
+            [':startdatum', $dmStartPeriode],
+        ]
+        );
+    }
 
-public function zoek_hok_ingebruik_geb($lidId) {
-    return $this->run_query(
-        <<<SQL
+    public function zoek_hok_ingebruik_geb($lidId) {
+        return $this->run_query(
+            <<<SQL
 SELECT ho.hokId, ho.hoknr
 FROM tblBezet b
  join tblHok ho on (b.hokId = ho.hokId)
@@ -1332,13 +1320,13 @@ FROM tblBezet b
 WHERE st.lidId = :lidId and h.skip = 0 and isnull(uit.bezId) and isnull(spn.schaapId) and isnull(prnt.schaapId)
 GROUP BY ho.hokId, ho.hoknr
 SQL
-    , [[':lidId', $lidId, self::INT]]
-    );
-}
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
 
-public function zoek_hok_ingebruik_spn($lidId) {
-    return $this->run_query(
-        <<<SQL
+    public function zoek_hok_ingebruik_spn($lidId) {
+        return $this->run_query(
+            <<<SQL
 SELECT ho.hokId, ho.hoknr
 FROM tblBezet b
  join tblHok ho on (b.hokId = ho.hokId)
@@ -1373,13 +1361,13 @@ FROM tblBezet b
 WHERE st.lidId = :lidId and h.skip = 0 and isnull(uit.bezId) and isnull(prnt.schaapId)
 GROUP BY ho.hokId, ho.hoknr
 SQL
-    , [[':lidId', $lidId, self::INT]]
-    );
-}
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
 
-public function hoklijst_zoek_nu_in_verblijf_geb($hokId) {
-    return $this->run_query(
-        <<<SQL
+    public function hoklijst_zoek_nu_in_verblijf_geb($hokId) {
+        return $this->run_query(
+            <<<SQL
 SELECT ho.hoknr, count(b.bezId) nu, r.ras, s.geslacht
 FROM tblBezet b
  join tblHok ho on (b.hokId = ho.hokId)
@@ -1414,13 +1402,13 @@ FROM tblBezet b
 WHERE b.hokId = :hokId and h.skip = 0 and isnull(uit.bezId) and isnull(spn.schaapId) and isnull(prnt.schaapId)
 GROUP BY ho.hoknr, r.ras, s.geslacht
 SQL
-    , [[':hokId', $hokId, self::INT]]
-    );
-}
+        , [[':hokId', $hokId, self::INT]]
+        );
+    }
 
-public function hoklijst_zoek_nu_in_verblijf_spn($hokId) {
-    return $this->run_query(
-        <<<SQL
+    public function hoklijst_zoek_nu_in_verblijf_spn($hokId) {
+        return $this->run_query(
+            <<<SQL
 SELECT ho.hoknr, count(b.bezId) nu, r.ras, s.geslacht
 FROM tblBezet b
  join tblHok ho on (b.hokId = ho.hokId)
@@ -1455,8 +1443,8 @@ FROM tblBezet b
 WHERE b.hokId = :hokId and h.skip = 0 and isnull(uit.bezId) and isnull(prnt.schaapId)
 GROUP BY ho.hoknr, r.ras, s.geslacht
 SQL
-    , [[':hokId', $hokId, self::INT]]
-    );
-}
+        , [[':hokId', $hokId, self::INT]]
+        );
+    }
 
 }

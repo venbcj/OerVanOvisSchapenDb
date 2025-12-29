@@ -9,6 +9,7 @@ class Gateway {
 
     protected const TXT = 'txt';
     protected const INT = 'int';
+    protected const FLOAT = 'float';
     protected const BOOL = 'bool';
     protected const DATE = 'date';
 
@@ -95,7 +96,7 @@ class Gateway {
     // parameter is een [naam, waarde, formaat]
     // naam is bijvoorbeeld :id
     // waarde is bijvoorbeeld 4
-    // formaat kan zijn self::INT, self::TXT, self::BOOL, self::DATE
+    // formaat kan zijn self::INT, self::FLOAT, self::TXT, self::BOOL, self::DATE
     // TODO meer formaten
     private function expand($SQL, $args = []) {
         foreach ($args as $arg) {
@@ -104,22 +105,25 @@ class Gateway {
             if (is_null($value)) {
                 $value = 'NULL';
             } else {
-                switch ($arg[2]) {
-                case self::TXT:
-                case self::DATE:
-                    $value = "'" . $this->db->real_escape_string($value) . "'";
-                    break;
-                case self::INT:
-                    $value = (int) $value;
-                    break;
-                case self::BOOL:
-                    $value = $value ? 'true' : 'false';
-                    break;
-                }
+                $value = $this->restrict($value, $format);
             }
             $SQL = preg_replace("#$name\b#", $value, $SQL);
         }
         return $SQL;
+    }
+
+    private function restrict($value, $type) {
+        switch ($type) {
+        case self::TXT:
+        case self::DATE:
+            return "'" . $this->db->real_escape_string($value) . "'";
+        case self::INT:
+            return (int) $value;
+        case self::FLOAT:
+            return (float) $value;
+        case self::BOOL:
+            return $value ? 'true' : 'false';
+        }
     }
 
     protected function struct_to_args($form) {
