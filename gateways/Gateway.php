@@ -7,6 +7,7 @@
 
 class Gateway {
 
+    // HERHAALD IN Gateway en SqlBuilder
     protected const TXT = 'txt';
     protected const INT = 'int';
     protected const FLOAT = 'float';
@@ -14,6 +15,7 @@ class Gateway {
     protected const DATE = 'date';
 
     protected $db;
+    protected $builder;
 
     public function __construct($db = null) {
         if (is_null($db)) {
@@ -24,11 +26,15 @@ class Gateway {
         } else {
             throw new Exception("Parameter is not usable to set up database connection");
         }
+        $this->builder = new SqlBuilder($db);
     }
 
-    protected function run_query($SQL, $args = []) {
-        // TODO: ik kan niet wachten tot er config() is, voor een setting debug.log_queries
-        $statement = $this->expand($SQL, $args);
+    // TODO: ik kan niet wachten tot er config() is, voor een setting debug.log_queries
+    protected function run_query($SQL, $args = [], $types = []) {
+        if (empty($types)) {
+            $types = Schema::dictionary();
+        }
+        $statement = $this->builder->statement($SQL, $args, $types);
         Logger::instance()->debug($statement);
         $res = $this->db->query($statement);
         if ($this->db->error) {
@@ -68,6 +74,9 @@ class Gateway {
         return $default;
     }
 
+    // haalt een associatieve array uit een resultaatset.
+    // Standaard wordt de eerste kolom uit de SELECT de sleutel van de array, en de tweede kolom de waarde.
+    // Als je dat niet wil, moet je een closure meegeven die van een record uit de resultaatset een tweekoloms-array maakt.
     protected function KV($vw, $row_former = null) {
         $res = [];
         if (is_null($row_former)) {
@@ -82,6 +91,16 @@ class Gateway {
         return $res;
     }
 
+    // haalt een lijst uit een resultset: 1 kolom in SELECT
+    protected function collect_list($SQL, $args = []) {
+        $vw = $this->run_query($SQL, $args);
+        $res = [];
+        while ($row = $vw->fetch_row()) {
+            $res[] = $row[0];  
+        }
+        return $res;
+    }
+
     private function view_has_rows($view) {
         if ($view === false || $view === true) {
             return false;
@@ -92,59 +111,14 @@ class Gateway {
         return true;
     }
 
-    // in args zit een array van benoemde parameters:
-    // parameter is een [naam, waarde, formaat]
-    // naam is bijvoorbeeld :id
-    // waarde is bijvoorbeeld 4
-    // formaat kan zijn self::INT, self::FLOAT, self::TXT, self::BOOL, self::DATE
-    // TODO meer formaten
-    private function expand($SQL, $args = []) {
-        foreach ($args as $arg) {
-            $arg = $this->validateArg($arg);
-            [$name, $value, $format] = $arg;
-            if (is_null($value)) {
-                $value = 'NULL';
-            } else {
-                $value = $this->restrict($value, $format);
-            }
-            $SQL = preg_replace("#$name\b#", $value, $SQL);
-        }
-        return $SQL;
-    }
-
-    private function restrict($value, $type) {
-        switch ($type) {
-        case self::TXT:
-        case self::DATE:
-            return "'" . $this->db->real_escape_string($value) . "'";
-        case self::INT:
-            return (int) $value;
-        case self::FLOAT:
-            return (float) $value;
-        case self::BOOL:
-            return $value ? 'true' : 'false';
-        }
-    }
-
+    // werkbespaarder: als je een formulier met veel parameters aanlevert,
+    //   zet deze methode ze allemaal om in pdo-string-argumenten
+    // Uitschrijven is uiteraard preciezer.
     protected function struct_to_args($form) {
         return array_map(function($key, $value) {
             return [":$key", $value];
         }, array_keys($form), array_values($form)
         );
-    }
-
-    private function validateArg($arg) {
-        if (!is_array($arg)) {
-            throw new Exception("Query-parameters: verwacht een array van arrays.");
-        }
-        // default formaat is TXT
-        if (count($arg) == 2) {
-            $arg[] = self::TXT;
-        }
-        if (count($arg) != 3) {
-            throw new Exception("Query-parameters: een parameter moet twee of drie onderdelen bevatten.");
-        }
-        return $arg;
     }
 
 }

@@ -681,4 +681,26 @@ SQL
         );
     }
 
+    public function list_for($lidId) {
+        return $this->collect_list(<<<SQL
+SELECT v.volwId
+FROM tblVolwas v
+ join tblSchaap s on (v.volwId = s.volwId)
+ join tblStal st on (s.schaapId = st.schaapId)
+WHERE st.lidId = :lidId
+GROUP BY v.volwId
+ORDER BY v.volwId
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
+
+    public function delete_ids($ids) {
+        $this->run_query(<<<SQL
+DELETE FROM tblVolwas WHERE %volwId
+SQL
+        , ['volwId' => $ids]
+        );
+    }
+
 }

@@ -3,7 +3,7 @@
 class Menu {
 
     public static function melden($db, $lidId) {
-        $request_gateway = new RequestGateway($db);
+        $request_gateway = new RequestGateway();
 
         $rows_geb = $request_gateway->countPerCode($lidId, 'GER');
         $links['geboorte'] = [

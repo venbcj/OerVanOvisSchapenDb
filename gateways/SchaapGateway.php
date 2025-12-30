@@ -4985,4 +4985,25 @@ SQL
         );
     }
 
+    public function list_for($lidId) {
+        return $this->collect_list(<<<SQL
+SELECT s.schaapId
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+WHERE st.lidId = :%lidId
+GROUP BY s.schaapId
+ORDER BY s.schaapId
+SQL
+        , ['lidId' => $lidId]
+        );
+    }
+
+    public function delete_ids($ids) {
+        $this->run_query(<<<SQL
+DELETE FROM tblSchaap WHERE :%schaapId
+SQL
+        , ['schaapId' => $ids]
+        );
+    }
+
 }

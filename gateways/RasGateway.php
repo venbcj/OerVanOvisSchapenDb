@@ -75,4 +75,14 @@ SQL
         );
     }
 
+    public function delete_user($lidId) {
+        $this->run_query(<<<SQL
+            DELETE FROM tblRasuser WHERE lidId = :lidId
+SQL
+        , [
+            [':lidId', $lidId, self::INT],
+        ]
+        );
+    }
+
 }

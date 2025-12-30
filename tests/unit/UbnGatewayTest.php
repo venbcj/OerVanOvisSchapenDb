@@ -11,7 +11,7 @@ class UbnGatewayTest extends GatewayCase {
     }
 
     public function test_exists() {
-        $ubn = '99';
+        $ubn = '63'; // ik had eerst 99 maar die bestaat "soms" niet.
         $result = $this->sut->exists($ubn);
         $this->assertTrue($result);
     }

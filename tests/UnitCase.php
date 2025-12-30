@@ -11,7 +11,7 @@ class UnitCase extends TestCase {
     protected function uses_db() {
         require_once "just_connect_db.php";
         global $db;
-        $this->db = $db;
+        $this->db = Db::instance($db);
     }
 
     protected function setupServer($path = 'Maaktnietuit.php') {

@@ -11,9 +11,9 @@ class Db {
     private $connection = null;
     private $logger;
 
-    public static function instance() {
+    public static function instance($db = null) {
         if (is_null(self::$instance)) {
-            self::$instance = new self();
+            self::$instance = new self(null, $db);
         }
         return self::$instance;
     }
@@ -28,18 +28,20 @@ class Db {
         throw new Exception("Unknown property $name");
     }
 
-    private function __construct($logger = null) {
+    private function __construct($logger = null, $db = null) {
         if (is_null($logger)) {
             $logger = Logger::instance();
         }
         $this->logger = $logger;
         // duplicated code in basisfuncties:setup_db() en Db::__construct
-        include "database.php";
-        global $db;
-        if (!isset($db) || $db === false) {
-            $db = mysqli_connect($host, $user, $pw, $dtb);
-            if ($db == false) {
-                throw new Exception('Connectie database niet gelukt');
+        if ($db === null) {
+            include "database.php";
+            global $db;
+            if (!isset($db) || $db === false) {
+                $db = mysqli_connect($host, $user, $pw, $dtb);
+                if ($db == false) {
+                    throw new Exception('Connectie database niet gelukt');
+                }
             }
         }
         $this->connection = $db;
@@ -60,6 +62,14 @@ class Db {
 
     public function run_query($SQL, $args = []) {
         return $this->connection->query($this->expand($SQL, $args));
+    }
+
+    public function begin_transaction() {
+        $this->connection->begin_transaction();
+    }
+
+    public function rollback() {
+        $this->connection->rollback();
     }
 
     // in args zit een array van benoemde parameters:
