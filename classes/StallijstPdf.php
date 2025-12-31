@@ -2,7 +2,7 @@
 
 class StallijstPdf extends Fpdf {
     function header(){
-        
+
 global $rapport;
 global $headerWidth;
 global $imageWidth;

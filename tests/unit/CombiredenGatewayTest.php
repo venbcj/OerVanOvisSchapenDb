@@ -15,16 +15,16 @@ class CombiredenGatewayTest extends GatewayCase {
     }
 
     public function test_bestaat_reden() {
-        $whereArtId = null;
-        $whereStdat = null;
-        $whereRed = null;
+        $whereArtId = 'true';
+        $whereStdat = 'true';
+        $whereRed = 'true';
         $fldTbl = null;
         $result = $this->sut->bestaat_reden($whereArtId, $whereStdat, $whereRed, $fldTbl);
         $this->assertNotFalse($result);
     }
 
     public function test_bestaat_scannr() {
-        $whereScan = null;
+        $whereScan = 'true';
         $fldTbl = null;
         $result = $this->sut->bestaat_scannr(self::LIDID, $whereScan, $fldTbl);
         $this->assertNotFalse($result);
@@ -32,9 +32,9 @@ class CombiredenGatewayTest extends GatewayCase {
 
     public function test_insert() {
         $fldTbl = null;
-        $insArtId = null;
-        $insStdat = null;
-        $insRed = null;
+        $insArtId = 1;
+        $insStdat = 1;
+        $insRed = 1;
         $insScan = null;
         $result = $this->sut->insert($fldTbl, $insArtId, $insStdat, $insRed, $insScan);
         $this->assertNotFalse($result);
@@ -52,14 +52,14 @@ class CombiredenGatewayTest extends GatewayCase {
     }
 
     public function test_bestaat_combireden2() {
-        $whereRed = null;
+        $whereRed = 'true';
         $rowid_d = null;
         $result = $this->sut->bestaat_combireden2(self::LIDID, $whereRed, $rowid_d);
         $this->assertNotFalse($result);
     }
 
     public function test_bestaat_scannr2() {
-        $whereScan = null;
+        $whereScan = 'true';
         $rowid_d = null;
         $result = $this->sut->bestaat_scannr2(self::LIDID, $whereScan, $rowid_d);
         $this->assertNotFalse($result);
@@ -101,15 +101,15 @@ class CombiredenGatewayTest extends GatewayCase {
     }
 
     public function test_bestaat_combireden3() {
-        $whereStdat = null;
-        $whereRed = null;
+        $whereStdat = 'true';
+        $whereRed = 'true';
         $rowid_p = null;
         $result = $this->sut->bestaat_combireden3(self::LIDID, $whereStdat, $whereRed, $rowid_p);
         $this->assertNotFalse($result);
     }
 
     public function test_bestaat_scan3() {
-        $whereScan = null;
+        $whereScan = 'true';
         $comrId = null;
         $result = $this->sut->bestaat_scan3(self::LIDID, $whereScan, $comrId);
         $this->assertNotFalse($result);

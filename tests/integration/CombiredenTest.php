@@ -3,11 +3,13 @@
 class CombiredenTest extends IntegrationCase {
 
     public function testInsertD() {
+        // dit kan niet werken... combireden zet insArtId op NULL, en tblCombireden.artId mag niet null zijn
         $this->post('/Combireden.php', [
             'ingelogd' => 1,
             'knpInsert_d' => 1,
             'insScan_d' => 1,
             'insReden_d' => 1,
+            'insArt_d' => 1,
         ]);
         $this->assertNoNoise();
     }

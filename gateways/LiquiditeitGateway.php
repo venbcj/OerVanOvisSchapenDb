@@ -239,8 +239,7 @@ FROM (
     FROM tblLiquiditeit l
      join tblRubriekuser ru on (l.rubuId = ru.rubuId)
      join tblRubriek r on (r.rubId = ru.rubId)
-     left join tblOpgaaf o on (l.rubuId = o.rubuId
- and date_format(l.datum,'%Y%m') = date_format(o.datum,'%Y%m') )
+     left join tblOpgaaf o on (l.rubuId = o.rubuId and date_format(l.datum,'%Y%m') = date_format(o.datum,'%Y%m') )
     WHERE ru.lidId = :lidId
  and ru.actief = 1
  and isnull(o.opgId)
@@ -253,8 +252,7 @@ FROM (
     FROM tblLiquiditeit l
      join tblRubriekuser ru on (l.rubuId = ru.rubuId)
      join tblRubriek r on (r.rubId = ru.rubId)
-     left join tblOpgaaf o on (l.rubuId = o.rubuId
- and date_format(l.datum,'%Y%m') = date_format(o.datum,'%Y%m') )
+     left join tblOpgaaf o on (l.rubuId = o.rubuId and date_format(l.datum,'%Y%m') = date_format(o.datum,'%Y%m') )
     WHERE ru.lidId = :lidId
  and ru.actief = 1
  and isnull(o.opgId)
@@ -284,7 +282,7 @@ FROM (
  and month(o.datum) <= :maand
  and r.rubhId <> 5
     GROUP BY date_format(o.datum,'%Y%m')
-)
+) a
 SQL
         , [
             [':lidId', $lidId, self::INT],
