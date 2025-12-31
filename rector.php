@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
 use Rector\ValueObject\PhpVersion;
-use Utils\Rector\Rector\MysqliQueryFunctionCallToDbMethodCallRector;
-use Utils\Rector\Rector\MysqliRealescapestringFunctionCallToDbMethodCallRector;
-use Utils\Rector\Rector\MysqliNumRowsFunctionCallToDbPropertyRector;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -26,6 +23,7 @@ return RectorConfig::configure()
          Utils\Rector\Rector\MysqliFetchAssocFunctionCallToDbMethodCallRector::class,
          Utils\Rector\Rector\MysqliRealescapestringFunctionCallToDbMethodCallRector::class,
          Utils\Rector\Rector\MysqliNumRowsFunctionCallToDbPropertyRector::class,
+         Utils\Rector\Rector\SplitSqlConcatenationRector::class,
          Utils\Rector\Rector\RemoveOrDieConstructRector::class,
     ])
     ->withTypeCoverageLevel(0)

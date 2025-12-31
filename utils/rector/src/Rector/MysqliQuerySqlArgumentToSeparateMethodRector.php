@@ -19,7 +19,7 @@ final class MysqliQuerySqlArgumentToSeparateMethodRector extends AbstractRector
         return new RuleDefinition('// @todo fill the description', [
             new CodeSample(
                 <<<'CODE_SAMPLE'
-// @todo fill code before
+mysqli_// @todo fill code before
 CODE_SAMPLE
                 ,
                 <<<'CODE_SAMPLE'

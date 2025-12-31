@@ -6,10 +6,14 @@ namespace Utils\Rector\Rector;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\BinaryOp\Concat;
 use PhpParser\Node\Scalar\String_;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 /**
@@ -39,17 +43,18 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [Assign::class];
+        return [Expression::class];
     }
 
     /**
      * @param \PhpParser\Node\Stmt\Class_ $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node)
     {
-        if (! $node instanceof Assign) {
+        if (! $node->expr instanceof Assign) {
             return null;
         }
+        $node = $node->expr;
 
         if (! $node->expr instanceof Concat) {
             return null;
@@ -81,28 +86,25 @@ CODE_SAMPLE
         $node->expr = new String_($sql);
 
         // Insert arguments array after assignment
+        $items = [];
+
+        foreach ($arguments as $arg) {
+            // $arg = [':param1', Expr $valueExpr]
+
+            $innerItems = [
+                new ArrayItem(new String_($arg[0])),
+                new ArrayItem($arg[1]),
+            ];
+
+            $items[] = new ArrayItem(new Array_($innerItems));
+        }
+
         $argumentsAssign = new Assign(
-            new Expr\Variable('arguments'),
-            $this->nodeFactory->createArray(
-                array_map(
-                    fn ($arg) => [
-                        $this->nodeFactory->createArrayItem(
-                            $arg[1],
-                            null,
-                            false,
-                            [
-                                $this->nodeFactory->createArrayItem(
-                                    new String_($arg[0])
-                                ),
-                            ]
-                        )
-                    ],
-                    $arguments
-                )
-            )
+            new Variable('arguments'),
+            new Array_($items)
         );
 
-        return [$node, $argumentsAssign];
+        return [new Expression($node), new Expression($argumentsAssign)];
     }
 
     /**
