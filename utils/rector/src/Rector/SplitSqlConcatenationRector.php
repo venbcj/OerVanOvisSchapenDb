@@ -18,60 +18,55 @@ use Rector\RectorDefinition\RectorDefinition;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use PhpParser\Node\Scalar\String_;
 
-final class SplitSqlConcatenationRector extends AbstractRector
-{
-    public function getRuleDefinition(): RuleDefinition
-    {
+final class SplitSqlConcatenationRector extends AbstractRector {
+
+    use ArgSplitter;
+
+    public function getRuleDefinition(): RuleDefinition {
         return new RuleDefinition(
             'Split SQL string concatenation into placeholders and arguments array',
             [
                 new CodeSample(
                     <<<'CODE_SAMPLE'
-// @todo fill code before
+$insert_tblHistorie = "INSERT INTO tblHistorie SET stalId = '" . mysqli_real_escape_string($db, $STALID) . "',
+        datum = '" . mysqli_real_escape_string($db, $DATUM) . "',
+            actId = '" . mysqli_real_escape_string($db, $ACTID) . "' ";
 CODE_SAMPLE
         ,
             <<<'CODE_SAMPLE'
-// @todo fill code after
+public function insert_tblHistorie($STALID, $DATUM, $ACTID) {
+$sql = <<<SQL
+INSERT INTO tblHistorie SET stalId = ':param1',
+        datum = ':param2',
+            actId = ':param3' 
+SQL;
+$arguments = [[':param1', $STALID], [':param2', $DATUM], [':param3', $ACTID]];
+    }
 CODE_SAMPLE
         ),
             ]);
     }
-    public function getNodeTypes(): array
-    {
+
+    public function getNodeTypes(): array {
         return [Expression::class];
     }
 
-    public function refactor(Node $node)
-    {
+    public function refactor(Node $node) {
         if (! $node->expr instanceof Assign) {
             return null;
         }
-
         $assign = $node->expr;
         if (! $assign->expr instanceof Concat) {
             return null;
         }
-
-        $parts = $this->flattenConcat($assign->expr);
-
-        $sql = '';
-        $args = [];
-        $i = 1;
-
-        foreach ($parts as $part) {
-            if ($part instanceof String_) {
-                $sql .= $part->value;
-            } else {
-                $param = ':param' . $i++;
-                $sql .= $param;
-                $args[] = [$param, $part];
-            }
-        }
-
+        [$sql, $args] = $this->splitArgsFromString($assign->expr);
         return [
             new Expression(new Assign(
                 $assign->var,
-                new String_($sql)
+                new String_($sql, [
+                    AttributeKey::KIND => String_::KIND_HEREDOC,
+                    AttributeKey::DOC_LABEL => 'SQL',
+                ])
             )),
             new Expression(new Assign(
                 new Variable('arguments'),
@@ -80,11 +75,4 @@ CODE_SAMPLE
         ];
     }
 
-    private function flattenConcat(Concat $concat): array
-    {
-        return array_merge(
-            $concat->left instanceof Concat ? $this->flattenConcat($concat->left) : [$concat->left],
-            $concat->right instanceof Concat ? $this->flattenConcat($concat->right) : [$concat->right]
-        );
-    }
 }

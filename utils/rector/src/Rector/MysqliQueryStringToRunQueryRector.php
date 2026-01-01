@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Utils\Rector\Rector;
 
 use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Expr\BinaryOp\Concat;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Expression;
@@ -12,8 +14,11 @@ use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Arg;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 
-final class MysqliQueryVariableToRunQueryRector extends AbstractRector {
+final class MysqliQueryStringToRunQueryRector extends AbstractRector {
+
+    use ArgSplitter;
 
     public function getRuleDefinition(): RuleDefinition {
         return new RuleDefinition(
@@ -35,7 +40,7 @@ CODE_SAMPLE
         return [FuncCall::class];
     }
 
-    public function refactor(Node $node): ?Node {
+    public function refactor(Node $node) {
         if (! $node instanceof FuncCall) {
             return null;
         }
@@ -45,16 +50,21 @@ CODE_SAMPLE
         if (count($node->args) < 2) {
             return null;
         }
-        // deze regel behandelt het geval met de query in een variabele
-        if (! $node->args[1]->value instanceof Variable) {
+        // deze regel behandelt het geval met de query in een string-met-onderbrekingen
+        if (! $node->args[1]->value instanceof Concat) {
             return null;
         }
+        # throw new \Exception(get_class($node->args[1]->value));
+        [$sql, $args] = $this->splitArgsFromString($node->args[1]->value);
         return new MethodCall(
             new Variable('this'),
             'run_query',
             [
-                $node->args[1],
-                new Arg(new Variable('arguments')),
+                new Arg(new String_($sql, [
+                    AttributeKey::KIND => String_::KIND_HEREDOC,
+                    AttributeKey::DOC_LABEL => 'SQL',
+                ])),
+                new Arg($this->nodeFactory->createArray($args))
             ]
         );
     }
