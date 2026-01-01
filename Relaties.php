@@ -36,14 +36,14 @@ if (Auth::is_logged_in()) {
 if (isset($_POST['knpdebSave_'])) { include "save_debiteuren.php"; }
 if (isset($_POST['knpcreSave_'])) { include "save_crediteuren.php"; }
 
-$PartijGateway = new PartijGateway();
+$partij_gateway = new PartijGateway();
 
 if (isset($_POST['knpInsert_']))
 {
 
 $newPartij = $_POST['insPartij_'];
 
-    $dubbel = $PartijGateway->has_partij($lidId, $newPartij);
+    $dubbel = $partij_gateway->has_partij($lidId, $newPartij);
     
     if (empty($_POST['insPartij_']))
     {
