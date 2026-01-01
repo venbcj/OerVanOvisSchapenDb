@@ -1925,4 +1925,12 @@ SQL
         );
     }
 
+    public function delete_user($lidId) {
+        $this->run_query(<<<SQL
+DELETE FROM impAgrident WHERE lidId = :lidId
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
+
 }

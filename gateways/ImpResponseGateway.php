@@ -29,4 +29,13 @@ SQL
         );
     }
 
+    public function delete_ids($ids) {
+        $this->run_query(<<<SQL
+      <<<SQL
+DELETE FROM impRespons WHERE :%reqId
+SQL
+        , ['reqId' => $ids]
+        );
+    }
+
 }

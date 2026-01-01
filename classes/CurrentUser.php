@@ -62,7 +62,7 @@ class CurrentUser {
         $this->store('lidId', Session::get('I1'));
         require_once "just_connect_db.php";
         $this->store('db', $GLOBALS['db']);
-        $lid_gateway = new LidGateway(static::db());
+        $lid_gateway = new LidGateway();
         $this->store('Karwerk', $lid_gateway->zoek_karwerk(static::lidId()));
     }
 

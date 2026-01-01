@@ -135,4 +135,39 @@ SQL
         );
     }
 
+    public function requests_list_for($lidId) {
+        return $this->collect_list(<<<SQL
+SELECT m.reqId
+FROM tblMelding m
+ join tblBezet b on (b.hisId = m.hisId)
+ join tblHok h on (h.hokId = b.hokId)
+WHERE h.lidId = :%lidId
+GROUP BY m.reqId
+ORDER BY m.reqId
+SQL
+        , ['lidId' => $lidId]
+        );
+    }
+
+    public function list_for($lidId) {
+        return $this->collect_list(<<<SQL
+SELECT m.meldId
+FROM tblMelding m
+ join tblBezet b on (b.hisId = m.hisId)
+ join tblHok h on (h.hokId = b.hokId)
+WHERE h.lidId = :%lidId
+ORDER BY m.meldId
+SQL
+        , ['lidId' => $lidId]
+        );
+    }
+
+    public function delete_ids($ids) {
+        $this->run_query(<<<SQL
+DELETE FROM tblMelding WHERE :%meldId
+SQL
+        , ['meldId' => $ids]
+        );
+    }
+
 }

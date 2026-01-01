@@ -28,108 +28,44 @@ $name = Session::get("U1");
 /* Verwijderen rassen en redenen */
 if(isset($_POST['chbAlles'])) {
 
-$verw_Ras = 
-"DELETE
-FROM tblRasuser 
-WHERE lidId = '". mysqli_real_escape_string($db,$lidId) ."' ";
+    $ras_gateway = new RasGateway();
+    $ras_gateway->delete_user($lidId);
 
-mysqli_query($db,$verw_Ras) or die (mysqli_error($db));
-
-$verw_Reden = 
-"DELETE
-FROM tblRedenuser 
-WHERE lidId = '". mysqli_real_escape_string($db,$lidId) ."' ";
-
-mysqli_query($db,$verw_Reden) or die (mysqli_error($db));
+    $reden_gateway = new RedenGateway();
+    $reden_gateway->delete_user($lidId);
 
 }
 
 /* Verwijderen schapen */
 if(isset($_POST['chbSchaap']) || isset($_POST['chbHok']) || isset($_POST['chbCredit']) || isset($_POST['chbDebet']) || isset($_POST['chbAlles'])) {
 
-$verw_Reader = 
-"DELETE
-FROM impAgrident
-WHERE lidId = '". mysqli_real_escape_string($db,$lidId) ."' ";
+    $impagrident_gateway = new ImpAgridentGateway();
+    $impagrident_gateway->delete_user($lidId);
 
-mysqli_query($db,$verw_Reader) or die (mysqli_error($db));
+    // TODO dit kan met een DELETE d FROM tblDracht d [enz]
 
-$zoek_draId = mysqli_query($db,"
-SELECT d.draId
-FROM tblDracht d
- join tblVolwas v on (d.volwId = v.volwId)
- join tblSchaap s on (v.volwId = s.volwId)
- join tblStal st on (s.schaapId = st.schaapId)
-WHERE st.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
-ORDER BY d.draId
-") or die (mysqli_error($db));
-
-$draId = array();
-while( $dra = mysqli_fetch_assoc($zoek_draId)) { $draId[] = $dra['draId'];  
-    
-$draIds = implode(',',$draId);
-    }
-    if(isset($draIds)) {
-    $del_tblDracht = "DELETE FROM tblDracht WHERE draId IN (".mysqli_real_escape_string($db,$draIds).") ";
-    /*echo $del_tblDracht.'<br>'; */    mysqli_query($db,$del_tblDracht);
+    $dracht_gateway = new DrachtGateway();
+    $ids = $dracht_gateway->list_for($lidId);
+    if (count($ids)) {
+        $dracht_gateway->delete_ids($ids);
     }
 
-
-$zoek_volwId = mysqli_query($db,"
-SELECT v.volwId
-FROM tblVolwas v
- join tblSchaap s on (v.volwId = s.volwId)
- join tblStal st on (s.schaapId = st.schaapId)
-WHERE st.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
-GROUP BY v.volwId
-ORDER BY v.volwId
-") or die (mysqli_error($db));
-
-$volwId = array();
-while( $volw = mysqli_fetch_assoc($zoek_volwId)) { $volwId[] = $volw['volwId'];  
-    
-$volwIds = implode(',',$volwId);
-    }
-    if(isset($volwIds)) {
-    $del_tblVolwas = "DELETE FROM tblVolwas WHERE volwId IN (".mysqli_real_escape_string($db,$volwIds).") ";
-    /*echo $del_tblVolwas.'<br>'; */    mysqli_query($db,$del_tblVolwas);
+    $volwas_gateway = new VolwasGateway();
+    $volwIds = $volwas_gateway->list_for($lidId);
+    if(count($volwIds)) {
+        $volwas_gateway->delete_ids($volwIds);
     }
 
-
-$zoek_schaapId = mysqli_query($db,"
-SELECT s.schaapId
-FROM tblSchaap s
- join tblStal st on (s.schaapId = st.schaapId)
-WHERE st.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
-GROUP BY s.schaapId
-ORDER BY s.schaapId
-") or die (mysqli_error($db));
-
-$schaapId = array();
-while( $schaap = mysqli_fetch_assoc($zoek_schaapId)) { $schaapId[] = $schaap['schaapId'];  
-    
-$schaapIds = implode(',',$schaapId);
-    }
-    if(isset($schaapIds)) {
-    $del_tblSchaap = "DELETE FROM tblSchaap WHERE schaapId IN (".mysqli_real_escape_string($db,$schaapIds).") ";
-    /*echo $del_tblSchaap.'<br>'; */    mysqli_query($db,$del_tblSchaap);
+    $schaap_gateway = new SchaapGateway();
+    $schaapIds = $schaap_gateway->list_for($lidId);
+    if(count($schaapIds)) {
+        $schaap_gateway->delete_ids($schaapIds);
     }
 
-$zoek_hisId = mysqli_query($db,"
-SELECT h.hisId
-FROM tblHistorie h
- join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '". mysqli_real_escape_string($db,$lidId) ."' and h.actId = 8
-") or die (mysqli_error($db));
-
-$hisId = array();
-while( $his = mysqli_fetch_assoc($zoek_hisId)) { $hisId[] = $his['hisId'];  
-    
-$hisIds = implode(',',$hisId);
-    }
-    if(isset($hisIds)) {
-    $del_tblHistorie = "DELETE FROM tblHistorie WHERE hisId IN (".mysqli_real_escape_string($db,$hisIds).") ";
-    /*echo $del_tblHistorie.'<br>'; */    mysqli_query($db,$del_tblHistorie);
+    $historie_gateway = new HistorieGateway();
+    $hisIds = $historie_gateway->list_for($lidId);
+    if(count($hisIds)) {
+        $historie_gateway->delete_ids($hisIds);
     }
 
 } 
@@ -137,67 +73,23 @@ $hisIds = implode(',',$hisId);
 /* Verwijderen meldingen, request en response n.a.v. verwijderen bezetting */
 if(isset($_POST['chbSchaap']) || isset($_POST['chbBezet']) || isset($_POST['chbHok']) || isset($_POST['chbCredit']) || isset($_POST['chbDebet']) || isset($_POST['chbAlles'])) {
 
-$zoek_reqId = mysqli_query($db,"
-SELECT m.reqId
-FROM tblMelding m
- join tblBezet b on (b.hisId = m.hisId)
- join tblHok h on (h.hokId = b.hokId)
-WHERE h.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
-GROUP BY m.reqId
-ORDER BY m.reqId
-") or die (mysqli_error($db));
-
-$reqId = array();
-while( $req = mysqli_fetch_assoc($zoek_reqId)) { $reqId[] = $req['reqId'];  
-    
-$reqIds = implode(',',$reqId);
-    }
-    if(isset($reqIds)) {
-    $del_tblRequest = "DELETE FROM tblRequest WHERE reqId IN (".mysqli_real_escape_string($db,$reqIds).") ";
-    /*echo $del_tblRequest.'<br>'; */    mysqli_query($db,$del_tblRequest);
-
-    $del_impRespons = "DELETE FROM impRespons WHERE reqId IN (".mysqli_real_escape_string($db,$reqIds).") ";
-    /*echo $del_impRespons.'<br>'; */    mysqli_query($db,$del_impRespons);
-
+    $melding_gateway = new MeldingGateway();
+    $reqIds = $melding_gateway->requests_list_for($lidId);
+    if(count($reqIds)) {
+        $request_gateway = new RequestGateway();
+        $response_gateway = new ImpResponseGateway();
+        $request_gateway->delete_ids($reqIds);
+        $response_gateway->delete_ids($reqIds);
     }
 
-$zoek_meldId = mysqli_query($db,"
-SELECT m.meldId
-FROM tblMelding m
- join tblBezet b on (b.hisId = m.hisId)
- join tblHok h on (h.hokId = b.hokId)
-WHERE h.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
-ORDER BY m.meldId
-") or die (mysqli_error($db));
-
-$meldId = array();
-while( $meld = mysqli_fetch_assoc($zoek_meldId)) { $meldId[] = $meld['meldId'];  
-    
-$meldIds = implode(',',$meldId);
-    }
-    if(isset($meldIds)) {
-    $del_tblMelding = "DELETE FROM tblMelding WHERE meldId IN (".mysqli_real_escape_string($db,$meldIds).") ";
-    /*echo $del_tblMelding.'<br>'; */    mysqli_query($db,$del_tblMelding);
+    $meldIds = $melding_gateway->list_for($lidId);
+    if(count($meldIds)) {
+        $melding_gateway->delete_ids($meldIds);
     }
 
-$zoek_hisId = mysqli_query($db,"
-SELECT h.hisId
-FROM tblHistorie h
- join tblStal st on (st.stalId = h.stalId)
- join tblBezet b on (b.hisId = h.hisId)
-WHERE st.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
-GROUP BY h.hisId
-ORDER BY h.hisId
-") or die (mysqli_error($db));
-
-$hisId = array();
-while( $his = mysqli_fetch_assoc($zoek_hisId)) { $hisId[] = $his['hisId'];  
-    
-$hisIds = implode(',',$hisId);
-    }
-    if(isset($hisIds)) {
-    $del_tblHistorie = "DELETE FROM tblHistorie WHERE hisId IN (".mysqli_real_escape_string($db,$hisIds).") ";
-    /*echo $del_tblHistorie.'<br>'; */    mysqli_query($db,$del_tblHistorie);
+    $hisIds = $historie_gateway->bezet_list_for($lidId);
+    if(count($hisIds)) {
+        $historie_gateway->delete_ids($hisIds);
     }
 
 }

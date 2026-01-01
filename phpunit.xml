@@ -22,8 +22,11 @@
       <exclude>
         <directory>tests</directory>
         <directory>vendor</directory>
+        <directory>fpdf</directory>
+        <directory>ongebruikt</directory>
+        <directory>utils</directory>
       </exclude>
-      <directory>./gateways</directory>
+      <file>./classes/SqlBuilder.php</file>
     </whitelist>
   </filter>
 </phpunit>

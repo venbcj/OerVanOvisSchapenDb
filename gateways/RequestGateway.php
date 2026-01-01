@@ -152,4 +152,12 @@ SQL
     );
 }
 
+public function delete_ids($ids) {
+    $this->run_query(<<<SQL
+DELETE FROM tblRequest WHERE :%reqId
+SQL
+    , ['reqId' => $ids]
+    );
+}
+
 }

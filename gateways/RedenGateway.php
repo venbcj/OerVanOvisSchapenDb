@@ -147,4 +147,12 @@ SQL
         );
     }
 
+    public function delete_user($lidId) {
+        $this->run_query(<<<SQL
+DELETE FROM tblRedenuser WHERE lidId = :lidId
+SQL
+        , [[':lidId', $lidId, self::INT]]
+        );
+    }
+
 }

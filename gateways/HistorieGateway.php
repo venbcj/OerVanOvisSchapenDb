@@ -1821,4 +1821,37 @@ SQL
         );
     }
 
+    public function bezet_list_for($lidId) {
+        return $this->collect_list(<<<SQL
+SELECT h.hisId
+FROM tblHistorie h
+ join tblStal st on (st.stalId = h.stalId)
+ join tblBezet b on (b.hisId = h.hisId)
+WHERE st.lidId = :%lidId
+GROUP BY h.hisId
+ORDER BY h.hisId
+SQL
+        , ['lidId' => $lidId]
+        );
+    }
+
+    public function list_for($lidId) {
+        return $this->collect_list(<<<SQL
+SELECT h.hisId
+FROM tblHistorie h
+ join tblStal st on (st.stalId = h.stalId)
+WHERE st.lidId = :%lidId and h.actId = 8
+SQL
+        , ['lidId' => $lidId]
+        );
+    }
+
+    public function delete_ids($ids) {
+        $this->run_query(<<<SQL
+DELETE FROM tblHistorie WHERE :%hisId
+SQL
+        , ['hisId', $ids]
+        );
+    }
+
 }
