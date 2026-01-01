@@ -86,4 +86,18 @@ SQL
         );
     }
 
+    public function has_partij($lidId, $newPartij) {
+        return (bool) $this->first_field(
+            <<<SQL
+SELECT EXISTS (
+    SELECT 1 
+    FROM tblPartij
+    WHERE lidId = :lidId
+     and partId = :partij)
+SQL
+        , [[':lidId', $lidId, self::INT],[':partij',$newPartij, self::TXT]]
+        );
+    }
+
+
 }

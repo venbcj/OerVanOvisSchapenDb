@@ -36,22 +36,14 @@ if (Auth::is_logged_in()) {
 if (isset($_POST['knpdebSave_'])) { include "save_debiteuren.php"; }
 if (isset($_POST['knpcreSave_'])) { include "save_crediteuren.php"; }
 
+$PartijGateway = new PartijGateway();
+
 if (isset($_POST['knpInsert_']))
 {
 
 $newPartij = $_POST['insPartij_'];
 
-    $controle = mysqli_query($db,"
-    SELECT count(p.partId) aantal
-    FROM tblPartij p
-     join tblRelatie r on (p.partId = r.partId)
-    WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.naam = '".mysqli_real_escape_string($db,$newPartij)."'
-    ") or die (mysqli_error($db));
-                while ($rij = mysqli_fetch_assoc($controle))
-                {
-                    $dubbel = $rij['aantal'];
-                }
-
+    $dubbel = $PartijGateway->has_partij($lidId, $newPartij);
     
     if (empty($_POST['insPartij_']))
     {
@@ -68,7 +60,7 @@ $newPartij = $_POST['insPartij_'];
             if (!empty($_POST['insPlaats_'])) { $txtPlaats = $_POST['insPlaats_']; }
             if (!empty($_POST['insTel_'])) { $txtTel = $_POST['insTel_']; }
     }
-    else if (!empty($dubbel) && $dubbel >= 1 )
+    else if ($dubbel == true)
     {  
         $fout = "Deze naam bestaat al.";
             if (!empty($_POST['insUbn_'])) { $txtUbn = $_POST['insUbn_']; }
