@@ -122,17 +122,17 @@ class StalGatewayTest extends GatewayCase {
     }
 
     public function test_insert() {
-        $ubnId = null;
-        $schaapId = null;
+        $ubnId = 1;
+        $schaapId = 1;
         $rel_herk = null;
         $result = $this->sut->insert(self::LIDID, $ubnId, $schaapId, $rel_herk);
         $this->assertNotFalse($result);
     }
 
     public function test_insert_uitgebreid() {
-        $schaapId = null;
+        $schaapId = 1;
         $rel_herk = null;
-        $ubnId = null;
+        $ubnId = 1;
         $kleur = null;
         $halsnr = null;
         $rel_best = null;

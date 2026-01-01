@@ -2394,6 +2394,7 @@ From (
      join tblVolwas v on (mdr.schaapId = v.mdrId)
      join tblSchaap lam on (v.volwId = lam.volwId)
      join tblStal st on (st.schaapId = lam.schaapId)
+     join tblUbn u USING (ubnId)
      join tblHistorie h on (st.stalId = h.stalId and h.actId = 1 and h.skip = 0)
     WHERE u.lidId = :lidId
  and mdr.schaapId = :schaapId
@@ -3300,8 +3301,8 @@ SQL
     public function maak_minimaal_schaap($levnr, $ras, $sekse) {
         $this->run_query(
             <<<SQL
-INSERT INTO tblSchaap set levensnummer = :levnr
- rasId = :rasId
+INSERT INTO tblSchaap set levensnummer = :levnr,
+ rasId = :rasId,
  geslacht = :sekse
 SQL
         , [

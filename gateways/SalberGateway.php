@@ -22,16 +22,18 @@ SQL
     public function insertJaar($lidId, $nextjaar) {
         $this->run_query(<<<SQL
 INSERT INTO tblSalber (datum, tbl, tblId, waarde)
-    SELECT '".$nextjaar."-01-01', 'eu', elemuId, waarde
+    SELECT :nextjaar, 'eu', elemuId, waarde
     FROM tblElementuser
     WHERE lidId = :lidId
     union all
-    SELECT '".$nextjaar."-01-01', 'ru', rubuId, NULL
+    SELECT :nextjaar, 'ru', rubuId, NULL
     FROM tblRubriekuser
     WHERE lidId = :lidId
-    ORDER BY elemuId;
+    ORDER BY elemuId
 SQL
         , [
+            [':lidId', $lidId, self::INT],
+            [':nextjaar', $nextjaar."-01-01"],
         ]);
     }
 

@@ -66,7 +66,7 @@ if(isset($array_p)) {
                                                             $this->Cell(15,3,'','',0,'',false);
     }
         $this->Cell(25,3,'','',1,'C',false);
-    
+
 // Einde Regel 2 van hoofding
 // Regel 3 van hoofding
         $this->Cell(10,5,'','',0,'',false);

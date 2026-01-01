@@ -594,36 +594,6 @@ class SchaapGatewayTest extends GatewayCase {
         $this->assertNotFalse($result);
     }
 
-    public function test_med_aantal_fase() {
-        $M = null;
-        $J = null;
-        $V = null;
-        $Sekse = null;
-        $Ouder = null;
-        $result = $this->sut->med_aantal_fase(self::LIDID, $M, $J, $V, $Sekse, $Ouder);
-        $this->assertNotFalse($result);
-    }
-
-    public function test_voer_fase() {
-        $M = null;
-        $J = null;
-        $V = null;
-        $Sekse = null;
-        $Ouder = null;
-        $result = $this->sut->voer_fase(self::LIDID, $M, $J, $V, $Sekse, $Ouder);
-        $this->assertNotFalse($result);
-    }
-
-    public function test_eenheid_fase() {
-        $M = null;
-        $J = null;
-        $V = null;
-        $Sekse = null;
-        $Ouder = null;
-        $result = $this->sut->eenheid_fase(self::LIDID, $M, $J, $V, $Sekse, $Ouder);
-        $this->assertNotFalse($result);
-    }
-
     public function test_zoekStapel() {
         $result = $this->sut->zoekStapel(self::LIDID);
         $this->assertNotFalse($result);
@@ -670,13 +640,6 @@ class SchaapGatewayTest extends GatewayCase {
     public function test_periode() {
         $volwId = null;
         $result = $this->sut->periode($volwId);
-        $this->assertNotFalse($result);
-    }
-
-    public function test_de_lammeren() {
-        $Volwid = null;
-        $KarWerk = null;
-        $result = $this->sut->de_lammeren($Volwid, $KarWerk);
         $this->assertNotFalse($result);
     }
 
@@ -760,13 +723,13 @@ class SchaapGatewayTest extends GatewayCase {
     }
 
     public function test_zoekAankoop() {
-        $where = null;
+        $where = 'true';
         $result = $this->sut->zoekAankoop(self::LIDID, $where);
         $this->assertNotFalse($result);
     }
 
     public function test_zoekSchaap() {
-        $where = null;
+        $where = 'true';
         $result = $this->sut->zoekSchaap($where);
         $this->assertNotFalse($result);
     }

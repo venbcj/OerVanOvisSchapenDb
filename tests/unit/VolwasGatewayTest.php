@@ -23,7 +23,7 @@ class VolwasGatewayTest extends GatewayCase {
     }
 
     public function test_zoek_volwas() {
-        $schaapId = null;
+        $schaapId = 1;
         $result = $this->sut->zoek_volwas($schaapId);
         $this->assertNotFalse($result);
     }
@@ -144,13 +144,13 @@ class VolwasGatewayTest extends GatewayCase {
     }
 
     public function test_zoek_werpdatum() {
-        $schaapId = null;
+        $schaapId = 1;
         $result = $this->sut->zoek_werpdatum($schaapId);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_laatste_worp() {
-        $schaapId = null;
+        $schaapId = 1;
         $result = $this->sut->zoek_laatste_worp($schaapId);
         $this->assertNotFalse($result);
     }
@@ -168,20 +168,20 @@ class VolwasGatewayTest extends GatewayCase {
     }
 
     public function test_zoek_vader_uit_laatste_dekkingen() {
-        $schaapId = null;
+        $schaapId = 1;
         $Karwerk = 5;
         $result = $this->sut->zoek_vader_uit_laatste_dekkingen($schaapId, $Karwerk);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_laatste_dekking_van_ooi() {
-        $schaapId = null;
+        $schaapId = 1;
         $result = $this->sut->zoek_laatste_dekking_van_ooi(self::LIDID, $schaapId);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_laatste_werpdatum_dracht() {
-        $schaapId = null;
+        $schaapId = 1;
         $result = $this->sut->zoek_laatste_werpdatum_dracht($schaapId);
         $this->assertNotFalse($result);
     }

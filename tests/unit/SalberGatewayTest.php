@@ -10,7 +10,7 @@ class SalberGatewayTest extends GatewayCase {
     }
 
     public function test_insertJaar() {
-        $nextjaar = null;
+        $nextjaar = 1900;
         $result = $this->sut->insertJaar(self::LIDID, $nextjaar);
         $this->assertNotFalse($result);
     }

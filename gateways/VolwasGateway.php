@@ -401,7 +401,7 @@ WHERE h.actId = 1
  and h.skip = 0
  and v.volwId = :schaapId
 SQL
-        , [['schaapId', $schaapId, self::INT]]
+        , [[':schaapId', $schaapId, self::INT]]
             , [null, null]
         );
     }

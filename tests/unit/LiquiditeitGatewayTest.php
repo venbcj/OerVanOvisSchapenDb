@@ -35,7 +35,7 @@ class LiquiditeitGatewayTest extends GatewayCase {
     }
 
     public function test_insert() {
-        $rub_user = null;
+        $rub_user = 1;
         $datum = null;
         $result = $this->sut->insert($rub_user, $datum);
         $this->assertNotFalse($result);
@@ -74,8 +74,8 @@ class LiquiditeitGatewayTest extends GatewayCase {
     }
 
     public function test_cumulatief_maandbedragen() {
-        $jaar = null;
-        $maand = null;
+        $jaar = 1900;
+        $maand = 11;
         $result = $this->sut->cumulatief_maandbedragen(self::LIDID, $jaar, $maand);
         $this->assertNotFalse($result);
     }

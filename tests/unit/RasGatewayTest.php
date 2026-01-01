@@ -5,42 +5,36 @@ class RasGatewayTest extends GatewayCase {
     protected static $sutname = 'RasGateway';
 
     public function test_zoek_ras() {
-        $lidId = null;
-        $result = $this->sut->zoek_ras($lidId);
+        $result = $this->sut->zoek_ras(self::LIDID);
         $this->assertNotFalse($result);
     }
 
     public function test_rassen() {
-        $lidId = null;
-        $result = $this->sut->rassen($lidId);
+        $result = $this->sut->rassen(self::LIDID);
         $this->assertNotFalse($result);
     }
 
     public function test_rassenKV() {
-        $lidId = null;
-        $result = $this->sut->rassenKV($lidId);
+        $result = $this->sut->rassenKV(self::LIDID);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_ras_bij() {
         $rasId = null;
-        $lidId = null;
-        $result = $this->sut->zoek_ras_bij($rasId, $lidId);
+        $result = $this->sut->zoek_ras_bij($rasId, self::LIDID);
         $this->assertNotFalse($result);
     }
 
     public function test_countScan() {
-        $lidId = null;
         $scan = null;
-        $result = $this->sut->countScan($lidId, $scan);
+        $result = $this->sut->countScan(self::LIDID, $scan);
         $this->assertNotFalse($result);
     }
 
     public function test_updateScan() {
-        $lidId = null;
         $scan = null;
         $rasId = null;
-        $result = $this->sut->updateScan($lidId, $scan, $rasId);
+        $result = $this->sut->updateScan(self::LIDID, $scan, $rasId);
         $this->assertNotFalse($result);
     }
 

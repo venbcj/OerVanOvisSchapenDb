@@ -11,6 +11,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use PhpParser\Node\Name;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\Variable;
 
@@ -39,7 +40,7 @@ CODE_SAMPLE
      */
     public function getNodeTypes(): array
     {
-        return [\PhpParser\Node\Expr\FuncCall::class];
+        return [FuncCall::class];
     }
 
     /**
@@ -50,17 +51,21 @@ CODE_SAMPLE
         if ($this->getName($node->name) != 'mysqli_query') {
             return null;
         }
+        // build: $this->run_query($sql)
         $newnode = new MethodCall(
-            new PropertyFetch(
-                new Variable(
-                    'this'
-                ),
-                new Identifier('db')
+            new Variable(
+                'this'
             ),
-            new Identifier('query'),
+            new Identifier('run_query'),
             [$node->args[1]]
         );
 
         return $newnode;
+                // Build: $gateway->query($sql)
+        return new MethodCall(
+            new Expr\Variable('gateway'),
+            'query',
+            [$this->nodeFactory->createArg($sqlExpr)]
+        );
     }
 }

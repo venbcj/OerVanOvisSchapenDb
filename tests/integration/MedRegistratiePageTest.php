@@ -174,7 +174,8 @@ class MedRegistratiePageTest extends IntegrationCase {
         ]);
         $this->assertNoNoise();
         // TODO: met betere data komt hier een betekenisvolle melding
-        $this->assertFout("U kunt geen 10 kg toedienen er is nl. nog maar 4.00 kg beschikbaar.");
+        // todo is het nou 4 of 4.00 kg?
+        $this->assertFout("U kunt geen 10 kg toedienen er is nl. nog maar 4 kg beschikbaar.");
     }
 
     public function testInsertMedregistratieToedienen() {

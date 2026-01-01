@@ -6,7 +6,7 @@ class NuttigGatewayTest extends GatewayCase {
 
     public function test_nuttig_pil() {
         $hisId = null;
-        $inkId = null;
+        $inkId = 1;
         $stdat = null;
         $reduId = null;
         $aantal = null;

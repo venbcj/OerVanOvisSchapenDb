@@ -5,26 +5,22 @@ class PartijGatewayTest extends GatewayCase {
     protected static $sutname = 'PartijGateway';
 
     public function test_findLeverancier() {
-        $lidId = null;
-        $result = $this->sut->findLeverancier($lidId);
+        $result = $this->sut->findLeverancier(self::LIDID);
         $this->assertNotFalse($result);
     }
 
     public function test_findKlant() {
-        $lidId = null;
-        $result = $this->sut->findKlant($lidId);
+        $result = $this->sut->findKlant(self::LIDID);
         $this->assertNotFalse($result);
     }
 
     public function test_relatienummers() {
-        $lidId = null;
-        $result = $this->sut->relatienummers($lidId);
+        $result = $this->sut->relatienummers(self::LIDID);
         $this->assertNotFalse($result);
     }
 
     public function test_find_relatie() {
-        $lidId = null;
-        $result = $this->sut->find_relatie($lidId);
+        $result = $this->sut->find_relatie(self::LIDID);
         $this->assertNotFalse($result);
     }
 

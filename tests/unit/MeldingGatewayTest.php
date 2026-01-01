@@ -32,14 +32,19 @@ class MeldingGatewayTest extends GatewayCase {
 
     public function test_aantal_oke_uitv() {
         $fldReqId = null;
-        $nestHistorieDm = null;
+        // TODO uitzoeken wat dit voor subquery is, en die testen. Waarschijnlijk ook aan boord halen.
+        $nestHistorieDm = $this->nesthistorie_stub();
         $result = $this->sut->aantal_oke_uitv($fldReqId, $nestHistorieDm);
         $this->assertNotFalse($result);
     }
 
+    private function nesthistorie_stub() {
+        return "select 13 actId, 'teste' actie, 1 schaapId, '2010-01-01' datum";
+    }
+
     public function test_aantal_oke_afv() {
         $reqId = null;
-        $nestHistorieDm = null;
+        $nestHistorieDm = $this->nesthistorie_stub();
         $result = $this->sut->aantal_oke_afv($reqId, $nestHistorieDm);
         $this->assertNotFalse($result);
     }

@@ -5,9 +5,8 @@ class DeklijstGatewayTest extends GatewayCase {
     public static $sutname = 'DeklijstGateway';
 
     public function test_insert() {
-        $lidId = null;
         $datum = null;
-        $result = $this->sut->insert($lidId, $datum);
+        $result = $this->sut->insert(self::LIDID, $datum);
         $this->assertNotFalse($result);
     }
 
@@ -25,88 +24,76 @@ class DeklijstGatewayTest extends GatewayCase {
     }
 
     public function test_zoek_laatste_jaar() {
-        $lidId = null;
-        $result = $this->sut->zoek_laatste_jaar($lidId);
+        $result = $this->sut->zoek_laatste_jaar(self::LIDID);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_max_dekjaar() {
-        $lidId = null;
         $jaar = null;
-        $result = $this->sut->zoek_max_dekjaar($lidId, $jaar);
+        $result = $this->sut->zoek_max_dekjaar(self::LIDID, $jaar);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_afvoermaanden() {
-        $lidId = null;
         $jaar = null;
-        $result = $this->sut->zoek_afvoermaanden($lidId, $jaar);
+        $result = $this->sut->zoek_afvoermaanden(self::LIDID, $jaar);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_dekjaar() {
-        $lidId = null;
         $jaar = null;
-        $result = $this->sut->zoek_dekjaar($lidId, $jaar);
+        $result = $this->sut->zoek_dekjaar(self::LIDID, $jaar);
         $this->assertNotFalse($result);
     }
 
     public function test_kzlJaar() {
-        $lidId = null;
-        $result = $this->sut->kzlJaar($lidId);
+        $result = $this->sut->kzlJaar(self::LIDID);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_eerste_datum_week1() {
-        $lidId = null;
         $jaar = null;
-        $result = $this->sut->zoek_eerste_datum_week1($lidId, $jaar);
+        $result = $this->sut->zoek_eerste_datum_week1(self::LIDID, $jaar);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_dekmaanden() {
-        $lidId = null;
         $jaar = null;
-        $result = $this->sut->zoek_dekmaanden($lidId, $jaar);
+        $result = $this->sut->zoek_dekmaanden(self::LIDID, $jaar);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_dekweken() {
-        $lidId = null;
         $jaar = null;
         $maand = null;
-        $result = $this->sut->zoek_dekweken($lidId, $jaar, $maand);
+        $result = $this->sut->zoek_dekweken(self::LIDID, $jaar, $maand);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_prognose_weken() {
-        $lidId = null;
         $jaar = null;
         $maandag = null;
-        $result = $this->sut->zoek_prognose_weken($lidId, $jaar, $maandag);
+        $result = $this->sut->zoek_prognose_weken(self::LIDID, $jaar, $maandag);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_realisatie_weken() {
-        $lidId = null;
         $jaar = null;
         $maandag = null;
-        $result = $this->sut->zoek_realisatie_weken($lidId, $jaar, $maandag);
+        $result = $this->sut->zoek_realisatie_weken(self::LIDID, $jaar, $maandag);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_aantal_dekkingen_per_week() {
-        $lidId = null;
         $jaarweek = null;
-        $result = $this->sut->zoek_aantal_dekkingen_per_week($lidId, $jaarweek);
+        $result = $this->sut->zoek_aantal_dekkingen_per_week(self::LIDID, $jaarweek);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_maandtotalen_prognose() {
-        $lidId = null;
         $jaar = null;
         $maand = null;
-        $result = $this->sut->zoek_maandtotalen_prognose($lidId, $jaar, $maand);
+        $result = $this->sut->zoek_maandtotalen_prognose(self::LIDID, $jaar, $maand);
         $this->assertNotFalse($result);
     }
 

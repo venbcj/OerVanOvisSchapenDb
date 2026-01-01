@@ -29,13 +29,13 @@ class UbnGatewayTest extends GatewayCase {
     }
 
     public function test_insert() {
-        $ubn = null;
+        $ubn = 1;
         $result = $this->sut->insert(self::LIDID, $ubn);
         $this->assertNotFalse($result);
     }
 
     public function test_insert_with_plaats() {
-        $new_ubn = null;
+        $new_ubn = 1;
         $new_adres = null;
         $new_plaats = null;
         $result = $this->sut->insert_with_plaats(self::LIDID, $new_ubn, $new_adres, $new_plaats);

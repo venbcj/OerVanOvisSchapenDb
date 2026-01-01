@@ -11,7 +11,7 @@ class OpgaafGatewayTest extends GatewayCase {
     }
 
     public function test_insert() {
-        $rubr = null;
+        $rubr = 1;
         $day = null;
         $bedrag = null;
         $toel = null;

@@ -1,0 +1,132 @@
+array(
+    0: Stmt_Expression(
+        expr: Expr_Assign(
+            var: Expr_Variable(
+                name: insert_tblHistorie
+            )
+            expr: Expr_BinaryOp_Concat(
+                left: Expr_BinaryOp_Concat(
+                    left: Expr_BinaryOp_Concat(
+                        left: Expr_BinaryOp_Concat(
+                            left: Expr_BinaryOp_Concat(
+                                left: Expr_BinaryOp_Concat(
+                                    left: Scalar_String(
+                                        value: INSERT INTO tblHistorie SET stalId = '
+                                    )
+                                    right: Expr_FuncCall(
+                                        name: Name(
+                                            name: mysqli_real_escape_string
+                                        )
+                                        args: array(
+                                            0: Arg(
+                                                name: null
+                                                value: Expr_Variable(
+                                                    name: db
+                                                )
+                                                byRef: false
+                                                unpack: false
+                                            )
+                                            1: Arg(
+                                                name: null
+                                                value: Expr_Variable(
+                                                    name: STALID
+                                                )
+                                                byRef: false
+                                                unpack: false
+                                            )
+                                        )
+                                    )
+                                )
+                                right: Scalar_String(
+                                    value: ',
+                                        datum = '
+                                )
+                            )
+                            right: Expr_FuncCall(
+                                name: Name(
+                                    name: mysqli_real_escape_string
+                                )
+                                args: array(
+                                    0: Arg(
+                                        name: null
+                                        value: Expr_Variable(
+                                            name: db
+                                        )
+                                        byRef: false
+                                        unpack: false
+                                    )
+                                    1: Arg(
+                                        name: null
+                                        value: Expr_Variable(
+                                            name: DATUM
+                                        )
+                                        byRef: false
+                                        unpack: false
+                                    )
+                                )
+                            )
+                        )
+                        right: Scalar_String(
+                            value: ',
+                            actId = '
+                        )
+                    )
+                    right: Expr_FuncCall(
+                        name: Name(
+                            name: mysqli_real_escape_string
+                        )
+                        args: array(
+                            0: Arg(
+                                name: null
+                                value: Expr_Variable(
+                                    name: db
+                                )
+                                byRef: false
+                                unpack: false
+                            )
+                            1: Arg(
+                                name: null
+                                value: Expr_Variable(
+                                    name: ACTID
+                                )
+                                byRef: false
+                                unpack: false
+                            )
+                        )
+                    )
+                )
+                right: Scalar_String(
+                    value: ' 
+                )
+            )
+        )
+    )
+    1: Stmt_Expression(
+        expr: Expr_FuncCall(
+            name: Name(
+                name: mysqli_query
+            )
+            args: array(
+                0: Arg(
+                    name: null
+                    value: Expr_Variable(
+                        name: db
+                    )
+                    byRef: false
+                    unpack: false
+                )
+                1: Arg(
+                    name: null
+                    value: Expr_Variable(
+                        name: insert_tblHistorie
+                    )
+                    byRef: false
+                    unpack: false
+                )
+            )
+        )
+        comments: array(
+            0: /*echo $insert_tblHistorie.'<br>';*/
+        )
+    )
+)

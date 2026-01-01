@@ -1,0 +1,4 @@
+#!/bin/bash
+[ -z "$1" ] && echo "$0 gatewayname (zonder Gateway)" && exit
+tmux split-window -h -l80 "cover-include none; cover-include gateways; cover on; ./watcher tests/unit/$1GatewayTest.php"
+vi -o tests/unit/$1GatewayTest.php gateways/$1Gateway.php
