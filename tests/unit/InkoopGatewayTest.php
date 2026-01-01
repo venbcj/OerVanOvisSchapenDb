@@ -80,16 +80,14 @@ class InkoopGatewayTest extends GatewayCase {
     }
 
     public function test_zoek_voorraad() {
-        $lidId = null;
         $artId = null;
-        $result = $this->sut->zoek_voorraad($lidId, $artId);
+        $result = $this->sut->zoek_voorraad(self::LIDID, $artId);
         $this->assertNotFalse($result);
     }
 
     public function test_porties() {
-        $lidId = null;
         $artId = null;
-        $result = $this->sut->porties($lidId, $artId);
+        $result = $this->sut->porties(self::LIDID, $artId);
         $this->assertNotFalse($result);
     }
 

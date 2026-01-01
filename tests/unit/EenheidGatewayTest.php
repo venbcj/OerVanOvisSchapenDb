@@ -10,15 +10,13 @@ class EenheidGatewayTest extends GatewayCase {
     }
 
     public function test_all() {
-        $lidId = null;
-        $result = $this->sut->all($lidId);
+        $result = $this->sut->all(self::LIDID);
         $this->assertNotFalse($result);
     }
 
     public function test_get() {
-        $lidId = null;
         $id = null;
-        $result = $this->sut->get($lidId, $id);
+        $result = $this->sut->get(self::LIDID, $id);
         $this->assertNotFalse($result);
     }
 

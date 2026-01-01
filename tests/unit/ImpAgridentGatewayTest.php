@@ -37,8 +37,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getInsAanvoerWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsAanvoerWhere($lidId);
+        $result = $this->sut->getInsAanvoerWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -49,8 +48,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getInsAdoptieWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsAdoptieWhere($lidId);
+        $result = $this->sut->getInsAdoptieWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -61,8 +59,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getInsAfvoerWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsAfvoerWhere($lidId);
+        $result = $this->sut->getInsAfvoerWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -73,8 +70,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getInsDekkenWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsDekkenWhere($lidId);
+        $result = $this->sut->getInsDekkenWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -85,8 +81,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getInsDrachtWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsDrachtWhere($lidId);
+        $result = $this->sut->getInsDrachtWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -97,8 +92,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getInsGeboortesWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsGeboortesWhere($lidId);
+        $result = $this->sut->getInsGeboortesWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -109,8 +103,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getInsGrWijzigingUbnWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsGrWijzigingUbnWhere($lidId);
+        $result = $this->sut->getInsGrWijzigingUbnWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -121,8 +114,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getInsHalsnummersWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsHalsnummersWhere($lidId);
+        $result = $this->sut->getInsHalsnummersWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -133,8 +125,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getInsLambarWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsLambarWhere($lidId);
+        $result = $this->sut->getInsLambarWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -151,14 +142,12 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getInsMedicijnAgridentWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsMedicijnAgridentWhere($lidId);
+        $result = $this->sut->getInsMedicijnAgridentWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
     public function test_getInsMedicijnBiocontrolWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsMedicijnBiocontrolWhere($lidId);
+        $result = $this->sut->getInsMedicijnBiocontrolWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -169,8 +158,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getInsOmnummerenWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsOmnummerenWhere($lidId);
+        $result = $this->sut->getInsOmnummerenWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -181,8 +169,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getInsOverplaatsAgridentWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsOverplaatsAgridentWhere($lidId);
+        $result = $this->sut->getInsOverplaatsAgridentWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -193,8 +180,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getInsOverplaatsBiocontrolWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsOverplaatsBiocontrolWhere($lidId);
+        $result = $this->sut->getInsOverplaatsBiocontrolWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -205,8 +191,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getInsSpenenAgridentWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsSpenenAgridentWhere($lidId);
+        $result = $this->sut->getInsSpenenAgridentWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -217,8 +202,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getInsSpenenBiocontrolWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsSpenenBiocontrolWhere($lidId);
+        $result = $this->sut->getInsSpenenBiocontrolWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -229,14 +213,12 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getInsStallijstscanWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsStallijstscanWhere($lidId);
+        $result = $this->sut->getInsStallijstscanWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
     public function test_aantal_niet_op_stallijst() {
-        $lidId = null;
-        $result = $this->sut->aantal_niet_op_stallijst($lidId);
+        $result = $this->sut->aantal_niet_op_stallijst(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -247,8 +229,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getInsStallijstscanNieuweklantWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsStallijstscanNieuweklantWhere($lidId);
+        $result = $this->sut->getInsStallijstscanNieuweklantWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -259,8 +240,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getInsTvUitscharenWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsTvUitscharenWhere($lidId);
+        $result = $this->sut->getInsTvUitscharenWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -271,8 +251,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getInsUitscharenWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsUitscharenWhere($lidId);
+        $result = $this->sut->getInsUitscharenWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -283,8 +262,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getInsUitvalAgridentWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsUitvalAgridentWhere($lidId);
+        $result = $this->sut->getInsUitvalAgridentWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -295,8 +273,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getInsUitvalBiocontrolWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsUitvalBiocontrolWhere($lidId);
+        $result = $this->sut->getInsUitvalBiocontrolWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -307,8 +284,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getInsVoerregistratieWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsVoerregistratieWhere($lidId);
+        $result = $this->sut->getInsVoerregistratieWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -319,8 +295,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getInsWegenWhere() {
-        $lidId = null;
-        $result = $this->sut->getInsWegenWhere($lidId);
+        $result = $this->sut->getInsWegenWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -331,8 +306,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getLoslopersPlaatsenWhere() {
-        $lidId = null;
-        $result = $this->sut->getLoslopersPlaatsenWhere($lidId);
+        $result = $this->sut->getLoslopersPlaatsenWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -343,8 +317,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_getLoslopersVerkopenWhere() {
-        $lidId = null;
-        $result = $this->sut->getLoslopersVerkopenWhere($lidId);
+        $result = $this->sut->getLoslopersVerkopenWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -369,8 +342,7 @@ class ImpAgridentGatewayTest extends GatewayCase {
     }
 
     public function test_zoek_lambar_record() {
-        $lidId = null;
-        $result = $this->sut->zoek_lambar_record($lidId);
+        $result = $this->sut->zoek_lambar_record(self::LIDID);
         $this->assertNotFalse($result);
     }
 
