@@ -4,6 +4,8 @@ class PartijGatewayTest extends GatewayCase {
 
     protected static $sutname = 'PartijGateway';
 
+    private const PARTIJNAAM_IN_FIXTURE = 'Stempelmans';
+
     public function test_findLeverancier() {
         $result = $this->sut->findLeverancier(self::LIDID);
         $this->assertNotFalse($result);
@@ -30,24 +32,14 @@ class PartijGatewayTest extends GatewayCase {
         $this->assertNotFalse($result);
     }
 
-    public function test_has_partij() {
-        $lidId = 1;
-        $partij = 'Stempelmans';
-        $result = $this->sut->has_partij($lidId,$partij);
-        $this->assertNotFalse($result);
-    }
-
     public function test_vindt_bestaande_partij() {
-        $lidId = 1;
-        $partij = 'Stempelmans';
-        $result = $this->sut->has_partij($lidId,$partij);
+        $result = $this->sut->has_partij(self::LIDID, self::PARTIJNAAM_IN_FIXTURE);
         $this->assertTrue($result);
     }
 
     public function test_vindt_geen_bestaande_partij() {
-        $lidId = 1;
         $partij = 'bestaatniet';
-        $result = $this->sut->has_partij($lidId,$partij);
+        $result = $this->sut->has_partij(self::LIDID, $partij);
         $this->assertFalse($result);
     }
 
