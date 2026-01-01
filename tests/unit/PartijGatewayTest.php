@@ -32,9 +32,23 @@ class PartijGatewayTest extends GatewayCase {
 
     public function test_has_partij() {
         $lidId = 1;
-        $partij = null;
+        $partij = 'Stempelmans';
         $result = $this->sut->has_partij($lidId,$partij);
         $this->assertNotFalse($result);
+    }
+
+    public function test_vindt_bestaande_partij() {
+        $lidId = 1;
+        $partij = 'Stempelmans';
+        $result = $this->sut->has_partij($lidId,$partij);
+        $this->assertTrue($result);
+    }
+
+    public function test_vindt_geen_bestaande_partij() {
+        $lidId = 1;
+        $partij = 'bestaatniet';
+        $result = $this->sut->has_partij($lidId,$partij);
+        $this->assertFalse($result);
     }
 
 }
