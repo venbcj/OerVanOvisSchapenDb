@@ -717,4 +717,14 @@ SQL
         );
     }
 
+    public function zoek_startdatum_klant($lidId) {
+        $sql = <<<SQL
+        SELECT date_format(dmcreate, '%Y-%m-%d') date
+        FROM tblLeden
+        WHERE lidId = :lidId
+SQL;
+        $args = [[':lidId', $lidId]];
+        return $this->first_field($sql, $args);
+    }
+
 }

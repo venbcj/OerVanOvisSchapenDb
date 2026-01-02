@@ -69,7 +69,7 @@ CODE_SAMPLE
         if (! $this->looksLikeQuery($sql)) {
             return null;
         }
-        $gateway = 'TODO';
+        $gateway = $this->guess_gateway_name($sql);
         return [
             $this->composeDeclaration($gateway),
             $this->composeCall($assign, $gateway, $func_args),

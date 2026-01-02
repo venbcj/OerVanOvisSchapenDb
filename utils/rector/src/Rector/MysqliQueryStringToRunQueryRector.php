@@ -72,7 +72,7 @@ CODE_SAMPLE
             return null;
         }
         [$sql, $args, $func_args] = $this->splitArgsFromString($query);
-        $gateway = 'TODO';
+        $gateway = $this->guess_gateway_name($sql);
         return [
             # $this->dit_werkte($sql, $args),
             $this->composeDeclaration($gateway),

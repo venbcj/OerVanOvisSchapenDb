@@ -30,10 +30,10 @@ return static function (RectorConfig $rectorConfig): void {
         Utils\Rector\Rector\MysqliQueryVariableToRunQueryRector::class,
         Utils\Rector\Rector\MysqliQueryStringToRunQueryRector::class,
         # vraagt nog meer uitdenken # Utils\Rector\Rector\ExtractGatewayMethodRector::class,
-#          Utils\Rector\Rector\MysqliFetchRowFunctionCallToDbMethodCallRector::class,
-#          Utils\Rector\Rector\MysqliFetchArrayFunctionCallToDbMethodCallRector::class,
-#          Utils\Rector\Rector\MysqliFetchAssocFunctionCallToDbMethodCallRector::class,
-#          Utils\Rector\Rector\MysqliNumRowsFunctionCallToDbPropertyRector::class,
+          Utils\Rector\Rector\MysqliFetchRowFunctionCallToDbMethodCallRector::class,
+          Utils\Rector\Rector\MysqliFetchArrayFunctionCallToDbMethodCallRector::class,
+          Utils\Rector\Rector\MysqliFetchAssocFunctionCallToDbMethodCallRector::class,
+          Utils\Rector\Rector\MysqliNumRowsFunctionCallToDbPropertyRector::class,
           Utils\Rector\Rector\RemoveOrDieConstructRector::class,
     ]);
 

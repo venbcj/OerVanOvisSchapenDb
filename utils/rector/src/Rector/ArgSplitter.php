@@ -36,8 +36,8 @@ trait ArgSplitter {
             if ($part instanceof String_ || $part instanceof InterpolatedStringPart) {
                 $sql .= $part->value;
             } else {
-                $variable = $this->unwrapEscapeCall($part);
-                $param = ':'.$variable->name;
+                $variable = $this->unwrapFunctionCall($part);
+                $param = ':' . $variable->name;
                 $sql .= $param;
                 $func_args[$variable->name] = $variable;
                 $arg = [$param, $variable];
@@ -47,12 +47,17 @@ trait ArgSplitter {
                 $args[$variable->name] = $arg;
             }
         }
+        $sql = $this->unquotePlaceholders($sql);
         return [$sql, array_values($args), array_values($func_args)];
     }
 
+    private function unquotePlaceholders($sql) {
+        return preg_replace("#'(:[a-zA-Z_][_a-zA-Z0-9]*)'#", '\1', $sql);
+    }
+
     private function looksLikeString($query) {
-        return 
-            $query instanceof Concat 
+        return
+            $query instanceof Concat
             || $query instanceof InterpolatedString
             # hier wordt het wel heel traag van. Eindeloze lus?
             # || $query instanceof String_
@@ -70,6 +75,19 @@ trait ArgSplitter {
     // *dm -> date
     private function canInferTypeFromName(Node $variable): bool {
         return false;
+    }
+
+    // dit 'tbl'-prefix maakt het wel HEEL SPECIFIEK
+    private function guess_gateway_name($sql) {
+        if (preg_match('#(FROM|INTO|UPDATE) tbl([a-zA-Z0-9]*)#', $sql, $matches)) {
+            $guess = strtolower($matches[2]);
+            if ($guess == 'leden') {
+                // keuzes, keuzes
+                $guess = 'lid';
+            }
+            return $guess;
+        }
+        return 'TODO';
     }
 
     // TODO: zoiets als self::INT
@@ -97,26 +115,48 @@ trait ArgSplitter {
         return $res;
     }
 
-    private function unwrapEscapeCall(Node $expr): Node {
-        if (
-            $expr instanceof Node\Expr\FuncCall
-            && $expr->name instanceof Node\Name
-            && $expr->name->toString() === 'mysqli_real_escape_string'
-            && isset($expr->args[1])
-        ) {
+    private function unwrapFunctionCall(Node $expr): Node {
+        if ($this->isEscape($expr)) {
             return $expr->args[1]->value; // de variabele die ge-escaped werd
+        }
+        if ($this->isDbNullInput($expr)) {
+            return $expr->args[0]->value;
         }
         return $expr;
     }
 
+    private function isEscape($expr) {
+        return
+            $expr instanceof Node\Expr\FuncCall
+            && $expr->name instanceof Node\Name
+            && $expr->name->toString() === 'mysqli_real_escape_string'
+            && isset($expr->args[1]);
+    }
+
+    private function isDbNullInput($expr) {
+        return
+            $expr instanceof Node\Expr\FuncCall
+            && $expr->name instanceof Node\Name
+            && $expr->name->toString() === 'db_null_input'
+            && isset($expr->args[0]);
+    }
+
     private function composeDeclaration($gateway) {
         return new Expression(new Assign(
-            new Variable(strtolower($gateway).'_gateway'),
-            new New_(new Name(ucfirst(strtolower($gateway)).'Gateway'))
+            new Variable($this->name_var($gateway)),
+            new New_(new Name($this->name_class($gateway)))
         ));
     }
 
-    private function composeCall(Node $assign, String $gateway, $func_args) {
+    private function name_var($gateway) {
+        return strtolower($gateway) . '_gateway';
+    }
+
+    private function name_class($gateway) {
+        return ucfirst(strtolower($gateway)) . 'Gateway';
+    }
+
+    private function composeCall(Node $assign, string $gateway, $func_args) {
         $call_args = [];
         foreach ($func_args as $arg) {
             $call_args[] = new Arg($arg);
@@ -124,7 +164,7 @@ trait ArgSplitter {
         return new Expression(new Assign(
             $assign->var,
             new MethodCall(
-                new Variable(strtolower($gateway).'_gateway'),
+                new Variable($this->name_var($gateway)),
                 $assign->var->name,
                 $call_args
             ),

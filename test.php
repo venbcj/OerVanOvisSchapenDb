@@ -2,13 +2,13 @@
 
 // plain string
 // @KOMNIVOOR
-$var = "SELECT FROM table";
+$var = "SELECT FROM tblTable";
 mysqli_query($db, $var);
 // interpolated string
-$delete = "DELETE FROM bla values($ram)";
+$delete = "DELETE FROM tblBla values($ram)";
 mysqli_query($db, $delete);
 // concatenated string
-$insert = "INSERT INTO bla values(".mysqli_real_escape_string($db, $berg).")";
+$insert = "INSERT INTO tblBla values(".mysqli_real_escape_string($db, $berg).")";
 mysqli_query($db, $insert);
 // inline concatenated string
 // @KOMNIVOOR
