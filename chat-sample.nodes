@@ -127,48 +127,138 @@ array(
         )
     )
     2: Stmt_Expression(
-        expr: Expr_FuncCall(
-            name: Name(
-                name: mysqli_query
+        expr: Expr_Assign(
+            var: Expr_Variable(
+                name: ledenlijst
+            )
+            expr: Expr_FuncCall(
+                name: Name(
+                    name: mysqli_query
+                )
+                args: array(
+                    0: Arg(
+                        name: null
+                        value: Expr_Variable(
+                            name: db
+                        )
+                        byRef: false
+                        unpack: false
+                    )
+                    1: Arg(
+                        name: null
+                        value: Expr_BinaryOp_Concat(
+                            left: Expr_BinaryOp_Concat(
+                                left: Scalar_String(
+                                    value: SELECT * where lidId = 
+                                )
+                                right: Expr_FuncCall(
+                                    name: Name(
+                                        name: mysqli_real_escape_string
+                                    )
+                                    args: array(
+                                        0: Arg(
+                                            name: null
+                                            value: Expr_Variable(
+                                                name: db
+                                            )
+                                            byRef: false
+                                            unpack: false
+                                        )
+                                        1: Arg(
+                                            name: null
+                                            value: Expr_Variable(
+                                                name: lidId
+                                            )
+                                            byRef: false
+                                            unpack: false
+                                        )
+                                    )
+                                )
+                            )
+                            right: Scalar_String(
+                                value:  AND true
+                            )
+                        )
+                        byRef: false
+                        unpack: false
+                    )
+                )
+            )
+        )
+    )
+    3: Stmt_Expression(
+        expr: Expr_MethodCall(
+            var: Expr_New(
+                class: Name(
+                    name: sample
+                )
+                args: array(
+                )
+            )
+            name: Identifier(
+                name: target
             )
             args: array(
                 0: Arg(
                     name: null
-                    value: Expr_Variable(
-                        name: db
+                    value: Scalar_Int(
+                        value: 4
                     )
                     byRef: false
                     unpack: false
                 )
-                1: Arg(
-                    name: null
-                    value: Expr_BinaryOp_Concat(
-                        left: Expr_BinaryOp_Concat(
-                            left: Scalar_String(
-                                value: SELECT * where lidId = 
-                            )
-                            right: Expr_FuncCall(
-                                name: Name(
-                                    name: mysqli_real_escape_string
-                                )
-                                args: array(
-                                    0: Arg(
-                                        name: null
-                                        value: Expr_Variable(
-                                            name: lidId
-                                        )
-                                        byRef: false
-                                        unpack: false
-                                    )
-                                )
-                            )
+            )
+        )
+    )
+    4: Stmt_Class(
+        attrGroups: array(
+        )
+        flags: 0
+        name: Identifier(
+            name: sample
+        )
+        extends: null
+        implements: array(
+        )
+        stmts: array(
+            0: Stmt_ClassMethod(
+                attrGroups: array(
+                )
+                flags: PUBLIC (1)
+                byRef: false
+                name: Identifier(
+                    name: target
+                )
+                params: array(
+                    0: Param(
+                        attrGroups: array(
                         )
-                        right: Scalar_String(
-                            value:  AND true
+                        flags: 0
+                        type: null
+                        byRef: false
+                        variadic: false
+                        var: Expr_Variable(
+                            name: arg1
+                        )
+                        default: null
+                        hooks: array(
                         )
                     )
-                    byRef: false
-                    unpack: false
+                )
+                returnType: null
+                stmts: array(
+                    0: Stmt_Expression(
+                        expr: Expr_MethodCall(
+                            var: Expr_Variable(
+                                name: this
+                            )
+                            name: Identifier(
+                                name: run_query
+                            )
+                            args: array(
+                            )
+                        )
+                    )
                 )
             )
         )

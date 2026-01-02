@@ -2,34 +2,65 @@
 
 namespace Utils\Rector\Rector;
 
+use PhpParser\Node\Expr\New_;
+use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Stmt\Return_;
+use Rector\NodeTypeResolver\Node\AttributeKey;
+use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Stmt\Expression;
+use PhpParser\Modifiers;
+use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Expr\BinaryOp\Concat;
 use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Scalar\InterpolatedString;
+use PhpParser\Node\InterpolatedStringPart;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
 
 trait ArgSplitter {
-    
+
     private function splitArgsFromString($expr) {
-        $parts = $this->flattenConcat($expr);
+        $parts = [$expr];
+        if ($expr instanceof Concat) {
+            $parts = $this->flattenConcat($expr);
+        }
+        $parts = $this->flattenInterpolations($parts);
         $sql = '';
         $args = [];
+        $func_args = [];
         $i = 1;
         foreach ($parts as $part) {
-            if ($part instanceof String_) {
+            if ($part instanceof String_ || $part instanceof InterpolatedStringPart) {
                 $sql .= $part->value;
             } else {
-                $param = ':param' . $i++;
-                $sql .= $param;
                 $variable = $this->unwrapEscapeCall($part);
+                $param = ':'.$variable->name;
+                $sql .= $param;
+                $func_args[$variable->name] = $variable;
                 $arg = [$param, $variable];
                 if ($this->canInferTypeFromName($variable)) {
                     $arg[] = $this->inferTypeFrom($variable);
                 }
-                $args[] = $arg;
+                $args[$variable->name] = $arg;
             }
         }
-        return [$sql, $args];
+        return [$sql, array_values($args), array_values($func_args)];
+    }
+
+    private function looksLikeString($query) {
+        return 
+            $query instanceof Concat 
+            || $query instanceof InterpolatedString
+            # hier wordt het wel heel traag van. Eindeloze lus?
+            # || $query instanceof String_
+            ;
+    }
+
+    private function looksLikeQuery($sql) {
+        return preg_match('#^\s*(SELECT|INSERT INTO|DELETE FROM|UPDATE)#', $sql);
     }
 
     // TODO: heuristiekjes
@@ -52,6 +83,20 @@ trait ArgSplitter {
         );
     }
 
+    private function flattenInterpolations(array $parts) {
+        $res = [];
+        foreach ($parts as $part) {
+            if ($part instanceof InterpolatedString) {
+                foreach ($part->parts as $inner_part) {
+                    $res[] = $inner_part;
+                }
+            } else {
+                $res[] = $part;
+            }
+        }
+        return $res;
+    }
+
     private function unwrapEscapeCall(Node $expr): Node {
         if (
             $expr instanceof Node\Expr\FuncCall
@@ -62,6 +107,61 @@ trait ArgSplitter {
             return $expr->args[1]->value; // de variabele die ge-escaped werd
         }
         return $expr;
+    }
+
+    private function composeDeclaration($gateway) {
+        return new Expression(new Assign(
+            new Variable(strtolower($gateway).'_gateway'),
+            new New_(new Name(ucfirst(strtolower($gateway)).'Gateway'))
+        ));
+    }
+
+    private function composeCall(Node $assign, String $gateway, $func_args) {
+        $call_args = [];
+        foreach ($func_args as $arg) {
+            $call_args[] = new Arg($arg);
+        }
+        return new Expression(new Assign(
+            $assign->var,
+            new MethodCall(
+                new Variable(strtolower($gateway).'_gateway'),
+                $assign->var->name,
+                $call_args
+            ),
+        ));
+    }
+
+    private function composeMethod($assign, $func_args, $sql, $args) {
+        return new ClassMethod(
+            $assign->var->name,
+            [
+                'flags' => Modifiers::PUBLIC,
+                'params' => $func_args,
+                'stmts' => [
+                    new Expression(new Assign(
+                        new Variable('sql'),
+                        new String_($sql, [
+                            AttributeKey::KIND => String_::KIND_HEREDOC,
+                            AttributeKey::DOC_LABEL => 'SQL',
+                        ])
+                    )),
+                    new Expression(new Assign(
+                        new Variable('args'),
+                        $this->nodeFactory->createArray($args)
+                    )),
+                    new Return_(
+                        new MethodCall(
+                            new Variable('this'),
+                            'run_query',
+                            [
+                                new Arg(new Variable('sql')),
+                                new Arg(new Variable('args'))
+                            ]
+                        )
+                    )
+                ]
+            ]
+        );
     }
 
 }

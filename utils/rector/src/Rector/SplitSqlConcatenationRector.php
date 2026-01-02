@@ -4,19 +4,22 @@ declare(strict_types=1);
 
 namespace Utils\Rector\Rector;
 
+use PhpParser\Node\Scalar\InterpolatedString;
+use PhpParser\BuilderHelpers;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Assign;
-use PhpParser\Node\Expr\FuncCall;
-use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Expr\BinaryOp\Concat;
-use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\Name;
-use PhpParser\Node\Arg;
-use PhpParser\BuilderHelpers;
-use Rector\Rector\AbstractRector;
-use Rector\RectorDefinition\RectorDefinition;
-use Rector\NodeTypeResolver\Node\AttributeKey;
 use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Expression;
+use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\RectorDefinition\RectorDefinition;
+use Rector\Rector\AbstractRector;
 
 final class SplitSqlConcatenationRector extends AbstractRector {
 
@@ -41,6 +44,7 @@ INSERT INTO tblHistorie SET stalId = ':param1',
             actId = ':param3' 
 SQL;
 $arguments = [[':param1', $STALID], [':param2', $DATUM], [':param3', $ACTID]];
+$this->run_query($sql, $arguments);
     }
 CODE_SAMPLE
         ),
@@ -56,22 +60,20 @@ CODE_SAMPLE
             return null;
         }
         $assign = $node->expr;
-        if (! $assign->expr instanceof Concat) {
+        $query = $assign->expr;
+        if (! $this->looksLikeString($query)) {
             return null;
         }
-        [$sql, $args] = $this->splitArgsFromString($assign->expr);
+        $var = $assign->var;
+        [$sql, $args, $func_args] = $this->splitArgsFromString($query);
+        if (! $this->looksLikeQuery($sql)) {
+            return null;
+        }
+        $gateway = 'TODO';
         return [
-            new Expression(new Assign(
-                $assign->var,
-                new String_($sql, [
-                    AttributeKey::KIND => String_::KIND_HEREDOC,
-                    AttributeKey::DOC_LABEL => 'SQL',
-                ])
-            )),
-            new Expression(new Assign(
-                new Variable('arguments'),
-                $this->nodeFactory->createArray($args)
-            )),
+            $this->composeDeclaration($gateway),
+            $this->composeCall($assign, $gateway, $func_args),
+            $this->composeMethod($assign, $func_args, $sql, $args),
         ];
     }
 

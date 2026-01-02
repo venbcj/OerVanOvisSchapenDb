@@ -1,0 +1,17 @@
+#!/bin/bash
+[ -z "$1" -o -z "$2" ] && echo "$0 pagename (met .php) test-path" && exit
+[ ! -f "$1" ] && echo "pagename $1 bestaat niet" && exit
+if [ ! -f "$2" ]; then
+    CLASS=$(basename $2)
+    CLASS=${CLASS%.php}
+    cat <<TXT > $2
+<?php
+
+class $CLASS extends IntegrationCase {
+
+}
+
+TXT
+fi
+tmux split-window -h -l80 "cover-include none; cover-include $1; cover on; ./watcher $2"
+vi -o $2 $1

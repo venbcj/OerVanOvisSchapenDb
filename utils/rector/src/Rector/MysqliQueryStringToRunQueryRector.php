@@ -4,17 +4,24 @@ declare(strict_types=1);
 
 namespace Utils\Rector\Rector;
 
-use PhpParser\Node\Expr\FuncCall;
-use PhpParser\Node\Scalar\String_;
-use PhpParser\Node\Expr\BinaryOp\Concat;
-use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Scalar\InterpolatedString;
+use PhpParser\Modifiers;
 use PhpParser\Node;
-use PhpParser\Node\Stmt\Expression;
-use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\BinaryOp\Concat;
+use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\New_;
+use PhpParser\Node\Stmt\Return_;
+use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Name;
+use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Expression;
+use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use Rector\NodeTypeResolver\Node\AttributeKey;
 
 final class MysqliQueryStringToRunQueryRector extends AbstractRector {
 
@@ -37,36 +44,41 @@ CODE_SAMPLE
     }
 
     public function getNodeTypes(): array {
-        return [FuncCall::class];
+        return [Expression::class];
     }
 
     public function refactor(Node $node) {
-        if (! $node instanceof FuncCall) {
+        if (! $node instanceof Expression) {
             return null;
         }
-        if (! $this->isName($node->name, 'mysqli_query')) {
+        if (! $node->expr instanceof Assign) {
             return null;
         }
-        if (count($node->args) < 2) {
+        $assign = $node->expr;
+        $var = $assign->var;
+        $func_call = $assign->expr;
+        if (! $func_call instanceof FuncCall) {
             return null;
         }
+        if (! $this->isName($func_call->name, 'mysqli_query')) {
+            return null;
+        }
+        if (count($func_call->args) < 2) {
+            return null;
+        }
+        $query = $func_call->args[1]->value;
         // deze regel behandelt het geval met de query in een string-met-onderbrekingen
-        if (! $node->args[1]->value instanceof Concat) {
+        if (! $this->looksLikeString($query)) {
             return null;
         }
-        # throw new \Exception(get_class($node->args[1]->value));
-        [$sql, $args] = $this->splitArgsFromString($node->args[1]->value);
-        return new MethodCall(
-            new Variable('this'),
-            'run_query',
-            [
-                new Arg(new String_($sql, [
-                    AttributeKey::KIND => String_::KIND_HEREDOC,
-                    AttributeKey::DOC_LABEL => 'SQL',
-                ])),
-                new Arg($this->nodeFactory->createArray($args))
-            ]
-        );
+        [$sql, $args, $func_args] = $this->splitArgsFromString($query);
+        $gateway = 'TODO';
+        return [
+            # $this->dit_werkte($sql, $args),
+            $this->composeDeclaration($gateway),
+            $this->composeCall($assign, $gateway, $func_args),
+            $this->composeMethod($assign, $func_args, $sql, $args),
+        ];
     }
 
 }
