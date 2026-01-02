@@ -150,4 +150,92 @@ class DekkingenTest extends IntegrationCase {
 
         // $this->assertFout('De dekdatum mag niet voor de laatste dekking met dit vaderdier liggen. Dit geldt voor tenminste 1 moederdier uit dit verblijf.');
 
+    public function testPostSave_delete() {
+        $this->runfixture('schaap-4');
+        $this->runfixture('moeders-in-verblijf');
+        $this->runfixture('dekkingen');
+        $this->post('/Dekkingen.php', [
+            'ingelogd_' => 1,
+            'knpSave_' => 1,
+            'chkDel_1' => 1,
+            'kzlDrachtUpd_1' => 1,
+        ]);
+        $this->assertNoNoise();
+        $this->assertNotFout();
+    }
+
+    public function testPostSave_euh() {
+        $this->runfixture('schaap-4');
+        $this->runfixture('moeders-in-verblijf');
+        $this->runfixture('dekkingen');
+        $this->post('/Dekkingen.php', [
+            'ingelogd_' => 1,
+            'knpSave_' => 1,
+            'kzlRam_1' => 1, // dekt een stukje "ram wijzigen"
+            'kzlDrachtUpd_1' => 1,
+        ]);
+        $this->assertNoNoise();
+        $this->assertNotFout();
+    }
+
+    /* bereik het stuk "dracht wijzigen"
+     * *-hoe maak je fldDracht=ja?
+     * | +- zet post[kzlDrachtUpd] op ja
+     * *-hoe maak je drachtig=ja?
+     *   +-zet drachtdm_db of schaapId
+     *     +-hoe zet je drachtdm_db?
+     *     | +-heb een entry in tblDracht join tblHistorie using(hisId) met d.volwId=recid
+     *     +-hoe zet je schaapId? <=== TODO case hiervoor?
+     *       +-heb een entry in tblVolwas join tblSchaap using (volwId) met volwId=recid
+     * hoe vul je dmDek?
+     * +-heb een entry in tblVolwas join tblHistorie using(hisId) met volwId=recId
+     */
+    public function testPostSave_bestaande_dracht() {
+        $this->runfixture('save_dracht');
+        $this->post('/Dekkingen.php', [
+            'ingelogd_' => 1,
+            'knpSave_' => 1,
+            'kzlDrachtUpd_1' => 'ja',
+            'txtDrachtdm_1' => '2020-01-01',
+            'txtGrootte_1' => 1,
+        ]);
+        $this->assertNoNoise();
+        $this->assertNotFout();
+    }
+
+    public function testPostSave_nieuwe_dracht() {
+        $this->runSQL("DELETE FROM tblDracht"); // zou toch door transaction->rollback al leeg moeten zijn? Huh.
+        $this->runSQL("truncate tblVolwas"); // zou toch door transaction->rollback al leeg moeten zijn? Huh.
+        $this->runSQL("delete from tblStal where stalId=9"); // zou toch door transaction->rollback al leeg moeten zijn? Huh.
+        $this->runSQL("INSERT INTO tblVolwas(hisId, volwId, mdrId) VALUES(2, 1, 4)");
+        $this->runSQL("INSERT INTO tblStal(stalId, schaapId, ubnId) values(9, 4, 1)");
+        $this->post('/Dekkingen.php', [
+            'ingelogd_' => 1,
+            'knpSave_' => 1,
+            'kzlDrachtUpd_1' => 'ja',
+            'txtDrachtdm_1' => '2020-01-01',
+            'txtGrootte_1' => 1,
+        ]);
+        $this->assertNoNoise();
+        $this->assertNotFout();
+    }
+
+    public function testPostSave_verwijder_dracht() {
+        $this->runfixture('save_dracht');
+        # $this->runSQL("DELETE FROM tblDracht"); // zou toch door transaction->rollback al leeg moeten zijn? Huh.
+        # $this->runSQL("truncate tblVolwas"); // zou toch door transaction->rollback al leeg moeten zijn? Huh.
+        # $this->runSQL("delete from tblStal where stalId=9"); // zou toch door transaction->rollback al leeg moeten zijn? Huh.
+        # $this->runSQL("INSERT INTO tblVolwas(hisId, volwId, mdrId) VALUES(2, 1, 4)");
+        # $this->runSQL("INSERT INTO tblStal(stalId, schaapId, ubnId) values(9, 4, 1)");
+        $this->post('/Dekkingen.php', [
+            'ingelogd_' => 1,
+            'knpSave_' => 1,
+            'kzlDrachtUpd_1' => 'nee',
+            'txtDrachtdm_1' => '2020-01-01',
+            'txtGrootte_1' => 1,
+        ]);
+        $this->assertNoNoise();
+        $this->assertNotFout();
+    }
+
 }

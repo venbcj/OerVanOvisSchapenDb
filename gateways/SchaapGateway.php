@@ -5007,4 +5007,17 @@ SQL
         );
     }
 
+    public function zoek_laatste_worpdatum($ooiId) {
+        $sql = <<<SQL
+        SELECT max(h.datum) dmworp
+        FROM tblSchaap s
+         join tblVolwas v on (s.volwId = v.volwId)
+         join tblStal st on (s.schaapId = st.schaapId)
+         join tblHistorie h on (st.stalId = h.stalId)
+        WHERE h.actId = 1 and v.mdrId = :ooiId and h.skip = 0
+SQL;
+        $args = [[':ooiId', $ooiId, self::INT]];
+        return $this->first_field($sql, $args);
+    }
+
 }

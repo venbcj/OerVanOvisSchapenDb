@@ -37,4 +37,33 @@ SQL
         );
     }
 
+    public function zoek_drachtdatum($recId) {
+        $sql = <<<SQL
+        SELECT h.hisId, h.datum
+        FROM tblDracht d
+         join tblHistorie h on (d.hisId = h.hisId)
+        WHERE h.skip = 0 and d.volwId = :recId
+SQL;
+        $args = [[':recId', $recId, self::INT]];
+        return $this->first_row($sql, $args);
+    }
+
+    public function insert_tblDracht($recId, $hisId) {
+        $sql = <<<SQL
+    INSERT INTO tblDracht SET volwId = :recId, hisId = :hisId
+SQL;
+        $args = [[':recId', $recId, self::INT], [':hisId', $hisId, self::INT]];
+        $this->run_query($sql, $args);
+    }
+
+    public function zoek_hisId($recId) {
+        $sql = <<<SQL
+    SELECT hisId
+    FROM tblDracht
+    WHERE volwId = :recId
+SQL;
+        $args = [[':recId', $recId, self::INT]];
+        return $this->first_field($sql, $args);
+    }
+
 }

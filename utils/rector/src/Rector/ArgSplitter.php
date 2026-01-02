@@ -197,7 +197,7 @@ trait ArgSplitter {
                 'stmts' => [
                     new Expression(new Assign(
                         new Variable('sql'),
-                        new String_($sql, [
+                        new String_(trim($sql), [
                             AttributeKey::KIND => String_::KIND_HEREDOC,
                             AttributeKey::DOC_LABEL => 'SQL',
                         ])

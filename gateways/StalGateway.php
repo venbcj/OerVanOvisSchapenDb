@@ -629,4 +629,15 @@ SQL;
         return $this->first_field($sql, $args);
     }
 
+    public function zoek_stalId($mdrId, $lidId) {
+        $sql = <<<SQL
+        SELECT max(stalId) stalId
+        FROM tblStal
+        JOIN tblUbn u USING(ubnId)
+        WHERE schaapId = :mdrId and u.lidId = :lidId
+SQL;
+        $args = [[':mdrId', $mdrId, self::INT], [':lidId', $lidId, self::INT]];
+        return $this->first_field($sql, $args);
+    }
+
 }

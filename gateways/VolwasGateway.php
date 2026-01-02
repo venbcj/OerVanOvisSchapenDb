@@ -703,4 +703,90 @@ SQL
         );
     }
 
+    public function zoek_dekdatum($recId) {
+        $sql = <<<SQL
+            SELECT h.datum
+            FROM tblVolwas v
+             join tblHistorie h on (v.hisId = h.hisId)
+            WHERE h.skip = 0 and volwId = :recId
+SQL;
+        $args = [[':recId', $recId, self::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function zoek_ooi($recId) {
+        $sql = <<<SQL
+    SELECT mdrId
+    FROM tblVolwas
+    WHERE volwId = :recId
+SQL;
+        $args = [[':recId', $recId, self::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function zoek_worp($recId) {
+        $sql = <<<SQL
+    SELECT s.schaapId
+    FROM tblVolwas v
+     join tblSchaap s on (s.volwId = v.volwId)
+    WHERE v.volwId = :recId
+SQL;
+        $args = [[':recId', $recId, self::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function zoek_worpgrootte_database($recId) {
+        $sql = <<<SQL
+    SELECT vdrId, grootte
+    FROM tblVolwas
+    WHERE volwId = :recId
+SQL;
+        $args = [[':recId', $recId, self::INT]];
+        return $this->first_row($sql, $args);
+    }
+
+    public function zoek_hisId($recId) {
+        $sql = <<<SQL
+    SELECT hisId
+    FROM tblVolwas
+    WHERE volwId = :recId
+SQL;
+        $args = [[':recId', $recId, self::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function updateRam($updRam, $recId) {
+        $sql = <<<SQL
+    UPDATE tblVolwas SET vdrId = :updRam WHERE volwId = :recId
+SQL;
+        $args = [[':updRam', $updRam], [':recId', $recId, self::INT]];
+        $this->run_query($sql, $args);
+    }
+
+    public function updateDracht($updGrootte, $recId) {
+        $sql = <<<SQL
+            UPDATE tblVolwas SET grootte = :updGrootte WHERE volwId = :recId
+SQL;
+        $args = [[':updGrootte', $updGrootte], [':recId', $recId, self::INT]];
+        $this->run_query($sql, $args);
+    }
+
+    public function zoek_mdrId($recId) {
+        $sql = <<<SQL
+        SELECT mdrId
+        FROM tblVolwas
+        WHERE volwId = :recId
+SQL;
+        $args = [[':recId', $recId, self::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function updateDracht2($recId) {
+        $sql = <<<SQL
+    UPDATE tblVolwas SET grootte = NULL WHERE volwId = :recId
+SQL;
+        $args = [[':recId', $recId, self::INT]];
+        $this->run_query($sql, $args);
+    }
+
 }

@@ -26,8 +26,7 @@
         <directory>ongebruikt</directory>
         <directory>utils</directory>
       </exclude>
-      <file>./Voorraadcorrectie.php</file>
-      <file>./save_voorraadcorrectie.php</file>
+      <file>./save_dekkingen.php</file>
     </whitelist>
   </filter>
   <logging>

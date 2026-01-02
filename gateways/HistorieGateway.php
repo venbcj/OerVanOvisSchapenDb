@@ -2010,4 +2010,37 @@ SQL;
         return $this->run_query($sql, $args);
     }
 
+    public function delete_dracht($hisId) {
+        $sql = <<<SQL
+    UPDATE tblHistorie SET skip = 1 WHERE hisId = :hisId
+SQL;
+        $args = [[':hisId', $hisId, self::INT]];
+        $this->run_query($sql, $args);
+    }
+
+    public function updateDracht($fldDmDracht, $hisId_dr_db) {
+        $sql = <<<SQL
+                UPDATE tblHistorie SET datum = :fldDmDracht WHERE hisId = :hisId_dr_db
+SQL;
+        $args = [[':fldDmDracht', $fldDmDracht], [':hisId_dr_db', $hisId_dr_db]];
+        $this->run_query($sql, $args);
+    }
+
+    public function insert_tblHistorie($stalId, $fldDmDracht) {
+        $sql = <<<SQL
+        INSERT INTO tblHistorie SET stalId = :stalId, datum = :fldDmDracht, actId = 19
+SQL;
+        $args = [[':stalId', $stalId, self::INT], [':fldDmDracht', $fldDmDracht]];
+        $this->run_query($sql, $args);
+        return $this->db->insert_id;
+    }
+
+    public function update_tblHistorie($hisId) {
+        $sql = <<<SQL
+    UPDATE tblHistorie SET skip = 1 WHERE hisId = :hisId
+SQL;
+        $args = [[':hisId', $hisId, self::INT]];
+        $this->run_query($sql, $args);
+    }
+
 }

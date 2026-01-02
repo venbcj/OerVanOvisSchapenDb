@@ -52,4 +52,20 @@ class VoerRapportageTest extends IntegrationCase {
         $this->assertOptieCount('kzlMdjr_', $fixed_options + 2);
     }
 
+    public function testSave() {
+        $this->runfixture('voervoorraad');
+        $this->runfixture('jaarmaanden-1');
+        $this->post('/Voer_rapportage.php', [
+            'ingelogd_' => 1,
+            'knpSave_' => 1,
+            'kzlVoer_' => 1,
+            'kzlDoel_' => 1,
+            'txtDatum_1' => '2020-01-01',
+            'txtKilo_1' => 2, // anders dan de 1 in fixture
+            'chbDelVoer_1' => 0,
+            'chbDelPeri_1' => 0,
+        ]);
+        $this->assertNoNoise();
+    }
+
 }
