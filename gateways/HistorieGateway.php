@@ -1854,4 +1854,160 @@ SQL
         );
     }
 
+    public function kzlJaar($lidId, $jaarstart) {
+        $sql = <<<SQL
+        SELECT date_format(h.datum,'%Y') jaar 
+        FROM tblHistorie h
+         join tblStal st on (st.stalId = h.stalId)
+        WHERE st.lidId = ':lidId' and date_format(datum,'%Y') >= ':jaarstart' and h.actId = 4 and h.skip = 0
+        GROUP BY date_format(datum,'%Y')
+        ORDER BY date_format(datum,'%Y') desc 
+SQL;
+        $args = [[':lidId', $lidId], [':jaarstart', $jaarstart]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function waardes_per_maand($lidId, $kzlJaar) {
+        $sql = <<<SQL
+            SELECT jrmnd jaarmnd, jaar, maand, speenat, afvat, doodat, Perc_naopleg, round(daggroei,2) gemgroei, round(voer,2) voer
+            FROM (
+                SELECT aant.jrmnd, aant.maand, aant.jaar, aant.speenat, aant.afvat, 
+                 naopleg.doodat, round((naopleg.doodat/aant.speenat*100),2) perc_naopleg, 
+                 groei.gemgroeidag daggroei,
+                 kgvoer.nutat_mnd voer
+                FROM (
+                    SELECT date_format(h.datum,'%Y%m') jrmnd, Month(h.datum) maand, year(h.datum) jaar, count(h.hisId) speenat, count(haf.hisId) afvat
+                    FROM tblHistorie h
+                     join tblStal st on (st.stalId = h.stalId)
+                     join tblSchaap s on (s.schaapId = st.schaapId)
+                     left join (
+                        SELECT h.stalId, h.hisId
+                        FROM tblHistorie h
+                        WHERE h.actId = 12 and h.skip = 0
+                     ) haf on (st.stalId = haf.stalId)
+                    WHERE st.lidId = ':lidId' and h.actId = 4 and h.skip = 0 and year(h.datum) = ':kzlJaar'
+                    GROUP BY Month(h.datum), year(h.datum)
+                 ) aant
+                left join (
+                    SELECT date_format(h.datum,'%Y%m') jrmnd, Month(h.datum) maand, Year(h.datum) jaar, count(distinct s.schaapId) doodat
+                    FROM tblSchaap s
+                     join tblStal st on (s.schaapId = st.schaapId)
+                     join tblHistorie h on (st.stalId = h.stalId)
+                     join tblHistorie ho on (st.stalId = ho.stalId and ho.actId = 14)
+                     join tblHistorie hs on (st.stalId = hs.stalId and hs.actId = 4)
+                     left join tblHistorie ha on (st.stalId = ha.stalId and ha.actId = 3)
+                    WHERE st.lidId = ':lidId' and h.actId = 4 and h.skip = 0 and isnull(ha.actId) and year(h.datum) = ':kzlJaar'
+                    GROUP BY month(h.datum), Year(h.datum)    
+                 ) naopleg on (aant.jrmnd = naopleg.jrmnd)
+                left join (
+                    SELECT date_format(h.datum,'%Y%m') jrmnd, sum((haf.kg -  h.kg)*1000/ DATEDIFF(haf.datum, h.datum)) groeidag, count(distinct st.schaapId), 
+                    sum((haf.kg -  h.kg)*1000/ DATEDIFF(haf.datum, h.datum)) / count(st.schaapId) gemgroeidag
+                    FROM tblSchaap s 
+                     join tblStal st on (st.schaapId = s.schaapId)
+                     join tblHistorie h on (st.stalId = h.stalId and h.actId = 4)
+                     join (
+                        SELECT h.stalId, h.kg, h.datum
+                        FROM tblHistorie h
+                        WHERE h.actId = 12 and h.skip = 0
+                     ) haf on (st.stalId = haf.stalId)
+                    WHERE st.lidId = ':lidId' and year(h.datum) = ':kzlJaar'
+                    GROUP BY Month(h.datum), Year(h.datum)
+                 ) groei on (aant.jrmnd = groei.jrmnd)
+                 left join (
+                    SELECT gesp_jrmnd, sum(nutat_peri_mnd) nutat_mnd
+                    FROM (
+                        SELECT date_format(spn.datum,'%Y%m') gesp_jrmnd, vantot.periId, dgperi.dgn_periId,
+                         sum(datediff(tot.datum,van.datum)) dgn,
+                         sum(datediff(tot.datum,van.datum))/dgperi.dgn_periId*100 perc_dgn,
+                         v.nutat,
+                         sum(datediff(tot.datum,van.datum))/dgperi.dgn_periId*v.nutat nutat_peri_mnd
+                        FROM (
+                            SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist, b.periId, h1.actId
+                            FROM tblBezet b
+                             join tblHistorie h1 on (b.hisId = h1.hisId)
+                             join tblActie a1 on (a1.actId = h1.actId)
+                             join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+                             join tblActie a2 on (a2.actId = h2.actId)
+                             join tblStal st on (h1.stalId = st.stalId)
+                             join tblPeriode p on (b.periId = p.periId)
+                            WHERE st.lidId = ':lidId' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+                             and p.doelId = 2 and year(h1.datum) = ':kzlJaar'
+                            GROUP BY b.bezId, st.schaapId, h1.hisId, h1.actId
+                        ) vantot
+                         join (
+                            SELECT vantot.periId, sum(datediff(tot.datum,van.datum)) dgn_periId
+                            FROM (
+                                SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist, b.periId, h1.actId
+                                FROM tblBezet b
+                                 join tblHistorie h1 on (b.hisId = h1.hisId)
+                                 join tblActie a1 on (a1.actId = h1.actId)
+                                 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+                                 join tblActie a2 on (a2.actId = h2.actId)
+                                 join tblStal st on (h1.stalId = st.stalId)
+                                 join tblPeriode p on (b.periId = p.periId)
+                                WHERE st.lidId = ':lidId' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+                                 and p.doelId = 2
+                                GROUP BY b.bezId, st.schaapId, h1.hisId, h1.actId
+                            ) vantot
+                             join tblHistorie van on (van.hisId = vantot.hisv)
+                             join tblHistorie tot on (tot.hisId = vantot.hist)
+                            GROUP BY vantot.periId
+                         ) dgperi on (vantot.periId = dgperi.periId)
+                         join tblHistorie van on (van.hisId = vantot.hisv)
+                         join tblHistorie tot on (tot.hisId = vantot.hist)
+                         join tblVoeding v on (v.periId = vantot.periId)
+                         join tblStal st on (st.schaapId = vantot.schaapId)
+                         join (
+                            SELECT h.stalId, h.datum
+                            FROM tblHistorie h
+                            WHERE h.actId = 4 and h.skip = 0
+                         ) spn on (spn.stalId = st.stalId)
+                        GROUP BY date_format(spn.datum,'%Y%m'), vantot.periId, dgperi.dgn_periId, v.nutat
+                    ) vr_mnd
+                    GROUP BY gesp_jrmnd
+                 ) kgvoer on (aant.jrmnd = kgvoer.gesp_jrmnd)
+            ) mv
+            ORDER BY jaarmnd desc
+SQL;
+        $args = [[':lidId', $lidId], [':kzlJaar', $kzlJaar]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function zoek_aantal_maanden($lidId, $kzlJaar) {
+        $sql = <<<SQL
+            SELECT count(distinct(month(h.datum))) mndat
+            FROM tblHistorie h
+             join tblStal st on (st.stalId = h.stalId)
+             join tblSchaap s on (s.schaapId = st.schaapId)
+            WHERE st.lidId = ':lidId' and h.actId = 4 and h.skip = 0 and year(h.datum) = ':kzlJaar'
+SQL;
+        $args = [[':lidId', $lidId], [':kzlJaar', $kzlJaar]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function zoek_overleden_schapen($Karwerk, $lidId, $kzlJaar, $keuze_mnd) {
+        $sql = <<<SQL
+            SELECT right(s.levensnummer, :Karwerk) werknr, date_format(h.datum,'%d-%m-%Y') speendm, date_format(dood.datum,'%d-%m-%Y') uitvdm, r.reden, meld.meldnr
+            FROM tblSchaap s
+             join tblStal st on (st.schaapId = s.schaapId)
+             join tblHistorie h on (st.stalId = h.stalId)
+             left join tblReden r on (r.redId = s.redId)
+             join(
+                 SELECT st.schaapId, datum
+                 FROM tblStal st
+                  join tblHistorie h on (st.stalId = h.stalId)
+                 WHERE h.actId = 14 and h.skip = 0 and st.lidId = ':lidId'
+             ) dood on (dood.schaapId = s.schaapId)
+             left join(
+                 SELECT rs.levensnummer, rs.meldnr
+                 FROM impRespons rs
+                 WHERE rs.meldnr is not null and rs.melding = 'DOO'
+             ) meld on (meld.levensnummer = s.levensnummer)
+            WHERE s.levensnummer is not null and h.actId = 4 and h.skip = 0 and year(h.datum) = ':kzlJaar' and month(h.datum) = ':keuze_mnd' and st.lidId = ':lidId'
+            GROUP BY s.schaapId, st.stalId
+SQL;
+        $args = [[':Karwerk', $Karwerk], [':lidId', $lidId], [':kzlJaar', $kzlJaar], [':keuze_mnd', $keuze_mnd]];
+        return $this->run_query($sql, $args);
+    }
+
 }

@@ -414,4 +414,124 @@ SQL
         return $this->db->insert_id;
     }
 
+    public function kg_per_maand($lidId, $kzlJaar, $mndnr) {
+        $sql = <<<SQL
+SELECT dagen_per_speenjaarmaand.jaarmaand, round(sum(dagen_per_speenjaarmaand.dgn*Kg_per_dag_per_periode.kgDag),2) kgMnd
+FROM (
+   SELECT p.periId, nutat/sum(dgn) kgDag
+   FROM (
+       SELECT p.periId, p.hokId, date_format(p.dmcreate,'%Y-%m-01') pStart, min(p.dmafsluit) pEind
+       FROM tblPeriode p
+        join tblHok ho on (p.hokId = ho.hokId)
+        join tblLeden l on (ho.lidId = l.lidId)
+       WHERE doelId = 2 and l.lidId = ':lidId'
+       GROUP BY p.periId, p.hokId, date_format(p.dmcreate,'%Y-%m-01')
+       union
+       SELECT p2.periId, p2.hokId, max(p1.dmafsluit) pStart, p2.dmafsluit pEind
+       FROM tblPeriode p1
+        join tblPeriode p2 on (p1.hokId = p2.hokId and p1.doelId = p2.doelId and p1.dmafsluit < p2.dmafsluit)
+        join tblHok ho on (p1.hokId = ho.hokId)
+       WHERE p1.doelId = 2 and ho.lidId = ':lidId'
+       GROUP BY p2.periId, p2.hokId, p2.dmafsluit
+    ) p
+    left join (
+        SELECT p.periId, sum(nutat) nutat
+        FROM tblVoeding v
+         join tblPeriode p on (v.periId = p.periId)
+         join tblHok ho on (ho.hokId = p.hokId)
+        WHERE lidId = ':lidId'
+        GROUP BY p.periId
+    ) v on (p.periId = v.periId)
+    join (
+       SELECT b.hokId, st.schaapId, hv.datum schpIn, ht.datum schpUit, datediff(coalesce(ht.datum,CURDATE()),hv.datum) dgn
+       FROM tblBezet b
+        join tblHistorie hv on (b.hisId = hv.hisId)
+        join tblStal st on (hv.stalId = st.stalId)
+        left join (
+           SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
+           FROM tblBezet b
+            join tblHistorie h1 on (b.hisId = h1.hisId)
+            join tblActie a1 on (a1.actId = h1.actId)
+            join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+            join tblActie a2 on (a2.actId = h2.actId)
+            join tblStal st on (h1.stalId = st.stalId)
+           WHERE a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and st.lidId = ':lidId'
+           GROUP BY b.bezId, st.schaapId, h1.hisId
+        ) uit on (uit.hisv = b.hisId)
+        left join tblHistorie ht on (uit.hist = ht.hisId)
+       WHERE hv.skip = 0 and st.lidId = ':lidId'
+    ) s on (p.hokId = s.hokId)
+    join (
+       SELECT st.schaapId, h.datum
+       FROM tblStal st
+        join tblHistorie h on (st.stalId = h.stalId)
+       WHERE h.actId = 4 and h.skip = 0 and st.lidId = ':lidId'
+    ) spn on (spn.schaapId = s.schaapId)
+     left join (
+       SELECT st.schaapId, h.datum
+       FROM tblStal st
+        join tblHistorie h on (st.stalId = h.stalId)
+       WHERE h.actId = 3 and h.skip = 0 and st.lidId = ':lidId'
+    ) prn on (prn.schaapId = s.schaapId)
+   WHERE schpIn < pEind and schpUit > pStart and schpIn >= spn.datum and (schpIn < prn.datum or isnull(prn.schaapId))
+   GROUP BY p.periId, v.nutat
+) Kg_per_dag_per_periode
+join 
+(
+   SELECT p.periId, date_format(spn.datum,'%Y%m') jaarmaand, sum(s.dgn) dgn
+   FROM (
+       SELECT p.periId, p.hokId, date_format(p.dmcreate,'%Y-%m-01') pStart, min(p.dmafsluit) pEind
+       FROM tblPeriode p
+        join tblHok ho on (p.hokId = ho.hokId)
+        join tblLeden l on (ho.lidId = l.lidId)
+       WHERE doelId = 2 and l.lidId = ':lidId'
+       GROUP BY p.periId, p.hokId
+       union
+       SELECT p2.periId, p2.hokId, max(p1.dmafsluit) pStart, p2.dmafsluit pEind
+       FROM tblPeriode p1
+        join tblPeriode p2 on (p1.hokId = p2.hokId and p1.doelId = p2.doelId and p1.dmafsluit < p2.dmafsluit)
+        join tblHok ho on (p1.hokId = ho.hokId)
+       WHERE p1.doelId = 2 and ho.lidId = ':lidId'
+       GROUP BY p2.periId, p2.hokId, p2.dmafsluit
+    ) p
+    join (
+       SELECT b.hokId, st.schaapId, hv.datum schpIn, ht.datum schpUit, datediff(coalesce(ht.datum,CURDATE()),hv.datum) dgn
+       FROM tblBezet b
+        join tblHistorie hv on (b.hisId = hv.hisId)
+        join tblStal st on (hv.stalId = st.stalId)
+        left join (
+           SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
+           FROM tblBezet b
+            join tblHistorie h1 on (b.hisId = h1.hisId)
+            join tblActie a1 on (a1.actId = h1.actId)
+            join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+            join tblActie a2 on (a2.actId = h2.actId)
+            join tblStal st on (h1.stalId = st.stalId)
+           WHERE a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and st.lidId = ':lidId'
+           GROUP BY b.bezId, st.schaapId, h1.hisId
+        ) uit on (uit.hisv = b.hisId)
+        left join tblHistorie ht on (uit.hist = ht.hisId)
+       WHERE hv.skip = 0 and st.lidId = ':lidId'
+    ) s on (p.hokId = s.hokId)
+    join (
+       SELECT st.schaapId, h.datum
+       FROM tblStal st
+        join tblHistorie h on (st.stalId = h.stalId)
+       WHERE h.actId = 4 and h.skip = 0 and st.lidId = ':lidId' and date_format(h.datum,'%Y') = ':kzlJaar' and Month(h.datum) = ':mndnr'
+    ) spn on (spn.schaapId = s.schaapId)
+    left join (
+       SELECT st.schaapId, h.datum
+       FROM tblStal st
+        join tblHistorie h on (st.stalId = h.stalId)
+       WHERE h.actId = 3 and h.skip = 0 and st.lidId = ':lidId'
+    ) prn on (prn.schaapId = s.schaapId)
+   WHERE schpIn < pEind and schpUit > pStart and schpIn >= spn.datum and (schpIn < prn.datum or isnull(prn.schaapId))
+   GROUP BY p.periId, date_format(spn.datum,'%Y%m')
+) dagen_per_speenjaarmaand on (Kg_per_dag_per_periode.periId = dagen_per_speenjaarmaand.periId)
+GROUP BY dagen_per_speenjaarmaand.jaarmaand
+SQL;
+        $args = [[':lidId', $lidId], [':kzlJaar', $kzlJaar], [':mndnr', $mndnr]];
+        return $this->run_query($sql, $args);
+    }
+
 }

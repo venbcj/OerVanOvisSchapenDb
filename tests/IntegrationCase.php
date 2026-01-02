@@ -64,11 +64,11 @@ class IntegrationCase extends UnitCase {
     protected function visit($path) {
         extract($GLOBALS);
         ob_start();
-        try {
+    #    try {
             include getcwd().$path;
-        } catch (Exception $e) {
-            echo $e->getMessage();
-        }
+    #    } catch (Exception $e) {
+    #        echo $e->getMessage();
+    #    }
         $this->output = ob_get_clean();
     }
 

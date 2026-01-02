@@ -620,13 +620,13 @@ SQL
     }
 
     public function zoek_startjaar_user($lidId) {
-        return $this->first_field(<<<SQL
-SELECT date_format(min(dmcreatie),'%Y') jaar 
-FROM tblStal
-WHERE lidId = :lidId
-SQL
-        , [[':lidId', $lidId, self::INT]]
-        );
+        $sql = <<<SQL
+        SELECT date_format(min(dmcreatie),'%Y') jaar 
+        FROM tblStal
+        WHERE lidId = ':lidId'
+SQL;
+        $args = [[':lidId', $lidId]];
+        return $this->first_field($sql, $args);
     }
 
 }
