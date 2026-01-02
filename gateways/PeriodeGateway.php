@@ -424,14 +424,14 @@ FROM (
        FROM tblPeriode p
         join tblHok ho on (p.hokId = ho.hokId)
         join tblLeden l on (ho.lidId = l.lidId)
-       WHERE doelId = 2 and l.lidId = ':lidId'
+       WHERE doelId = 2 and l.lidId = :lidId
        GROUP BY p.periId, p.hokId, date_format(p.dmcreate,'%Y-%m-01')
        union
        SELECT p2.periId, p2.hokId, max(p1.dmafsluit) pStart, p2.dmafsluit pEind
        FROM tblPeriode p1
         join tblPeriode p2 on (p1.hokId = p2.hokId and p1.doelId = p2.doelId and p1.dmafsluit < p2.dmafsluit)
         join tblHok ho on (p1.hokId = ho.hokId)
-       WHERE p1.doelId = 2 and ho.lidId = ':lidId'
+       WHERE p1.doelId = 2 and ho.lidId = :lidId
        GROUP BY p2.periId, p2.hokId, p2.dmafsluit
     ) p
     left join (
@@ -439,7 +439,7 @@ FROM (
         FROM tblVoeding v
          join tblPeriode p on (v.periId = p.periId)
          join tblHok ho on (ho.hokId = p.hokId)
-        WHERE lidId = ':lidId'
+        WHERE lidId = :lidId
         GROUP BY p.periId
     ) v on (p.periId = v.periId)
     join (
@@ -455,23 +455,23 @@ FROM (
             join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
             join tblActie a2 on (a2.actId = h2.actId)
             join tblStal st on (h1.stalId = st.stalId)
-           WHERE a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and st.lidId = ':lidId'
+           WHERE a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and st.lidId = :lidId
            GROUP BY b.bezId, st.schaapId, h1.hisId
         ) uit on (uit.hisv = b.hisId)
         left join tblHistorie ht on (uit.hist = ht.hisId)
-       WHERE hv.skip = 0 and st.lidId = ':lidId'
+       WHERE hv.skip = 0 and st.lidId = :lidId
     ) s on (p.hokId = s.hokId)
     join (
        SELECT st.schaapId, h.datum
        FROM tblStal st
         join tblHistorie h on (st.stalId = h.stalId)
-       WHERE h.actId = 4 and h.skip = 0 and st.lidId = ':lidId'
+       WHERE h.actId = 4 and h.skip = 0 and st.lidId = :lidId
     ) spn on (spn.schaapId = s.schaapId)
      left join (
        SELECT st.schaapId, h.datum
        FROM tblStal st
         join tblHistorie h on (st.stalId = h.stalId)
-       WHERE h.actId = 3 and h.skip = 0 and st.lidId = ':lidId'
+       WHERE h.actId = 3 and h.skip = 0 and st.lidId = :lidId
     ) prn on (prn.schaapId = s.schaapId)
    WHERE schpIn < pEind and schpUit > pStart and schpIn >= spn.datum and (schpIn < prn.datum or isnull(prn.schaapId))
    GROUP BY p.periId, v.nutat
@@ -484,14 +484,14 @@ join
        FROM tblPeriode p
         join tblHok ho on (p.hokId = ho.hokId)
         join tblLeden l on (ho.lidId = l.lidId)
-       WHERE doelId = 2 and l.lidId = ':lidId'
+       WHERE doelId = 2 and l.lidId = :lidId
        GROUP BY p.periId, p.hokId
        union
        SELECT p2.periId, p2.hokId, max(p1.dmafsluit) pStart, p2.dmafsluit pEind
        FROM tblPeriode p1
         join tblPeriode p2 on (p1.hokId = p2.hokId and p1.doelId = p2.doelId and p1.dmafsluit < p2.dmafsluit)
         join tblHok ho on (p1.hokId = ho.hokId)
-       WHERE p1.doelId = 2 and ho.lidId = ':lidId'
+       WHERE p1.doelId = 2 and ho.lidId = :lidId
        GROUP BY p2.periId, p2.hokId, p2.dmafsluit
     ) p
     join (
@@ -507,23 +507,23 @@ join
             join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
             join tblActie a2 on (a2.actId = h2.actId)
             join tblStal st on (h1.stalId = st.stalId)
-           WHERE a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and st.lidId = ':lidId'
+           WHERE a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and st.lidId = :lidId
            GROUP BY b.bezId, st.schaapId, h1.hisId
         ) uit on (uit.hisv = b.hisId)
         left join tblHistorie ht on (uit.hist = ht.hisId)
-       WHERE hv.skip = 0 and st.lidId = ':lidId'
+       WHERE hv.skip = 0 and st.lidId = :lidId
     ) s on (p.hokId = s.hokId)
     join (
        SELECT st.schaapId, h.datum
        FROM tblStal st
         join tblHistorie h on (st.stalId = h.stalId)
-       WHERE h.actId = 4 and h.skip = 0 and st.lidId = ':lidId' and date_format(h.datum,'%Y') = ':kzlJaar' and Month(h.datum) = ':mndnr'
+       WHERE h.actId = 4 and h.skip = 0 and st.lidId = :lidId and date_format(h.datum,'%Y') = :kzlJaar and Month(h.datum) = :mndnr
     ) spn on (spn.schaapId = s.schaapId)
     left join (
        SELECT st.schaapId, h.datum
        FROM tblStal st
         join tblHistorie h on (st.stalId = h.stalId)
-       WHERE h.actId = 3 and h.skip = 0 and st.lidId = ':lidId'
+       WHERE h.actId = 3 and h.skip = 0 and st.lidId = :lidId
     ) prn on (prn.schaapId = s.schaapId)
    WHERE schpIn < pEind and schpUit > pStart and schpIn >= spn.datum and (schpIn < prn.datum or isnull(prn.schaapId))
    GROUP BY p.periId, date_format(spn.datum,'%Y%m')

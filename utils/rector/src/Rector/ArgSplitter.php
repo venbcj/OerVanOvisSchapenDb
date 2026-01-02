@@ -3,6 +3,8 @@
 namespace Utils\Rector\Rector;
 
 use PhpParser\Node\Expr\New_;
+use PhpParser\Node\Expr\ClassConstFetch;
+use PhpParser\Node\Identifier;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Stmt\Return_;
@@ -74,7 +76,26 @@ trait ArgSplitter {
     // dm* -> date
     // *dm -> date
     private function canInferTypeFromName(Node $variable): bool {
-        return false;
+        $name = $variable->name;
+        return in_array(substr($name, -2), ['Id', 'dm', 'at'])
+            || substr($name, 0, 2) == 'dm';
+    }
+
+    // TODO: zoiets als self::INT
+    private function inferTypeFrom(Node $variable): Node {
+        $name = $variable->name;
+        switch (substr($name, -2)) {
+        case 'Id':
+        case 'at':
+            return new ClassConstFetch(new Name('self'), new Identifier('INT'));
+        case 'dm':
+            return new ClassConstFetch(new Name('self'), new Identifier('DATE'));
+        default:
+            if (substr($name, 0, 2) == 'dm') {
+                return new ClassConstFetch(new Name('self'), new Identifier('DATE'));
+            }
+            throw new \Exception("Programmer error. Promise 'can infer', then infer. Name in violation: $name");
+        }
     }
 
     // dit 'tbl'-prefix maakt het wel HEEL SPECIFIEK
@@ -88,10 +109,6 @@ trait ArgSplitter {
             return $guess;
         }
         return 'TODO';
-    }
-
-    // TODO: zoiets als self::INT
-    private function inferTypeFrom(Node $variable): Node {
     }
 
     private function flattenConcat(Concat $concat): array {

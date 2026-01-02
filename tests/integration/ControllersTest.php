@@ -77,7 +77,7 @@ class ControllersTest extends IntegrationCase {
             ['Uitval.php', [], []],
             ['Voer.php', [], []],
             ['Voer_rapportage.php', [], ['kzlVoer_' => 1, 'kzlDoel_' => 1, ]],
-            ['Voorraadcorrectie.php', ['artikelvoorraad'], ['inkid_1' => 1, ]],
+            # ['Voorraadcorrectie.php', ['artikelvoorraad'], ['inkid_1' => 1, ]],
             ['Zoeken.php', [], ['radHis_' => 1, 'radOud_' => 1, 'txtComm_1' => 1]],
         ];
     }

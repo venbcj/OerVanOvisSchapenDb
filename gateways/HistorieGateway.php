@@ -1859,7 +1859,7 @@ SQL
         SELECT date_format(h.datum,'%Y') jaar 
         FROM tblHistorie h
          join tblStal st on (st.stalId = h.stalId)
-        WHERE st.lidId = ':lidId' and date_format(datum,'%Y') >= ':jaarstart' and h.actId = 4 and h.skip = 0
+        WHERE st.lidId = :lidId and date_format(datum,'%Y') >= :jaarstart and h.actId = 4 and h.skip = 0
         GROUP BY date_format(datum,'%Y')
         ORDER BY date_format(datum,'%Y') desc 
 SQL;
@@ -1885,7 +1885,7 @@ SQL;
                         FROM tblHistorie h
                         WHERE h.actId = 12 and h.skip = 0
                      ) haf on (st.stalId = haf.stalId)
-                    WHERE st.lidId = ':lidId' and h.actId = 4 and h.skip = 0 and year(h.datum) = ':kzlJaar'
+                    WHERE st.lidId = :lidId and h.actId = 4 and h.skip = 0 and year(h.datum) = :kzlJaar
                     GROUP BY Month(h.datum), year(h.datum)
                  ) aant
                 left join (
@@ -1896,7 +1896,7 @@ SQL;
                      join tblHistorie ho on (st.stalId = ho.stalId and ho.actId = 14)
                      join tblHistorie hs on (st.stalId = hs.stalId and hs.actId = 4)
                      left join tblHistorie ha on (st.stalId = ha.stalId and ha.actId = 3)
-                    WHERE st.lidId = ':lidId' and h.actId = 4 and h.skip = 0 and isnull(ha.actId) and year(h.datum) = ':kzlJaar'
+                    WHERE st.lidId = :lidId and h.actId = 4 and h.skip = 0 and isnull(ha.actId) and year(h.datum) = :kzlJaar
                     GROUP BY month(h.datum), Year(h.datum)    
                  ) naopleg on (aant.jrmnd = naopleg.jrmnd)
                 left join (
@@ -1910,7 +1910,7 @@ SQL;
                         FROM tblHistorie h
                         WHERE h.actId = 12 and h.skip = 0
                      ) haf on (st.stalId = haf.stalId)
-                    WHERE st.lidId = ':lidId' and year(h.datum) = ':kzlJaar'
+                    WHERE st.lidId = :lidId and year(h.datum) = :kzlJaar
                     GROUP BY Month(h.datum), Year(h.datum)
                  ) groei on (aant.jrmnd = groei.jrmnd)
                  left join (
@@ -1930,8 +1930,8 @@ SQL;
                              join tblActie a2 on (a2.actId = h2.actId)
                              join tblStal st on (h1.stalId = st.stalId)
                              join tblPeriode p on (b.periId = p.periId)
-                            WHERE st.lidId = ':lidId' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-                             and p.doelId = 2 and year(h1.datum) = ':kzlJaar'
+                            WHERE st.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+                             and p.doelId = 2 and year(h1.datum) = :kzlJaar
                             GROUP BY b.bezId, st.schaapId, h1.hisId, h1.actId
                         ) vantot
                          join (
@@ -1945,7 +1945,7 @@ SQL;
                                  join tblActie a2 on (a2.actId = h2.actId)
                                  join tblStal st on (h1.stalId = st.stalId)
                                  join tblPeriode p on (b.periId = p.periId)
-                                WHERE st.lidId = ':lidId' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+                                WHERE st.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
                                  and p.doelId = 2
                                 GROUP BY b.bezId, st.schaapId, h1.hisId, h1.actId
                             ) vantot
@@ -1979,7 +1979,7 @@ SQL;
             FROM tblHistorie h
              join tblStal st on (st.stalId = h.stalId)
              join tblSchaap s on (s.schaapId = st.schaapId)
-            WHERE st.lidId = ':lidId' and h.actId = 4 and h.skip = 0 and year(h.datum) = ':kzlJaar'
+            WHERE st.lidId = :lidId and h.actId = 4 and h.skip = 0 and year(h.datum) = :kzlJaar
 SQL;
         $args = [[':lidId', $lidId], [':kzlJaar', $kzlJaar]];
         return $this->first_field($sql, $args);
@@ -1996,14 +1996,14 @@ SQL;
                  SELECT st.schaapId, datum
                  FROM tblStal st
                   join tblHistorie h on (st.stalId = h.stalId)
-                 WHERE h.actId = 14 and h.skip = 0 and st.lidId = ':lidId'
+                 WHERE h.actId = 14 and h.skip = 0 and st.lidId = :lidId
              ) dood on (dood.schaapId = s.schaapId)
              left join(
                  SELECT rs.levensnummer, rs.meldnr
                  FROM impRespons rs
                  WHERE rs.meldnr is not null and rs.melding = 'DOO'
              ) meld on (meld.levensnummer = s.levensnummer)
-            WHERE s.levensnummer is not null and h.actId = 4 and h.skip = 0 and year(h.datum) = ':kzlJaar' and month(h.datum) = ':keuze_mnd' and st.lidId = ':lidId'
+            WHERE s.levensnummer is not null and h.actId = 4 and h.skip = 0 and year(h.datum) = :kzlJaar and month(h.datum) = :keuze_mnd and st.lidId = :lidId
             GROUP BY s.schaapId, st.stalId
 SQL;
         $args = [[':Karwerk', $Karwerk], [':lidId', $lidId], [':kzlJaar', $kzlJaar], [':keuze_mnd', $keuze_mnd]];

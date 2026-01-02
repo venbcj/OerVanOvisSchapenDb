@@ -251,4 +251,43 @@ SQL
         );
     }
 
+    public function zoek_soort_artikel($recId) {
+        $sql = <<<SQL
+            SELECT a.soort
+            FROM tblInkoop i
+             join tblArtikel a on (a.artId = i.artId)
+            WHERE i.inkId = :recId
+SQL;
+        $args = [[':recId', $recId, self::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function zoek_voorraad_pil($recId) {
+        $sql = <<<SQL
+                SELECT round(i.inkat - sum(coalesce(n.nutat*n.stdat,0)),0) voorraad, e.eenheid
+                FROM tblInkoop i
+                 join tblEenheiduser eu on (eu.enhuId = i.enhuId)
+                 join tblEenheid e on (e.eenhId = eu.eenhId)
+                 left join tblNuttig n on (n.inkId = i.inkId)
+                WHERE i.inkId = :recId
+                GROUP BY e.eenheid
+SQL;
+        $args = [[':recId', $recId, self::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function zoek_voorraad_voer($recId) {
+        $sql = <<<SQL
+                SELECT round(i.inkat - sum(coalesce(v.nutat*v.stdat,0)),0) voorraad, e.eenheid
+                FROM tblInkoop i
+                 join tblEenheiduser eu on (eu.enhuId = i.enhuId)
+                 join tblEenheid e on (e.eenhId = eu.eenhId)
+                 left join tblVoeding v on (v.inkId = i.inkId)
+                WHERE i.inkId = :recId
+                GROUP BY e.eenheid
+SQL;
+        $args = [[':recId', $recId, self::INT]];
+        return $this->first_row($sql, $args);
+    }
+
 }

@@ -623,7 +623,7 @@ SQL
         $sql = <<<SQL
         SELECT date_format(min(dmcreatie),'%Y') jaar 
         FROM tblStal
-        WHERE lidId = ':lidId'
+        WHERE lidId = :lidId
 SQL;
         $args = [[':lidId', $lidId]];
         return $this->first_field($sql, $args);

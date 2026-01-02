@@ -55,4 +55,14 @@ SQL
         );
     }
 
+    public function zoek_afgeboekt_pil($recId) {
+        $sql = <<<SQL
+                SELECT round(sum(n.nutat*n.stdat),0) af
+                FROM tblNuttig n
+                WHERE n.inkId = :recId and isnull(hisId)
+SQL;
+        $args = [[':recId', $recId, self::INT]];
+        return $this->first_field($sql, $args);
+    }
+
 }

@@ -14,7 +14,7 @@ mysqli_query($db, $insert);
 // @KOMNIVOOR
 mysqli_query($db, "UPDATE users SET name='".mysqli_real_escape_string($db, $name)."'");
 // inline string with result
-$res = mysqli_query($db, "SELECT $fields FROM $table WHERE value='".mysqli_real_escape_string($db, $ram)."' ORDER BY worst $limit");
+$res = mysqli_query($db, "SELECT $fields, $dmVroeg, $voerat FROM $table WHERE lidId ='".mysqli_real_escape_string($db, $lidId)."' ORDER BY worst $limit");
 /*
 
 ====> File test.php:
