@@ -14,6 +14,25 @@ class UnitCase extends TestCase {
         $this->db = Db::instance($db);
     }
 
+    protected function snapshot($tables) {
+        $trace = debug_backtrace();
+        array_shift($trace);
+        $test = $trace[0]['function'];
+        $res = '';
+        foreach ($tables as $table) {
+            $records = $this->db->query("SELECT * FROM $table")->fetch_all(MYSQLI_ASSOC);
+            $fields = '';
+            if (count($records)) {
+                $fields = ' ('.implode(',', array_keys($records[0])).')';
+            }
+            $res .= $table.$fields.PHP_EOL;
+            $res .= implode(PHP_EOL, array_map(function ($rec) { return implode(',', $rec); },
+            $records)).PHP_EOL;
+        }
+        $file = './snapshot-'.$test.'-'.date("Y-m-d-H-i-s").'.txt';
+        $this->assertNotFalse(file_put_contents($file, $res), 'snapshot failed');
+    }
+
     protected function setupServer($path = 'Maaktnietuit.php') {
         $_SERVER['HTTP_HOST'] = 'oer-dev';
         $_SERVER['REQUEST_SCHEME'] = 'http';

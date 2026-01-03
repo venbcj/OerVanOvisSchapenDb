@@ -26,11 +26,7 @@
         <directory>ongebruikt</directory>
         <directory>utils</directory>
       </exclude>
-      <file>./save_dekkingen.php</file>
+      <directory>.</directory>
     </whitelist>
   </filter>
-  <logging>
-    <log type="coverage-html" target="./coverage-html"/>
-    <log type="coverage-clover" target="./coverage.xml"/>
-  </logging>
 </phpunit>

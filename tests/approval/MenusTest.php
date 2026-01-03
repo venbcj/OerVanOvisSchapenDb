@@ -4,11 +4,14 @@ class MenusTest extends IntegrationCase {
 
     public function testMenuMeldenRood() {
         $this->runfixture('request-lid-codes');
+        # $this->snapshot(['tblRequest','tblMelding', 'tblHistorie', 'tblStal', 'tblUbn']);
         $this->get('/Melden.php', ['ingelogd' => 1]);
         $this->approve();
     }
 
     public function testMenuMeldenBlauw() {
+        # $this->snapshot(['tblRequest','tblMelding', 'tblHistorie', 'tblStal', 'tblUbn']);
+        # Deze snapshots laten een verschil zien. Mooi, dan werkt het transactie-mechaniek.
         $this->get('/Melden.php', ['ingelogd' => 1]);
         $this->approve();
     }

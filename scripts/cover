@@ -2,3 +2,4 @@
 cover-include all
 cover on
 scripts/suite
+cover off

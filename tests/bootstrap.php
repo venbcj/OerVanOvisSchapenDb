@@ -21,6 +21,7 @@ foreach (
     [
         // stamtabellen
         'tblActie',
+        'tblAlert',
         'tblDoel',
         'tblEenheid',
         'tblElement',
@@ -29,6 +30,7 @@ foreach (
         'tblRasuser',
         'tblReden',
         'tblRubriek',
+        'tblVersiebeheer',
         // minimale vulling
         'user-1',
         'tblLeden',

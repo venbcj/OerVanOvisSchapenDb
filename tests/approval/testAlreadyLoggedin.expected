@@ -139,7 +139,7 @@ $(document).ready(function(){
             <a href="http://oer-dev/Vader.php" class="black">Dekrammen</a>
             <a href="http://oer-dev/Eenheden.php" class="blue">Eenheden</a>
             <a href="http://oer-dev/Relaties.php" class="black">Relaties</a>
-            <a href="http://oer-dev/Readerversies.php" class="red">Readerversies</a>
+            <a href="http://oer-dev/Readerversies.php" class="black">Readerversies</a>
             <a href="http://oer-dev/bestanden.php" class="black">Readerbestanden</a>
                         <a href="http://oer-dev/Gebruikers.php" class="black">Gebruikers</a>
                         <a href="http://oer-dev/Systeem.php" class="blue">Instellingen</a>
