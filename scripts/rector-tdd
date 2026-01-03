@@ -1,0 +1,15 @@
+#!/bin/bash
+[ -z "$1" ] && echo "Usage: $0 <rule-name>" && exit
+NAME=${1%Rector}
+RULE=utils/rector/src/Rector/${NAME}Rector.php
+TESTPATH=utils/rector/tests/Rector/${NAME}Rector/
+TEST=${TESTPATH}${NAME}RectorTest.php
+FIXTURE=${TESTPATH}Fixture/some_class.php.inc
+CONFIG=${TESTPATH}config/configured_rule.php
+if [ ! -f "$RULE" ]; then
+    echo $NAME | vendor/bin/rector custom-rule
+fi
+
+tmux split-window -h -l80 "cover off; ./watcher utils/rector/tests/Rector/${NAME}Rector/${NAME}RectorTest.php"
+vi -o $CONFIG $FIXTURE $RULE $TEST
+

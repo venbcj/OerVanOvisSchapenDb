@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Rector\Tests\TypeDeclaration\Rector\MysqliQueryFunctionCallToDbMethodCallRector;
+namespace Rector\Tests\TypeDeclaration\Rector\MysqliQueryVariableToRunQueryRector;
 
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class MysqliQueryFunctionCallToDbMethodCallRectorTest extends AbstractRectorTestCase
+final class MysqliQueryVariableToRunQueryRectorTest extends AbstractRectorTestCase
 {
     /**
      * @dataProvider provideData()
