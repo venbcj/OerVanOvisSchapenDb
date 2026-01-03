@@ -26,7 +26,7 @@
         <directory>ongebruikt</directory>
         <directory>utils</directory>
       </exclude>
-      <directory>.</directory>
+      <file>./Relaties.php</file>
     </whitelist>
   </filter>
 </phpunit>
