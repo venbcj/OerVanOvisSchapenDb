@@ -177,6 +177,8 @@ if (isset($_POST['knpVervers_'])) { $dag = $_POST["txtOvpldag_$Id"]; $kzlHok = $
 	$makeday = date_create($_POST["txtOvpldag_$Id"]); $dmdag =  date_format($makeday, 'Y-m-d');
 }
 
+unset($onjuist);
+unset($color);
 if ((isset($af) && $af == 1) || !isset($status))	{ $color = 'red';  $onjuist = 'Levensnummer is onbekend'; }	
 else if (isset($levnr_dupl) )       { $color = 'blue'; $onjuist = 'Dubbel in de reader.'; }
 else if (empty($dag)) 		{ $color = 'red';  $onjuist = 'Datum is onbekend'; }
