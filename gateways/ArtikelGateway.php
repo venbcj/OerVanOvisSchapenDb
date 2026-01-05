@@ -543,4 +543,16 @@ SQL
         );
     }
 
+    public function ophalen_waardes($insVoer) {
+        $sql = <<<SQL
+            SELECT a.stdat, a.enhuId, a.btw, a.relId, a.rubuId, p.naam
+            FROM tblArtikel a
+             left join tblRelatie r on (a.relId = r.relId)
+             left join tblPartij p on (r.partId = p.partId)
+            WHERE a.artId = :insVoer
+SQL;
+        $args = [[':insVoer', $insVoer]];
+        return $this->run_query($sql, $args);
+    }
+
 }

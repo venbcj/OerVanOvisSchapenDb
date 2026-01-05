@@ -1,15 +1,23 @@
 #!/bin/bash
 [ -z "$1" ] && echo "Usage: $0 <rule-name>" && exit
 NAME=${1%Rector}
-RULE=utils/rector/src/Rector/${NAME}Rector.php
+
+RULEPATH=utils/rector/src/Rector/
 TESTPATH=utils/rector/tests/Rector/${NAME}Rector/
+
+RULE=${RULEPATH}${NAME}Rector.php
 TEST=${TESTPATH}${NAME}RectorTest.php
 FIXTURE=${TESTPATH}Fixture/some_class.php.inc
 CONFIG=${TESTPATH}config/configured_rule.php
 if [ ! -f "$RULE" ]; then
     echo $NAME | vendor/bin/rector custom-rule
 fi
+if [ ! -f "$TEST" ]; then
+    mv $RULE{,.bak}
+    echo $NAME | vendor/bin/rector custom-rule
+    mv $RULE{.bak,}
+fi
 
-tmux split-window -h -l80 "cover off; ./watcher utils/rector/tests/Rector/${NAME}Rector/${NAME}RectorTest.php"
-vi -o $CONFIG $FIXTURE $RULE $TEST
+tmux split-window -h -l80 "cover off; ./watcher $TEST"
+vim $TEST -c "vsplit $RULE | wincmd l | split $FIXTURE | wincmd l | split $CONFIG"
 

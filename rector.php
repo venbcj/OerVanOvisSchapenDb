@@ -35,6 +35,8 @@ return static function (RectorConfig $rectorConfig): void {
         Utils\Rector\Rector\MysqliFetchAssocFunctionCallToDbMethodCallRector::class,
         Utils\Rector\Rector\MysqliNumRowsFunctionCallToDbPropertyRector::class,
         Utils\Rector\Rector\RemoveOrDieConstructRector::class,
+        # Interessant, maar misschien nog niet rijp concept
+        # Utils\Rector\Rector\ExtractPostCommandWithScopeRector::class,
     ]);
 
 };

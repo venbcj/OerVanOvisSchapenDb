@@ -68,4 +68,12 @@ SQL
         );
     }
 
+    public function insert_tblOpgaaf($rubuId, $insInkdm, $PrijsInclBtw, $relatie) {
+        $sql = <<<SQL
+            INSERT INTO tblOpgaaf SET rubuId = :rubuId, datum = :insInkdm, bedrag = :PrijsInclBtw, toel = :relatie, liq = 1
+SQL;
+        $args = [[':rubuId', $rubuId, self::INT], [':insInkdm', $insInkdm, self::DATE], [':PrijsInclBtw', $PrijsInclBtw], [':relatie', $relatie]];
+        return $this->run_query($sql, $args);
+    }
+
 }

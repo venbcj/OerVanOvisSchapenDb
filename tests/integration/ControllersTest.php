@@ -53,7 +53,6 @@ class ControllersTest extends IntegrationCase {
             ['HokOverpl.php', ['schaap-4'], ['chbkies_4' => 1, 'txtDatum_4' => '02-02-2021', ]],
             ['HokSpenen.php', ['schaap-4'], ['chbkies_4' => 1, 'txtDatum_4' => '01-02-2020', 'txtKg_4' => 2, ]],
             ['HokVerlaten.php', ['schaap-4'], ['chbkies_4' => 1, 'txtDatum_4' => '01-01-2021', ]],
-            ['Inkopen.php', [], []],
             ['InsGeboortes.php', [], []],
             ['InsVoerregistratie.php', [], []],
             ['Kostenopgaaf.php', ['opgaaf-1'], ['chbLiq_1' => 0, 'kzlRubr_1' => 1, 'txtDatum_1' => '13-12-2021', 'txtBedrag_1' => 11, 'txtToel_1' => 'kennelijk', ]],
@@ -111,7 +110,6 @@ HokVerkopen.php
 HokVerlaten.php
 Home.php
 Inkoop.php
-Inkopen.php
 InlezenReader.php
 InsAanvoer.php
 InsAdoptie.php

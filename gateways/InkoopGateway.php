@@ -290,4 +290,31 @@ SQL;
         return $this->first_row($sql, $args);
     }
 
+    public function insert_tblInkoop($insInkdm, $insVoer, $insCharge, $insInkat, $enhuId, $insPrijs, $insBtw, $insRc) {
+        $sql = <<<SQL
+            INSERT INTO tblInkoop SET dmink = :insInkdm, artId = :insVoer, charge = :insCharge, inkat = :insInkat, enhuId = :enhuId, prijs = :insPrijs, btw = :insBtw, relId = :insRc
+SQL;
+        $args = [[':insInkdm', $insInkdm, self::DATE], [':insVoer', $insVoer], [':insCharge', $insCharge], [':insInkat', $insInkat, self::INT], [':enhuId', $enhuId, self::INT], [':insPrijs', $insPrijs], [':insBtw', $insBtw], [':insRc', $insRc]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function inkopen_query($lidId, $jaar) {
+        $sql = <<<SQL
+                SELECT i.inkId, date_format(i.dmink,'%d-%m-%Y') inkdm, i.dmink, i.artId, a.naam, i.charge chargenr, inkat, i.enhuId, e.eenheid, round((i.prijs/inkat),2) stprijs, i.prijs, i.btw, p.naam crediteur, min(n.nutId) nutId, min(v.voedId) voedId
+                FROM tblInkoop i 
+                 join tblEenheiduser eu on (i.enhuId = eu.enhuId)
+                 join tblEenheid e on (e.eenhId = eu.eenhId)
+                 join tblArtikel a on (a.artId = i.artId)
+                 left join tblNuttig n on (n.inkId = i.inkId)
+                 left join tblVoeding v on (v.inkId = i.inkId)
+                 left join tblRelatie r on (i.relId = r.relId)
+                 join tblPartij p on (r.partId = p.partId)
+                WHERE eu.lidId = :lidId and year(i.dmink) = :jaar
+                GROUP BY i.inkId, i.dmink, i.dmink, i.artId, a.naam, i.charge, inkat, i.enhuId, e.eenheid, round((i.prijs/inkat),2), i.prijs, i.btw, p.naam
+                ORDER BY i.dmink desc, inkId desc
+SQL;
+        $args = [[':lidId', $lidId, self::INT], [':jaar', $jaar]];
+        return $this->run_query($sql, $args);
+    }
+
 }
