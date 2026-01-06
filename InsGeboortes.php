@@ -73,7 +73,7 @@ if (isset($_POST['knpSave_']) ) {
     }
     
 if (isset($_POST['knpInsert_']) ) { 
-    include "post_readerGeb.php"; #Deze include moet voor de vervversing in de functie header()
+    include "post_readerGeb.php";
     }
     
 

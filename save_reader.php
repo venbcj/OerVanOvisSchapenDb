@@ -1,11 +1,9 @@
+<?php
+/*
 <!-- 11-8-2014 : veld type gewijzigd in fase
  16-11-2014 include maak_request toegevoegd -->
 
-<?php
-/* post_readerGeb.php toegepast in :
-    - InsGeboortes.php */
-    
-
+ */
 
 foreach($_POST as $fldname => $fldvalue) {  //  Voor elke post die wordt doorlopen wordt de veldnaam en de waarde teruggeven als een array
     
@@ -60,6 +58,3 @@ echo $RasId."<br/>";
     
                         }
 }
-?>
-                    
-    

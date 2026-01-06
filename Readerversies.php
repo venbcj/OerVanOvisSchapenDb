@@ -193,6 +193,7 @@ unlink($DelFileTaak);// verwijdert taken bestand
 $appfile_aanwezig = file_exists($persoonlijke_map.'/Readerversies/'.$setup_bestand);
 $takenfile_aanwezig = file_exists($persoonlijke_map.'/Readerversies/'.$taken_bestand);
 
+$afgerond = '';
 if ($appfile_aanwezig == 1 && $takenfile_aanwezig == 1) { $afgerond = 'Ja'; }
 $current_versie = $versiebeheer_gateway->zoek_huidige_versie($last_versieId);
 // $last_versieId gedeclareerd in login.php
