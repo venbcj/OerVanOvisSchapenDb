@@ -30,7 +30,6 @@ class MeldenTest extends IntegrationCase {
     // Nuttig om fixtures mee op te stellen, het is beter om scherm-verschijningen te meten.
 
     public function testGeenGeboortes() {
-        $this->runfixture('request-none');
         $this->get('/Melden.php', ['ingelogd' => 1]);
         $this->assertAbsent('href="MeldGeboortes.php');
     }

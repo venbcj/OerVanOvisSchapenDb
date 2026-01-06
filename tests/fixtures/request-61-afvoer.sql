@@ -1,8 +1,3 @@
-delete from tblRequest;
-delete from tblMelding;
-delete from tblHistorie;
-delete from tblStal;
-
 insert into tblRequest(reqId, code, dmmeld) values
 (1, 'AFV', null),
 (2, 'AFV', null),

@@ -31,10 +31,6 @@ class AfleverlijstTest extends IntegrationCase {
 
     private function setupStalFixture() {
         $this->uses_db();
-        $this->runSQL("truncate tblPartij");
-        $this->runSQL("truncate tblRelatie");
-        $this->runSQL("truncate tblStal");
-        $this->runSQL("truncate tblHistorie");
         $this->runSQL("INSERT INTO tblPartij(naam, partId, lidId) VALUES('Stempelmans', 1, 1)");
         $this->runSQL("INSERT INTO tblRelatie(relId, partId, relatie) VALUES(1, 1, 'test')");
         $this->runSQL("INSERT INTO tblStal(stalId, rel_best, schaapId) VALUES(1, 1, 4)");

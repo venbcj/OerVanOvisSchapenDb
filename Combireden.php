@@ -470,6 +470,10 @@ for ($i = 0; $i < $count; $i++){
 // Controle of reden bij medicijn hoort
 // TODO: uitzoeken of vorige assignment van redActief hier niet in lekt
 // (later) wel, kennelijk niet. Er faalt nu een test op de afwezigheid van redActief.
+if (!isset($redActief)) {
+    $redActief = '';
+    $reden = '';
+}
 if(!empty($reduId)) {
     [$redActief, $reden] = $reden_gateway->pil_actief($lidId, $reduId);
 }

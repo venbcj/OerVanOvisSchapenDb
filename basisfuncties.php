@@ -563,6 +563,7 @@ function setup_db() {
     global $db;
     include "database.php";
     if (!isset($db) || $db === false) {
+        Logger::instance()->warning("init db from setup");
         $db = mysqli_connect($host, $user, $pw, $dtb);
         if ($db == false) {
             throw new Exception('Connectie database niet gelukt');
@@ -587,11 +588,12 @@ function setup_db() {
     Tweede query zoek naar readerApp versie i.c.m. taakversies
     Derde query zoek naar alleen taakversies */
 function setup_versies($db, $persoonlijke_map) {
+    Logger::instance()->debug("map=$persoonlijke_map\n");
     $versie_gateway = new VersieGateway();
     $last_versieId = $versie_gateway->zoek_laatste_versie();
     $Readersetup_bestand = $versie_gateway->zoek_readersetup_in($last_versieId);
     $Readertaken_bestand = $versie_gateway->zoek_readertaken_in($last_versieId);
-
+    Logger::instance()->debug("appfile $Readersetup_bestand takenfile $Readertaken_bestand\n");
     // hee, dit fragment /staat/ al in Readerversies.php
     if (isset($Readersetup_bestand)) {
         $appfile_exists = file_exists($persoonlijke_map.'/Readerversies/'.$Readersetup_bestand);

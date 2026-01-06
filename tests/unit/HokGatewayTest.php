@@ -35,6 +35,7 @@ class HokGatewayTest extends GatewayCase {
     }
 
     public function test_hok_is_aanwezig() {
+        $this->runfixture('hok');
         $hok = 1;
         $result = $this->sut->is_aanwezig(self::LIDID, $hok);
         $this->assertTrue($result);
@@ -52,6 +53,7 @@ class HokGatewayTest extends GatewayCase {
 
     // @FRAGILE test implementatie. Methode moet sowieso verbouwd worden om KV te gebruiken
     public function test_items_without_one() {
+        $this->runfixture('hok');
         $hokId = 97;
         $result = $this->sut->items_without_one(self::LIDID, $hokId);
         // af fixture zit er 1 hok in de tabel

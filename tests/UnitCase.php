@@ -26,7 +26,12 @@ class UnitCase extends TestCase {
                 $fields = ' ('.implode(',', array_keys($records[0])).')';
             }
             $res .= $table.$fields.PHP_EOL;
-            $res .= implode(PHP_EOL, array_map(function ($rec) { return implode(',', $rec); },
+            $res .= implode(PHP_EOL, array_map(function ($rec) { return implode(',', array_map(
+                function ($col) {
+                    return is_null($col) ? 'NULL' : $col;
+                },
+                $rec)
+            ); },
             $records)).PHP_EOL;
         }
         $file = './snapshot-'.$test.'-'.date("Y-m-d-H-i-s").'.txt';
@@ -48,6 +53,7 @@ class UnitCase extends TestCase {
         }
     }
 
+    // dit moet je in tests niet willen.
     protected static function runsetup($name) {
         if (file_exists($file = getcwd()."/db/setup/$name.sql")) {
             self::performStatementsIn($file);

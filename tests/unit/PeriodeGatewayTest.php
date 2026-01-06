@@ -5,7 +5,6 @@ class PeriodeGatewayTest extends GatewayCase {
     protected static $sutname = 'PeriodeGateway';
 
     public function testGeenJaarmaanden() {
-        $this->runSQL("DELETE FROM tblPeriode");
         $artId = 1;
         $doelId = 1;
         $actual = $this->sut->aantal_jaarmaanden(self::LIDID, $artId, $doelId);

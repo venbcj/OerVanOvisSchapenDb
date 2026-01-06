@@ -2,11 +2,6 @@
 
 class PasswTest extends IntegrationCase {
 
-    public static function setupBeforeClass(): void {
-        # self::runsetup('user-1');
-        # Lijkt niet meer nodig nu tests in een transactie draaien
-    }
-
     public function setup(): void {
         require_once "autoload.php";
         $GLOBALS['passw'] = '';

@@ -55,7 +55,8 @@ class ArtikelnuttigenTest extends IntegrationCase {
 
     public function test_volgende_inkoop_pil() {
         $this->runfixture('pil-inkoop');
-        $this->runSQL("INSERT INTO tblInkoop(inkId, dmink, artId, inkat, enhuId, prijs) VALUES(2, '2012-01-01', " . self::ARTID . ", 1, 1, 1)");
+        $this->runSQL("INSERT INTO tblInkoop(inkId, dmink, artId, inkat, enhuId, prijs)
+            VALUES(2, '2012-01-01', " . self::ARTID . ", 1, 1, 1)");
         $artid = self::ARTID;
         $actual = volgende_inkoop_pil($artid);
         $expected = [2, 1, 4];

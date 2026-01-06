@@ -2,7 +2,7 @@
 
 namespace Rector\Tests\TypeDeclaration\Rector\MysqliQueryFunctionCallToDbMethodCallRector\Fixture;
 
-mysqli_query($db, 'SELECT');
+mysqli_query($db, $var);
 
 ?>
 -----
@@ -10,6 +10,7 @@ mysqli_query($db, 'SELECT');
 
 namespace Rector\Tests\TypeDeclaration\Rector\MysqliQueryFunctionCallToDbMethodCallRector\Fixture;
 
-$this->db->query('SELECT');
+// @TODO: remove if covered by gateway-call
+mysqli_query($db, $var);
 
 ?>

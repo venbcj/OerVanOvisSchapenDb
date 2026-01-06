@@ -47,7 +47,7 @@ if ($modmeld ?? 0 != 0) {
 }
 
 $reader_color = 'red';
-if (isset($actuele_versie)) {
+if ($actuele_versie == 'Ja') {
     $reader_color = 'black';
 }
 

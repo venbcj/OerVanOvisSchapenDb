@@ -1,6 +1,3 @@
-delete from tblPeriode;
-delete from tblHok;
-
 insert into tblPeriode(hokId, dmafsluit, doelId) values
 (1, '2021-10-11', 1),
 (1, '2021-11-11', 1)

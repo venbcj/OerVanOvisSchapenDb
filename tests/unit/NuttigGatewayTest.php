@@ -12,6 +12,7 @@ class NuttigGatewayTest extends GatewayCase {
         $aantal = null;
         $result = $this->sut->nuttig_pil($hisId, $inkId, $stdat, $reduId, $aantal);
         $this->assertNotFalse($result);
+        $this->assertTableRowcount('tblNuttig', 1);
     }
 
     public function test_periode_medicijnen() {

@@ -106,6 +106,7 @@ SQL
         );
     }
 
+    // todo: klopt de eerste > in de where-clause? Moet dat niet >= zijn? Zo is de left join niks waard.
     public function laatst_aangesproken_voorraad($artikel) {
         return $this->first_row(<<<SQL
 SELECT i.inkId, i.inkat - coalesce(n.nutat,0) vrdat, a.stdat

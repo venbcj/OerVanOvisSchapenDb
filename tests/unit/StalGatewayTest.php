@@ -13,12 +13,10 @@ class StalGatewayTest extends GatewayCase {
     }
 
     public function testZoekKleurHalsnr() {
-        $this->runSQL("DELETE FROM tblStal");
         $this->assertNull($this->sut->zoekKleurHalsnr(self::LIDID, 1)['stalId']);
     }
 
     public function testZoekLaatsteStalId() {
-        $this->runSQL("DELETE FROM tblStal");
         $this->assertNull($this->sut->zoek_laatste_stalId(self::LIDID, 4));
     }
 

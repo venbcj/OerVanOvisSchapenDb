@@ -2,7 +2,7 @@ delete from tblRequest;
 delete from tblMelding;
 delete from tblHistorie;
 delete from tblStal;
-
+delete from tblUbn;
 insert into tblRequest(reqId, code, dmmeld) values
 (1, 'GER', null),
 (2, 'AFV', null),
@@ -25,4 +25,4 @@ insert into tblHistorie(hisId, stalId, datum, skip) values
 (15, 1, '1900-01-01', 0)
 ;
 insert into tblStal(stalId, ubnId, schaapId) values(1, 1, 0);
-
+INSERT INTO tblUbn(lidId, ubnId, ubn) values(1, 1, '333');

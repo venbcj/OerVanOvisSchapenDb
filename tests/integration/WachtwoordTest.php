@@ -66,7 +66,6 @@ class WachtwoordTest extends IntegrationCase {
 
     public function testPostBestaatAl() {
         $this->login();
-        $this->runsetup('tblLeden');
         $this->runfixture('user-kobus');
         $this->post('/Wachtwoord.php', [
             'ingelogd' => 42,
@@ -82,7 +81,6 @@ class WachtwoordTest extends IntegrationCase {
 
     public function testPostWijzigUsername() {
         $this->login();
-        $this->runsetup('tblLeden');
         $this->runfixture('user-kobus');
         $this->post('/Wachtwoord.php', [
             'ingelogd' => 42,
@@ -95,13 +93,10 @@ class WachtwoordTest extends IntegrationCase {
         ]);
         $this->assertFout('De inloggegevens zijn gewijzigd');
         $this->assertTableWithPK('tblLeden', 'lidId', 42, ['login' => 'krelis']);
-        // cleanup
-        $this->runsetup('tblLeden');
     }
 
     public function testPostWijzigWachtwoord() {
         $this->login();
-        $this->runsetup('tblLeden');
         $this->runfixture('user-kobus');
         $this->post('/Wachtwoord.php', [
             'knpChange' => 1,
@@ -114,14 +109,11 @@ class WachtwoordTest extends IntegrationCase {
         $this->assertFout('De inloggegevens zijn gewijzigd.');
         // TODO: #0004115 deugdelijke assert maken voor het wachtwoord. Zoiets als "old password 'groente' (uit de fixture af te leiden) is niet meer geldig"
         $this->assertTableWithPK('tblLeden', 'lidId', 42, ['login' => 'kobus', 'passw' => 'e37fb031e454b9c9f4a4a46ebbc9ddb6']);
-        // cleanup
-        $this->runsetup('tblLeden');
     }
 
     // TODO: Is een leeg wachtwoord echt toegestaan?
     public function testPostWisWachtwoord() {
         $this->login();
-        $this->runsetup('tblLeden');
         $this->runfixture('user-kobus');
         $this->post('/Wachtwoord.php', [
             'knpChange' => 1,
@@ -134,8 +126,6 @@ class WachtwoordTest extends IntegrationCase {
         $this->assertFout('De inloggegevens zijn gewijzigd.');
         // TODO: #0004115 deugdelijke assert maken voor het wachtwoord. Zoiets als "old password 'groente' (uit de fixture af te leiden) is niet meer geldig"
         $this->assertTableWithPK('tblLeden', 'lidId', 42, ['login' => 'kobus', 'passw' => '6edffa2b54fe663ac77c316115a0e44a']);
-        // cleanup
-        $this->runsetup('tblLeden');
     }
 
 }

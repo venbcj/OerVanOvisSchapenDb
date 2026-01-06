@@ -104,7 +104,6 @@ class DekkingenTest extends IntegrationCase {
 
     public function testNieuweInvoerHok() {
         $this->uses_db();
-        $this->runSQL("DELETE FROM tblSchaap");
         $this->post('/Dekkingen.php', [
             'ingelogd' => 1,
             'knpInsert2_' => 1,
@@ -204,9 +203,6 @@ class DekkingenTest extends IntegrationCase {
     }
 
     public function testPostSave_nieuwe_dracht() {
-        $this->runSQL("DELETE FROM tblDracht"); // zou toch door transaction->rollback al leeg moeten zijn? Huh.
-        $this->runSQL("truncate tblVolwas"); // zou toch door transaction->rollback al leeg moeten zijn? Huh.
-        $this->runSQL("delete from tblStal where stalId=9"); // zou toch door transaction->rollback al leeg moeten zijn? Huh.
         $this->runSQL("INSERT INTO tblVolwas(hisId, volwId, mdrId) VALUES(2, 1, 4)");
         $this->runSQL("INSERT INTO tblStal(stalId, schaapId, ubnId) values(9, 4, 1)");
         $this->post('/Dekkingen.php', [
@@ -222,9 +218,6 @@ class DekkingenTest extends IntegrationCase {
 
     public function testPostSave_verwijder_dracht() {
         $this->runfixture('save_dracht');
-        # $this->runSQL("DELETE FROM tblDracht"); // zou toch door transaction->rollback al leeg moeten zijn? Huh.
-        # $this->runSQL("truncate tblVolwas"); // zou toch door transaction->rollback al leeg moeten zijn? Huh.
-        # $this->runSQL("delete from tblStal where stalId=9"); // zou toch door transaction->rollback al leeg moeten zijn? Huh.
         # $this->runSQL("INSERT INTO tblVolwas(hisId, volwId, mdrId) VALUES(2, 1, 4)");
         # $this->runSQL("INSERT INTO tblStal(stalId, schaapId, ubnId) values(9, 4, 1)");
         $this->post('/Dekkingen.php', [

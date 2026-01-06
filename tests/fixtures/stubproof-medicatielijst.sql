@@ -1,6 +1,3 @@
-TRUNCATE tblSchaap;
-TRUNCATE tblStal;
-TRUNCATE tblHistorie;
 INSERT INTO tblSchaap(schaapId, levensnummer) VALUES(1, 'KZA');
 INSERT INTO tblSchaap(schaapId, levensnummer) VALUES(2, 'KZB');
 INSERT INTO tblSchaap(schaapId, levensnummer) VALUES(3, 'KZC');

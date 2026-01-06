@@ -39,14 +39,15 @@ trait ArgSplitter {
                 $sql .= $part->value;
             } else {
                 $variable = $this->unwrapFunctionCall($part);
-                $param = ':' . $variable->name;
+                $varname = $this->getName($variable);
+                $param = ':' . $varname;
                 $sql .= $param;
-                $func_args[$variable->name] = $variable;
+                $func_args[$varname] = $variable;
                 $arg = [$param, $variable];
                 if ($this->canInferTypeFromName($variable)) {
                     $arg[] = $this->inferTypeFrom($variable);
                 }
-                $args[$variable->name] = $arg;
+                $args[$varname] = $arg;
             }
         }
         $sql = $this->unquotePlaceholders($sql);

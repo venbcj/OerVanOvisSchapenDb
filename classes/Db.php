@@ -38,6 +38,7 @@ class Db {
             include "database.php";
             global $db;
             if (!isset($db) || $db === false) {
+                $logger->warning("init db from Db");
                 $db = mysqli_connect($host, $user, $pw, $dtb);
                 if ($db == false) {
                     throw new Exception('Connectie database niet gelukt');

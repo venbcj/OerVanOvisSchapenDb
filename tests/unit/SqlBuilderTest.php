@@ -7,9 +7,9 @@ class SqlBuilderTest extends UnitCase {
     }
 
     public function test_plain_statement() {
-        $SQL = 'TRUNCATE tabel';
+        $SQL = 'SELECT * FROM tabel';
         $args = [];
-        $expected = 'TRUNCATE tabel';
+        $expected = $SQL;
         $this->assertEquals($expected, $this->sut->statement($SQL, $args));
     }
 

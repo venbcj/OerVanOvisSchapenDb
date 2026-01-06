@@ -27,6 +27,8 @@ mysqli_query($db, $variable);
 CODE_SAMPLE
         ,
             <<<'CODE_SAMPLE'
+// @TODO: remove if covered by gateway-call
+mysqli_query($db, $variable);
 CODE_SAMPLE
         ),
             ]);

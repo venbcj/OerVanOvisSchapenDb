@@ -118,7 +118,6 @@ class BezetGatewayTest extends GatewayCase {
 
     public function testGeenMoedersInVerblijf() {
         $kzlHok = 1;
-        $this->runSQL("DELETE FROM tblBezet");
         $this->assertEquals(0, $this->sut->zoek_moeders_in_verblijf($kzlHok)->num_rows);
     }
 

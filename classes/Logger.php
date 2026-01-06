@@ -14,6 +14,13 @@ class Logger {
         # throw new Exception($msg);
     }
 
+    public function warning($msg, $with_trace = true) {
+        error_log($this->moment() . ' [WARNING] ' . $msg . PHP_EOL, 3, $this->file());
+        if ($with_trace) {
+            error_log($this->trace(), 3, $this->file());
+        }
+    }
+
     private function file() {
         if (!defined('APP')) {
             return 'log/development.log';

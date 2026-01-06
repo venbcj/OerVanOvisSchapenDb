@@ -2,8 +2,9 @@
 
 class LoginTest extends IntegrationCase {
 
-    public static function setupBeforeClass(): void {
-        static::runfixture('versie-1');
+    public function setup(): void {
+        parent::setup();
+        $this->runfixture('versie-1');
     }
 
     public function testHomepageIsLoggedOut() {
@@ -29,9 +30,10 @@ class LoginTest extends IntegrationCase {
 
     // faalt bij seed 1758476906 ... ? waarom?
     // 1758477385
+    // Faalt omdat de readerversies-link rood is ipv zwart.
     public function testAlreadyLoggedin() {
-        // met alle requests verwijderd verwachten we een zwarte link naar Readerversies
-        $this->runfixture('request-none');
+        // [v] met alle requests verwijderd verwachten we een meld_color=zwarte link naar RVO/Melden
+        // [X] met appfile en takenfile wordt actuele_versie ja, en verwachten we een readercolor=zwarte link naar readerversies
         $this->get('/Home.php', ['ingelogd' => 1]);
         $this->approve();
     }

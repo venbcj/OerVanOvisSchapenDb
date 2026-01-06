@@ -8,7 +8,8 @@ function volgende_inkoop_voer($datb, $artikel) {
     $new_inkId = $inkoop_gateway->eerste_inkoopid_voeding_op_datum($artikel, $dmink);
     $inkoop = $inkoop_gateway->zoek_inkoop($new_inkId);
     if (!$inkoop) {
-        throw new Exception("volgende_inkoop_voer mag niet worden aangeroepen bij onvoldoende voorraad");
+        // TODO: betere tekst. Vermoedelijk gaat het juist mis als er nog voorraad is (inkoop-records zonder gekoppeld voeding-record)
+        throw new Exception("volgende_inkoop_voer mag niet worden aangeroepen bij onvoldoende voorraad (new_id=$new_inkId)");
     }
     return $inkoop;
 }

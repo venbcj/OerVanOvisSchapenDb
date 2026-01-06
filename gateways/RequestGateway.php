@@ -77,19 +77,22 @@ return $vw->fetch_row()[0];
 }
 
 public function hasOpenRequests($lidId) {
-    $vw = $this->db->query("
+    $field = $this->first_field(<<<SQL
 SELECT count(*) aant
 FROM tblRequest r
  join tblMelding m on (r.reqId = m.reqId)
  join tblHistorie h on (h.hisId = m.hisId)
  join tblStal st on (st.stalId = h.stalId)
  join tblUbn u on (st.ubnId = u.ubnId)
-WHERE u.lidId = ".$this->db->real_escape_string($lidId)."
+WHERE u.lidId = :lidId
  and h.skip = 0
- and isnull(r.dmmeld)
- and m.skip <> 1 ");
-return $vw->fetch_row()[0] > 0;
-    }
+ and r.dmmeld is null
+ and coalesce(m.skip, 0) <> 1
+SQL
+    , [[':lidId', $lidId, self::INT]]
+    );
+    return $field > 0;
+}
 
 public function zoek_open_request($lidId, $code) {
     return $this->first_field(

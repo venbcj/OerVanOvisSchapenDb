@@ -1,9 +1,3 @@
-delete from tblSchaap;
-delete from tblStal;
-delete from tblHistorie;
-delete from tblNuttig;
-delete from tblInkoop;
-
 insert into tblSchaap(levensnummer, schaapId, geslacht) values
 ('102', 1, 'ram'),
 ('103', 2, 'ooi');

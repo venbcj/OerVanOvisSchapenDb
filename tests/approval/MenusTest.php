@@ -4,7 +4,6 @@ class MenusTest extends IntegrationCase {
 
     public function testMenuMeldenRood() {
         $this->runfixture('request-lid-codes');
-        # $this->snapshot(['tblRequest','tblMelding', 'tblHistorie', 'tblStal', 'tblUbn']);
         $this->get('/Melden.php', ['ingelogd' => 1]);
         $this->approve();
     }

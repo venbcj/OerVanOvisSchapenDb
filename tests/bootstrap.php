@@ -17,6 +17,11 @@ Session::set_instance(new TestSession());
 // jammer: omdat onder windows 'cat' niet bestaat, moeten we hier de database-connectie alvast maken
 require_once "just_connect_db.php";
 global $db;
+$db->query("SET autocommit=0");
+$all_tables = $db->query("SHOW TABLES");
+while ($rec = $all_tables->fetch_row()) {
+    $db->query("TRUNCATE {$rec[0]}");
+}
 foreach (
     [
         // stamtabellen
@@ -43,6 +48,6 @@ foreach (
             }
         }
     } else {
-        throw new Exception("setup $name not found as $file.");
+        throw new Exception("Configuration error: setup file $file not found");
     }
 }

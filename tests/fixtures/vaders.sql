@@ -1,7 +1,3 @@
-delete from tblSchaap;
-delete from tblStal;
-delete from tblHistorie;
-
 insert into tblSchaap(schaapId, levensnummer, geslacht) values
 (1, 'dertien', 'ram'),
 (2, 'dertien', 'ram'),

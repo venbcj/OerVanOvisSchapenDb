@@ -66,7 +66,6 @@ class MedRegistratiePageTest extends IntegrationCase {
     }
 
     public function testToonMedregistratieKeuzelijstReden() {
-        $this->runsetup('user-1'); // in de hoop dat de test nu niet meer af en toe faalt
         $this->runfixture('reden'); // zet 1 willekeurige reden op "pil"
         $this->post('/Med_registratie.php', [
             'ingelogd' => 1,
@@ -181,7 +180,6 @@ class MedRegistratiePageTest extends IntegrationCase {
     public function testInsertMedregistratieToedienen() {
         $this->runfixture('medicijnvoorraad');
         $this->uses_db();
-        $this->runSQL("TRUNCATE tblHistorie");
         $this->post('/Med_registratie.php', [
             'ingelogd' => 1,
             'knpInsert' => 1,
@@ -199,7 +197,6 @@ class MedRegistratiePageTest extends IntegrationCase {
     public function testInsertMedregistratieToedienenTeLaat() {
         $this->runfixture('medicijnvoorraad');
         $this->uses_db();
-        $this->runSQL("TRUNCATE tblHistorie");
         $this->runSQL("INSERT INTO tblHistorie(actId, stalId, skip, datum) VALUES(12, 1, 0, '2001-12-13')");
         $this->post('/Med_registratie.php', [
             'ingelogd' => 1,

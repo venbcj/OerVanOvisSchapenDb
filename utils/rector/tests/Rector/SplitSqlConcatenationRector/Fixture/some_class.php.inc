@@ -2,7 +2,9 @@
 
 namespace Rector\Tests\TypeDeclaration\Rector\SplitSqlConcatenationRector\Fixture;
 
-// @todo fill code before
+$insert_tblHistorie = "INSERT INTO tblHistorie SET stalId = '" . mysqli_real_escape_string($db, $STALID) . "',
+        datum = '" . mysqli_real_escape_string($db, $DATUM) . "',
+            actId = '" . mysqli_real_escape_string($db, $ACTID) . "' ";
 
 ?>
 -----
@@ -10,6 +12,14 @@ namespace Rector\Tests\TypeDeclaration\Rector\SplitSqlConcatenationRector\Fixtur
 
 namespace Rector\Tests\TypeDeclaration\Rector\SplitSqlConcatenationRector\Fixture;
 
-// @todo fill code after
+public function insert_tblHistorie($STALID, $DATUM, $ACTID) {
+$sql = <<<SQL
+INSERT INTO tblHistorie SET stalId = ':param1',
+        datum = ':param2',
+            actId = ':param3' 
+SQL;
+$arguments = [[':param1', $STALID], [':param2', $DATUM], [':param3', $ACTID]];
+$this->run_query($sql, $arguments);
+    }
 
 ?>

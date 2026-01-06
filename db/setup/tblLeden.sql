@@ -1,4 +1,5 @@
 DELETE FROM tblLeden WHERE lidId=42;
+ALTER TABLE tblLeden AUTO_INCREMENT=42;
 INSERT INTO tblLeden(login,passw,lidId,alias,
     meld,tech,fin,beheer,
     relnr, urvo, prvo,

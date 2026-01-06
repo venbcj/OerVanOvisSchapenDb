@@ -24,7 +24,6 @@ class GebruikerTest extends IntegrationCase {
 
     public function testGetMeld() {
         $this->uses_db();
-        $this->runsetup('tblLeden');
         $this->assertTableWithPK('tblLeden', 'lidId', 42);
         $this->db->query("UPDATE tblLeden SET meld=1 WHERE lidId=42");
         $this->get('/Gebruiker.php', ['ingelogd' => 1, 'pstId' => 42]);
@@ -49,8 +48,6 @@ class GebruikerTest extends IntegrationCase {
 
     public function testSaveGebruiker() {
         $this->uses_db();
-        $this->runsetup('user-1');
-        $this->runsetup('tblLeden');
         $this->post('/Gebruiker.php', [
             'ingelogd' => 1,
             'uid' => 42,

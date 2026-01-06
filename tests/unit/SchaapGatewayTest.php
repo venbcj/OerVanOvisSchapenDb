@@ -48,7 +48,6 @@ class SchaapGatewayTest extends GatewayCase {
     }
 
     public function testGeenEenheidFase() {
-        $this->runSQL("DELETE FROM tblSchaap");
         $lidid = 1;
         $M = 1; // "maandnummer" ?
         $J = 1970; // "jaar" ?
@@ -84,7 +83,6 @@ class SchaapGatewayTest extends GatewayCase {
 
     public function testZoekSchaap_leeg() {
         $this->uses_db();
-        $this->runSQL("TRUNCATE tblSchaap");
         $postdata = [
             'kzlLevnr_' => '1',
             'kzlWerknr_' => '',
@@ -132,7 +130,6 @@ class SchaapGatewayTest extends GatewayCase {
 
     public function testZoekStalid() {
         $this->runfixture('schaap-4');
-        $this->runSQL("DELETE FROM tblHistorie WHERE stalId=1");
         // moet ook een actie 3 in de historie hebben; die is er niet, dus vinden we niks.
         $this->assertEquals('', $this->db->error);
         $this->assertEquals(null, $this->sut->zoek_stalid(self::LIDID));
@@ -146,7 +143,6 @@ class SchaapGatewayTest extends GatewayCase {
     }
 
     public function testZoekVaders() {
-        $this->runSQL("DELETE FROM tblHistorie WHERE stalId=1");
         $Karwerk = 5;
         # er is een preconditie waar de methode [0,0] geeft. Soms fout, dus
         $this->assertEquals([], $this->sut->zoek_vaders(self::LIDID, $Karwerk));
@@ -184,7 +180,6 @@ class SchaapGatewayTest extends GatewayCase {
     }
 
     public function testGeenLamOpStal() {
-        $this->runSQL("DELETE FROM tblSchaap");
         $this->assertEquals(0, $this->sut->aantalLamOpStal(self::LIDID));
     }
 
@@ -234,8 +229,6 @@ class SchaapGatewayTest extends GatewayCase {
     public function testMetActie10WelUitgeschaarden() {
         $this->runfixture('schaap-4');
         $this->runSQL("INSERT INTO tblHistorie(stalId, actId) VALUES(1, 10)");
-        $this->runSQL("DELETE FROM tblRelatie");
-        $this->runSQL("DELETE FROM tblPartij");
         $this->runSQL("INSERT INTO tblRelatie(relId, relatie, partId) values(1, 'bestemming', 1)");
         $this->runSQL("INSERT INTO tblPartij(partId, lidId, naam) values(1, 1, 'partij')");
         $this->runSQL("UPDATE tblStal SET rel_best=1 WHERE stalId=1");
@@ -250,7 +243,6 @@ class SchaapGatewayTest extends GatewayCase {
     }
 
     public function testGeenAanwezigen() {
-        $this->runSQL("DELETE FROM tblSchaap");
         $Karwerk = 5;
         $this->assertEquals(0, $this->sut->aanwezigen(self::LIDID, $Karwerk)->num_rows);
     }
@@ -268,7 +260,6 @@ class SchaapGatewayTest extends GatewayCase {
     }
 
     public function testGeenPeriode() {
-        $this->runSQL("DELETE FROM tblSchaap");
         $volwid = 0;
         $this->assertEquals('', $this->sut->periode($volwid)[1]);
     }
@@ -294,7 +285,6 @@ class SchaapGatewayTest extends GatewayCase {
         $this->runfixture('schaap-4');
         $ooiId = 4;
         $aantal = 1;
-        $this->runSQL("DELETE FROM tblVolwas");
         $this->runSQL("INSERT INTO tblVolwas(mdrId, volwId) VALUES(" . $ooiId . ", " . self::VOLWID . ")");
         $this->runSQL("INSERT INTO tblSchaap(schaapId, volwId) VALUES(" . self::NEWSCHAAPID . ", " . self::VOLWID . ")"); // lam
         $this->runSQL("INSERT INTO tblSchaap(schaapId, volwId) VALUES(" . self::NEWSCHAAPID2 . ", " . self::VOLWID . ")"); // lam
@@ -308,7 +298,6 @@ class SchaapGatewayTest extends GatewayCase {
     }
 
     public function testDeLammerenLeeg() {
-        $this->runSQL("DELETE FROM tblSchaap");
         $volwid = 1;
         $Karwerk = 5;
         $this->assertEquals([null, null], $this->sut->de_lammeren($volwid, $Karwerk));
@@ -330,7 +319,6 @@ class SchaapGatewayTest extends GatewayCase {
     public function testWelMeerlingenPerooiPerjaar() {
         $this->runfixture('schaap-4');
         $this->runSQL("UPDATE tblSchaap SET geslacht='ooi'");
-        $this->runSQL("DELETE FROM tblVolwas");
         $this->runSQL("INSERT INTO tblVolwas(mdrId, volwId) VALUES(4, 1)");
         $this->runSQL("INSERT INTO tblSchaap(schaapId, volwId) VALUES(" . self::NEWSCHAAPID . ", " . self::VOLWID . ")"); // lam
         $this->runSQL("INSERT INTO tblSchaap(schaapId, volwId) VALUES(" . self::NEWSCHAAPID2 . ", " . self::VOLWID . ")"); // lam
@@ -363,7 +351,6 @@ class SchaapGatewayTest extends GatewayCase {
     }
 
     public function testGeenOoienInJaar() {
-        $this->runSQL("DELETE FROM tblSchaap");
         $this->assertEquals(0, $this->sut->zoek_ooien_in_jaar(self::LIDID, 2020));
     }
 
@@ -376,7 +363,6 @@ class SchaapGatewayTest extends GatewayCase {
     }
 
     public function testGeenLammerenInJaar() {
-        $this->runSQL("DELETE FROM tblSchaap");
         $this->assertEquals(0, $this->sut->zoek_lammeren_in_jaar(self::LIDID, 2020, '2020-01-01'));
     }
 
@@ -391,7 +377,6 @@ class SchaapGatewayTest extends GatewayCase {
     }
 
     public function testGeenSterfteLammeren() {
-        $this->runSQL("DELETE FROM tblSchaap");
         $this->assertEquals(0, $this->sut->zoek_aantal_sterfte_lammeren_in_jaar(self::LIDID, 2020));
     }
 
@@ -402,7 +387,6 @@ class SchaapGatewayTest extends GatewayCase {
     }
 
     public function testGeenSterfteMoeders() {
-        $this->runSQL("DELETE FROM tblSchaap");
         $this->assertEquals(0, $this->sut->zoek_aantal_sterfte_moeder_in_jaar(self::LIDID, 2020));
     }
 
@@ -457,7 +441,6 @@ class SchaapGatewayTest extends GatewayCase {
 
     public function test_zoekGeschiedenis_leeg() {
         $this->uses_db();
-        $this->runSQL("TRUNCATE tblSchaap");
         $result = $this->sut->zoekGeschiedenis(self::LIDID, self::SCHAAP4_ID, $Karwerk = 5);
         $this->assertEquals(0, $result->num_rows);
     }
@@ -478,11 +461,6 @@ class SchaapGatewayTest extends GatewayCase {
     
     public function test_zoek_schaap_aflever() {
         $this->uses_db();
-        $this->runSQL("truncate tblPartij");
-        $this->runSQL("truncate tblRelatie");
-        $this->runSQL("truncate tblStal");
-        $this->runSQL("truncate tblHistorie");
-        $this->runSQL("truncate tblSchaap");
         $this->runSQL("INSERT INTO tblPartij(naam, partId, lidId) VALUES('Stempelmans', 1, 1)");
         $this->runSQL("INSERT INTO tblRelatie(relId, partId, relatie) VALUES(1, 1, 'test')");
         $this->runSQL("INSERT INTO tblStal(stalId, rel_best, schaapId) VALUES(1, 1, 4)");

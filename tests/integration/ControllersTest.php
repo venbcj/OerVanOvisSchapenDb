@@ -68,7 +68,7 @@ class ControllersTest extends IntegrationCase {
             ['MeldUitval.php', [], []],
             ['OoilamSelectie.php', [], []],
             ['Ras.php', [], []],
-            ['Relatie.php', ['partij-1'], ['txtpId_' => 1, 'txtNaam_' => 'nodig']],
+            ['Relatie.php', ['partij-1'], ['txtpId_' => 11, 'txtNaam_' => 'nodig']],
             ['Rubrieken.php', [], []],
             ['Saldoberekening.php', [], []],
             ['Ubn_toevoegen.php', [], []],
@@ -328,7 +328,7 @@ TXT
 
     public function testRelatie() {
         $this->runfixture('partij-1');
-        $this->get("/Relatie.php", ['pstid' => 1]);
+        $this->get("/Relatie.php", ['pstid' => 11]);
         $this->assertNoNoise();
     }
 
