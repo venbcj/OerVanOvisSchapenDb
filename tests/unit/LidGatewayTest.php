@@ -4,6 +4,15 @@ class LidGatewayTest extends GatewayCase {
 
     protected static $sutname = 'LidGateway';
 
+    private $wants_autoincrement_restore = false;
+
+    public function teardown(): void {
+        parent::teardown();
+        if ($this->wants_autoincrement_restore) {
+            $this->db->query("ALTER TABLE tblLeden AUTOINCREMENT=42");
+        }
+    }
+
     public function testFindCrediteur() {
         $this->runfixture('crediteur');
         $res = $this->sut->findCrediteur(self::LIDID);
@@ -11,6 +20,7 @@ class LidGatewayTest extends GatewayCase {
     }
 
     public function test_save_new() {
+        $this->wants_autoincrement_restore = true;
         $form = [
             // uit een POST
             'roep' => 'a',
@@ -343,6 +353,7 @@ class LidGatewayTest extends GatewayCase {
     }
 
     public function test_store() {
+        $this->wants_autoincrement_restore = true;
         $ubn = null;
         $passw = null;
         $tel = null;

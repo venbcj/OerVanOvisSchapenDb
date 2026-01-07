@@ -1,10 +1,14 @@
 #!/bin/bash
-[ -z "$1" -o -z "$2" ] && echo "$0 pagename (met .php) test-path" && exit
+[ -z "$1" ] && echo "$0 pagename (met .php) <test-path>  # test path defaults to integration test" && exit
 [ ! -f "$1" ] && echo "pagename $1 bestaat niet" && exit
-if [ ! -f "$2" ]; then
-    CLASS=$(basename $2)
+PAGE=$1
+PAGEFILE=$(basename $PAGE)
+DEFAULT=tests/integration/${PAGEFILE%.php}Test.php
+TEST=${2:-$DEFAULT}
+if [ ! -f "$TEST" ]; then
+    CLASS=$(basename $TEST)
     CLASS=${CLASS%.php}
-    cat <<TXT > $2
+    cat <<TXT > $TEST
 <?php
 
 class $CLASS extends IntegrationCase {
@@ -13,5 +17,5 @@ class $CLASS extends IntegrationCase {
 
 TXT
 fi
-tmux split-window -h -l80 "cover-include none; cover-include $1; cover on; ./watcher $2"
-vi -o $2 $1
+tmux split-window -h -l80 "cover-include none; cover-include $PAGE; cover on; ./watcher $TEST"
+vi -o $TEST $PAGE

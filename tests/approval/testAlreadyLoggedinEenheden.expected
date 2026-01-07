@@ -1,10 +1,10 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-<title>Home</title>
+<title>Beheer</title>
 </head>
 <body>
+
 
 <link rel="stylesheet" type="text/css" href="style.css">
 <link rel="stylesheet" type="text/css" href="menu.css">
@@ -41,7 +41,7 @@ $(document).ready(function(){
 
 <div id = "rechts_uitlijnen" class = 'header_breed'>
     <section style="text-align : center">
-        Home&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    </section>
+        Verbruikseenheden&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    </section>
     <img src='OER_van_OVIS.jpg' />
 </div>
 
@@ -154,18 +154,66 @@ $(document).ready(function(){
 <tbody>
 <tr height = 90> </tr>
 <TR>
-            <TD align = "center" width = "1600">
-<table>
+            <TD align = "center" valign = "top">
+<table border = 0 ><tr><td>
+<form action= "Eenheden.php" method="post">
+<table border = 0 >
 <tr>
- <td>
-    <img src="OER_van_OVIS.jpg" width= 650 height= 240 valign = "center"/>
- </td>
+<td colspan = 5 align = center style ="font-size:11px;"> <b style ="font-size:20px;">Verbuikseenheden</b><br/> <!--tbv medicijnen--> <br></td>
 </tr>
+<tr align = center style ="font-size:12px;">
+<td></td> 
+<td><b><i>Omschrijving</i></b></td>
+<td><b><i>actief</i></b></td>
+</tr>
+<tr>
+<td width = 80></td>
+<td> cc </td>
+<form action= "Eenheden.php" method = "post">  
+    <input type = "hidden" name = "txtId" value = 1 >
+    <td align = center>
+        <input type="checkbox" name="chkAct" id="c1" value="1" checked title = "Is deze eenheid te gebruiken ja/nee ?">
+    </td>
+    <td><input type = "submit" name="knpUpdate" value = "Opslaan" style = "font-size:9px;"></td>
+</tr>
+        </form>
+<tr>
+<td width = 80></td>
+<td> kg </td>
+<form action= "Eenheden.php" method = "post">  
+    <input type = "hidden" name = "txtId" value = 3 >
+    <td align = center>
+        <input type="checkbox" name="chkAct" id="c1" value="1" checked title = "Is deze eenheid te gebruiken ja/nee ?">
+    </td>
+    <td><input type = "submit" name="knpUpdate" value = "Opslaan" style = "font-size:9px;"></td>
+</tr>
+        </form>
+<tr>
+<td width = 80></td>
+<td> ltr </td>
+<form action= "Eenheden.php" method = "post">  
+    <input type = "hidden" name = "txtId" value = 2 >
+    <td align = center>
+        <input type="checkbox" name="chkAct" id="c1" value="1" checked title = "Is deze eenheid te gebruiken ja/nee ?">
+    </td>
+    <td><input type = "submit" name="knpUpdate" value = "Opslaan" style = "font-size:9px;"></td>
+</tr>
+        </form>
+<tr>
+<td width = 80></td>
+<td> stuks </td>
+<form action= "Eenheden.php" method = "post">  
+    <input type = "hidden" name = "txtId" value = 4 >
+    <td align = center>
+        <input type="checkbox" name="chkAct" id="c1" value="1" checked title = "Is deze eenheid te gebruiken ja/nee ?">
+    </td>
+    <td><input type = "submit" name="knpUpdate" value = "Opslaan" style = "font-size:9px;"></td>
+</tr>
+        </form>
+    
 </table>
-
-</TD>
-
-<!-- menu1 -->
+</table>
+    </TD>
 
 <script>
 $('#datepicker1').attr('autocomplete','off');
@@ -177,57 +225,51 @@ $('#datepicker5').attr('autocomplete','off');
 
 <link rel="stylesheet" href="menu.css">
 <td width = '150' height = '100' valign='top'>
-Menu : <br>
+Menu : </br>
 <hr class="blue">
 
 <a href="http://oer-dev/Home.php" class="blue">Home</a>
-<hr class="grey">
 
-<a href="http://oer-dev/InvSchaap.php" class="blue">Aanvoer schaap</a>
 <hr class="grey">
-
-<a href="http://oer-dev/InlezenReader.php" class="blue">Inlezen reader</a>
- 
+<br/>
 <hr class="grey">
+<a href="http://oer-dev/Hok.php" class="blue">Verblijven</a>
 
-<a href="http://oer-dev/Melden.php" class="blue">RVO</a>
 <hr class="grey">
+<a href="http://oer-dev/Ras.php" class="blue">Rassen</a>
 
-<a href="http://oer-dev/Bezet.php" class="blue">Verblijven in gebruik</a>
 <hr class="grey">
+<a href="http://oer-dev/Uitval.php" class="blue">Redenen en momenten</a>
 
-<a href="http://oer-dev/Zoeken.php" class="blue">Schaap opzoeken</a>
 <hr class="grey">
+<a href="http://oer-dev/Combireden.php" class="blue">Combi redenen</a>
 
-<a href="http://oer-dev/Med_registratie.php" class="blue">Medicijn toediening</a>
 <hr class="grey">
+<a href="http://oer-dev/Vader.php" class="blue">Dekrammen</a>
 
-<a href="http://oer-dev/Dekkingen.php" class="blue">Dekkingen / Dracht</a>
 <hr class="grey">
-
-<a href="http://oer-dev/Alerts.php" class="blue">Raederalerts</a>
+<br/>
 <hr class="grey">
+<a href="http://oer-dev/Eenheden.php" class="blue">Eenheden</a>
 
-<a href="http://oer-dev/Rapport.php" class="blue">Rapporten</a>
 <hr class="grey">
+<a href="http://oer-dev/Relaties.php" class="blue">Relaties</a>
 
-<a href="http://oer-dev/Beheer.php" class="blue">Beheer</a>
 <hr class="grey">
+<a href="http://oer-dev/Readerversies.php" class="grey">Readerversies</a>
 
-<a href="http://oer-dev/Inkoop.php" class="blue">Voorraadbeheer</a>
 <hr class="grey">
+<a href="http://oer-dev/Gebruikers.php" class="blue">Gebruikers</a>
 
-<a href="http://oer-dev/Finance.php" class="blue">Financiëel</a>
 <hr class="grey">
+<a href="http://oer-dev/Systeem.php" class="blue">Instellingen</a>
 
+<hr class="grey">
 
 <i style = "color : #E2E2E2;">versie : 26-12-2024 </i> <br>
 <i style = "color : #E2E2E2;">ingelogd : 1</i>
 </td>
-
-</TR>
-</tbody>
+</tr>
 </table>
-
 </body>
 </html>

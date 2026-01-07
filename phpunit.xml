@@ -4,6 +4,12 @@
     <testsuite name="default">
       <directory>tests</directory>
     </testsuite>
+    <testsuite name="menu">
+      <file>tests/approval/GebruikerPageTest.php</file>
+      <file>tests/approval/LoginTest.php</file>
+      <file>tests/integration/SetupStateTest.php</file>
+      <file>tests/unit/VersiebeheerGatewayTest.php</file>
+    </testsuite>
     <testsuite name="gebruiker">
       <file>tests/approval/GebruikerPageTest.php</file>
       <file>tests/integration/GebruikerTest.php</file>
@@ -26,7 +32,7 @@
         <directory>ongebruikt</directory>
         <directory>utils</directory>
       </exclude>
-      <directory>.</directory>
+      <file>./classes/SetupState.php</file>
     </whitelist>
   </filter>
 </phpunit>

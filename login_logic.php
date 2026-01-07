@@ -67,10 +67,8 @@ if (php_uname('n') == 'basq') {
     }
 }
 
-// *** ALS NIET IS INGELOGD ***
 if (!Auth::is_logged_in()) {
     Auth::logout();
-
     if (isset($_POST['knpLogin']) || isset($_POST['knpBasis'])) {
         $lid_gateway = new LidGateway();
         $row = $lid_gateway->findByUserPassword($_POST['txtUser'], $passw);
@@ -88,9 +86,7 @@ if (!Auth::is_logged_in()) {
         $output[] = "header_logout.tpl.php"; // BV Dit bestand bestaat nog niet BCB: jawel, in templates/
         $output[] = "uitgelogd.tpl.php";      // BV Dit bestand bestaat nog niet BCB: idem
     }
-    // *** EINDE ALS NIET IS INGELOGD ***
-} elseif (Auth::is_logged_in()) {
-    // ***     ALS WEL IS INGELOGD    ***
+} else {
     // TODO: #0004173 variabele login wordt nergens gebruikt --BCB
     $login = Session::get('U1');
     $lidId = Session::get('I1');
@@ -130,11 +126,14 @@ if (!Auth::is_logged_in()) {
     //  en ook Readerversies in menuBeheer.php
     $dir = dirname(__FILE__); // Locatie bestanden op FTP server
     $persoonlijke_map = $dir.'/user_'.$lidId;
-    foreach (setup_versies($db, $persoonlijke_map) as $name => $value) {
+    if (empty($setup_state)) {
+        // test-seam, injectable
+        $setup_state = new SetupState();
+    }
+    foreach ($setup_state->versies($persoonlijke_map) as $name => $value) {
         global $$name;
         $$name = $value;
     }
 
     $output[] = "header.tpl.php";
-// ***     EINDE ALS WEL IS INGELOGD     ***
 }

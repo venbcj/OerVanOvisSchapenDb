@@ -2,6 +2,11 @@
 
 class GebruikerPageTest extends IntegrationCase {
 
+    /* Deze tests falen nu als de Readerversies-link in het menu rood is in plaats van de verwachte zwart.
+     * Maar dat heeft met de ingelogde gebruiker te maken, niet met de pstId
+     * Kunnen we toch een approval test opstellen, alleen dan niet voor de HELE pagina?
+     */
+
     public function testGebruikerPageForm() {
         $this->runfixture('user-kobus');
         $this->runfixture('hok');

@@ -583,39 +583,6 @@ function setup_db() {
     ];
 }
 
-    // TODO: (BV) #0004162 gaat onderstaand commentaar over de drie delen van de union? of over de drie "methoden" laatste-versie, readersetup, readertaken?
-    /* Eerste query zoek alleen readerApp versies
-    Tweede query zoek naar readerApp versie i.c.m. taakversies
-    Derde query zoek naar alleen taakversies */
-function setup_versies($db, $persoonlijke_map) {
-    Logger::instance()->debug("map=$persoonlijke_map\n");
-    $versie_gateway = new VersieGateway();
-    $last_versieId = $versie_gateway->zoek_laatste_versie();
-    $Readersetup_bestand = $versie_gateway->zoek_readersetup_in($last_versieId);
-    $Readertaken_bestand = $versie_gateway->zoek_readertaken_in($last_versieId);
-    Logger::instance()->debug("appfile $Readersetup_bestand takenfile $Readertaken_bestand\n");
-    // hee, dit fragment /staat/ al in Readerversies.php
-    if (isset($Readersetup_bestand)) {
-        $appfile_exists = file_exists($persoonlijke_map.'/Readerversies/'.$Readersetup_bestand);
-    } else {
-        $appfile_exists = 1;
-    }
-
-    // hee, dit fragment /staat/ al in Readerversies.php
-    if (isset($Readertaken_bestand)) {
-        $takenfile_exists = file_exists($persoonlijke_map.'/Readerversies/'.$Readertaken_bestand);
-    } else {
-        $takenfile_exists = 1;
-    }
-
-    $actuele_versie = null;
-    if ($appfile_exists == 1 && $takenfile_exists == 1) {
-        // deze variabele komt terug in menu1 en menubeheer, maar ook aangeroepen vanuit header.tpl. Daarom moet-ie er nu al zijn.
-        $actuele_versie = 'Ja';
-    }
-    return compact(explode(' ', 'last_versieId Readersetup_bestand Readertaken_bestand appfile_exists takenfile_exists actuele_versie'));
-}
-
 function redirect_if_forbidden() {
     // TODO: #0004152 whitelisten is veiliger dan dit blacklisten
     // TODO: dit wordt sowieso nog anders als je eenmaal een front controller hebt. --BCB

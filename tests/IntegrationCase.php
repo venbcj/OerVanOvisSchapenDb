@@ -166,4 +166,34 @@ class IntegrationCase extends UnitCase {
         $this->assertCount($count, $rows, "table heeft niet de verwachte $count rijen");
     }
 
+    protected function makeUserFilesPresent() {
+        $workdir = getcwd();
+        chdir('../..');
+        $root_dir = getcwd();
+        if (!file_exists('./user_1/Readerversies')) {
+            mkdir('./user_1/Readerversies', 0777, true);
+        }
+        touch('./user_1/Readerversies/appfile');
+        touch('./user_1/Readerversies/readerfile');
+        chdir($workdir);
+        return $root_dir;
+    }
+
+    protected function makeUserFilesAbsent() {
+        $workdir = getcwd();
+        chdir('../..');
+        $root_dir = getcwd();
+        if (file_exists($path = './user_1/Readerversies/appfile')) {
+            $this->assertTrue(unlink($path), 'cannot remove appfile?');
+        }
+        if (file_exists($path = './user_1/Readerversies/readerfile')) {
+            $this->assertTrue(unlink($path), 'cannot remove appfile?');
+        }
+        if (file_exists($path = './user_1/Readerversies')) {
+            rmdir('./user_1/Readerversies');
+        }
+        chdir($workdir);
+        return $root_dir;
+    }
+
 }

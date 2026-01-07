@@ -12,7 +12,6 @@ class NewUserTest extends IntegrationCase {
     }
 
     public function testSave() {
-        Logger::instance()->debug('===============================================================');
         include "just_connect_db.php";
         $this->db = $db;
         if (is_dir(self::NEW_USER_DIR)) {
