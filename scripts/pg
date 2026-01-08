@@ -5,9 +5,11 @@ PAGE=$1
 PAGEFILE=$(basename $PAGE)
 DEFAULT=tests/integration/${PAGEFILE%.php}Test.php
 TEST=${2:-$DEFAULT}
+ALSO=
 if [ ! -f "$TEST" ]; then
     CLASS=$(basename $TEST)
     CLASS=${CLASS%.php}
+    ALSO=tests/integration/ControllersTest.php
     cat <<TXT > $TEST
 <?php
 
@@ -18,4 +20,4 @@ class $CLASS extends IntegrationCase {
 TXT
 fi
 tmux split-window -h -l80 "cover-include none; cover-include $PAGE; cover on; ./watcher $TEST"
-vi -o $TEST $PAGE
+vi -o $ALSO $TEST $PAGE

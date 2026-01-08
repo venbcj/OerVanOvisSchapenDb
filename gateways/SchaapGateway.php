@@ -5176,4 +5176,34 @@ SQL;
         return $this->run_query($sql, $args);
     }
 
+    public function zoek_oud_levensnummer($pstnr) {
+        $sql = <<<SQL
+    SELECT levensnummer
+    FROM tblSchaap
+    WHERE levensnummer = :pstnr
+SQL;
+        $args = [[':pstnr', $pstnr]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function zoek_oud_levensnummer_obv_schaapId($pst) {
+        $sql = <<<SQL
+            SELECT levensnummer
+            FROM tblSchaap
+            WHERE schaapId = :pst
+SQL;
+        $args = [[':pst', $pst]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function zoek_op_bestaand_levensnummer($levnr_new) {
+        $sql = <<<SQL
+    SELECT schaapId
+    FROM tblSchaap
+    WHERE levensnummer = :levnr_new
+SQL;
+        $args = [[':levnr_new', $levnr_new]];
+        return $this->first_field($sql, $args);
+    }
+
 }

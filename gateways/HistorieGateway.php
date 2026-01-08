@@ -2043,4 +2043,22 @@ SQL;
         $this->run_query($sql, $args);
     }
 
+    public function omnummer($stalId, $fldDay, $levnr_old) {
+        $sql = <<<SQL
+        INSERT INTO tblHistorie set stalId = :stalId, datum = :fldDay, actId = 17, oud_nummer = :levnr_old
+SQL;
+        $args = [[':stalId', $stalId, self::INT], [':fldDay', $fldDay], [':levnr_old', $levnr_old]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function zoek_omnummering($stalId) {
+        $sql = <<<SQL
+        SELECT max(hisId) hisId
+        FROM tblHistorie
+        WHERE stalId = :stalId and actId = 17
+SQL;
+        $args = [[':stalId', $stalId, self::INT]];
+        return $this->first_field($sql, $args);
+    }
+
 }

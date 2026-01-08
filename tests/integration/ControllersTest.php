@@ -156,7 +156,6 @@ Meldpagina.php
 MeldUitval.php
 Mndoverz_fok.php
 Newuser.php
-OmnSchaap.php
 OoikaartAll.php
 OoilamSelectie.php
 Rapport1.php

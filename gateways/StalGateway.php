@@ -640,4 +640,18 @@ SQL;
         return $this->first_field($sql, $args);
     }
 
+    public function zoek_stalId_omn($lidId, $levnr_old) {
+        $sql = <<<SQL
+    SELECT stalId, s.schaapId
+    FROM tblStal st
+    join tblUbn u USING(ubnId)
+     join tblSchaap s on (st.schaapId = s.schaapId)
+    WHERE u.lidId = :lidId
+     and s.levensnummer = :levnr_old
+     and isnull(st.rel_best)
+SQL;
+        $args = [[':lidId', $lidId, self::INT], [':levnr_old', $levnr_old]];
+        return $this->first_row($sql, $args, [0,0]);
+    }
+
 }

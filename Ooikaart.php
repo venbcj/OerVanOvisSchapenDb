@@ -32,6 +32,7 @@ include "login.php";
 <?php
 if (Auth::is_logged_in()) {
     if ($modtech == 1) {
+            $schaap_gateway = new SchaapGateway();
         if (isset($_GET['pstId'])) {
             $raak = $_GET['pstId'];
         }
@@ -63,7 +64,6 @@ if (Auth::is_logged_in()) {
         Elk van de gevulde keuze velden moet gelijk zijn aan het resultaat van de deling.
         Dat is   $gekozen_ooi  !!! */
         if (!empty($kzlLevnr)) {
-            $schaap_gateway = new SchaapGateway();
             $mdrId_obv_levnr = $schaap_gateway->zoek_moeder_ooikaart($kzlLevnr);
             $deel = 1;
         } else {
@@ -71,14 +71,12 @@ if (Auth::is_logged_in()) {
             $deel = 0;
         }
         if (!empty($kzlWerknr)) {
-            $schaap_gateway = new SchaapGateway();
             $mdrId_obv_werknr = $schaap_gateway->zoek_moeder_werknr($kzlWerknr);
             $deel++ ;
         } else {
             $mdrId_obv_werknr = 0;
         }
         if (!empty($kzlHalsnr)) {
-            $schaap_gateway = new SchaapGateway();
             $mdrId_obv_halsnr = $schaap_gateway->zoek_moeder_halsnr($kzlHalsnr);
             $deel++ ;
         } else {
@@ -112,7 +110,6 @@ if (Auth::is_logged_in()) {
 <form action= "Ooikaart.php" method= "post"> 
 <td colspan = 3>
 <?php
-        $schaap_gateway = new SchaapGateway();
         $kzl = $schaap_gateway->kzl_ooikaart($lidId);
 ?>
  <select name= "kzllevnr" style= "width:120;" >
@@ -136,7 +133,6 @@ if (Auth::is_logged_in()) {
 <?php
         //Keuzelijst werknr
         $width = 25 + (8 * $Karwerk) ;
-        $schaap_gateway = new SchaapGateway();
         $kzl = $schaap_gateway->kzl_werknr($Karwerk, $lidId);
 ?>
     <select name= "kzlwerknr" style= "width:<?php
@@ -161,7 +157,6 @@ if (Auth::is_logged_in()) {
 <!-- kzlHalsnr -->
 <td>
 <?php
-        $schaap_gateway = new SchaapGateway();
         $zoek_halsnr = $schaap_gateway->kzl_halsnr($lidId);
 ?>
  <select name="kzlHalsnr" style= "width: 80;" >
@@ -191,7 +186,6 @@ if (Auth::is_logged_in()) {
 </table>        </td></tr>
 <?php
         if (isset($gekozen_ooi)) {
-            $schaap_gateway = new SchaapGateway();
             $result_mdr = $schaap_gateway->result_mdr($Karwerk, $lidId, $gekozen_ooi);
             while ($row = $result_mdr->fetch_assoc()) {
                 $levnr = $row['levensnummer'];
@@ -326,7 +320,6 @@ if (Auth::is_logged_in()) {
      <td></td> <td><b> Gem<br>groei<br>afleveren </b><hr></td>
      </tr>
 <?php
-            $schaap_gateway = new SchaapGateway();
             $lammeren = $schaap_gateway->lammeren($Karwerk, $lidId, $gekozen_ooi);
             while ($lam = $lammeren->fetch_assoc()) {
                 if (empty($lam['levensnummer'])) {
