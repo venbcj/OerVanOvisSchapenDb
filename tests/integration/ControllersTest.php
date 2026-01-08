@@ -158,7 +158,6 @@ Mndoverz_fok.php
 Newuser.php
 OmnSchaap.php
 OoikaartAll.php
-Ooikaart.php
 OoilamSelectie.php
 Rapport1.php
 Rapport.php

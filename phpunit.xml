@@ -4,6 +4,10 @@
     <testsuite name="default">
       <directory>tests</directory>
     </testsuite>
+    <testsuite name="ooikaart">
+      <file>tests/integration/OoikaartTest.php</file>
+      <directory>tests/unit</directory>
+    </testsuite>
     <testsuite name="menu">
       <file>tests/approval/GebruikerPageTest.php</file>
       <file>tests/approval/LoginTest.php</file>
@@ -32,7 +36,7 @@
         <directory>ongebruikt</directory>
         <directory>utils</directory>
       </exclude>
-      <file>./classes/SetupState.php</file>
+      <file>./Ooikaart.php</file>
     </whitelist>
   </filter>
 </phpunit>
