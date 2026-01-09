@@ -29,8 +29,7 @@ FROM tblEenheid e
 WHERE eu.lidId = :lidId and a.soort = 'pil' and a.actief = 1
 ORDER BY a.naam
 SQL
-        , [[':lidId', $lidId, self::INT]]
-        );
+        , [[':lidId', $lidId, self::INT]]);
     }
 
     public function zoek_soort($artId): ?string {
@@ -40,7 +39,8 @@ SELECT a.soort
 FROM tblArtikel a
 WHERE a.artId = :artId
 SQL
-            , [[':artId', $artId, self::INT]]
+            ,
+            [[':artId', $artId, self::INT]]
         );
     }
 
@@ -111,7 +111,7 @@ WHERE eu.lidId = :lidId
  and i.inkat - coalesce(v.vbrat,0) > 0
 ORDER BY a.naam
 SQL
-        ,
+            ,
             [[':lidId', $lidId, self::INT]]
         );
     }
@@ -155,7 +155,7 @@ WHERE eu.lidId = :lidId
 GROUP BY a.artId, a.naam, a.stdat, e.eenheid, i.charge, artvrd.totvrd
 ORDER BY a.naam, i.inkId
 SQL
-        ,
+            ,
             [[':lidId', $lidId, self::INT]]
         );
     }
@@ -173,13 +173,13 @@ WHERE a.soort = 'voer'
 GROUP BY a.artId, a.naam 
 ORDER BY a.naam
 SQL
-        ,
+            ,
             [[':lidId', $lidId, self::INT]]
         );
     }
 
     public function countVoerByName($lidId, $naam): ?int {
-       return $this->first_field(
+        return $this->first_field(
             <<<SQL
 SELECT count(naam) aantal
 FROM tblEenheid e
@@ -207,7 +207,7 @@ INSERT INTO tblArtikel SET
     relId= :relId,
     rubuId= :rubuId
 SQL
-        ,
+            ,
             [
                 [':naam', $insNaam],
                 [':stdat', $insStdat],
@@ -231,7 +231,7 @@ WHERE eu.lidId = :lidId
  and a.actief = 1
 ORDER BY a.actief desc, a.naam
 SQL
-        ,
+            ,
             [[':lidId', $lidId, self::INT]]
         );
     }
@@ -245,7 +245,7 @@ FROM tblEenheid e
  join tblArtikel a on (a.enhuId = eu.enhuId)
 WHERE a.artId = :artId
 SQL
-        ,
+            ,
             [[':artId', $artId, self::INT]]
         );
     }
@@ -264,7 +264,7 @@ FROM tblEenheid e
 WHERE a.artId = :artId
 ORDER BY a.naam 
 SQL
-        ,
+            ,
             [[':artId', $artId, self::INT]]
         );
     }
@@ -280,7 +280,7 @@ WHERE eu.lidId = :lidId
  and a.soort = 'voer'
  and a.actief = 0 
 SQL
-        ,
+            ,
             [[':lidId', $lidId, self::INT]]
         );
     }
@@ -297,7 +297,7 @@ WHERE eu.lidId = :lidId
  and a.actief = 0
 ORDER BY a.actief desc, a.naam  
 SQL
-        ,
+            ,
             [[':lidId', $lidId, self::INT]]
         );
     }
@@ -307,7 +307,7 @@ SQL
             <<<SQL
 Update tblArtikel set actief = 1 WHERE artId = :artId
 SQL
-        ,
+            ,
             [[':artId', $artId, self::INT]]
         );
     }
@@ -331,7 +331,7 @@ WHERE eu.lidId = :lidId
 GROUP BY a.artId, a.naam, a.stdat, e.eenheid
 ORDER BY a.naam
 SQL
-        ,
+            ,
             [[':lidId', $lidId, self::INT]]
         );
     }
@@ -345,7 +345,7 @@ FROM tblArtikel a
  join tblEenheid e on (e.eenhId = eu.eenhId)
 WHERE a.artId = :artId
 SQL
-        ,
+            ,
             [[':artId', $artId]],
             [0, 0, 0, 0]
         );
@@ -360,7 +360,8 @@ FROM tblEenheid e
  join tblArtikel a on (a.enhuId = eu.enhuId)
 WHERE a.artId = :artId
 SQL
-        , [[':artId', $artId, self::INT]]
+            ,
+            [[':artId', $artId, self::INT]]
         );
     }
 
@@ -378,7 +379,8 @@ FROM tblInkoop i
  ) n on (i.inkId = n.inkId)
 WHERE i.artId = :artId
 SQL
-        , [[':artId', $artId, self::INT]]
+            ,
+            [[':artId', $artId, self::INT]]
         );
     }
 
@@ -400,12 +402,13 @@ WHERE h.skip = 0
 GROUP BY date_format(h.datum,'%Y%m')
 ORDER BY date_format(h.datum,'%Y%m') desc
 SQL
-        , [
+            ,
+            [
             [':lidId', $lidId, self::INT],
             [':minjaar', $minjaar],
             [':maxjaar', $maxjaar],
             [':artId', $artId, self::INT],
-        ]
+            ]
         );
     }
 
@@ -431,12 +434,13 @@ GROUP BY date_format(h.datum,'%Y%m')
 ORDER BY date_format(h.datum,'%Y%m') desc
 )
 SQL
-        , [
+            ,
+            [
             [':lidId', $lidId, self::INT],
             [':minjaar', $minjaar],
             [':maxjaar', $maxjaar],
             [':artId', $artId, self::INT],
-        ]
+            ]
         );
         if ($vw) {
             return $vw->num_rows;
@@ -462,7 +466,7 @@ WHERE h.skip = 0
 GROUP BY month(h.datum), date_format(h.datum,'%Y')
 ORDER BY date_format(h.datum,'%Y') desc, month(h.datum) desc 
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, self::INT],
                 [':minjaar', $minjaar],
@@ -491,7 +495,8 @@ WHERE eu.lidId = :lidId
 GROUP BY a.artId, a.naam
 ORDER BY a.naam
 SQL
-        , [[':lidId', $lidId, self::INT]]
+            ,
+            [[':lidId', $lidId, self::INT]]
         );
     }
 
@@ -502,7 +507,8 @@ SELECT round(a.stdat) stdat
 FROM tblArtikel a
 WHERE a.artId = :artId
 SQL
-        , [[':artId', $artId, self::INT]]
+            ,
+            [[':artId', $artId, self::INT]]
         );
     }
 
@@ -526,20 +532,21 @@ FROM (
 GROUP BY u.artId, u.naam
 ORDER BY u.naam
 SQL
-        , [[':lidId', $lidId, self::INT], [':artId', $artId, self::INT]]
-        );
+        , [[':lidId', $lidId, self::INT], [':artId', $artId, self::INT]]);
     }
 
     public function medicijn_actief($lidId, $artId): array {
-        return $this->first_row(<<<SQL
+        return $this->first_row(
+            <<<SQL
 SELECT a.naam, a.actief 
 FROM tblEenheid e
  join tblEenheiduser eu on (e.eenhId = eu.eenhId)
  join tblArtikel a on (a.enhuId = eu.enhuId)
 WHERE eu.lidId = :lidId and a.artId = :artId
 SQL
-        , [[':lidId', $lidId, self::INT], [':artId', $artId, self::INT]]
-            , [null, null]
+            ,
+            [[':lidId', $lidId, self::INT], [':artId', $artId, self::INT]],
+            [null, null]
         );
     }
 
@@ -552,6 +559,27 @@ SQL
             WHERE a.artId = :insVoer
 SQL;
         $args = [[':insVoer', $insVoer]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function zoek_readernaam($lidId, $readernaam) {
+        $sql = <<<SQL
+        SELECT count(*) aant 
+                    FROM tblArtikel a
+                     join tblEenheiduser eu on (a.enhuId = eu.enhuId) 
+                    WHERE lidId = :lidId and a.naamreader = :readernaam ;
+SQL;
+        $args = [[':lidId', $lidId, self::INT], [':readernaam', $readernaam]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function insert_tblArtikel($insNaam, $readernaam, $insRegnr, $insStdat, $insNhd, $insKg, $insBtw, $insRelatie, $inswdgn_v, $inswdgn_m, $insRubriek) {
+        $sql = <<<SQL
+                INSERT INTO tblArtikel SET soort = 'pil', naam = :insNaam, naamreader = :readernaam, :insRegnr, :insStdat, enhuId = :insNhd, perkg = :insKg, btw = :insBtw, relId= :insRelatie, wdgn_v = :inswdgn_v, wdgn_m = :inswdgn_m, rubuId= :insRubriek
+SQL;
+        $args = [
+            [':insNaam', $insNaam], [':readernaam', $readernaam], [':insRegnr', $insRegnr], [':insStdat', $insStdat, self::INT], [':insNhd', $insNhd], [':insKg', $insKg], [':insBtw', $insBtw], [':insRelatie', $insRelatie], [':inswdgn_v', $inswdgn_v], [':inswdgn_m', $inswdgn_m], [':insRubriek', $insRubriek]
+        ];
         return $this->run_query($sql, $args);
     }
 

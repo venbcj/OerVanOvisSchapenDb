@@ -318,4 +318,14 @@ SQL;
         return $this->run_query($sql, $args);
     }
 
+    public function pil_ingekocht($Id) {
+        $sql = <<<SQL
+            SELECT count(artId) aant
+            FROM tblInkoop
+            WHERE artId = :Id
+SQL;
+        $args = [[':Id', $Id, self::INT]];
+        return $this->run_query($sql, $args);
+    }
+
 }

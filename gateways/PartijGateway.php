@@ -3,8 +3,7 @@
 class PartijGateway extends Gateway {
 
     public function findLeverancier($lidId) {
-        return $this->run_query(
-            <<<SQL
+        $sql = <<<SQL
 SELECT r.relId, p.naam
 FROM tblPartij p
  join tblRelatie r on (p.partId = r.partId)
@@ -13,9 +12,9 @@ WHERE p.lidId = :lidId
  and p.actief = 1
  and r.actief = 1
 ORDER BY p.naam
-SQL
-        , [[':lidId', $lidId, self::INT]]
-        );
+SQL;
+        $args = [[':lidId', $lidId, self::INT]];
+        return $this->run_query($sql, $args);
     }
 
     public function findKlant($lidId) {
@@ -98,6 +97,5 @@ SQL
         , [[':lidId', $lidId, self::INT],[':partij',$newPartij, self::TXT]]
         );
     }
-
 
 }

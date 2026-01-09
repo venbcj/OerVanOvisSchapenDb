@@ -239,4 +239,17 @@ SQL
         );
     }
 
+    public function qryRubriek($lidId) {
+        $sql = <<<SQL
+            SELECT ru.rubuId, r.rubriek
+            FROM tblRubriekuser ru 
+             join tblRubriek r on (ru.rubId = r.rubId)
+             join tblRubriekhfd hr on (r.rubhId = hr.rubhId)
+            WHERE ru.lidId = :lidId and r.rubId = 10 and r.actief = 1 and hr.actief = 1
+            ORDER BY r.rubriek
+SQL;
+        $args = [[':lidId', $lidId, self::INT]];
+        return $this->run_query($sql, $args);
+    }
+
 }
