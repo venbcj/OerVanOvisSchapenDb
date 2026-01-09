@@ -25,11 +25,22 @@
 
 $ubn = 'FIXME'; // nodig in doodgeboren-scenario, zo te zien, maar niet gezet.
 $array = array();
-foreach($_POST as $key => $value) {
+foreach ($_POST as $key => $value) {
     $array[Url::getIdFromKey($key)][Url::getNameFromKey($key)] = $value;
 }
-foreach($array as $recId => $id) {
-    if (!$recId) continue;
+
+$bezet_gateway = new BezetGateway();
+$historie_gateway = new HistorieGateway();
+$impagrident_gateway = new ImpAgridentGateway();
+$schaap_gateway = new SchaapGateway();
+$stal_gateway = new StalGateway();
+$ubn_gateway = new UbnGateway();
+$volwas_gateway = new VolwasGateway();
+
+foreach ($array as $recId => $id) {
+    if (!$recId) {
+        continue;
+    }
     unset($fldRas);
     unset($fldSekse);
     unset($fldKg);
@@ -37,9 +48,13 @@ foreach($array as $recId => $id) {
     unset($fldMom);
     unset($fldUitvdag);
     unset($fldRed);
-    foreach($id as $key => $value) {
-        if ($key == 'chbkies')   { $fldKies = $value; }
-        if ($key == 'chbDel')   { $fldDel = $value; }
+    foreach ($id as $key => $value) {
+        if ($key == 'chbkies') {
+            $fldKies = $value;
+        }
+        if ($key == 'chbDel') {
+            $fldDel = $value;
+        }
         if ($key == 'txtDatum' && !empty($value)) {
             $dag = date_create($value);
             $fldDag = date_format($dag, 'Y-m-d');
@@ -47,408 +62,237 @@ foreach($array as $recId => $id) {
             $fldDrachtDay = date('Y-m-d', strtotime("-145 day", $Dagberekening));
         }
         if ($key == 'kzlRas' && !empty($value)) {
-            $fldRas = $value; 
+            $fldRas = $value;
         }
         if ($key == 'kzlSekse' && !empty($value)) {
-            $fldSekse = $value; 
+            $fldSekse = $value;
         }
         if ($key == 'txtKg' && !empty($value)) {
-            $fldKg = str_replace(',', '.', $value); 
+            $fldKg = str_replace(',', '.', $value);
         }
         if ($key == 'kzlOoi' && !empty($value)) {
-            $fldStalIdMdr = $value; 
+            $fldStalIdMdr = $value;
         }
         if ($key == 'kzlHok' && !empty($value)) {
-            $fldHok = $value; 
+            $fldHok = $value;
         }
         if ($key == 'kzlMom' && !empty($value)) {
-            $fldMom = $value; 
+            $fldMom = $value;
+        } elseif ($key == 'kzlMom' && empty($value)) {
+            $fldMom = '' ;
         }
-        else if ($key == 'kzlMom' && empty($value)) {
-            $fldMom = '' ; 
-        }
+        // dit wordt niet in deze code gebruikt. Wel in InsGeboortes, maar of het *deze* waarde is, vind ik zo moeilijk te zeggen
         if ($key == 'txtUitvaldm' && !empty($value)) {
-            $uitvdag = date_create($value); $fldUitvdag = date_format($uitvdag, 'Y-m-d'); 
+            $uitvdag = date_create($value);
+            $fldUitvdag = date_format($uitvdag, 'Y-m-d');
         }
         if ($key == 'kzlRed' && !empty($value)) {
-            $fldRed = $value; 
+            $fldRed = $value;
         }
     }
     // (extra) controle of readerregel reeds is verwerkt. Voor als de pagina 2x wordt verstuurd bij fouten op de pagina
     unset($verwerkt);
-    $zoek_readerRegel_verwerkt = mysqli_query($db,"
-SELECT verwerkt
-FROM impAgrident
-WHERE Id = '".mysqli_real_escape_string($db,$recId)."'
-") or die (mysqli_error($db));
-while($verw = mysqli_fetch_array($zoek_readerRegel_verwerkt))
-{ $verwerkt = $verw['verwerkt']; }
-if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt)) {
-    if(isset($fldStalIdMdr)) {
-        // Zoek gegevens behorende bij moederdier
-        // zoek ubn van moederdier bij gebruikers met module technisch
-        $zoek_schaapId_ubnId_moeder = mysqli_query($db,"
-SELECT schaapId, ubnId
-FROM tblStal
-WHERE stalId = '".mysqli_real_escape_string($db,$fldStalIdMdr)."'
-") or die (mysqli_error($db));
-    while($zsum = mysqli_fetch_array($zoek_schaapId_ubnId_moeder)) {
-        $mdrId = $zsum['schaapId'];
-        $ubnId = $zsum['ubnId']; 
-    }
-// Einde zoek ubn van moederdier bij gebruikers met module technisch
-    $zoek_eerste_aanvoerdatum_moeder = mysqli_query($db,"
-    SELECT h.datum
-    FROM (
-      SELECT min(stalId) stalId
-      FROM tblStal st
-JOIN tblUbn u USING(ubnId)
-      WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and schaapId = '".mysqli_real_escape_string($db,$mdrId)."'
-     ) st1
-     join tblHistorie h on (h.stalId = st1.stalId)
-     join tblActie a on (a.actId = h.actId)
-    WHERE a.op = 1 and h.skip = 0
-    and not exists (
-      SELECT datum
-      FROM tblHistorie ha
-       join tblStal st on (ha.stalId = st.stalId)
-       join tblSchaap s on (st.schaapId = s.schaapId)
-      WHERE actId = 2 and st1.stalId = st.stalId and h.actId = ha.actId-1 and s.schaapId = '" .mysqli_real_escape_string($db,$mdrId) . "'
-    )
-    ") or die (mysqli_error($db));
-      // bij aankoop incl. geboortedatum wordt geboortedatum niet getoond
-    while($zeam = mysqli_fetch_array($zoek_eerste_aanvoerdatum_moeder)) {
-        $dmaanv_1_mdr = $zeam['datum']; 
-    }
-  unset($dmafv_mdr);
-    $query_datum_afvoer_moeder = mysqli_query($db,"
-    SELECT h.datum dmeind
-    FROM (
-      SELECT max(stalId) stalId
-      FROM tblStal
-      WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and schaapId = '".mysqli_real_escape_string($db,$mdrId)."'
-    ) mst
-     join tblStal st on (mst.stalId = st.stalId)
-     join tblHistorie h on (h.stalId = st.stalId)
-     join tblActie a on (a.actId = h.actId)
-    WHERE a.af = 1 and h.skip = 0
-    ") or die (mysqli_error($db));
-        while($mdrdm = mysqli_fetch_array($query_datum_afvoer_moeder)) {
-            $dmafv_mdr = $mdrdm['dmeind']; 
+    $verwerkt = $impagrident_gateway->zoek_readerRegel_verwerkt($recId);
+    if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt)) {
+        if (isset($fldStalIdMdr)) {
+            [$mdrId, $ubnId] = $stal_gateway->zoek_schaapId_ubnId_moeder($fldStalIdMdr);
+            $dmaanv_1_mdr = $stal_gateway->zoek_eerste_aanvoerdatum_moeder($lidId, $mdrId);
+        // TODO: slaat dit commentaar nog ergens op?
+          // bij aankoop incl. geboortedatum wordt geboortedatum niet getoond
+            unset($dmafv_mdr);
+            $dmafv_mdr = $stal_gateway->query_datum_afvoer_moeder($lidId, $mdrId);
+        } else {
+    // TODO is de ariteit juist? Een lid zou toch meerdere ubn-records kunnen hebben?
+    // TODO hadden we hier ook $ubn zullen declareren?
+            $ubnId = $ubn_gateway->zoek_ubnId($lidId);
         }
-    } else {
-// zoek ubn van gebruiker bij gebruikers die module technisch niet hebben. Controle of gebruiker slechts 1 ubn heeft zit in InsGeboortes.php
-$zoek_ubnId = mysqli_query($db,"
-SELECT ubnId
-FROM tblUbn
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
-") or die (mysqli_error($db));
-        while($zu = mysqli_fetch_array($zoek_ubnId)) {
-            $ubnId = $zu['ubnId']; 
+          [$tran, $fldLevnr, $moeder, $mdrTran_rd] = $impagrident_gateway->zoek_levensnummer_transponder($recId);
+    // Transponder moeder inlezen als deze niet bestaat in tblSchaap
+        $mdrTran_sch = $mdrTran_rd;
+        [$moederId, $mdrTran_sch] = $schaap_gateway->zoek_transp_moeder($moeder);
+        if ($mdrTran_rd <> $mdrTran_sch) {
+            $schaap_gateway->update_tblSchaap($mdrTran_rd, $moederId);
+        }
+    // Einde Transponder moeder inlezen als deze niet bestaat in tblSchaap
+    /* ********************
+    //    BEPAAL VOLWID
+    // ********************
+    Stap 1 : Eerst wordt o.b.v. moeder en geboortedatum van lam een actuele worp gezocht. Dus volwId in tblVolwas die al is gekoppeld aan een ander lam.
+    Stap 2 : Als deze niet bestaat wordt er gezocht naar een drachtige ooi zonder worp. Na de laatste worp van de ooi moet er nog een dracht zijn geregistreerd die niet ouder is dan 145 dagen.
+    Stap 3 : Als een drachtige ooi zonder worp niet bestaat wordt er gezocht op een actuele dekking die dus nog niet heeft geworpen. Na de laatste worp van de ooi moet er nog een dekking zijn geregistreerd die niet ouder is dan 145 dagen.
+    Stap 4 : Als deze dekking niet bestaat wordt een nieuw koppel (vader al dan niet bekend) aangemaakt in tblVolwas. Daarna wordt een fictieve dekdatum vastgelegd in tblHistorie met actId 18 (Dekken) zijnde geboortedatum - 145 dagen.
+    Een fictieve drachtdatum wordt niet vastgelegd. Deze moet reeds bestaan anders wordt deze niet met terugwerkende kracht aangemaakt.
+    */
+        if (isset($fldStalIdMdr)) {
+            unset($volwId);
+            $volwId = $schaap_gateway->zoek_huidige_worp_geb($mdrId, $fldDag);
+        // Stap 2 is overbodig. Als er een drachtige ooi bestaat moet deze hetzelfde volwId hebben als de volwId o.b.v. de laatste dekking zonder worp. Aan die volwId hangt immers de drachtregistratie.
+        /*
+        if(!isset($volwId)) { // Stap 2 : Zoek drachtige ooi zonder worp binnen 145 dagen t.o.v. de geboortedatum $fldDag
+        $zoek_actuele_dracht = mysqli_query($db,"
+         SELECT v.volwId
+         FROM tblVolwas v
+          join tblDracht d on (v.volwId = d.volwId)
+          join tblHistorie h on (d.hisId = h.hisId)
+          left join tblSchaap s on (s.volwId v.volwId)
+         WHERE h.skip = 0 and v.mdrId = '".mysqli_real_escape_string($db,$fldMoeder)."' and isnull(s.volwId) and date_add(h.datum, interval 145 day) > '".mysqli_real_escape_string($db,$fldDag)."'
+         ") or die (mysqli_error($db));
+          while ( $zadr = mysqli_fetch_assoc($zoek_actuele_dracht)) { $volwId = $zadr['volwId']; }
+        }
+         */ // EInde Stap 2 : Zoek drachtige ooi zonder worp binnen 145 dagen t.o.v. de geboortedatum $fldDag
+            if (!isset($volwId)) {
+                $volwId = $volwas_gateway->zoek_actuele_dekking_binnen_145dagen($mdrId, $fldDag);
+            } // EInde Stap 3 : Zoek actuele dekking zonder worp en zonder registratie dracht
+            if (!isset($volwId)) {
+                $hisId = $historie_gateway->insert_tblHistorie_18($fldStalIdMdr, $fldDrachtDay);
+                $volwId = $volwas_gateway->insert_tblVolwas($hisId, $mdrId);
+            }
+            $verloop_rd = $impagrident_gateway->zoek_worpverloop_reader($recId);
+            $verloop_db = $volwas_gateway->zoek_worpverloop_db($volwId);
+            if (!isset($verloop_db) && isset($verloop_rd)) {
+                $volwas_gateway->updateVerloop($verloop_rd, $volwId);
+            }
+        // Einde Worpverloop vastleggen
+        }
+    // ********************
+    // EINDE BEPAAL VOLWID
+    // ********************
+    // ***************************
+    //    GEGEVENS INLEZEN
+    // ***************************
+        unset($rel_best);
+        if (
+            (
+            isset($fldDag)
+            && isset($fldLevnr)
+            && isset($fldStalIdMdr)
+            && $fldDag >= $dmaanv_1_mdr
+            && (!isset($dmafv_mdr) || $fldDag <= $dmafv_mdr)
+            && isset($fldHok)
+            )
+            // Veplichte velden bij module Technisch. Moeder is verplicht bij module technisch
+            || (
+            $modtech == 0
+            && isset($fldDag)
+            && isset($fldLevnr)
+            )
+            // Veplichte velden zonder module Technisch
+        ) {
+            $scenario = 'Geboren_lam';
+        } elseif (
+            !isset($fldLevnr)
+            && isset($fldDag)
+            && (
+            (isset($fldStalIdMdr) && $modtech == 1)
+            || ($modtech == 0)
+            )
+        ) {
+            $scenario = 'Dood_geboren';
+            $rel_best = $rendac_Id; // werd gezet in login_logic
+            $fldLevnr = $ubn; // deze variabele bestaat niet :(
+        }
+    #  refactor-opzetje
+    #  if (!function_exists('bepaal_scenario')) {
+    #  function bepaal_scenario($input) {
+    #      extract($input);
+    #  if (
+    #      (
+    #          isset($fldDag)
+    #          && isset($fldLevnr)
+    #          && isset($fldStalIdMdr)
+    #          && $fldDag >= $dmaanv_1_mdr
+    #          && (!isset($dmafv_mdr) || $fldDag <= $dmafv_mdr)
+    #          && isset($fldHok)
+    #      )
+    #      // Veplichte velden bij module Technisch. Moeder is verplicht bij module technisch
+    #      || (
+    #          $modtech == 0
+    #          && isset($fldDag)
+    #          && isset($fldLevnr)
+    #      )
+    #      // Veplichte velden zonder module Technisch
+    #  ) {
+    #      $scenario = 'Geboren_lam';
+    #  } else if(
+    #      !isset($fldLevnr)
+    #      && isset($fldDag)
+    #      && (
+    #          (isset($fldStalIdMdr) && $modtech == 1)
+    #          || ($modtech == 0)
+    #      )
+    #  ) {
+    #      $scenario = 'Dood_geboren';
+    #      $rel_best = $rendac_Id;
+    #      $fldLevnr = $ubn;
+    #    }
+    #  return [
+    #      'scenario' => $scenario ?? null,
+    #      'rel_best' => $rel_best ?? null,
+    #      'fldLevnr' => $fldLevnr ?? null,
+    #  ];
+    #  }
+    #  }
+    #  // jammer dus: doordat niet alle variabelen gezet hoeven zijn, werkt de compact-aanpak niet
+    #  // $decision_inputs = compact(explode(' ', 'fldDag fldLevnr fldStalIdMdr dmaanv_1_mdr dmafv_mdr fldHok modtech ubn rendac_Id scenario'));
+    #  $decision_inputs = [
+    #      'fldDag'        => $fldDag        ?? null,
+    #      'fldLevnr'      => $fldLevnr      ?? null,
+    #      'fldStalIdMdr'  => $fldStalIdMdr  ?? null,
+    #      'fldHok'        => $fldHok        ?? null,
+    #      'modtech'      => $modtech        ?? null,
+    #      'dmaanv_1_mdr'  => $dmaanv_1_mdr  ?? null,
+    #      'dmafv_mdr'     => $dmafv_mdr     ?? null,
+    #      'ubn'           => $ubn           ?? null,
+    #      'rendac_Id'     => $rendac_Id     ?? null,
+    #  ];
+    #  $shadow = bepaal_scenario($decision_inputs);
+    #  $scenario = $shadow['scenario'];
+    #  $rel_best = $shadow['rel_best'];
+    #  $fldLevnr = $shadow['fldLevnr'];
+    // TODO: *welk* scenario het is, doet kennelijk niet terzake? Als je dan toch iets uitrekent, vertrouw er dan vervolgens op.
+        if (isset($scenario)) {
+            // NOTE dit is de enige plek voor fldMom
+            $schaapId = $schaap_gateway->insert_tblSchaap($fldLevnr, $fldRas, $fldSekse, $volwId, $fldMom, $fldRed, $tran);
+            if (isset($schaapId) && isset($rel_best)) {
+                $schaap_gateway->wis_levensnummer_by_id($schaapId);
+                unset($levnr);
+            }
+            $stalId = $stal_gateway->insert_tblStal($lidId, $ubnId, $schaapId, $rel_best ?? null);
+            $hisId = $historie_gateway->insert_tblHistorie_geb($stalId, $fldDag, $fldKg);
+        // t.b.v. tblBezet en/of tblMelding
+            if (isset($rel_best)) {
+                // Bij doodgeboren
+                if (isset($fldUitvdag)) {
+                    $doodday = $fldUitvdag;
+                } else {
+                    $doodday = $fldDag;
+                }
+                $historie_gateway->insert_tblHistorie_14($stalId, $doodday);
+            }
+        // Einde Insert tblHistorie
+            if ($modtech == 1 && !isset($rel_best)) {
+                $insert_tblBezet = $bezet_gateway->insert_tblBezet($hisId, $fldHok);
+            }
+            if ($modmeld == 1 && !isset($rel_best)) {
+                // @TODO: is de spelling echt "GER", of had dit "GEB" moeten zijn? Nu ja, het is nu al in de hele applicatie "GER". Maak hier constanten voor, of een enum, of een hele klasse --BCB
+                $Melding = 'GER'; //geboren
+                include "maak_request.php";
+            }
+            if ($reader == 'Agrident') {
+                $impagrident_gateway->updateReaderAgrident($recId);
+            } else {
+                $impagrident_gateway->updateReaderBiocontrol($recId);
+            }
+        }
+    // ***************************
+    //   EINDE GEGEVENS INLEZEN
+    // ***************************
+    }
+    if ($fldKies == 0 && $fldDel == 1) {
+        if ($reader == 'Agrident') {
+            $impagrident_gateway->updateReaderAgrident($recId);
+        } else {
+            $updateReader = $impagrident_gateway->updateReaderBiocontrol($recId);
         }
     }
-$zoek_levensnummer_transponder = mysqli_query($db, "
-SELECT transponder tran, levensnummer lam, moeder, moedertransponder mdr_tran
-FROM impAgrident
-WHERE Id = '".mysqli_real_escape_string($db,$recId)."'
-") or die (mysqli_error($db));
-$tran = 0;
-# $fldLevnr = '1';
-$moeder = 0;
-$mdrTran_rd = 0;
-    while( $lv = mysqli_fetch_assoc($zoek_levensnummer_transponder)) {
-      $tran     = $lv['tran'];
-      $fldLevnr = $lv['lam'];
-      $moeder   = $lv['moeder'];
-      $mdrTran_rd = $lv['mdr_tran']; 
-    }
-// Transponder moeder inlezen als deze niet bestaat in tblSchaap
-$mdrTran_sch = $mdrTran_rd;
-$zoek_transp_moeder = mysqli_query($db, "
-SELECT schaapId, transponder
-FROM tblSchaap
-WHERE levensnummer = '".mysqli_real_escape_string($db,$moeder)."'
-") or die (mysqli_error($db));
-    while( $ztm = mysqli_fetch_assoc($zoek_transp_moeder)) {
-      $moederId = $ztm['schaapId'];
-      $mdrTran_sch = $ztm['transponder'];
-    }
-if($mdrTran_rd <> $mdrTran_sch) {
-  $update_tblSchaap = "UPDATE tblSchaap set transponder = '".mysqli_real_escape_string($db,$mdrTran_rd)."' WHERE schaapId = '".mysqli_real_escape_string($db,$moederId)."' ";
-    mysqli_query($db,$update_tblSchaap) or die (mysqli_error($db));
-}
-// Einde Transponder moeder inlezen als deze niet bestaat in tblSchaap
-/* ********************
-//    BEPAAL VOLWID
-// ********************
-Stap 1 : Eerst wordt o.b.v. moeder en geboortedatum van lam een actuele worp gezocht. Dus volwId in tblVolwas die al is gekoppeld aan een ander lam.
-Stap 2 : Als deze niet bestaat wordt er gezocht naar een drachtige ooi zonder worp. Na de laatste worp van de ooi moet er nog een dracht zijn geregistreerd die niet ouder is dan 145 dagen.
-Stap 3 : Als een drachtige ooi zonder worp niet bestaat wordt er gezocht op een actuele dekking die dus nog niet heeft geworpen. Na de laatste worp van de ooi moet er nog een dekking zijn geregistreerd die niet ouder is dan 145 dagen.
-Stap 4 : Als deze dekking niet bestaat wordt een nieuw koppel (vader al dan niet bekend) aangemaakt in tblVolwas. Daarna wordt een fictieve dekdatum vastgelegd in tblHistorie met actId 18 (Dekken) zijnde geboortedatum - 145 dagen.
-Een fictieve drachtdatum wordt niet vastgelegd. Deze moet reeds bestaan anders wordt deze niet met terugwerkende kracht aangemaakt.
-*/
-if(isset($fldStalIdMdr)) {
-unset($volwId);
-// Stap 1 : Zoek een huidige worp o.b.v. moeder en geboortedatum
- $zoek_huidige_worp = mysqli_query($db,"
-   SELECT l.volwId
-   FROM tblSchaap l
-    join tblVolwas v on (l.volwId = v.volwId)
-    join tblStal st on (l.schaapId = st.schaapId)
-    join tblHistorie h on (h.stalId = st.stalId)
-   WHERE v.mdrId = '".mysqli_real_escape_string($db,$mdrId)."' and h.actId = 1 and h.datum = '".mysqli_real_escape_string($db,$fldDag)."'
- ") or die (mysqli_error($db));
-  while ( $zhw = mysqli_fetch_assoc($zoek_huidige_worp)) { $volwId = $zhw['volwId']; }
-// Stap 2 is overbodig. Als er een drachtige ooi bestaat moet deze hetzelfde volwId hebben als de volwId o.b.v. de laatste dekking zonder worp. Aan die volwId hangt immers de drachtregistratie.
-/*
-if(!isset($volwId)) { // Stap 2 : Zoek drachtige ooi zonder worp binnen 145 dagen t.o.v. de geboortedatum $fldDag
-$zoek_actuele_dracht = mysqli_query($db,"
- SELECT v.volwId
- FROM tblVolwas v
-  join tblDracht d on (v.volwId = d.volwId)
-  join tblHistorie h on (d.hisId = h.hisId)
-  left join tblSchaap s on (s.volwId v.volwId)
- WHERE h.skip = 0 and v.mdrId = '".mysqli_real_escape_string($db,$fldMoeder)."' and isnull(s.volwId) and date_add(h.datum, interval 145 day) > '".mysqli_real_escape_string($db,$fldDag)."'
- ") or die (mysqli_error($db));
-  while ( $zadr = mysqli_fetch_assoc($zoek_actuele_dracht)) { $volwId = $zadr['volwId']; }
-}
- */ // EInde Stap 2 : Zoek drachtige ooi zonder worp binnen 145 dagen t.o.v. de geboortedatum $fldDag
-     if(!isset($volwId)) {
-         // Stap 3 : Zoek actuele dekking (al dan niet met drachtregistratie) zonder worp binnen 145 dagen
-// Huidige worp bestaat niet want deze stap 3 wordt niet doorlopen als stap 1 van toepassing is. Binnen $zoek_actuele_dekking_binnen_145dagen hoeft dus geen rekening te worden gehouden met een actuele worp
-$zoek_actuele_dekking_binnen_145dagen = mysqli_query($db,"
-SELECT max(v.volwId) volwId
-FROM tblVolwas v
- join tblHistorie h on (v.hisId = h.hisId)
- left join tblSchaap s on (s.volwId = v.volwId)
-WHERE h.skip = 0 and v.mdrId = '".mysqli_real_escape_string($db,$mdrId)."' and isnull(s.volwId) and date_add(h.datum, interval 145 day) > '".mysqli_real_escape_string($db,$fldDag)."'
-") or die (mysqli_error($db));
-  while ( $zadr = mysqli_fetch_assoc($zoek_actuele_dekking_binnen_145dagen)) { $volwId = $zadr['volwId']; }
-} // EInde Stap 3 : Zoek actuele dekking zonder worp en zonder registratie dracht
-if(!isset($volwId)) {
-    // Stap 4 nieuw koppel (vader al dan niet bekend) maken in tblVolwas
-$insert_tblHistorie = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$fldStalIdMdr)."', datum = '".mysqli_real_escape_string($db,$fldDrachtDay)."', actId = 18 ";
-mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
-$zoek_hisId = mysqli_query($db,"
-SELECT max(hisId) hisId
-FROM tblHistorie
-WHERE stalId = '".mysqli_real_escape_string($db,$fldStalIdMdr)."' and actId = 18
-") or die (mysqli_error($db));
-  while ( $zh = mysqli_fetch_assoc($zoek_hisId)) { $hisId = $zh['hisId']; }
-$insert_tblVolwas = "INSERT INTO tblVolwas set 
-    hisId = '".mysqli_real_escape_string($db,$hisId)."', 
-    mdrId = '".mysqli_real_escape_string($db,$mdrId)."' ";
-mysqli_query($db,$insert_tblVolwas) or die (mysqli_error($db));
-  // Einde Koppel maken
- $zoek_volwId = mysqli_query($db,"
- SELECT max(volwId) volwId
- FROM tblVolwas
- WHERE mdrId = '".mysqli_real_escape_string($db,$mdrId)."'
- ") or die (mysqli_error($db));
-while ( $vw = mysqli_fetch_assoc($zoek_volwId)) {
-    $volwId = $vw['volwId']; 
-}
-}
-// Einde Stap 4 nieuw koppel maken
-// Worpverloop vastleggen
-$zoek_worpverloop_reader = mysqli_query($db,"
- SELECT verloop
- FROM impAgrident
- WHERE Id = '".mysqli_real_escape_string($db,$recId)."'
- ") or die (mysqli_error($db));
-while ( $zvr = mysqli_fetch_assoc($zoek_worpverloop_reader)) {
-    $verloop_rd = $zvr['verloop']; 
-}
-$zoek_worpverloop_db = mysqli_query($db,"
- SELECT verloop
- FROM tblVolwas
- WHERE volwId = '".mysqli_real_escape_string($db,$volwId)."'
- ") or die (mysqli_error($db));
-while ( $zvb = mysqli_fetch_assoc($zoek_worpverloop_db)) {
-    $verloop_db = $zvb['verloop'];
-}
-if(!isset($verloop_db) && isset($verloop_rd)) {
-$updateDracht = "UPDATE tblVolwas set verloop = '".mysqli_real_escape_string($db,$verloop_rd)."' WHERE volwId = '".mysqli_real_escape_string($db,$volwId)."' " ;
-mysqli_query($db,$updateDracht) or die (mysqli_error($db));
-}
-// Einde Worpverloop vastleggen
-}
-// ********************
-// EINDE BEPAAL VOLWID
-// ********************
-// ***************************
-//    GEGEVENS INLEZEN
-// ***************************
-unset($rel_best);
-if (
-    (
-        isset($fldDag)
-        && isset($fldLevnr)
-        && isset($fldStalIdMdr)
-        && $fldDag >= $dmaanv_1_mdr
-        && (!isset($dmafv_mdr) || $fldDag <= $dmafv_mdr)
-        && isset($fldHok)
-    )
-    // Veplichte velden bij module Technisch. Moeder is verplicht bij module technisch
-    || (
-        $modtech == 0 
-        && isset($fldDag) 
-        && isset($fldLevnr)
-    )
-    // Veplichte velden zonder module Technisch
-) {
-    $scenario = 'Geboren_lam'; 
-} else if(
-    !isset($fldLevnr)
-    && isset($fldDag)
-    && (
-        (isset($fldStalIdMdr) && $modtech == 1)
-        || ($modtech == 0)
-    ) 
-) {
-    $scenario = 'Dood_geboren';
-    $rel_best = $rendac_Id; // werd gezet in login_logic
-    $fldLevnr = $ubn; // deze variabele bestaat niet :(
-  }
-#  refactor-opzetje
-#  if (!function_exists('bepaal_scenario')) {
-#  function bepaal_scenario($input) {
-#      extract($input);
-#  if (
-#      (
-#          isset($fldDag)
-#          && isset($fldLevnr)
-#          && isset($fldStalIdMdr)
-#          && $fldDag >= $dmaanv_1_mdr
-#          && (!isset($dmafv_mdr) || $fldDag <= $dmafv_mdr)
-#          && isset($fldHok)
-#      )
-#      // Veplichte velden bij module Technisch. Moeder is verplicht bij module technisch
-#      || (
-#          $modtech == 0 
-#          && isset($fldDag) 
-#          && isset($fldLevnr)
-#      )
-#      // Veplichte velden zonder module Technisch
-#  ) {
-#      $scenario = 'Geboren_lam'; 
-#  } else if(
-#      !isset($fldLevnr)
-#      && isset($fldDag)
-#      && (
-#          (isset($fldStalIdMdr) && $modtech == 1)
-#          || ($modtech == 0)
-#      ) 
-#  ) {
-#      $scenario = 'Dood_geboren';
-#      $rel_best = $rendac_Id;
-#      $fldLevnr = $ubn;
-#    }
-#  return [
-#      'scenario' => $scenario ?? null,
-#      'rel_best' => $rel_best ?? null,
-#      'fldLevnr' => $fldLevnr ?? null,
-#  ];
-#  }
-#  }
-#  // jammer dus: doordat niet alle variabelen gezet hoeven zijn, werkt de compact-aanpak niet
-#  // $decision_inputs = compact(explode(' ', 'fldDag fldLevnr fldStalIdMdr dmaanv_1_mdr dmafv_mdr fldHok modtech ubn rendac_Id scenario'));
-#  $decision_inputs = [
-#      'fldDag'        => $fldDag        ?? null,
-#      'fldLevnr'      => $fldLevnr      ?? null,
-#      'fldStalIdMdr'  => $fldStalIdMdr  ?? null,
-#      'fldHok'        => $fldHok        ?? null,
-#      'modtech'      => $modtech        ?? null,
-#      'dmaanv_1_mdr'  => $dmaanv_1_mdr  ?? null,
-#      'dmafv_mdr'     => $dmafv_mdr     ?? null,
-#      'ubn'           => $ubn           ?? null,
-#      'rendac_Id'     => $rendac_Id     ?? null,
-#  ];
-#  $shadow = bepaal_scenario($decision_inputs);
-#  $scenario = $shadow['scenario'];
-#  $rel_best = $shadow['rel_best'];
-#  $fldLevnr = $shadow['fldLevnr'];
-// TODO: *welk* scenario het is, doet kennelijk niet terzake?
-if(isset($scenario)) {
-    // SCHAAP invoeren
-    $insert_tblSchaap = "
- INSERT INTO tblSchaap set
- levensnummer = '".mysqli_real_escape_string($db,$fldLevnr)."',
- rasId = " . db_null_input($fldRas) . ",
- geslacht = " . db_null_input($fldSekse) . ",
- volwId = " . db_null_input($volwId). ",
- momId = " . db_null_input($fldMom) . ",
- redId = " . db_null_input($fldRed) . ",
- transponder = " . db_null_input($tran);
-mysqli_query($db,$insert_tblSchaap) or die (mysqli_error($db));
-// Einde SCHAAP invoeren
-$zoek_schaapId = mysqli_query($db,"
-SELECT schaapId
-FROM tblSchaap
-WHERE levensnummer = '".mysqli_real_escape_string($db,$fldLevnr)."'
-") or die (mysqli_error($db));
-while ( $zs = mysqli_fetch_assoc ($zoek_schaapId)) {
-    $schaapId = $zs['schaapId']; 
-}
-if(isset($schaapId) && isset($rel_best)) {
-// ubn uit veld levensnummer verwijderen
-$update_tblSchaap = "UPDATE tblSchaap set levensnummer = NULL WHERE schaapId = '".mysqli_real_escape_string($db,$schaapId)."' ";
-mysqli_query($db,$update_tblSchaap) or die (mysqli_error($db));
-unset($levnr);
-}
-// TODO: deze query gebruikt klakkeloos $rel_best, terwijl die prima unset kan zijn.
-$insert_tblStal = "INSERT INTO tblStal set lidId = '".mysqli_real_escape_string($db,$lidId)."', ubnId = '".mysqli_real_escape_string($db,$ubnId)."', schaapId = '".mysqli_real_escape_string($db,$schaapId)."',  rel_best = " . db_null_input($rel_best ?? null) ;
-mysqli_query($db,$insert_tblStal) or die (mysqli_error($db));
-// Insert tblHistorie
-$zoek_stalId = mysqli_query($db,"
-SELECT stalId
-FROM tblStal
-WHERE schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
-") or die (mysqli_error($db));
-    while ( $zst = mysqli_fetch_assoc ($zoek_stalId)) { $stalId = $zst['stalId']; }
-  $insert_tblHistorie = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$fldDag)."', kg = " . db_null_input($fldKg) . ", actId = 1 ";
-mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
-$zoek_hisId = mysqli_query($db,"
-SELECT hisId
-FROM tblHistorie
-WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."'
-") or die (mysqli_error($db));
-while ( $zh = mysqli_fetch_assoc ($zoek_hisId)) { $hisId = $zh['hisId']; }
-// t.b.v. tblBezet en/of tblMelding
-if(isset($rel_best)) {
-    // Bij doodgeboren
-  if(isset($fldUitvdag)) { $doodday = $fldUitvdag; } else { $doodday = $fldDag; }
-$insert_tblHistorie_14 = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$doodday)."', actId = 14 ";
-mysqli_query($db,$insert_tblHistorie_14) or die (mysqli_error($db));
-}
-// Einde Insert tblHistorie
-if($modtech == 1 && !isset($rel_best)) {
-  $insert_tblBezet = "INSERT INTO tblBezet set hisId = ".mysqli_real_escape_string($db,$hisId).", hokId = ".mysqli_real_escape_string($db,$fldHok)." " ;
-mysqli_query($db,$insert_tblBezet) or die (mysqli_error($db));
-}
-if ($modmeld == 1 && !isset($rel_best)) {
-    // @TODO: is de spelling echt "GER", of had dit "GEB" moeten zijn? Nu ja, het is nu al in de hele applicatie "GER". Maak hier constanten voor, of een enum, of een hele klasse --BCB
-$Melding = 'GER'; //geboren
-include "maak_request.php";
-}
-if($reader == 'Agrident') {
-$updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' " ;
-}
-else {
-$updateReader = "UPDATE impReader set verwerkt = 1 WHERE readId = '".mysqli_real_escape_string($db,$recId)."' " ;
-}
-if($recId == 59604) { echo $updateReader.'<br>'.'<br>'; } mysqli_query($db,$updateReader) or die (mysqli_error($db));
-}
-// ***************************
-//   EINDE GEGEVENS INLEZEN
-// ***************************
-}
-if($fldKies == 0 && $fldDel == 1) {
-    if($reader == 'Agrident')  {
-        $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' " ;
-    } else {
-        $updateReader = "UPDATE impReader set verwerkt = 1 WHERE readId = '".mysqli_real_escape_string($db,$recId)."' " ;
-    }
-    mysqli_query($db,$updateReader) or die (mysqli_error($db));
-}
 }

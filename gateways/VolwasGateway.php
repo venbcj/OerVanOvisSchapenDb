@@ -789,4 +789,45 @@ SQL;
         $this->run_query($sql, $args);
     }
 
+    public function zoek_actuele_dekking_binnen_145dagen($mdrId, $fldDag) {
+        $sql = <<<SQL
+      SELECT max(v.volwId) volwId
+      FROM tblVolwas v
+       join tblHistorie h on (v.hisId = h.hisId)
+       left join tblSchaap s on (s.volwId = v.volwId)
+      WHERE h.skip = 0 and v.mdrId = :mdrId and isnull(s.volwId) and date_add(h.datum, interval 145 day) > :fldDag
+SQL;
+        $args = [[':mdrId', $mdrId, self::INT], [':fldDag', $fldDag]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function insert_tblVolwas($hisId, $mdrId) {
+        $sql = <<<SQL
+      INSERT INTO tblVolwas set 
+          hisId = :hisId, 
+          mdrId = :mdrId
+SQL;
+        $args = [[':hisId', $hisId, self::INT], [':mdrId', $mdrId, self::INT]];
+        $this->run_query($sql, $args);
+        return $this->db->insert_id;
+    }
+
+    public function zoek_worpverloop_db($volwId) {
+        $sql = <<<SQL
+    SELECT verloop
+     FROM tblVolwas
+     WHERE volwId = :volwId
+SQL;
+        $args = [[':volwId', $volwId, self::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function updateVerloop($verloop_rd, $volwId) {
+        $sql = <<<SQL
+    UPDATE tblVolwas set verloop = :verloop_rd WHERE volwId = :volwId
+SQL;
+        $args = [[':verloop_rd', $verloop_rd], [':volwId', $volwId, self::INT]];
+        return $this->run_query($sql, $args);
+    }
+
 }

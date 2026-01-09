@@ -654,4 +654,64 @@ SQL;
         return $this->first_row($sql, $args, [0,0]);
     }
 
+    public function zoek_schaapId_ubnId_moeder($fldStalIdMdr) {
+        $sql = <<<SQL
+        SELECT schaapId, ubnId
+        FROM tblStal
+        WHERE stalId = :fldStalIdMdr
+SQL;
+        $args = [[':fldStalIdMdr', $fldStalIdMdr]];
+        return $this->first_row($sql, $args, [0,0]);
+    }
+
+    public function zoek_eerste_aanvoerdatum_moeder($lidId, $mdrId) {
+        $sql = <<<SQL
+        SELECT h.datum
+            FROM (
+              SELECT min(stalId) stalId
+              FROM tblStal st
+        JOIN tblUbn u USING(ubnId)
+              WHERE u.lidId = :lidId and schaapId = :mdrId
+             ) st1
+             join tblHistorie h on (h.stalId = st1.stalId)
+             join tblActie a on (a.actId = h.actId)
+            WHERE a.op = 1 and h.skip = 0
+            and not exists (
+              SELECT datum
+              FROM tblHistorie ha
+               join tblStal st on (ha.stalId = st.stalId)
+               join tblSchaap s on (st.schaapId = s.schaapId)
+              WHERE actId = 2 and st1.stalId = st.stalId and h.actId = ha.actId-1 and s.schaapId = :mdrId
+            )
+SQL;
+        $args = [[':lidId', $lidId, self::INT], [':mdrId', $mdrId, self::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function query_datum_afvoer_moeder($lidId, $mdrId) {
+        $sql = <<<SQL
+      SELECT h.datum dmeind
+          FROM (
+            SELECT max(stalId) stalId
+            FROM tblStal
+            WHERE lidId = :lidId and schaapId = :mdrId
+          ) mst
+           join tblStal st on (mst.stalId = st.stalId)
+           join tblHistorie h on (h.stalId = st.stalId)
+           join tblActie a on (a.actId = h.actId)
+          WHERE a.af = 1 and h.skip = 0
+SQL;
+        $args = [[':lidId', $lidId, self::INT], [':mdrId', $mdrId, self::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function insert_tblStal($lidId, $ubnId, $schaapId, $rel_best) {
+        $sql = <<<SQL
+    INSERT INTO tblStal set lidId = :lidId, ubnId = :ubnId, schaapId = :schaapId,  rel_best = :rel_best
+SQL;
+        $args = [[':lidId', $lidId, self::INT], [':ubnId', $ubnId, self::INT], [':schaapId', $schaapId, self::INT], [':rel_best', $rel_best]];
+        $this->run_query($sql, $args);
+        return $this->db->insert_id;
+    }
+
 }

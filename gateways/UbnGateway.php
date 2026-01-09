@@ -125,4 +125,15 @@ SQL
         );
     }
 
+    // :hmm zit dit ook/al in LidGateway? (ziedaar de slechte invloed van ActiveRecord)
+    public function zoek_ubnId($lidId) {
+        $sql = <<<SQL
+            SELECT ubnId
+            FROM tblUbn
+            WHERE lidId = :lidId
+SQL;
+        $args = [[':lidId', $lidId, self::INT]];
+        return $this->first_field($sql, $args);
+    }
+
 }

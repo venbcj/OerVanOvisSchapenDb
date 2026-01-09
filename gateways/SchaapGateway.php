@@ -4614,6 +4614,21 @@ SQL
         );
     }
 
+    public function zoek_huidige_worp_geb($mdrId, $fldDag) {
+        $sql = <<<SQL
+    SELECT l.volwId
+       FROM tblSchaap l
+        join tblVolwas v on (l.volwId = v.volwId)
+        join tblStal st on (l.schaapId = st.schaapId)
+        join tblHistorie h on (h.stalId = st.stalId)
+       WHERE v.mdrId = :mdrId
+ and h.actId = 1
+ and h.datum = :fldDag
+SQL;
+        $args = [[':mdrId', $mdrId, self::INT], [':fldDag', $fldDag]];
+        return $this->first_field($sql, $args);
+    }
+
     public function zoek_fase($lidId, $schaapId) {
         return $this->first_record(
             <<<SQL
@@ -5204,6 +5219,48 @@ SQL;
 SQL;
         $args = [[':levnr_new', $levnr_new]];
         return $this->first_field($sql, $args);
+    }
+
+    public function zoek_transp_moeder($moeder) {
+        $sql = <<<SQL
+    SELECT schaapId, transponder
+    FROM tblSchaap
+    WHERE levensnummer = :moeder
+SQL;
+        $args = [[':moeder', $moeder]];
+        return $this->first_row($sql, $args, [0, 0]);
+    }
+
+    public function update_tblSchaap($mdrTran_rd, $moederId) {
+        $sql = <<<SQL
+        UPDATE tblSchaap set transponder = :mdrTran_rd WHERE schaapId = :moederId
+SQL;
+        $args = [[':mdrTran_rd', $mdrTran_rd], [':moederId', $moederId, self::INT]];
+        $this->run_query($sql, $args);
+    }
+
+    public function insert_tblSchaap($fldLevnr, $fldRas, $fldSekse, $volwId, $fldMom, $fldRed, $tran) {
+        $sql = <<<SQL
+    INSERT INTO tblSchaap set
+     levensnummer = :fldLevnr,
+     rasId = :fldRas,
+     geslacht = :fldSekse,
+     volwId = :volwId,
+     momId = :fldMom,
+     redId = :fldRed,
+     transponder = :tran
+SQL;
+        $args = [[':fldLevnr', $fldLevnr], [':fldRas', $fldRas], [':fldSekse', $fldSekse], [':volwId', $volwId, self::INT], [':fldMom', $fldMom], [':fldRed', $fldRed], [':tran', $tran]];
+        $this->run_query($sql, $args);
+        return $this->db->insert_id;
+    }
+
+    public function wis_levensnummer_by_id($schaapId) {
+        $sql = <<<SQL
+    UPDATE tblSchaap set levensnummer = NULL WHERE schaapId = :schaapId
+SQL;
+        $args = [[':schaapId', $schaapId, self::INT]];
+        return $this->run_query($sql, $args);
     }
 
 }

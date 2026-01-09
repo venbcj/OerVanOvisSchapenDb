@@ -1892,15 +1892,14 @@ SQL
         ]);
     }
 
-    public function zoek_readerregel_verwerkt($recId) {
-        return $this->first_field(
-            <<<SQL
+    public function zoek_readerRegel_verwerkt($recId) {
+        $sql = <<<SQL
 SELECT verwerkt
 FROM impAgrident
 WHERE Id = :recId
-SQL
-        , [[':recId', $recId, self::INT]]
-        );
+SQL;
+        $args = [[':recId', $recId, self::INT]];
+        return $this->first_field($sql, $args);
     }
 
     public function zoek_levnr_reader($recId) {
@@ -1931,6 +1930,42 @@ DELETE FROM impAgrident WHERE lidId = :lidId
 SQL
         , [[':lidId', $lidId, self::INT]]
         );
+    }
+
+    public function zoek_levensnummer_transponder($recId) {
+        $sql = <<<SQL
+        SELECT transponder tran, levensnummer lam, moeder, moedertransponder mdr_tran
+        FROM impAgrident
+        WHERE Id = :recId
+SQL;
+        $args = [[':recId', $recId, self::INT]];
+        return $this->first_row($sql, $args, [0, 0, 0, 0]);
+    }
+
+    public function zoek_worpverloop_reader($recId) {
+        $sql = <<<SQL
+    SELECT verloop
+     FROM impAgrident
+     WHERE Id = :recId
+SQL;
+        $args = [[':recId', $recId, self::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function updateReaderAgrident($recId) {
+        $sql = <<<SQL
+        UPDATE impAgrident set verwerkt = 1 WHERE Id = :recId
+SQL;
+        $args = [[':recId', $recId, self::INT]];
+        $this->run_query($sql, $args);
+    }
+
+    public function updateReaderBiocontrol($recId) {
+        $sql = <<<SQL
+        UPDATE impReader set verwerkt = 1 WHERE readId = :recId
+SQL;
+        $args = [[':recId', $recId, self::INT]];
+        $this->run_query($sql, $args);
     }
 
 }

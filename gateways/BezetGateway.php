@@ -1447,4 +1447,12 @@ SQL
         );
     }
 
+    public function insert_tblBezet($hisId, $fldHok) {
+        $sql = <<<SQL
+    INSERT INTO tblBezet set hisId = :hisId, hokId = :fldHok
+SQL;
+        $args = [[':hisId', $hisId, self::INT], [':fldHok', $fldHok]];
+        return $this->run_query($sql, $args);
+    }
+
 }

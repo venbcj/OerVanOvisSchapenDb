@@ -2061,4 +2061,30 @@ SQL;
         return $this->first_field($sql, $args);
     }
 
+    public function insert_tblHistorie_18($fldStalIdMdr, $fldDrachtDay) {
+        $sql = <<<SQL
+    INSERT INTO tblHistorie set stalId = :fldStalIdMdr, datum = :fldDrachtDay, actId = 18
+SQL;
+        $args = [[':fldStalIdMdr', $fldStalIdMdr], [':fldDrachtDay', $fldDrachtDay]];
+        $this->run_query($sql, $args);
+        return $this->db->insert_id;
+    }
+
+    public function insert_tblHistorie_geb($stalId, $fldDag, $fldKg) {
+        $sql = <<<SQL
+        INSERT INTO tblHistorie set stalId = :stalId, datum = :fldDag, kg = :fldKg, actId = 1
+SQL;
+        $args = [[':stalId', $stalId, self::INT], [':fldDag', $fldDag], [':fldKg', $fldKg]];
+        $this->run_query($sql, $args);
+        return $this->db->insert_id;
+    }
+
+    public function insert_tblHistorie_14($stalId, $doodday) {
+        $sql = <<<SQL
+      INSERT INTO tblHistorie set stalId = :stalId, datum = :doodday, actId = 14
+SQL;
+        $args = [[':stalId', $stalId, self::INT], [':doodday', $doodday]];
+        return $this->run_query($sql, $args);
+    }
+
 }
