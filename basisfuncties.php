@@ -563,7 +563,6 @@ function setup_db() {
     global $db;
     include "database.php";
     if (!isset($db) || $db === false) {
-        Logger::instance()->warning("init db from setup");
         $db = mysqli_connect($host, $user, $pw, $dtb);
         if ($db == false) {
             throw new Exception('Connectie database niet gelukt');

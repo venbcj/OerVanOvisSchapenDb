@@ -35,10 +35,12 @@ class Gateway {
             $types = Schema::dictionary();
         }
         $statement = $this->builder->statement($SQL, $args, $types);
-        Logger::instance()->debug($statement);
+        if (LOG_QUERIES) {
+            Logger::instance()->debug($statement);
+        }
         $res = $this->db->query($statement);
-        if ($this->db->error) {
-            Logger::instance()->debug($this->db->error);
+        if (LOG_QUERIES && $this->db->error) {
+            Logger::instance()->warning($this->db->error);
         }
         return $res;
     }

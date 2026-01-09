@@ -10,13 +10,26 @@ class IntegrationCase extends UnitCase {
     protected $tablecounts = [];
     protected $expectedincrements = [];
 
+    protected $restore_keys_before = false;
+    protected $restore_keys_after = false;
+
     public function setup(): void {
         $this->uses_db();
+        if ($this->restore_keys_before) {
+            $this->restore_keys();
+        }
         $this->db->begin_transaction();
     }
 
     public function teardown(): void {
         $this->db->rollback();
+        if ($this->restore_keys_after) {
+            $this->restore_keys();
+        }
+    }
+
+    // subclass may implement this and set restore_keys_(before,after)
+    protected function restore_keys() {
     }
 
     protected function simulateGetRequest($path, $data = []) {

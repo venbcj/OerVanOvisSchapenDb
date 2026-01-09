@@ -68,7 +68,9 @@ class UnitCase extends TestCase {
         $logger = Logger::instance();
         foreach (explode(';', file_get_contents($file)) as $SQL) {
             if (trim($SQL)) {
-                $logger->debug($SQL);
+                if (LOG_QUERIES) {
+                    $logger->debug($SQL);
+                }
                 $db->query($SQL);
             }
         }
@@ -83,8 +85,14 @@ class UnitCase extends TestCase {
     }
 
     protected function assertTableWhereHas($table, $where = [], $has_values = []) {
-        $where_clause = implode(' AND ', array_map(function ($field, $val) { return "$field = '$val'"; }, array_keys($where), array_values($where)));
-        $vw = $this->db->query("SELECT * FROM $table WHERE $where_clause");
+        $where_clause = implode(' AND ', array_map(
+            function ($field, $val) { return "$field = '$val'"; }, array_keys($where), array_values($where)
+        ));
+        $where = '';
+        if ($where_clause) {
+            $where = "WHERE $where_clause ";
+        }
+        $vw = $this->db->query("SELECT * FROM $table $where");
         $this->assertInstanceOf(mysqli_result::class, $vw, $this->db->error);
         $this->assertEquals(1, $vw->num_rows, "kan record met $where_clause niet vinden");
         $row = $vw->fetch_assoc();

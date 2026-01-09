@@ -36,7 +36,7 @@
         <directory>ongebruikt</directory>
         <directory>utils</directory>
       </exclude>
-      <file>./OmnSchaap.php</file>
+      <file>./post_readerGeb.php</file>
     </whitelist>
   </filter>
   <logging>

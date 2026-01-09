@@ -1,10 +1,12 @@
 <?php
 
-# dit kan nog niet, zolang wij als allereerste geladen worden
+# deze kan nog niet als if(), zolang wij als allereerste geladen worden
 # if (ENV != 'production') {
     ini_set('display_errors', true);
     error_reporting(E_ALL);
 # }
+
+    define('LOG_QUERIES', false);
 
 $base = str_replace('\\', '/', __DIR__);
 

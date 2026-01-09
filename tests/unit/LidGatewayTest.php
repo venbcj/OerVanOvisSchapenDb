@@ -4,13 +4,10 @@ class LidGatewayTest extends GatewayCase {
 
     protected static $sutname = 'LidGateway';
 
-    private $wants_autoincrement_restore = false;
+    protected $restore_keys_after = true;
 
-    public function teardown(): void {
-        parent::teardown();
-        if ($this->wants_autoincrement_restore) {
-            $this->db->query("ALTER TABLE tblLeden AUTOINCREMENT=42");
-        }
+    protected function restore_keys(): void {
+        $this->db->query("ALTER TABLE tblLeden AUTOINCREMENT=42");
     }
 
     public function testFindCrediteur() {
