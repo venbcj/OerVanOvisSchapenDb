@@ -36,11 +36,7 @@
         <directory>ongebruikt</directory>
         <directory>utils</directory>
       </exclude>
-      <file>./post_readerGeb.php</file>
+      <file>./Medicijnen.php</file>
     </whitelist>
   </filter>
-  <logging>
-    <log type="coverage-html" target="./coverage-html"/>
-    <log type="coverage-clover" target="./coverage.xml"/>
-  </logging>
 </phpunit>

@@ -66,7 +66,7 @@ if (!empty($dubbel) && $dubbel >= 1 )
     else 
     {
 if (empty($_POST["insNaam_"]))    {    $insNaam = "NULL";    }
-  else        {    $insNaam = "'$_POST[insNaam_]'";    $Artikel = $_POST[insNaam_]; }
+  else        {    $insNaam = "'$_POST[insNaam_]'";    $Artikel = $_POST['insNaam_']; }
 
 if (!isset($_POST["insPres_"]) || empty($_POST["insPres_"]))    {    $insPres = $Artikel;    }
   else        {    $insPres = $_POST[insPres_];    }
@@ -102,32 +102,13 @@ if (empty($_POST['insRubriek_']))    {    $insRubriek = "NULL";    }
 else
 { $insRubriek = "NULL"; }
 
-// Functie : Maak readernamen uniek
-function getReadername($datb, $lidid, $naam, $n) {
-        $n++;
-        $len = strlen($n); $string_len = 20 - $len;
-        $readername = substr($naam, 0, $string_len) . $n;
-
-        $result = mysqli_query($datb,"
-            SELECT count(*) aant 
-            FROM tblArtikel a
-             join tblEenheiduser eu on (a.enhuId = eu.enhuId) 
-            WHERE lidId = ".mysqli_real_escape_string($datb,$lidid)." and naamreader = '".mysqli_real_escape_string($datb,$readername)."' ;") or die (mysqli_error($datb)); 
-
-        while ($row = mysqli_fetch_assoc($result)) { $count = $row['aant']; }
-
-        if ($count > 0) { $readername = getReadername($datb, $lidid, $naam, $n); }
-
-    return $readername;
-}
-// Einde Functie : Maak readernamen uniek
 
 $readernaam = substr($insPres, 0, 20);
 $zoek_readernaam = mysqli_query($db,"
             SELECT count(*) aant 
             FROM tblArtikel a
              join tblEenheiduser eu on (a.enhuId = eu.enhuId) 
-            WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and naamreader = '".mysqli_real_escape_string($db,$readernaam)."' ;") or die (mysqli_error($db)); 
+            WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and a.naamreader = '".mysqli_real_escape_string($db,$readernaam)."' ;") or die (mysqli_error($db)); 
 
         while ($dup = mysqli_fetch_assoc($zoek_readernaam)) { $count = $dup['aant']; }
 
@@ -218,7 +199,8 @@ SELECT count(artId) aant
 FROM tblInkoop
 WHERE artId = '".mysqli_real_escape_string($db,$Id)."'
 ") or die (mysqli_error($db));
- $ing = mysqli_fetch_assoc($pil_ingekocht);  $rows_inkoop = $ing['aant'];
+$ing = mysqli_fetch_assoc($pil_ingekocht); 
+$rows_inkoop = $ing['aant'];
 // EINDE Bepalen of artikel al is ingekocht
 
 ?>
@@ -226,9 +208,10 @@ WHERE artId = '".mysqli_real_escape_string($db,$Id)."'
  <td style = "font-size : 14px;">
 <?php
 // Veld Omschrijving (al dan niet te wijzigen)
-if ($rows_inkoop > 0) { echo $pil; }
-else     { ?>
-
+if ($rows_inkoop > 0) {
+    echo $pil; 
+} else     {
+?>
     <input type= "text" name= <?php echo "txtNaam_$Id"; ?> size = 30 value = <?php echo " '$pil' "; ?> style = "font-size:12px;" >
 <?php    }    
 // EINDE  Veld Omschrijving (al dan niet te wijzigen) ?>
@@ -715,7 +698,9 @@ echo $pil;
 
 <tr><td colspan = 15><hr></td></tr>
 
-<?php } // EINDE Aantal artikelen niet in gebruik ?>
+<?php 
+}
+?>
 </table>
 </form>
 

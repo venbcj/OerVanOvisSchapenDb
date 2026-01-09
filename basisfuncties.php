@@ -621,3 +621,21 @@ function redirect_if_forbidden() {
     }
 }
 
+// Functie : Maak readernamen uniek
+function getReadername($datb, $lidid, $naam, $n) {
+        $n++;
+        $len = strlen($n); $string_len = 20 - $len;
+        $readername = substr($naam, 0, $string_len) . $n;
+
+        $result = mysqli_query($datb,"
+            SELECT count(*) aant 
+            FROM tblArtikel a
+             join tblEenheiduser eu on (a.enhuId = eu.enhuId) 
+            WHERE lidId = ".mysqli_real_escape_string($datb,$lidid)." and naamreader = '".mysqli_real_escape_string($datb,$readername)."' ;") or die (mysqli_error($datb)); 
+
+        while ($row = mysqli_fetch_assoc($result)) { $count = $row['aant']; }
+
+        if ($count > 0) { $readername = getReadername($datb, $lidid, $naam, $n); }
+
+    return $readername;
+}

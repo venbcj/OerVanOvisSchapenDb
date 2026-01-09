@@ -8,15 +8,21 @@ TEST=${2:-$DEFAULT}
 ALSO=
 if [ ! -f "$TEST" ]; then
     CLASS=$(basename $TEST)
-    CLASS=${CLASS%.php}
+    TESTCLASS=${CLASS%.php}
     ALSO=tests/integration/ControllersTest.php
     cat <<TXT > $TEST
 <?php
 
-class $CLASS extends IntegrationCase {
+class $TESTCLASS extends IntegrationCase {
+
+    public function test_get() {
+        \$this->get('/$PAGEFILE', [
+            'ingelogd' => 1,
+        ]);
+        \$this->assertNoNoise();
+    }
 
 }
-
 TXT
 fi
 tmux split-window -h -l80 "cover-include none; cover-include $PAGE; cover on; ./watcher $TEST"

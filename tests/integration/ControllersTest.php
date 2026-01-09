@@ -60,7 +60,6 @@ class ControllersTest extends IntegrationCase {
             ['Liquiditeit.php', [], []],
             ['LoslopersPlaatsen.php', [], []],
             ['LoslopersVerkopen.php', [], []],
-            ['Medicijnen.php', [], []],
             ['MeldAanvoer.php', [], []],
             ['MeldAfvoer.php', [], []],
             ['MeldGeboortes.php', [], []],
@@ -137,7 +136,6 @@ Liquiditeit.php
 Loslopers.php
 LoslopersVerkopen.php
 MaandTotalen.php
-Medicijnen.php
 MedOverzSchaap.php
 Med_rapportage.php
 Med_registratie.php
