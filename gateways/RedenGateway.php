@@ -155,4 +155,92 @@ SQL
         );
     }
 
+    public function controle($lidId, $redId) {
+        $sql = <<<SQL
+            SELECT count(redId) aantal
+            FROM tblRedenuser
+            WHERE lidId = :lidId and redId = :redId
+            GROUP BY redId
+SQL;
+        $args = [[':lidId', $lidId, Type::INT], [':redId', $redId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function query_reden_toevoegen($lidId, $redId, $insUitv, $insPil, $insSterf) {
+        $sql = <<<SQL
+            INSERT INTO tblRedenuser SET
+             lidId = :lidId,
+             redId = :redId,
+             uitval = :insUitv,
+             pil = :insPil,
+             sterfte = :insSterf
+SQL;
+        $args = [[':lidId', $lidId, Type::INT], [':redId', $redId, Type::INT], [':insUitv', $insUitv], [':insPil', $insPil], [':insSterf', $insSterf]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function qryReden($lidId) {
+        $sql = <<<SQL
+        SELECT r.redId, r.reden
+        FROM tblReden r
+         left join tblRedenuser ru on (ru.redId = r.redId and ru.lidId = :lidId)
+        WHERE isnull(ru.redId) and r.actief = 1
+        ORDER BY r.reden
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function loop($lidId) {
+        $sql = <<<SQL
+        SELECT ru.reduId, r.redId, r.reden, ru.uitval, ru.pil, ru.afvoer, ru.sterfte
+        FROM tblReden r
+         join tblRedenuser ru on (r.redId = ru.redId)
+        WHERE ru.lidId = :lidId
+        ORDER BY if(uitval+pil = 2, 1 ,uitval+pil) desc, reden
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function zoek_in_db($recId) {
+        $sql = <<<SQL
+     SELECT uitval, pil, afvoer, sterfte FROM tblRedenuser WHERE reduId = :recId
+SQL;
+        $args = [[':recId', $recId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function update_uitv($fldUitv, $recId) {
+        $sql = <<<SQL
+            UPDATE tblRedenuser SET uitval = :fldUitv WHERE reduId = :recId
+SQL;
+        $args = [[':fldUitv', $fldUitv], [':recId', $recId, Type::INT]];
+        $this->run_query($sql, $args);
+    }
+
+    public function update_pil($fldPil, $recId) {
+        $sql = <<<SQL
+            UPDATE tblRedenuser SET pil = :fldPil WHERE reduId = :recId
+SQL;
+        $args = [[':fldPil', $fldPil], [':recId', $recId, Type::INT]];
+        $this->run_query($sql, $args);
+    }
+
+    public function update_afvoer($fldAfoer, $recId) {
+        $sql = <<<SQL
+            UPDATE tblRedenuser SET afvoer = :fldAfoer WHERE reduId = :recId
+SQL;
+        $args = [[':fldAfoer', $fldAfoer], [':recId', $recId, Type::INT]];
+        $this->run_query($sql, $args);
+    }
+
+    public function update_sterfte($fldSterfte, $recId) {
+        $sql = <<<SQL
+            UPDATE tblRedenuser SET sterfte = :fldSterfte WHERE reduId = :recId
+SQL;
+        $args = [[':fldSterfte', $fldSterfte], [':recId', $recId, Type::INT]];
+        $this->run_query($sql, $args);
+    }
+
 }

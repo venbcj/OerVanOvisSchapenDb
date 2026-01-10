@@ -53,12 +53,13 @@ if ((Url::getWebroot() == 'https://test.oervanovis.nl/' || Url::getWebroot() == 
 }
 if (php_uname('n') == 'basq') {
     // twee sleutels, omdat de post_* includes veel werken met getIdFromKey, en die vraagt op alle sleutels een aanwezige underscore
-    if (isset($_REQUEST['ingelogd']) || isset($_REQUEST['ingelogd_'])) {
+    // in het geval van save_uitvalredenen zelfs TWEE underscores
+    if (isset($_REQUEST['ingelogd']) || isset($_REQUEST['ingelogd_']) || isset($_REQUEST['ingelogd__'])) {
         // met deze hack kan ik op mijn computer het ingelogd-zijn simuleren vanuit een unit test --BCB
         Session::set('U1', 1); // moet eigenlijk username zijn, maar dan vallen alle approval-tests om. Niet nodig.
         Session::set('W1', 1);
         Session::set('A1', 1);
-        Session::set('I1', $_REQUEST['ingelogd'] ?? $_REQUEST['ingelogd_']);
+        Session::set('I1', $_REQUEST['ingelogd'] ?? $_REQUEST['ingelogd_'] ?? $_REQUEST['ingelogd__']);
         Session::set('PA', 1);
         Session::set('RPP', 30);
         Session::set('ID', $_REQUEST['uid'] ?? $_REQUEST['uid_'] ?? 1);

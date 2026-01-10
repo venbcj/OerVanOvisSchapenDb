@@ -12,6 +12,12 @@ class Url {
         return $array[1];
     }
 
+    // alleen in gebruik in save_uitvalredenen
+    public static function getIndexFromKey($key) {
+        $array = explode('_', $key);
+        return $array[2];
+    }
+
     public static function redirect($path) {
         header("Location: " . self::getWebroot() . $path);
     }

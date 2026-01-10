@@ -36,7 +36,12 @@
         <directory>ongebruikt</directory>
         <directory>utils</directory>
       </exclude>
-      <directory>.</directory>
+      <file>./Uitval.php</file>
+      <file>./save_uitvalredenen.php</file>
     </whitelist>
   </filter>
+  <logging>
+    <log type="coverage-html" target="./coverage-html"/>
+    <log type="coverage-clover" target="./coverage.xml"/>
+  </logging>
 </phpunit>

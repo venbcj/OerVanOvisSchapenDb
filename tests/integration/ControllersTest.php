@@ -71,7 +71,6 @@ class ControllersTest extends IntegrationCase {
             ['Rubrieken.php', [], []],
             ['Saldoberekening.php', [], []],
             ['Ubn_toevoegen.php', [], []],
-            ['Uitval.php', [], []],
             ['Voer.php', [], []],
             ['Voer_rapportage.php', [], ['kzlVoer_' => 1, 'kzlDoel_' => 1, ]],
             # ['Voorraadcorrectie.php', ['artikelvoorraad'], ['inkid_1' => 1, ]],
@@ -167,7 +166,6 @@ Saldoberekening.php
 Stallijst.php
 Systeem.php
 Ubn_toevoegen.php
-Uitval.php
 Vader.php
 Voer.php
 Voer_rapportage.php
