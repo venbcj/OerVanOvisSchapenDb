@@ -18,6 +18,4 @@ SQL;
     return $this->run_query($sql, $args);
 }
 
-// @todo fill code after
-
 ?>

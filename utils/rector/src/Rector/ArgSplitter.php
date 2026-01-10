@@ -88,14 +88,14 @@ trait ArgSplitter {
         switch (substr($name, -2)) {
         case 'Id':
         case 'at':
-            return new ClassConstFetch(new Name('self'), new Identifier('INT'));
+            return new ClassConstFetch(new Name('Type'), new Identifier('INT'));
         case 'dm':
-            return new ClassConstFetch(new Name('self'), new Identifier('DATE'));
+            return new ClassConstFetch(new Name('Type'), new Identifier('DATE'));
         default:
             if (substr($name, 0, 2) == 'dm') {
-                return new ClassConstFetch(new Name('self'), new Identifier('DATE'));
+                return new ClassConstFetch(new Name('Type'), new Identifier('DATE'));
             }
-            throw new \Exception("Programmer error. Promise 'can infer', then infer. Name in violation: $name");
+            throw new \Exception("Programmer error. Promise 'can infer'? then infer. Name in violation: $name");
         }
     }
 
