@@ -9,8 +9,8 @@ INSERT INTO tblDracht SET volwId = :volwId, hisId = :hisId
 SQL
         ,
             [
-                [':volwId', $volwId, self::INT],
-                [':hisId', $hisId, self::INT],
+                [':volwId', $volwId, Type::INT],
+                [':hisId', $hisId, Type::INT],
             ]
         );
     }
@@ -25,7 +25,7 @@ FROM tblDracht d
 WHERE st.lidId = :lidId
 ORDER BY d.draId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -44,7 +44,7 @@ SQL
          join tblHistorie h on (d.hisId = h.hisId)
         WHERE h.skip = 0 and d.volwId = :recId
 SQL;
-        $args = [[':recId', $recId, self::INT]];
+        $args = [[':recId', $recId, Type::INT]];
         return $this->first_row($sql, $args);
     }
 
@@ -52,7 +52,7 @@ SQL;
         $sql = <<<SQL
     INSERT INTO tblDracht SET volwId = :recId, hisId = :hisId
 SQL;
-        $args = [[':recId', $recId, self::INT], [':hisId', $hisId, self::INT]];
+        $args = [[':recId', $recId, Type::INT], [':hisId', $hisId, Type::INT]];
         $this->run_query($sql, $args);
     }
 
@@ -62,7 +62,7 @@ SQL;
     FROM tblDracht
     WHERE volwId = :recId
 SQL;
-        $args = [[':recId', $recId, self::INT]];
+        $args = [[':recId', $recId, Type::INT]];
         return $this->first_field($sql, $args);
     }
 

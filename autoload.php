@@ -12,6 +12,7 @@ $base = str_replace('\\', '/', __DIR__);
 
 $app_folders = [
     $base . '/classes',
+    $base . '/legacy',
     $base . '/templates',
     $base . '/fpdf_stub',
     $base . '/gateways'

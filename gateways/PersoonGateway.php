@@ -17,7 +17,7 @@ INSERT INTO tblPersoon SET partId = :partId,
  functie = :functie
 SQL
         , [
-            [':partId', $partId, self::INT],
+            [':partId', $partId, Type::INT],
             [':roep', $data['insRoep_']],
             [':letter', $data['insLetter_']],
             [':voeg', $data['insVgsl_']],
@@ -39,7 +39,7 @@ FROM tblPersoon
 WHERE partId = :partId
 ORDER BY actief desc
 SQL
-        , [[':partId', $partId, self::INT]]
+        , [[':partId', $partId, Type::INT]]
         );
     }
 
@@ -51,7 +51,7 @@ FROM tblPersoon
 WHERE persId = :persId
 ORDER BY naam
 SQL
-        , [[':persId', $id, self::INT]]
+        , [[':persId', $id, Type::INT]]
         );
     }
 

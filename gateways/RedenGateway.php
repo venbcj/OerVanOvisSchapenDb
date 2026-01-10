@@ -11,7 +11,7 @@ WHERE ru.lidId = :lidId
 and ru.pil = 1
 ORDER BY reden
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -25,7 +25,7 @@ and r.actief = 1
 and ru.pil = 1
 ORDER BY reden
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -39,7 +39,7 @@ WHERE ru.lidId = :lidId
  and ru.uitval = 1
 ORDER BY r.reden
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -58,7 +58,7 @@ WHERE ru.lidId = :lidId
  and ru.afvoer = 1
 ORDER BY r.reden
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -72,7 +72,7 @@ WHERE ru.lidId = :lidId
  and ru.pil = 1
 ORDER BY r.reden
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -85,7 +85,7 @@ FROM tblReden r
 WHERE ru.lidId = :lidId
 ORDER BY r.reden
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -97,7 +97,7 @@ FROM tblRedenuser ru
 WHERE ru.lidId = :lidId
  and ru.reduId = :reduId
 SQL
-        , [[':lidId', $lidId, self::INT], [':reduId', $reduId, self::INT]]
+        , [[':lidId', $lidId, Type::INT], [':reduId', $reduId, Type::INT]]
         );
     }
 
@@ -108,7 +108,7 @@ FROM tblReden r
  join tblRedenuser ru on (r.redId = ru.redId)
 WHERE ru.lidId = :lidId and ru.reduId = :reduId
 SQL
-        , [[':lidId', $lidId, self::INT], [':reduId', $reduId, self::INT]]
+        , [[':lidId', $lidId, Type::INT], [':reduId', $reduId, Type::INT]]
         , [null, null]
         );
     }
@@ -131,7 +131,7 @@ FROM (
 GROUP BY u.reduId, u.reden
 ORDER BY u.reden
 SQL
-        , [[':lidId', $lidId, self::INT], [':reduId', $reduId, self::INT]]
+        , [[':lidId', $lidId, Type::INT], [':reduId', $reduId, Type::INT]]
         );
     }
 
@@ -142,7 +142,7 @@ FROM tblReden r
  join tblRedenuser ru on (r.redId = ru.redId)
 WHERE ru.lidId = :lidId and ru.reduId = :reduId
 SQL
-        , [[':lidId', $lidId, self::INT], [':reduId', $reduId, self::INT]]
+        , [[':lidId', $lidId, Type::INT], [':reduId', $reduId, Type::INT]]
             , [null, null]
         );
     }
@@ -151,7 +151,7 @@ SQL
         $this->run_query(<<<SQL
 DELETE FROM tblRedenuser WHERE lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 

@@ -15,7 +15,7 @@ GROUP BY hr.rubhId, hr.rubriek
 ORDER BY hr.sort
 SQL
         , 
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -32,7 +32,7 @@ GROUP BY hr.rubhId, hr.rubriek
 ORDER BY hr.sort
 SQL
         , 
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -55,8 +55,8 @@ GROUP BY sb.salbId, ru.rubuId, r.rubriek, sb.waarde
 ORDER BY r.rubriek
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':rubhId', $rubhId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':rubhId', $rubhId, Type::INT],
             [':jaar', $jaar],
         ]
         );
@@ -71,8 +71,8 @@ WHERE ru.lidId = :lidId and r.rubhId = :rubhId and r.actief = 1 and (ru.actief =
 ORDER BY r.rubriek
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':rubhId', $rubhId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':rubhId', $rubhId, Type::INT],
         ]
         );
     }
@@ -90,7 +90,7 @@ WHERE ru.lidId = :lidId
  and hr.actief = 1
 ORDER BY r.rubriek
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -118,7 +118,7 @@ SELECT '$maand' dag, rubuId
 FROM tblRubriekuser
 WHERE lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -135,7 +135,7 @@ GROUP BY hr.rubhId, hr.rubriek
 ORDER BY hr.sort, hr.rubhId
 SQL
         ,
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -152,7 +152,7 @@ ORDER BY r.rubriek
 SQL
         ,
             [
-                [':lidId', $lidId, self::INT],
+                [':lidId', $lidId, Type::INT],
                 [':rubhId', $rubhId],
             ]
         );
@@ -169,7 +169,7 @@ WHERE lidId = :lidId
  and ru.actief = 1
 ORDER BY r.rubriek
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -180,7 +180,7 @@ SELECT rubuId
 FROM tblRubriekuser
 WHERE lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -191,7 +191,7 @@ SELECT rubuId
 FROM tblRubriekuser
 WHERE rubId = 39 and lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -201,7 +201,7 @@ SELECT count(rubuId) aant
 FROM tblRubriekuser
 WHERE lidId = :lidId and actief = 0 and sal = 0
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -215,7 +215,7 @@ WHERE ru.lidId = :lidId and (hr.actief = 0 or r.actief = 0 or (ru.actief = 0 and
 GROUP BY hr.rubhId, hr.rubriek 
 ORDER BY hr.sort 
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -233,8 +233,8 @@ ORDER BY r.rubriek
 SQL
         ,
             [
-                [':lidId', $lidId, self::INT],
-                [':rubhId', $rubhId, self::INT],
+                [':lidId', $lidId, Type::INT],
+                [':rubhId', $rubhId, Type::INT],
             ]
         );
     }
@@ -248,7 +248,7 @@ SQL
             WHERE ru.lidId = :lidId and r.rubId = 10 and r.actief = 1 and hr.actief = 1
             ORDER BY r.rubriek
 SQL;
-        $args = [[':lidId', $lidId, self::INT]];
+        $args = [[':lidId', $lidId, Type::INT]];
         return $this->run_query($sql, $args);
     }
 

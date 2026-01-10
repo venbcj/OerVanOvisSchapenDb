@@ -11,7 +11,7 @@ FROM tblRas r
 WHERE ru.actief = 1 and lidId = :lidId
 ORDER BY sort, ras
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -25,7 +25,7 @@ FROM tblRas r
 WHERE ru.lidId = :lidId and r.actief = 1 and ru.actief = 1
 ORDER BY ras
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -40,7 +40,7 @@ FROM tblRas r
  join tblRasuser ru on (r.rasId = ru.rasId)
 WHERE r.rasId = :rasId and ru.lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT], [':rasId', $rasId, self::INT]]
+        , [[':lidId', $lidId, Type::INT], [':rasId', $rasId, Type::INT]]
             , ['scan' => null, 'sort' => null, 'actief' => null]
         );
     }
@@ -51,7 +51,7 @@ SELECT count(scan)
 FROM tblRasuser
 WHERE lidId = :lidId and scan = :scan and scan is not NULL
 SQL
-        , [[':lidId', $lidId, self::INT], [':scan', $scan]]
+        , [[':lidId', $lidId, Type::INT], [':scan', $scan]]
         );
     }
 
@@ -60,8 +60,8 @@ SQL
 UPDATE tblRasuser SET scan = :scan WHERE lidId = :lidId and rasId = :rasId
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':rasId', $rasId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':rasId', $rasId, Type::INT],
             [':scan', $scan],
         ]
         );
@@ -71,7 +71,7 @@ SQL
         $this->run_query(<<<SQL
 UPDATE tblRasuser SET actief = :actief WHERE rasId = :rasId
 SQL
-        , [[':rasId', $rasId, self::INT], [':actief', $actief]]
+        , [[':rasId', $rasId, Type::INT], [':actief', $actief]]
         );
     }
 
@@ -80,7 +80,7 @@ SQL
             DELETE FROM tblRasuser WHERE lidId = :lidId
 SQL
         , [
-            [':lidId', $lidId, self::INT],
+            [':lidId', $lidId, Type::INT],
         ]
         );
     }

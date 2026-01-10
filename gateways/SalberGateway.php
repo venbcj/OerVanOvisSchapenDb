@@ -15,7 +15,7 @@ FROM tblSalber sb
 WHERE sb.tbl = 'ru' and ru.lidId = :lidId
 SQL
         , [
-            [':lidId', $lidId, self::INT]
+            [':lidId', $lidId, Type::INT]
         ]);
     }
 
@@ -32,7 +32,7 @@ INSERT INTO tblSalber (datum, tbl, tblId, waarde)
     ORDER BY elemuId
 SQL
         , [
-            [':lidId', $lidId, self::INT],
+            [':lidId', $lidId, Type::INT],
             [':nextjaar', $nextjaar."-01-01"],
         ]);
     }
@@ -50,8 +50,8 @@ WHERE u.lidId = :lidId
  and isnull(hkoop.hisId)
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':jaar', $jaar, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':jaar', $jaar, Type::INT],
         ]);
     }
 
@@ -71,7 +71,7 @@ GROUP BY year(sb.datum)
 ORDER BY  jaar desc
 SQL
         , [
-            [':lidId', $lidId, self::INT]
+            [':lidId', $lidId, Type::INT]
         ]);
     }
 
@@ -109,8 +109,8 @@ FROM (
 ) reken
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':jaar', $jaar, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':jaar', $jaar, Type::INT],
         ]);
     }
 
@@ -122,8 +122,8 @@ FROM tblSalber sb
 WHERE tbl = 'eu' and eu.elemId = 16 and eu.lidId = :lidId and year(datum) = :jaar
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':jaar', $jaar, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':jaar', $jaar, Type::INT],
         ]); 
     }
 
@@ -155,8 +155,8 @@ WHERE eu.lidId = :lidId and year(sb.datum) = :jaar
 ORDER BY sort, element
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':jaar', $jaar, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':jaar', $jaar, Type::INT],
         ]);
     }
 
@@ -483,11 +483,11 @@ and year(sb.datum) = :kzlJaar and r.actief = 1 and ru.sal = 1
  ) som
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':kzlJaar', $kzlJaar, self::INT],
-            [':p_ooital', $p_ooital, self::INT],
-            [':p_afv', $p_afv, self::INT],
-            [':verv_ooi', $verv_ooi, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':kzlJaar', $kzlJaar, Type::INT],
+            [':p_ooital', $p_ooital, Type::INT],
+            [':p_afv', $p_afv, Type::INT],
+            [':verv_ooi', $verv_ooi, Type::INT],
         ]);
     }
 
@@ -496,7 +496,7 @@ SQL
             <<<SQL
 UPDATE tblSalber set waarde = :waarde WHERE salbId = :salbId
 SQL
-        , [[':salbId', $recId, self::INT], [':waarde', $waarde]]
+        , [[':salbId', $recId, Type::INT], [':waarde', $waarde]]
         );
     }
 

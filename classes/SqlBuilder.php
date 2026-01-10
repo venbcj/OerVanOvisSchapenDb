@@ -2,13 +2,6 @@
 
 class SqlBuilder {
 
-    // HERHAALD IN Gateway en SqlBuilder
-    protected const TXT = 'txt';
-    protected const INT = 'int';
-    protected const FLOAT = 'float';
-    protected const BOOL = 'bool';
-    protected const DATE = 'date';
-
     private $db;
 
     public function __construct(Db $db) {
@@ -17,12 +10,13 @@ class SqlBuilder {
 
     // Twee smaken:
     // - pdo-stijl, en alexander-stijl.
+
     // Dit is pdo-stijl:
     // in args zit een array van benoemde parameters:
     // parameter is een [naam, waarde, formaat]
     // naam is bijvoorbeeld :id
     // waarde is bijvoorbeeld 4
-    // formaat kan zijn self::INT, self::FLOAT, self::TXT, self::BOOL, self::DATE
+    // formaat kan zijn Type::INT, Type::FLOAT, Type::TXT, Type::BOOL, Type::DATE
     // TODO meer formaten
     public function statement($SQL, $args = [], $type_list = []) {
         if (false !== strpos($SQL, ':%')) {
@@ -37,6 +31,11 @@ class SqlBuilder {
                 $value = $this->restrict($value, $format);
             }
             $SQL = preg_replace("#$name\b#", $value, $SQL);
+        }
+        if (substr($SQL, 0, 6) == 'SELECT') {
+            // noodfix voor #0004221 omgaan met null-waarden.
+            // Alleen voor selects, omdat inserts nog worden geschreven met SET column = value.
+            $SQL = str_replace(' = NULL', ' IS NULL', $SQL);
         }
         return $SQL;
     }
@@ -56,7 +55,7 @@ class SqlBuilder {
             $key = $placeholder;
             $this->op = '=';
             // default formaat is TXT
-            $type = self::TXT;
+            $type = Type::TXT;
             if (array_key_exists($key, $type_list)) {
                 $type = $type_list[$key];
             }
@@ -74,20 +73,20 @@ class SqlBuilder {
 
     private function restrict($value, $type) {
         switch ($type) {
-        case self::TXT:
-        case self::DATE:
+        case Type::TXT:
+        case Type::DATE:
             return $this->surround($this->db->real_escape_string($value), "''");
-        case self::INT:
+        case Type::INT:
             return (int) $value;
-        case self::FLOAT:
+        case Type::FLOAT:
             return (float) $value;
-        case self::BOOL:
+        case Type::BOOL:
             return $value ? 'true' : 'false';
         }
     }
 
     private function expression($key, $expr, $type) {
-        if ($type == self::BOOL) {
+        if ($type == Type::BOOL) {
             $this->op = '';
             $this->prefix = '';
             if (!$expr) {
@@ -127,7 +126,7 @@ class SqlBuilder {
         }
         // default formaat is TXT
         if (count($arg) == 2) {
-            $arg[] = self::TXT;
+            $arg[] = Type::TXT;
         }
         if (count($arg) != 3) {
             throw new Exception("Query-parameters: een parameter moet twee of drie onderdelen bevatten.");

@@ -6,12 +6,12 @@ class HokGateway extends Gateway {
         return $this->first_field(<<<SQL
 SELECT max(length(hoknr)) lengte FROM tblHok WHERE lidId = :lidId
 SQL
-    , [[':lidId', $lidId, self::INT]]
+    , [[':lidId', $lidId, Type::INT]]
         );
     }
 
     public function findHoknrById($hokId) {
-        return $this->first_field("SELECT hoknr FROM tblHok WHERE hokId = :hokId", [[':hokId', $hokId, self::INT]]);
+        return $this->first_field("SELECT hoknr FROM tblHok WHERE hokId = :hokId", [[':hokId', $hokId, Type::INT]]);
     }
 
     public function findSortActief($hokId) {
@@ -20,7 +20,7 @@ SELECT sort, actief
 FROM tblHok
 WHERE hokId = :hokId
 SQL
-        , [[':hokId', $hokId, self::INT]]
+        , [[':hokId', $hokId, Type::INT]]
         );
     }
 
@@ -28,7 +28,7 @@ SQL
         $this->run_query(<<<SQL
 UPDATE tblHok SET sort = :sort WHERE hokId = :hokId 
 SQL
-        , [[':hokId', $hokId, self::INT], [':sort', $sort]]
+        , [[':hokId', $hokId, Type::INT], [':sort', $sort]]
         );
     }
 
@@ -39,7 +39,7 @@ SELECT count(*)
 FROM tblHok
 WHERE lidId = :lidId and hoknr = :hoknr
 SQL
-        , [[':lidId', $lidId, self::INT], [':hoknr', $hok]]
+        , [[':lidId', $lidId, Type::INT], [':hoknr', $hok]]
         );
     }
 
@@ -51,7 +51,7 @@ FROM tblHok
 WHERE actief = 1 and lidId = :lidId
 ORDER BY hoknr 
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -71,8 +71,8 @@ WHERE lidId = :lidId
 ORDER BY hoknr
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':hokId', $hokId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':hokId', $hokId, Type::INT],
         ]);
         if ($vw->num_rows == 0) {
             return [[], []];
@@ -93,7 +93,7 @@ SELECT lidId
 FROM tblHok
 WHERE hokId = :hokId
 SQL
-        , [[':hokId', $hok, self::INT]]
+        , [[':hokId', $hok, Type::INT]]
         );
     }
 
@@ -104,7 +104,7 @@ FROM tblHok
 WHERE actief = 1 and lidId = :lidId
 ORDER BY hoknr
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -117,7 +117,7 @@ FROM tblHok
 WHERE lidId = :lidId and actief = 1
 ORDER BY hoknr
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -133,9 +133,9 @@ WHERE h.lidId = :lidId
  and p.doelId = :doelId
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':artId', $artId, self::INT],
-            [':doelId', $doelId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':artId', $artId, Type::INT],
+            [':doelId', $doelId, Type::INT],
         ]);
     }
 
@@ -150,8 +150,8 @@ WHERE h.lidId = :lidId and i.artId = :artId
 GROUP BY h.hoknr
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':artId', $artId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':artId', $artId, Type::INT],
         ]);
     }
 
@@ -170,7 +170,7 @@ SQL
       ) mb on (mb.bezId = b.bezId)
 SQL
         , [
-            [':schaapId', $schaapId, self::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]);
     }
 
@@ -182,7 +182,7 @@ FROM tblHok
 WHERE lidId = :lidId
 ORDER BY sort, hokId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -194,7 +194,7 @@ FROM tblHok h
 WHERE h.lidId = :lidId
 ORDER BY hoknr
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -207,7 +207,7 @@ WHERE h.lidId = :lidId
  and actief = 1
 ORDER BY hoknr
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -382,7 +382,7 @@ FROM tblHok h
 GROUP BY result.periId, result.hokId, h.hoknr, result.doelId, d.doel, result.van, result.tot
 ORDER BY result.hokId, result.doelId, result.van
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -395,7 +395,7 @@ SET lidId = :lidId,
   sort = :sort
 SQL
         , [
-            [':lidId', $lidId, self::INT],
+            [':lidId', $lidId, Type::INT],
             [':hoknr', $hoknr],
             [':sort', $sort],
         ]
@@ -414,7 +414,7 @@ WHERE h.lidId = :lidId
  and isnull(b.hokId)
  and isnull(p.hokId)
 SQL
-        , [[':lidId', $lidId, self::INT], [':actief', $actief]]
+        , [[':lidId', $lidId, Type::INT], [':actief', $actief]]
         );
     }
 
@@ -427,7 +427,7 @@ WHERE lidId = :lidId
  and actief > :actief
 ORDER BY coalesce(sort, hoknr)
 SQL
-        , [[':lidId', $lidId, self::INT], [':actief', $actief]]
+        , [[':lidId', $lidId, Type::INT], [':actief', $actief]]
         );
     }
 
@@ -442,7 +442,7 @@ WHERE h.hokId = :hokId
  and isnull(b.hokId)
  and isnull(p.hokId)
 SQL
-        , [[':hokId', $hokId, self::INT]]
+        , [[':hokId', $hokId, Type::INT]]
         );
     }
 
@@ -484,7 +484,7 @@ on (h.hokId = inhok.hokId)
 WHERE h.lidId = :lidId and h.actief = 1
 ) hb WHERE hokId = :hokId
 SQL
-        , [[':lidId', $lidId, self::INT], [':hokId', $hokId, self::INT]]
+        , [[':lidId', $lidId, Type::INT], [':hokId', $hokId, Type::INT]]
         );
     }
 
@@ -492,7 +492,7 @@ SQL
         $this->run_query(<<<SQL
 UPDATE tblHok SET actief = :actief WHERE hokId = :hokId
 SQL
-        , [[':hokId', $hokId, self::INT], [':actief', $actief]]
+        , [[':hokId', $hokId, Type::INT], [':actief', $actief]]
         );
     }
 
@@ -500,7 +500,7 @@ SQL
         $this->run_query(<<<SQL
 DELETE FROM tblHok WHERE hokId = :hokId
 SQL
-        , [[':hokId', $hokId, self::INT]]
+        , [[':hokId', $hokId, Type::INT]]
         );
     }
 
@@ -510,7 +510,7 @@ SELECT hokId
 FROM tblHok
 WHERE hoknr = 'Lambar' and lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -518,7 +518,7 @@ SQL
         $this->run_query(<<<SQL
 INSERT INTO tblHok set hoknr = 'Lambar', lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
         return $this->db->insert_id;
     }

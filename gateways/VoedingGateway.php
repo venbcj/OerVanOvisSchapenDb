@@ -12,12 +12,12 @@ INSERT INTO tblVoeding SET periId = :periId
 , readerId = :readerId
 SQL
         , [
-            [':periId', $periode_id, self::INT],
-            [':inkId', $inkId, self::INT],
+            [':periId', $periode_id, Type::INT],
+            [':inkId', $inkId, Type::INT],
             [':nutat', $rest_ink_vrd],
             [':stdat', $stdat],
-            [':datum', $toediendatum, self::DATE],
-            [':readerId', $readerid, self::INT],
+            [':datum', $toediendatum, Type::DATE],
+            [':readerId', $readerid, Type::INT],
         ]
         );
     }
@@ -28,7 +28,7 @@ SQL
                 FROM tblVoeding v
                 WHERE v.inkId = :recId and isnull(periId)
 SQL;
-        $args = [[':recId', $recId, self::INT]];
+        $args = [[':recId', $recId, Type::INT]];
         return $this->first_field($sql, $args);
     }
 
@@ -38,7 +38,7 @@ SQL;
         $sql = <<<SQL
                 INSERT INTO :tabel set inkId = :recId, nutat = :updCorrat, stdat = 1, correctie = 1 
 SQL;
-        $args = [[':tabel', $tabel], [':recId', $recId, self::INT], [':updCorrat', $updCorrat, self::INT]];
+        $args = [[':tabel', $tabel], [':recId', $recId, Type::INT], [':updCorrat', $updCorrat, Type::INT]];
         return $this->run_query($sql, $args);
     }
 

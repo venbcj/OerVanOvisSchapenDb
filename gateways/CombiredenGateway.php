@@ -12,7 +12,7 @@ where ru.lidId = :lidId
  and cr.tbl = 'd'
 order by cr.scan
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         )->fetch_all();
     }
 
@@ -29,7 +29,7 @@ where eu.lidId = :lidId
  and cr.tbl = 'p'
 order by cr.scan
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -53,7 +53,7 @@ FROM tblCombireden cr
 WHERE ru.lidId = :lidId and $whereScan and cr.tbl = '$fldTbl'
 GROUP BY cr.scan
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         )->num_rows ?? 0;
     }
 
@@ -72,7 +72,7 @@ FROM tblCombireden cr
 WHERE ru.lidId = :lidId and cr.tbl = 'd'
 ORDER BY cr.scan
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -83,7 +83,7 @@ FROM tblCombireden
 WHERE comrId = :comrId
 ORDER BY scan
 SQL
-        , [[':comrId', $comrId, self::INT]]
+        , [[':comrId', $comrId, Type::INT]]
         );
     }
 
@@ -95,7 +95,7 @@ FROM tblCombireden cr
 WHERE ru.lidId = :lidId and $whereRed and cr.comrId != $rowid_d and cr.tbl = 'd'
 GROUP BY cr.artId, cr.reduId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         )->num_rows ?? 0;
     }
 
@@ -107,7 +107,7 @@ FROM tblCombireden cr
 WHERE ru.lidId = :lidId and $whereScan and cr.comrId != $rowid_d and cr.tbl = 'd'
 GROUP BY cr.scan
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         )->num_rows ?? 0;
     }
 
@@ -129,7 +129,7 @@ SQL
         $this->run_query(<<<SQL
 DELETE FROM tblCombireden WHERE comrId = :comrId
 SQL
-        , [[':comrId', $comrId, self::INT]]
+        , [[':comrId', $comrId, Type::INT]]
         );
     }
 
@@ -142,7 +142,7 @@ FROM tblCombireden cr
 WHERE eu.lidId = :lidId and cr.tbl = 'p'
 ORDER BY cr.scan
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -155,7 +155,7 @@ FROM tblCombireden cr
 WHERE eu.lidId = :lidId and cr.comrId = :comrId
 ORDER BY cr.scan
 SQL
-        , [[':lidId', $lidId, self::INT], [':comrId', $comrId, self::INT]]
+        , [[':lidId', $lidId, Type::INT], [':comrId', $comrId, Type::INT]]
         );
     }
 
@@ -168,7 +168,7 @@ FROM tblCombireden cr
 WHERE ru.lidId = :lidId and $whereStdat and $whereRed and cr.comrId != :comrId and cr.tbl = 'p'
 GROUP BY cr.artId, cr.reduId
 SQL
-        , [[':lidId', $lidId, self::INT], [':comrId', $rowid_p, self::INT]]
+        , [[':lidId', $lidId, Type::INT], [':comrId', $rowid_p, Type::INT]]
         );
     }
 
@@ -181,8 +181,8 @@ WHERE ru.lidId = :lidId and $whereScan and cr.comrId != :comrId and cr.tbl = 'p'
 GROUP BY cr.scan
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':comrId', $comrId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':comrId', $comrId, Type::INT],
         ]
         );
     }

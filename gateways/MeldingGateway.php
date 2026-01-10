@@ -11,7 +11,7 @@ FROM tblMelding m
  join tblStal st on (h.stalId = st.stalId)
 WHERE m.meldId = :recId
 SQL
-        , [[':recId', $recId, self::INT]]
+        , [[':recId', $recId, Type::INT]]
         );
     }
 
@@ -21,7 +21,7 @@ SQL
 UPDATE tblMelding SET skip = :skip, fout = NULL
 WHERE meldId = :recId
 SQL
-        , [[':recId', $recId, self::INT], [':skip', $fldSkip]]
+        , [[':recId', $recId, Type::INT], [':skip', $fldSkip]]
         );
     }
 
@@ -31,7 +31,7 @@ SQL
 UPDATE tblMelding SET fout = :fout
 WHERE meldId = :recId and skip <> 1
 SQL
-        , [[':recId', $recId, self::INT], [':fout', $wrong]]
+        , [[':recId', $recId, Type::INT], [':fout', $wrong]]
         );
     }
 
@@ -59,7 +59,7 @@ WHERE m.reqId = :reqId
  and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12 
  and m.skip <> 1
 SQL
- , [[':reqId', $fldReqId, self::INT]],
+ , [[':reqId', $fldReqId, Type::INT]],
  false
         );
     }
@@ -92,7 +92,7 @@ WHERE m.reqId = :reqId
  and m.skip <> 1
  and h.skip = 0                            
 SQL
-        , [[':reqId', $fldReqId, self::INT]]
+        , [[':reqId', $fldReqId, Type::INT]]
         );
     }
 
@@ -122,7 +122,7 @@ WHERE m.reqId = :reqId
  and m.skip <> 1
  and h.skip = 0
 SQL
-        , [[':reqId', $reqId, self::INT]]
+        , [[':reqId', $reqId, Type::INT]]
         );
     }
 
@@ -131,7 +131,7 @@ SQL
             <<<SQL
 INSERT INTO tblMelding SET reqId = :reqId, hisId = :hisId
 SQL
-        , [[':reqId', $reqId, self::INT], [':hisId', $hisId, self::INT]]
+        , [[':reqId', $reqId, Type::INT], [':hisId', $hisId, Type::INT]]
         );
     }
 

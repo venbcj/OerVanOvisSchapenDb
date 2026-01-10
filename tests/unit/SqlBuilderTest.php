@@ -45,7 +45,7 @@ class SqlBuilderTest extends UnitCase {
     public function test_pdo_null() {
         $SQL = "SELECT * FROM tabel WHERE param = :param";
         $args = [[':param', null, 'int']];
-        $expected = "SELECT * FROM tabel WHERE param = NULL"; // en dat is fout...
+        $expected = "SELECT * FROM tabel WHERE param IS NULL";
         $this->assertEquals($expected, $this->sut->statement($SQL, $args));
     }
 

@@ -18,7 +18,7 @@ SQL
             <<<SQL
 UPDATE impAgrident set toedat_upd = :aantal WHERE Id = :id
 SQL
-        , [[':id', $id, self::INT], [':aantal', $aantal]]
+        , [[':id', $id, Type::INT], [':aantal', $aantal]]
         );
     }
 
@@ -27,7 +27,7 @@ SQL
             <<<SQL
 UPDATE impAgrident set verwerkt = 1 WHERE Id = :recId
 SQL
-        , [[':recId', $recId, self::INT]]
+        , [[':recId', $recId, Type::INT]]
         );
     }
 
@@ -35,7 +35,7 @@ SQL
         $this->run_query(<<<SQL
 UPDATE impAgrident SET hokId = :hokId WHERE Id = :Id
 SQL
-        , [[':Id', $Id, self::INT], [':hokId', $hokId, self::INT]]
+        , [[':Id', $Id, Type::INT], [':hokId', $hokId, Type::INT]]
         );
     }
 
@@ -91,7 +91,7 @@ SQL;
     public function getInsAanvoerWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and (rd.actId = 2 or rd.actId = 3) and isnull(rd.verwerkt)",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -137,7 +137,7 @@ SQL;
     public function getInsAdoptieWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and rd.actId = 15 and isnull(rd.verwerkt) ",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -284,7 +284,7 @@ SQL;
     public function getInsAfvoerWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and rd.actId = 12 and isnull(rd.ubnId) and isnull(rd.verwerkt) ",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -307,7 +307,7 @@ SQL;
     public function getInsDekkenWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and rd.actId = 18 and isnull(verwerkt) ",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -327,7 +327,7 @@ SQL
     public function getInsDrachtWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and rd.actId = 19 and isnull(verwerkt) ",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -405,7 +405,7 @@ SQL;
     public function getInsGeboortesWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and rd.actId = 1 and isnull(rd.verwerkt)",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -567,7 +567,7 @@ SQL
     public function getInsGrWijzigingUbnWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and rd.actId = 12 and isnull(rd.verwerkt) ",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -605,7 +605,7 @@ SQL;
     public function getInsHalsnummersWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and rd.actId = 1717 and isnull(rd.verwerkt) ",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -675,7 +675,7 @@ SQL;
     public function getInsLambarWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and actId = 16 and isnull(rd.verwerkt)",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -744,14 +744,14 @@ SQL;
     public function getInsMedicijnAgridentWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and rd.actId = 8 and isnull(rd.verwerkt) ",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
     public function getInsMedicijnBiocontrolWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and rd.teller_pil is not null and isnull(rd.verwerkt) ",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -790,7 +790,7 @@ SQL;
     public function getInsOmnummerenWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and rd.actId = 17 and isnull(rd.verwerkt) ",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -855,7 +855,7 @@ SQL;
     public function getInsOverplaatsAgridentWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and rd.actId = 5 and isnull(rd.verwerkt) and isnull(rs.Id) ",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -920,7 +920,7 @@ SQL;
     public function getInsOverplaatsBiocontrolWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and rd.teller_ovpl is not null and isnull(rd.verwerkt) and isnull(rs.readId) ",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -997,7 +997,7 @@ SQL;
     public function getInsSpenenAgridentWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and actId = 4 and isnull(rd.verwerkt)",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -1073,7 +1073,7 @@ SQL;
     public function getInsSpenenBiocontrolWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and rd.teller_sp is not null and isnull(rd.verwerkt)",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -1167,7 +1167,7 @@ SQL;
     public function getInsStallijstscanWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and rd.actId = 22 and isnull(rd.verwerkt)",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -1184,7 +1184,7 @@ FROM impAgrident rd
  ) s on (s.levensnummer = rd.levensnummer)
 WHERE rd.lidId = :lidId and rd.actId = 22 and isnull(rd.verwerkt) and isnull(s.schaapId)
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -1205,7 +1205,7 @@ SQL;
     public function getInsStallijstscanNieuweklantWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and rd.actId = 21 and isnull(rd.verwerkt)",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -1230,7 +1230,7 @@ SQL;
     public function getInsTvUitscharenWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and rd.actId = 11 and isnull(rd.verwerkt)",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -1410,7 +1410,7 @@ SQL;
     public function getInsUitscharenWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and rd.actId = 10 and isnull(rd.verwerkt) ",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -1505,7 +1505,7 @@ SQL
     public function getInsUitvalAgridentWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and rd.actId = 14 and isnull(rd.verwerkt) ",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -1600,7 +1600,7 @@ SQL
     public function getInsUitvalBiocontrolWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and rd.teller_uitv is not null and isnull(rd.verwerkt) ",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -1660,7 +1660,7 @@ SQL;
             // was in de pagina uitgeschakeld
             // "WHERE rd.lidId = :lidId and rd.actId = 8888 and isnull(rd.verwerkt) ",
             '',
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -1737,7 +1737,7 @@ SQL;
     public function getInsWegenWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and actId = 9 and isnull(rd.verwerkt)",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -1803,7 +1803,7 @@ SQL;
     public function getLoslopersPlaatsenWhere($lidId) {
         return [
             " WHERE (isnull(b.hokId) or uit.hist is not null) ",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -1870,7 +1870,7 @@ SQL
     public function getLoslopersVerkopenWhere($lidId) {
         return [
             "WHERE (isnull(b.hokId) or uit.hist is not null) and prnt.schaapId is not null",
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         ];
     }
 
@@ -1886,9 +1886,9 @@ WHERE hokId = :hokId
 ORDER BY datum
 SQL
         , [
-            [':hokId', $hokId, self::INT],
-            [':doelId', $doelId, self::INT],
-            [':artId', $artId, self::INT],
+            [':hokId', $hokId, Type::INT],
+            [':doelId', $doelId, Type::INT],
+            [':artId', $artId, Type::INT],
         ]);
     }
 
@@ -1898,7 +1898,7 @@ SELECT verwerkt
 FROM impAgrident
 WHERE Id = :recId
 SQL;
-        $args = [[':recId', $recId, self::INT]];
+        $args = [[':recId', $recId, Type::INT]];
         return $this->first_field($sql, $args);
     }
 
@@ -1909,7 +1909,7 @@ SELECT levensnummer levnr_aanv, transponder
 FROM impAgrident
 WHERE Id = :recId
 SQL
-        , [[':recId', $recId, self::INT]]
+        , [[':recId', $recId, Type::INT]]
             , [null, null]
         );
     }
@@ -1920,7 +1920,7 @@ SELECT max(Id) Id
 FROM impAgrident
 WHERE actId = 16 and isnull(hokId) and lidId = :lidId and isnull(verwerkt)
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -1928,7 +1928,7 @@ SQL
         $this->run_query(<<<SQL
 DELETE FROM impAgrident WHERE lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -1938,7 +1938,7 @@ SQL
         FROM impAgrident
         WHERE Id = :recId
 SQL;
-        $args = [[':recId', $recId, self::INT]];
+        $args = [[':recId', $recId, Type::INT]];
         return $this->first_row($sql, $args, [0, 0, 0, 0]);
     }
 
@@ -1948,7 +1948,7 @@ SQL;
      FROM impAgrident
      WHERE Id = :recId
 SQL;
-        $args = [[':recId', $recId, self::INT]];
+        $args = [[':recId', $recId, Type::INT]];
         return $this->first_field($sql, $args);
     }
 
@@ -1956,7 +1956,7 @@ SQL;
         $sql = <<<SQL
         UPDATE impAgrident set verwerkt = 1 WHERE Id = :recId
 SQL;
-        $args = [[':recId', $recId, self::INT]];
+        $args = [[':recId', $recId, Type::INT]];
         $this->run_query($sql, $args);
     }
 
@@ -1964,7 +1964,7 @@ SQL;
         $sql = <<<SQL
         UPDATE impReader set verwerkt = 1 WHERE readId = :recId
 SQL;
-        $args = [[':recId', $recId, self::INT]];
+        $args = [[':recId', $recId, Type::INT]];
         $this->run_query($sql, $args);
     }
 

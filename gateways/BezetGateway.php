@@ -49,7 +49,7 @@ FROM tblBezet b
  ) prnt on (prnt.schaapId = st.schaapId)
 WHERE u.lidId = :lidId and isnull(uit.bezId) and isnull(spn.schaapId) and isnull(prnt.schaapId) and h.skip = 0
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -87,7 +87,7 @@ FROM tblBezet b
  ) prnt on (prnt.schaapId = st.schaapId)
 WHERE u.lidId = :lidId and isnull(uit.bezId) and isnull(prnt.schaapId) and h.skip = 0
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -130,7 +130,7 @@ FROM (
  ) prnt on (prnt.schaapId = hin.schaapId)
 WHERE (isnull(b.hokId) or uit.hist is not null)
 SQL
-       , [[':lidId', $lidId, self::INT]]
+       , [[':lidId', $lidId, Type::INT]]
        );
     }
 
@@ -379,7 +379,7 @@ FROM (
 GROUP BY h.hokId, h.hoknr
 ORDER BY hoknr
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -419,7 +419,7 @@ WHERE b.hokId = :hokId
  and isnull(uit.bezId)
  and isnull(prnt.schaapId)
 SQL
-        , [[':hokId', $hokId, self::INT]]
+        , [[':hokId', $hokId, Type::INT]]
         );
     }
 
@@ -458,7 +458,7 @@ and isnull(spn.schaapId)
 and isnull(prnt.schaapId)
 and h.skip = 0
 SQL
-        , [[':hokId', $hokId, self::INT]]
+        , [[':hokId', $hokId, Type::INT]]
         );
     }
 
@@ -496,7 +496,7 @@ WHERE b.hokId = :hokId and isnull(uit.bezId)
 and isnull(prnt.schaapId)
 and h.skip = 0
 SQL
-        , [[':hokId', $hokId, self::INT]]
+        , [[':hokId', $hokId, Type::INT]]
         );
     }
 
@@ -534,7 +534,7 @@ WHERE b.hokId = :hokId
  and isnull(uit.bezId)
  and h.skip = 0
 SQL
-        , [[':hokId', $hokId, self::INT]]
+        , [[':hokId', $hokId, Type::INT]]
         );
     }
 
@@ -589,7 +589,7 @@ FROM (
 WHERE b.hokId = :hokId
  and isnull(uit.bezId)
 SQL
-        , [[':hokId', $hokId, self::INT]]
+        , [[':hokId', $hokId, Type::INT]]
         );
     }
 
@@ -629,7 +629,7 @@ and (isnull(spn.schaapId) or ht.datum = spn.datum)
 and (isnull(prnt.schaapId) or ht.datum < prnt.datum)
 and h.skip = 0
 SQL
-        , [[':hokId', $hokId, self::INT], [':dmstopgeb', $dmstopgeb, self::DATE]]
+        , [[':hokId', $hokId, Type::INT], [':dmstopgeb', $dmstopgeb, Type::DATE]]
         );
     }
 
@@ -670,7 +670,7 @@ and (isnull(ht.actId) or (ht.actId != 4 and ht.actId != 5 and ht.actId != 14))
 and (ht.datum >= spn.datum or (isnull(uit.bezId) and prnt.schaapId is not null and h.datum < spn.datum))
 and h.skip = 0
 SQL
-        , [[':hokId', $hokId, self::INT], [':dmstopspn', $dmstopspn, self::DATE]]
+        , [[':hokId', $hokId, Type::INT], [':dmstopspn', $dmstopspn, Type::DATE]]
         );
     }
 
@@ -716,7 +716,7 @@ and (isnull(spn.schaapId) or ht.datum < spn.datum or (ht.datum = spn.datum and h
 and (isnull(prnt.schaapId) or ht.datum < prnt.datum)
 and h.skip = 0
 SQL
-        , [[':hokId', $hokId, self::INT], [':dmstopgeb', $dmstopgeb, self::DATE]]
+        , [[':hokId', $hokId, Type::INT], [':dmstopgeb', $dmstopgeb, Type::DATE]]
         );
     }   
 
@@ -757,7 +757,7 @@ and (ht.datum > spn.datum or (ht.datum = spn.datum and his_spn < hist))
 and (isnull(prnt.schaapId) or h.datum < prnt.datum)
 and h.skip = 0
 SQL
-        , [[':hokId', $hokId, self::INT], [':dmstopspn', $dmstopspn, self::DATE]]
+        , [[':hokId', $hokId, Type::INT], [':dmstopspn', $dmstopspn, Type::DATE]]
         );
     }
 
@@ -798,7 +798,7 @@ WHERE b.hokId = :hokId and ht.actId = 14
  and isnull(prnt.schaapId)
  and h.skip = 0
 SQL
-        , [[':hokId', $hokId, self::INT], [':dmstopgeb', $dmstopgeb, self::DATE]]
+        , [[':hokId', $hokId, Type::INT], [':dmstopgeb', $dmstopgeb, Type::DATE]]
        );
     }
 
@@ -838,7 +838,7 @@ WHERE b.hokId = :hokId and ht.actId = 14
  and isnull(prnt.schaapId)
  and h.skip = 0
 SQL
-        , [[':hokId', $hokId, self::INT], [':dmstopspn', $dmstopspn, self::DATE]]
+        , [[':hokId', $hokId, Type::INT], [':dmstopspn', $dmstopspn, Type::DATE]]
         );
     }
 
@@ -880,7 +880,7 @@ WHERE b.hokId = :hokId and isnull(uit.bezId)
  and h.skip = 0
 SQL
         , [
-            [':hokId', $hokId, self::INT],
+            [':hokId', $hokId, Type::INT],
         ]
         );
     }
@@ -933,8 +933,8 @@ FROM (
 SQL
         , [
             [':txtDay', $txtDay],
-            [':kzlHok', $kzlHok, self::INT],
-            [':kzlVdr', $kzlVdr, self::INT],
+            [':kzlHok', $kzlHok, Type::INT],
+            [':kzlVdr', $kzlVdr, Type::INT],
         ]
         , [null, null]
         );
@@ -972,7 +972,7 @@ SELECT st.schaapId mdrId
  and isnull(uit.bezId)
  and h.skip = 0
 SQL
- , [[':kzlHok', $kzlHok, self::INT]]
+ , [[':kzlHok', $kzlHok, Type::INT]]
         );
     }
 
@@ -1049,12 +1049,12 @@ WHERE b.hokId = :hokId
 ORDER BY dmin, dmuit
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':hokId', $hokId, self::INT],
-            [':doelId', $doelId, self::INT],
-            [':dagkg', $dagkg, self::FLOAT],
-            [':dmbegin', $dmbegin, self::DATE],
-            [':dmeind', $dmeind, self::DATE],
+            [':lidId', $lidId, Type::INT],
+            [':hokId', $hokId, Type::INT],
+            [':doelId', $doelId, Type::INT],
+            [':dagkg', $dagkg, Type::FLOAT],
+            [':dmbegin', $dmbegin, Type::DATE],
+            [':dmeind', $dmeind, Type::DATE],
         ]);
     }
 
@@ -1064,7 +1064,7 @@ SQL
 INSERT INTO tblBezet
  set hisId = :hisId, hokId = :hokId
 SQL
-        , [[':hisId', $hisId, self::INT], [':hokId', $hokId, self::INT]]
+        , [[':hisId', $hisId, Type::INT], [':hokId', $hokId, Type::INT]]
         );
     }
 
@@ -1096,7 +1096,7 @@ WHERE hk.lidId = :lidId and isnull(uit.bezId) and h.skip = 0
 GROUP BY b.hokId, hk.hoknr
 ORDER BY hk.hoknr
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -1158,8 +1158,8 @@ SQL;
         return [
             $where,
             [
-                [':hokId', $hokId, self::INT],
-                [':lidId', $lidId, self::INT],
+                [':hokId', $hokId, Type::INT],
+                [':lidId', $lidId, Type::INT],
             ]
         ];
     }
@@ -1213,8 +1213,8 @@ WHERE b.hokId = :hokId
  and (isnull(ht.datum) or ht.datum > :startdatum))
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':hokId', $hokId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':hokId', $hokId, Type::INT],
             [':datum', $dmafsl],
             [':startdatum', $dmStartPeriode],
         ]
@@ -1275,8 +1275,8 @@ WHERE b.hokId = :hokId
 ORDER BY st.schaapId, b.hisId
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':hokId', $hokId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':hokId', $hokId, Type::INT],
             [':datum', $dmafsl],
             [':startdatum', $dmStartPeriode],
         ]
@@ -1320,7 +1320,7 @@ FROM tblBezet b
 WHERE st.lidId = :lidId and h.skip = 0 and isnull(uit.bezId) and isnull(spn.schaapId) and isnull(prnt.schaapId)
 GROUP BY ho.hokId, ho.hoknr
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -1361,7 +1361,7 @@ FROM tblBezet b
 WHERE st.lidId = :lidId and h.skip = 0 and isnull(uit.bezId) and isnull(prnt.schaapId)
 GROUP BY ho.hokId, ho.hoknr
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -1402,7 +1402,7 @@ FROM tblBezet b
 WHERE b.hokId = :hokId and h.skip = 0 and isnull(uit.bezId) and isnull(spn.schaapId) and isnull(prnt.schaapId)
 GROUP BY ho.hoknr, r.ras, s.geslacht
 SQL
-        , [[':hokId', $hokId, self::INT]]
+        , [[':hokId', $hokId, Type::INT]]
         );
     }
 
@@ -1443,7 +1443,7 @@ FROM tblBezet b
 WHERE b.hokId = :hokId and h.skip = 0 and isnull(uit.bezId) and isnull(prnt.schaapId)
 GROUP BY ho.hoknr, r.ras, s.geslacht
 SQL
-        , [[':hokId', $hokId, self::INT]]
+        , [[':hokId', $hokId, Type::INT]]
         );
     }
 
@@ -1451,7 +1451,7 @@ SQL
         $sql = <<<SQL
     INSERT INTO tblBezet set hisId = :hisId, hokId = :fldHok
 SQL;
-        $args = [[':hisId', $hisId, self::INT], [':fldHok', $fldHok]];
+        $args = [[':hisId', $hisId, Type::INT], [':fldHok', $fldHok]];
         return $this->run_query($sql, $args);
     }
 

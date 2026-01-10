@@ -12,7 +12,7 @@ WHERE eu.lidId = :lidId
  and eu.actief = 1
 ORDER BY e.eenheid
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -25,7 +25,7 @@ from tblEenheid e
 where eu.lidId = :lidId
 order by e.eenheid
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -40,8 +40,8 @@ where eu.lidId = :lidId
 order by eenheid
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':enhuId', $id, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':enhuId', $id, Type::INT],
         ]
         );
     }
@@ -55,7 +55,7 @@ SQL
     WHERE eu.lidId = :lidId and a.actief = 1
     ORDER BY soort desc, naam
 SQL;
-        $args = [[':lidId', $lidId, self::INT]];
+        $args = [[':lidId', $lidId, Type::INT]];
         return $this->run_query($sql, $args);
     } 
 
@@ -67,7 +67,7 @@ SQL;
              join tblArtikel a on (a.enhuId = eu.enhuId)
             WHERE eu.lidId = :lidId and a.artId = :artId
 SQL;
-        $args = [[':lidId', $lidId, self::INT], [':artId', $txtArtikel]];
+        $args = [[':lidId', $lidId, Type::INT], [':artId', $txtArtikel]];
         return $this->first_field($sql, $args);
     }
 
@@ -82,7 +82,7 @@ SQL;
     GROUP BY year(i.dmink)
     ORDER BY year(i.dmink) desc
 SQL;
-        $args = [[':lidId', $lidId, self::INT]];
+        $args = [[':lidId', $lidId, Type::INT]];
         return $this->run_query($sql, $args);
     }
 
@@ -95,7 +95,7 @@ SQL;
                 WHERE eu.lidId = :lidId and a.naam = :naam and a.soort = 'pil'
                 GROUP BY a.naam
 SQL;
-        $args = [[':lidId', $lidId, self::INT], [':naam', $naam]];
+        $args = [[':lidId', $lidId, Type::INT], [':naam', $naam]];
         return $this->first_field($sql, $args);
     }
 
@@ -108,7 +108,7 @@ SQL;
         WHERE eu.lidId = :lidId and a.soort = 'pil' and a.actief = 1
         ORDER BY a.actief desc, a.naam
 SQL;
-        $args = [[':lidId', $lidId, self::INT]];
+        $args = [[':lidId', $lidId, Type::INT]];
         return $this->run_query($sql, $args);
     }
 
@@ -121,7 +121,7 @@ SQL;
                 WHERE a.artId = :Id
                 ORDER BY a.naam
 SQL;
-        $args = [[':Id', $Id, self::INT]];
+        $args = [[':Id', $Id, Type::INT]];
         return $this->run_query($sql, $args);
     }
 
@@ -133,7 +133,7 @@ SQL;
             WHERE eu.lidId = :lidId and eu.actief = 1
             ORDER BY e.eenheid
 SQL;
-        $args = [[':lidId', $lidId, self::INT]];
+        $args = [[':lidId', $lidId, Type::INT]];
         return $this->run_query($sql, $args);
     }
 
@@ -145,7 +145,7 @@ SQL;
         WHERE eu.lidId = :lidId and eu.actief = 1
         ORDER BY e.eenheid
 SQL;
-        $args = [[':lidId', $lidId, self::INT]];
+        $args = [[':lidId', $lidId, Type::INT]];
         return $this->run_query($sql, $args);
     }
 
@@ -157,7 +157,7 @@ SQL;
          join tblArtikel a on (a.enhuId = eu.enhuId)
         WHERE eu.lidId = :lidId and a.soort = 'pil' and a.actief = 0
 SQL;
-        $args = [[':lidId', $lidId, self::INT]];
+        $args = [[':lidId', $lidId, Type::INT]];
         return $this->first_field($sql, $args);
     }
 
@@ -170,7 +170,7 @@ SQL;
             WHERE eu.lidId = :lidId and a.soort = 'pil' and a.actief = 0
             ORDER BY a.actief desc, a.naam
 SQL;
-        $args = [[':lidId', $lidId, self::INT]];
+        $args = [[':lidId', $lidId, Type::INT]];
         return $this->run_query($sql, $args);
     }
 
@@ -187,7 +187,7 @@ SQL;
                     WHERE a.artId = :Id
                     ORDER BY a.naam
 SQL;
-        $args = [[':Id', $Id, self::INT]];
+        $args = [[':Id', $Id, Type::INT]];
         return $this->run_query($sql, $args);
     }
 

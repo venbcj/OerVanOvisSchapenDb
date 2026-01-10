@@ -13,6 +13,7 @@ class VoerRapportageTest extends IntegrationCase {
         $this->uses_db();
         $this->runSQL("UPDATE tblLeden SET tech=0 WHERE lidId=1");
         $this->get('/Voer_rapportage.php', ['ingelogd' => 1]);
+        // Bros. als dit breekt, controleer het afbeelding-pad.
         $this->assertPresent('<img src="Voer_rapportage_php.jpg');
         $this->runSQL("UPDATE tblLeden SET tech=1 WHERE lidId=1");
     }
@@ -28,7 +29,7 @@ class VoerRapportageTest extends IntegrationCase {
     public function testToon_geen_maanden() {
         $this->post('/Voer_rapportage.php', [
             'ingelogd_' => 1,
-            'knpToon' => 1,
+            'knpToon_' => 1,
             'kzlVoer_' => 1,
             'kzlDoel_' => 0,
         ]);
@@ -36,7 +37,6 @@ class VoerRapportageTest extends IntegrationCase {
         $this->assertAbsent('<select name="kzlMdjr_"');
     }
 
-    // ooh lekker weer. Deze test faalt "af en toe".
     public function testToon_met_maanden() {
         $this->runfixture('voervoorraad');
         $this->runfixture('jaarmaanden-n');
@@ -50,6 +50,48 @@ class VoerRapportageTest extends IntegrationCase {
         $this->assertPresent('<select name="kzlMdjr_"');
         $fixed_options = 1; // een lege
         $this->assertOptieCount('kzlMdjr_', $fixed_options + 2);
+    }
+
+    public function testToon_zonder_voer() {
+        $this->runfixture('voervoorraad');
+        $this->runfixture('jaarmaanden-n');
+        $this->post('/Voer_rapportage.php', [
+            'ingelogd_' => 1,
+            'knpToon_' => 1,
+            'kzlVoer_' => 1,
+            'kzlDoel_' => 1, // wordt parameter voor maandjaren-query
+        ]);
+        $this->assertNoNoise();
+        $this->assertPresent('afsluit- / voerdatum');
+    }
+
+    public function testToon_met_voer() {
+        $this->runfixture('voervoorraad');
+        $this->runfixture('jaarmaanden-n');
+        $this->post('/Voer_rapportage.php', [
+            'ingelogd_' => 1,
+            'knpToon_' => 1,
+            'kzlVoer_' => 1,
+            'kzlDoel_' => 1, // wordt parameter voor maandjaren-query
+            'radVoer_' => 1, // schakelt afsluitdatum af? "alleen met voer"
+        ]);
+        $this->assertNoNoise();
+        $this->assertAbsent('afsluit- / voerdatum');
+    }
+
+    public function testToon_incl_schapen() {
+        // TODO fixture voor BezetGateway::schaap_gegevens die echt rijen oplevert
+        $this->runfixture('voervoorraad');
+        $this->runfixture('jaarmaanden-n');
+        $this->post('/Voer_rapportage.php', [
+            'ingelogd_' => 1,
+            'knpToon_' => 1,
+            'kzlVoer_' => 1,
+            'kzlDoel_' => 1, // wordt parameter voor maandjaren-query
+            'radSchaap_1' => 1,
+        ]);
+        $this->assertNoNoise();
+        $this->assertPresent('class="detailscheider"');
     }
 
     public function testSave() {
@@ -68,4 +110,5 @@ class VoerRapportageTest extends IntegrationCase {
         $this->assertNoNoise();
     }
 
+    // @TODO: #0004222 flow en fixtures testen.
 }

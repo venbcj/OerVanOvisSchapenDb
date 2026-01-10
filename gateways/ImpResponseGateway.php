@@ -25,7 +25,7 @@ SQL
         WHERE reqId = :reqId
      ) lr on (r.respId = lr.respId)
 SQL
-        , [[':reqId', $reqId, self::INT]]
+        , [[':reqId', $reqId, Type::INT]]
         );
     }
 

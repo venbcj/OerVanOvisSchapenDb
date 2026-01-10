@@ -14,9 +14,9 @@ SQL
         ,
             [
                 [':waarde', $fldWaarde],
-                [':actief', $fldActief], // moet dit self::BOOL zijn?
+                [':actief', $fldActief], // moet dit Type::BOOL zijn?
                 [':sal', $fldSalber],
-                [':elemuId', $recId, self::INT],
+                [':elemuId', $recId, Type::INT],
             ]
         );
     }
@@ -29,7 +29,7 @@ FROM tblElement e
  join tblElementuser eu on (e.elemId = eu.elemId)
 WHERE eu.lidId = :lidId and e.elemId = 10
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
             , [null, null]
         );
     }
@@ -42,7 +42,7 @@ FROM tblElement e
  join tblElementuser eu on (e.elemId = eu.elemId)
 WHERE eu.lidId = :lidId and e.elemId = 19
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
             , [null, null]
         );
     }
@@ -55,7 +55,7 @@ FROM tblElement e
  join tblElementuser eu on (e.elemId = eu.elemId)
 WHERE eu.lidId = :lidId and e.elemId = 12
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
             , [null, null]
         );
     }

@@ -18,7 +18,7 @@ FROM tblHistorie h
  WHERE a.op = 1
 SQL
         ,
-            [[':meldId', $recId, self::INT]],
+            [[':meldId', $recId, Type::INT]],
             [null, null]
         );
     }
@@ -59,7 +59,7 @@ SELECT date_format(datum,'%d-%m-%Y') datum
 FROM tblHistorie
 WHERE hisId = :hisId and skip = 0
 SQL
-        , [[':hisId', $drachtMoment, self::INT]]
+        , [[':hisId', $drachtMoment, Type::INT]]
         );
     }
 
@@ -74,7 +74,7 @@ WHERE (actId = 18 or actId = 19)
  and u.lidId = :lidId
  and year(h.datum) >= :jaar
 SQL
-        , [[':lidId', $lidId, self::INT], [':jaar', $een_startjaar_eerder_gebruiker]]
+        , [[':lidId', $lidId, Type::INT], [':jaar', $een_startjaar_eerder_gebruiker]]
         );
     }
 
@@ -90,9 +90,9 @@ WHERE u.lidId = :lidId
  and h.datum <= :datum
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':schaapId', $mdrId, self::INT],
-            [':datum', $dmdek, self::DATE],
+            [':lidId', $lidId, Type::INT],
+            [':schaapId', $mdrId, Type::INT],
+            [':datum', $dmdek, Type::DATE],
         ]);
     }
 
@@ -108,9 +108,9 @@ WHERE u.lidId = :lidId
  and h.datum = :date_verblijf
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':mdrId', $mdrId, self::INT],
-            [':date_verblijf', $date_verblijf, self::DATE],
+            [':lidId', $lidId, Type::INT],
+            [':mdrId', $mdrId, Type::INT],
+            [':date_verblijf', $date_verblijf, Type::DATE],
         ]
         );
     }
@@ -138,9 +138,9 @@ WHERE b.hisId = :hisId_verblijf
  and (isnull(uit.bezId) or ht.datum > :dmdek)
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':hisId_verblijf', $hisId_verblijf, self::INT],
-            [':dmdek', $dmdek, self::DATE],
+            [':lidId', $lidId, Type::INT],
+            [':hisId_verblijf', $hisId_verblijf, Type::INT],
+            [':dmdek', $dmdek, Type::DATE],
         ]
         );
     }
@@ -158,8 +158,8 @@ WHERE u.lidId = :lidId
  and h.skip = 0
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':schaapId', $schaapId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]
         );
     }
@@ -170,7 +170,7 @@ SELECT max(datum) datumfirst, date_format(max(datum),'%d-%m-%Y') datum1
 FROM tblHistorie
 WHERE stalId = :stalId and (actId = 1 or actId = 2 or actId = 11) and skip = 0
 SQL
-        , [[':stalId', $stalId, self::INT]]
+        , [[':stalId', $stalId, Type::INT]]
         );
     }
 
@@ -180,7 +180,7 @@ SELECT max(datum) datumend, date_format(max(datum),'%d-%m-%Y') enddatum
 FROM tblHistorie
 WHERE stalId = :stalId and (actId = 10 or actId = 12 or actId = 13 or actId = 14) and skip = 0
 SQL
-        , [[':stalId', $stalId, self::INT]]
+        , [[':stalId', $stalId, Type::INT]]
         );
     }
 
@@ -193,9 +193,9 @@ kg = :newkg,
 actId = 9
 SQL
         , [
-            [':stalId', $stalId, self::INT],
-            [':datum', $datum, self::DATE],
-            [':newkg', $newkg, self::FLOAT], // TODO: decimal? zoals in de tabel
+            [':stalId', $stalId, Type::INT],
+            [':datum', $datum, Type::DATE],
+            [':newkg', $newkg, Type::FLOAT], // TODO: decimal? zoals in de tabel
         ]
         );
     }
@@ -209,10 +209,10 @@ kg = :kg,
 actId = :actId
 SQL
         , [
-            [':stalId', $stalId, self::INT],
-            [':actId', $actId, self::INT],
-            [':datum', $datum, self::DATE],
-            [':kg', $kg, self::FLOAT],
+            [':stalId', $stalId, Type::INT],
+            [':actId', $actId, Type::INT],
+            [':datum', $datum, Type::DATE],
+            [':kg', $kg, Type::FLOAT],
         ]
         );
         return $this->db->insert_id;
@@ -225,8 +225,8 @@ SQL
         actId = 8
 SQL
         , [
-            [':stalId', $stalId, self::INT],
-            [':datum', $datum, self::DATE]
+            [':stalId', $stalId, Type::INT],
+            [':datum', $datum, Type::DATE]
         ]
         );
     }
@@ -244,8 +244,8 @@ WHERE u.lidId = :lidId
  and h.skip = 0
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':schaapId', $schaapId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]
         );
     }
@@ -265,8 +265,8 @@ WHERE u.lidId = :lidId
 ORDER BY datum desc
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':schaapId', $schaapId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]
         );
     }
@@ -279,7 +279,7 @@ FROM tblHistorie h
 WHERE h.actId = 1 and h.skip = 0 and st.schaapId = :schaapId
 SQL
         , [
-            [':schaapId', $schaapId, self::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]
         );
     }
@@ -292,7 +292,7 @@ FROM tblHistorie h
 WHERE h.skip = 0 and st.schaapId = :schaapId
 SQL
         , [
-            [':schaapId', $schaapId, self::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]
         );
     }
@@ -304,8 +304,8 @@ INSERT INTO tblHistorie set stalId = :stalId,
         actId = 1
 SQL
         , [
-            [':stalId', $stalId, self::INT],
-            [':datum', $datum, self::DATE],
+            [':stalId', $stalId, Type::INT],
+            [':datum', $datum, Type::DATE],
         ]
         );
     }
@@ -318,7 +318,7 @@ FROM tblHistorie h
 WHERE st.schaapId = :schaapId and h.actId = 3 and h.skip = 0
 SQL
         , [
-            [':schaapId', $schaapId, self::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]
         , [null, null]
         );
@@ -334,8 +334,8 @@ WHERE u.lidId = :lidId and st.schaapId = :schaapId and
  actId = 4 and h.skip = 0
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':schaapId', $schaapId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]
         );
     }
@@ -350,8 +350,8 @@ WHERE u.lidId = :lidId and st.schaapId = :schaapId and
  actId IN (4,5,6) and h.skip = 0
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':schaapId', $schaapId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]
         );
     }
@@ -381,8 +381,8 @@ From (
 ) datum
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':schaapId', $schaapId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]
         );
     }
@@ -412,8 +412,8 @@ From (
 ) datum
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':schaapId', $schaapId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]
         );
     }
@@ -423,8 +423,8 @@ SQL
 UPDATE tblHistorie SET datum = :datum WHERE hisId = :hisId
 SQL
         , [
-            [':hisId', $hisId, self::INT],
-            [':datum', $datum, self::DATE],
+            [':hisId', $hisId, Type::INT],
+            [':datum', $datum, Type::DATE],
         ]
         );
     }
@@ -437,7 +437,7 @@ FROM tblHistorie h
 WHERE st.schaapId = :schaapId and h.actId = 4 and h.skip = 0
 SQL
         , [
-            [':schaapId', $schaapId, self::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]
         , [null, null]
         );
@@ -464,8 +464,8 @@ From (
 ) datum
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':schaapId', $schaapId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]
         );
     }
@@ -490,8 +490,8 @@ From (
 ) datum
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':schaapId', $schaapId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]
         );
     }
@@ -503,8 +503,8 @@ UPDATE tblHistorie SET datum = :datum
 WHERE hisId = :hisId
 SQL
         , [
-            [':hisId', $hisId, self::INT],
-            [':datum', $datum, self::DATE],
+            [':hisId', $hisId, Type::INT],
+            [':datum', $datum, Type::DATE],
         ]
         );
     }
@@ -517,7 +517,7 @@ FROM tblHistorie h
 WHERE st.schaapId = :schaapId and h.actId = 4 and h.skip = 0
 SQL
         , [
-            [':schaapId', $schaapId, self::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]
         , [null, null]
         );
@@ -527,7 +527,7 @@ SQL
         $this->run_query(<<<SQL
 UPDATE tblHistorie SET kg = :kg WHERE hisId = :hisId
 SQL
-        , [[':kg', $kg, self::FLOAT], [':hisId', $hisId, self::INT]]
+        , [[':kg', $kg, Type::FLOAT], [':hisId', $hisId, Type::INT]]
         );
     }
 
@@ -539,7 +539,7 @@ FROM tblActie a
  join tblStal st on (h.stalId = st.stalId)
 WHERE st.schaapId = :schaapId and a.af = 1 and h.skip = 0
 SQL
-        , [[':schaapId', $schaapId, self::INT]]
+        , [[':schaapId', $schaapId, Type::INT]]
             , [null, null]
         );
     }
@@ -550,8 +550,8 @@ SQL
 UPDATE tblHistorie SET datum = :datum WHERE hisId = :hidId
 SQL
         , [
-            [':hisId', $hisId, self::INT],
-            [':datum', $datum, self::DATE],
+            [':hisId', $hisId, Type::INT],
+            [':datum', $datum, Type::DATE],
         ]
         );
     }
@@ -564,7 +564,7 @@ FROM tblActie a
  join tblStal st on (h.stalId = st.stalId)
 WHERE st.schaapId = :schaapId and a.af = 1 and h.skip = 0
 SQL
-        , [[':schaapId', $schaapId, self::INT]]
+        , [[':schaapId', $schaapId, Type::INT]]
         );
     }
 
@@ -577,8 +577,8 @@ SQL
     WHERE st.schaapId = :schaapId and a.af = 1 and h.skip = 0
 SQL
         , [
-            [':schaapId', $schaapId, self::INT],
-            [':kg', $kg, self::FLOAT],
+            [':schaapId', $schaapId, Type::INT],
+            [':kg', $kg, Type::FLOAT],
         ]
         );
     }
@@ -590,8 +590,8 @@ INSERT INTO tblHistorie SET stalId = :stalId,
         actId = 3
 SQL
         , [
-            [':dmafv', $dmafv, self::DATE],
-            [':stalId', $stalId, self::INT],
+            [':dmafv', $dmafv, Type::DATE],
+            [':stalId', $stalId, Type::INT],
         ]
         );
     }
@@ -605,8 +605,8 @@ INSERT INTO tblHistorie set stalId = :stalId,
         actId = 3
 SQL
         , [
-            [':stalId', $stalId, self::INT],
-            [':datum', $datum, self::DATE],
+            [':stalId', $stalId, Type::INT],
+            [':datum', $datum, Type::DATE],
             [':kg', $kg],
         ]
         );
@@ -620,8 +620,8 @@ INSERT INTO tblHistorie SET stalId = :stalId,
         actId = :actId
 SQL
         , [
-            [':stalId', $stalId, self::INT],
-            [':datum', $datum, self::DATE],
+            [':stalId', $stalId, Type::INT],
+            [':datum', $datum, Type::DATE],
             [':actId', $actId],
         ]
         );
@@ -638,8 +638,8 @@ WHERE st.schaapId = :schaapId
  and h.kg is not null
 SQL
         , [
-            [':schaapId', $schaapId, self::INT],
-            [':date', $date, self::DATE],
+            [':schaapId', $schaapId, Type::INT],
+            [':date', $date, Type::DATE],
         ]
         );
     }
@@ -653,7 +653,7 @@ FROM tblHistorie h
 WHERE h.hisId = :hisId
 SQL
         , [
-            [':hisId', $hisId, self::INT],
+            [':hisId', $hisId, Type::INT],
         ]
         , ['actId' => null, 'actie' => null, 'datum' => null, 'kg' => null]
         );
@@ -670,7 +670,7 @@ WHERE u.lidId = :lidId and h.kg is not null
 GROUP BY h.actId, a.actie
 ORDER BY h.actId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -696,8 +696,8 @@ FROM (
 ) dm_na
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':schaapId', $schaapId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]
         );
         return $vw->fetch_row()[0];
@@ -715,8 +715,8 @@ WHERE st.schaapId = :schaapId
  and skip = 0
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':schaapId', $schaapId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]
         );
     }
@@ -727,7 +727,7 @@ SELECT datum date
 FROM tblHistorie
 WHERE stalId = :stalId and actId = 10
 SQL
-        , [[':stalId', $last_stalId, self::INT]]
+        , [[':stalId', $last_stalId, Type::INT]]
         );
     }
 
@@ -740,8 +740,8 @@ FROM tblHistorie h
 WHERE u.lidId = :lidId and st.schaapId = :schaapId
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':schaapId', $schaapId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]
         );
     }
@@ -754,7 +754,7 @@ FROM tblHistorie h
 WHERE hisId = :hisId and a.af = 1
 SQL
         , [
-            [':hisId', $maxhis, self::INT],
+            [':hisId', $maxhis, Type::INT],
         ]
         );
     }
@@ -769,8 +769,8 @@ FROM tblHistorie h
 WHERE u.lidId = :lidId and st.schaapId = :schaapId
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':schaapId', $schaapId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]
         );
     }
@@ -784,14 +784,14 @@ FROM tblHistorie h
 WHERE hisId > :lst_bezet and a.uit = 1 and st.schaapId = :schaapId
 SQL
         , [
-            [':lst_bezet', $lst_bezet, self::INT],
-            [':schaapId', $schaapId, self::INT],
+            [':lst_bezet', $lst_bezet, Type::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]
         );
     }
 
     public function skip($hisId) {
-        $this->run_query("UPDATE tblHistorie SET skip=1 WHERE hisId=:hisId", [[':hisId', $hisId, self::INT]]);
+        $this->run_query("UPDATE tblHistorie SET skip=1 WHERE hisId=:hisId", [[':hisId', $hisId, Type::INT]]);
     }
 
     public function zoek_laatste($stalId, $datum) {
@@ -803,8 +803,8 @@ and datum = :datum
 and actId = 8
 SQL
         , [
-            [':stalId', $stalId, self::INT],
-            [':datum', $datum, self::DATE],
+            [':stalId', $stalId, Type::INT],
+            [':datum', $datum, Type::DATE],
         ]
         );
     }
@@ -819,7 +819,7 @@ and h.actId != 10
 and h.stalId = :stalId
 and h.skip = 0
 SQL
-        , [[':stalId', $stalId, self::INT]]
+        , [[':stalId', $stalId, Type::INT]]
         );
     }
 
@@ -851,7 +851,7 @@ FROM (
  ) uit on (uit.hisv = hin.hisId)
 WHERE isnull(uit.hist)
 SQL
-        , [[':stalId', $stalId, self::INT]]
+        , [[':stalId', $stalId, Type::INT]]
         );
     }
 
@@ -898,7 +898,7 @@ FROM (
 WHERE (isnull(b.hokId) or uit.hist is not null)
  and isnull(prnt.schaapId)
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -944,7 +944,7 @@ FROM (
  ) prnt on (prnt.schaapId = hin.schaapId)
 WHERE (isnull(b.hokId) or uit.hist is not null)
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -955,7 +955,7 @@ SELECT comment
 FROM tblHistorie
 WHERE hisId = :hisId
 SQL
-        , [[':hisId', $hisId, self::INT]]
+        , [[':hisId', $hisId, Type::INT]]
         );
     }
 
@@ -964,7 +964,7 @@ SQL
             <<<SQL
 UPDATE tblHistorie SET comment = :comment WHERE hisId = :hisId
 SQL
-        , [[':hisId', $hisId, self::INT], [':comment', $comment]]
+        , [[':hisId', $hisId, Type::INT], [':comment', $comment]]
         );
     }
 
@@ -973,7 +973,7 @@ SQL
             <<<SQL
 UPDATE tblHistorie SET comment = NULL WHERE hisId = :hisId
 SQL
-        , [[':hisId', $hisId, self::INT]]
+        , [[':hisId', $hisId, Type::INT]]
         );
     }
 
@@ -987,7 +987,7 @@ WHERE h.stalId = :stalId
  and a.af = 1
  and h.skip = 0
 SQL
-        , [[':stalId', $stalId, self::INT]]
+        , [[':stalId', $stalId, Type::INT]]
         );
     }
 
@@ -1002,7 +1002,7 @@ FROM tblHistorie h
  join tblPartij p on (p.partId = r.partId)
 WHERE h.hisId = :hisId
 SQL
-        , [[':hisId', $his, self::INT]]
+        , [[':hisId', $his, Type::INT]]
         );
     }
 
@@ -1022,9 +1022,9 @@ WHERE u.lidId = :lidId
 SQL
         ,
             [
-                [':lidId', $lidId, self::INT],
+                [':lidId', $lidId, Type::INT],
                 [':datum', $datum],
-                [':relId', $relId, self::INT],
+                [':relId', $relId, Type::INT],
             ]
         );
     }
@@ -1059,9 +1059,9 @@ WHERE h.datum = :datum
 ORDER BY right(s.levensnummer,$Karwerk)
 SQL
         , [
-            [':lidId', $lidId, self::INT],
+            [':lidId', $lidId, Type::INT],
             [':datum', $datum],
-            [':relId', $relId, self::INT],
+            [':relId', $relId, Type::INT],
         ]);
     }
 
@@ -1074,7 +1074,7 @@ FROM tblHistorie h
 WHERE st.lidId = :lidId
  and h.actId = :actId
 SQL
-        , [[':lidId', $lidId, self::INT], [':actId', $actId, self::INT]]
+        , [[':lidId', $lidId, Type::INT], [':actId', $actId, Type::INT]]
         );
     }
 
@@ -1090,7 +1090,7 @@ FROM tblHistorie h
  and skip = 0
  ) mh on (h.hisId = mh.hisId)
 SQL
-        , [[':stalId', $stalId, self::INT]]
+        , [[':stalId', $stalId, Type::INT]]
             , [null, null]
         );
     }
@@ -1104,9 +1104,9 @@ INSERT INTO tblHistorie
  actId = :actId
 SQL
         , [
-            [':stalId', $stalId, self::INT],
+            [':stalId', $stalId, Type::INT],
             [':datum', $datum],
-            [':actId', $actId, self::INT],
+            [':actId', $actId, Type::INT],
         ]
         );
     }
@@ -1123,7 +1123,7 @@ WHERE h.actId = 12
  and st.lidId = :lidId
 SQL
         , [
-            [':lidId', $lidId, self::INT],
+            [':lidId', $lidId, Type::INT],
             [':jaar', $jaar],
         ]
         );
@@ -1137,7 +1137,7 @@ FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
 WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y%u') = :jaarweek and st.lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT], [':jaarweek', $jaarweek]]
+        , [[':lidId', $lidId, Type::INT], [':jaarweek', $jaarweek]]
         );
     }
 
@@ -1149,7 +1149,7 @@ FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
 WHERE h.actId = 12 and h.skip = 0 and date_format(h.datum,'%Y%u') = :jaarweek and st.lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT], [':jaarweek', $jaarweek]]
+        , [[':lidId', $lidId, Type::INT], [':jaarweek', $jaarweek]]
         );
     }
 
@@ -1161,7 +1161,7 @@ FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
 WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y%u') = :jaarweek and st.lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT], [':jaarweek', $jaarweek]]
+        , [[':lidId', $lidId, Type::INT], [':jaarweek', $jaarweek]]
         );
     }
 
@@ -1173,7 +1173,7 @@ FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
 WHERE h.actId = 12 and h.skip = 0 and date_format(h.datum,'%Y%u') = :jaarweek and st.lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT], [':jaarweek', $jaarweek]]
+        , [[':lidId', $lidId, Type::INT], [':jaarweek', $jaarweek]]
         );
     }
 
@@ -1185,7 +1185,7 @@ FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
 WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y%u') >= :van and date_format(h.datum,'%Y%u') <= :tot and st.lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT], [':van', $van], [':tot', $tot]]
+        , [[':lidId', $lidId, Type::INT], [':van', $van], [':tot', $tot]]
         );
     }
 
@@ -1197,7 +1197,7 @@ FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
 WHERE h.actId = 12 and h.skip = 0 and date_format(h.datum,'%Y%u') >= :van and date_format(h.datum,'%Y%u') <= :tot and st.lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT], [':van', $van], [':tot', $tot]]
+        , [[':lidId', $lidId, Type::INT], [':van', $van], [':tot', $tot]]
         );
     }
 
@@ -1209,7 +1209,7 @@ SELECT hisId
 FROM tblHistorie
 WHERE stalId = :stalId and actId = :actId
 SQL
-        , [[':stalId', $stalId, self::INT], [':actId', $actId, self::INT]]
+        , [[':stalId', $stalId, Type::INT], [':actId', $actId, Type::INT]]
         );
     }
 
@@ -1254,7 +1254,7 @@ left join (
     GROUP BY date_format(h.datum,'%Y%m')
 ) doo_m on (nr.jrmnd = doo_m.jrmnd)
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -1266,7 +1266,7 @@ FROM tblHistorie h
  join tblSchaap s on (s.schaapId = st.schaapId)
 WHERE st.lidId = :lidId and h.datum > 0 and h.actId = 3 and s.geslacht = 'ooi' and skip = 0
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -1311,7 +1311,7 @@ left join (
     GROUP BY date_format(h.datum,'%Y%m')
 ) doo_v on (nr.jrmnd = doo_v.jrmnd)
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -1530,10 +1530,10 @@ SQL
     ORDER BY jrmnd desc
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':jm', $jm, self::INT],
-            [':j', $j, self::INT],
-            [':endjrmnd', $endjrmnd, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':jm', $jm, Type::INT],
+            [':j', $j, Type::INT],
+            [':endjrmnd', $endjrmnd, Type::INT],
         ]
         );
     }
@@ -1545,7 +1545,7 @@ FROM tblHistorie h
  join tblActie a on (h.actId = a.actId)
 WHERE h.skip = 0 and a.aan = 1 and stalId = :stalId
 SQL
-        , [[':stalId', $stalId, self::INT]]
+        , [[':stalId', $stalId, Type::INT]]
         );
     }
 
@@ -1557,7 +1557,7 @@ WHERE skip = 0
  and stalId = :stalId
  and actId = :actId
 SQL
-        , [[':stalId', $stalId, self::INT], [':actId', $actId, self::INT]]
+        , [[':stalId', $stalId, Type::INT], [':actId', $actId, Type::INT]]
         );
     }
 
@@ -1698,8 +1698,8 @@ SQL
     ORDER BY datum desc, actId desc
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':schaapId', $schaapId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]
         );
     }
@@ -1741,7 +1741,7 @@ FROM (
  ) prnt on (prnt.schaapId = hin.schaapId)
 WHERE (isnull(b.hokId) or uit.hist is not null) and isnull(spn.schaapId) and isnull(prnt.schaapId)
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -1782,7 +1782,7 @@ FROM (
  ) prnt on (prnt.schaapId = hin.schaapId)
 WHERE (isnull(b.hokId) or uit.hist is not null) and isnull(prnt.schaapId)
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -1817,7 +1817,7 @@ FROM (
  ) prnt on (prnt.schaapId = hin.schaapId)
 WHERE (isnull(b.hokId) or uit.hist is not null)
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -2014,7 +2014,7 @@ SQL;
         $sql = <<<SQL
     UPDATE tblHistorie SET skip = 1 WHERE hisId = :hisId
 SQL;
-        $args = [[':hisId', $hisId, self::INT]];
+        $args = [[':hisId', $hisId, Type::INT]];
         $this->run_query($sql, $args);
     }
 
@@ -2030,7 +2030,7 @@ SQL;
         $sql = <<<SQL
         INSERT INTO tblHistorie SET stalId = :stalId, datum = :fldDmDracht, actId = 19
 SQL;
-        $args = [[':stalId', $stalId, self::INT], [':fldDmDracht', $fldDmDracht]];
+        $args = [[':stalId', $stalId, Type::INT], [':fldDmDracht', $fldDmDracht]];
         $this->run_query($sql, $args);
         return $this->db->insert_id;
     }
@@ -2039,7 +2039,7 @@ SQL;
         $sql = <<<SQL
     UPDATE tblHistorie SET skip = 1 WHERE hisId = :hisId
 SQL;
-        $args = [[':hisId', $hisId, self::INT]];
+        $args = [[':hisId', $hisId, Type::INT]];
         $this->run_query($sql, $args);
     }
 
@@ -2047,7 +2047,7 @@ SQL;
         $sql = <<<SQL
         INSERT INTO tblHistorie set stalId = :stalId, datum = :fldDay, actId = 17, oud_nummer = :levnr_old
 SQL;
-        $args = [[':stalId', $stalId, self::INT], [':fldDay', $fldDay], [':levnr_old', $levnr_old]];
+        $args = [[':stalId', $stalId, Type::INT], [':fldDay', $fldDay], [':levnr_old', $levnr_old]];
         return $this->run_query($sql, $args);
     }
 
@@ -2057,7 +2057,7 @@ SQL;
         FROM tblHistorie
         WHERE stalId = :stalId and actId = 17
 SQL;
-        $args = [[':stalId', $stalId, self::INT]];
+        $args = [[':stalId', $stalId, Type::INT]];
         return $this->first_field($sql, $args);
     }
 
@@ -2074,7 +2074,7 @@ SQL;
         $sql = <<<SQL
         INSERT INTO tblHistorie set stalId = :stalId, datum = :fldDag, kg = :fldKg, actId = 1
 SQL;
-        $args = [[':stalId', $stalId, self::INT], [':fldDag', $fldDag], [':fldKg', $fldKg]];
+        $args = [[':stalId', $stalId, Type::INT], [':fldDag', $fldDag], [':fldKg', $fldKg]];
         $this->run_query($sql, $args);
         return $this->db->insert_id;
     }
@@ -2083,7 +2083,7 @@ SQL;
         $sql = <<<SQL
       INSERT INTO tblHistorie set stalId = :stalId, datum = :doodday, actId = 14
 SQL;
-        $args = [[':stalId', $stalId, self::INT], [':doodday', $doodday]];
+        $args = [[':stalId', $stalId, Type::INT], [':doodday', $doodday]];
         return $this->run_query($sql, $args);
     }
 

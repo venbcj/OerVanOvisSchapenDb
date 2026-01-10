@@ -10,7 +10,7 @@ FROM tblStal st
  join tblUbn u on (st.ubnId = u.ubnId)
 WHERE u.lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]);
+        , [[':lidId', $lidId, Type::INT]]);
     }
 
     public function zoek_karwerk($lidId) {
@@ -19,7 +19,7 @@ SELECT kar_werknr
 FROM tblLeden
 WHERE lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]);
+        , [[':lidId', $lidId, Type::INT]]);
     }
 
     public function rechten($lidId) {
@@ -28,7 +28,7 @@ SQL
 SELECT beheer, tech, fin, meld FROM tblLeden
 WHERE lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
         if ($vw->num_rows) {
             return $vw->fetch_object();
@@ -51,7 +51,7 @@ AND relnr IS NOT NULL
 AND urvo IS NOT NULL
 AND prvo IS NOT NULL
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
         return $vw->num_rows > 0;
     }
@@ -80,7 +80,7 @@ SELECT lidId
 FROM tblRasuser
 WHERE rasuId = :rasuId
 SQL
-        , [[':rasuId', $rasnr, self::INT]]
+        , [[':rasuId', $rasnr, Type::INT]]
         );
     }
 
@@ -137,7 +137,7 @@ SQL
         ,
         [
             [':login', $login],
-            [':lidId', $lidId, self::INT],
+            [':lidId', $lidId, Type::INT],
         ]
         );
     }
@@ -149,7 +149,7 @@ SELECT login AS user, passw AS passw
 FROM tblLeden
 WHERE lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
             , ['user' => null, 'passw' => null]
         );
     }
@@ -162,7 +162,7 @@ FROM tblUbn
 WHERE lidId = :lidId
  and actief = 1
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -174,7 +174,7 @@ FROM tblUbn
 WHERE lidId = :lidId
  and actief = 1
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -183,7 +183,7 @@ SQL
             <<<SQL
 SELECT alias FROM tblLeden WHERE lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
             , ''
         );
     }
@@ -215,7 +215,7 @@ SQL
 INSERT INTO tblHok SET lidId=$lidId, hoknr='Lambar', actief=1
 SQL
         ,
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -226,7 +226,7 @@ INSERT INTO tblMomentuser (lidId, momId)
 SELECT :lidId, momId
 FROM tblMoment
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -247,7 +247,7 @@ FROM tblMoment m
 WHERE s.schaapId = :schaapId
 ORDER BY momId
 SQL
-        , [[':lidId', $lidId, self::INT], [':schaapId', $schaapId, self::INT]]
+        , [[':lidId', $lidId, Type::INT], [':schaapId', $schaapId, Type::INT]]
         );
     }
 
@@ -256,7 +256,7 @@ SQL
             <<<SQL
 INSERT INTO tblEenheiduser (lidId, eenhId) SELECT :lidId, eenhId FROM tblEenheid
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -266,7 +266,7 @@ SQL
             <<<SQL
 INSERT INTO tblElementuser (elemId, lidId, waarde) SELECT elemId, :lidId, 0 FROM tblElement
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
         //een aantal elementen m.b.t. de saldoberekening worden standaard uitgezet
         $this->run_query(
@@ -274,7 +274,7 @@ SQL
 UPDATE tblElementuser set sal = 0
             WHERE lidId = :lidId and elemId IN (2,3,4,5,67,8,10,11,14,15,17)
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -285,7 +285,7 @@ INSERT INTO tblPartij (lidId, ubn, naam, actief, naamreader ) VALUES
 (:lidId, 123123, 'Rendac', 1, 'Rendac'),
 (:lidId, 123456, 'Vermist', 1, 'Vermist');
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -297,7 +297,7 @@ SELECT p.partId, 'cred', 1, 1
 FROM tblPartij p
 WHERE p.ubn = '123123' and p.lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
         $this->run_query(
             <<<SQL
@@ -306,7 +306,7 @@ SELECT p.partId, 'cred', 0
 FROM tblPartij p
 WHERE p.ubn = '123456' and p.lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -318,7 +318,7 @@ SELECT rubId, :lidId
 FROM tblRubriek
 ORDER BY rubId;
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -333,7 +333,7 @@ SQL;
 INSERT INTO tblRedenuser set uitval=1, redId = :redId, lidId = :lidId
 SQL;
         }
-        $this->run_query($SQL, [[':lidId', $lidId, self::INT], [':redId', $redId, self::INT]]);
+        $this->run_query($SQL, [[':lidId', $lidId, Type::INT], [':redId', $redId, Type::INT]]);
         return $this->db->insert_id;
     }
 
@@ -348,7 +348,7 @@ SQL;
 INSERT INTO tblRedenuser set afvoer = 1, redId = :redId, lidId = :lidId
 SQL;
         }
-        $this->run_query($SQL, [[':lidId', $lidId, self::INT], [':redId', $redId, self::INT]]);
+        $this->run_query($SQL, [[':lidId', $lidId, Type::INT], [':redId', $redId, Type::INT]]);
         return $this->db->insert_id;
     }
 
@@ -360,8 +360,8 @@ FROM tblRedenuser
 WHERE redId = :redId and lidId = :lidId
 SQL
         , [
-            [':redId', $redId, self::INT],
-            [':lidId', $lidId, self::INT],
+            [':redId', $redId, Type::INT],
+            [':lidId', $lidId, Type::INT],
         ]
         );
         return $vw->num_rows > 0;
@@ -374,7 +374,7 @@ SQL
 SELECT reader FROM tblLeden WHERE lidId = :lidId
 SQL
         ,
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -386,7 +386,7 @@ SQL
      join tblRelatie r on (p.partId = r.partId)
     WHERE p.lidId = :lidId and r.uitval = 1;
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
             , [null, null]
         );
     }
@@ -398,7 +398,7 @@ SELECT date_format(dmcreate,'%Y-%m-01') dmstart
 FROM tblLeden
 WHERE lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -407,7 +407,7 @@ SQL
             <<<SQL
 SELECT histo FROM tblLeden WHERE lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -420,7 +420,7 @@ FROM tblRas r
 WHERE ru.lidId = :lidId and r.actief = 1 and ru.actief = 1
 ORDER BY r.ras
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -433,7 +433,7 @@ FROM tblPartij p
 WHERE p.lidId = :lidId and r.relatie = 'deb' and p.actief = 1 and r.actief = 1
 ORDER BY p.naam
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -445,7 +445,7 @@ FROM tblHok h
 WHERE lidId = :lidId and actief = 1
 ORDER BY hoknr
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -458,7 +458,7 @@ FROM tblReden r
 WHERE ru.lidId = :lidId and ru.sterfte = 1
 ORDER BY r.reden
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -472,7 +472,7 @@ where eu.lidId = :lidId and (actief = 1 or eu.sal = 1)
 group by e.eenheid
 order by e.eenheid
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -485,7 +485,7 @@ from tblElement e
 where eu.lidId = :lidId and e.eenheid = :eenheid and (actief = 1 or eu.sal = 1)
 order by e.eenheid, e.element
 SQL
-        , [[':lidId', $lidId, self::INT], [':eenheid', $eenh]]
+        , [[':lidId', $lidId, Type::INT], [':eenheid', $eenh]]
         );
     }
 
@@ -496,7 +496,7 @@ select count(elemuId) aant
 from tblElementuser
 where lidId = :lidId and actief = 0 and sal = 0
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
         return $vw->fetch_row()[0];
     }
@@ -511,7 +511,7 @@ where eu.lidId = :lidId and eu.actief = 0 and sal = 0
 group by e.eenheid
 order by e.eenheid
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -524,7 +524,7 @@ from tblElement e
 where eu.lidId = :lidId and e.eenheid = :eenheid and actief = 0 and sal = 0
 order by element
 SQL
-        , [[':lidId', $lidId, self::INT], [':eenheid', $eenh]]
+        , [[':lidId', $lidId, Type::INT], [':eenheid', $eenh]]
         );
     }
 
@@ -535,7 +535,7 @@ SQL
     FROM tblLeden 
     WHERE lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         ); 
     }
 
@@ -548,7 +548,7 @@ FROM tblLeden l
  join tblUbn u on (l.lidId = u.lidId)
 WHERE l.lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         ); 
         $columns = explode(' ', 'lidId roep voegsel naam relnr ubn urvo prvo mail tel ingescand meld tech fin beheer reader readerkey');
         $row = array_fill_keys($columns, '');
@@ -589,7 +589,7 @@ SELECT count(redId) aant
 FROM tblRedenuser
 WHERE redId in (8, 13, 22, 42, 43, 44) and uitval = 1 and lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -600,7 +600,7 @@ SELECT count(redId) aant
 FROM tblRedenuser
 WHERE redId in (15, 45, 46, 47, 48, 49, 50, 51) and afvoer = 1 and lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -609,7 +609,7 @@ SQL
             <<<SQL
 SELECT groei FROM tblLeden WHERE lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -621,7 +621,7 @@ FROM tblPartij p
  join tblRelatie r on (r.partId = p.partId)
 WHERE p.lidId = :lidId and p.naam = 'Vermist'
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -643,7 +643,7 @@ SQL
 UPDATE tblLeden SET passw = :passw WHERE lidId = :lidId
 SQL
         , [
-            [':lidId', $lidId, self::INT],
+            [':lidId', $lidId, Type::INT],
             [':passw', $wwnew],
         ]
         );
@@ -713,7 +713,7 @@ SELECT lidId, relnr, urvo, prvo, kar_werknr, histo, groei
 FROM tblLeden
 WHERE lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 

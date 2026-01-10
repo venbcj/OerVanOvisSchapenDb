@@ -43,7 +43,7 @@ public function view($lidId) {
     $sql = <<<SQL
 SELECT * FROM tblLeden WHERE lidId=:lidId
 SQL;
-    $args = [[':lidId', $lidId, self::INT]];
+    $args = [[':lidId', $lidId, Type::INT]];
     return $this->run_query($sql, $args);
     }
 CODE_SAMPLE

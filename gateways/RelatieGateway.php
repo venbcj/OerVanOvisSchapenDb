@@ -10,7 +10,7 @@ FROM tblStal st
  join tblRelatie r on (st.rel_best = r.relId)
 WHERE st.stalId = :stalId
 SQL
-        , [[':stalId', $last_stalId, self::INT]]
+        , [[':stalId', $last_stalId, Type::INT]]
         );
     }
 
@@ -22,7 +22,7 @@ FROM tblRelatie
 WHERE partId = :partId
  and relatie = 'cred'
 SQL
-        , [[':partId', $partId, self::INT]]
+        , [[':partId', $partId, Type::INT]]
         );
     }
 

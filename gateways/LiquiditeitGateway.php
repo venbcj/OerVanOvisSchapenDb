@@ -13,7 +13,7 @@ and year(datum) = :year
 GROUP BY year(datum)
 SQL
         , [
-            [':lidId', $lidId, self::INT],
+            [':lidId', $lidId, Type::INT],
             [':year', $year],
         ]
         );
@@ -30,7 +30,7 @@ WHERE rubuId = :rubuId
 SQL
         ,
             [
-                [':rubuId', $rubuId, self::INT],
+                [':rubuId', $rubuId, Type::INT],
                 [':maand', $maand],
                 [':jaar', $jaar],
             ]
@@ -47,7 +47,7 @@ WHERE rubuId = :rubuId
 SQL
         ,
             [
-                [':rubuId', $rubuId, self::INT],
+                [':rubuId', $rubuId, Type::INT],
                 [':maand', $maand],
                 [':bedrag', $bedrag],
                 [':jaar', $jaar],
@@ -67,8 +67,8 @@ WHERE ru.lidId = :lidId
  and datum = :day
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':day', $day, self::DATE],
+            [':lidId', $lidId, Type::INT],
+            [':day', $day, Type::DATE],
             [':bedrag', $bedrag]
         ]
         );
@@ -80,7 +80,7 @@ SQL
 INSERT INTO tblLiquiditeit SET rubuId = :rubuId, datum = :datum
 SQL
     , [
-        [':rubuId', $rub_user, self::INT],
+        [':rubuId', $rub_user, Type::INT],
         [':datum', $datum],
     ]
         );
@@ -95,7 +95,7 @@ FROM tblLiquiditeit l
 WHERE ru.lidId = :lidId
 SQL
         ,
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -110,7 +110,7 @@ GROUP BY year(datum)
 ORDER BY year(datum)
 SQL
         ,
-            [[':lidId', $lidId, self::INT]]
+            [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -133,7 +133,7 @@ WHERE li.rubuId = :rubuId
 SQL
         ,
             [
-                [':rubuId', $rubuId, self::INT],
+                [':rubuId', $rubuId, Type::INT],
                 [':maand', $maand],
                 [':jaar', $jaar],
             ]
@@ -161,7 +161,7 @@ WHERE li.rubuId = :rubuId
 SQL
         ,
             [
-                [':rubuId', $rubuId, self::INT],
+                [':rubuId', $rubuId, Type::INT],
                 [':maand', $maand],
                 [':jaar', $jaar],
             ]
@@ -224,7 +224,7 @@ GROUP BY jaarmnd
 SQL
         ,
             [
-                [':lidId', $lidId, self::INT],
+                [':lidId', $lidId, Type::INT],
                 [':jaar', $jaar],
             ]
         );
@@ -285,7 +285,7 @@ FROM (
 ) a
 SQL
         , [
-            [':lidId', $lidId, self::INT],
+            [':lidId', $lidId, Type::INT],
             [':jaar', $jaar],
             [':maand', $maand],
         ]
@@ -301,7 +301,7 @@ FROM tblLiquiditeit li
 WHERE ru.lidId = :lidId
  and year(li.datum) = :jaar
 SQL
-        , [[':lidId', $lidId, self::INT], [':jaar', $jaar]]
+        , [[':lidId', $lidId, Type::INT], [':jaar', $jaar]]
         );
     }
 

@@ -8,7 +8,7 @@ SELECT verwerkt
 FROM impReader
 WHERE readId = :readId
 SQL
-        , [[':readId', $readId, self::INT]]
+        , [[':readId', $readId, Type::INT]]
         );
     }
 

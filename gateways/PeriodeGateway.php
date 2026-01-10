@@ -8,7 +8,7 @@ SELECT max(dmafsluit) dmstop
 FROM tblPeriode
 WHERE hokId = :hokId and doelId = 1 and dmafsluit is not null
 SQL
-        , [[':hokId', $hokId, self::INT]]
+        , [[':hokId', $hokId, Type::INT]]
         );
     }
 
@@ -18,7 +18,7 @@ SELECT max(dmafsluit) dmstop
 FROM tblPeriode
 WHERE hokId = :hokId and doelId = 2 and dmafsluit is not null
 SQL
-        , [[':hokId', $hokId, self::INT]]
+        , [[':hokId', $hokId, Type::INT]]
         );
     }
 
@@ -35,9 +35,9 @@ WHERE h.lidId = :lidId
  and p.doelId = :doelId
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':artId', $artId, self::INT],
-            [':doelId', $doelId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':artId', $artId, Type::INT],
+            [':doelId', $doelId, Type::INT],
         ]
         );
     }
@@ -55,8 +55,8 @@ WHERE eu.lidId = :lidId and i.artId = :artId
 GROUP BY date_format(p.dmafsluit,'%Y%m')
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':artId', $fldVoer, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':artId', $fldVoer, Type::INT],
         ]); 
     }
 
@@ -77,9 +77,9 @@ GROUP BY month(p.dmafsluit), date_format(p.dmafsluit,'%Y')
 ORDER BY jaar desc, month(p.dmafsluit) desc
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':artId', $artId, self::INT],
-            [':doelId', $doelId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':artId', $artId, Type::INT],
+            [':doelId', $doelId, Type::INT],
         ]);
     }
 
@@ -141,9 +141,9 @@ WHERE ho.lidId = :lidId
  and date_format(p.dmeind,'%Y%m') = :jrmnd
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':doelId', $doelId, self::INT],
-            [':artId', $artId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':doelId', $doelId, Type::INT],
+            [':artId', $artId, Type::INT],
             [':jrmnd', $jrmnd],
         ]);
     }
@@ -269,13 +269,13 @@ GROUP BY p.periId, ho.hokId, ho.hoknr, p.dmbegin, p.dmeind, p.nutat
 ORDER BY ho.hokId, p.dmeind
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':hokId', $hokId, self::INT],
-            [':fldVoer', $fldVoer, self::INT],
-            [':doelId', $doelId, self::INT],
-            [':dmstart', $dmstart, self::DATE],
-            [':dmbegin', $dmbegin, self::DATE],
-            [':dmeind', $dmeind, self::DATE],
+            [':lidId', $lidId, Type::INT],
+            [':hokId', $hokId, Type::INT],
+            [':fldVoer', $fldVoer, Type::INT],
+            [':doelId', $doelId, Type::INT],
+            [':dmstart', $dmstart, Type::DATE],
+            [':dmbegin', $dmbegin, Type::DATE],
+            [':dmeind', $dmeind, Type::DATE],
             [':jrmnd', $jrmnd],
         ]);
     }
@@ -338,11 +338,11 @@ GROUP BY p.periId, ho.hokId, ho.hoknr, p.dmbegin, p.dmeind, p.nutat
 ORDER BY ho.hokId, p.dmeind
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':hokId', $hokId, self::INT],
-            [':artId', $artId, self::INT],
-            [':doelId', $doelId, self::INT],
-            [':dmstart', $dmstart, self::DATE],
+            [':lidId', $lidId, Type::INT],
+            [':hokId', $hokId, Type::INT],
+            [':artId', $artId, Type::INT],
+            [':doelId', $doelId, Type::INT],
+            [':dmstart', $dmstart, Type::DATE],
             [':jrmnd', $jrmnd],
         ]);
     }
@@ -357,8 +357,8 @@ WHERE hokId = :hokId
  and dmafsluit = :datum
 SQL
         , [
-            [':hokId', $hokId, self::INT],
-            [':doelId', $doelId, self::INT],
+            [':hokId', $hokId, Type::INT],
+            [':doelId', $doelId, Type::INT],
             [':datum', $datum],
         ]);
     }
@@ -372,7 +372,7 @@ FROM tblPeriode p
  join tblDoel d on (p.doelId = d.doelId)
 WHERE periId = :periId
 SQL
-        , [[':periId', $periId, self::INT]]
+        , [[':periId', $periId, Type::INT]]
             , [
                 'hokId' => null,
                 'hoknr' => null,
@@ -394,8 +394,8 @@ WHERE hokId = :hokId
  and dmafsluit < :dmafsluit
 SQL
         , [
-            [':hokId', $hokId, self::INT],
-            [':doelId', $doelId, self::INT],
+            [':hokId', $hokId, Type::INT],
+            [':doelId', $doelId, Type::INT],
             [':dmafsluit', $dmafsl]
         ]
         , [null, null]
@@ -407,9 +407,9 @@ SQL
 INSERT INTO tblPeriode set hokId = :hokId, doelId= :doelId, dmafsluit = :dmafsluit
 SQL
         , [
-            [':hokId', $hokId, self::INT],
-            [':doelId', $doelId, self::INT],
-            [':dmafsluit', $dmafsluit, self::DATE],
+            [':hokId', $hokId, Type::INT],
+            [':doelId', $doelId, Type::INT],
+            [':dmafsluit', $dmafsluit, Type::DATE],
         ]);
         return $this->db->insert_id;
     }

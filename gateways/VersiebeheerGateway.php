@@ -54,7 +54,7 @@ SQL;
         ORDER BY Id desc
         LIMIT :hisVersies
 SQL;
-        $args = [[':dmStart', $dmStart], [':last_versieId', $last_versieId], [':hisVersies', $hisVersies, self::INT]];
+        $args = [[':dmStart', $dmStart], [':last_versieId', $last_versieId], [':hisVersies', $hisVersies, Type::INT]];
         return $this->run_query($sql, $args);
     }
 
@@ -100,7 +100,7 @@ FROM tblVersiebeheer
 WHERE app = 'App' and Id = :id
 SQL
         , [
-            [':id', $last_versieId, self::INT],
+            [':id', $last_versieId, Type::INT],
         ]);
     }
 
@@ -111,7 +111,7 @@ FROM tblVersiebeheer
 WHERE app = 'Reader' and (Id = :id or versieId = :id)
 SQL
         , [
-            [':id', $last_versieId, self::INT],
+            [':id', $last_versieId, Type::INT],
         ]);
     }
 

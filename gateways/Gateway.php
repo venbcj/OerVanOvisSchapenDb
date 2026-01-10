@@ -7,13 +7,6 @@
 
 class Gateway {
 
-    // HERHAALD IN Gateway en SqlBuilder
-    protected const TXT = 'txt';
-    protected const INT = 'int';
-    protected const FLOAT = 'float';
-    protected const BOOL = 'bool';
-    protected const DATE = 'date';
-
     protected $db;
     protected $builder;
 
@@ -21,15 +14,14 @@ class Gateway {
         if (is_null($db)) {
             $db = Db::instance();
         }
-        if (is_a($db, Db::class) || is_a($db, Mysqli::class)) {
-            $this->db = $db;
-        } else {
+        if (!(is_a($db, Db::class) || is_a($db, Mysqli::class))) {
             throw new Exception("Parameter is not usable to set up database connection");
         }
+        $this->db = $db;
         $this->builder = new SqlBuilder($db);
     }
 
-    // TODO: ik kan niet wachten tot er config() is, voor een setting debug.log_queries
+    // TODO: ipv LOG_QUERIES... ik kan niet wachten tot er config() is, voor een setting debug.log_queries
     protected function run_query($SQL, $args = [], $types = []) {
         if (empty($types)) {
             $types = Schema::dictionary();
@@ -45,10 +37,11 @@ class Gateway {
         return $res;
     }
 
-    public function explain_run_query($parSQL, $parArgs = []) {
-        $result = $this->run_query($parSQL, $parArgs);
-        return $result->fetch_all(MYSQLI_ASSOC);
-    }
+    // BCB: Afgeraden. Los dit op in je client-code.
+    // public function explain_run_query($parSQL, $parArgs = []) {
+    //     $result = $this->run_query($parSQL, $parArgs);
+    //     return $result->fetch_all(MYSQLI_ASSOC);
+    // }
         
     // returns table row as assoc-array
     protected function first_record($SQL, $args = [], $default = null) {

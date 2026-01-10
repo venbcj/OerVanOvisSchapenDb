@@ -9,7 +9,7 @@ SELECT doel
 FROM tblDoel
 WHERE doelId = :doelId
 SQL
-        , [[':doelId', $doelId, self::INT]]
+        , [[':doelId', $doelId, Type::INT]]
             , 'fout'
         );
     }

@@ -11,8 +11,8 @@ dmdek = :dmdek
 SQL
         ,
             [
-                [':lidId', $lidId, self::INT],
-                [':dmdek', $datum, self::DATE],
+                [':lidId', $lidId, Type::INT],
+                [':dmdek', $datum, Type::DATE],
             ]
         );
     }
@@ -24,7 +24,7 @@ SELECT dekat
 FROM tblDeklijst 
 WHERE dekId = :dekId
 SQL
-        , [[':dekId', $dekId, self::INT]]
+        , [[':dekId', $dekId, Type::INT]]
         );
     }
 
@@ -44,7 +44,7 @@ SELECT max(year(dmdek)) maxjaar
 FROM tblDeklijst 
 WHERE lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -56,7 +56,7 @@ FROM tblDeklijst
 WHERE lidId = :lidId
  and year(dmdek) = :jaar
 SQL
-        , [[':lidId', $lidId, self::INT], [':jaar', $jaar]]
+        , [[':lidId', $lidId, Type::INT], [':jaar', $jaar]]
         );
     }
 
@@ -70,7 +70,7 @@ WHERE lidId = :lidId
 GROUP BY date_format((dmdek + interval 9 month),'%Y-%m')
 SQL
         , [
-            [':lidId', $lidId, self::INT],
+            [':lidId', $lidId, Type::INT],
             [':jaar', $jaar]
         ]
         );
@@ -92,7 +92,7 @@ WHERE lidId = :lidId and year(dmdek) = :jaar
 GROUP BY liq.jrmnd, liq.bedrag
 SQL
         , [
-            [':lidId', $lidId, self::INT],
+            [':lidId', $lidId, Type::INT],
             [':jaar', $jaar],
         ]
             , ['dektot' => null, 'bedrag' => null]
@@ -108,7 +108,7 @@ WHERE lidId = :lidId
 GROUP BY year(dmdek)
 ORDER BY  year(dmdek)
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -120,7 +120,7 @@ SELECT min(dmdek) dmdek1
 FROM tblDeklijst 
 WHERE lidId = :lidId and year(dmdek) = :jaar
 SQL
-        , [[':lidId', $lidId, self::INT], [':jaar', $jaar]]
+        , [[':lidId', $lidId, Type::INT], [':jaar', $jaar]]
         );
     }
 
@@ -132,7 +132,7 @@ FROM tblDeklijst dek
 WHERE lidId = :lidId and year(dmdek) = :jaar
 GROUP BY month(dmdek)
 SQL
-        , [[':lidId', $lidId, self::INT], [':jaar', $jaar]]
+        , [[':lidId', $lidId, Type::INT], [':jaar', $jaar]]
         );
     }
 
@@ -143,7 +143,7 @@ SELECT dmdek
 FROM tblDeklijst 
 WHERE lidId = :lidId and year(dmdek) = :jaar and month(dmdek) = :maand
 SQL
-        , [[':lidId', $lidId, self::INT], [':jaar', $jaar], [':maand', $maand]]
+        , [[':lidId', $lidId, Type::INT], [':jaar', $jaar], [':maand', $maand]]
         );
     }
 
@@ -155,7 +155,7 @@ SELECT dekId, dmdek, dekat, dmdek + interval 145 day dmwerp, (dmdek + interval 1
 FROM tblDeklijst
 WHERE lidId = :lidId and year(dmdek) = :jaar and dmdek = :maandag
 SQL
-        , [[':lidId', $lidId, self::INT], [':jaar', $jaar], [':maandag', $maandag]]
+        , [[':lidId', $lidId, Type::INT], [':jaar', $jaar], [':maandag', $maandag]]
         );
     }
 
@@ -173,7 +173,7 @@ SELECT dekId, dmdek,
 FROM tblDeklijst 
 WHERE lidId = :lidId and year(dmdek) = :jaar and dmdek = :maandag
 SQL
-        , [[':lidId', $lidId, self::INT], [':jaar', $jaar], [':maandag', $maandag]]
+        , [[':lidId', $lidId, Type::INT], [':jaar', $jaar], [':maandag', $maandag]]
         );
     }
 
@@ -186,7 +186,7 @@ FROM tblVolwas v
  join tblStal st on (h.stalId = st.stalId)
 WHERE h.skip = 0 and date_format(h.datum,'%Y%u') = :jaarweek and st.lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT], [':jaarweek', $jaarweek]]
+        , [[':lidId', $lidId, Type::INT], [':jaarweek', $jaarweek]]
         );
     }
 
@@ -204,7 +204,7 @@ FROM tblDeklijst d
 WHERE d.lidId = :lidId and year(d.dmdek) = :jaar and month(d.dmdek) = :maand
 GROUP BY liq.bedrag
 SQL
-        , [[':lidId', $lidId, self::INT], [':jaar', $jaar], [':maand', $maand]]
+        , [[':lidId', $lidId, Type::INT], [':jaar', $jaar], [':maand', $maand]]
         );
     }
 

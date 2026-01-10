@@ -7,7 +7,7 @@ class OpgaafGateway extends Gateway {
             <<<SQL
 UPDATE tblOpgaaf SET his = NULL WHERE opgId = :opgId
 SQL
-        , [[':opgId', $recId, self::INT]]
+        , [[':opgId', $recId, Type::INT]]
         );
     }
 
@@ -21,7 +21,7 @@ toel = :toel,
 liq = :liq
 SQL
         , [
-            [':rubuId', $rubr, self::INT],
+            [':rubuId', $rubr, Type::INT],
             [':datum', $day],
             [':bedrag', $bedrag],
             [':toel', $toel],
@@ -39,7 +39,7 @@ FROM tblOpgaaf op
 WHERE ru.lidId = :lidId
  and (isnull(op.his) or op.his = 0)
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -51,7 +51,7 @@ FROM tblOpgaaf o
 WHERE rubuId = :rubuId and date_format(datum,'%Y') = :jaar
 SQL
         , [
-            [':rubuId', $rubuId, self::INT],
+            [':rubuId', $rubuId, Type::INT],
             [':jaar', $jaar]
         ]
         );
@@ -64,7 +64,7 @@ SELECT sum(bedrag) bedrag
 FROM tblOpgaaf o
 WHERE rubuId = :rubuId and date_format(datum,'%Y%u') >= :van and date_format(datum,'%Y%u') <= :tot
 SQL
-        , [[':rubuId', $rubuId, self::INT], [':van', $van], [':tot', $tot]]
+        , [[':rubuId', $rubuId, Type::INT], [':van', $van], [':tot', $tot]]
         );
     }
 
@@ -72,7 +72,7 @@ SQL
         $sql = <<<SQL
             INSERT INTO tblOpgaaf SET rubuId = :rubuId, datum = :insInkdm, bedrag = :PrijsInclBtw, toel = :relatie, liq = 1
 SQL;
-        $args = [[':rubuId', $rubuId, self::INT], [':insInkdm', $insInkdm, self::DATE], [':PrijsInclBtw', $PrijsInclBtw], [':relatie', $relatie]];
+        $args = [[':rubuId', $rubuId, Type::INT], [':insInkdm', $insInkdm, Type::DATE], [':PrijsInclBtw', $PrijsInclBtw], [':relatie', $relatie]];
         return $this->run_query($sql, $args);
     }
 

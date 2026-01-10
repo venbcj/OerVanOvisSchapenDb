@@ -89,7 +89,7 @@ WHERE u.lidId = :lidId
  and r.dmmeld is null
  and coalesce(m.skip, 0) <> 1
 SQL
-    , [[':lidId', $lidId, self::INT]]
+    , [[':lidId', $lidId, Type::INT]]
     );
     return $field > 0;
 }
@@ -109,7 +109,7 @@ WHERE st.lidId = :lidId
 GROUP BY r.reqId
 HAVING (count(r.reqId) < 60)
 SQL
-    , [[':lidId', $lidId, self::INT], [':code', $code]]
+    , [[':lidId', $lidId, Type::INT], [':code', $code]]
     );
 }
 
@@ -118,7 +118,7 @@ public function insert($lidId, $fldCode) {
         <<<SQL
 INSERT INTO tblRequest SET lidId_new = :lidId, code = :code
 SQL
-    , [[':lidId', $lidId, self::INT], [':code', $fldCode]]
+    , [[':lidId', $lidId, Type::INT], [':code', $fldCode]]
     );
     return $this->db->insert_id;
 }
@@ -129,7 +129,7 @@ public function update($reqId) {
 UPDATE tblRequest SET lidId_new = NULL
 where reqId = :reqId
 SQL
-    , [[':reqId', $reqId, self::INT]]
+    , [[':reqId', $reqId, Type::INT]]
     );
 }
 
@@ -139,7 +139,7 @@ public function update_response_date($reqId, $dmresponse) {
 UPDATE tblRequest SET dmresponse = :dmresponse
 where reqId = :reqId
 SQL
-    , [[':reqId', $reqId, self::INT], [':dmresponse', $dmresponse]]
+    , [[':reqId', $reqId, Type::INT], [':dmresponse', $dmresponse]]
     );
 }
 
@@ -150,7 +150,7 @@ public function findById($reqId) {
     FROM tblRequest r
     WHERE reqId = :reqId
 SQL
-    , [[':reqId', $reqId, self::INT]]
+    , [[':reqId', $reqId, Type::INT]]
         , ['def' => null, 'code' => null]
     );
 }

@@ -1,8 +1,5 @@
-<!-- 3-9-2017 : gemaakt
-30-12-2023 sql beveiligd met quotes -->
 <?php
-/* toegepast in :
-- Ras.php */
+
 foreach($_POST as $fldname => $fldvalue) {  //  Voor elke post die wordt doorlopen wordt de veldnaam en de waarde teruggeven als een array
     $multip_array[Url::getIdFromKey($fldname)][Url::getNameFromKey($fldname)] = $fldvalue;  // Opbouwen van een Multidimensional array met 2 indexen. [Id] [naamveld] en een waarde nl. de veldwaarde.
 }

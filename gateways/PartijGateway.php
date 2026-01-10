@@ -13,7 +13,7 @@ WHERE p.lidId = :lidId
  and r.actief = 1
 ORDER BY p.naam
 SQL;
-        $args = [[':lidId', $lidId, self::INT]];
+        $args = [[':lidId', $lidId, Type::INT]];
         return $this->run_query($sql, $args);
     }
 
@@ -29,7 +29,7 @@ and p.actief = 1
 and r.actief = 1
 ORDER BY p.naam
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -47,7 +47,7 @@ and r.actief = 1
 and p.actief = 1
 ORDER BY relatie
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -72,7 +72,7 @@ WHERE p.lidId = :lidId
  and ubn is not null
 ORDER BY naam
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -81,7 +81,7 @@ SQL
             <<<SQL
 SELECT naam FROM tblPartij WHERE partId = :partId
 SQL
-        , [[':partId', $partId, self::INT]]
+        , [[':partId', $partId, Type::INT]]
         );
     }
 
@@ -94,7 +94,7 @@ SELECT EXISTS (
     WHERE lidId = :lidId
      and naam = :partij)
 SQL
-        , [[':lidId', $lidId, self::INT],[':partij',$newPartij, self::TXT]]
+        , [[':lidId', $lidId, Type::INT],[':partij',$newPartij, Type::TXT]]
         );
     }
 

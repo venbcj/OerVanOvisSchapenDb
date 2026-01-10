@@ -19,7 +19,7 @@ SELECT max(volgnr) volgnr
 FROM tblAlertselectie
 WHERE lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -45,9 +45,9 @@ set volgnr = :volgnr,
 SQL
         , [
             [':volgnr', $volgnr],
-            [':lidId', $lidId, self::INT],
+            [':lidId', $lidId, Type::INT],
             [':transponder', $transponder],
-            [':alertId', $recId, self::INT],
+            [':alertId', $recId, Type::INT],
         ]
         );
     }

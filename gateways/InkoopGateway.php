@@ -8,7 +8,7 @@ SELECT i.artId
 FROM  tblInkoop i 
 WHERE i.inkId = :inkId
 SQL
-        , [[':inkId', $ink_id, self::INT]]);
+        , [[':inkId', $ink_id, Type::INT]]);
     }
 
     public function zoek_afgeboekt($Id) {
@@ -28,7 +28,7 @@ Union all
     WHERE v.inkId = :inkId and correctie = 1
 ) tbl
 SQL
-        , [[':inkId', $Id, self::INT]]);
+        , [[':inkId', $Id, Type::INT]]);
     }
 
     public function countArtikel($artId) {
@@ -37,7 +37,7 @@ SELECT count(artId) aant
 FROM tblInkoop
 WHERE artId = :artId
 SQL
-        , [[':artId', $artId, self::INT]]
+        , [[':artId', $artId, Type::INT]]
         );
     }
 
@@ -51,7 +51,7 @@ SQL
  and isnull(n.inkId)
 GROUP BY i.inkId
 SQL
-        , [[':artId', $artikel, self::INT]]
+        , [[':artId', $artikel, Type::INT]]
         );
     }
 
@@ -64,7 +64,7 @@ SQL
  and dmink = :dmink
  and isnull(n.inkId)
 SQL
-        , [[':artId', $artikel, self::INT], [':dmink', $dmink, self::DATE]]
+        , [[':artId', $artikel, Type::INT], [':dmink', $dmink, Type::DATE]]
         );
     }
 
@@ -75,7 +75,7 @@ SQL
    left join tblVoeding v on (i.inkId = v.inkId) 
   WHERE artId = :artId and isnull(v.inkId)
 SQL
-        , [[':artId', $artikel, self::INT]]
+        , [[':artId', $artikel, Type::INT]]
         );
     }
 
@@ -89,8 +89,8 @@ SQL
  and isnull(v.inkId)
 SQL
         , [
-            [':artId', $artikel, self::INT],
-            [':dmink', $dmink, self::DATE],
+            [':artId', $artikel, Type::INT],
+            [':dmink', $dmink, Type::DATE],
         ]
         );
     }
@@ -102,7 +102,7 @@ SQL
    join tblArtikel a on (i.artId = a.artId)
   WHERE inkId = :inkId
 SQL
-        , [[':inkId', $new_inkId, self::INT]]
+        , [[':inkId', $new_inkId, Type::INT]]
         );
     }
 
@@ -121,7 +121,7 @@ WHERE i.artId = :artId
  and i.inkat > (i.inkat - coalesce(n.nutat,0))
  and (i.inkat - coalesce(n.nutat,0)) > 0
 SQL
-        , [[':artId', $artikel, self::INT]]
+        , [[':artId', $artikel, Type::INT]]
         );
     }
 
@@ -140,7 +140,7 @@ WHERE i.artId = :artId
  and i.inkat > (i.inkat - coalesce(n.nutat,0))
  and (i.inkat - coalesce(n.nutat,0)) > 0
 SQL
-        , [[':artId', $artId, self::INT]]
+        , [[':artId', $artId, Type::INT]]
         );
     }
 
@@ -149,7 +149,7 @@ SQL
             <<<SQL
 UPDATE tblInkoop set prijs = :prijs WHERE inkId = :inkId
 SQL
-        , [[':prijs', $prijs], [':inkId', $inkId, self::INT]]
+        , [[':prijs', $prijs], [':inkId', $inkId, Type::INT]]
         );
     }
 
@@ -158,7 +158,7 @@ SQL
             <<<SQL
 DELETE FROM tblInkoop WHERE inkId = :inkId
 SQL
-        , [[':inkId', $inkId, self::INT]]
+        , [[':inkId', $inkId, Type::INT]]
         );
     }
 
@@ -215,7 +215,7 @@ FROM (
 ) A
 WHERE artId = :artId
 SQL
-        , [[':lidId', $lidId, self::INT], [':artId', $artId, self::INT]]
+        , [[':lidId', $lidId, Type::INT], [':artId', $artId, Type::INT]]
         );
     }
 
@@ -230,7 +230,7 @@ FROM tblInkoop i
 WHERE eu.lidId = :lidId
  and i.artId = :artId
 SQL
-        , [[':lidId', $lidId, self::INT], [':artId', $artId, self::INT]]
+        , [[':lidId', $lidId, Type::INT], [':artId', $artId, Type::INT]]
         );
     }
 
@@ -248,7 +248,7 @@ FROM tblInkoop i
  ) n on (i.inkId = n.inkId)
 WHERE i.artId = :artId and i.inkat-coalesce(n.vbrat,0) > 0
 SQL
-        , [[':artId', $artId, self::INT]]
+        , [[':artId', $artId, Type::INT]]
         );
     }
 
@@ -259,7 +259,7 @@ SQL
              join tblArtikel a on (a.artId = i.artId)
             WHERE i.inkId = :recId
 SQL;
-        $args = [[':recId', $recId, self::INT]];
+        $args = [[':recId', $recId, Type::INT]];
         return $this->first_field($sql, $args);
     }
 
@@ -273,7 +273,7 @@ SQL;
                 WHERE i.inkId = :recId
                 GROUP BY e.eenheid
 SQL;
-        $args = [[':recId', $recId, self::INT]];
+        $args = [[':recId', $recId, Type::INT]];
         return $this->first_field($sql, $args);
     }
 
@@ -287,7 +287,7 @@ SQL;
                 WHERE i.inkId = :recId
                 GROUP BY e.eenheid
 SQL;
-        $args = [[':recId', $recId, self::INT]];
+        $args = [[':recId', $recId, Type::INT]];
         return $this->first_row($sql, $args);
     }
 
@@ -295,7 +295,7 @@ SQL;
         $sql = <<<SQL
             INSERT INTO tblInkoop SET dmink = :insInkdm, artId = :insVoer, charge = :insCharge, inkat = :insInkat, enhuId = :enhuId, prijs = :insPrijs, btw = :insBtw, relId = :insRc
 SQL;
-        $args = [[':insInkdm', $insInkdm, self::DATE], [':insVoer', $insVoer], [':insCharge', $insCharge], [':insInkat', $insInkat, self::INT], [':enhuId', $enhuId, self::INT], [':insPrijs', $insPrijs], [':insBtw', $insBtw], [':insRc', $insRc]];
+        $args = [[':insInkdm', $insInkdm, Type::DATE], [':insVoer', $insVoer], [':insCharge', $insCharge], [':insInkat', $insInkat, Type::INT], [':enhuId', $enhuId, Type::INT], [':insPrijs', $insPrijs], [':insBtw', $insBtw], [':insRc', $insRc]];
         return $this->run_query($sql, $args);
     }
 
@@ -314,7 +314,7 @@ SQL;
                 GROUP BY i.inkId, i.dmink, i.dmink, i.artId, a.naam, i.charge, inkat, i.enhuId, e.eenheid, round((i.prijs/inkat),2), i.prijs, i.btw, p.naam
                 ORDER BY i.dmink desc, inkId desc
 SQL;
-        $args = [[':lidId', $lidId, self::INT], [':jaar', $jaar]];
+        $args = [[':lidId', $lidId, Type::INT], [':jaar', $jaar]];
         return $this->run_query($sql, $args);
     }
 
@@ -324,7 +324,7 @@ SQL;
             FROM tblInkoop
             WHERE artId = :Id
 SQL;
-        $args = [[':Id', $Id, self::INT]];
+        $args = [[':Id', $Id, Type::INT]];
         return $this->run_query($sql, $args);
     }
 

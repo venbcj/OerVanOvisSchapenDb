@@ -11,7 +11,7 @@ class StalGateway extends Gateway {
             WHERE m.meldId = :recId
 SQL
         , [
-            [':recId', $recId, self::INT],
+            [':recId', $recId, Type::INT],
             [':fldHerk', $fldHerk],
         ]);
     }
@@ -25,7 +25,7 @@ SQL
             WHERE m.meldId = :recId
 SQL
         , [
-            [':recId', $recId, self::INT],
+            [':recId', $recId, Type::INT],
             [':fldBest', $fldBest],
         ]);
     }
@@ -38,15 +38,15 @@ FROM tblStal st
 WHERE st.schaapId = :schaapId and u.lidId <> :lidId
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':schaapId', $schaapId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]);
     }
 
     public function kzlOoien($lidId, $Karwerk) {
         return $this->run_query(
             $this->kzl_ooien_statement(),
-            [[':lidId', $lidId, self::INT], [':Karwerk', $Karwerk, self::INT]]
+            [[':lidId', $lidId, Type::INT], [':Karwerk', $Karwerk, Type::INT]]
         );
     }
 
@@ -119,7 +119,7 @@ and lidId = :lidId
 )
 ORDER BY right(s.levensnummer,$Karwerk)
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -131,8 +131,8 @@ FROM tblStal st
 WHERE u.lidId = :lidId and st.schaapId = :schaapId 
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':schaapId', $schaapId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]);
     }
 
@@ -144,7 +144,7 @@ FROM tblStal st
  join tblUbn u on (st.ubnId = u.ubnId)
 WHERE st.stalId = :stalId
 SQL
-        , [[':stalId', $stalId, self::INT]]
+        , [[':stalId', $stalId, Type::INT]]
         );
     }
 
@@ -158,8 +158,8 @@ WHERE u.lidId = :lidId
  and isnull(st.rel_best)
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':schaapId', $schaapId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':schaapId', $schaapId, Type::INT],
         ], ['stalId' => null, 'kleur' => null, 'halsnr' => null]
         );
     }
@@ -172,7 +172,7 @@ INNER JOIN tblUbn u USING (ubnId)
 WHERE u.lidId = :lidId and isnull(rel_best) and (kleur is not null or halsnr is not null)
 ORDER BY concat(kleur,' ',halsnr)
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -181,9 +181,9 @@ SQL
 UPDATE tblStal set kleur = :kleur, halsnr = :halsnr WHERE stalId = :stalId
 SQL
         , [
-            [':stalId', $stalId, self::INT],
+            [':stalId', $stalId, Type::INT],
             [':kleur', $kleur],
-            [':halsnr', $halsnr, self::INT],
+            [':halsnr', $halsnr, Type::INT],
         ]);
     }
 
@@ -199,15 +199,15 @@ FROM (
  join tblStal st on (mst.stalId = st.stalId)
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':schaapId', $schaapId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':schaapId', $schaapId, Type::INT],
         ], [null, null]
         );
     }
 
     public function update_relbest($stalId, $rel_best) {
         $this->run_query($this->update_relbest_statement(),
-            [[':stalId', $stalId, self::INT], [':rel_best', $rel_best]]
+            [[':stalId', $stalId, Type::INT], [':rel_best', $rel_best]]
         );
     }
 
@@ -222,7 +222,7 @@ SQL;
     public function update_relbest_by_his($hisId, $rel_best) {
         $this->run_query(
             $this->update_relbest_by_his_statement(),
-            [[':hisId', $hisId, self::INT], [':rel_best', $rel_best]]
+            [[':hisId', $hisId, Type::INT], [':rel_best', $rel_best]]
         );
     }
 
@@ -240,9 +240,9 @@ SQL;
 INSERT INTO tblStal set lidId = :lidId, ubnId = :ubnId, schaapId = :schaapId, rel_herk = :rel_herk
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':ubnId', $ubnId, self::INT],
-            [':schaapId', $schaapId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':ubnId', $ubnId, Type::INT],
+            [':schaapId', $schaapId, Type::INT],
             [':rel_herk', $rel_herk],
         ]
         );
@@ -262,9 +262,9 @@ INSERT INTO tblStal SET
 SQL
         ,
             [
-                [':lidId', $lidId, self::INT],
-                [':ubnId', $ubnId, self::INT],
-                [':schaapId', $schaapId, self::INT],
+                [':lidId', $lidId, Type::INT],
+                [':ubnId', $ubnId, Type::INT],
+                [':schaapId', $schaapId, Type::INT],
                 [':kleur', $kleur],
                 [':halsnr', $halsnr],
                 [':rel_herk', $rel_herk],
@@ -283,8 +283,8 @@ WHERE u.lidId = :lidId
  and st.schaapId = :schaapId
 SQL
         , [
-            [':lidId', $lidId, self::INT],
-            [':schaapId', $schaapId, self::INT],
+            [':lidId', $lidId, Type::INT],
+            [':schaapId', $schaapId, Type::INT],
         ]
         );
     }
@@ -302,7 +302,7 @@ WHERE u.lidId = :lidId
 SQL
         ,
             [
-                [':lidId', $lidId, self::INT],
+                [':lidId', $lidId, Type::INT],
                 [':levnr', $levnr],
             ]
         );
@@ -323,7 +323,7 @@ WHERE st.lidId = :lidId
 SQL
         ,
             [
-                [':lidId', $lidId, self::INT],
+                [':lidId', $lidId, Type::INT],
                 [':levnr', $levnr],
             ]
         );
@@ -376,7 +376,7 @@ FROM tblHistorie h
 WHERE h.hisId = :hisId
 SQL
         ,
-            [[':hisId', $hisId, self::INT]]
+            [[':hisId', $hisId, Type::INT]]
         );
     }
 
@@ -398,8 +398,8 @@ WHERE a.op = 1 and h.skip = 0
 SQL
         ,
             [
-                [':lidId', $lidId, self::INT],
-                [':schaapId', $schaapId, self::INT],
+                [':lidId', $lidId, Type::INT],
+                [':schaapId', $schaapId, Type::INT],
             ]
         );
     }
@@ -423,8 +423,8 @@ WHERE a.af = 1
 SQL
         ,
             [
-                [':lidId', $lidId, self::INT],
-                [':schaapId', $schaapId, self::INT],
+                [':lidId', $lidId, Type::INT],
+                [':schaapId', $schaapId, Type::INT],
             ]
         );
     }
@@ -439,7 +439,7 @@ WHERE isnull(st.rel_best)
  and st.lidId = :lidId
 SQL
         ,
-            [[':lidId', $lidId, self::INT], [':schaapId', $recId, self::INT]],
+            [[':lidId', $lidId, Type::INT], [':schaapId', $recId, Type::INT]],
             0
         );
     }
@@ -454,7 +454,7 @@ WHERE schaapId = :schaapId
  and u.lidId = :lidId
  and isnull(rel_best)
 SQL
-        , [[':lidId', $lidId, self::INT], [':schaapId', $schaapId, self::INT]]
+        , [[':lidId', $lidId, Type::INT], [':schaapId', $schaapId, Type::INT]]
         );
     }
 
@@ -501,8 +501,8 @@ SQL;
         return [
             $fiter,
             [
-                [':hokId', $hokId, self::INT],
-                [':lidId', $lidId, self::INT],
+                [':hokId', $hokId, Type::INT],
+                [':lidId', $lidId, Type::INT],
             ]
         ];
     }
@@ -524,7 +524,7 @@ WHERE a.af = 1
  and h.actId != 10
  and h.skip = 0
 SQL
-        , [[':lidId', $lidId, self::INT], [':schaapId', $schaapId, self::INT]]
+        , [[':lidId', $lidId, Type::INT], [':schaapId', $schaapId, Type::INT]]
         );
     }
 
@@ -536,7 +536,7 @@ FROM tblStal st
  join tblHistorie h on (h.stalId = st.stalId)
 WHERE h.actId = 11 and st.schaapId = :schaapId
 SQL
-        , [[':schaapId', $schaapId, self::INT]]
+        , [[':schaapId', $schaapId, Type::INT]]
         );
     }
 
@@ -547,7 +547,7 @@ SELECT max(stalId) stalId
 FROM tblStal
 WHERE schaapId = :schaapId
 SQL
-        , [[':schaapId', $schaapId, self::INT]]
+        , [[':schaapId', $schaapId, Type::INT]]
         );
     }
 
@@ -558,7 +558,7 @@ SELECT scan
 FROM tblStal
 WHERE stalId = :stalId
 SQL
-        , [[':stalId', $stalId, self::INT]]
+        , [[':stalId', $stalId, Type::INT]]
         );
     }
 
@@ -567,7 +567,7 @@ SQL
             <<<SQL
 SELECT count(*) FROM tblStal WHERE lidId=:lidId AND scan=:scan and scan IS NOT NULL and rel_best IS NULL
 SQL
-        , [[':lidId', $lidId, self::INT], [':scan', $scan]]
+        , [[':lidId', $lidId, Type::INT], [':scan', $scan]]
         ) > 0;
     }
 
@@ -576,7 +576,7 @@ SQL
             <<<SQL
 UPDATE tblStal SET scan = NULL WHERE lidId = :lidId and scan = :scan and rel_best is not null
 SQL
-        , [[':lidId', $lidId, self::INT], [':scan', $scan]]
+        , [[':lidId', $lidId, Type::INT], [':scan', $scan]]
         );
     }
 
@@ -585,7 +585,7 @@ SQL
             <<<SQL
 UPDATE tblStal SET scan = :scan WHERE stalId = :stalId
 SQL
-        , [[':stalId', $stalId, self::INT], [':scan', $scan]]
+        , [[':stalId', $stalId, Type::INT], [':scan', $scan]]
         );
     }
 
@@ -597,7 +597,7 @@ FROM tblStal st
  join tblHistorie h on (h.stalId = st.stalId)
 WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y') = :jaar and st.lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT], [':jaar', $jaar]]
+        , [[':lidId', $lidId, Type::INT], [':jaar', $jaar]]
         );
     }
 
@@ -615,7 +615,7 @@ FROM tblStal st
  ) geb on (geb.schaapId = st.schaapId)
 WHERE h.actId = 14 and h.skip = 0 and date_format(h.datum,'%Y') = :jaar and st.lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT], [':jaar', $jaar]]
+        , [[':lidId', $lidId, Type::INT], [':jaar', $jaar]]
         );
     }
 
@@ -636,7 +636,7 @@ SQL;
         JOIN tblUbn u USING(ubnId)
         WHERE schaapId = :mdrId and u.lidId = :lidId
 SQL;
-        $args = [[':mdrId', $mdrId, self::INT], [':lidId', $lidId, self::INT]];
+        $args = [[':mdrId', $mdrId, Type::INT], [':lidId', $lidId, Type::INT]];
         return $this->first_field($sql, $args);
     }
 
@@ -650,7 +650,7 @@ SQL;
      and s.levensnummer = :levnr_old
      and isnull(st.rel_best)
 SQL;
-        $args = [[':lidId', $lidId, self::INT], [':levnr_old', $levnr_old]];
+        $args = [[':lidId', $lidId, Type::INT], [':levnr_old', $levnr_old]];
         return $this->first_row($sql, $args, [0,0]);
     }
 
@@ -684,7 +684,7 @@ SQL;
               WHERE actId = 2 and st1.stalId = st.stalId and h.actId = ha.actId-1 and s.schaapId = :mdrId
             )
 SQL;
-        $args = [[':lidId', $lidId, self::INT], [':mdrId', $mdrId, self::INT]];
+        $args = [[':lidId', $lidId, Type::INT], [':mdrId', $mdrId, Type::INT]];
         return $this->first_field($sql, $args);
     }
 
@@ -701,7 +701,7 @@ SQL;
            join tblActie a on (a.actId = h.actId)
           WHERE a.af = 1 and h.skip = 0
 SQL;
-        $args = [[':lidId', $lidId, self::INT], [':mdrId', $mdrId, self::INT]];
+        $args = [[':lidId', $lidId, Type::INT], [':mdrId', $mdrId, Type::INT]];
         return $this->first_field($sql, $args);
     }
 
@@ -709,7 +709,7 @@ SQL;
         $sql = <<<SQL
     INSERT INTO tblStal set lidId = :lidId, ubnId = :ubnId, schaapId = :schaapId,  rel_best = :rel_best
 SQL;
-        $args = [[':lidId', $lidId, self::INT], [':ubnId', $ubnId, self::INT], [':schaapId', $schaapId, self::INT], [':rel_best', $rel_best]];
+        $args = [[':lidId', $lidId, Type::INT], [':ubnId', $ubnId, Type::INT], [':schaapId', $schaapId, Type::INT], [':rel_best', $rel_best]];
         $this->run_query($sql, $args);
         return $this->db->insert_id;
     }

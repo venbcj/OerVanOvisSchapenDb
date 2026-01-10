@@ -14,7 +14,7 @@ WHERE (isnull(dek.skip) or dek.skip = 0)
  and v.mdrId = :mdrId
 SQL
  ,
- [[':mdrId', $kzlMdr, self::INT]]
+ [[':mdrId', $kzlMdr, Type::INT]]
         );
     }
 
@@ -29,7 +29,7 @@ WHERE (isnull(hd.skip) or hd.skip = 0)
  and v.volwId = :volwId
 SQL
  ,
- [[':volwId', $koppel, self::INT]],
+ [[':volwId', $koppel, Type::INT]],
  [0, 0, 0, 0]
         );
     }
@@ -46,7 +46,7 @@ WHERE mdrId = :mdrId
  and h.actId = 1
  and h.skip = 0
 SQL
- , [[':mdrId', $kzlMdr, self::INT]]
+ , [[':mdrId', $kzlMdr, Type::INT]]
         );
     }
 
@@ -58,7 +58,7 @@ FROM tblVolwas
 WHERE mdrId = :schaapId
  OR vdrId = :schaapId
 SQL
-        , [[':schaapId', $schaapId, self::INT]]
+        , [[':schaapId', $schaapId, Type::INT]]
         );
     }
 
@@ -71,7 +71,7 @@ FROM tblVolwas v
 WHERE v.mdrId = :mdrId
 SQL
         ,
-            [[':mdrId', $mdrId, self::INT]]
+            [[':mdrId', $mdrId, Type::INT]]
         );
     }
 
@@ -153,7 +153,7 @@ GROUP BY v.volwId, v.hisId, dekdatum, v.mdrId, mdr.levensnummer, v.vdrId, dracht
 ORDER BY right(mdr.levensnummer,$Karwerk), dekdate desc
 SQL
         ,
-            [[':lidId', $lidId, self::INT], [':jaar', $jaar]]
+            [[':lidId', $lidId, Type::INT], [':jaar', $jaar]]
         );
     }
 
@@ -166,7 +166,7 @@ SQL
  and vdrId = :vdrId
 SQL
         ,
-            [[':mdrId', $mdrId, self::INT], [':vdrId', $vdrId, self::INT]]
+            [[':mdrId', $mdrId, Type::INT], [':vdrId', $vdrId, Type::INT]]
         );
     }
 
@@ -185,8 +185,8 @@ WHERE v.mdrId = :mdrId
 SQL
         ,
             [
-                [':mdrId', $mdrId, self::INT],
-                [':datum', $datum, self::DATE],
+                [':mdrId', $mdrId, Type::INT],
+                [':datum', $datum, Type::DATE],
             ]
         );
     }
@@ -215,8 +215,8 @@ WHERE v.mdrId = :mdrId
 SQL
         ,
             [
-                [':mdrId', $mdrId, self::INT],
-                [':datum', $datum, self::DATE],
+                [':mdrId', $mdrId, Type::INT],
+                [':datum', $datum, Type::DATE],
             ]
         );
     }
@@ -234,8 +234,8 @@ WHERE h.skip = 0
 SQL
         ,
             [
-                [':mdrId', $mdrId, self::INT],
-                [':volwId', $volwId, self::INT],
+                [':mdrId', $mdrId, Type::INT],
+                [':volwId', $volwId, Type::INT],
             ]
         );
     }
@@ -252,8 +252,8 @@ WHERE h.skip = 0
 SQL
         ,
             [
-                [':mdrId', $mdrId, self::INT],
-                [':volwId', $volwId, self::INT],
+                [':mdrId', $mdrId, Type::INT],
+                [':volwId', $volwId, Type::INT],
             ]
         );
     }
@@ -265,7 +265,7 @@ SQL
  FROM tblVolwas
  WHERE volwId = :volwId
 SQL
-        , [[':volwId', $volwId, self::INT]]
+        , [[':volwId', $volwId, Type::INT]]
         );
     }
 
@@ -276,8 +276,8 @@ UPDATE tblVolwas set vdrId = :vdrId WHERE volwId = :volwId
 SQL
     ,
     [
-        [':vdrId', $vdrId, self::INT],
-        [':volwId', $volwId, self::INT],
+        [':vdrId', $vdrId, Type::INT],
+        [':volwId', $volwId, Type::INT],
     ]
         );
     }
@@ -288,7 +288,7 @@ SQL
  INSERT INTO tblVolwas set mdrId = :mdrId, vdrId = :vdrId
 SQL
         ,
-            [[':mdrId', $mdrId, self::INT], [':vdrId', $vdrId, self::INT]]
+            [[':mdrId', $mdrId, Type::INT], [':vdrId', $vdrId, Type::INT]]
         );
     }
 
@@ -297,7 +297,7 @@ SQL
             <<<SQL
 INSERT INTO tblVolwas set readId = :recId, mdrId = :mdrId
 SQL
-        , [[':recId', $recId, self::INT], [':mdrId', $mdrId, self::INT]]
+        , [[':recId', $recId, Type::INT], [':mdrId', $mdrId, Type::INT]]
         );
         return $this->db->insert_id;
     }
@@ -309,7 +309,7 @@ SQL
  FROM tblVolwas
  WHERE mdrId = :mdrId
 SQL
-        , [[':mdrId', $mdrId, self::INT]]
+        , [[':mdrId', $mdrId, Type::INT]]
         );
     }
 
@@ -328,8 +328,8 @@ WHERE v.mdrId = :mdrId
 SQL
         ,
             [
-                [':mdrId', $mdrId, self::INT],
-                [':datum', $datum, self::DATE],
+                [':mdrId', $mdrId, Type::INT],
+                [':datum', $datum, Type::DATE],
             ]
         );
     }
@@ -348,7 +348,7 @@ WHERE v.mdrId = :mdrId
  and h.datum < :datum
 SQL
         ,
-            [[':mdrId', $mdrId, self::INT], [':datum', $datum, self::DATE]]
+            [[':mdrId', $mdrId, Type::INT], [':datum', $datum, Type::DATE]]
             , [null, null]
         );
     }
@@ -368,8 +368,8 @@ WHERE v.mdrId = :mdrId
 SQL
         ,
             [
-                [':mdrId', $mdrId, self::INT],
-                [':datum', $datum, self::DATE],
+                [':mdrId', $mdrId, Type::INT],
+                [':datum', $datum, Type::DATE],
             ]
             , [null, null]
         );
@@ -384,7 +384,7 @@ FROM tblVolwas v
  join tblHistorie h on (d.hisId = h.hisId)
 WHERE h.skip = 0 and v.volwId = :volwId
 SQL
-        , [[':volwId', $volwId, self::INT]]
+        , [[':volwId', $volwId, Type::INT]]
             , [null, null]
         );
     }
@@ -401,7 +401,7 @@ WHERE h.actId = 1
  and h.skip = 0
  and v.volwId = :schaapId
 SQL
-        , [[':schaapId', $schaapId, self::INT]]
+        , [[':schaapId', $schaapId, Type::INT]]
             , [null, null]
         );
     }
@@ -423,7 +423,7 @@ FROM tblVolwas v
 WHERE v.mdrId = :schaapId
  and isnull(ha.schaapId)
 SQL
-        , [[':schaapId', $schaapId, self::INT]]
+        , [[':schaapId', $schaapId, Type::INT]]
         );
     }
 
@@ -478,7 +478,7 @@ FROM tblVolwas v
 WHERE isnull(hl.werpId)
 GROUP BY  v.volwId, v.mdrId, v.vdrId, right(vdr.levensnummer,$Karwerk)
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
         $res = [];
         while ($rec = $vw->fetch_assoc()) {
@@ -533,7 +533,7 @@ FROM tblVolwas v
  ) hl on (stl.stalId = hl.stalId)
 GROUP BY  v.volwId, v.mdrId, v.vdrId, right(vdr.levensnummer,$Karwerk)
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
         $res = [];
         while ($rec = $vw->fetch_assoc()) {
@@ -581,7 +581,7 @@ FROM tblVolwas v
    GROUP BY v.mdrId
  ) lv on (v.volwId = lv.volwId) 
 SQL
-        , [[':schaapId', $schaapId, self::INT]]
+        , [[':schaapId', $schaapId, Type::INT]]
         );
     }
 
@@ -621,7 +621,7 @@ WHERE (dek.hisId is not null or dra.volwId is not null)
  and v.mdrId = :schaapId
 GROUP BY v.mdrId
 SQL
-        , [[':lidId', $lidId, self::INT], [':schaapId', $schaapId, self::INT]]
+        , [[':lidId', $lidId, Type::INT], [':schaapId', $schaapId, Type::INT]]
         );
     }
 
@@ -636,7 +636,7 @@ FROM tblVolwas v
 WHERE h.skip = 0 and v.mdrId = :schaapId
 GROUP BY  v.mdrId
 SQL
-        , [[':schaapId', $schaapId, self::INT]]
+        , [[':schaapId', $schaapId, Type::INT]]
         );
     }
 
@@ -649,7 +649,7 @@ FROM tblVolwas v
  join tblStal st on (h.stalId = st.stalId)
 WHERE h.skip = 0 and st.lidId = :lidId and year(h.datum) = :jaar and h.datum < :datum
 SQL
-        , [[':lidId', $lidId, self::INT], [':jaar', $jaar], [':datum', $datum]]
+        , [[':lidId', $lidId, Type::INT], [':jaar', $jaar], [':datum', $datum]]
         );
     }
 
@@ -664,7 +664,7 @@ WHERE h.skip = 0
  and date_format(h.datum,'%Y%u') = :jaarweek
  and st.lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT], [':jaarweek', $jaarweek]]
+        , [[':lidId', $lidId, Type::INT], [':jaarweek', $jaarweek]]
         );
     }
 
@@ -677,7 +677,7 @@ FROM tblVolwas v
  join tblStal st on (h.stalId = st.stalId)
 WHERE h.skip = 0 and date_format(h.datum,'%Y%u') >= :van and date_format(h.datum,'%Y%u') <= :tot and st.lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT], [':van', $van], [':tot', $tot]]
+        , [[':lidId', $lidId, Type::INT], [':van', $van], [':tot', $tot]]
         );
     }
 
@@ -691,7 +691,7 @@ WHERE st.lidId = :lidId
 GROUP BY v.volwId
 ORDER BY v.volwId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -710,7 +710,7 @@ SQL
              join tblHistorie h on (v.hisId = h.hisId)
             WHERE h.skip = 0 and volwId = :recId
 SQL;
-        $args = [[':recId', $recId, self::INT]];
+        $args = [[':recId', $recId, Type::INT]];
         return $this->first_field($sql, $args);
     }
 
@@ -720,7 +720,7 @@ SQL;
     FROM tblVolwas
     WHERE volwId = :recId
 SQL;
-        $args = [[':recId', $recId, self::INT]];
+        $args = [[':recId', $recId, Type::INT]];
         return $this->first_field($sql, $args);
     }
 
@@ -731,7 +731,7 @@ SQL;
      join tblSchaap s on (s.volwId = v.volwId)
     WHERE v.volwId = :recId
 SQL;
-        $args = [[':recId', $recId, self::INT]];
+        $args = [[':recId', $recId, Type::INT]];
         return $this->first_field($sql, $args);
     }
 
@@ -741,7 +741,7 @@ SQL;
     FROM tblVolwas
     WHERE volwId = :recId
 SQL;
-        $args = [[':recId', $recId, self::INT]];
+        $args = [[':recId', $recId, Type::INT]];
         return $this->first_row($sql, $args);
     }
 
@@ -751,7 +751,7 @@ SQL;
     FROM tblVolwas
     WHERE volwId = :recId
 SQL;
-        $args = [[':recId', $recId, self::INT]];
+        $args = [[':recId', $recId, Type::INT]];
         return $this->first_field($sql, $args);
     }
 
@@ -759,7 +759,7 @@ SQL;
         $sql = <<<SQL
     UPDATE tblVolwas SET vdrId = :updRam WHERE volwId = :recId
 SQL;
-        $args = [[':updRam', $updRam], [':recId', $recId, self::INT]];
+        $args = [[':updRam', $updRam], [':recId', $recId, Type::INT]];
         $this->run_query($sql, $args);
     }
 
@@ -767,7 +767,7 @@ SQL;
         $sql = <<<SQL
             UPDATE tblVolwas SET grootte = :updGrootte WHERE volwId = :recId
 SQL;
-        $args = [[':updGrootte', $updGrootte], [':recId', $recId, self::INT]];
+        $args = [[':updGrootte', $updGrootte], [':recId', $recId, Type::INT]];
         $this->run_query($sql, $args);
     }
 
@@ -777,7 +777,7 @@ SQL;
         FROM tblVolwas
         WHERE volwId = :recId
 SQL;
-        $args = [[':recId', $recId, self::INT]];
+        $args = [[':recId', $recId, Type::INT]];
         return $this->first_field($sql, $args);
     }
 
@@ -785,7 +785,7 @@ SQL;
         $sql = <<<SQL
     UPDATE tblVolwas SET grootte = NULL WHERE volwId = :recId
 SQL;
-        $args = [[':recId', $recId, self::INT]];
+        $args = [[':recId', $recId, Type::INT]];
         $this->run_query($sql, $args);
     }
 
@@ -797,7 +797,7 @@ SQL;
        left join tblSchaap s on (s.volwId = v.volwId)
       WHERE h.skip = 0 and v.mdrId = :mdrId and isnull(s.volwId) and date_add(h.datum, interval 145 day) > :fldDag
 SQL;
-        $args = [[':mdrId', $mdrId, self::INT], [':fldDag', $fldDag]];
+        $args = [[':mdrId', $mdrId, Type::INT], [':fldDag', $fldDag]];
         return $this->first_field($sql, $args);
     }
 
@@ -807,7 +807,7 @@ SQL;
           hisId = :hisId, 
           mdrId = :mdrId
 SQL;
-        $args = [[':hisId', $hisId, self::INT], [':mdrId', $mdrId, self::INT]];
+        $args = [[':hisId', $hisId, Type::INT], [':mdrId', $mdrId, Type::INT]];
         $this->run_query($sql, $args);
         return $this->db->insert_id;
     }
@@ -818,7 +818,7 @@ SQL;
      FROM tblVolwas
      WHERE volwId = :volwId
 SQL;
-        $args = [[':volwId', $volwId, self::INT]];
+        $args = [[':volwId', $volwId, Type::INT]];
         return $this->first_field($sql, $args);
     }
 
@@ -826,7 +826,7 @@ SQL;
         $sql = <<<SQL
     UPDATE tblVolwas set verloop = :verloop_rd WHERE volwId = :volwId
 SQL;
-        $args = [[':verloop_rd', $verloop_rd], [':volwId', $volwId, self::INT]];
+        $args = [[':verloop_rd', $verloop_rd], [':volwId', $volwId, Type::INT]];
         return $this->run_query($sql, $args);
     }
 

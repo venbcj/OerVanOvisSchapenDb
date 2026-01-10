@@ -82,7 +82,7 @@ trait ArgSplitter {
             || substr($name, 0, 2) == 'dm';
     }
 
-    // TODO: zoiets als self::INT
+    // TODO: zoiets als Type::INT
     private function inferTypeFrom(Node $variable): Node {
         $name = $variable->name;
         switch (substr($name, -2)) {

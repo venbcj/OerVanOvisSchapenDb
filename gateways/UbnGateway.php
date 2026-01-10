@@ -17,14 +17,14 @@ SQL
         return 0 < $this->first_field(<<<SQL
 SELECT count(*) FROM tblUbn WHERE lidId = :lidId and ubn = :ubn
 SQL
-        , [[':lidId', $lidId, self::INT], [':ubn', $ubn, self::TXT]]);
+        , [[':lidId', $lidId, Type::INT], [':ubn', $ubn, Type::TXT]]);
     }
 
     public function insert($lidId, $ubn) {
         $this->run_query(<<<SQL
 INSERT INTO tblUbn SET lidId = :lidId, ubn = :ubn
 SQL
-        , [[':lidId', $lidId, self::INT], [':ubn', $ubn]]);
+        , [[':lidId', $lidId, Type::INT], [':ubn', $ubn]]);
     }
 
     public function insert_with_plaats($lidId, $new_ubn, $new_adres, $new_plaats) {
@@ -33,7 +33,7 @@ INSERT INTO tblUbn SET lidId = :lidId, ubn = :ubn,
  adres = :adres, plaats = :plaats
 SQL
         , [
-            [':lidId', $lidId, self::INT],
+            [':lidId', $lidId, Type::INT],
             [':ubn', $new_ubn], // default type is txt
             [':adres', $new_adres],
             [':plaats', $new_plaats],
@@ -47,7 +47,7 @@ FROM tblUbn
 WHERE lidId = :lidId
 ORDER BY actief desc, ubn
 SQL
-        , [[':lidId', $lidId, self::INT]]);
+        , [[':lidId', $lidId, Type::INT]]);
     }
 
     public function zoek_op_id_met_plaats($ubnId) {
@@ -57,7 +57,7 @@ FROM tblUbn
 WHERE ubnId = :ubnId
 ORDER BY actief desc, ubn
 SQL
-        , [[':ubnId', $ubnId, self::INT]]
+        , [[':ubnId', $ubnId, Type::INT]]
             ,
             [
                 'adres' => '',
@@ -75,27 +75,27 @@ FROM tblUbn u
 WHERE u.ubnId = :ubnId
  and isnull(st.stalId)
 SQL
-        , [[':ubnId', $ubnId, self::INT]]);
+        , [[':ubnId', $ubnId, Type::INT]]);
     }
 
     public function delete_by_id($ubnId) {
-        $this->run_query("DELETE FROM tblUbn WHERE ubnId = :ubnId", [[':ubnId', $ubnId, self::INT]]);
+        $this->run_query("DELETE FROM tblUbn WHERE ubnId = :ubnId", [[':ubnId', $ubnId, Type::INT]]);
     }
 
     # NOTE deze drie methoden kunnen gebundeld, als er een object is dat weet hoe de tabel in elkaar zit.
     # Ik wil niet klakkeloos alles als strings updaten namelijk.
 
     public function update_adres($ubnId, $adres) {
-        $this->run_query("UPDATE tblUbn SET adres = :adres WHERE ubnId = :ubnId", [[':ubnId', $ubnId, self::INT], [':adres', $adres]]);
+        $this->run_query("UPDATE tblUbn SET adres = :adres WHERE ubnId = :ubnId", [[':ubnId', $ubnId, Type::INT], [':adres', $adres]]);
     }
 
     public function update_plaats($ubnId, $plaats) {
-        $this->run_query("UPDATE tblUbn SET plaats = :plaats WHERE ubnId = :ubnId", [[':ubnId', $ubnId, self::INT], [':plaats', $plaats]]);
+        $this->run_query("UPDATE tblUbn SET plaats = :plaats WHERE ubnId = :ubnId", [[':ubnId', $ubnId, Type::INT], [':plaats', $plaats]]);
     }
 
     public function update_actief($ubnId, $actief) {
         // actief is tinyint in de tabel. Daar mag een bool in.
-        $this->run_query("UPDATE tblUbn SET actief = :actief WHERE ubnId = :ubnId", [[':ubnId', $ubnId, self::INT], [':actief', $actief, self::BOOL]]);
+        $this->run_query("UPDATE tblUbn SET actief = :actief WHERE ubnId = :ubnId", [[':ubnId', $ubnId, Type::INT], [':actief', $actief, Type::BOOL]]);
     }
 
     public function lijst($lidId) {
@@ -106,7 +106,7 @@ FROM tblUbn
 WHERE lidId = :lidId and actief = 1
 ORDER BY ubn
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -121,7 +121,7 @@ SELECT count(ubnId) aant_ubn
 FROM tblUbn 
 WHERE lidId = :lidId
 SQL
-        , [[':lidId', $lidId, self::INT]]
+        , [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -132,7 +132,7 @@ SQL
             FROM tblUbn
             WHERE lidId = :lidId
 SQL;
-        $args = [[':lidId', $lidId, self::INT]];
+        $args = [[':lidId', $lidId, Type::INT]];
         return $this->first_field($sql, $args);
     }
 

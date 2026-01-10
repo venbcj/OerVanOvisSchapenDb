@@ -7,9 +7,9 @@ class NuttigGateway extends Gateway {
 INSERT INTO tblNuttig SET hisId = :hisId, inkId = :inkId, nutat = :aantal, stdat = :stdat, reduId = :reduId
 SQL
         , [
-            [':hisId', $hisId, self::INT],
-            [':inkId', $inkId, self::INT],
-            [':reduId', $reduId, self::INT],
+            [':hisId', $hisId, Type::INT],
+            [':inkId', $inkId, Type::INT],
+            [':reduId', $reduId, Type::INT],
             [':aantal', $aantal], // TODO: decimal
             [':stdat', $stdat],
         ]
@@ -47,10 +47,10 @@ ORDER BY h.datum desc, right(s.levensnummer,$Karwerk)
 SQL
         ,
             [
-                [':lidId', $lidId, self::INT],
+                [':lidId', $lidId, Type::INT],
                 [':maand', $maand],
                 [':jaar', $jaar],
-                [':artId', $artId, self::INT],
+                [':artId', $artId, Type::INT],
             ]
         );
     }
@@ -61,7 +61,7 @@ SQL
                 FROM tblNuttig n
                 WHERE n.inkId = :recId and isnull(hisId)
 SQL;
-        $args = [[':recId', $recId, self::INT]];
+        $args = [[':recId', $recId, Type::INT]];
         return $this->first_field($sql, $args);
     }
 

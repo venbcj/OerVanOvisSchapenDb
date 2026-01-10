@@ -6,6 +6,12 @@ class NewUserTest extends IntegrationCase {
     private const NEW_USER_DIR = 'user_43'; // in fixtures is 42 de laatste user
     // oh boy. Soms bestaat user_43 al, en probeert de code dus user_44 aan te maken.
 
+    protected $restore_keys_before = true;
+
+    protected function restore_keys() {
+        $this->db->query("ALTER TABLE tblLeden AUTOINCREMENT=42");
+    }
+
     public function testGet() {
         $this->get('/Newuser.php', ['ingelogd' => 1]);
         $this->assertNoNoise();
