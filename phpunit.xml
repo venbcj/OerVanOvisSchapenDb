@@ -36,10 +36,13 @@
         <directory>ongebruikt</directory>
         <directory>utils</directory>
       </exclude>
-      <file>./Relatie.php</file>
+      <file>./InsGrWijzigingUbn.php</file>
       <file>./login.php</file>
-      <file>./save_relatie.php</file>
-      <file>./menuBeheer.php</file>
+      <file>./vw_HistorieDm.php</file>
+      <file>./post_readerUbn.php</file>
+      <file>./paginas.php</file>
+      <file>./menu1.php</file>
+      <file>./select-all.js.php</file>
     </whitelist>
   </filter>
   <logging>

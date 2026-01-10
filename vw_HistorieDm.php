@@ -191,5 +191,4 @@ WHERE h.skip = 0 and r.code = 'DOO' and r.dmmeld IS NOT NULL and m.skip <> 1 and
 GROUP BY s.schaapId
 
 
-")
-?>
+");

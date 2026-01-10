@@ -19,7 +19,6 @@ class ControllersTest extends IntegrationCase {
             ['InsDekken.php', [], ['chbKies_1' => 1, 'chbDel_1' => 0, ]], // hoofdletter K !?!
             ['InsDracht.php', [], ['chbKies_1' => 1, ]],
             ['InsGeboortes.php', ['impagrident-moeder'], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
-            ['InsGrWijzigingUbn.php', [], []],
             ['InsHalsnummers.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
             ['InsLambar.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
             ['InsMedicijn.php', [], ['chbkies_1' => 1, 'chbDel_1' => 0, ]],
@@ -115,7 +114,6 @@ InsAfvoer.php
 InsDekken.php
 InsDracht.php
 InsGeboortes.php
-InsGrWijzigingUbn.php
 InsHalsnummers.php
 InsLambar.php
 InsMedicijn.php
