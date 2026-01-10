@@ -36,7 +36,7 @@
         <directory>ongebruikt</directory>
         <directory>utils</directory>
       </exclude>
-      <file>./Medicijnen.php</file>
+      <directory>.</directory>
     </whitelist>
   </filter>
 </phpunit>
