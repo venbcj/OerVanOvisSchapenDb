@@ -98,4 +98,100 @@ SQL
         );
     }
 
+    public function zoek_vervoer($pId) {
+        $sql = <<<SQL
+                select v.vervId
+                    from tblVervoer v
+                     join tblPartij p on (v.partId = p.partId)
+                    where p.partId = :pId
+SQL;
+        $args = [[':pId', $pId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function update($form) {
+        $this->run_query(<<<SQL
+    update tblPartij p set ubn = :ubn,
+ naam = :naam,
+ tel = :tel,
+ fax = :fax,
+ email = :mail,
+ site = :site,
+ banknr = :bank,
+ relnr = :relnr,
+ wachtw = :wawo
+    where partId = :partId
+SQL
+        , $this->struct_to_args($form)
+        );
+    }
+
+    public function insert_vervoer($partId, $kenteken, $aanhanger) {
+        $this->run_query(<<<SQL
+    insert into tblVervoer
+    set partId = :partId, kenteken = :kenteken, aanhanger = :aanhanger
+SQL
+        , [[':partId', $partId, Type::INT], [':kenteken', $kenteken], [':aanhanger', $aanhanger]]
+        );
+    }
+
+    public function wijzig_vervoer($partId, $kenteken, $aanhanger) {
+        $this->run_query(<<<SQL
+    update tblVervoer v
+    set kenteken = :kenteken, aanhanger = :aanhanger
+    where partId = :partId
+SQL
+        , [[':partId', $partId, Type::INT], [':kenteken', $kenteken], [':aanhanger', $aanhanger]]
+        );
+    }
+
+    public function find($pId) {
+        $sql = <<<SQL
+        select p.partId, r.relId, relatie, ubn, naam, tel, fax, email, site, banknr, p.relnr, p.wachtw, kenteken, aanhanger 
+        from tblPartij p
+         join tblRelatie r on (p.partId = r.partId)
+         left join tblVervoer v on (p.partId = v.partId) 
+        where p.partId = :pId
+SQL;
+        $args = [[':pId', $pId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function Relatie($pId) {
+        $sql = <<<SQL
+        select r.relId, relatie, ubn, naam, straat, nr, pc, plaats, tel, fax, email, site, banknr, p.actief actief_p, r.actief 
+        from tblPartij p
+         join tblRelatie r on (p.partId = r.partId)
+         left join tblAdres a on (r.relId = a.relId) 
+        where p.partId = :pId 
+        order by actief desc, relatie desc
+SQL;
+        $args = [[':pId', $pId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function zoek_straat($updId) {
+        $sql = <<<SQL
+    SELECT a.straat
+        FROM tblPartij p
+         join tblRelatie r on (p.partId = r.partId)
+         join tblAdres a on (a.relId = r.relId)
+        WHERE r.relId = :updId
+SQL;
+        $args = [[':updId', $updId, Type::INT]];
+        return $this->first_field($sql, $args, '');
+    }
+
+    public function zoek_nr($updId) {
+        $sql = <<<SQL
+    SELECT a.nr
+        FROM tblPartij p
+         join tblRelatie r on (p.partId = r.partId)
+         join tblAdres a on (a.relId = r.relId)
+        WHERE r.relId = :updId
+SQL;
+        $args = [[':updId', $updId, Type::INT]];
+        return $this->first_field($sql, $args, '');
+    }
+
 }

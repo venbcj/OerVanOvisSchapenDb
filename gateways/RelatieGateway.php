@@ -26,4 +26,57 @@ SQL
         );
     }
 
+    public function zoek_postcode($updId) {
+        $sql = <<<SQL
+    SELECT a.pc
+        FROM tblRelatie r
+         join tblAdres a on (a.relId = r.relId)
+        WHERE r.relId = :updId
+SQL;
+        $args = [[':updId', $updId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function zoek_plaats($updId) {
+        $sql = <<<SQL
+    SELECT a.plaats
+        FROM tblRelatie r
+         join tblAdres a on (a.relId = r.relId)
+        WHERE r.relId = :updId
+SQL;
+        $args = [[':updId', $updId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function zoek_rendac($updId) {
+        $sql = <<<SQL
+    SELECT relId
+        FROM tblRelatie r
+         join tblPartij p on (r.partId = p.partId)
+        WHERE r.relId = :updId and p.naam = 'Rendac'
+SQL;
+        $args = [[':updId', $updId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function zoek_actief($updId) {
+        $sql = <<<SQL
+        SELECT actief
+            FROM tblRelatie
+            WHERE relId = :updId
+SQL;
+        $args = [[':updId', $updId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function wijzigactief($fldActief, $updId) {
+        $sql = <<<SQL
+        UPDATE tblRelatie
+            SET actief = :fldActief
+            WHERE relId = :updId
+SQL;
+        $args = [[':fldActief', $fldActief], [':updId', $updId, Type::INT]];
+        $this->run_query($sql, $args);
+    }
+
 }
