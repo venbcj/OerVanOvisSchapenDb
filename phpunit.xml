@@ -36,8 +36,10 @@
         <directory>ongebruikt</directory>
         <directory>utils</directory>
       </exclude>
-      <file>./Uitval.php</file>
-      <file>./save_uitvalredenen.php</file>
+      <file>./Relatie.php</file>
+      <file>./login.php</file>
+      <file>./save_relatie.php</file>
+      <file>./menuBeheer.php</file>
     </whitelist>
   </filter>
   <logging>

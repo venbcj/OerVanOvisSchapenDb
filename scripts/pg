@@ -25,5 +25,12 @@ class $TESTCLASS extends IntegrationCase {
 }
 TXT
 fi
-tmux split-window -h -l80 "cover-include none; cover-include $PAGE; cover on; ./watcher $TEST"
-vi -o $ALSO $TEST $PAGE
+cover-include none
+cover-include $PAGE
+OTHERS=$(grep -oP '(?<=include ")([^"]*)(?=")' $PAGE)
+for c in $OTHERS; do
+    cover-include $c
+done
+cover on
+tmux split-window -h -l80 "./watcher $TEST"
+vi -o $ALSO $TEST $PAGE $OTHERS
