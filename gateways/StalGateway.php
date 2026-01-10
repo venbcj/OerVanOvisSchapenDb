@@ -714,4 +714,35 @@ SQL;
         return $this->db->insert_id;
     }
 
+    public function zoek_stalId_afvoer($lidId, $schaapId) {
+        $sql = <<<SQL
+    SELECT stalId, u.ubn
+    FROM tblStal st
+     join tblUbn u on (st.ubnId = u.ubnId)
+    WHERE u.lidId = :lidId and schaapId = :schaapId and isnull(rel_best)
+SQL;
+        $args = [[':lidId', $lidId, Type::INT], [':schaapId', $schaapId, Type::INT]];
+        return $this->first_row($sql, $args, [0,0]);
+    }
+
+    public function insert_tblStal_aanvoer($lidId, $ubnId_best, $schaapId, $rel_herk) {
+        $sql = <<<SQL
+    INSERT INTO tblStal
+    set lidId = :lidId, ubnId = :ubnId_best, schaapId = :schaapId, rel_herk = :rel_herk
+SQL;
+        $args = [[':lidId', $lidId, Type::INT], [':ubnId_best', $ubnId_best], [':schaapId', $schaapId, Type::INT], [':rel_herk', $rel_herk]];
+        $this->run_query($sql, $args);
+        return $this->db->insert_id;
+    }
+
+    public function update_tblStal_afvoer($rel_best, $stalId_afv) {
+        $sql = <<<SQL
+            UPDATE tblStal
+            set rel_best = :rel_best
+            WHERE stalId = :stalId_afv
+SQL;
+        $args = [[':rel_best', $rel_best], [':stalId_afv', $stalId_afv]];
+        return $this->run_query($sql, $args);
+    }
+
 }

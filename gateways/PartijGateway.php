@@ -194,4 +194,26 @@ SQL;
         return $this->first_field($sql, $args, '');
     }
 
+    public function zoek_relatie_afvoer($ubn_best) {
+        $sql = <<<SQL
+        SELECT r.relId
+        FROM tblPartij p
+         join tblRelatie r on (p.partId = r.partId)
+        WHERE p.ubn = :ubn_best and r.relatie = 'deb'
+SQL;
+        $args = [[':ubn_best', $ubn_best]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function zoek_relatie_aanvoer($ubn_herk) {
+        $sql = <<<SQL
+    SELECT r.relId
+    FROM tblPartij p
+     join tblRelatie r on (p.partId = r.partId)
+    WHERE p.ubn = :ubn_herk and r.relatie = 'cred'
+SQL;
+        $args = [[':ubn_herk', $ubn_herk]];
+        return $this->first_field($sql, $args);
+    }
+
 }

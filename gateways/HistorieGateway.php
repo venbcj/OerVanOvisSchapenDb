@@ -2087,4 +2087,44 @@ SQL;
         return $this->run_query($sql, $args);
     }
 
+    public function zoek_aanwas($schaapId) {
+        $sql = <<<SQL
+        SELECT hisId
+        FROM tblHistorie h
+         join tblStal st on (h.stalId = st.stalId)
+        WHERE schaapId = :schaapId and actId = 3 and skip = 0
+SQL;
+        $args = [[':schaapId', $schaapId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function zoek_hisId($stalId_afv, $actId) {
+        $sql = <<<SQL
+            SELECT hisId
+            FROM tblHistorie
+            WHERE stalId = :stalId_afv and actId = :actId and skip = 0
+SQL;
+        $args = [[':stalId_afv', $stalId_afv], [':actId', $actId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function insert_tblHistorie_aanvoer($stalId_aanv, $fldDag, $fldKg) {
+        $sql = <<<SQL
+            INSERT INTO tblHistorie
+            set stalId = :stalId_aanv, datum = :fldDag, actId = '2', kg = :fldKg
+SQL;
+        $args = [[':stalId_aanv', $stalId_aanv], [':fldDag', $fldDag], [':fldKg', $fldKg]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function zoek_hisId_aanv($stalId_aanv) {
+        $sql = <<<SQL
+            SELECT hisId
+            FROM tblHistorie
+            WHERE stalId = :stalId_aanv and actId = '2' and skip = 0
+SQL;
+        $args = [[':stalId_aanv', $stalId_aanv]];
+        return $this->run_query($sql, $args);
+    }
+
 }
