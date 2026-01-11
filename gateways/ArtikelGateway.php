@@ -593,4 +593,112 @@ SQL;
         return $this->run_query($sql, $args);
     }
 
+    public function zoek_in_database($recId) {
+        $sql = <<<SQL
+        SELECT naam, naamreader, stdat, enhuId, perkg, btw, regnr, relId, wdgn_v, wdgn_m, rubuId, actief
+        FROM tblArtikel
+        WHERE artId = :recId
+SQL;
+        $args = [[':recId', $recId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function wijzig_naam($updNaam, $recId) {
+        $sql = <<<SQL
+    UPDATE tblArtikel set naam = :updNaam WHERE artId = :recId
+SQL;
+        $args = [[':updNaam', $updNaam], [':recId', $recId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function wijzig_naamreader($updPres, $recId) {
+        $sql = <<<SQL
+    UPDATE tblArtikel set naamreader = :updPres WHERE artId = :recId
+SQL;
+        $args = [[':updPres', $updPres], [':recId', $recId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function wijzig_stdat($updStdat, $recId) {
+        $sql = <<<SQL
+    UPDATE tblArtikel set stdat = :updStdat WHERE artId = :recId
+SQL;
+        $args = [[':updStdat', $updStdat, Type::INT], [':recId', $recId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function wijzig_eenheid($updEenheid, $recId) {
+        $sql = <<<SQL
+    UPDATE tblArtikel set enhuId = :updEenheid WHERE artId = :recId
+SQL;
+        $args = [[':updEenheid', $updEenheid], [':recId', $recId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function wijzig_perkg($updKg, $recId) {
+        $sql = <<<SQL
+    UPDATE tblArtikel set perkg = :updKg WHERE artId = :recId
+SQL;
+        $args = [[':updKg', $updKg], [':recId', $recId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function wijzig_btw($updBtw, $recId) {
+        $sql = <<<SQL
+    UPDATE tblArtikel set btw = :updBtw WHERE artId = :recId
+SQL;
+        $args = [[':updBtw', $updBtw], [':recId', $recId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function wijzig_regnr($updRegnr, $recId) {
+        $sql = <<<SQL
+    UPDATE tblArtikel set regnr = :updRegnr WHERE artId = :recId
+SQL;
+        $args = [[':updRegnr', $updRegnr], [':recId', $recId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function wijzig_relatie($updRelatie, $recId) {
+        $sql = <<<SQL
+    UPDATE tblArtikel set relId = :updRelatie WHERE artId = :recId
+SQL;
+        $args = [[':updRelatie', $updRelatie], [':recId', $recId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
+/*Wijzig wachtdagen vlees */
+    public function wijzig_wdgn_v($updWdgn_v, $recId) {
+        $sql = <<<SQL
+    UPDATE tblArtikel set wdgn_v = :updWdgn_v WHERE artId = :recId
+SQL;
+        $args = [[':updWdgn_v', $updWdgn_v], [':recId', $recId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
+/*Wijzig wachtdagen melk */
+    public function wijzig_wdgn_m($updWdgn_m, $recId) {
+        $sql = <<<SQL
+    UPDATE tblArtikel set wdgn_m = :updWdgn_m WHERE artId = :recId
+SQL;
+        $args = [[':updWdgn_m', $updWdgn_m], [':recId', $recId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function wijzig_rubriek($updRubriek, $recId) {
+        $sql = <<<SQL
+    UPDATE tblArtikel set rubuId = :updRubriek WHERE artId = :recId
+SQL;
+        $args = [[':updRubriek', $updRubriek], [':recId', $recId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function wijzig_actief($updActief, $recId) {
+        $sql = <<<SQL
+    UPDATE tblArtikel set actief = :updActief WHERE artId = :recId
+SQL;
+        $args = [[':updActief', $updActief], [':recId', $recId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
 }

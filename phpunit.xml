@@ -36,7 +36,11 @@
         <directory>ongebruikt</directory>
         <directory>utils</directory>
       </exclude>
-      <file>./save_voerrapport.php</file>
+      <file>./Voer.php</file>
+      <file>./login.php</file>
+      <file>./validate-voer.js.php</file>
+      <file>./save_artikel.php</file>
+      <file>./menuInkoop.php</file>
     </whitelist>
   </filter>
   <logging>
