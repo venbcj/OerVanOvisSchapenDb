@@ -534,4 +534,33 @@ SQL;
         return $this->run_query($sql, $args);
     }
 
+    public function zoek_in_database($recId) {
+        $sql = <<<SQL
+        SELECT dmafsluit, i.artId, sum(nutat) nutat
+        FROM tblPeriode p
+         left join tblVoeding v on (p.periId = v.periId)
+         left join tblInkoop i on (v.inkId = i.inkId)
+        WHERE p.periId = :recId
+        GROUP BY dmafsluit, i.artId
+        SQL;
+        $args = [[':recId', $recId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function update_datum($fldDay, $recId) {
+        $sql = <<<SQL
+            UPDATE tblPeriode SET dmafsluit = :fldDay WHERE periId = :recId
+SQL;
+        $args = [[':fldDay', $fldDay], [':recId', $recId, Type::INT]];
+        $this->run_query($sql, $args);
+    }
+
+    public function delete_periode($recId) {
+        $sql = <<<SQL
+            DELETE FROM tblPeriode WHERE periId = :recId
+SQL;
+        $args = [[':recId', $recId, Type::INT]];
+        $this->run_query($sql, $args);
+    }
+
 }

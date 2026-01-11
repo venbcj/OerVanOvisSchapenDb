@@ -512,6 +512,16 @@ SQL
         );
     }
 
+    public function zoek_stdat_with_fraction($dbArtId) {
+        $sql = <<<SQL
+        SELECT stdat
+        FROM tblArtikel
+        WHERE artId = :dbArtId
+SQL;
+        $args = [[':dbArtId', $dbArtId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
     public function kzlMedicijn_combi($lidId, $artId) {
         // Declaratie MEDICIJN  Met union all kan ik een niet actief/pil reden toch tonen en kan dit en andere inactieve artikelen niet worden gekozen !!
         return $this->run_query(<<<SQL

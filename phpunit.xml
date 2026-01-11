@@ -36,13 +36,7 @@
         <directory>ongebruikt</directory>
         <directory>utils</directory>
       </exclude>
-      <file>./InsGrWijzigingUbn.php</file>
-      <file>./login.php</file>
-      <file>./vw_HistorieDm.php</file>
-      <file>./post_readerUbn.php</file>
-      <file>./paginas.php</file>
-      <file>./menu1.php</file>
-      <file>./select-all.js.php</file>
+      <file>./save_voerrapport.php</file>
     </whitelist>
   </filter>
   <logging>

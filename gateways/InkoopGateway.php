@@ -328,4 +328,60 @@ SQL;
         return $this->run_query($sql, $args);
     }
 
+    public function queryStock($dbArtId) {
+        $sql = <<<SQL
+    SELECT sum(i.inkat-coalesce(v.vbrat,0)) vrdat
+    FROM tblInkoop i
+     left join (
+        SELECT i.inkId, sum(v.nutat*v.stdat) vbrat
+        FROM tblVoeding v
+         join tblInkoop i on (v.inkId = i.inkId)
+        WHERE i.artId = :dbArtId
+        GROUP BY i.inkId
+     ) v on (i.inkId = v.inkId)
+    WHERE i.artId = :dbArtId
+SQL;
+        $args = [[':dbArtId', $dbArtId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function zoek_inkId($dbArtId) {
+        $sql = <<<SQL
+        SELECT min(i.inkId) inkId
+        FROM tblInkoop i
+         left join (
+            SELECT v.inkId, sum(v.nutat*v.stdat) vbrat
+            FROM tblVoeding v
+             join tblInkoop i on (i.inkId = v.inkId)
+            WHERE i.artId = :dbArtId
+            GROUP BY v.inkId
+         ) v on (i.inkId = v.inkId)
+        WHERE i.artId = :dbArtId and i.inkat-coalesce(v.vbrat,0) > 0
+SQL;
+        $args = [[':dbArtId', $dbArtId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function zoek_aantal_inkIds($dbArtId, $inkId_ingebruik) {
+        $sql = <<<SQL
+        SELECT count(inkId) aant
+        FROM tblInkoop
+        WHERE artId = :dbArtId and inkId >= :inkId_ingebruik
+SQL;
+        $args = [[':dbArtId', $dbArtId, Type::INT], [':inkId_ingebruik', $inkId_ingebruik]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function stock_van_ink($inkId) {
+        $sql = <<<SQL
+        SELECT i.inkat - sum(coalesce(v.nutat,0)) stock
+        FROM tblInkoop i
+         left join tblVoeding v on (i.inkId = v.inkId)
+        WHERE i.inkId = :inkId
+        GROUP BY i.inkat
+SQL;
+        $args = [[':inkId', $inkId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
 }
