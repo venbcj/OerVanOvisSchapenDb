@@ -34,11 +34,11 @@ foreach ($multip_array as $recId => $id) {
             }
         }
         if ($reader == 'Agrident' && $fldSort <> $ras['sort']) {
-            $ras_gateway->updateScan($lidId, $fldScan, $recId);
+            $ras_gateway->updateSort($lidId, $fldSort, $recId);
         }
         if ($fldActief <> $ras['actief']) {
             $ras_gateway->set_actief($recId, $fldActief);
-            header("Location:" . Url::getWebroot() . "Ras.php");
+            Response::redirect(Url::getWebroot() . "Ras.php");
         }
     }
 }

@@ -65,7 +65,6 @@ class ControllersTest extends IntegrationCase {
             ['MeldOmnummer.php', [], []],
             ['MeldUitval.php', [], []],
             ['OoilamSelectie.php', [], []],
-            ['Ras.php', [], []],
             ['Relatie.php', ['partij-1'], ['txtpId_' => 11, 'txtNaam_' => 'nodig']],
             ['Rubrieken.php', [], []],
             ['Saldoberekening.php', [], []],
@@ -154,7 +153,6 @@ OoikaartAll.php
 OoilamSelectie.php
 Rapport1.php
 Rapport.php
-Ras.php
 Readerversies.php
 ResultHok.php
 ResultSchaap.php
