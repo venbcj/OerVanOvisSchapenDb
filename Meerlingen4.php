@@ -1,238 +1,249 @@
-<?php 
+
+<?php
 
 require_once("autoload.php");
-
 $versie = '26-10-2018'; /* gemaakt */
 $versie = '28-12-2023'; /* and h.skip = 0 toegevoegd bij tblHistorie sql voorzien van enkele quotes */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = 'top' align = center > gewijzigd naar <TD valign = 'top' align = 'center'> 31-12-24 include login voor include header gezet */
-
  Session::start();
- ?>
+?>
 <!DOCTYPE html>
 <html>
 <head>
 <title>Rapport</title>
 </head>
 <body>
-
 <?php
 $titel = 'Meerlingen aanwezig';
 $file = "Meerlingen4.php";
-include "login.php"; ?>
-
+include "login.php";
+?>
         <TD valign = 'top' align = 'center'>
 <?php
-if (Auth::is_logged_in()) { if($modtech ==1) {
-$schaap_gateway = new SchaapGateway();
-
-$huidigjaar = date("Y"); $begin_datum = '1-01-'.$huidigjaar; $eind_datum = '1-03-'.$huidigjaar;
-
-$var1dag = 60*60*24;
-    $maak_datum = strtotime($eind_datum) - $var1dag; $eind_datum = date("d-m-Y", $maak_datum);
-    /*if (isset($_GET['pstId'])) {$raak = $_GET['pstId']; }*/ ?>
-
+if (Auth::is_logged_in()) {
+    if ($modtech == 1) {
+        $schaap_gateway = new SchaapGateway();
+        $huidigjaar = date("Y");
+        $begin_datum = '1-01-' . $huidigjaar;
+        $eind_datum = '1-03-' . $huidigjaar;
+        $var1dag = 60 * 60 * 24;
+        $maak_datum = strtotime($eind_datum) - $var1dag;
+        $eind_datum = date("d-m-Y", $maak_datum);
+       /*
+           if (isset($_GET['pstId'])) {
+               $raak = $_GET['pstId'];
+           }
+        */
+?>
 <form action= "Meerlingen4.php" method="post">
-<table border = 0> 
-<tr align = "center" valign = 'top' ><td colspan = 10>    
-
+<table border = 0>
+<tr align = "center" valign = 'top' ><td colspan = 10>
 <table border = 0>
 <tr>
- 
-<?php if (isset($raak)) { ?>
+<?php
+        if (isset($raak)) {
+?>
  <td>
-<?php echo View::link_to('print pagina', 'Meerlingen4_pdf.php?Id='.$raak, ['style' => 'color: blue']); ?>
+<?php echo View::link_to('print pagina', 'Meerlingen4_pdf.php?Id=' . $raak, ['style' => 'color: blue']); ?>
 </td>
-<?php } elseif (isset($gekozen_ooi)) { ?>
- <td> 
-<?php echo View::link_to('print pagina', 'Meerlingen4_pdf.php?Id='.$gekozen_ooi, ['style' => 'color: blue']); ?>
+<?php
+        } elseif (isset($gekozen_ooi)) {
+?>
+ <td>
+<?php echo View::link_to('print pagina', 'Meerlingen4_pdf.php?Id=' . $gekozen_ooi, ['style' => 'color: blue']); ?>
 </td>
-<?php } ?>
+<?php
+        }
+?>
 </tr>
-
-</table>        </td></tr>    
-
+</table>        </td></tr>
 <tr><td colspan = 10 align = "center"><h3>lammeren per moederdier </td></tr>
 <tr><td colspan = 10 ><hr></td></tr>
 <tr><td></td></tr>
 <!--    Einde Gegevens tbv MOEDERDIER        -->
 <tr><td colspan = 50><table border = 0>
-
 <?php
-
-if(isset($_POST['ascTotat'])) {    $order = "sum(worp)"; } 
-elseif(isset($_POST['descTotat'])) { $order = "sum(worp) desc"; }
-else { $order = "ooi"; }
-$ooien_met_meerlingworpen = $schaap_gateway->ooien_met_meerlingworpen0($lidId, $Karwerk, $order);
-
-while($jm = $ooien_met_meerlingworpen->fetch_assoc()) { 
-
-    $ooiId = $jm['schaapId']; 
-    $ooi = $jm['ooi'];
-    $totat = $jm['totat'];
-    
-
-unset($geengeslacht);
-$zoek_aantal_geengeslacht_tbv_hoofding = $schaap_gateway->zoek_aantal_geengeslacht_tbv_hoofding($ooiId, $lidId);
-
-while($ga = $zoek_aantal_geengeslacht_tbv_hoofding->fetch_assoc()) { $geengeslacht = $ga['aant']; }
- ?>
-
+        if (isset($_POST['ascTotat'])) {
+            $order = "sum(worp)";
+        } elseif (isset($_POST['descTotat'])) {
+            $order = "sum(worp) desc";
+        } else {
+            $order = "ooi";
+        }
+        $ooien_met_meerlingworpen = $schaap_gateway->ooien_met_meerlingworpen0($lidId, $Karwerk, $order);
+        while ($jm = $ooien_met_meerlingworpen->fetch_assoc()) {
+            $ooiId = $jm['schaapId'];
+            $ooi = $jm['ooi'];
+            $totat = $jm['totat'];
+            unset($geengeslacht);
+            $zoek_aantal_geengeslacht_tbv_hoofding = $schaap_gateway->zoek_aantal_geengeslacht_tbv_hoofding($ooiId, $lidId);
+            while ($ga = $zoek_aantal_geengeslacht_tbv_hoofding->fetch_assoc()) {
+                $geengeslacht = $ga['aant'];
+            }
+?>
 <tr height = 30 valign = 'bottom'>
- <td style = "font-size : 18px;"> <b><?php echo $ooi; ?></b></td>
- <td style = "font-size : 12px;" ><?php echo 'Totaal : '.$totat.'&nbsp'; ?>
+<td style = "font-size : 18px;"> <b><?php echo $ooi; ?>
+</b></td>
+<td style = "font-size : 12px;" ><?php echo 'Totaal : ' . $totat . '&nbsp'; ?>
      <input type = "submit" name="ascTotat"  value = "A" style= "font-size:7px";>
     <input type = "submit" name="descTotat" value = "Z" style= "font-size:7px";></td>
 </tr>
-
 <tr align = "center" style = "font-size : 14px;"  >
  <td></td>
  <td width = 100><b> maand </b><hr></td>
  <td width = 100><b> Aantal </b><hr></td>
  <td colspan = 2 width = 120><b> ooitjes </b><hr></td>
- <td colspan = 2 width = 120><b> rammen </b><hr></td> 
-<?php if(isset($geengeslacht) && $geengeslacht > 0) { ?>
+ <td colspan = 2 width = 120><b> rammen </b><hr></td>
+<?php
+if (isset($geengeslacht) && $geengeslacht > 0) {
+?>
  <td colspan = 2 width = 120> onbekend <hr></td>
-<?php } ?> 
+<?php
+}
+?>
 </tr>
-
 <?php
 $maand = array(1 => 'Jan','Feb','Mrt','Apr','Mei','Jun','Jul','Aug','Sep','Okt','Nov','Dec');
- $zoek_meerlingen_ooi = $schaap_gateway->zoek_meerlingen_ooi($lidId, $ooiId);
-    while($mrl = $zoek_meerlingen_ooi->fetch_assoc()) {
-                $mnd = $mrl['mnd'];
-                $jaar = $mrl['jaar']; $MaandJaar = $maand[$mnd].' '.$jaar;
-                $aant = $mrl['aant'];
-                $volwId = $mrl['volwId']; 
-
-
-unset($ooi_st);
-unset($werknr_ooi);
-$zoek_aantal_ooitjes = $schaap_gateway->zoek_aantal_ooitjes($volwId, $mnd, $jaar);
-
-while($oa = $zoek_aantal_ooitjes->fetch_assoc()) { $ooi_st = $oa['aant']; }
-$zoek_werknr_ooitjes = $schaap_gateway->zoek_werknr_ooitjes($Karwerk, $volwId, $mnd, $jaar);
-
-while($ow = $zoek_werknr_ooitjes->fetch_assoc()) { 
-    $wnr = $ow['werknr'];
-    $kg = $ow['kg']; if(isset($kg)) { $kg = $kg.' kg'; }
-    
-    $werknr_ooi[] = array($wnr, $kg);
-}
-
-
-unset($ram_st);
-unset($werknr_ram);
-$zoek_aantal_ramtjes = $schaap_gateway->zoek_aantal_ramtjes($volwId, $mnd, $jaar);
-
-while($ra = $zoek_aantal_ramtjes->fetch_assoc()) { $ram_st = $ra['aant']; }
-$zoek_werknr_ramtjes = $schaap_gateway->zoek_werknr_ramtjes($Karwerk, $volwId, $mnd, $jaar);
-
-while($rw = $zoek_werknr_ramtjes->fetch_assoc()) { 
-    $wnr = $rw['werknr'];
-    $kg = $rw['kg']; if(isset($kg)) { $kg = $kg.' kg'; }
-    
-    $werknr_ram[] = array($wnr, $kg);
-}
-
-
-unset($gg_st); // geen geslacht
-unset($werknr_gg);
-$zoek_aantal_geengeslacht = $schaap_gateway->zoek_aantal_geengeslacht($volwId, $mnd, $jaar);
-
-while($ga = $zoek_aantal_geengeslacht->fetch_assoc()) { $gg_st = $ga['aant']; }
-$zoek_werknr_geengeslacht = $schaap_gateway->zoek_werknr_geengeslacht($Karwerk, $volwId, $mnd, $jaar);
-
-while($gw = $zoek_werknr_geengeslacht->fetch_assoc()) { 
-    $wnr = $gw['werknr'];
-    $kg = $gw['kg']; if(isset($kg)) { $kg = $kg.' kg'; }
-    
-    $werknr_gg[] = array($wnr, $kg);
-}
-
-    ?>    
+$zoek_meerlingen_ooi = $schaap_gateway->zoek_meerlingen_ooi($lidId, $ooiId);
+while ($mrl = $zoek_meerlingen_ooi->fetch_assoc()) {
+    $mnd = $mrl['mnd'];
+    $jaar = $mrl['jaar'];
+    $MaandJaar = $maand[$mnd] . ' ' . $jaar;
+    $aant = $mrl['aant'];
+    $volwId = $mrl['volwId'];
+    unset($ooi_st);
+    unset($werknr_ooi);
+    $zoek_aantal_ooitjes = $schaap_gateway->zoek_aantal_ooitjes($volwId, $mnd, $jaar);
+    while ($oa = $zoek_aantal_ooitjes->fetch_assoc()) {
+        $ooi_st = $oa['aant'];
+    }
+    $zoek_werknr_ooitjes = $schaap_gateway->zoek_werknr_ooitjes($Karwerk, $volwId, $mnd, $jaar);
+    while ($ow = $zoek_werknr_ooitjes->fetch_assoc()) {
+        $wnr = $ow['werknr'];
+        $kg = $ow['kg']; if (isset($kg)) {
+        $kg = $kg . ' kg';
+        }
+        $werknr_ooi[] = array($wnr, $kg);
+    }
+    unset($ram_st);
+    unset($werknr_ram);
+    $zoek_aantal_ramtjes = $schaap_gateway->zoek_aantal_ramtjes($volwId, $mnd, $jaar);
+    while ($ra = $zoek_aantal_ramtjes->fetch_assoc()) {
+        $ram_st = $ra['aant'];
+    }
+    $zoek_werknr_ramtjes = $schaap_gateway->zoek_werknr_ramtjes($Karwerk, $volwId, $mnd, $jaar);
+    while ($rw = $zoek_werknr_ramtjes->fetch_assoc()) {
+        $wnr = $rw['werknr'];
+        $kg = $rw['kg']; if (isset($kg)) {
+        $kg = $kg . ' kg';
+        }
+        $werknr_ram[] = array($wnr, $kg);
+    }
+    unset($gg_st); // geen geslacht
+    unset($werknr_gg);
+    $zoek_aantal_geengeslacht = $schaap_gateway->zoek_aantal_geengeslacht($volwId, $mnd, $jaar);
+    while ($ga = $zoek_aantal_geengeslacht->fetch_assoc()) {
+        $gg_st = $ga['aant'];
+    }
+    $zoek_werknr_geengeslacht = $schaap_gateway->zoek_werknr_geengeslacht($Karwerk, $volwId, $mnd, $jaar);
+    while ($gw = $zoek_werknr_geengeslacht->fetch_assoc()) {
+        $wnr = $gw['werknr'];
+        $kg = $gw['kg']; if (isset($kg)) {
+        $kg = $kg . ' kg';
+        }
+        $werknr_gg[] = array($wnr, $kg);
+    }
+?>
 <tr align = "center" style = "font-size : 15px";>
  <td>  </td>
- <td> <?php echo $MaandJaar ?> </td>
-
- <td align="center" style = "font-size : 13px";> <?php echo $aant; ?> </td>
-
- <td align="right" style="font-size: 13px";> <?php if($ooi_st > 0) { echo $ooi_st; } ?> </td>
+ <td> <?php echo $MaandJaar ?>
+ </td>
+ <td align="center" style = "font-size : 13px";> <?php echo $aant; ?>
+ </td>
+ <td align="right" style="font-size: 13px";>
+<?php
+    if ($ooi_st > 0) {
+        echo $ooi_st;
+    }
+?>
+ </td>
  <td style = "font-size : 11px"; >
 <?php
-if(isset($werknr_ooi)) {
-    foreach ($werknr_ooi as $array) {
-        foreach ($array as $key => $value) {
-            echo $value.'&nbsp&nbsp';
+    if (isset($werknr_ooi)) {
+        foreach ($werknr_ooi as $array) {
+            foreach ($array as $key => $value) {
+                echo $value . '&nbsp&nbsp';
+            }
+            echo '<br>';
         }
-        echo '<br>';
     }
-}
-
- ?> </td>
- 
- <td align="right" style = "font-size : 13px";> <?php if($ram_st > 0) { echo $ram_st; } ?> </td>
-
+?>
+ </td>
+ <td align="right" style = "font-size : 13px";>
+<?php
+    if ($ram_st > 0) {
+        echo $ram_st;
+    }
+?>
+ </td>
  <td style = "font-size : 11px"; >
 <?php
-if(isset($werknr_ram)) {
-    foreach ($werknr_ram as $array) {
-        foreach ($array as $key => $value) {
-            echo $value.'&nbsp&nbsp';
+    if (isset($werknr_ram)) {
+        foreach ($werknr_ram as $array) {
+            foreach ($array as $key => $value) {
+                echo $value . '&nbsp&nbsp';
+            }
+            echo '<br>';
         }
-        echo '<br>';
     }
-}
-
- ?> </td>
- 
- <td align="right" style = "font-size : 13px";> <?php if($gg_st > 0) { echo $gg_st; } ?> </td>
-
+?>
+ </td>
+ <td align="right" style = "font-size : 13px";>
+<?php
+    if ($gg_st > 0) {
+        echo $gg_st;
+    }
+?>
+ </td>
  <td style = "font-size : 11px"; >
 <?php
-if(isset($werknr_gg)) {
-    foreach ($werknr_gg as $array) {
-        foreach ($array as $key => $value) {
-            echo $value.'&nbsp&nbsp';
+    if (isset($werknr_gg)) {
+        foreach ($werknr_gg as $array) {
+            foreach ($array as $key => $value) {
+                echo $value . '&nbsp&nbsp';
+            }
+            echo '<br>';
         }
-        echo '<br>';
     }
-}
-
- ?> </td>
- 
+?>
+ </td>
  <td align="left" style = "font-size : 11px";>  </td>
- 
  <td align = 'right'>  </td>
-
 </tr> <tr>
 <tr><td>
-
 </td>
 </tr>
-<?php 
-    }
-// Einde while($mrl = mysqli_fetch_assoc($zoek_meerlingen_ooi)) 
-}         //$zoek_ooien_uit_periode
-?>
-</table>        
-
-<!--    Einde Gegevens tbv LAM    -->    
-
-</td></tr></table>
-</form>
-
-</TD>
-<?php
-} else {
- ?>
- <img src='ooikaart_php.jpg'  width='970' height='550'/>
 <?php
 }
-include "menuRapport1.php";
+// Einde while($mrl = mysqli_fetch_assoc($zoek_meerlingen_ooi))
+        }
+        //$zoek_ooien_uit_periode
+?>
+</table>
+<!--    Einde Gegevens tbv LAM    -->
+</td></tr></table>
+</form>
+</TD>
+<?php
+    } else {
+?>
+ <img src='ooikaart_php.jpg'  width='970' height='550'/>
+<?php
+    }
+    include "menuRapport1.php";
 }
 ?>
 </tr>
 </table>
-
 </body>
 </html>
