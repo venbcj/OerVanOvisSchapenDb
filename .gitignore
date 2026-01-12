@@ -13,6 +13,4 @@ log/*
 BRIGHT
 *.zip
 production*sql
-subset.list
-tests.files
-tests.list
+experimental/*

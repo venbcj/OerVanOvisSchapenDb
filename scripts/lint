@@ -1,0 +1,14 @@
+#!/bin/bash
+[ -z "$1" ] && echo "usage: $0 sourcefile" && exit
+FILE=$1
+[ ! -f $FILE ] && echo "file $1 not found" && exit
+echo 'spread out lines'
+sed -i -f scripts/_before_phpcbf.sed $FILE
+# het lukt me niet om in sed open witregels weg te halen
+# /^$/d zou moeten werken... nu ja, dan maar met awk:
+echo 'remove empty lines'
+awk -i inplace NF $FILE
+echo 'run linter'
+phpcbf $FILE
+echo 'clean up'
+sed -i -f scripts/_after_phpcbf.sed $FILE
