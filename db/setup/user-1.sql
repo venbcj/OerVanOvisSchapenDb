@@ -1,8 +1,3 @@
-truncate tblLeden;
-truncate tblUbn;
-truncate tblRedenuser;
-truncate tblEenheiduser;
-
 INSERT INTO tblLeden(login,passw,lidId,alias,
     meld,tech,fin,beheer,
     relnr, urvo, prvo,

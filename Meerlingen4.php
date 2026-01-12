@@ -68,10 +68,14 @@ FROM (
     SELECT mdr.schaapId, right(mdr.levensnummer,$Karwerk) ooi, v.volwId, count(lam.schaapId) worp
     FROM tblSchaap mdr
      join tblStal stm on (stm.schaapId = mdr.schaapId)
+     join tblUbn um on stm.ubnId = um.ubnId
      join tblVolwas v on (mdr.schaapId = v.mdrId)
      join tblSchaap lam on (v.volwId = lam.volwId)
      join tblStal st on (lam.schaapId = st.schaapId)
-    WHERE isnull(stm.rel_best) and stm.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+     join tblUbn u on st.ubnId = u.ubnId
+    WHERE isnull(stm.rel_best)
+ and um.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+ and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
     GROUP BY mdr.schaapId, right(mdr.levensnummer,$Karwerk), v.volwId
     HAVING count(v.volwId) > 0
      ) perWorp
@@ -93,7 +97,9 @@ SELECT count(s.schaapId) aant
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
  join tblVolwas v on (s.volwId = v.volwId)
-WHERE isnull(s.geslacht) and v.mdrId = '".mysqli_real_escape_string($db,$ooiId)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+WHERE isnull(s.geslacht)
+ and v.mdrId = '".mysqli_real_escape_string($db,$ooiId)."'
+ and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die(mysqli_error($db));
 
 while($ga = mysqli_fetch_assoc($zoek_aantal_geengeslacht_tbv_hoofding)) { $geengeslacht = $ga['aant']; }
@@ -126,14 +132,16 @@ FROM tblSchaap mdr
  join tblVolwas v on (v.mdrId = mdr.schaapId)
  join tblSchaap lam on (v.volwId = lam.volwId)
  join tblStal st on (st.schaapId = lam.schaapId)
+ join tblUbn u ON u.ubnId = st.ubnId
  join tblHistorie h on (st.stalId = h.stalId)
- 
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and mdr.schaapId = '".mysqli_real_escape_string($db,$ooiId)."' and h.actId = 1 and h.skip = 0
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+ and mdr.schaapId = '".mysqli_real_escape_string($db,$ooiId)."'
+ and h.actId = 1
+ and h.skip = 0
 GROUP BY date_format(h.datum,'%Y%m'), date_format(h.datum,'%Y'), v.volwId
 ORDER BY date_format(h.datum,'%Y%m') desc
 ") or die (mysqli_error($db));    
-    while($mrl = mysqli_fetch_assoc($zoek_meerlingen_ooi))
-            {
+    while($mrl = mysqli_fetch_assoc($zoek_meerlingen_ooi)) {
                 $mnd = $mrl['mnd'];
                 $jaar = $mrl['jaar']; $MaandJaar = $maand[$mnd].' '.$jaar;
                 $aant = $mrl['aant'];
@@ -147,7 +155,12 @@ SELECT count(s.schaapId) aant
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
  join tblHistorie h on (st.stalId = h.stalId)
-WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."' and s.geslacht = 'ooi' and h.actId = 1 and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."' and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."' and h.skip = 0
+WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."'
+ and s.geslacht = 'ooi'
+ and h.actId = 1
+ and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."'
+ and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."'
+ and h.skip = 0
         
 ") or die(mysqli_error($db));
 
@@ -158,7 +171,13 @@ SELECT coalesce(right(s.levensnummer,$Karwerk),' ------- ') werknr, kg
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
  join tblHistorie h on (st.stalId = h.stalId)
-WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."' and s.geslacht = 'ooi' and h.actId = 1 and isnull(st.rel_best) and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."' and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."' and h.skip = 0
+WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."'
+ and s.geslacht = 'ooi'
+ and h.actId = 1
+ and isnull(st.rel_best)
+ and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."'
+ and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."'
+ and h.skip = 0
 GROUP BY s.schaapId
         
 ") or die(mysqli_error($db));
@@ -178,7 +197,12 @@ SELECT count(s.schaapId) aant
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
  join tblHistorie h on (st.stalId = h.stalId)
-WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."' and s.geslacht = 'ram' and h.actId = 1 and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."' and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."' and h.skip = 0
+WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."'
+ and s.geslacht = 'ram'
+ and h.actId = 1
+ and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."'
+ and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."'
+ and h.skip = 0
 
 ") or die(mysqli_error($db));
 
@@ -189,7 +213,13 @@ SELECT coalesce(right(s.levensnummer,$Karwerk),' ------- ') werknr, kg
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
  join tblHistorie h on (st.stalId = h.stalId)
-WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."' and s.geslacht = 'ram' and h.actId = 1 and isnull(st.rel_best) and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."' and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."' and h.skip = 0
+WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."'
+ and s.geslacht = 'ram'
+ and h.actId = 1
+ and isnull(st.rel_best)
+ and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."'
+ and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."'
+ and h.skip = 0
 GROUP BY s.schaapId
         
 ") or die(mysqli_error($db));
@@ -209,7 +239,12 @@ SELECT count(s.schaapId) aant
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
  join tblHistorie h on (st.stalId = h.stalId)
-WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."' and isnull(s.geslacht) and h.actId = 1 and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."' and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."' and h.skip = 0
+WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."'
+ and isnull(s.geslacht)
+ and h.actId = 1
+ and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."'
+ and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."'
+ and h.skip = 0
 
 ") or die(mysqli_error($db));
 
@@ -220,7 +255,13 @@ SELECT coalesce(right(s.levensnummer,$Karwerk),' ------- ') werknr, kg
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
  join tblHistorie h on (st.stalId = h.stalId)
-WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."' and isnull(s.geslacht) and h.actId = 1 and isnull(st.rel_best) and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."' and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."' and h.skip = 0
+WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."'
+ and isnull(s.geslacht)
+ and h.actId = 1
+ and isnull(st.rel_best)
+ and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."'
+ and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."'
+ and h.skip = 0
 GROUP BY s.schaapId
         
 ") or die(mysqli_error($db));
@@ -292,8 +333,11 @@ if(isset($werknr_gg)) {
 
 </td>
 </tr>
-<?php } // Einde while($mrl = mysqli_fetch_assoc($zoek_meerlingen_ooi)) 
-}         //$zoek_ooien_uit_periode ?>
+<?php 
+    }
+// Einde while($mrl = mysqli_fetch_assoc($zoek_meerlingen_ooi)) 
+}         //$zoek_ooien_uit_periode
+?>
 </table>        
 
 <!--    Einde Gegevens tbv LAM    -->    
@@ -302,8 +346,15 @@ if(isset($werknr_gg)) {
 </form>
 
 </TD>
-<?php } else { ?> <img src='ooikaart_php.jpg'  width='970' height='550'/> <?php }
-include "menuRapport1.php"; } ?>
+<?php
+} else {
+ ?>
+ <img src='ooikaart_php.jpg'  width='970' height='550'/>
+<?php
+}
+include "menuRapport1.php";
+}
+?>
 </tr>
 </table>
 

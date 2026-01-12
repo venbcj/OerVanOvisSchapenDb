@@ -1,0 +1,5 @@
+#!/bin/bash
+[ -z "$1" ] && echo "usage: $0 fixture" && exit
+FIXTURE=tests/fixtures/$1.sql
+[ ! -f $FIXTURE ] && "fixture file $1 not found" && exit
+cat $FIXTURE | scripts/console

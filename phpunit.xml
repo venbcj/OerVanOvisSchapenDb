@@ -36,11 +36,9 @@
         <directory>ongebruikt</directory>
         <directory>utils</directory>
       </exclude>
-      <file>./Ras.php</file>
+      <file>./Meerlingen4.php</file>
       <file>./login.php</file>
-      <file>./validate-ras.js.php</file>
-      <file>./save_ras.php</file>
-      <file>./menuBeheer.php</file>
+      <file>./menuRapport1.php</file>
     </whitelist>
   </filter>
   <logging>

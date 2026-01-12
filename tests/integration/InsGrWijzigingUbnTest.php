@@ -9,6 +9,7 @@ class InsGrWijzigingUbnTest extends IntegrationCase {
         $this->assertNoNoise();
     }
 
+    // NOTE dit faalt soms in post_readerUbn op een niet-bestaande ubn_best, dus een falende impagrident_gateway->zoek_data_reader
     public function test_post() {
         $this->runSQL("INSERT INTO tblUbn(ubnId, ubn, lidId) VALUES(3, 13, 2)"); // ubn 13 is in gebruik bij debiteur, 14 bij crediteur
         $this->runSQL("INSERT INTO impAgrident(levensnummer, ubnId) VALUES('4', 3)");
