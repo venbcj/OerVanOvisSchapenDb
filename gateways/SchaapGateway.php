@@ -3595,17 +3595,19 @@ SQL
         );
     }
 
-    public function ooien_met_meerlingworpen($lidId, $Karwerk, $order) {
-        return $this->run_query(
-            <<<SQL
+    // bijna-duplicaat: het verschil tussen __0 en ___1 is de HAVING-grens
+    public function ooien_met_meerlingworpen1($lidId, $Karwerk, $order) {
+        $sql = <<<SQL
 SELECT schaapId, ooi, sum(worp) totat
 FROM (
     SELECT mdr.schaapId, right(mdr.levensnummer,$Karwerk) ooi, v.volwId, count(lam.schaapId) worp
     FROM tblSchaap mdr
      join tblStal stm on (stm.schaapId = mdr.schaapId)
+     join tblUbn um on stm.ubnId = um.ubnId
      join tblVolwas v on (mdr.schaapId = v.mdrId)
      join tblSchaap lam on (v.volwId = lam.volwId)
      join tblStal st on (lam.schaapId = st.schaapId)
+     join tblUbn u on st.ubnId = u.ubnId
     WHERE isnull(stm.rel_best)
  and stm.lidId = :lidId
  and st.lidId = :lidId
@@ -3614,9 +3616,9 @@ FROM (
      ) perWorp
 GROUP BY schaapId, ooi
 ORDER BY $order
-SQL
-        , [[':lidId', $lidId, Type::INT]]
-        );
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->run_query($sql, $args);
     }
 
     public function alle_ooien_met_meerlingworpen($lidId, $Karwerk, $order, $jaar1, $jaar2, $jaar3, $jaar4) {
@@ -5260,6 +5262,174 @@ SQL;
     UPDATE tblSchaap set levensnummer = NULL WHERE schaapId = :schaapId
 SQL;
         $args = [[':schaapId', $schaapId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
+    // bijna-duplicaat: het verschil tussen __0 en ___1 is de HAVING-grens
+    public function ooien_met_meerlingworpen0($lidId, $Karwerk, $order) {
+        $sql = <<<SQL
+SELECT schaapId, ooi, sum(worp) totat
+FROM (
+    SELECT mdr.schaapId, right(mdr.levensnummer,:Karwerk) ooi, v.volwId, count(lam.schaapId) worp
+    FROM tblSchaap mdr
+     join tblStal stm on (stm.schaapId = mdr.schaapId)
+     join tblUbn um on stm.ubnId = um.ubnId
+     join tblVolwas v on (mdr.schaapId = v.mdrId)
+     join tblSchaap lam on (v.volwId = lam.volwId)
+     join tblStal st on (lam.schaapId = st.schaapId)
+     join tblUbn u on st.ubnId = u.ubnId
+    WHERE isnull(stm.rel_best)
+ and um.lidId = :lidId
+ and u.lidId = :lidId
+    GROUP BY mdr.schaapId, right(mdr.levensnummer,:Karwerk), v.volwId
+    HAVING count(v.volwId) > 0
+     ) perWorp
+GROUP BY schaapId, ooi
+ORDER BY :order
+SQL;
+        $args = [[':Karwerk', $Karwerk], [':lidId', $lidId, Type::INT], [':order', $order]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function zoek_aantal_geengeslacht_tbv_hoofding($ooiId, $lidId) {
+        $sql = <<<SQL
+    SELECT count(s.schaapId) aant
+    FROM tblSchaap s
+     join tblStal st on (st.schaapId = s.schaapId)
+     join tblVolwas v on (s.volwId = v.volwId)
+    WHERE isnull(s.geslacht)
+     and v.mdrId = :ooiId
+     and st.lidId = :lidId
+SQL;
+        $args = [[':ooiId', $ooiId, Type::INT], [':lidId', $lidId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function zoek_meerlingen_ooi($lidId, $ooiId) {
+        $sql = <<<SQL
+     SELECT date_format(h.datum,'%m')*1 mnd, date_format(h.datum,'%Y') jaar, count(lam.schaapId) aant, v.volwId
+     FROM tblSchaap mdr
+      join tblVolwas v on (v.mdrId = mdr.schaapId)
+      join tblSchaap lam on (v.volwId = lam.volwId)
+      join tblStal st on (st.schaapId = lam.schaapId)
+      join tblUbn u ON u.ubnId = st.ubnId
+      join tblHistorie h on (st.stalId = h.stalId)
+     WHERE u.lidId = :lidId
+      and mdr.schaapId = :ooiId
+      and h.actId = 1
+      and h.skip = 0
+     GROUP BY date_format(h.datum,'%Y%m'), date_format(h.datum,'%Y'), v.volwId
+     ORDER BY date_format(h.datum,'%Y%m') desc
+SQL;
+        $args = [[':lidId', $lidId, Type::INT], [':ooiId', $ooiId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }    
+
+    public function zoek_aantal_ooitjes($volwId, $mnd, $jaar) {
+        $sql = <<<SQL
+    SELECT count(s.schaapId) aant
+    FROM tblSchaap s
+     join tblStal st on (st.schaapId = s.schaapId)
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE s.volwId = :volwId
+     and s.geslacht = 'ooi'
+     and h.actId = 1
+     and date_format(h.datum,'%m')*1 = :mnd
+     and date_format(h.datum,'%Y') = :jaar
+     and h.skip = 0
+SQL;
+        $args = [[':volwId', $volwId, Type::INT], [':mnd', $mnd], [':jaar', $jaar]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function zoek_werknr_ooitjes($Karwerk, $volwId, $mnd, $jaar) {
+        $sql = <<<SQL
+    SELECT coalesce(right(s.levensnummer,:Karwerk),' ------- ') werknr, kg
+    FROM tblSchaap s
+     join tblStal st on (st.schaapId = s.schaapId)
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE s.volwId = :volwId
+     and s.geslacht = 'ooi'
+     and h.actId = 1
+     and isnull(st.rel_best)
+     and date_format(h.datum,'%m')*1 = :mnd
+     and date_format(h.datum,'%Y') = :jaar
+     and h.skip = 0
+    GROUP BY s.schaapId
+SQL;
+        $args = [[':Karwerk', $Karwerk], [':volwId', $volwId, Type::INT], [':mnd', $mnd], [':jaar', $jaar]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function zoek_aantal_ramtjes($volwId, $mnd, $jaar) {
+        $sql = <<<SQL
+    SELECT count(s.schaapId) aant
+    FROM tblSchaap s
+     join tblStal st on (st.schaapId = s.schaapId)
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE s.volwId = :volwId
+     and s.geslacht = 'ram'
+     and h.actId = 1
+     and date_format(h.datum,'%m')*1 = :mnd
+     and date_format(h.datum,'%Y') = :jaar
+     and h.skip = 0
+SQL;
+        $args = [[':volwId', $volwId, Type::INT], [':mnd', $mnd], [':jaar', $jaar]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function zoek_aantal_geengeslacht($volwId, $mnd, $jaar) {
+        $sql = <<<SQL
+    SELECT count(s.schaapId) aant
+    FROM tblSchaap s
+     join tblStal st on (st.schaapId = s.schaapId)
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE s.volwId = :volwId
+     and isnull(s.geslacht)
+     and h.actId = 1
+     and date_format(h.datum,'%m')*1 = :mnd
+     and date_format(h.datum,'%Y') = :jaar
+     and h.skip = 0
+SQL;
+        $args = [[':volwId', $volwId, Type::INT], [':mnd', $mnd], [':jaar', $jaar]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function zoek_werknr_ramtjes($Karwerk, $volwId, $mnd, $jaar) {
+        $sql = <<<SQL
+    SELECT coalesce(right(s.levensnummer,:Karwerk),' ------- ') werknr, kg
+    FROM tblSchaap s
+     join tblStal st on (st.schaapId = s.schaapId)
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE s.volwId = :volwId
+     and s.geslacht = 'ram'
+     and h.actId = 1
+     and isnull(st.rel_best)
+     and date_format(h.datum,'%m')*1 = :mnd
+     and date_format(h.datum,'%Y') = :jaar
+     and h.skip = 0
+    GROUP BY s.schaapId
+SQL;
+        $args = [[':Karwerk', $Karwerk], [':volwId', $volwId, Type::INT], [':mnd', $mnd], [':jaar', $jaar]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function zoek_werknr_geengeslacht($Karwerk, $volwId, $mnd, $jaar) {
+        $sql = <<<SQL
+    SELECT coalesce(right(s.levensnummer,:Karwerk),' ------- ') werknr, kg
+    FROM tblSchaap s
+     join tblStal st on (st.schaapId = s.schaapId)
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE s.volwId = :volwId
+     and isnull(s.geslacht)
+     and h.actId = 1
+     and isnull(st.rel_best)
+     and date_format(h.datum,'%m')*1 = :mnd
+     and date_format(h.datum,'%Y') = :jaar
+     and h.skip = 0
+    GROUP BY s.schaapId
+SQL;
+        $args = [[':Karwerk', $Karwerk], [':volwId', $volwId, Type::INT], [':mnd', $mnd], [':jaar', $jaar]];
         return $this->run_query($sql, $args);
     }
 

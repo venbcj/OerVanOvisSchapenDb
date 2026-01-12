@@ -58,7 +58,7 @@ if(isset($_POST['ascTotat'])) {    $order = "sum(worp)"; }
 elseif(isset($_POST['descTotat'])) { $order = "sum(worp) desc"; }
 else { $order = "ooi"; }
 
-$ooien_met_meerlingworpen = $schaap_gateway->ooien_met_meerlingworpen($lidId, $Karwerk, $order);
+$ooien_met_meerlingworpen = $schaap_gateway->ooien_met_meerlingworpen1($lidId, $Karwerk, $order);
 
 while ($jm = $ooien_met_meerlingworpen->fetch_assoc()) { 
     // TODO: [overal] niet dit datapompen, maar gewoon de waardes gebruiken waar je ze nodig hebt.

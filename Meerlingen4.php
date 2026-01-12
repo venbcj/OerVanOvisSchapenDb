@@ -23,6 +23,7 @@ include "login.php"; ?>
         <TD valign = 'top' align = 'center'>
 <?php
 if (Auth::is_logged_in()) { if($modtech ==1) {
+$schaap_gateway = new SchaapGateway();
 
 $huidigjaar = date("Y"); $begin_datum = '1-01-'.$huidigjaar; $eind_datum = '1-03-'.$huidigjaar;
 
@@ -61,48 +62,19 @@ $var1dag = 60*60*24;
 if(isset($_POST['ascTotat'])) {    $order = "sum(worp)"; } 
 elseif(isset($_POST['descTotat'])) { $order = "sum(worp) desc"; }
 else { $order = "ooi"; }
+$ooien_met_meerlingworpen = $schaap_gateway->ooien_met_meerlingworpen0($lidId, $Karwerk, $order);
 
-$ooien_met_meerlingworpen = mysqli_query($db,"
-SELECT schaapId, ooi, sum(worp) totat
-FROM (
-    SELECT mdr.schaapId, right(mdr.levensnummer,$Karwerk) ooi, v.volwId, count(lam.schaapId) worp
-    FROM tblSchaap mdr
-     join tblStal stm on (stm.schaapId = mdr.schaapId)
-     join tblUbn um on stm.ubnId = um.ubnId
-     join tblVolwas v on (mdr.schaapId = v.mdrId)
-     join tblSchaap lam on (v.volwId = lam.volwId)
-     join tblStal st on (lam.schaapId = st.schaapId)
-     join tblUbn u on st.ubnId = u.ubnId
-    WHERE isnull(stm.rel_best)
- and um.lidId = '".mysqli_real_escape_string($db,$lidId)."'
- and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-    GROUP BY mdr.schaapId, right(mdr.levensnummer,$Karwerk), v.volwId
-    HAVING count(v.volwId) > 0
-     ) perWorp
-GROUP BY schaapId, ooi
-
-ORDER BY $order
-") or die(mysqli_error($db));
-
-while($jm = mysqli_fetch_assoc($ooien_met_meerlingworpen)) { 
+while($jm = $ooien_met_meerlingworpen->fetch_assoc()) { 
 
     $ooiId = $jm['schaapId']; 
     $ooi = $jm['ooi'];
     $totat = $jm['totat'];
     
 
-unset($geengeslacht); // geen geslacht
-$zoek_aantal_geengeslacht_tbv_hoofding = mysqli_query($db,"
-SELECT count(s.schaapId) aant
-FROM tblSchaap s
- join tblStal st on (st.schaapId = s.schaapId)
- join tblVolwas v on (s.volwId = v.volwId)
-WHERE isnull(s.geslacht)
- and v.mdrId = '".mysqli_real_escape_string($db,$ooiId)."'
- and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-") or die(mysqli_error($db));
+unset($geengeslacht);
+$zoek_aantal_geengeslacht_tbv_hoofding = $schaap_gateway->zoek_aantal_geengeslacht_tbv_hoofding($ooiId, $lidId);
 
-while($ga = mysqli_fetch_assoc($zoek_aantal_geengeslacht_tbv_hoofding)) { $geengeslacht = $ga['aant']; }
+while($ga = $zoek_aantal_geengeslacht_tbv_hoofding->fetch_assoc()) { $geengeslacht = $ga['aant']; }
  ?>
 
 <tr height = 30 valign = 'bottom'>
@@ -125,23 +97,8 @@ while($ga = mysqli_fetch_assoc($zoek_aantal_geengeslacht_tbv_hoofding)) { $geeng
 
 <?php
 $maand = array(1 => 'Jan','Feb','Mrt','Apr','Mei','Jun','Jul','Aug','Sep','Okt','Nov','Dec');
-
-$zoek_meerlingen_ooi = mysqli_query($db,"
-SELECT date_format(h.datum,'%m')*1 mnd, date_format(h.datum,'%Y') jaar, count(lam.schaapId) aant, v.volwId
-FROM tblSchaap mdr
- join tblVolwas v on (v.mdrId = mdr.schaapId)
- join tblSchaap lam on (v.volwId = lam.volwId)
- join tblStal st on (st.schaapId = lam.schaapId)
- join tblUbn u ON u.ubnId = st.ubnId
- join tblHistorie h on (st.stalId = h.stalId)
-WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
- and mdr.schaapId = '".mysqli_real_escape_string($db,$ooiId)."'
- and h.actId = 1
- and h.skip = 0
-GROUP BY date_format(h.datum,'%Y%m'), date_format(h.datum,'%Y'), v.volwId
-ORDER BY date_format(h.datum,'%Y%m') desc
-") or die (mysqli_error($db));    
-    while($mrl = mysqli_fetch_assoc($zoek_meerlingen_ooi)) {
+ $zoek_meerlingen_ooi = $schaap_gateway->zoek_meerlingen_ooi($lidId, $ooiId);
+    while($mrl = $zoek_meerlingen_ooi->fetch_assoc()) {
                 $mnd = $mrl['mnd'];
                 $jaar = $mrl['jaar']; $MaandJaar = $maand[$mnd].' '.$jaar;
                 $aant = $mrl['aant'];
@@ -150,39 +107,12 @@ ORDER BY date_format(h.datum,'%Y%m') desc
 
 unset($ooi_st);
 unset($werknr_ooi);
-$zoek_aantal_ooitjes = mysqli_query($db,"
-SELECT count(s.schaapId) aant
-FROM tblSchaap s
- join tblStal st on (st.schaapId = s.schaapId)
- join tblHistorie h on (st.stalId = h.stalId)
-WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."'
- and s.geslacht = 'ooi'
- and h.actId = 1
- and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."'
- and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."'
- and h.skip = 0
-        
-") or die(mysqli_error($db));
+$zoek_aantal_ooitjes = $schaap_gateway->zoek_aantal_ooitjes($volwId, $mnd, $jaar);
 
-while($oa = mysqli_fetch_assoc($zoek_aantal_ooitjes)) { $ooi_st = $oa['aant']; }
+while($oa = $zoek_aantal_ooitjes->fetch_assoc()) { $ooi_st = $oa['aant']; }
+$zoek_werknr_ooitjes = $schaap_gateway->zoek_werknr_ooitjes($Karwerk, $volwId, $mnd, $jaar);
 
-$zoek_werknr_ooitjes = mysqli_query($db,"
-SELECT coalesce(right(s.levensnummer,$Karwerk),' ------- ') werknr, kg
-FROM tblSchaap s
- join tblStal st on (st.schaapId = s.schaapId)
- join tblHistorie h on (st.stalId = h.stalId)
-WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."'
- and s.geslacht = 'ooi'
- and h.actId = 1
- and isnull(st.rel_best)
- and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."'
- and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."'
- and h.skip = 0
-GROUP BY s.schaapId
-        
-") or die(mysqli_error($db));
-
-while($ow = mysqli_fetch_assoc($zoek_werknr_ooitjes)) { 
+while($ow = $zoek_werknr_ooitjes->fetch_assoc()) { 
     $wnr = $ow['werknr'];
     $kg = $ow['kg']; if(isset($kg)) { $kg = $kg.' kg'; }
     
@@ -192,39 +122,12 @@ while($ow = mysqli_fetch_assoc($zoek_werknr_ooitjes)) {
 
 unset($ram_st);
 unset($werknr_ram);
-$zoek_aantal_ramtjes = mysqli_query($db,"
-SELECT count(s.schaapId) aant
-FROM tblSchaap s
- join tblStal st on (st.schaapId = s.schaapId)
- join tblHistorie h on (st.stalId = h.stalId)
-WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."'
- and s.geslacht = 'ram'
- and h.actId = 1
- and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."'
- and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."'
- and h.skip = 0
+$zoek_aantal_ramtjes = $schaap_gateway->zoek_aantal_ramtjes($volwId, $mnd, $jaar);
 
-") or die(mysqli_error($db));
+while($ra = $zoek_aantal_ramtjes->fetch_assoc()) { $ram_st = $ra['aant']; }
+$zoek_werknr_ramtjes = $schaap_gateway->zoek_werknr_ramtjes($Karwerk, $volwId, $mnd, $jaar);
 
-while($ra = mysqli_fetch_assoc($zoek_aantal_ramtjes)) { $ram_st = $ra['aant']; }
-
-$zoek_werknr_ramtjes = mysqli_query($db,"
-SELECT coalesce(right(s.levensnummer,$Karwerk),' ------- ') werknr, kg
-FROM tblSchaap s
- join tblStal st on (st.schaapId = s.schaapId)
- join tblHistorie h on (st.stalId = h.stalId)
-WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."'
- and s.geslacht = 'ram'
- and h.actId = 1
- and isnull(st.rel_best)
- and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."'
- and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."'
- and h.skip = 0
-GROUP BY s.schaapId
-        
-") or die(mysqli_error($db));
-
-while($rw = mysqli_fetch_assoc($zoek_werknr_ramtjes)) { 
+while($rw = $zoek_werknr_ramtjes->fetch_assoc()) { 
     $wnr = $rw['werknr'];
     $kg = $rw['kg']; if(isset($kg)) { $kg = $kg.' kg'; }
     
@@ -233,40 +136,13 @@ while($rw = mysqli_fetch_assoc($zoek_werknr_ramtjes)) {
 
 
 unset($gg_st); // geen geslacht
-unset($werknr_gg); // geen geslacht
-$zoek_aantal_geengeslacht = mysqli_query($db,"
-SELECT count(s.schaapId) aant
-FROM tblSchaap s
- join tblStal st on (st.schaapId = s.schaapId)
- join tblHistorie h on (st.stalId = h.stalId)
-WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."'
- and isnull(s.geslacht)
- and h.actId = 1
- and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."'
- and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."'
- and h.skip = 0
+unset($werknr_gg);
+$zoek_aantal_geengeslacht = $schaap_gateway->zoek_aantal_geengeslacht($volwId, $mnd, $jaar);
 
-") or die(mysqli_error($db));
+while($ga = $zoek_aantal_geengeslacht->fetch_assoc()) { $gg_st = $ga['aant']; }
+$zoek_werknr_geengeslacht = $schaap_gateway->zoek_werknr_geengeslacht($Karwerk, $volwId, $mnd, $jaar);
 
-while($ga = mysqli_fetch_assoc($zoek_aantal_geengeslacht)) { $gg_st = $ga['aant']; }
-
-$zoek_werknr_geengeslacht = mysqli_query($db,"
-SELECT coalesce(right(s.levensnummer,$Karwerk),' ------- ') werknr, kg
-FROM tblSchaap s
- join tblStal st on (st.schaapId = s.schaapId)
- join tblHistorie h on (st.stalId = h.stalId)
-WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."'
- and isnull(s.geslacht)
- and h.actId = 1
- and isnull(st.rel_best)
- and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."'
- and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."'
- and h.skip = 0
-GROUP BY s.schaapId
-        
-") or die(mysqli_error($db));
-
-while($gw = mysqli_fetch_assoc($zoek_werknr_geengeslacht)) { 
+while($gw = $zoek_werknr_geengeslacht->fetch_assoc()) { 
     $wnr = $gw['werknr'];
     $kg = $gw['kg']; if(isset($kg)) { $kg = $kg.' kg'; }
     
