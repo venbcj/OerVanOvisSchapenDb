@@ -36,13 +36,11 @@
         <directory>ongebruikt</directory>
         <directory>utils</directory>
       </exclude>
-      <file>./HokSpenen.php</file>
+      <file>./OoilamSelectie.php</file>
       <file>./login.php</file>
-      <file>./save_spenen.php</file>
-      <file>./paginas.php</file>
       <file>./kalender.php</file>
-      <file>./menu1.php</file>
-      <file>./select-all.js.php</file>
+      <file>./save_ooiselectie.php</file>
+      <file>./menuAlerts.php</file>
     </whitelist>
   </filter>
   <logging>

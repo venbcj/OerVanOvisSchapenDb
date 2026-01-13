@@ -23,6 +23,9 @@ include "login.php";
 <?php
 if (Auth::is_logged_in()) {
     if ($modtech == 1) {
+        if (empty($schaap_gateway)) {
+            $schaap_gateway = new SchaapGateway();
+        }
         include "kalender.php";
         if (isset($_POST['knpStuur_'])) {
             include "save_ooiselectie.php";
@@ -32,8 +35,7 @@ if (Auth::is_logged_in()) {
             $van = date_format(date_create($worpvan), 'Y-m-d');
             $worptot = $_POST['txtWorpTot_'];
             $tot = date_format(date_create($worptot), 'Y-m-d');
-            $schaap_gateway = new SchaapGateway();
-            $toon_meerlingen = $schaap_gateway->toon_meerlingen();
+            $toon_meerlingen = $schaap_gateway->toon_meerlingen($lidId, $van, $tot);
         }
 ?>
 <form action= "OoilamSelectie.php" method="post">
@@ -111,7 +113,7 @@ echo "$worpvan";
 <?php
     } else {
 ?>
-        <img src='ooikaart_php.jpg'  width='970' height='550'/>
+        <img src="ooikaart_php.jpg"  width='970' height='550'/>
 <?php
     }
     include "menuAlerts.php";
