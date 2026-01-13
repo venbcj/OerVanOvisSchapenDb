@@ -36,10 +36,11 @@
         <directory>ongebruikt</directory>
         <directory>utils</directory>
       </exclude>
-      <file>./Rubrieken.php</file>
+      <file>./OoilamSelectie.php</file>
       <file>./login.php</file>
-      <file>./save_rubriek.php</file>
-      <file>./menuFinance.php</file>
+      <file>./kalender.php</file>
+      <file>./save_ooiselectie.php</file>
+      <file>./menuAlerts.php</file>
     </whitelist>
   </filter>
   <logging>

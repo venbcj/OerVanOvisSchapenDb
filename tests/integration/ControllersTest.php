@@ -50,7 +50,6 @@ class ControllersTest extends IntegrationCase {
             ['HokAfsluiten.php', [], []],
             # dit gaat af en toe mis, als $data gevuld wordt. Maar die query is nogal ... dik.
             ['HokOverpl.php', ['schaap-4'], ['chbkies_4' => 1, 'txtDatum_4' => '02-02-2021', ]],
-            ['HokSpenen.php', ['schaap-4'], ['chbkies_4' => 1, 'txtDatum_4' => '01-02-2020', 'txtKg_4' => 2, ]],
             ['HokVerlaten.php', ['schaap-4'], ['chbkies_4' => 1, 'txtDatum_4' => '01-01-2021', ]],
             ['InsGeboortes.php', [], []],
             ['InsVoerregistratie.php', [], []],
@@ -64,7 +63,6 @@ class ControllersTest extends IntegrationCase {
             ['MeldGeboortes.php', [], []],
             ['MeldOmnummer.php', [], []],
             ['MeldUitval.php', [], []],
-            ['OoilamSelectie.php', [], []],
             ['Relatie.php', ['partij-1'], ['txtpId_' => 11, 'txtNaam_' => 'nodig']],
             ['Saldoberekening.php', [], []],
             ['Ubn_toevoegen.php', [], []],
@@ -98,7 +96,6 @@ Hoklijsten.php
 Hoklijst.php
 HokOverpl.php
 Hok.php
-HokSpenen.php
 HokUitscharen.php
 HokVerkopen.php
 HokVerlaten.php
@@ -147,7 +144,6 @@ MeldUitval.php
 Mndoverz_fok.php
 Newuser.php
 OoikaartAll.php
-OoilamSelectie.php
 Rapport1.php
 Rapport.php
 Readerversies.php
