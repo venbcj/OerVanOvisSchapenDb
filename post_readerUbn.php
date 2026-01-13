@@ -9,6 +9,7 @@ $historie_gateway = new HistorieGateway();
 $impagrident_gateway = new ImpAgridentGateway();
 $partij_gateway = new PartijGateway();
 $stal_gateway = new StalGateway();
+$bezet_gateway = new BezetGateway();
 foreach ($array as $recId => $id) {
     unset($fldKies);
     unset($fldDel);
@@ -52,6 +53,7 @@ foreach ($array as $recId => $id) {
                 $ubnId_best = $zdr['ubnId'];
                 $ubn_best = $zdr['ubn'];
                 $schaapId = $zdr['schaapId'];
+                $hokId = $zdr['hokId'];
             }
             $rel_best = $partij_gateway->zoek_relatie_afvoer($ubn_best);
             [$stalId_afv, $ubn_herk] = $stal_gateway->zoek_stalId_afvoer($lidId, $schaapId);
@@ -77,11 +79,15 @@ foreach ($array as $recId => $id) {
                 $rel_herk = $partij_gateway->zoek_relatie_aanvoer($ubn_herk);
                 $stalId_aanv = $stal_gateway->insert_tblStal_aanvoer($lidId, $ubnId_best, $schaapId, $rel_herk);
                 $insert_tblHistorie_aanvoer = $historie_gateway->insert_tblHistorie_aanvoer($stalId_aanv, $fldDag, $fldKg);
-                if ($modmeld == 1) {
-                    $zoek_hisId_aanv = $historie_gateway->zoek_hisId_aanv($stalId_aanv);
-                    while ($zha = $zoek_hisId_aanv->fetch_assoc()) {
+                
+
+                $zoek_hisId_aanv = $historie_gateway->zoek_hisId_aanv($stalId_aanv);
+                    $zha = $zoek_hisId_aanv->fetch_assoc();
                         $hisId_aanv = $zha['hisId'];
-                    }
+                    
+                $insert_tblBezet = $bezet_gateway->insert($hisId_aanv, $hokId);
+
+                if ($modmeld == 1) {
                     $Melding = 'AAN';
                     $hisId = $hisId_aanv;
                     include "maak_request.php";

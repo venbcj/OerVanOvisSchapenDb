@@ -1970,11 +1970,11 @@ SQL;
 
     public function zoek_data_reader($recId) {
         $sql = <<<SQL
-    SELECT a.levensnummer, u.ubnId, u.ubn, s.schaapId
-    FROM impAgrident a
-     join tblUbn u on (a.ubnId = u.ubnId)
-     join tblSchaap s on (a.levensnummer = s.levensnummer)
-    WHERE a.Id = :recId
+    SELECT rd.levensnummer, u.ubnId, u.ubn, s.schaapId, rd.hokId
+    FROM impAgrident rd
+     join tblUbn u on (rd.ubnId = u.ubnId)
+     join tblSchaap s on (rd.levensnummer = s.levensnummer)
+    WHERE rd.Id = :recId
 SQL;
         $args = [[':recId', $recId, Type::INT]];
         return $this->run_query($sql, $args);
