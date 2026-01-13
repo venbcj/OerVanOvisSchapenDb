@@ -108,7 +108,9 @@ class HokAfsluitenTest extends IntegrationCase {
             'txtSluitdm1' => '2010-02-02',
         ]);
         $this->assertNoNoise();
+        // zal ik deze "assertGoed" noemen? Dit is geen foutmelding
         $this->assertFout('1 is per 2010-02-02 afgesloten excl. voer.');
+        // todo postconditie assereren. Wat is er nu gewijzigd?
     }
 
     public function test_post_save1_hok_inc_voer() {
@@ -124,6 +126,7 @@ class HokAfsluitenTest extends IntegrationCase {
         ]);
         $this->assertNoNoise();
         $this->assertFout('1 is per 2010-02-02 afgesloten incl. voer.');
+        // zelfde opmerkingen als voor ex_voer
     }
 
 }
