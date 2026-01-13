@@ -36,11 +36,16 @@
         <directory>ongebruikt</directory>
         <directory>utils</directory>
       </exclude>
-      <file>./OoilamSelectie.php</file>
+      <file>./HokAfsluiten.php</file>
       <file>./login.php</file>
       <file>./kalender.php</file>
-      <file>./save_ooiselectie.php</file>
-      <file>./menuAlerts.php</file>
+      <file>./save_afsluiten.php</file>
+      <file>./save_afsluiten.php</file>
+      <file>./save_afsluiten.php</file>
+      <file>./kzl.php</file>
+      <file>./kzl.php</file>
+      <file>./kzl.php</file>
+      <file>./menu1.php</file>
     </whitelist>
   </filter>
   <logging>

@@ -191,4 +191,27 @@ SQL;
         return $this->run_query($sql, $args);
     }
 
+    public function qryKeuzelijstVoer($lidId)    {
+        $sql = <<<SQL
+        SELECT i.artId, a.naam, a.stdat, e.eenheid, sum(i.inkat-coalesce(v.vbrat,0)) vrdat
+        FROM tblEenheid e
+         join tblEenheiduser eu on (e.eenhId = eu.eenhId)
+         join tblInkoop i on (i.enhuId = eu.enhuId)
+         join tblArtikel a on (i.artId = a.artId)
+         left join (
+           SELECT v.inkId, sum(v.nutat*v.stdat) vbrat
+           FROM tblVoeding v
+            join tblInkoop i on (v.inkId = i.inkId)
+             join tblEenheiduser eu on (i.enhuId = eu.enhuId)
+            WHERE eu.lidId = :lidId
+           GROUP BY v.inkId
+         ) v on (i.inkId = v.inkId)
+        WHERE eu.lidId = :lidId and i.inkat-coalesce(v.vbrat,0) > 0 and a.soort = 'voer'
+        GROUP BY a.naam, a.stdat, e.eenheid
+        ORDER BY a.naam
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
 }

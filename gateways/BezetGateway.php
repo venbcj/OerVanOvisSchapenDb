@@ -1907,4 +1907,239 @@ SQL;
         return $this->run_query($sql, $args);
     }
 
+    public function zoek_data_aantal_geb($Id)    {
+        $sql = <<<SQL
+        SELECT b.hokId, hk.hoknr, min(h.datum) eerste_in, max(ht.datum) laatste_uit, count(distinct st.schaapId) aant, endgeb.dmstop
+        FROM tblBezet b
+         join tblHok hk on (b.hokId = hk.hokId)
+         join tblHistorie h on (h.hisId = b.hisId)
+         left join (
+            SELECT b.bezId, min(h2.hisId) hist
+           FROM tblBezet b
+            join tblHistorie h1 on (b.hisId = h1.hisId)
+            join tblActie a1 on (a1.actId = h1.actId)
+            join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+            join tblActie a2 on (a2.actId = h2.actId)
+            join tblStal st on (h1.stalId = st.stalId)
+           WHERE b.hokId = :Id and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+           GROUP BY b.bezId
+         ) uit on (uit.bezId = b.bezId)
+         left join tblHistorie ht on (ht.hisId = uit.hist)
+         join tblStal st on (st.stalId = h.stalId)
+         left join (
+            SELECT st.schaapId, h.datum
+           FROM tblStal st
+            join tblHistorie h on (st.stalId = h.stalId)
+           WHERE h.actId = 4
+         ) spn on (spn.schaapId = st.schaapId)
+         left join (
+            SELECT st.schaapId, h.datum
+            FROM tblStal st
+             join tblHistorie h on (st.stalId = h.stalId)
+            WHERE h.actId = 3
+         ) prnt on (prnt.schaapId = st.schaapId)
+         left join (
+            SELECT p.hokId, max(p.dmafsluit) dmstop
+            FROM tblPeriode p
+            WHERE p.hokId = :Id and p.doelId = 1 and dmafsluit is not null
+            GROUP BY p.hokId
+         ) endgeb on (endgeb.hokId = b.hokId)
+        WHERE b.hokId = :Id
+         and (isnull(ht.hisId) or ht.datum > coalesce(dmstop,'1988-06-25'))
+         and (isnull(spn.schaapId) or h.datum < spn.datum)
+         and (isnull(prnt.schaapId) or h.datum < prnt.datum)
+         and h.skip = 0
+        GROUP BY b.hokId, hk.hoknr, endgeb.dmstop
+SQL;
+        $args = [[':Id', $Id, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function zoek_nu_in_hok1($Id)        {
+        $sql = <<<SQL
+            SELECT count(b.bezId) aant
+            FROM tblBezet b
+             left join (
+                SELECT b.bezId, min(h2.hisId) hist
+                FROM tblBezet b
+                 join tblHistorie h1 on (b.hisId = h1.hisId)
+                 join tblActie a1 on (a1.actId = h1.actId)
+                 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+                 join tblActie a2 on (a2.actId = h2.actId)
+                WHERE b.hokId = :Id and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+                GROUP BY b.bezId
+             ) uit on (b.bezId = uit.bezId)
+             join tblHistorie h on (h.hisId = b.hisId)
+             join tblStal st on (st.stalId = h.stalId)
+             left join (
+                SELECT st.schaapId, datum
+                FROM tblStal st
+                 join tblHistorie h on (h.stalId = st.stalId)
+                WHERE h.actId = 4 and h.skip = 0
+             ) spn on (st.schaapId = spn.schaapId)
+             left join (
+                SELECT st.schaapId, h.datum
+                FROM tblStal st
+                 join tblHistorie h on (st.stalId = h.stalId)
+                WHERE h.actId = 3 and h.skip = 0
+             ) prnt on (prnt.schaapId = st.schaapId)
+            WHERE b.hokId = :Id and isnull(uit.hist) and isnull(spn.schaapId) and isnull(prnt.schaapId) and h.skip = 0
+SQL;
+        $args = [[':Id', $Id, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function zoek_data_aantal_spn($Id)    {
+        $sql = <<<SQL
+        SELECT b.hokId, hk.hoknr, min(h.datum) eerste_in, max(ht.datum) laatste_uit, count(distinct st.schaapId) aant, endspn.dmstop
+        FROM tblBezet b
+         join tblHok hk on (b.hokId = hk.hokId)
+         join tblHistorie h on (h.hisId = b.hisId)
+         left join (
+            SELECT b.bezId, min(h2.hisId) hist
+            FROM tblBezet b
+             join tblHistorie h1 on (b.hisId = h1.hisId)
+             join tblActie a1 on (a1.actId = h1.actId)
+             join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+             join tblActie a2 on (a2.actId = h2.actId)
+             join tblStal st on (h1.stalId = st.stalId)
+            WHERE b.hokId = :Id and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+            GROUP BY b.bezId
+         ) uit on (uit.bezId = b.bezId)
+         left join tblHistorie ht on (ht.hisId = uit.hist)
+         join tblStal st on (st.stalId = h.stalId)
+         join (
+            SELECT st.schaapId, h.datum
+            FROM tblStal st
+             join tblHistorie h on (st.stalId = h.stalId)
+            WHERE h.actId = 4 and h.skip = 0
+         ) spn on (spn.schaapId = st.schaapId)
+         left join (
+            SELECT st.schaapId, h.datum
+            FROM tblStal st
+             join tblHistorie h on (st.stalId = h.stalId)
+            WHERE h.actId = 3 and h.skip = 0
+         ) prnt on (prnt.schaapId = st.schaapId)
+         left join (
+            SELECT p.hokId, max(p.dmafsluit) dmstop
+            FROM tblPeriode p
+            WHERE p.hokId = :Id and p.doelId = 2 and dmafsluit is not null
+            GROUP BY p.hokId
+         ) endspn on (endspn.hokId = b.hokId)
+        WHERE b.hokId = :Id 
+         and (isnull(ht.hisId) or ht.datum > coalesce(dmstop,'1988-06-25') )
+         and h.datum >= spn.datum and (isnull(prnt.schaapId) or h.datum < prnt.datum)
+         and h.skip = 0
+        GROUP BY b.hokId, hk.hoknr, endspn.dmstop
+SQL;
+        $args = [[':Id', $Id, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function zoek_nu_in_hok2($Id)        {
+        $sql = <<<SQL
+            SELECT count(b.bezId) aant
+            FROM tblBezet b
+             left join (
+                SELECT b.bezId, min(h2.hisId) hist
+                FROM tblBezet b
+                 join tblHistorie h1 on (b.hisId = h1.hisId)
+                 join tblActie a1 on (a1.actId = h1.actId)
+                 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+                 join tblActie a2 on (a2.actId = h2.actId)
+                WHERE b.hokId = :Id and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+                GROUP BY b.bezId
+             ) uit on (b.bezId = uit.bezId)
+             join tblHistorie h on (h.hisId = b.hisId)
+             join tblStal st on (st.stalId = h.stalId)
+             join (
+                SELECT st.schaapId, datum
+                FROM tblStal st
+                 join tblHistorie h on (h.stalId = st.stalId)
+                WHERE h.actId = 4 and h.skip = 0
+             ) spn on (st.schaapId = spn.schaapId)
+             left join (
+                SELECT st.schaapId, datum
+                FROM tblStal st
+                 join tblHistorie h on (h.stalId = st.stalId)
+                WHERE h.actId = 3 and h.skip = 0
+             ) prnt on (st.schaapId = prnt.schaapId)
+            WHERE b.hokId = :Id and isnull(uit.bezId)
+             and (isnull(prnt.schaapId) or h.datum < prnt.datum)
+             and h.skip = 0
+SQL;
+        $args = [[':Id', $Id, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function zoek_data_aantal_prnt($Id)    {
+        $sql = <<<SQL
+        SELECT b.hokId, hk.hoknr, min(h.datum) eerste_in, max(ht.datum) laatste_uit, count(distinct st.schaapId) aant, endprnt.dmstop
+        FROM tblBezet b
+         join tblHok hk on (b.hokId = hk.hokId)
+         join tblHistorie h on (h.hisId = b.hisId)
+         left join (
+            SELECT b.bezId, min(h2.hisId) hist
+            FROM tblBezet b
+             join tblHistorie h1 on (b.hisId = h1.hisId)
+             join tblActie a1 on (a1.actId = h1.actId)
+             join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+             join tblActie a2 on (a2.actId = h2.actId)
+             join tblStal st on (h1.stalId = st.stalId)
+            WHERE b.hokId = :Id and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+            GROUP BY b.bezId
+         ) uit on (uit.bezId = b.bezId)
+         left join tblHistorie ht on (ht.hisId = uit.hist)
+         join tblStal st on (st.stalId = h.stalId)
+         left join (
+            SELECT h.hisId, st.schaapId, h.datum
+            FROM tblStal st
+             join tblHistorie h on (st.stalId = h.stalId)
+            WHERE h.actId = 3 and h.skip = 0
+         ) prnt on (prnt.schaapId = st.schaapId)
+         left join (
+            SELECT p.hokId, max(p.dmafsluit) dmstop
+            FROM tblPeriode p
+            WHERE p.hokId = :Id and p.doelId = 3 and dmafsluit is not null
+            GROUP BY p.hokId
+         ) endprnt on (endprnt.hokId = b.hokId)
+        WHERE b.hokId = :Id 
+         and (isnull(ht.hisId) or ht.datum > coalesce(dmstop,'1988-06-25'))
+         and (h.datum > prnt.datum || (h.datum = prnt.datum && h.hisId >= prnt.hisId) )
+         and h.skip = 0
+        GROUP BY b.hokId, hk.hoknr, endprnt.dmstop
+SQL;
+        $args = [[':Id', $Id, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
+    public function zoek_nu_in_hok3($Id)        {
+        $sql = <<<SQL
+            SELECT count(b.bezId) aant
+            FROM tblBezet b
+             left join (
+                SELECT b.bezId, min(h2.hisId) hist
+                FROM tblBezet b
+                 join tblHistorie h1 on (b.hisId = h1.hisId)
+                 join tblActie a1 on (a1.actId = h1.actId)
+                 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+                 join tblActie a2 on (a2.actId = h2.actId)
+                WHERE b.hokId = :Id and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+                GROUP BY b.bezId
+             ) uit on (b.bezId = uit.bezId)
+             left join tblHistorie ht on (ht.hisId = uit.hist)
+             join tblHistorie h on (h.hisId = b.hisId)
+             join tblStal st on (st.stalId = h.stalId)
+             join (
+                SELECT st.schaapId, h.hisId, datum
+                FROM tblStal st
+                 join tblHistorie h on (h.stalId = st.stalId)
+                WHERE h.actId = 3 and h.skip = 0
+             ) prnt on (st.schaapId = prnt.schaapId)
+            WHERE b.hokId = :Id and h.datum >= prnt.datum and isnull(ht.hisId)
+SQL;
+        $args = [[':Id', $Id, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
 }

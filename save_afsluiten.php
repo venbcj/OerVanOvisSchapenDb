@@ -29,7 +29,9 @@ if ((isset($txtKg) && !isset($fldArt)) || !isset($txtKg) && isset($fldArt)) {
     if (isset($periId)) {
         if (isset($txtKg) && isset($fldArt)) {
             $inkoop_gateway = new InkoopGateway();
-            $vrdat = $inkoop_gateway->zoek_voorraad_artikel($kzlVoer);
+            // TODO kan niet werken... kzlVoer wordt nergens gezet. Bedoelde je fldArt?
+            // $vrdat = $inkoop_gateway->zoek_voorraad_artikel($kzlVoer);
+            $vrdat = $inkoop_gateway->zoek_voorraad_artikel($fldArt);
             if (isset($vrdat) && $vrdat < $txtKg) {
                 $fout = "Er is onvoldoende voer op voorraad.";
             } else {
