@@ -50,7 +50,6 @@ class ControllersTest extends IntegrationCase {
             ['HokAfsluiten.php', [], []],
             # dit gaat af en toe mis, als $data gevuld wordt. Maar die query is nogal ... dik.
             ['HokOverpl.php', ['schaap-4'], ['chbkies_4' => 1, 'txtDatum_4' => '02-02-2021', ]],
-            ['HokSpenen.php', ['schaap-4'], ['chbkies_4' => 1, 'txtDatum_4' => '01-02-2020', 'txtKg_4' => 2, ]],
             ['HokVerlaten.php', ['schaap-4'], ['chbkies_4' => 1, 'txtDatum_4' => '01-01-2021', ]],
             ['InsGeboortes.php', [], []],
             ['InsVoerregistratie.php', [], []],
@@ -98,7 +97,6 @@ Hoklijsten.php
 Hoklijst.php
 HokOverpl.php
 Hok.php
-HokSpenen.php
 HokUitscharen.php
 HokVerkopen.php
 HokVerlaten.php
