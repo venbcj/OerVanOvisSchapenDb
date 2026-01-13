@@ -158,7 +158,7 @@ if (Auth::is_logged_in()) {
     </TD>
 <?php } else {
 ?>
-    <img src='rubrieken_php.jpg'  width='970' height='550'>
+    <img src="rubrieken_php.jpg"  width='970' height='550'>
 <?php
             }
             include "menuFinance.php";
