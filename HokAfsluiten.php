@@ -46,8 +46,8 @@ FROM tblEenheid e
    SELECT v.inkId, sum(v.nutat*v.stdat) vbrat
    FROM tblVoeding v
     join tblInkoop i on (v.inkId = i.inkId)
-     join tblEenheiduser eu on (i.enhuId = eu.enhuId)
-    WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    join tblEenheiduser eu on (i.enhuId = eu.enhuId)
+   WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."'
    GROUP BY v.inkId
  ) v on (i.inkId = v.inkId)
 WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and i.inkat-coalesce(v.vbrat,0) > 0 and a.soort = 'voer'
@@ -143,7 +143,7 @@ FROM tblBezet b
 	GROUP BY p.hokId
  ) endgeb on (endgeb.hokId = b.hokId)
 WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."'
- and (isnull(ht.hisId) or ht.datum > coalesce(dmstop,'1973-09-11'))
+ and (isnull(ht.hisId) or ht.datum > coalesce(dmstop,'1988-06-25'))
  and (isnull(spn.schaapId) or h.datum < spn.datum)
  and (isnull(prnt.schaapId) or h.datum < prnt.datum)
  and h.skip = 0
@@ -154,7 +154,7 @@ GROUP BY b.hokId, hk.hoknr, endgeb.dmstop
 		$eerste_in_geb = $hk['eerste_in']; 
 		$laatste_uit_geb = $hk['laatste_uit']; 
 		$totat_geb = $hk['aant'];
-		$dmstop_geb = $hk['dmstop']; } if(!isset($dmstop_geb)) { $dmstop_geb = '1973-09-11'; }
+		$dmstop_geb = $hk['dmstop']; } if(!isset($dmstop_geb)) { $dmstop_geb = '1988-06-25'; }
 
 		if(isset($eerste_in_geb)) { if ($eerste_in_geb < $dmstop_geb) { $dmstart_geb = $dmstop_geb; } else { $dmstart_geb = $eerste_in_geb; } 
 			$todate = date_create($dmstart_geb); $dag1_geb = date_format($todate,'d-m-Y'); }
@@ -180,12 +180,18 @@ FROM tblBezet b
  join tblHistorie h on (h.hisId = b.hisId)
  join tblStal st on (st.stalId = h.stalId)
  left join (
-		SELECT st.schaapId, h.hisId, datum
+		SELECT st.schaapId, datum
 		FROM tblStal st
 		 join tblHistorie h on (h.stalId = st.stalId)
 		WHERE h.actId = 4 and h.skip = 0
 	 ) spn on (st.schaapId = spn.schaapId)
-WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' and isnull(uit.hist) and isnull(spn.hisId) and h.skip = 0
+	left join (
+		SELECT st.schaapId, h.datum
+		FROM tblStal st
+		 join tblHistorie h on (st.stalId = h.stalId)
+		WHERE h.actId = 3 and h.skip = 0
+	 ) prnt on (prnt.schaapId = st.schaapId)
+WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' and isnull(uit.hist) and isnull(spn.schaapId) and isnull(prnt.schaapId) and h.skip = 0
 ") or die (mysqli_error($db));
 	while ($hk = mysqli_fetch_assoc($zoek_nu_in_hok)) { $nu_geb = $hk['aant']; }
 
@@ -275,7 +281,7 @@ FROM tblBezet b
 	GROUP BY p.hokId
  ) endspn on (endspn.hokId = b.hokId)
 WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' 
- and (isnull(ht.hisId) or ht.datum > coalesce(dmstop,'1973-09-11') )
+ and (isnull(ht.hisId) or ht.datum > coalesce(dmstop,'1988-06-25') )
  and h.datum >= spn.datum and (isnull(prnt.schaapId) or h.datum < prnt.datum)
  and h.skip = 0
 GROUP BY b.hokId, hk.hoknr, endspn.dmstop
@@ -285,7 +291,7 @@ GROUP BY b.hokId, hk.hoknr, endspn.dmstop
 		$eerste_in_spn = $hk['eerste_in'];
 		$totat_spn = $hk['aant'];
 		$laatste_uit_spn = $hk['laatste_uit']; 
-		$dmstop_spn = $hk['dmstop']; } if(!isset($dmstop_spn)) { $dmstop_spn = '1973-09-11'; }
+		$dmstop_spn = $hk['dmstop']; } if(!isset($dmstop_spn)) { $dmstop_spn = '1988-06-25'; }
 		
 		if(isset($eerste_in_spn)) { if ($eerste_in_spn < $dmstop_spn) { $dmstart_spn = $dmstop_spn; } else { $dmstart_spn = $eerste_in_spn; } 
 			$todate = date_create($dmstart_spn); $dag1_spn = date_format($todate,'d-m-Y'); }
@@ -402,7 +408,7 @@ FROM tblBezet b
  left join tblHistorie ht on (ht.hisId = uit.hist)
  join tblStal st on (st.stalId = h.stalId)
  left join (
-	SELECT st.schaapId, h.datum
+	SELECT h.hisId, st.schaapId, h.datum
 	FROM tblStal st
 	 join tblHistorie h on (st.stalId = h.stalId)
 	WHERE h.actId = 3 and h.skip = 0
@@ -413,9 +419,9 @@ FROM tblBezet b
 	WHERE p.hokId = '".mysqli_real_escape_string($db,$Id)."' and p.doelId = 3 and dmafsluit is not null
 	GROUP BY p.hokId
  ) endprnt on (endprnt.hokId = b.hokId)
-WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."' 
- and (isnull(ht.hisId) or ht.datum > coalesce(dmstop,'1973-09-11'))
- and h.datum >= prnt.datum
+WHERE b.hokId = '".mysqli_real_escape_string($db,$Id)."'
+ and (isnull(ht.hisId) or ht.datum > coalesce(dmstop,'1988-06-25'))
+ and (h.datum > prnt.datum || (h.datum = prnt.datum && h.hisId >= prnt.hisId) )
  and h.skip = 0
 GROUP BY b.hokId, hk.hoknr, endprnt.dmstop
 ") or die (mysqli_error($db));
@@ -424,7 +430,7 @@ GROUP BY b.hokId, hk.hoknr, endprnt.dmstop
 		$eerste_in_prnt = $hk['eerste_in'];
 		$totat_prnt = $hk['aant'];
 		$laatste_uit_prnt = $hk['laatste_uit']; 
-		$dmstop_prnt = $hk['dmstop']; } if(!isset($dmstop_prnt)) { $dmstop_prnt = '1973-09-11'; }
+		$dmstop_prnt = $hk['dmstop']; } if(!isset($dmstop_prnt)) { $dmstop_prnt = '1988-06-25'; }
 		
 		if(isset($eerste_in_prnt)) { if ($eerste_in_prnt < $dmstop_prnt) { $dmstart_prnt = $dmstop_prnt; } else { $dmstart_prnt = $eerste_in_prnt; } 
 			$todate = date_create($dmstart_prnt); $dag1_prnt = date_format($todate,'d-m-Y'); }
