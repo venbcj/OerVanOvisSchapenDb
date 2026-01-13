@@ -105,7 +105,6 @@ HokVerkopen.php
 HokVerlaten.php
 Home.php
 Inkoop.php
-InlezenReader.php
 InsAanvoer.php
 InsAdoptie.php
 InsAfvoer.php

@@ -1980,4 +1980,220 @@ SQL;
         return $this->run_query($sql, $args);
     }
 
+    // MMMM
+    public function count_stallijstscan_new_lid($lidId) {
+        $sql = <<<SQL
+     SELECT count(Id) aant 
+     FROM impAgrident 
+     WHERE lidId = :lidId and actId = 21 and isnull(verwerkt)
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function count_zoek_dekken($lidId) {
+        $sql = <<<SQL
+     SELECT count(Id) aant 
+     FROM impAgrident
+     WHERE lidId = :lidId and actId = 18 and isnull(verwerkt)
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function count_zoek_dracht($lidId) {
+        $sql = <<<SQL
+     SELECT count(Id) aant 
+     FROM impAgrident
+     WHERE lidId = :lidId and actId = 19 and isnull(verwerkt)
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function count_lammeren($lidId) {
+        $sql = <<<SQL
+     SELECT count(Id) aant 
+     FROM impAgrident
+     WHERE lidId = :lidId and actId = 1 and isnull(verwerkt)
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function count_lambar($lidId) {
+        $sql = <<<SQL
+     SELECT count(Id) aant 
+     FROM impAgrident
+     WHERE lidId = :lidId and actId = 16 and isnull(verwerkt)
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function count_gespeenden($lidId) {
+        $sql = <<<SQL
+     SELECT count(Id) aant 
+     FROM impAgrident 
+     WHERE lidId = :lidId and actId = 4 and isnull(verwerkt)
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function count_afgeleverden($lidId) {
+        $sql = <<<SQL
+     SELECT count(Id) aant 
+     FROM impAgrident 
+     WHERE lidId = :lidId and actId = 12 and isnull(ubnId) and isnull(verwerkt)
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function count_uitgeschaarden($lidId) {
+        $sql = <<<SQL
+     SELECT count(Id) aant 
+     FROM impAgrident 
+     WHERE lidId = :lidId and actId = 10 and isnull(verwerkt)
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function count_uitgevallen($lidId) {
+        $sql = <<<SQL
+     SELECT count(Id) aant 
+     FROM impAgrident 
+     WHERE lidId = :lidId and actId = 14 and isnull(verwerkt)
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function count_aanvoer($lidId) {
+        $sql = <<<SQL
+     SELECT count(Id) aant 
+     FROM impAgrident 
+     WHERE lidId = :lidId and (actId = 2 or actId = 3) and isnull(verwerkt)
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function count_TvUitscharen($lidId) {
+        $sql = <<<SQL
+     SELECT count(Id) aant 
+     FROM impAgrident 
+     WHERE lidId = :lidId and actId = 11 and isnull(verwerkt)
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function count_overplaatsen($lidId) {
+        $sql = <<<SQL
+     SELECT count(Id) aant 
+     FROM impAgrident
+     WHERE lidId = :lidId and actId = 5 and isnull(verwerkt)
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function count_SpenenEnOverpl($lidId) {
+        $sql = <<<SQL
+     SELECT count(rs.datum) aantsp
+     FROM impAgrident rs 
+      join (
+         SELECT lidId, levensnummer
+         FROM impAgrident
+         WHERE lidId = :lidId and actId = 5 and isnull(verwerkt)
+      ) ro ON (rs.lidId = ro.lidId and rs.levensnummer = ro.levensnummer)
+     WHERE rs.lidId = :lidId and actId = 4 and isnull(verwerkt)
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function count_adoptie($lidId) {
+        $sql = <<<SQL
+     SELECT count(Id) aant 
+     FROM impAgrident 
+     WHERE lidId = :lidId and actId = 15 and isnull(verwerkt)
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function count_medicijn($lidId) {
+        $sql = <<<SQL
+     SELECT count(Id) aant 
+     FROM impAgrident 
+     WHERE lidId = :lidId and actId = 8 and isnull(verwerkt)
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function count_wegingen($lidId) {
+        $sql = <<<SQL
+     SELECT count(Id) aant 
+     FROM impAgrident 
+     WHERE lidId = :lidId and actId = 9 and isnull(verwerkt)
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function count_omnummer($lidId) {
+        $sql = <<<SQL
+     SELECT count(Id) aant 
+     FROM impAgrident 
+     WHERE lidId = :lidId and actId = 17 and isnull(verwerkt)
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function count_halsnummer($lidId) {
+        $sql = <<<SQL
+     SELECT count(Id) aant 
+     FROM impAgrident 
+     WHERE lidId = :lidId and actId = 1717 and isnull(verwerkt)
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function count_voerregistratie($lidId) {
+        $sql = <<<SQL
+     SELECT count(Id) aant 
+     FROM impAgrident 
+     WHERE lidId = :lidId and actId = 8888 and isnull(verwerkt)
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function count_wijzigingen_ubn($lidId) {
+        $sql = <<<SQL
+     SELECT count(Id) aant 
+     FROM impAgrident 
+     WHERE lidId = :lidId and actId = 12 and ubnId is not null and isnull(verwerkt)
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function count_stallijstscan_controle($lidId) {
+        $sql = <<<SQL
+     SELECT count(Id) aant 
+     FROM impAgrident 
+     WHERE lidId = :lidId and actId = 22 and isnull(verwerkt)
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
 }

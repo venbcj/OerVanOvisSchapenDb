@@ -44,8 +44,30 @@ if (Auth::is_logged_in()) {
 ?>
  <form action="#" method="post" enctype="multipart/form-data">
 <?php
-    include "inlezenAgrident.php";
-    # NOTE: deze include brengt een armvol variabelen in scope.
+$impagrident_gateway = new ImpAgridentGateway();
+
+$aantNewLid = $impagrident_gateway->count_stallijstscan_new_lid($lidId);
+$aantdek = $impagrident_gateway->count_zoek_dekken($lidId);
+$aantdra = $impagrident_gateway->count_zoek_dracht($lidId);
+$aantgeb = $impagrident_gateway->count_lammeren($lidId);
+$aantLbar = $impagrident_gateway->count_lambar($lidId);
+$aantspn = $impagrident_gateway->count_gespeenden($lidId);
+$aantafl = $impagrident_gateway->count_afgeleverden($lidId);
+$aantUitsch = $impagrident_gateway->count_uitgeschaarden($lidId);
+$aantuitv = $impagrident_gateway->count_uitgevallen($lidId);
+$aantaanw = $impagrident_gateway->count_aanvoer($lidId);
+$aantTvUitsch = $impagrident_gateway->count_TvUitscharen($lidId);
+$aantovpl = $impagrident_gateway->count_overplaatsen($lidId);
+$speen_ovpl = $impagrident_gateway->count_SpenenEnOverpl($lidId);
+$aantadop = $impagrident_gateway->count_adoptie($lidId);
+$aantpil = $impagrident_gateway->count_medicijn($lidId);
+$aantwg = $impagrident_gateway->count_wegingen($lidId);
+$aantomn = $impagrident_gateway->count_omnummer($lidId);
+$aanthals = $impagrident_gateway->count_halsnummer($lidId);
+$aantvoer = $impagrident_gateway->count_voerregistratie($lidId);
+$aantubn = $impagrident_gateway->count_wijzigingen_ubn($lidId);
+$aantscan = $impagrident_gateway->count_stallijstscan_controle($lidId);
+    # NOTE: dit brengt een armvol variabelen in scope.
     # Ik wil er een functie van maken, en dan een array teruggeven:
     # [A ] nu komt bijvoorbeeld $speen_ovpl terug,
     # [ Z] dan krijg je $aantallen['speen_ovpl']
