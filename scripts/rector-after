@@ -1,4 +1,5 @@
 #!/bin/bash
 [ -z "$1" ] && echo "usage: $0 <filename>" && exit
+sed -i '/public function/N;s/\n//' $1
 AUX=$(grep -oP 'new (.*)Gateway' $1 |sort -u|sed 's/new /gateways\//'|sed 's/$/.php/'|xargs)
 vi -o $1 $AUX

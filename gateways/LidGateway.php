@@ -13,15 +13,6 @@ SQL
         , [[':lidId', $lidId, Type::INT]]);
     }
 
-    public function zoek_karwerk($lidId) {
-        return $this->first_field(<<<SQL
-SELECT kar_werknr 
-FROM tblLeden
-WHERE lidId = :lidId
-SQL
-        , [[':lidId', $lidId, Type::INT]]);
-    }
-
     public function rechten($lidId) {
         $vw = $this->run_query(
             <<<SQL
@@ -724,6 +715,16 @@ SQL
         WHERE lidId = :lidId
 SQL;
         $args = [[':lidId', $lidId]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function zoek_karwerk($lidId)    {
+        $sql = <<<SQL
+        SELECT kar_werknr 
+        FROM tblLeden
+        WHERE lidId = :lidId
+SQL;
+        $args = [[':lidId', $lidId, Type::INT]];
         return $this->first_field($sql, $args);
     }
 

@@ -12,6 +12,7 @@ class BezetPdfPageTest extends IntegrationCase {
 
     public function testGetBezetHokLammerenVoorSpenen() {
         $this->runfixture('bezet-voor-spenen');
+        $this->runfixture('hok');
         $GLOBALS['Karwerk'] = 1;
         $this->get('/Bezet_pdf.php', ['Id' => 1]);
         $this->assertNoNoise();
@@ -20,6 +21,7 @@ class BezetPdfPageTest extends IntegrationCase {
     // dit raakt ook de code-voor-spenen
     public function testGetBezetHokLammerenVolwassenen() {
         $this->runfixture('bezet-volwassenen');
+        $this->runfixture('hok');
         $GLOBALS['Karwerk'] = 1;
         $this->get('/Bezet_pdf.php', ['Id' => 1]);
         $this->assertNoNoise();
@@ -27,8 +29,14 @@ class BezetPdfPageTest extends IntegrationCase {
 
     public function testGetBezetHokLammerenNaSpenen() {
         $this->runfixture('bezet-na-spenen');
+        $this->runfixture('hok');
         $GLOBALS['Karwerk'] = 1;
         $this->get('/Bezet_pdf.php', ['Id' => 1]);
+        $this->assertNoNoise();
+    }
+
+    public function test_get_geen_id() {
+        $this->get('/Bezet_pdf.php', []);
         $this->assertNoNoise();
     }
 

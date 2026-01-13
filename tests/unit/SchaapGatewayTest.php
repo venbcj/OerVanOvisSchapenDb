@@ -1058,10 +1058,17 @@ class SchaapGatewayTest extends GatewayCase {
         $this->assertNotFalse($result);
     }
 
-    public function test_ooien_met_meerlingworpen() {
+    public function test_ooien_met_meerlingworpen0() {
         $Karwerk = 5;
         $order = '1';
-        $result = $this->sut->ooien_met_meerlingworpen(self::LIDID, $Karwerk, $order);
+        $result = $this->sut->ooien_met_meerlingworpen0(self::LIDID, $Karwerk, $order);
+        $this->assertNotFalse($result);
+    }
+
+    public function test_ooien_met_meerlingworpen1() {
+        $Karwerk = 5;
+        $order = '1';
+        $result = $this->sut->ooien_met_meerlingworpen1(self::LIDID, $Karwerk, $order);
         $this->assertNotFalse($result);
     }
 

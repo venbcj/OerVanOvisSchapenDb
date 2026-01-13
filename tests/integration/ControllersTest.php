@@ -197,7 +197,6 @@ TXT
     public static function controllers_using_pdf() {
         return [
             'afleverlijst' => ['AfleverLijst_pdf.php', ['afleverlijst'], ['hisId' => 1]],
-            # ['Bezet_pdf.php', [], []], # er is al een integratietest voor deze pagina.
             'combireden' => ['Combireden_pdf.php', ['combireden'], ['Id' => 1]],
             'hok' => ['Hok_pdf.php', ['hok'], ['Id' => 1]],
             'hoklijst' => ['Hoklijst_pdf.php', [], ['Id' => 1]],

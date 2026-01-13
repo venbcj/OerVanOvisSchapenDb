@@ -523,4 +523,14 @@ SQL
         return $this->db->insert_id;
     }
 
+    public function zoek_verblijf_gegevens($hokId)    {
+        $sql = <<<SQL
+        SELECT hokId, hoknr
+        FROM tblHok
+        WHERE hokId = :hokId
+SQL;
+        $args = [[':hokId', $hokId, Type::INT]];
+        return $this->run_query($sql, $args);
+    }
+
 }

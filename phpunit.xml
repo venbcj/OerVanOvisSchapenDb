@@ -36,9 +36,8 @@
         <directory>ongebruikt</directory>
         <directory>utils</directory>
       </exclude>
-      <file>./Meerlingen4.php</file>
-      <file>./login.php</file>
-      <file>./menuRapport1.php</file>
+      <file>./Bezet_pdf.php</file>
+      <file>./just_connect_db.php</file>
     </whitelist>
   </filter>
   <logging>
