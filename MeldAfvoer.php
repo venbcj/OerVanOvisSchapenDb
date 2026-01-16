@@ -290,12 +290,12 @@ FROM tblMelding m
 	WHERE h.actId = 3 and h.skip = 0
  ) ouder on (s.schaapId = ouder.schaapId)
  join ( 
-	SELECT schaapId, max(datum) datum 
+	SELECT hd.ubnId, schaapId, max(datum) datum 
 	FROM (".$vw_HistorieDm.") hd
 	 left join tblActie a on (hd.actId = a.actId)
 	WHERE (a.af = 0 or isnull(a.af)) and hd.actie != 'Gevoerd' and hd.actie not like '% gemeld'
-	GROUP BY schaapId
- ) mhd on (s.schaapId = mhd.schaapId)
+	GROUP BY hd.ubnId, schaapId
+ ) mhd on (st.ubnId = mhd.ubnId and s.schaapId = mhd.schaapId)
  left join tblRelatie rl on (rl.relId = st.rel_best)
  left join tblPartij p on (rl.partId = p.partId)
  left join (
