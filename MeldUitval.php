@@ -126,11 +126,11 @@ FROM tblRequest rq
  join tblLeden l on (st.lidId = l.lidId)
  join tblSchaap s on (st.schaapId = s.schaapId)
  join ( 
-	SELECT schaapId, max(datum) lastdatum
+	SELECT hd.stalId, schaapId, max(datum) lastdatum
 	FROM (".$vw_HistorieDm.") hd 
 	WHERE hd.actId != 14 and actie != 'Gevoerd' and actie not like '% gemeld'
-	GROUP BY schaapId
- ) mhd on (s.schaapId = mhd.schaapId)
+	GROUP BY hd.stalId, schaapId
+ ) mhd on (st.stalId = mhd.stalId and s.schaapId = mhd.schaapId)
 WHERE rq.reqId = '".mysqli_real_escape_string($db,$reqId)."'
  and h.datum is not null
  and h.datum >= mhd.lastdatum
@@ -281,10 +281,11 @@ FROM tblMelding m
  join tblRelatie r on (r.relId = st.rel_best)
  join tblPartij p on (r.partId = p.partId)
  join (
-	SELECT schaapId, max(datum) datum 
+	SELECT hd.stalId, schaapId, max(datum) datum 
 	FROM (".$vw_HistorieDm.") hd 
-	WHERE hd.actId != 14 and actie != 'Gevoerd' and actie not like '% gemeld' GROUP BY schaapId
- ) mhd on (st.schaapId = mhd.schaapId)
+	WHERE hd.actId != 14 and actie != 'Gevoerd' and actie not like '% gemeld'
+	GROUP BY hd.stalId, schaapId
+ ) mhd on (st.stalId = mhd.stalId and st.schaapId = mhd.schaapId)
  left join (
 	SELECT max(respId) respId, levensnummer
 	FROM impRespons
