@@ -299,7 +299,15 @@ $aantalmelden = mysqli_query($datb, "
 SELECT count(*) aant
 FROM tblMelding m
  join tblHistorie h on (m.hisId = h.hisId)
-WHERE m.reqId = '".mysqli_real_escape_string($datb, $fldReqId)."' and m.skip <> 1 and h.skip = 0
+ join tblStal st on (st.stalId = h.stalId)
+ join tblSchaap s on (s.schaapId = st.schaapId)
+ left join (
+    SELECT reqId, levensnummer, levensnummer_new, max(meldnr) meldnr 
+    FROM impRespons
+    WHERE reqId = '".mysqli_real_escape_string($datb,$fldReqId)."'
+    GROUP BY reqId, levensnummer, levensnummer_new
+ ) rs on (coalesce(rs.levensnummer_new, rs.levensnummer) = s.levensnummer and rs.reqId = m.reqId)
+WHERE m.reqId = '".mysqli_real_escape_string($datb, $fldReqId)."' and m.skip <> 1 and h.skip = 0 and isnull(rs.meldnr)
 ");//Foutafhandeling zit in return FALSE
 
     if ($aantalmelden) {
