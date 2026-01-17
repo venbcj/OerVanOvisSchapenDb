@@ -155,24 +155,38 @@ $index++;
 } // Einde if($rows_meld > 1)
 
 // Declaratie keuzelijst foute meldingen
-$zoek_foute_meldingen /*niet ouder dan 1 maand */ = mysqli_query($db,"
+$zoek_meldingen_zonder_meldnr /*niet ouder dan 1 maand */ = mysqli_query($db,"
 SELECT rq.reqId, rq.code, count(distinct meldId) aant
 FROM tblRequest rq
- join impRespons rp on (rq.reqId = rp.reqId)
  join tblMelding m on (rq.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rq.def = 'J' and rp.def = 'N' and date_format(rq.dmmeld,'%Y-%m-%d') <= date_format(rp.dmcreate,'%Y-%m-%d') and date_format(rp.dmcreate,'%Y-%m-%d') >= date_add(curdate(),interval -30 day)
+ join tblSchaap s on (s.schaapId = st.schaapId)
+ left join impRespons rp on (s.levensnummer = rp.levensnummer)
+ left join (
+    SELECT s.levensnummer, rs.respId, rs.meldnr, rs.reqId, rs.melding
+    FROM tblMelding m
+     join tblHistorie h on (m.hisId = h.hisId)
+     join tblStal st on (st.stalId = h.stalId)
+     join tblSchaap s on (s.schaapId = st.schaapId)
+     join impRespons rs on (s.levensnummer = coalesce(rs.levensnummer_new, rs.levensnummer) and m.reqId = rs.reqId)
+    WHERE rs.meldnr is not null
+    ) rvonr on (s.levensnummer = rvonr.levensnummer and m.reqId = rvonr.reqId)
+WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rq.def = 'J' 
+ and (rp.def = 'N' || isnull(rp.def)) 
+ and (date_format(rq.dmmeld,'%Y-%m-%d') <= date_format(rp.dmcreate,'%Y-%m-%d') || isnull(rp.dmcreate)) 
+ and (date_format(rq.dmresponse,'%Y-%m-%d') >= date_add(curdate(),interval -30 day))
+ and isnull(rvonr.respId)
 GROUP BY rq.reqId, rq.code
 ") or die (mysqli_error($db));
-  /*while ($zfm = mysqli_fetch_assoc($zoek_foute_meldingen))    
+  /*while ($zfm = mysqli_fetch_assoc($zoek_meldingen_zonder_meldnr))    
       {
           $reqId_openen = $zfm['reqId'];
           $code_openen = $zfm['code'];  } */
-$rows_foute_meld = mysqli_num_rows($zoek_foute_meldingen);
+$rows_foute_meld = mysqli_num_rows($zoek_meldingen_zonder_meldnr);
 
   $index = 0; 
-while ($zfm = mysqli_fetch_assoc($zoek_foute_meldingen)) 
+while ($zfm = mysqli_fetch_assoc($zoek_meldingen_zonder_meldnr)) 
 { 
    $requId[$index] = $zfm['reqId'];
    $reqCode[$index] = $zfm['code'];
