@@ -59,7 +59,7 @@ FROM tblRequest r
     GROUP BY reqId
     ) lr on (r.reqId = lr.reqId)
  left join impRespons rp on (rp.respId = lr.respId)
-WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and (rp.def != 'J' or isnull(rp.def)) and h.skip = 0
+WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and (rp.def != 'J' or isnull(rp.meldnr)) and h.skip = 0
 GROUP BY r.reqId
 ORDER BY r.reqId
 ");
