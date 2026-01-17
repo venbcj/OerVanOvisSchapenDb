@@ -352,12 +352,18 @@ FROM tblMelding m
     WHERE h.actId <= 4 and h.actId != 2 and h.skip = 0
     GROUP BY schaapId
  ) mhd on (st.schaapId = mhd.schaapId)
+ left join (
+    SELECT reqId, levensnummer, levensnummer_new, max(meldnr) meldnr 
+    FROM impRespons
+    WHERE reqId = '".mysqli_real_escape_string($datb,$fldReqId)."'
+    GROUP BY reqId, levensnummer, levensnummer_new
+ ) rs on (coalesce(rs.levensnummer_new, rs.levensnummer) = s.levensnummer and rs.reqId = m.reqId)
 WHERE m.reqId = '".mysqli_real_escape_string($datb, $fldReqId)."'
  and h.datum is not null
  and (h.datum >= mhd.datum or isnull(mhd.datum))
  and h.datum <= (curdate() + interval 3 day)
- and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12
  and m.skip <> 1
+ and isnull(rs.meldnr)
 ");
     /* Herkomst (ubn_herk) is niet verplicht te melden */
     if ($juistaantal) {
@@ -486,7 +492,7 @@ FROM tblMelding m
      not exists (SELECT max(stl.stalId) stalId FROM tblStal stl WHERE stl.lidId = '".mysqli_real_escape_string($db, $lidId)."' and stl.stalId = st.stalId)
     GROUP BY st.schaapId
  ) lastdm on (lastdm.schaapId = s.schaapId)
-WHERE h.skip = 0 and m.reqId = '".mysqli_real_escape_string($db, $reqId)."' and isnull(hide.meldId)
+WHERE h.skip = 0 and m.reqId = '".mysqli_real_escape_string($db, $reqId)."' and isnull(hide.meldId) and isnull(rs.meldnr)
 ORDER BY u.ubn, m.skip, s.levensnummer 
 ");
 }
