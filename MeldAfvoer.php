@@ -76,12 +76,12 @@ FROM tblMelding m
  join tblStal st on (st.stalId = h.stalId)
  join tblSchaap s on (st.schaapId = s.schaapId)
  join ( 
-	SELECT schaapId, max(datum) lastdatum 
+	SELECT hd.stalId, schaapId, max(datum) lastdatum 
 	FROM (".$nestHistorieDm.") hd
 	 left join tblActie a on (hd.actId = a.actId)
 	WHERE (a.af = 0 or isnull(a.af)) and hd.actie != 'Gevoerd' and hd.actie not like '% gemeld'
-	GROUP BY schaapId
- ) mhd on (s.schaapId = mhd.schaapId)
+	GROUP BY hd.stalId, schaapId
+ ) mhd on (st.stalId = mhd.stalId and s.schaapId = mhd.schaapId)
 WHERE m.reqId = '".mysqli_real_escape_string($datb,$fldReqId)."' 
  and h.datum is not null
  and h.datum >= mhd.lastdatum
