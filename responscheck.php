@@ -39,7 +39,7 @@ FROM tblRequest r
 	GROUP BY reqId
 	) lr on (r.reqId = lr.reqId)
  left join impRespons rp on (rp.respId = lr.respId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (rp.def != 'J' or isnull(rp.def)) and h.skip = 0
+WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (rp.def != 'J' or isnull(rp.meldnr)) and h.skip = 0
 GROUP BY r.reqId
 ORDER BY r.reqId
 ") or die (mysqli_error($db));
