@@ -1,11 +1,8 @@
 <?php
-
 require_once("autoload.php");
-
 /* 17-2-14 : schaapgegevens aangepast. vw_Schapen is aangevuld met max bezetId (laatste hoknr). Op deze manier wordt maar 1 regel uit vw_Bezetting gekoppeld met vw_Schapen. Het hok wordt alleen getoond als het dier een lam is.
         Bij keuze moederdier moet per schaap het selectieveld uit staan
   18-2-2014 : reslevnr aangepast. levnr vervangen door _POST['kzlLevnr']
-
   19-2-14 : Kolom 'ander medicijn' uitgezet omdat weergave niet juist is.
   19-2-14 : Uit kzl type = 'lam' verwijderd. Gevolg is uit reswerknr 'and isnull(tot) and isnull(afsluitdm)' verwijderd. Ook is kolom 'Generatie' toegevoegd
         Post levensnummer via link naar MedOverzSchaap.php
@@ -16,7 +13,7 @@ require_once("autoload.php");
   20-2-2015 : login toegevoegd
   14-11-2015 : naamwijziging van Medicijn registratie naar Medicijn toediening en Keuze medicijn naar Keuze medicijnvoorraad
   8-12-2015 : laatste geboren lam bij moeders tonen hoeveelheid per schaap verplaatst en getotaliseerd
-  6-1-2016 : Hoknr gewijzigd aar Verblijf */
+6-1-2016 : Hoknr gewijzigd aar Verblijf */
 $versie = '25-11-2016'; /* actId = 3 uit on clause gehaald en als sub query genest */
 $versie = '28-12-2016'; /* Bij keuze moederdieren wordt standaard chbKeuze aangevinkt */
 $versie = "23-1-2017"; /* 18-1-2017 Query's aangepast n.a.v. nieuwe DoelId        22-1-2017 tblBezetting gewijzigd naar tblBezet    23-1-2017 kalender toegevoegd */
@@ -32,13 +29,12 @@ $versie = '23-09-2021'; /* func_artikelnuttigen.php toegevoegd. Sql beveiligd me
 $versie = '06-11-2023'; /* Bij zoek_einddatum 'and h.skip = 0' toegevoegd */
 $versie = '31-12-2023'; /* and h.skip = 0 in een enkele query aangevuld aan tblHistorie */
 $versie = "11-03-2024"; /* Bij geneste query uit
-join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
-join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 */
-$versie = '30-11-2024'; /* In keuzelijst levensnummer en werknr uitgeschaarde dieren wel tonen. query's m.b.t. afvoer aangevuld met h.actId != 10 */
+    join tblHistorie h2 on (h1.stalId = h2.stalId and h1.hisId < h2.hisId) gewijzgd naar
+    join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+    I.v.m. historie van stalId 22623. Dit dier is eerst verkocht en met terugwerkende kracht geplaatst in verblijf Afmest 1 */
+    $versie = '30-11-2024'; /* In keuzelijst levensnummer en werknr uitgeschaarde dieren wel tonen. query's m.b.t. afvoer aangevuld met h.actId != 10 */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = top > gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '15-01-2025'; /*h1.actId != 2 verwijderd in de geneste query 'uit' in de query kzl_verblijven */
-
 Session::start();
 ?>
 <!DOCTYPE html>
@@ -72,6 +68,7 @@ if (Auth::is_logged_in()) {
         while ($lin = $vw->fetch_array()) {
             $stdat = str_replace('.00', '', $lin['stdat']);
             $array_eenheid[$lin['artId']] = 'x ' . $stdat . $lin['eenheid'] . ' per schaap';
+            // TODO deze include moet buiten de lus, denk ik --BCB
             include "med-registratie.js.php";
         }
         $hok_uitgez = "Alles";
@@ -105,6 +102,7 @@ if (Auth::is_logged_in()) {
                     $Geb_tot = $_POST['txtGeb_tot'];
                 }
             } else {
+                // TODO: rename. De bedoeling is een boolean: "moeten we de knop tonen?"
                 $knpInsert = "toonknpInsert";
             }
         }
@@ -136,48 +134,51 @@ if (Auth::is_logged_in()) {
                         $knpInsert = "toonknpInsert";
                     }
                 } elseif (empty($_POST['chbKeuze'])) {
-                    // TODO: (BV) #0004158 dit is dode code. Je komt alleen in deze tak als er wel een keuze is aangevinkt.
+                  // TODO: (BV) #0004158 dit is dode code. Je komt alleen in deze tak als er wel een keuze is aangevinkt.
+                    // @codeCoverageIgnoreStart
                     $fout = "Er is geen schaap geselecteerd.";
                     if (!empty($_POST['kzlArtikel'])) {
                         $knpInsert = "toonknpInsert";
                     }
+                    // @codeCoverageIgnoreEnd
                 } elseif ($nut_totaal > $stock) {
-                    // Controle van het toedien aantal tov het voorraad aantal
+                  // Controle van het toedien aantal tov het voorraad aantal
                     $fout = "U kunt geen $nut_totaal $eenh toedienen er is nl. nog maar $stock $eenh beschikbaar.";
                 } else {
-                    // toevoegen medicijn
-                    $kzlArt = "$_POST[kzlArtikel]";
-                    $date = date_create($_POST['txtDatum']);
-                    $fldDay = date_format($date, 'Y-m-d');
-                    //Aantal daadwerkelijk ingelezen
-                    $ingelezen = 0;
-                    // Doorlopen van geselecteerde schapen
-                    $vw = $schaap_gateway->zoek_per_levensnummers(implode(',', $_POST['chbKeuze']));
+                        // toevoegen medicijn
+                        $kzlArt = "$_POST[kzlArtikel]";
+                        $date = date_create($_POST['txtDatum']);
+                        $fldDay = date_format($date, 'Y-m-d');
+                        //Aantal daadwerkelijk ingelezen
+                        $ingelezen = 0;
+                        // Doorlopen van geselecteerde schapen
+                        $vw = $schaap_gateway->zoek_per_levensnummers(implode(',', $_POST['chbKeuze']));
                     while ($s = $vw->fetch_assoc()) {
                         $schaapId = $s['schaapId'];
                         $levnsr = $s['levensnummer'];
                         $zoek_stalId = $stal_gateway->zoek_laatste_stal($lidId, $schaapId);
-                        // beetje raar, deze while. De query doet max en levert dus 1 record.
+         // beetje raar, deze while. De query doet max en levert dus 1 record.
                         while ($s = $zoek_stalId->fetch_assoc()) {
-                            $stalId = $s['stalId'];
-                            // Zoek naar einddatum in geval schaap reeds is afgevoerd
-                            unset($dmafv);
-                            [$dmafv, $afvdm] = $historie_gateway->zoek_einddatum($stalId);
-                            // Einde Zoek naar einddatum in geval schaap reeds is afgevoerd
+                                    $stalId = $s['stalId'];
+                                    // Zoek naar einddatum in geval schaap reeds is afgevoerd
+                                    unset($dmafv);
+                                    [$dmafv, $afvdm] = $historie_gateway->zoek_einddatum($stalId);
+                                    // Einde Zoek naar einddatum in geval schaap reeds is afgevoerd
                             if (isset($dmafv) && $fldDay > $dmafv) {
                                 $opm = $levnsr . ' de datum mag niet na de afvoerdatum ' . $afvdm . ' liggen.\n';
                                 if (isset($melding)) {
-                                    $melding .= $opm;
+                                    // TODO (BV) dit is dode code. $melding wordt alleen gezet in importRespons, en die wordt hier niet gebruikt.
+                                            $melding .= $opm; // @codeCoverageIgnore
                                 } else {
                                     $melding = $opm;
                                 }
                             } else {
-                                // Vervolgen toevoegen medicijn
-                                // Aanvullen tblHistorie
+                 // Vervolgen toevoegen medicijn
+                 // Aanvullen tblHistorie
                                 $historie_gateway->medicijn_invoeren($stalId, $fldDay);
-                                // zoeken laatste hisId van ingelezen historie t.b.v. tblNuttig ($insert_tblHistorie)
+                 // zoeken laatste hisId van ingelezen historie t.b.v. tblNuttig ($insert_tblHistorie)
                                 $hisId = $historie_gateway->zoek_laatste($stalId, $fldDay);
-                                // hoeveelheid per dier
+                 // hoeveelheid per dier
                                 $toedtotal = $stdat * $toedat;
                                 inlezen_pil($db, $hisId, $kzlArt, $toedtotal, $fldDay, $kzlReden);
                                 $ingelezen++;
@@ -188,7 +189,7 @@ if (Auth::is_logged_in()) {
                     if ($ingelezen == 1) {
                         $meervoud = ' dier ';
                     } else {
-                        $meervoud = ' dieren totaal ';
+                               $meervoud = ' dieren totaal ';
                     }
                     $goed = "Er is bij " . $ingelezen . $meervoud . $echtGenuttigd . $eenh . " " . $naam . " toegediend";
                 }
@@ -211,7 +212,8 @@ if (Auth::is_logged_in()) {
 <td colspan = 2 ><i><sub> Aantal</sub></i></td>
 </tr>
 <tr>
-<td><input id = "datepicker1" type= text name = "txtDatum" size = "8" value = <?php echo "$Datum";?> ></td>
+<td><input id = "datepicker1" type= text name = "txtDatum" size = "8" value = <?php echo "$Datum"; ?>
+></td>
         <?php
         // Artikelgegevens ophalen van het gekozen artikel
         $queryEenheid = $artikel_gateway->zoek_eenheid($kzlArt);
@@ -246,8 +248,9 @@ Medicijnen met artId als key. deze inkId is de laagste inkId waarvan nog voorraa
         // kzlReden
         $kzl_redenen = $reden_gateway->lijst_voor($lidId);
         $name = "kzlReden";
-        $width = 200 ;?>
-<select name=<?php echo"$name";?> style="width:<?php echo "$width";?>;\" >";
+        $width = 200 ;
+        ?>
+<select name="kzlReden" style="width: <?php echo $width; ?> ;" >
  <option></option>
         <?php
         while ($row = $kzl_redenen->fetch_array()) {
@@ -255,19 +258,22 @@ Medicijnen met artId als key. deze inkId is de laagste inkId waarvan nog voorraa
             $kzlvalue = "$row[reden]";
             include "kzl.php";
         }
-// EINDE kzlReden
+        // EINDE kzlReden
         ?>
 </select></td>
 <!-- Keuze 2e inenting -->
  <td>
-    <input type = "text" name = "txtAantal" size = "1" value = <?php echo "$toedat";?> >
+    <input type = "text" name = "txtAantal" size = "1" value = <?php echo "$toedat";     ?>
+>
  </td>
- <td style = "font-size:13px;" ><p  id="aantal" > <?php if (isset($eenheid)) {
-        echo 'x ' . $eenheid . ' per schaap';
-                                                  } else {
-                                                      echo 'x';
-                                                  }
-                                                    ?>
+ <td style = "font-size:13px;" ><p  id="aantal" >
+        <?php
+        if (isset($eenheid)) {
+            echo 'x ' . $eenheid . ' per schaap';
+        } else {
+            echo 'x';
+        }
+        ?>
  </p>
  </td>
         <?php
@@ -281,15 +287,15 @@ Medicijnen met artId als key. deze inkId is de laagste inkId waarvan nog voorraa
 </tr>
 </table>
 <hr>
-<?php
+        <?php
 
-/*******************************************
-**    EINDE GEGEVENS TBV MEDICIJN    **
-********************************************
-*
-*******************************************
-**    GEGEVENS TBV SCHAAP ZOEKEN    **
-********************************************/
+        /*******************************************
+         **    EINDE GEGEVENS TBV MEDICIJN    **
+         ********************************************
+         *
+         *******************************************
+         **    GEGEVENS TBV SCHAAP ZOEKEN    **
+         ********************************************/
 
         ?>
 <table border = 0>
@@ -314,19 +320,26 @@ Medicijnen met artId als key. deze inkId is de laagste inkId waarvan nog voorraa
  <td width = 35 ></td>
  <td><i><sub> Verblijf</sub></i><i style = "font-size:12px;"><sub> (aantal in verblijf) </sub></i> </td>
  <td><sub><input type = radio name = 'radHok' value = 1
-        <?php if (!isset($_POST['knpToon']) || $_POST['radHok'] == 1) {
+        <?php
+        if (!isset($_POST['knpToon']) || $_POST['radHok'] == 1) {
             echo "checked";
-        } ?> title = "Toont alleen lammeren uit gekozen verblijf"> Lammeren </sub></td>
+        }
+        ?>
+title = "Toont alleen lammeren uit gekozen verblijf"> Lammeren </sub></td>
  <td></td>
  <td><sub><input type = radio name = 'radAfv' value = 0
-        <?php if (!isset($_POST['knpToon']) || $_POST['radAfv'] == 0) {
+        <?php
+        if (!isset($_POST['knpToon']) || $_POST['radAfv'] == 0) {
             echo "checked";
-        } ?>
+        }
+        ?>
         title = "Alleen dieren van stallijst"> Nee </sub>
      <sub><input type = radio name = 'radAfv' value = 1
-        <?php if ((isset($_POST['knpToon']) || isset($_POST['knpVervers'])) && $_POST['radAfv'] == 1) {
+        <?php
+        if ((isset($_POST['knpToon']) || isset($_POST['knpVervers'])) && $_POST['radAfv'] == 1) {
             echo "checked";
-        } ?>
+        }
+        ?>
         title = "Alleen dieren van stallijst"> Ja </sub></td>
 </tr>
 <tr>
@@ -338,10 +351,10 @@ Medicijnen met artId als key. deze inkId is de laagste inkId waarvan nog voorraa
             $radAfv = $_POST['radAfv'];
         }
         $zoek_levensnummer = $schaap_gateway->zoek_medicatie_lijst($lidId, $_POST['radAfv'] ?? false);
-?>
+        ?>
  <select name="kzlLevnr"  width=110 >
  <option></option>
-<?php
+        <?php
         while ($row = $zoek_levensnummer->fetch_array()) {
             $opties = array($row['schaapId'] => $row['levensnummer']);
             foreach ($opties as $key => $waarde) {
@@ -352,18 +365,18 @@ Medicijnen met artId als key. deze inkId is de laagste inkId waarvan nog voorraa
                 echo '<option value="' . $key . '" ' . $keuze . '>' . $waarde . '</option>';
             }
         }
-?>
+        ?>
 </select>
  </td>
  <td>
-<?php
+        <?php
         // Einde kzlLevensnummer
         // kzlWerknr
         $zoek_werknummer = $schaap_gateway->zoek_medicatielijst_werknummer($lidId, $Karwerk, $radAfv);
         $name = "kzlWerknr";
         $width = 25 + (8 * $Karwerk) ;
         ?>
-<select name=<?php echo"$name";?> style= "width:<?php echo "$width";?>;\" >";
+<select name="kzlWerknr" style="width: <?php echo $width; ?>">
  <option></option>
         <?php
         while ($row = $zoek_werknummer->fetch_array()) {
@@ -376,40 +389,50 @@ Medicijnen met artId als key. deze inkId is de laagste inkId waarvan nog voorraa
  </td>
  <td>
         <?php
-// Einde kzlWerknr
-// kzlHalsnr
+        // Einde kzlWerknr
+        // kzlHalsnr
         $zoek_halsnr = $stal_gateway->zoek_kleuren_halsnrs($lidId);
         $name = "kzlHalsnr";
         $width = 25 + (8 * $Karwerk) ;
         ?>
-<select name=<?php echo"$name";?> style= "width:<?php echo "$width";?>;\" >";
+<select name="kzlHalsnr" style="width: <?php echo $width; ?>">
  <option></option>
         <?php
         while ($row = $zoek_halsnr->fetch_array()) {
             $kzlkey = "$row[schaapId]";
             $kzlvalue = "$row[halsnr]";
             include "kzl.php";
-        // Einde kzlHalsnr
+            // Einde kzlHalsnr
         }
         ?>
 </select>
  </td>
  <td width = 35 ></td>
- <td><input id = "datepicker2" type= text name = "txtGeb_van" size = "8" value = <?php if (isset($Geb_van)) {
-        echo "$Geb_van";
-                                                                                 } ?> ></td>
- <td><input id = "datepicker3" type= text name = "txtGeb_tot" size = "8" value = <?php if (isset($Geb_tot)) {
-        echo "$Geb_tot";
-                                                                                 } ?> ></td>
+ <td><input id = "datepicker2" type= text name = "txtGeb_van" size = "8" value =
+        <?php
+        if (isset($Geb_van)) {
+            echo "$Geb_van";
+        }
+        ?>
+></td>
+            <td><input id = "datepicker3" type= text name = "txtGeb_tot" size = "8" value =
+        <?php
+        if (isset($Geb_tot)) {
+            echo "$Geb_tot";
+        }
+        ?>
+></td>
  <td width = 35 ></td>
  <td>
         <?php
-//Verblijf zoeken
-                                                                                     $kzl_verblijven = $bezet_gateway->zoek_verblijven($lidId);
+     //Verblijf zoeken
+        $kzl_verblijven = $bezet_gateway->zoek_verblijven($lidId);
         $name = "kzlHok";
         $width = 100 ;
         ?>
-<select name=<?php echo"$name";?> style="width:<?php echo "$width";?>;\" >";
+<select name=<?php echo"$name"; ?>
+style="width:<?php echo "$width"; ?>
+;\" >";
  <option></option>
         <?php
         while ($row = $kzl_verblijven->fetch_array()) {
@@ -417,23 +440,29 @@ Medicijnen met artId als key. deze inkId is de laagste inkId waarvan nog voorraa
             $kzlvalue = "$row[hoknr] &nbsp; ($row[nu])";
             include "kzl.php";
         }
-// EINDE Verblijf zoeken
+        // EINDE Verblijf zoeken
         ?>
 </select>
  </td>
  <td><sub><input type = radio name = 'radHok' value = 2
-        <?php if (isset($_POST['knpToon']) && $_POST['radHok'] == 2) {
+        <?php
+        if (isset($_POST['knpToon']) && $_POST['radHok'] == 2) {
             echo "checked";
-        } ?> title = "Toont alleen moederdieren van de lammeren uit gekozen verblijf"> Volwassen dieren </sub></td>
+        }
+        ?>
+title = "Toont alleen moederdieren van de lammeren uit gekozen verblijf"> Volwassen dieren </sub></td>
  <td></td>
  <td><input type = "submit" name="knpVervers" style = "font-size : 10px;" value = "Ververs"></td>
 </tr>
 <tr>
  <td colspan = 9 align = "center"><input type = "submit" name="knpToon" value = "toon"></td>
  <td><sub><input type = radio name = 'radHok' value = 3
-        <?php if (isset($_POST['knpToon']) && $_POST['radHok'] == 3) {
+        <?php
+        if (isset($_POST['knpToon']) && $_POST['radHok'] == 3) {
             echo "checked";
-        } ?> title = "Toont zowel lammeren als hun moederdieren uit gekozen verblijf"> Beiden </sub></td>
+        }
+        ?>
+title = "Toont zowel lammeren als hun moederdieren uit gekozen verblijf"> Beiden </sub></td>
 </tr>
 </table>
 <!--
@@ -446,22 +475,22 @@ Medicijnen met artId als key. deze inkId is de laagste inkId waarvan nog voorraa
     ********************************************
 -->
         <?php
-// Ophalen en tonen van dieren o.b.v. ingevulde keuzelijst(en)
+    // Ophalen en tonen van dieren o.b.v. ingevulde keuzelijst(en)
         if (!empty($_POST['kzlArtikel']) && (!empty($_POST['kzlLevnr']) || !empty($_POST['kzlWerknr']) || !empty($_POST['kzlHalsnr']) || !empty($_POST['chbOoi']) || !empty($_POST['kzlHok']) || !empty($_POST['txtGeb_van']))) {
             [$filter, $filt_mdr] = $schaap_gateway->getMedicatieWhere($_POST);
             if (isset($filt_mdr)) {
-            /*$where_mdr = $filt_mdr;*/
+                /*$where_mdr = $filt_mdr;*/
             }
             if (isset($where_mdr)) {
-            // Geneste query t.b.v. het hok (aglias b) is nodig. Bij zoeken op hok moet $filter op betreffende lammeren filteren.
-            // Zonder $reshok worden alle schapen getoond en is $levnr_mdr dus niet leeg !!
+                // Geneste query t.b.v. het hok (aglias b) is nodig. Bij zoeken op hok moet $filter op betreffende lammeren filteren.
+                // Zonder $reshok worden alle schapen getoond en is $levnr_mdr dus niet leeg !!
                 $zoek_aanwezig_moeder = $schaap_gateway->zoek_aanwezig_moeder($lidId, $where_mdr);
                 while ($kkop = $zoek_aanwezig_moeder->fetch_assoc()) {
                     $levnr_mdr = $kkop['levensnummer'];
                 }
             }
             include "med-registratie-toggle.js.php";
-// TODO: #0004159 onclick aanhangen met event listener (jquery?), niet in html
+            // TODO: #0004159 onclick aanhangen met event listener (jquery?), niet in html
             ?>
 <table id="schapen" border="0">
 <tr height = 30><td></td></tr>
@@ -472,12 +501,15 @@ Medicijnen met artId als key. deze inkId is de laagste inkId waarvan nog voorraa
  <th style = "text-align:center;"valign= bottom width= 80>Geboorte datum<hr></th>
  <th style = "text-align:center;"valign="bottom"; >Generatie<hr></th>
  <th width = 1></th>
-            <?php if (!empty($_POST['chbOoi']) || isset($levnr_mdr)) {
+            <?php
+            if (!empty($_POST['chbOoi']) || isset($levnr_mdr)) {
                 $veld = 'Laatst geboren lam';
             } else {
-                $veld = 'Verblijf';
-            } ?>
- <th style = "text-align:center;"valign="bottom"; ><?php echo $veld; ?><hr></th>
+                  $veld = 'Verblijf';
+            }
+            ?>
+ <th style = "text-align:center;"valign="bottom"; ><?php echo $veld;     ?>
+<hr></th>
  <th width = 1></th>
  <th style = "text-align:center;"valign="bottom"; width= 140 > Historie <hr></th>
  <th width = 1></th>
@@ -489,9 +521,9 @@ Medicijnen met artId als key. deze inkId is de laagste inkId waarvan nog voorraa
  <th width = 600></th>
 </tr>
             <?php
-                $zoek_schaapgegevens = $schaap_gateway->zoek_schaapgegevens($lidId, $Karwerk, $radAfv, $filter);
+            $zoek_schaapgegevens = $schaap_gateway->zoek_schaapgegevens($lidId, $Karwerk, $radAfv, $filter);
             while ($row = $zoek_schaapgegevens->fetch_assoc()) {
-            // nodig bij doorklikken naar historie medicatie
+                // nodig bij doorklikken naar historie medicatie
                 $schaapId = $row['schaapId'];
                 $levnr = $row['levensnummer'];
                 $werknr = $row['werknr'];
@@ -520,27 +552,38 @@ Medicijnen met artId als key. deze inkId is de laagste inkId waarvan nog voorraa
                     ?>
 <tr align = "center">
  <td width = 0> </td>
- <td width = 90> <input type = checkbox name = "chbKeuze[]" value = <?php echo $levnr; ?> >
+ <td width = 90> <input type = checkbox name = "chbKeuze[]" value = <?php echo $levnr;     ?>
+>
  </td>
- <td width = 100 style = "font-size:15px;"> <?php echo $levnr; ?> <br> </td>
- <td width = 100 style = "font-size:15px;"> <?php if (isset($gebdm)) {
-        echo $gebdm;
-                                            } ?> <br> </td>
- <td width = 100 style = "font-size:15px;"> <?php echo $fase; ?> <br> </td>
+ <td width = 100 style = "font-size:15px;"> <?php echo $levnr;     ?>
+<br> </td>
+ <td width = 100 style = "font-size:15px;">
+                    <?php
+                    if (isset($gebdm)) {
+                        echo $gebdm;
+                    }
+                    ?>
+<br> </td>
+ <td width = 100 style = "font-size:15px;"> <?php echo $fase;     ?>
+<br> </td>
  <td width = 1> </td>
- <td width = 100 style = "font-size:15px;"> <?php if (isset($lstdm) && $afvoer == 0) {
-             echo $lstdm;
-                                            } else {
-                                                echo $hoknr;
-                                            } ?> <br> </td>
+ <td width = 100 style = "font-size:15px;">
+                    <?php
+                    if (isset($lstdm) && $afvoer == 0) {
+                        echo $lstdm;
+                    } else {
+                        echo $hoknr;
+                    }
+                    ?>
+<br> </td>
  <td width = 1> </td>
  <td width = 100 style = "font-size:12px;">
                     <?php
-                 // Zoeken naar historie medicijnen per schaap
-                        $medic = $schaap_gateway->tel_medicijn_historie($lidId, $schaapId);
-                        if (!empty($medic)) {
-                            echo View::link_to('historie', 'MedOverzSchaap.php?pstId='.$schaapId, ['style' => 'color: blue']);
-                        }
+                    // Zoeken naar historie medicijnen per schaap
+                    $medic = $schaap_gateway->tel_medicijn_historie($lidId, $schaapId);
+                    if (!empty($medic)) {
+                        echo View::link_to('historie', 'MedOverzSchaap.php?pstId=' . $schaapId, ['style' => 'color: blue']);
+                    }
                     ?>
 <br> </td>
 </tr>
@@ -551,7 +594,7 @@ Medicijnen met artId als key. deze inkId is de laagste inkId waarvan nog voorraa
 </table>
             <?php
         }
-?>
+        ?>
 <!--
     **************************************************
     **    EINDE MEDICIJNREGISTRATIE TONEN    **
@@ -560,7 +603,8 @@ Medicijnen met artId als key. deze inkId is de laagste inkId waarvan nog voorraa
     </TD>
         <?php
     } else {
-        ?> <img src='med_registratie_php.jpg'  width='970' height='550'/>
+        ?>
+<img src="med_registratie_php.jpg"  width="970" height="550"/>
         <?php
     }
     include "menu1.php";

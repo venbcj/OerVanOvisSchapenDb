@@ -28,7 +28,7 @@ if (!function_exists('getallheaders')) {
 }
 $string = '';
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    return);
+    return;
 }
 $headers = getallheaders(); // geef in een array ook headers terug die ik naar de server heb gestuurd in eerste instantie
 if (!isset($headers['Authorization'])) { // Als in de headers geen index 'Autorization voorkomt'

@@ -2,8 +2,6 @@
 
 class InsGeboortesInsertTest extends IntegrationCase {
 
-    private $wants_autoincrement_restore = false;
-
     protected $restore_keys_before = true;
     protected $restore_keys_after = true;
 
@@ -25,8 +23,6 @@ class InsGeboortesInsertTest extends IntegrationCase {
     }
 
     public function test_post_met_bestaande_ooi() {
-        $this->wants_autoincrement_restore = true; // ondoorzichtig; door deze post wordt een record in tblVolwas gezet
-        // schoner, maar trager, is in teardown ALLE autoincrements terugzetten.
         $this->runfixture('moeder-4');
         $this->post('/InsGeboortes.php', [
             'ingelogd_' => 1,
@@ -46,7 +42,6 @@ class InsGeboortesInsertTest extends IntegrationCase {
     }
 
     public function test_post_met_ooi_andere_transponder() {
-        $this->wants_autoincrement_restore = true;
         $this->runfixture('impagrident-moeder');
         $this->runfixture('moeder-4');
         $this->runSQL("UPDATE tblSchaap SET levensnummer='4', transponder='ietsanders'"); // fixture moeder-4 vult levensnummer niet in, moet matchen met de "ingelezen" waarde in fixture impagrident-moeder
@@ -65,7 +60,6 @@ class InsGeboortesInsertTest extends IntegrationCase {
     }
 
     public function test_post_met_ander_verloop() {
-        $this->wants_autoincrement_restore = true;
         $this->runfixture('impagrident-moeder');
         $this->runfixture('moeder-4');
         $this->runSQL("UPDATE impAgrident SET verloop='131072'");

@@ -17,7 +17,6 @@ class LidGatewayTest extends GatewayCase {
     }
 
     public function test_save_new() {
-        $this->wants_autoincrement_restore = true;
         $form = [
             // uit een POST
             'roep' => 'a',
@@ -350,7 +349,6 @@ class LidGatewayTest extends GatewayCase {
     }
 
     public function test_store() {
-        $this->wants_autoincrement_restore = true;
         $ubn = null;
         $passw = null;
         $tel = null;

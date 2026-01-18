@@ -36,7 +36,17 @@
         <directory>ongebruikt</directory>
         <directory>utils</directory>
       </exclude>
-      <directory>.</directory>
+      <file>./Med_registratie.php</file>
+      <file>./kalender.php</file>
+      <file>./kzl.php</file>
+      <file>./login.php</file>
+      <file>./med-registratie.js.php</file>
+      <file>./med-registratie-toggle.js.php</file>
+      <file>./menu1.php</file>
     </whitelist>
   </filter>
+  <logging>
+    <log type="coverage-html" target="./coverage-html"/>
+    <log type="coverage-clover" target="./coverage.xml"/>
+  </logging>
 </phpunit>

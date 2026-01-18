@@ -1,0 +1,10 @@
+parameters:
+    bootstrapFiles:
+        - autoload.php
+    level: 0
+    paths:
+        - .
+    excludePaths:
+        - vendor
+        - fpdf
+        - ongebruikt

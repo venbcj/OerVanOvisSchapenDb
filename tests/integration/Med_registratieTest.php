@@ -9,6 +9,12 @@ class MedRegistratiePageTest extends IntegrationCase {
         parent::tearDown();
     }
 
+    public function test_toont_plaatje_indien_module_uitgeschakeld() {
+        $this->runSQL("UPDATE tblLeden SET tech=0");
+        $this->get('/Med_registratie.php');
+        $this->assertPresent('<img src="med_registratie');
+    }
+
     public function testToonMedregistratieGeenSchaap() {
         $this->post('/Med_registratie.php', [
             'ingelogd' => 1,
@@ -29,6 +35,8 @@ class MedRegistratiePageTest extends IntegrationCase {
             'radAfv' => 0,
             'chbKeuze' => 1,
             'kzlLevnr' => '1',
+            'txtGeb_van' => '2010-01-03',
+            'txtGeb_tot' => '2020-01-03',
         ]);
         $this->assertNoNoise();
         $this->assertFout('Medicijn is niet geselecteerd.');
@@ -196,7 +204,6 @@ class MedRegistratiePageTest extends IntegrationCase {
 
     public function testInsertMedregistratieToedienenTeLaat() {
         $this->runfixture('medicijnvoorraad');
-        $this->uses_db();
         $this->runSQL("INSERT INTO tblHistorie(actId, stalId, skip, datum) VALUES(12, 1, 0, '2001-12-13')");
         $this->post('/Med_registratie.php', [
             'ingelogd' => 1,

@@ -1,6 +1,13 @@
 <?php
 
 class RasPdf extends Fpdf {
+
+    private $reader;
+
+    public function setReader($reader) {
+        $this->reader = $reader;
+    }
+
     function header(){
 
 
@@ -27,13 +34,13 @@ global $imageWidth;
         $this->SetFillColor(166,198,235);
         $this->SetDrawColor(50,50,100);
         $this->Cell(75,3,'','',0,'',false);
-if($reader == 'Biocontrol') {
+if($this->reader == 'Biocontrol') {
         $this->Cell(15,3,'Code','',0,'C',false);
 }
         $this->Cell(18,3,'','',1,'C',false);
 
         $this->Cell(75,5,'','',0,'',false);
-if($reader == 'Biocontrol') {
+if($this->reader == 'Biocontrol') {
         $this->Cell(15,5,'reader','',0,'C',false);
 }
         $this->Cell(18,5,'Ras','',1,'C',false);

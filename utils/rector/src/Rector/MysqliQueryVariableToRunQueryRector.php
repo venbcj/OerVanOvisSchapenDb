@@ -14,6 +14,7 @@ use PhpParser\Node\Arg;
 use PhpParser\NodeTraverser;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 
 final class MysqliQueryVariableToRunQueryRector extends AbstractRector {
 
