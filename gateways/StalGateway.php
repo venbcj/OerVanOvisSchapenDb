@@ -314,8 +314,9 @@ SQL
 SELECT s.schaapId 
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  join tblHistorie h on (st.stalId = h.stalId)
-WHERE st.lidId = :lidId
+WHERE u.lidId = :lidId
  and levensnummer = :levnr
  and st.rel_best is not null
  and (h.actId = 12 or h.actId = 13)
@@ -434,9 +435,10 @@ SQL
             <<<SQL
 SELECT stalId
 FROM tblStal st
+ join tblUbn u on (u.ubnId = st.ubnId)
 WHERE isnull(st.rel_best)
  and st.schaapId = :schaapId
- and st.lidId = :lidId
+ and u.lidId = :lidId
 SQL
         ,
             [[':lidId', $lidId, Type::INT], [':schaapId', $recId, Type::INT]],
@@ -473,7 +475,8 @@ tblSchaap s
          join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
-        WHERE b.hokId = :hokId and st.lidId = :lidId and a1.aan = 1
+         join tblUbn u on (u.ubnId = st.ubnId)
+        WHERE b.hokId = :hokId and u.lidId = :lidId and a1.aan = 1
          and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
         GROUP BY b.bezId, st.schaapId, h1.hisId
  ) uit on (uit.bezId = b.bezId)
@@ -594,8 +597,9 @@ SQL
             <<<SQL
 SELECT count(st.schaapId) aant
 FROM tblStal st
+ join tblUbn u on (u.ubnId = st.ubnId)
  join tblHistorie h on (h.stalId = st.stalId)
-WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y') = :jaar and st.lidId = :lidId
+WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y') = :jaar and u.lidId = :lidId
 SQL
         , [[':lidId', $lidId, Type::INT], [':jaar', $jaar]]
         );
@@ -606,14 +610,16 @@ SQL
             <<<SQL
 SELECT count(st.schaapId) aant
 FROM tblStal st
+ join tblUbn u on (u.ubnId = st.ubnId)
  join tblHistorie h on (h.stalId = st.stalId)
  join (
      SELECT st.schaapId
     FROM tblStal st
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblHistorie h on (h.stalId = st.stalId)
-    WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y') = :jaar and st.lidId = :lidId
+    WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y') = :jaar and u.lidId = :lidId
  ) geb on (geb.schaapId = st.schaapId)
-WHERE h.actId = 14 and h.skip = 0 and date_format(h.datum,'%Y') = :jaar and st.lidId = :lidId
+WHERE h.actId = 14 and h.skip = 0 and date_format(h.datum,'%Y') = :jaar and u.lidId = :lidId
 SQL
         , [[':lidId', $lidId, Type::INT], [':jaar', $jaar]]
         );

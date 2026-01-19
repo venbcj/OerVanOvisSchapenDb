@@ -447,6 +447,7 @@ FROM (
        FROM tblBezet b
         join tblHistorie hv on (b.hisId = hv.hisId)
         join tblStal st on (hv.stalId = st.stalId)
+        join tblUbn u on (u.ubnId = st.ubnId)
         left join (
            SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
            FROM tblBezet b
@@ -455,23 +456,26 @@ FROM (
             join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
             join tblActie a2 on (a2.actId = h2.actId)
             join tblStal st on (h1.stalId = st.stalId)
-           WHERE a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and st.lidId = :lidId
+            join tblUbn u on (u.ubnId = st.ubnId)
+           WHERE a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and u.lidId = :lidId
            GROUP BY b.bezId, st.schaapId, h1.hisId
         ) uit on (uit.hisv = b.hisId)
         left join tblHistorie ht on (uit.hist = ht.hisId)
-       WHERE hv.skip = 0 and st.lidId = :lidId
+       WHERE hv.skip = 0 and u.lidId = :lidId
     ) s on (p.hokId = s.hokId)
     join (
        SELECT st.schaapId, h.datum
        FROM tblStal st
+        join tblUbn u on (u.ubnId = st.ubnId)
         join tblHistorie h on (st.stalId = h.stalId)
-       WHERE h.actId = 4 and h.skip = 0 and st.lidId = :lidId
+       WHERE h.actId = 4 and h.skip = 0 and u.lidId = :lidId
     ) spn on (spn.schaapId = s.schaapId)
      left join (
        SELECT st.schaapId, h.datum
        FROM tblStal st
+        join tblUbn u on (u.ubnId = st.ubnId)
         join tblHistorie h on (st.stalId = h.stalId)
-       WHERE h.actId = 3 and h.skip = 0 and st.lidId = :lidId
+       WHERE h.actId = 3 and h.skip = 0 and u.lidId = :lidId
     ) prn on (prn.schaapId = s.schaapId)
    WHERE schpIn < pEind and schpUit > pStart and schpIn >= spn.datum and (schpIn < prn.datum or isnull(prn.schaapId))
    GROUP BY p.periId, v.nutat
@@ -499,6 +503,7 @@ join
        FROM tblBezet b
         join tblHistorie hv on (b.hisId = hv.hisId)
         join tblStal st on (hv.stalId = st.stalId)
+        join tblUbn u on (u.ubnId = st.ubnId)
         left join (
            SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
            FROM tblBezet b
@@ -507,23 +512,26 @@ join
             join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
             join tblActie a2 on (a2.actId = h2.actId)
             join tblStal st on (h1.stalId = st.stalId)
-           WHERE a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and st.lidId = :lidId
+            join tblUbn u on (u.ubnId = st.ubnId)
+           WHERE a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and u.lidId = :lidId
            GROUP BY b.bezId, st.schaapId, h1.hisId
         ) uit on (uit.hisv = b.hisId)
         left join tblHistorie ht on (uit.hist = ht.hisId)
-       WHERE hv.skip = 0 and st.lidId = :lidId
+       WHERE hv.skip = 0 and u.lidId = :lidId
     ) s on (p.hokId = s.hokId)
     join (
        SELECT st.schaapId, h.datum
        FROM tblStal st
+        join tblUbn u on (u.ubnId = st.ubnId)
         join tblHistorie h on (st.stalId = h.stalId)
-       WHERE h.actId = 4 and h.skip = 0 and st.lidId = :lidId and date_format(h.datum,'%Y') = :kzlJaar and Month(h.datum) = :mndnr
+       WHERE h.actId = 4 and h.skip = 0 and u.lidId = :lidId and date_format(h.datum,'%Y') = :kzlJaar and Month(h.datum) = :mndnr
     ) spn on (spn.schaapId = s.schaapId)
     left join (
        SELECT st.schaapId, h.datum
        FROM tblStal st
+        join tblUbn u on (u.ubnId = st.ubnId)
         join tblHistorie h on (st.stalId = h.stalId)
-       WHERE h.actId = 3 and h.skip = 0 and st.lidId = :lidId
+       WHERE h.actId = 3 and h.skip = 0 and u.lidId = :lidId
     ) prn on (prn.schaapId = s.schaapId)
    WHERE schpIn < pEind and schpUit > pStart and schpIn >= spn.datum and (schpIn < prn.datum or isnull(prn.schaapId))
    GROUP BY p.periId, date_format(spn.datum,'%Y%m')

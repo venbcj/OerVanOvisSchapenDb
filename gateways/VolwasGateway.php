@@ -444,8 +444,9 @@ FROM tblVolwas v
     SELECT hisId
     FROM tblHistorie h
      join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (u.ubnId = st.ubnId)
     WHERE h.skip = 0
- and st.lidId = :lidId
+ and u.lidId = :lidId
    ) dek on (dek.hisId = v.hisId)
    left join (
       SELECT d.volwId, d.hisId
@@ -500,8 +501,9 @@ FROM tblVolwas v
     SELECT hisId
     FROM tblHistorie h
      join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (u.ubnId = st.ubnId)
     WHERE h.skip = 0
- and st.lidId = :lidId
+ and u.lidId = :lidId
    ) dek on (dek.hisId = v.hisId)
    left join (
       SELECT d.volwId, d.hisId
@@ -594,8 +596,9 @@ FROM tblVolwas v
         SELECT hisId
         FROM tblHistorie h
          join tblStal st on (st.stalId = h.stalId)
+         join tblUbn u on (u.ubnId = st.ubnId)
         WHERE h.skip = 0
- and st.lidId = :lidId
+ and u.lidId = :lidId
  and st.schaapId = :schaapId
  ) dek on (dek.hisId = v.hisId)
  left join (
@@ -603,8 +606,9 @@ FROM tblVolwas v
     FROM tblDracht d 
      join tblHistorie h on (h.hisId = d.hisId)
      join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (u.ubnId = st.ubnId)
     WHERE h.skip = 0
- and st.lidId = :lidId
+ and u.lidId = :lidId
  and st.schaapId = :schaapId
  ) dra on (v.volwId = dra.volwId)
  left join tblSchaap lam on (lam.volwId = v.volwId)
@@ -647,7 +651,8 @@ SELECT count(volwId) aant
 FROM tblVolwas v
  join tblHistorie h on (v.hisId = h.hisId)
  join tblStal st on (h.stalId = st.stalId)
-WHERE h.skip = 0 and st.lidId = :lidId and year(h.datum) = :jaar and h.datum < :datum
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE h.skip = 0 and u.lidId = :lidId and year(h.datum) = :jaar and h.datum < :datum
 SQL
         , [[':lidId', $lidId, Type::INT], [':jaar', $jaar], [':datum', $datum]]
         );
@@ -660,9 +665,10 @@ SELECT count(v.volwId) aant
 FROM tblVolwas v 
  join tblHistorie h on (v.hisId = h.hisId)
  join tblStal st on (h.stalId = st.stalId)
+ join tblUbn u on (u.ubnId = st.ubnId)
 WHERE h.skip = 0
  and date_format(h.datum,'%Y%u') = :jaarweek
- and st.lidId = :lidId
+ and u.lidId = :lidId
 SQL
         , [[':lidId', $lidId, Type::INT], [':jaarweek', $jaarweek]]
         );
@@ -675,7 +681,8 @@ SELECT count(v.volwId) aant
 FROM tblVolwas v 
  join tblHistorie h on (v.hisId = h.hisId)
  join tblStal st on (h.stalId = st.stalId)
-WHERE h.skip = 0 and date_format(h.datum,'%Y%u') >= :van and date_format(h.datum,'%Y%u') <= :tot and st.lidId = :lidId
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE h.skip = 0 and date_format(h.datum,'%Y%u') >= :van and date_format(h.datum,'%Y%u') <= :tot and u.lidId = :lidId
 SQL
         , [[':lidId', $lidId, Type::INT], [':van', $van], [':tot', $tot]]
         );
@@ -687,7 +694,8 @@ SELECT v.volwId
 FROM tblVolwas v
  join tblSchaap s on (v.volwId = s.volwId)
  join tblStal st on (s.schaapId = st.schaapId)
-WHERE st.lidId = :lidId
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE u.lidId = :lidId
 GROUP BY v.volwId
 ORDER BY v.volwId
 SQL

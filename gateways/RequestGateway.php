@@ -102,7 +102,8 @@ FROM tblRequest r
  join tblMelding m on (r.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h. hisId)
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = :lidId
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE u.lidId = :lidId
  and isnull(r.dmmeld)
  and r.code = :code
  and h.skip = 0

@@ -213,13 +213,14 @@ SQL
 SELECT count(distinct(s.schaapId)) aant
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  left join (
     SELECT st.schaapId
     FROM tblStal st
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = s.schaapId)
-WHERE st.lidId = :lidId
+WHERE u.lidId = :lidId
  and isnull(st.rel_best)
 SQL
         , [[':lidId', $lidId, Type::INT]]
@@ -257,6 +258,7 @@ FROM tblSchaap s
     WHERE u.lidId = :lidId
      GROUP BY u.lidId, st.schaapId
   ) mst on (mst.schaapId = s.schaapId)
+ join tblUbn u on (u.ubnId = mst.ubnId)
  join (
      SELECT h.stalId, h.actId
      FROM tblHistorie h
@@ -269,7 +271,7 @@ FROM tblSchaap s
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = s.schaapId)
-WHERE mst.lidId = :lidId
+WHERE u.lidId = :lidId
  and $Sekse
  and $Ouder
 SQL
@@ -411,26 +413,26 @@ SQL
 
     public function countUitgeschaarden($lidId) {
         return $this->first_field(
-            "SELECT count(*) aantal " . $this->fromUitgeschaarden(),
+            "SELECT count(*) aantal " . $this->FROMUitgeschaarden(),
             [[':lidId', $lidId, Type::INT]]
         );
     }
 
     public function zoekUitgeschaarden($lidId, $Karwerk) {
-        $from = $this->fromUitgeschaarden();
+        $FROM = $this->FROMUitgeschaarden();
         return $this->run_query(
             <<<SQL
 SELECT s.levensnummer, right(s.levensnummer, $Karwerk) werknum, s.transponder,
 date_format(hg.datum, '%Y%m%d') gebdm_sort, date_format(hg.datum, '%d-%m-%Y') gebdm,
 s.geslacht, prnt.datum aanw, best.naam, haf.actId
-    $from
+    $FROM
 SQL
         ,
             [[':lidId', $lidId, Type::INT]]
         );
     }
 
-    private function fromUitgeschaarden() {
+    private function FROMUitgeschaarden() {
         return <<<SQL
 FROM tblSchaap s
  join (
@@ -990,7 +992,7 @@ SQL
         return implode(' and ', $parts);
     }
 
-    public function zoekAankoop($lidId, $where) {
+    public function zoekAankoop($lidId, $WHERE) {
         return $this->first_row(
             <<<SQL
 SELECT date_format(hg.datum, '%d-%m-%Y') gebdm, koop.datum dmkoop
@@ -1013,7 +1015,7 @@ FROM tblSchaap s
     WHERE h.actId = 2 and h.skip = 0
  ) koop on (koop.schaapId = s.schaapId)
 WHERE u.lidId = :lidId
- and $where
+ and $WHERE
 SQL
         ,
             [[':lidId', $lidId, Type::INT]],
@@ -1021,7 +1023,7 @@ SQL
         );
     }
 
-    public function zoekSchaap($where) {
+    public function zoekSchaap($WHERE) {
         return $this->first_field(
             <<<SQL
 SELECT s.schaapId
@@ -1029,14 +1031,14 @@ FROM tblSchaap s
  left join tblVolwas v on (v.volwId = s.volwId)
  left join tblSchaap mdr on (v.mdrId = mdr.schaapId)
  left join tblSchaap vdr on (v.vdrId = vdr.schaapId)
-WHERE $where
+WHERE $WHERE
 SQL
         ,
             []
         );
     }
 
-    public function zoekresultaat($lidId, $where, $Karwerk) {
+    public function zoekresultaat($lidId, $WHERE, $Karwerk) {
         return $this->run_query(
             <<<SQL
 SELECT s.transponder, concat(st.kleur, ' ', st.halsnr) halsnr, s.schaapId, s.levensnummer, right(s.levensnummer, $Karwerk) werknr,
@@ -1099,7 +1101,7 @@ FROM tblSchaap s
      left join tblSchaap mdr on (v.mdrId = mdr.schaapId)
      left join tblSchaap vdr on (v.vdrId = vdr.schaapId)
     WHERE u.lidId = :lidId
- and $where
+ and $WHERE
  and a.af = 1
  and h.skip = 0
  ) haf on (haf.stalId = st.stalId)
@@ -1126,7 +1128,7 @@ FROM tblSchaap s
     WHERE h.skip = 0
  ) afl on (afl.schaapId = s.schaapId)
  left join tblRas r on(s.rasId = r.rasId)
-WHERE $where
+WHERE $WHERE
 ORDER BY if(isnull(s.levensnummer), 'Geen', ''), dmgeb desc, status
 SQL
         ,
@@ -1761,7 +1763,8 @@ SQL
 SELECT s.schaapId, s.levensnummer
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
-WHERE st.lidId = :lidId
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE u.lidId = :lidId
  and st.schaapId = :schaapId
 SQL
         ,
@@ -2074,7 +2077,7 @@ SQL
         );
     }
 
-    public function zoek_groeiresultaat_schaap($lidId, $Karwerk, $where) {
+    public function zoek_groeiresultaat_schaap($lidId, $Karwerk, $WHERE) {
         return $this->run_query(
             <<<SQL
 SELECT right(mdr.levensnummer, $Karwerk) moeder, s.schaapId, s.levensnummer, right(s.levensnummer, $Karwerk) werknum,
@@ -2102,7 +2105,7 @@ WHERE u.lidId = :lidId
  and isnull(st.rel_best)
  and h.kg is not null
  and h.skip = 0
- $where
+ $WHERE
 ORDER BY right(mdr.levensnummer, $Karwerk), right(s.levensnummer, $Karwerk), h.hisId
 SQL
         ,
@@ -2112,7 +2115,7 @@ SQL
         );
     }
 
-    public function zoek_groeiresultaat_weging($lidId, $Karwerk, $where) {
+    public function zoek_groeiresultaat_weging($lidId, $Karwerk, $WHERE) {
         return $this->run_query(
             <<<SQL
 SELECT date_format(h.datum, '%d-%m-%Y') datum, h.datum date, a.actie, right(mdr.levensnummer, $Karwerk) moeder,
@@ -2135,7 +2138,7 @@ WHERE u.lidId = :lidId
  and isnull(st.rel_best)
  and h.kg is not null
  and h.skip = 0
-$where
+$WHERE
 ORDER BY h.datum desc, h.actId, right(mdr.levensnummer, $Karwerk), right(s.levensnummer, $Karwerk), h.hisId
 SQL
         ,
@@ -2664,7 +2667,8 @@ FROM (
              join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
              join tblActie a2 on (a2.actId = h2.actId)
              join tblStal st on (h1.stalId = st.stalId)
-            WHERE st.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+             join tblUbn u on (u.ubnId = st.ubnId)
+            WHERE u.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
             GROUP BY h1.stalId, h1.hisId
          ) tot on (b.hisId = tot.hisv)
         WHERE hk.lidId = :lidId and isnull(tot.hist) and h.skip = 0
@@ -2676,8 +2680,9 @@ FROM (
          join tblVolwas v on (mdr.schaapId = v.mdrId)
          join tblSchaap lam on (v.volwId = lam.volwId)
          join tblStal st on (lam.schaapId = st.schaapId)
+         join tblUbn u on (u.ubnId = st.ubnId)
          join tblHistorie h on (st.stalId = h.stalId and h.actId = 1)
-        WHERE st.lidId = :lidId and h.skip = 0
+        WHERE u.lidId = :lidId and h.skip = 0
         GROUP BY mdr.schaapId
      ) lstlam on (lstlam.schaapId = s.schaapId)
 
@@ -2699,7 +2704,8 @@ FROM (
         SELECT max(h.hisId) hisId, h.stalId
         FROM tblHistorie h
          join tblStal st on (h.stalId = st.stalId)
-        WHERE st.lidId = :lidId and h.skip = 0
+         join tblUbn u on (u.ubnId = st.ubnId)
+        WHERE u.lidId = :lidId and h.skip = 0
         GROUP BY stalId
      ) hm on (hm.stalId = stm.stalId)
      join tblHistorie h on (hm.hisId = h.hisId)
@@ -2740,7 +2746,8 @@ FROM (
              join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
              join tblActie a2 on (a2.actId = h2.actId)
              join tblStal st on (h1.stalId = st.stalId)
-            WHERE st.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+             join tblUbn u on (u.ubnId = st.ubnId)
+            WHERE u.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
             GROUP BY h1.stalId, h1.hisId
          ) tot on (b.hisId = tot.hisv)
         WHERE hk.lidId = :lidId and isnull(tot.hist) and h.skip = 0
@@ -2752,8 +2759,9 @@ FROM (
          join tblVolwas v on (mdr.schaapId = v.mdrId)
          join tblSchaap lam on (v.volwId = lam.volwId)
          join tblStal st on (lam.schaapId = st.schaapId)
+         join tblUbn u on (u.ubnId = st.ubnId)
          join tblHistorie h on (st.stalId = h.stalId and h.actId = 1)
-        WHERE st.lidId = :lidId and h.skip = 0
+        WHERE u.lidId = :lidId and h.skip = 0
         GROUP BY mdr.schaapId
      ) lstlam on (lstlam.schaapId = s.schaapId)
 
@@ -2770,7 +2778,7 @@ SQL
         );
     }
 
-    public function zoek_aanwezig_moeder($lidId, $where_mdr) {
+    public function zoek_aanwezig_moeder($lidId, $WHERE_mdr) {
         return $this->run_query(
             <<<SQL
 SELECT s.levensnummer
@@ -2779,7 +2787,8 @@ FROM tblSchaap s
     SELECT max(h.hisId) hisId, st.schaapId
     FROM tblHistorie h
      join tblStal st on (h.stalId = st.stalId)
-    WHERE st.lidId = :lidId and isnull(st.rel_best) and h.skip = 0
+     join tblUbn u on (u.ubnId = st.ubnId)
+    WHERE u.lidId = :lidId and isnull(st.rel_best) and h.skip = 0
     GROUP BY st.stalId
  ) hm on (hm.schaapId = s.schaapId)
  join tblHistorie h on (hm.hisId = h.hisId)
@@ -2790,7 +2799,7 @@ FROM tblSchaap s
     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = s.schaapId)
  left join tblBezet b on (h.hisId = b.hisId)
-WHERE s.geslacht = 'ooi' and $where_mdr
+WHERE s.geslacht = 'ooi' and $WHERE_mdr
 SQL
         ,
             [[':lidId', $lidId, Type::INT]]
@@ -2938,12 +2947,13 @@ SQL
 SELECT date_format(h.datum,'%d-%m-%Y') datum, art.naam, DATEDIFF( (h.datum + interval art.wdgn_v day), :date) resterend
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  join tblHistorie h on (h.stalId = st.stalId)
  join tblActie a on (a.actId = h.actId)
  left join tblNuttig n on (h.hisId = n.hisId)
  left join tblInkoop i on (i.inkId = n.inkId)
  left join tblArtikel art on (i.artId = art.artId)
-WHERE st.lidId = :lidId
+WHERE u.lidId = :lidId
  and s.schaapId = :schaapId
  and h.actId = 8
  and h.skip = 0
@@ -2964,12 +2974,13 @@ SQL
 SELECT date_format(h.datum,'%d-%m-%Y') datum, art.naam, DATEDIFF( (h.datum + interval art.wdgn_v day), :date) resterend
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  join tblHistorie h on (h.stalId = st.stalId)
  join tblActie a on (a.actId = h.actId)
  left join tblNuttig n on (h.hisId = n.hisId)
  left join tblInkoop i on (i.inkId = n.inkId)
  left join tblArtikel art on (i.artId = art.artId)
-WHERE st.lidId = :lidId
+WHERE u.lidId = :lidId
  and s.schaapId = :schaapId
  and h.actId = 8
  and h.skip = 0
@@ -3127,8 +3138,9 @@ FROM tblVolwas v
         SELECT hisId
         FROM tblHistorie h
          join tblStal st on (st.stalId = h.stalId)
+         join tblUbn u on (u.ubnId = st.ubnId)
         WHERE h.skip = 0
- and st.lidId = :lidId
+ and u.lidId = :lidId
  and st.schaapId = :schaapId
  ) hv on (hv.hisId = v.hisId)
  left join (
@@ -3136,8 +3148,9 @@ FROM tblVolwas v
         FROM tblDracht d 
      join tblHistorie h on (h.hisId = d.hisId)
      join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (u.ubnId = st.ubnId)
     WHERE h.skip = 0
- and st.lidId = :lidId
+ and u.lidId = :lidId
  and st.schaapId = :schaapId
  ) d on (v.volwId = d.volwId)
  left join tblSchaap k on (k.volwId = v.volwId)
@@ -3358,9 +3371,9 @@ SQL
         return $this->run_query(
             <<<SQL
 SELECT schaapId, werknr, geslacht, gebkg, wg1, spkg, wg2, wg3, afvkg, round(groei/coalesce(dagen,1)*1000,2) gemgroei
-from (
+FROM (
 
-select s.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr, s.geslacht, hg.gebkg, w1_voorsp.wg1,
+SELECT s.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr, s.geslacht, hg.gebkg, w1_voorsp.wg1,
  hs.spkg, w1_nasp.wg2, w2_nasp.wg3, haf.afvkg,
  coalesce(hg.datum,coalesce(w1_voorsp.datum,coalesce(hs.dmspeen,coalesce(w1_nasp.datum,coalesce(w2_nasp.datum,haf.datum))))) minkg,
  coalesce(haf.datum,coalesce(w2_nasp.datum,coalesce(w1_nasp.datum,coalesce(hs.dmspeen,coalesce(w1_voorsp.datum,hg.datum))))) maxkg,
@@ -3370,73 +3383,77 @@ select s.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr, s.gesl
      coalesce(haf.datum,coalesce(w2_nasp.datum,coalesce(w1_nasp.datum,coalesce(hs.dmspeen,coalesce(w1_voorsp.datum,hg.datum))))),
      coalesce(hg.datum,coalesce(w1_voorsp.datum,coalesce(hs.dmspeen,coalesce(w1_nasp.datum,coalesce(w2_nasp.datum,haf.datum)))))
  ) dagen
-from tblSchaap s
+FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  left join (
-     select schaapId, kg gebkg, h.datum
-     from tblHistorie h
+     SELECT schaapId, kg gebkg, h.datum
+     FROM tblHistorie h
       join tblStal st on (h.stalId = st.stalId)
-     where st.lidId = :lidId
+      join tblUbn u on (u.ubnId = st.ubnId)
+     WHERE u.lidId = :lidId
  and actId = 1
  and skip = 0
  and h.kg is not null
  ) hg on (hg.schaapId = s.schaapId)
  left join (
-    select wg1.schaapId, h.kg wg1, h.datum
-    from (
-        select st.schaapId, min(wg1.hisId) hisId
-        from tblHistorie wg1
+    SELECT wg1.schaapId, h.kg wg1, h.datum
+    FROM (
+        SELECT st.schaapId, min(wg1.hisId) hisId
+        FROM tblHistorie wg1
          join tblStal st on (wg1.stalId = st.stalId)
+         join tblUbn u on (u.ubnId = st.ubnId)
          left join (
-             select stalId, kg spkg, datum dmaanw from tblHistorie where actId = 3
+             SELECT stalId, kg spkg, datum dmaanw FROM tblHistorie WHERE actId = 3
  and skip = 0
         ) aw on (aw.stalId = st.stalId)
          left join (
-             select stalId, kg spkg, datum dmspeen from tblHistorie where actId = 4
+             SELECT stalId, kg spkg, datum dmspeen FROM tblHistorie WHERE actId = 4
  and skip = 0
         ) sp on (sp.stalId = st.stalId)
-        where st.lidId = :lidId
+        WHERE u.lidId = :lidId
  and wg1.actId = 9
  and skip = 0 
 
  and (wg1.datum < sp.dmspeen or isnull(sp.dmspeen))
 
  and isnull(aw.dmaanw)
-        group by st.schaapId
+        GROUP BY st.schaapId
      ) wg1
      join tblHistorie h on (wg1.hisId = h.hisId)
  ) w1_voorsp on (w1_voorsp.schaapId = s.schaapId)
  left join (
-     select st.schaapId, h.kg spkg, h.datum dmspeen
-     from tblHistorie h
+     SELECT st.schaapId, h.kg spkg, h.datum dmspeen
+     FROM tblHistorie h
       join tblStal st on (h.stalId = st.stalId)
-     where actId = 4
+     WHERE actId = 4
  and skip = 0
  and h.kg is not null
  ) hs on (hs.schaapId = hg.schaapId)
  left join (
-    select wg_nasp.schaapId, h.kg wg2, h.datum
-    from tblHistorie h
+    SELECT wg_nasp.schaapId, h.kg wg2, h.datum
+    FROM tblHistorie h
      join (
-        select w1.schaapId, w1.hisId, count(w1.lidId) rank
-        from (
-            select st.lidId, st.schaapId, wg.hisId, wg.datum, aw.dmaanw, sp.dmspeen
-            from tblHistorie wg
+        SELECT w1.schaapId, w1.hisId, count(w1.lidId) rank
+        FROM (
+            SELECT u.lidId, st.schaapId, wg.hisId, wg.datum, aw.dmaanw, sp.dmspeen
+            FROM tblHistorie wg
              join tblStal st on (wg.stalId = st.stalId)
+             join tblUbn u on (u.ubnId = st.ubnId)
              left join (
-                 select stalId, datum dmaanw
-                from tblHistorie
-                where actId = 3
+                 SELECT stalId, datum dmaanw
+                FROM tblHistorie
+                WHERE actId = 3
  and skip = 0
             ) aw on (aw.stalId = st.stalId)
             left join (
-                 select stalId, datum dmspeen
-                from tblHistorie
-                where actId = 4
+                 SELECT stalId, datum dmspeen
+                FROM tblHistorie
+                WHERE actId = 4
  and skip = 0
             ) sp on (sp.stalId = st.stalId)
 
-            where st.lidId = :lidId
+            WHERE u.lidId = :lidId
  and wg.actId = 9
  and skip = 0
  and ( (aw.stalId is not null
@@ -3444,23 +3461,24 @@ from tblSchaap s
  and wg.datum > sp.dmspeen) )
          ) w1
          join (
-            select st.lidId, st.schaapId, wg.hisId, wg.datum, aw.dmaanw, sp.dmspeen
-            from tblHistorie wg
+            SELECT u.lidId, st.schaapId, wg.hisId, wg.datum, aw.dmaanw, sp.dmspeen
+            FROM tblHistorie wg
              join tblStal st on (wg.stalId = st.stalId)
+             join tblUbn u on (u.ubnId = st.ubnId)
              left join (
-                 select stalId, datum dmaanw
-                from tblHistorie
-                where actId = 3
+                 SELECT stalId, datum dmaanw
+                FROM tblHistorie
+                WHERE actId = 3
  and skip = 0
             ) aw on (aw.stalId = st.stalId)
             left join (
-                 select stalId, datum dmspeen
-                from tblHistorie
-                where actId = 4
+                 SELECT stalId, datum dmspeen
+                FROM tblHistorie
+                WHERE actId = 4
  and skip = 0
             ) sp on (sp.stalId = st.stalId)
 
-            where st.lidId = :lidId
+            WHERE u.lidId = :lidId
  and wg.actId = 9
  and skip = 0
  and ( (aw.stalId is not null
@@ -3469,33 +3487,34 @@ from tblSchaap s
             ) w2 on (w1.lidId = w2.lidId
  and w1.schaapId = w2.schaapId
  and w1.datum >= w2.datum)
-        group by w1.lidId, w1.schaapId, w1.hisId, w1.datum, w1.dmaanw, w1.dmspeen
-        having (count(w1.lidId) = 1 )
+        GROUP BY w1.lidId, w1.schaapId, w1.hisId, w1.datum, w1.dmaanw, w1.dmspeen
+        HAVING (count(w1.lidId) = 1 )
      ) wg_nasp on (h.hisId = wg_nasp.hisId)
 ) w1_nasp on (w1_nasp.schaapId = s.schaapId)
 left join (
-    select wg_nasp.schaapId, h.kg wg3, h.datum
-    from tblHistorie h
+    SELECT wg_nasp.schaapId, h.kg wg3, h.datum
+    FROM tblHistorie h
      join (
-        select w1.schaapId, w1.hisId, count(w1.lidId) rank
-        from (
-            select st.lidId, st.schaapId, wg.hisId, wg.datum, aw.dmaanw, sp.dmspeen
-            from tblHistorie wg
+        SELECT w1.schaapId, w1.hisId, count(w1.lidId) rank
+        FROM (
+            SELECT u.lidId, st.schaapId, wg.hisId, wg.datum, aw.dmaanw, sp.dmspeen
+            FROM tblHistorie wg
              join tblStal st on (wg.stalId = st.stalId)
+             join tblUbn u on (u.ubnId = st.ubnId)
              left join (
-                 select stalId, datum dmaanw
-                from tblHistorie
-                where actId = 3
+                 SELECT stalId, datum dmaanw
+                FROM tblHistorie
+                WHERE actId = 3
  and skip = 0
             ) aw on (aw.stalId = st.stalId)
             left join (
-                 select stalId, datum dmspeen
-                from tblHistorie
-                where actId = 4
+                 SELECT stalId, datum dmspeen
+                FROM tblHistorie
+                WHERE actId = 4
  and skip = 0
             ) sp on (sp.stalId = st.stalId)
 
-            where st.lidId = :lidId
+            WHERE u.lidId = :lidId
  and wg.actId = 9
  and skip = 0
  and ( (aw.stalId is not null
@@ -3503,23 +3522,24 @@ left join (
  and wg.datum > sp.dmspeen) )
          ) w1
          join (
-            select st.lidId, st.schaapId, wg.hisId, wg.datum, aw.dmaanw, sp.dmspeen
-            from tblHistorie wg
+            SELECT u.lidId, st.schaapId, wg.hisId, wg.datum, aw.dmaanw, sp.dmspeen
+            FROM tblHistorie wg
              join tblStal st on (wg.stalId = st.stalId)
+             join tblUbn u on (u.ubnId = st.ubnId)
              left join (
-                 select stalId, datum dmaanw
-                from tblHistorie
-                where actId = 3
+                 SELECT stalId, datum dmaanw
+                FROM tblHistorie
+                WHERE actId = 3
  and skip = 0
             ) aw on (aw.stalId = st.stalId)
             left join (
-                 select stalId, datum dmspeen
-                from tblHistorie
-                where actId = 4
+                 SELECT stalId, datum dmspeen
+                FROM tblHistorie
+                WHERE actId = 4
  and skip = 0
             ) sp on (sp.stalId = st.stalId)
 
-            where st.lidId = :lidId
+            WHERE u.lidId = :lidId
  and wg.actId = 9
  and skip = 0
  and ( (aw.stalId is not null
@@ -3528,25 +3548,26 @@ left join (
             ) w2 on (w1.lidId = w2.lidId
  and w1.schaapId = w2.schaapId
  and w1.datum >= w2.datum)
-        group by w1.lidId, w1.schaapId, w1.hisId, w1.datum, w1.dmaanw, w1.dmspeen
-        having (count(w1.lidId) = 2 )
+        GROUP BY w1.lidId, w1.schaapId, w1.hisId, w1.datum, w1.dmaanw, w1.dmspeen
+        HAVING (count(w1.lidId) = 2 )
      ) wg_nasp on (h.hisId = wg_nasp.hisId)
 ) w2_nasp on (w2_nasp.schaapId = s.schaapId)
 left join (
-     select schaapId, kg afvkg, h.datum
-     from tblHistorie h
+     SELECT schaapId, kg afvkg, h.datum
+     FROM tblHistorie h
       join tblStal st on (h.stalId = st.stalId)
-     where st.lidId = :lidId
+      join tblUbn u on (u.ubnId = st.ubnId)
+     WHERE u.lidId = :lidId
  and actId = 12
  and skip = 0
  and h.kg is not null
  ) haf on (haf.schaapId = s.schaapId)
 
-where s.levensnummer is not null
- and st.lidId = :lidId
+WHERE s.levensnummer is not null
+ and u.lidId = :lidId
  and (hg.gebkg is not null or w1_voorsp.wg1 is not null or hs.spkg is not null)
 ) a
-order by werknr
+ORDER BY werknr
 SQL
         ,
             [[':lidId', $lidId, Type::INT]]
@@ -3573,6 +3594,7 @@ SELECT s.schaapId, s.levensnummer, date_format(h.datum,'%d-%m-%Y') toedm, a.naam
  round(sum(n.nutat),2) nutat, n.stdat, round(sum(n.nutat*n.stdat),2) totat, e.eenheid, r.reden
 FROM tblSchaap s 
  join tblStal st on (st.schaapId = s.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  join tblHistorie h on (h.stalId = st.stalId)
  join tblNuttig n on (n.hisId = h.hisId)
  join tblInkoop i on (n.inkId = i.inkId)
@@ -3581,7 +3603,7 @@ FROM tblSchaap s
  join tblReden r on (r.redId = ru.redId)
  join tblEenheiduser eu on (eu.enhuId = a.enhuId)
  join tblEenheid e on (e.eenhId = eu.eenhId)
-WHERE st.lidId = :lidId
+WHERE u.lidId = :lidId
  and s.schaapId = :schaapId
  and a.soort = 'pil'
  and h.skip = 0
@@ -3603,14 +3625,14 @@ FROM (
     SELECT mdr.schaapId, right(mdr.levensnummer,$Karwerk) ooi, v.volwId, count(lam.schaapId) worp
     FROM tblSchaap mdr
      join tblStal stm on (stm.schaapId = mdr.schaapId)
-     join tblUbn um on stm.ubnId = um.ubnId
+     join tblUbn um on (stm.ubnId = um.ubnId)
      join tblVolwas v on (mdr.schaapId = v.mdrId)
      join tblSchaap lam on (v.volwId = lam.volwId)
      join tblStal st on (lam.schaapId = st.schaapId)
-     join tblUbn u on st.ubnId = u.ubnId
+     join tblUbn u on (st.ubnId = u.ubnId)
     WHERE isnull(stm.rel_best)
- and stm.lidId = :lidId
- and st.lidId = :lidId
+ and um.lidId = :lidId
+ and u.lidId = :lidId
     GROUP BY mdr.schaapId, right(mdr.levensnummer,$Karwerk), v.volwId
     HAVING count(v.volwId) > 1
      ) perWorp
@@ -3630,13 +3652,15 @@ FROM (
     SELECT mdr.schaapId, right(mdr.levensnummer,$Karwerk) ooi, v.volwId, count(lam.schaapId) worp
     FROM tblSchaap mdr
      join tblStal stm on (stm.schaapId = mdr.schaapId)
+     join tblUbn um on (um.ubnId = stm.ubnId)
      join tblVolwas v on (mdr.schaapId = v.mdrId)
      join tblSchaap lam on (v.volwId = lam.volwId)
      join tblStal st on (lam.schaapId = st.schaapId)
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblHistorie h on (h.stalId = st.stalId)
     WHERE isnull(stm.rel_best)
- and stm.lidId = :lidId
- and st.lidId = :lidId
+ and um.lidId = :lidId
+ and u.lidId = :lidId
  and date_format(h.datum,'%Y') <= '$jaar1'
  and date_format(h.datum,'%Y') >= '$jaar4'
  and h.actId = 1
@@ -3648,13 +3672,15 @@ left join (
     SELECT mdr.schaapId, v.volwId, count(lam.schaapId) worp
     FROM tblSchaap mdr
      join tblStal stm on (stm.schaapId = mdr.schaapId)
+     join tblUbn um on (um.ubnId = stm.ubnId)
      join tblVolwas v on (mdr.schaapId = v.mdrId)
      join tblSchaap lam on (v.volwId = lam.volwId)
      join tblStal st on (lam.schaapId = st.schaapId)
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblHistorie h on (h.stalId = st.stalId)
     WHERE isnull(stm.rel_best)
- and stm.lidId = :lidId
- and st.lidId = :lidId
+ and um.lidId = :lidId
+ and u.lidId = :lidId
  and h.actId = 1
  and date_format(h.datum,'%Y') = '$jaar1'
  and h.skip = 0
@@ -3665,13 +3691,15 @@ left join (
     SELECT mdr.schaapId, v.volwId, count(lam.schaapId) worp
     FROM tblSchaap mdr
      join tblStal stm on (stm.schaapId = mdr.schaapId)
+     join tblUbn um on (um.ubnId = stm.ubnId)
      join tblVolwas v on (mdr.schaapId = v.mdrId)
      join tblSchaap lam on (v.volwId = lam.volwId)
      join tblStal st on (lam.schaapId = st.schaapId)
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblHistorie h on (h.stalId = st.stalId)
     WHERE isnull(stm.rel_best)
- and stm.lidId = :lidId
- and st.lidId = :lidId
+ and um.lidId = :lidId
+ and u.lidId = :lidId
  and h.actId = 1
  and date_format(h.datum,'%Y') = '$jaar2'
  and h.skip = 0
@@ -3682,13 +3710,15 @@ left join (
     SELECT mdr.schaapId, v.volwId, count(lam.schaapId) worp
     FROM tblSchaap mdr
      join tblStal stm on (stm.schaapId = mdr.schaapId)
+     join tblUbn um on (um.ubnId = stm.ubnId)
      join tblVolwas v on (mdr.schaapId = v.mdrId)
      join tblSchaap lam on (v.volwId = lam.volwId)
      join tblStal st on (lam.schaapId = st.schaapId)
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblHistorie h on (h.stalId = st.stalId)
     WHERE isnull(stm.rel_best)
- and stm.lidId = :lidId
- and st.lidId = :lidId
+ and um.lidId = :lidId
+ and u.lidId = :lidId
  and h.actId = 1
  and date_format(h.datum,'%Y') = '$jaar3'
  and h.skip = 0
@@ -3699,13 +3729,15 @@ left join (
     SELECT mdr.schaapId, v.volwId, count(lam.schaapId) worp
     FROM tblSchaap mdr
      join tblStal stm on (stm.schaapId = mdr.schaapId)
+     join tblUbn um on (um.ubnId = stm.ubnId)
      join tblVolwas v on (mdr.schaapId = v.mdrId)
      join tblSchaap lam on (v.volwId = lam.volwId)
      join tblStal st on (lam.schaapId = st.schaapId)
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblHistorie h on (h.stalId = st.stalId)
     WHERE isnull(stm.rel_best)
- and stm.lidId = :lidId
- and st.lidId = :lidId
+ and um.lidId = :lidId
+ and u.lidId = :lidId
  and h.actId = 1
  and date_format(h.datum,'%Y') = '$jaar4'
  and h.skip = 0
@@ -3727,8 +3759,9 @@ FROM tblSchaap mdr
  join tblVolwas v on (v.mdrId = mdr.schaapId)
  join tblSchaap lam on (v.volwId = lam.volwId)
  join tblStal st on (st.schaapId = lam.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  join tblHistorie h on (st.stalId = h.stalId)
-WHERE st.lidId = :lidId
+WHERE u.lidId = :lidId
  and mdr.schaapId = :schaapId
  and h.actId = 1
  and date_format(h.datum,'%Y') <= '$jaar1'
@@ -3756,6 +3789,7 @@ FROM tblSchaap lam
  join tblSchaap mdr on (mdr.schaapId = v.mdrId)
  join tblSchaap wrp on (lam.volwId = wrp.volwId)
  join tblStal st on (st.schaapId = lam.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  join tblHistorie h on (st.stalId = h.stalId)
  left join (
      SELECT stalId, max(datum) mdm
@@ -3772,7 +3806,7 @@ FROM tblSchaap lam
 WHERE lam.levensnummer is not null
  and isnull(st.rel_best)
  and h.actId = 1
- and st.lidId = :lidId
+ and u.lidId = :lidId
  and h.datum >= :van
  and h.datum <= :tot
  and h.skip = 0
@@ -3799,6 +3833,7 @@ FROM tblSchaap lam
  join tblSchaap mdr on (mdr.schaapId = v.mdrId)
  join tblSchaap wrp on (lam.volwId = wrp.volwId)
  join tblStal st on (st.schaapId = lam.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  join tblHistorie h on (st.stalId = h.stalId)
  left join (
      SELECT stalId, max(datum) mdm
@@ -3815,7 +3850,7 @@ FROM tblSchaap lam
 WHERE lam.levensnummer is not null
  and isnull(st.rel_best)
  and h.actId = 1
- and st.lidId = :lidId
+ and u.lidId = :lidId
  and h.datum >= :van
  and h.datum <= :tot
 GROUP BY lam.levensnummer, lam.geslacht, h.datum, mdr.levensnummer, mx.mdm, st.stalId
@@ -3846,6 +3881,7 @@ FROM tblSchaap mdr
  left join tblVolwas v on (mdr.schaapId = v.mdrId)
  left join tblSchaap lam on (v.volwId = lam.volwId)
  join tblStal st on (mdr.schaapId = st.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  join (
     SELECT st.schaapId
     FROM tblStal st
@@ -3867,7 +3903,7 @@ FROM tblSchaap mdr
  left join tblHistorie hg_lm on (st_lm.stalId = hg_lm.stalId and hg_lm.actId = 1 and hg_lm.skip = 0)
  left join tblHistorie hs_lm on (st_lm.stalId = hs_lm.stalId and hs_lm.actId = 4 and hs_lm.skip = 0)
  left join tblHistorie haf_lm on (st_lm.stalId = haf_lm.stalId and haf_lm.actId = 12 and haf_lm.skip = 0)
-WHERE st.lidId = :lidId
+WHERE u.lidId = :lidId
  and mdr.geslacht = 'ooi'
  and isnull(haf.datum)
  and isnull(hdo.datum)
@@ -4086,24 +4122,26 @@ SELECT mdr.levensnummer, right(mdr.levensnummer,$Karwerk) werknr, r.ras, date_fo
 FROM tblSchaap mdr 
  left join tblVolwas v on (mdr.schaapId = v.mdrId)
  left join (
-     select s.schaapId, s.levensnummer, s.volwId
-     from tblSchaap s
+     SELECT s.schaapId, s.levensnummer, s.volwId
+     FROM tblSchaap s
       join tblStal st on (s.schaapId = st.schaapId)
-     where st.lidId = :lidId
+      join tblUbn u on (u.ubnId = st.ubnId)
+     WHERE u.lidId = :lidId
  ) lam on (v.volwId = lam.volwId)
  join (
-    select max(stalId) stalId, mdr.schaapId
-    from tblStal st
+    SELECT max(stalId) stalId, mdr.schaapId
+    FROM tblStal st
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblSchaap mdr on (st.schaapId = mdr.schaapId)
-    where st.lidId = :lidId
+    WHERE u.lidId = :lidId
  and mdr.schaapId = :ooi
-    group by mdr.schaapId
+    GROUP BY mdr.schaapId
  ) maxst on (maxst.schaapId = mdr.schaapId)
  join (
-    select st.schaapId, h.datum
-    from tblStal st
+    SELECT st.schaapId, h.datum
+    FROM tblStal st
      join tblHistorie h on (st.stalId = h.stalId)
-    where h.actId = 3 and h.skip =0
+    WHERE h.actId = 3 and h.skip =0
  ) ouder on (mdr.schaapId = ouder.schaapId)
  left join tblHistorie hg on (maxst.stalId = hg.stalId and hg.actId = 1)
  left join tblHistorie hop on (maxst.stalId = hop.stalId and (hop.actId = 2 or hop.actId = 11) )
@@ -4115,8 +4153,8 @@ FROM tblSchaap mdr
  left join tblHistorie hs_lm on (st_lm.stalId = hs_lm.stalId and hs_lm.actId = 4)
  left join tblHistorie haf_lm on (st_lm.stalId = haf_lm.stalId and haf_lm.actId = 12)
 
-group by mdr.levensnummer, mdr.geslacht, r.ras, date_format(hg.datum,'%d-%m-%Y'), date_format(hop.datum,'%d-%m-%Y')
-order by right(mdr.levensnummer,$Karwerk) desc
+GROUP BY mdr.levensnummer, mdr.geslacht, r.ras, date_format(hg.datum,'%d-%m-%Y'), date_format(hop.datum,'%d-%m-%Y')
+ORDER BY right(mdr.levensnummer,$Karwerk) desc
 SQL
         , [
             [':lidId', $lidId, Type::INT],
@@ -4128,16 +4166,17 @@ SQL
     public function zoek_lammeren($lidId, $ooi, $Karwerk) {
         return $this->run_query(
             <<<SQL
-select s.levensnummer, right(s.levensnummer,$Karwerk) werknr, r.ras, s.geslacht, ouder.datum dmaanw,
+SELECT s.levensnummer, right(s.levensnummer,$Karwerk) werknr, r.ras, s.geslacht, ouder.datum dmaanw,
  date_format(hg.datum,'%d-%m-%Y') gebrndm, date_format(hg.datum,'%Y-%m-%d') dmgebrn, hg.kg gebrnkg,
  date_format(hs.datum,'%d-%m-%Y') speendm, hs.kg speenkg, 
 case when hs.kg-hg.kg > 0 and datediff(hs.datum,hg.datum) > 0 then round(((hs.kg-hg.kg)/datediff(hs.datum,hg.datum)*1000),2) end gemgr_s,
 date_format(haf.datum,'%d-%m-%Y') afvdm, haf.kg afvkg, date_format(hdo.datum,'%d-%m-%Y') uitvaldm, re.reden, 
 case when haf.kg-hg.kg > 0 and datediff(haf.datum,hg.datum) > 0 then round(((haf.kg-hg.kg)/datediff(haf.datum,hg.datum)*1000),2) end gemgr_a
-from tblSchaap s
+FROM tblSchaap s
  join tblVolwas v on (v.volwId = s.volwId)
  join tblSchaap mdr on (mdr.schaapId = v.mdrId) 
  join tblStal st on (s.schaapId = st.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  left join tblRas r on (s.rasId = r.rasId)
  left join tblReden re on (s.redId = re.redId)
  join tblHistorie hg on (st.stalId = hg.stalId and hg.actId = 1)
@@ -4146,8 +4185,8 @@ from tblSchaap s
  left join tblHistorie hdo on (st.stalId = hdo.stalId and hdo.actId = 14)
  join tblStal st_all on (st_all.schaapId = s.schaapId)
  left join tblHistorie ouder on (st_all.stalId = ouder.stalId and ouder.actId = 3)
-where st.lidId = :lidId and v.mdrId = :ooi
-order by hg.datum
+WHERE u.lidId = :lidId and v.mdrId = :ooi
+ORDER BY hg.datum
 SQL
         , [
             [':lidId', $lidId, Type::INT],
@@ -4162,6 +4201,7 @@ SQL
 SELECT s.levensnummer, right(s.levensnummer, $Karwerk) werknum, date_format(hg.datum,'%d-%m-%Y') gebdm, s.geslacht, prnt.datum aanw
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  left join tblHistorie hg on (st.stalId = hg.stalId and hg.actId = 1) 
  left join (
     SELECT st.schaapId, datum
@@ -4169,7 +4209,7 @@ FROM tblSchaap s
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = s.schaapId) 
-WHERE st.lidId = :lidId
+WHERE u.lidId = :lidId
  and isnull(st.rel_best)
 ORDER BY right(s.levensnummer, $Karwerk)
 SQL
@@ -4186,12 +4226,13 @@ tblSchaap s
         left join (
             SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
             FROM tblBezet b
-            join tblHistorie h1 on (b.hisId = h1.hisId)
-            join tblActie a1 on (a1.actId = h1.actId)
-            join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-            join tblActie a2 on (a2.actId = h2.actId)
-            join tblStal st on (h1.stalId = st.stalId)
-            WHERE st.lidId = :lidId
+             join tblHistorie h1 on (b.hisId = h1.hisId)
+             join tblActie a1 on (a1.actId = h1.actId)
+             join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+             join tblActie a2 on (a2.actId = h2.actId)
+             join tblStal st on (h1.stalId = st.stalId)
+             join tblUbn u on (u.ubnId = st.ubnId)
+            WHERE u.lidId = :lidId
  and a2.uit = 1
  and h1.skip = 0
  and h2.skip = 0
@@ -4361,7 +4402,8 @@ tblSchaap s
             SELECT max(hisId) hisId, h.stalId
             FROM tblHistorie h
              join tblStal st on (st.stalId = h.stalId)
-            WHERE st.lidId = :lidId and h.skip = 0
+             join tblUbn u on (u.ubnId = st.ubnId)
+            WHERE u.lidId = :lidId and h.skip = 0
             GROUP BY h.stalId
      ) hmax on (hmax.stalId = st.stalId)
      join tblHistorie hm on (hm.hisId = hmax.hisId)
@@ -4424,10 +4466,11 @@ FROM tblSchaap s
  join (
      SELECT schaapId
      FROM tblStal st
+      join tblUbn u on (u.ubnId = st.ubnId)
       join tblHistorie h on (st.stalId = h.stalId)
      WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE st.lidId = :lidId
+WHERE u.lidId = :lidId
  and s.geslacht = 'ooi'
  and isnull(haf.hisId)
 ORDER BY right(s.levensnummer,$Karwerk)
@@ -4452,10 +4495,11 @@ FROM tblSchaap s
  join (
      SELECT schaapId
      FROM tblStal st
+      join tblUbn u on (u.ubnId = st.ubnId)
       join tblHistorie h on (st.stalId = h.stalId)
      WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE st.lidId = :lidId
+WHERE u.lidId = :lidId
  and s.geslacht = 'ram'
  and ( isnull(haf.hisId) or date_add(haf.datum,interval 2 month) > CURRENT_DATE() )
 ORDER BY right(levensnummer,$Karwerk)
@@ -4483,6 +4527,7 @@ SQL
 SELECT st.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  left join (
      SELECT stalId, hisId
      FROM tblHistorie h
@@ -4495,7 +4540,7 @@ FROM tblSchaap s
       join tblHistorie h on (st.stalId = h.stalId)
      WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE st.lidId = :lidId and s.geslacht = 'ooi' and isnull(haf.hisId)
+WHERE u.lidId = :lidId and s.geslacht = 'ooi' and isnull(haf.hisId)
 ORDER BY right(s.levensnummer,$Karwerk)
 SQL
         , [[':lidId', $lidId, Type::INT]]
@@ -4637,6 +4682,7 @@ SQL;
 SELECT s.schaapId, s.geslacht, af.stalId s_af, prnt.schaapId prnt
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  join (
     SELECT max(stalId) stalId
     FROM tblStal
@@ -4660,7 +4706,7 @@ FROM tblSchaap s
     WHERE h.actId = 3
  and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE st.lidId = :lidId
+WHERE u.lidId = :lidId
  and st.schaapId = :schaapId
 SQL
         , [
@@ -4731,6 +4777,7 @@ SQL
 SELECT count(s.schaapId) nietgescand
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  left join (
      SELECT levensnummer
     FROM impAgrident
@@ -4740,7 +4787,7 @@ FROM tblSchaap s
  ) rd on (rd.levensnummer = s.levensnummer)
 WHERE isnull(rd.levensnummer)
  and isnull(st.rel_best)
- and st.lidId = :lidId
+ and u.lidId = :lidId
 SQL
         , [[':lidId', $lidId, Type::INT]]
         );
@@ -4752,6 +4799,7 @@ SQL
 SELECT s.levensnummer, gebdm, s.geslacht, oudr.hisId aanwasId, lastdm
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  left join (
      SELECT levensnummer
     FROM impAgrident
@@ -4781,7 +4829,7 @@ FROM tblSchaap s
              GROUP BY schaapId
          ) sc on (sc.hismx = h.hisId and sc.schaapId = st.schaapId)
  ) lstsc on (lstsc.schaapId = s.schaapId)
-WHERE isnull(rd.levensnummer) and isnull(st.rel_best) and st.lidId = :lidId
+WHERE isnull(rd.levensnummer) and isnull(st.rel_best) and u.lidId = :lidId
 SQL
         , [[':lidId', $lidId, Type::INT]]
         );
@@ -4826,11 +4874,12 @@ SQL
 SELECT count(distinct s.volwId) aant
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  join tblHistorie h on (h.stalId = st.stalId)
 WHERE h.actId = 1
  and h.skip = 0
  and date_format(h.datum,'%Y') = :jaar
- and st.lidId = :lidId
+ and u.lidId = :lidId
 SQL
         , [[':lidId', $lidId, Type::INT], [':jaar', $jaar]]
         );
@@ -4868,9 +4917,10 @@ SQL
 SELECT count(s.schaapId) aant
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
 WHERE s.levensnummer is not null
  and date_format(s.dmcreatie,'%Y-%m-%d') = CURRENT_DATE()
- and st.lidId = :lidId
+ and u.lidId = :lidId
 SQL
         , [[':lidId', $lidId, Type::INT]]
         );
@@ -4881,9 +4931,10 @@ SQL
 SELECT count(s.schaapId) aant
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
 WHERE isnull(s.levensnummer)
  and date_format(s.dmcreatie,'%Y-%m-%d') = CURRENT_DATE()
- and st.lidId = :lidId
+ and u.lidId = :lidId
 SQL
         , [[':lidId', $lidId, Type::INT]]
         );
@@ -4915,9 +4966,10 @@ FROM tblSchaap s
  join (
     SELECT st.schaapId, max(hisId) hisId
     FROM tblStal st 
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblHistorie h on (st.stalId = h.stalId)
      join tblActie a on (a.actId = h.actId) 
-    WHERE st.lidId = :lidId and isnull(st.rel_best) and a.aan = 1 and h.skip = 0
+    WHERE u.lidId = :lidId and isnull(st.rel_best) and a.aan = 1 and h.skip = 0
     GROUP BY st.schaapId
  ) hin on (hin.schaapId = s.schaapId)
  left join tblBezet b on (hin.hisId = b.hisId)
@@ -4929,7 +4981,8 @@ FROM tblSchaap s
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+     join tblUbn u on (u.ubnId = st.ubnId)
+    WHERE u.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
     GROUP BY b.bezId, st.schaapId, h1.hisId
  ) uit on (uit.hisv = hin.hisId)
  left join (
@@ -4959,9 +5012,10 @@ FROM tblSchaap s
  join (
     SELECT st.schaapId, max(hisId) hisId
     FROM tblStal st 
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblHistorie h on (st.stalId = h.stalId)
      join tblActie a on (a.actId = h.actId) 
-    WHERE st.lidId = :lidId and isnull(st.rel_best) and a.aan = 1 and h.skip = 0
+    WHERE u.lidId = :lidId and isnull(st.rel_best) and a.aan = 1 and h.skip = 0
     GROUP BY st.schaapId
  ) hin on (hin.schaapId = s.schaapId)
  left join tblBezet b on (hin.hisId = b.hisId)
@@ -4973,7 +5027,8 @@ FROM tblSchaap s
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+     join tblUbn u on (u.ubnId = st.ubnId)
+    WHERE u.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
     GROUP BY b.bezId, st.schaapId, h1.hisId
  ) uit on (uit.hisv = hin.hisId)
  join (
@@ -5003,9 +5058,10 @@ FROM tblSchaap s
  join (
     SELECT st.schaapId, max(hisId) hisId
     FROM tblStal st 
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblHistorie h on (st.stalId = h.stalId)
      join tblActie a on (a.actId = h.actId) 
-    WHERE st.lidId = :lidId and isnull(st.rel_best) and a.aan = 1 and h.skip = 0
+    WHERE u.lidId = :lidId and isnull(st.rel_best) and a.aan = 1 and h.skip = 0
     GROUP BY st.schaapId
  ) hin on (hin.schaapId = s.schaapId)
  left join tblBezet b on (hin.hisId = b.hisId)
@@ -5017,7 +5073,8 @@ FROM tblSchaap s
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+     join tblUbn u on (u.ubnId = st.ubnId)
+    WHERE u.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
     GROUP BY b.bezId, st.schaapId, h1.hisId
  ) uit on (uit.hisv = hin.hisId)
  join (
@@ -5038,7 +5095,8 @@ SQL
 SELECT s.schaapId
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
-WHERE st.lidId = :%lidId
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE u.lidId = :%lidId
 GROUP BY s.schaapId
 ORDER BY s.schaapId
 SQL
@@ -5074,13 +5132,14 @@ SQL;
              left join tblVolwas v on (mdr.schaapId = v.mdrId)
              left join tblSchaap lam on (v.volwId = lam.volwId) 
              join tblStal st on (mdr.schaapId = st.schaapId)
+             join tblUbn u on (u.ubnId = st.ubnId)
              join (
                 SELECT schaapId
                 FROM tblStal st
                  join tblHistorie h on (st.stalId = h.stalId)
                 WHERE h.actId = 3 and h.skip = 0
              ) h on (st.schaapId = h.schaapId)
-            WHERE st.lidId = :lidId and isnull(st.rel_best) and mdr.geslacht = 'ooi'
+            WHERE u.lidId = :lidId and isnull(st.rel_best) and mdr.geslacht = 'ooi'
             GROUP BY mdr.schaapId, mdr.levensnummer
             ORDER BY mdr.levensnummer
 SQL;
@@ -5095,13 +5154,14 @@ SQL;
              left join tblVolwas v on (mdr.schaapId = v.mdrId)
              left join tblSchaap lam on (v.volwId = lam.volwId) 
              join tblStal st on (mdr.schaapId = st.schaapId)
+             join tblUbn u on (u.ubnId = st.ubnId)
              join (
                 SELECT schaapId
                 FROM tblStal st
                  join tblHistorie h on (st.stalId = h.stalId)
                 WHERE h.actId = 3 and h.skip = 0
              ) h on (st.schaapId = h.schaapId)
-            WHERE st.lidId = :lidId and isnull(st.rel_best) and mdr.geslacht = 'ooi'
+            WHERE u.lidId = :lidId and isnull(st.rel_best) and mdr.geslacht = 'ooi'
             GROUP BY mdr.schaapId, right(mdr.levensnummer,:Karwerk)
             ORDER BY right(mdr.levensnummer,:Karwerk)
 SQL;
@@ -5114,7 +5174,8 @@ SQL;
             SELECT s.schaapId, concat(st.kleur,' ',st.halsnr) halsnr
             FROM tblSchaap s
              join tblStal st on (s.schaapId = st.schaapId)
-            WHERE st.lidId = :lidId and st.kleur is not null and st.halsnr is not null and isnull(st.rel_best)
+             join tblUbn u on (u.ubnId = st.ubnId)
+            WHERE u.lidId = :lidId and st.kleur is not null and st.halsnr is not null and isnull(st.rel_best)
             GROUP BY s.schaapId, concat(st.kleur,' ',st.halsnr)
             ORDER BY st.kleur, st.halsnr
 SQL;
@@ -5178,6 +5239,7 @@ SQL;
                  join tblVolwas v on (v.volwId = s.volwId)
                  join tblSchaap mdr on (mdr.schaapId = v.mdrId) 
                  join tblStal st on (s.schaapId = st.schaapId)
+                 join tblUbn u on (u.ubnId = st.ubnId)
                  left join tblRas r on (s.rasId = r.rasId)
                  left join tblReden re on (s.redId = re.redId)
                  join tblHistorie hg on (st.stalId = hg.stalId and hg.actId = 1 and hg.skip = 0)
@@ -5186,7 +5248,7 @@ SQL;
                  left join tblHistorie hdo on (st.stalId = hdo.stalId and hdo.actId = 14 and hdo.skip = 0)
                  join tblStal st_all on (st_all.schaapId = s.schaapId)
                  left join tblHistorie ouder on (st_all.stalId = ouder.stalId and ouder.actId = 3 and ouder.skip = 0)
-                WHERE st.lidId = :lidId and v.mdrId = :gekozen_ooi
+                WHERE u.lidId = :lidId and v.mdrId = :gekozen_ooi
                 ORDER BY hg.datum
 SQL;
         $args = [[':Karwerk', $Karwerk], [':lidId', $lidId, Type::INT], [':gekozen_ooi', $gekozen_ooi]];
@@ -5296,10 +5358,11 @@ SQL;
     SELECT count(s.schaapId) aant
     FROM tblSchaap s
      join tblStal st on (st.schaapId = s.schaapId)
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblVolwas v on (s.volwId = v.volwId)
     WHERE isnull(s.geslacht)
      and v.mdrId = :ooiId
-     and st.lidId = :lidId
+     and u.lidId = :lidId
 SQL;
         $args = [[':ooiId', $ooiId, Type::INT], [':lidId', $lidId, Type::INT]];
         return $this->run_query($sql, $args);
