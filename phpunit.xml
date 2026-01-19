@@ -36,13 +36,11 @@
         <directory>ongebruikt</directory>
         <directory>utils</directory>
       </exclude>
-      <file>./Med_registratie.php</file>
+      <file>./InvSchaap.php</file>
       <file>./kalender.php</file>
-      <file>./kzl.php</file>
       <file>./login.php</file>
-      <file>./med-registratie.js.php</file>
-      <file>./med-registratie-toggle.js.php</file>
       <file>./menu1.php</file>
+      <file>./validate-invschaap.js.php</file>
     </whitelist>
   </filter>
   <logging>
