@@ -174,7 +174,7 @@ WHERE actId = 8 and stalId = '" . mysqli_real_escape_string($db, $stalId) . "'
                     while ($hi = mysqli_fetch_assoc($zoek_hisId)) {
                         $hisId = $hi['hisId'];
                     }
-                    inlezen_pil($db, $hisId, $fldArtId, $fldToedat, $fldDay, $fldReden);
+                    inlezen_pil($hisId, $fldArtId, $fldToedat, $fldDay, $fldReden);
                     if ($reader == 'Agrident') {
                         $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "' " ;
                     } else {

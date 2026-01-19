@@ -61,7 +61,10 @@ $stal_gateway = new StalGateway();
 $jaar1 = $stal_gateway->zoek_startjaar_user($lidId);
 $startjaar = $historie_gateway->eerste_jaar_tbv_testen($lidId);
 // ennn dit gooien we weg. Waarom? TODO FIXME
-$startjaar = date("Y")-2; if($jaar1 > $startjaar && $dtb == $db_p) { $startjaar = $jaar1; } // Alleen in productieomg rapport tonen vanaf startjaar user
+$startjaar = date("Y")-2;
+if($jaar1 > $startjaar && $dtb == $db_p) {
+    $startjaar = $jaar1; 
+} // Alleen in productieomg rapport tonen vanaf startjaar user
 $endjaar = date("Y");
 $endjrmnd = date("Ym");
 

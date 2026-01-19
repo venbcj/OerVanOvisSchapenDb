@@ -493,7 +493,7 @@ while ($his = mysqli_fetch_assoc($geschiedenis)) {
 
 
 
-<?php //   '".mysqli_real_escape_string($db,$schaapId)."'
+<?php
 
 
 $ouders = $schaap_gateway->ouders($schaapId);

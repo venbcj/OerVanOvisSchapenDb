@@ -114,7 +114,6 @@ if (Auth::is_logged_in()) {
     $zoekControle = zoek_controle_melding($db, $reqId);
     if (isset($zoekControle) && $zoekControle > 0 && $aantMeld > 0) {
         /* Als er een controlemelding is gedaan en er zijn schapen te melden */
-        // TODO: (BCB) #0004148 dit uitvoeren met collection_select
         $name = 'kzlDef_';
         $collection = array('N'=>'Controle', 'J'=>'Vastleggen');
         $selected = (isset($_POST['kzlDef_'])) ? $_POST['kzlDef'] : $def;

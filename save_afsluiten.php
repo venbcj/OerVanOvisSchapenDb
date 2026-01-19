@@ -35,7 +35,7 @@ if ((isset($txtKg) && !isset($fldArt)) || !isset($txtKg) && isset($fldArt)) {
             if (isset($vrdat) && $vrdat < $txtKg) {
                 $fout = "Er is onvoldoende voer op voorraad.";
             } else {
-                inlezen_voer($db, $fldArt, $txtKg, null, $periId, null);
+                inlezen_voer($fldArt, $txtKg, null, $periId, null);
             }
         } // Einde if(isset($txtKg) && isset($fldArt))
         $hok_gateway = new HokGateway();

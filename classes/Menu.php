@@ -2,7 +2,7 @@
 
 class Menu {
 
-    public static function melden($db, $lidId) {
+    public static function melden($lidId) {
         $request_gateway = new RequestGateway();
 
         $rows_geb = $request_gateway->countPerCode($lidId, 'GER');

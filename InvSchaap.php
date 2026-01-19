@@ -316,17 +316,12 @@ else if ($modtech == 1 && isset($levnr) && !isset($txtGebkg) && $kzlFase == 'lam
 
             // Bepaal volwId bij aanvoer
             if (
-                ($modtech == 1
-                && (isset($kzlOoi)
-                || isset($kzlRam)) )
+                ($modtech == 1 && (isset($kzlOoi) || isset($kzlRam)) )
                 && (
                     // levnr bestaat in db maar heeft geen ouders en nu wel
-                    (isset($levnr_db)
-                    && !isset($volwId_db) )
+                    (isset($levnr_db) && !isset($volwId_db) )
                     || // Levnr bestaat niet in db en het betreft aanvoer met registratie ouders
-                    (!isset($levnr_db)
-                    && ($kzlFase == 'moeder'
-                    || $kzlFase == 'vader') )
+                    (!isset($levnr_db) && ($kzlFase == 'moeder' || $kzlFase == 'vader') )
                 )
             ) {
                 // Controle nieuwe worp. Deze moet 183 dagan van vorige worp of volgende worp liggen.
@@ -384,16 +379,14 @@ else if ($modtech == 1 && isset($levnr) && !isset($txtGebkg) && $kzlFase == 'lam
             if (isset($levnr_db)) {
                 $schaapId = $schaap_gateway->zoek_schaapid($levnr);
             } elseif ($scenario == 'Dood_lam_zonder_levensnummer') {
-                $schaap_gateway->maak_schaap($ubn, $kzlRas, $kzlSekse, $volwId, $kzlMoment, $kzlReden);
-                // TODO laat de insert-query een aangemaakt id teruggeven
+                $schaapId = $schaap_gateway->maak_schaap($ubn, $kzlRas, $kzlSekse, $volwId, $kzlMoment, $kzlReden);
                 $volwId = $volwas_gateway->zoek_recentste_id($kzlOoi);
                 $schaap_gateway->wis_levensnummer($ubn);
             } else {
                 // $kzlRas is bij uitval zonder levensnummer niet verplicht
                 // $kzlSekse is bij uitval niet verplicht
                 // $kzlOoi en dus $volwId is alleen verplicht bij geboren lammeren i.c.m. module technisch
-                $schaap_gateway->maak_schaap($levnr, $kzlRas, $kzlSekse, $volwId, $kzlMoment, $kzlReden);
-                // TODO laat de insert-query een aangemaakt id teruggeven
+                $schaapId = $schaap_gateway->maak_schaap($levnr, $kzlRas, $kzlSekse, $volwId, $kzlMoment, $kzlReden ?? null);
                 $volwId = $volwas_gateway->zoek_recentste_id($kzlOoi);
             }
 

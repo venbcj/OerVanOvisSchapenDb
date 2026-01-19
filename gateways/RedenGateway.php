@@ -243,4 +243,8 @@ SQL;
         $this->run_query($sql, $args);
     }
 
+    public function insert($naam) {
+        $this->run_query("INSERT into tblReden set reden = :reden", [[':reden', $naam]]);
+    }
+
 }
