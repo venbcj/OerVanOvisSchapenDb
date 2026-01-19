@@ -184,7 +184,8 @@ SELECT count(v.volwId) aant
 FROM tblVolwas v 
  join tblHistorie h on (v.hisId = h.hisId)
  join tblStal st on (h.stalId = st.stalId)
-WHERE h.skip = 0 and date_format(h.datum,'%Y%u') = :jaarweek and st.lidId = :lidId
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE h.skip = 0 and date_format(h.datum,'%Y%u') = :jaarweek and u.lidId = :lidId
 SQL
         , [[':lidId', $lidId, Type::INT], [':jaarweek', $jaarweek]]
         );

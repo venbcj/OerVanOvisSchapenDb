@@ -1006,7 +1006,8 @@ FROM tblBezet b
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+     join tblUbn u on (u.ubnId = st.ubnId)
+    WHERE u.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
     GROUP BY b.bezId, h1.hisId
  ) uit on (b.bezId = uit.bezId)
  left join (
@@ -1037,7 +1038,8 @@ tblSchaap s
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = :lidId
+     join tblUbn u on (u.ubnId = st.ubnId)
+    WHERE u.lidId = :lidId
  and a2.uit = 1
  and h1.skip = 0
  and h2.skip = 0
@@ -1107,7 +1109,8 @@ FROM tblBezet b
  and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = :lidId
+     join tblUbn u on (u.ubnId = st.ubnId)
+    WHERE u.lidId = :lidId
  and a2.uit = 1
  and h1.skip = 0
  and h2.skip = 0
@@ -1166,7 +1169,8 @@ FROM tblBezet b
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = :lidId
+     join tblUbn u on (u.ubnId = st.ubnId)
+    WHERE u.lidId = :lidId
  and a2.uit = 1
  and h1.skip = 0
  and h2.skip = 0
@@ -1214,6 +1218,7 @@ FROM tblBezet b
  join tblHok ho on (b.hokId = ho.hokId)
  join tblHistorie h on (b.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  join tblSchaap s on (s.schaapId = st.schaapId)
  left join tblRas r on (s.rasId = r.rasId)
  left join 
@@ -1225,7 +1230,8 @@ FROM tblBezet b
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+     join tblUbn u on (u.ubnId = st.ubnId)
+    WHERE u.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
     GROUP BY b.bezId, h1.hisId
  ) uit on (uit.hisv = b.hisId)
  left join (
@@ -1240,7 +1246,7 @@ FROM tblBezet b
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE st.lidId = :lidId and h.skip = 0 and isnull(uit.bezId) and isnull(spn.schaapId) and isnull(prnt.schaapId)
+WHERE u.lidId = :lidId and h.skip = 0 and isnull(uit.bezId) and isnull(spn.schaapId) and isnull(prnt.schaapId)
 GROUP BY ho.hokId, ho.hoknr
 SQL
         , [[':lidId', $lidId, Type::INT]]
@@ -1255,6 +1261,7 @@ FROM tblBezet b
  join tblHok ho on (b.hokId = ho.hokId)
  join tblHistorie h on (b.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  join tblSchaap s on (s.schaapId = st.schaapId)
  left join tblRas r on (s.rasId = r.rasId)
  left join 
@@ -1266,7 +1273,8 @@ FROM tblBezet b
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+     join tblUbn u on (u.ubnId = st.ubnId)
+    WHERE u.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
     GROUP BY b.bezId, h1.hisId
  ) uit on (uit.hisv = b.hisId)
  join (
@@ -1281,7 +1289,7 @@ FROM tblBezet b
      join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE st.lidId = :lidId and h.skip = 0 and isnull(uit.bezId) and isnull(prnt.schaapId)
+WHERE u.lidId = :lidId and h.skip = 0 and isnull(uit.bezId) and isnull(prnt.schaapId)
 GROUP BY ho.hokId, ho.hoknr
 SQL
         , [[':lidId', $lidId, Type::INT]]

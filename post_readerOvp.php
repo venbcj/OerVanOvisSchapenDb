@@ -114,14 +114,16 @@ FROM impAgrident rd
          join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+         join tblUbn u on (u.ubnId = st.ubnId)
+        WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
         GROUP BY h1.hisId
      ) tot on (b.hisId = tot.hisv)
      join tblPeriode p on (p.periId = b.periId)
      join tblHistorie h on (b.hisId = h.hisId)
      join tblStal st on (h.stalId = st.stalId)
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblSchaap s on (s.schaapId = st.schaapId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(tot.hist) and h.skip = 0
+    WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(tot.hist) and h.skip = 0
  ) p on (rd.levensnummer = p.levensnummer)
 WHERE rd.Id = '".mysqli_real_escape_string($db,$recId)."'
 ") or die (mysqli_error($db));
@@ -140,14 +142,16 @@ FROM impReader rd
          join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
          join tblActie a2 on (a2.actId = h2.actId)
          join tblStal st on (h1.stalId = st.stalId)
-        WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+         join tblUbn u on (u.ubnId = st.ubnId)
+        WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
         GROUP BY h1.hisId
      ) tot on (b.hisId = tot.hisv)
      join tblPeriode p on (p.periId = b.periId)
      join tblHistorie h on (b.hisId = h.hisId)
      join tblStal st on (h.stalId = st.stalId)
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblSchaap s on (s.schaapId = st.schaapId)
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(tot.hist) and h.skip = 0
+    WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(tot.hist) and h.skip = 0
  ) p on (rd.levnr_ovpl = p.levensnummer)
 WHERE rd.readId = '".mysqli_real_escape_string($db,$recId)."'
 ") or die (mysqli_error($db));
@@ -158,8 +162,9 @@ WHERE rd.readId = '".mysqli_real_escape_string($db,$recId)."'
 $zoek_stalId = mysqli_query($db,"
 SELECT stalId
 FROM tblStal st
+ join tblUbn u on (u.ubnId = st.ubnId)
  join tblSchaap s on (st.schaapId = s.schaapId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.levensnummer = '".mysqli_real_escape_string($db,$levnr)."' and isnull(st.rel_best)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.levensnummer = '".mysqli_real_escape_string($db,$levnr)."' and isnull(st.rel_best)
 ") or die (mysqli_error($db));
     while ($st = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $st['stalId']; }
 //echo '$stalId = '.$stalId.'<br>';

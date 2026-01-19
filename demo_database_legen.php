@@ -126,8 +126,9 @@ $zoek_hisId = mysqli_query($db,"
 SELECT h.hisId
 FROM tblHistorie h
  join tblStal st on (st.stalId = h.stalId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  join tblBezet b on (b.hisId = h.hisId)
-WHERE st.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
+WHERE u.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
 ORDER BY h.hisId
 ") or die (mysqli_error($db));
 
@@ -152,7 +153,8 @@ SELECT m.reqId
 FROM tblMelding m
  join tblHistorie h on (h.hisId = m.hisId)
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE u.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
 GROUP BY m.reqId
 ORDER BY m.reqId
 ") or die (mysqli_error($db));
@@ -176,7 +178,8 @@ SELECT m.meldId
 FROM tblMelding m
  join tblHistorie h on (h.hisId = m.hisId)
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE u.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
 ORDER BY m.meldId
 ") or die (mysqli_error($db));
 
@@ -210,7 +213,8 @@ SELECT n.nutId
 FROM tblNuttig n
  join tblHistorie h on (n.hisId = h.hisId)
  join tblStal st on (h.stalId = st.stalId)
-WHERE st.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE u.lidId = '". mysqli_real_escape_string($db,$lidId) ."'
 ORDER BY n.nutId
 ") or die (mysqli_error($db));
 
@@ -228,7 +232,8 @@ $zoek_hisId = mysqli_query($db,"
 SELECT h.hisId
 FROM tblHistorie h
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '". mysqli_real_escape_string($db,$lidId) ."' and h.actId = 8
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE u.lidId = '". mysqli_real_escape_string($db,$lidId) ."' and h.actId = 8
 ") or die (mysqli_error($db));
 
 $hisId = array();
@@ -354,7 +359,8 @@ if(isset($_POST['chbSchaap']) || isset($_POST['chbHok']) || isset($_POST['chbCre
 $verw_Stal = 
 "DELETE
 FROM tblStal st
-WHERE st.lidId = '". mysqli_real_escape_string($db,$lidId) ."' ";
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE u.lidId = '". mysqli_real_escape_string($db,$lidId) ."' ";
 
 mysqli_query($db,$verw_Stal) or die (mysqli_error($db));
 

@@ -65,7 +65,8 @@ FROM tblRequest rq
  join tblMelding m on (rq.reqId = m.reqId)
  join tblHistorie h on (h.hisId = m.hisId)
  join tblStal st on (st.stalId = h.stalId)
- join tblLeden l on (l.lidId = st.lidId)
+ join tblUbn u on (u.ubnId = st.ubnId)
+ join tblLeden l on (l.lidId = u.lidId)
 WHERE h.skip = 0 and l.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(rq.dmmeld) and rq.code = 'AFV' 
 GROUP BY l.relnr
 ");
@@ -111,7 +112,7 @@ FROM tblRequest rq
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (h.stalId = st.stalId)
  join tblUbn u on (u.ubnId = st.ubnId)
- join tblLeden l on (st.lidId = l.lidId)
+ join tblLeden l on (u.lidId = l.lidId)
  join tblSchaap s on (st.schaapId = s.schaapId)
  join ( 
     SELECT hd.stalId, schaapId, max(datum) lastdatum 

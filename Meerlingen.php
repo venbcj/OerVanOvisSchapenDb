@@ -70,7 +70,8 @@ FROM (
      join tblVolwas v on (mdr.schaapId = v.mdrId)
      join tblSchaap lam on (v.volwId = lam.volwId)
      join tblStal st on (lam.schaapId = st.schaapId)
-    WHERE isnull(stm.rel_best) and stm.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+     join tblUbn u on (u.ubnId = st.ubnId)
+    WHERE isnull(stm.rel_best) and stm.lidId = '".mysqli_real_escape_string($db,$lidId)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
     GROUP BY mdr.schaapId, right(mdr.levensnummer,$Karwerk), v.volwId
     HAVING count(v.volwId) > 0
      ) perWorp
@@ -91,8 +92,9 @@ $zoek_aantal_geengeslacht_tbv_hoofding = mysqli_query($db,"
 SELECT count(s.schaapId) aant
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  join tblVolwas v on (s.volwId = v.volwId)
-WHERE isnull(s.geslacht) and v.mdrId =  '".mysqli_real_escape_string($db,$ooiId)."'  and st.lidId = '".mysqli_real_escape_string($db,$ooiId)."'
+WHERE isnull(s.geslacht) and v.mdrId =  '".mysqli_real_escape_string($db,$ooiId)."'  and u.lidId = '".mysqli_real_escape_string($db,$ooiId)."'
 ") or die(mysqli_error($db));
 
 while($ga = mysqli_fetch_assoc($zoek_aantal_geengeslacht_tbv_hoofding)) { $geengeslacht = $ga['aant']; }
@@ -125,9 +127,9 @@ FROM tblSchaap mdr
  join tblVolwas v on (v.mdrId = mdr.schaapId)
  join tblSchaap lam on (v.volwId = lam.volwId)
  join tblStal st on (st.schaapId = lam.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  join tblHistorie h on (st.stalId = h.stalId)
- 
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and mdr.schaapId =  '".mysqli_real_escape_string($db,$ooiId)."'  and h.actId = 1 and h.skip = 0
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and mdr.schaapId =  '".mysqli_real_escape_string($db,$ooiId)."'  and h.actId = 1 and h.skip = 0
 GROUP BY date_format(h.datum,'%Y%m'), date_format(h.datum,'%Y'), v.volwId
 ORDER BY date_format(h.datum,'%Y%m') desc
 ") or die (mysqli_error($db));    

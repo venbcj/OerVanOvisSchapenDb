@@ -66,7 +66,8 @@ echo "hokId = ".$newHok.'<br><br>' ; */
 $zoek_stalId = mysqli_query($db,"
 SELECT stalId
 FROM tblStal st
-WHERE isnull(st.rel_best) and st.schaapId = '".mysqli_real_escape_string($db,$recId)."' and st.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE isnull(st.rel_best) and st.schaapId = '".mysqli_real_escape_string($db,$recId)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die(mysqli_error($db));
 
     while ($st = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $st['stalId']; }
@@ -91,7 +92,8 @@ $zoek_hisId = mysqli_query($db,"
 SELECT max(hisId) hisId
 FROM tblHistorie h
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = '".mysqli_real_escape_string($db,$actId)."'
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = '".mysqli_real_escape_string($db,$actId)."'
 ") or die(mysqli_error($db));
 
     while ($hi = mysqli_fetch_assoc($zoek_hisId)) { $hisId = $hi['hisId']; }

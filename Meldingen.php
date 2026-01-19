@@ -61,7 +61,8 @@ FROM tblRequest rq
  join tblMelding m on (rq.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(rq.dmmeld,'%Y') is not null and ".$radioDel."
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(rq.dmmeld,'%Y') is not null and ".$radioDel."
 GROUP BY date_format(rq.dmmeld,'%Y') 
 ORDER BY date_format(rq.dmmeld,'%Y') desc
 ") or die (mysqli_error($db));
@@ -84,7 +85,8 @@ FROM tblRequest rq
  join tblMelding m on (rq.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(rq.dmmeld,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and ".$radioDel."
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(rq.dmmeld,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and ".$radioDel."
 GROUP BY date_format(rq.dmmeld,'%m')
 ") or die (mysqli_error($db));
    $zam = mysqli_fetch_assoc($zoek_aantal_maanden);
@@ -99,7 +101,8 @@ FROM tblRequest rq
  join tblMelding m on (rq.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(rq.dmmeld,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and ".$radioDel."
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(rq.dmmeld,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and ".$radioDel."
 GROUP BY date_format(rq.dmmeld,'%Y%m') ") or die (mysqli_error($db)); 
 
 $index = 0;
@@ -123,7 +126,8 @@ FROM tblRequest rq
  join tblMelding m on (rq.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(rq.dmmeld,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and ".$radioDel."
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(rq.dmmeld,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and ".$radioDel."
 GROUP BY rq.code
 ORDER BY rq.code
 ") or die (mysqli_error($db));
@@ -139,7 +143,8 @@ FROM tblRequest rq
  join tblMelding m on (rq.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId) 
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(rq.dmmeld,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and ".$radioDel."
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(rq.dmmeld,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and ".$radioDel."
 GROUP BY code
 ") or die (mysqli_error($db));
 
@@ -161,6 +166,7 @@ FROM tblRequest rq
  join tblMelding m on (rq.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  join tblSchaap s on (s.schaapId = st.schaapId)
  left join impRespons rp on (s.levensnummer = rp.levensnummer)
  left join (
@@ -172,7 +178,7 @@ FROM tblRequest rq
      join impRespons rs on (s.levensnummer = coalesce(rs.levensnummer_new, rs.levensnummer) and m.reqId = rs.reqId)
     WHERE rs.meldnr is not null
     ) rvonr on (s.levensnummer = rvonr.levensnummer and m.reqId = rvonr.reqId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rq.def = 'J' 
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rq.def = 'J' 
  and (rp.def = 'N' || isnull(rp.def)) 
  and (date_format(rq.dmmeld,'%Y-%m-%d') <= date_format(rp.dmcreate,'%Y-%m-%d') || isnull(rp.dmcreate)) 
  and (date_format(rq.dmresponse,'%Y-%m-%d') >= date_add(curdate(),interval -30 day))
@@ -312,7 +318,8 @@ FROM tblRequest rq
  join tblMelding m on (rq.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(rq.dmmeld,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and ".$radioDel." and ".$resJrmnd." and ".$resMeld."
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(rq.dmmeld,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and ".$radioDel." and ".$resJrmnd." and ".$resMeld."
 GROUP BY month(rq.dmmeld)
 ORDER BY month(rq.dmmeld) desc
 LIMIT 1
@@ -327,7 +334,8 @@ FROM tblRequest rq
  join tblMelding m on (rq.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(rq.dmmeld,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and ".$radioDel." and ".$resJrmnd." and ".$resMeld."
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(rq.dmmeld,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and ".$radioDel." and ".$resJrmnd." and ".$resMeld."
 GROUP BY month(rq.dmmeld), date_format(rq.dmmeld,'%Y')
 ORDER BY jaar, month(rq.dmmeld) desc
 ") or die (mysqli_error($db));
@@ -377,7 +385,8 @@ FROM tblRequest rq
  join tblMelding m on (rq.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ".$radioDel." and date_format(rq.dmmeld,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and month(rq.dmmeld) = $mndnr and ".$resMeld."
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ".$radioDel." and date_format(rq.dmmeld,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and month(rq.dmmeld) = $mndnr and ".$resMeld."
 GROUP BY rq.code
 ") or die (mysqli_error($db));
   while ($zm = mysqli_fetch_assoc($zoek_meldingen))
@@ -391,7 +400,8 @@ FROM tblRequest rq
  join tblMelding m on (rq.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rq.code = '$code' and date_format(rq.dmmeld,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and month(rq.dmmeld) = $mndnr and  ".$radioDel." and ".$resMeld."  
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rq.code = '$code' and date_format(rq.dmmeld,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and month(rq.dmmeld) = $mndnr and  ".$radioDel." and ".$resMeld."  
 GROUP BY rq.reqId
 ORDER BY m.skip, if(isnull(m.fout),0,1), rq.dmmeld desc
 ") or die (mysqli_error($db));
@@ -412,7 +422,8 @@ FROM tblRequest rq
  join tblMelding m on (rq.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rq.code = '$code' and date_format(rq.dmmeld,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and month(rq.dmmeld) = $mndnr and  ".$radioDel." and ".$resMeld."  
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rq.code = '$code' and date_format(rq.dmmeld,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and month(rq.dmmeld) = $mndnr and  ".$radioDel." and ".$resMeld."  
 ORDER BY m.skip, if(isnull(m.fout),0,1), rq.dmmeld desc
 ") or die (mysqli_error($db));
 
@@ -479,16 +490,17 @@ FROM tblRequest rq
  ) ouder on (s.schaapId = ouder.schaapId)
  left join (
     SELECT max(rs.respId) respId, rs.reqId, s.schaapId 
-    FROM impRespons rs "
-     .$join_tblSchaap.
-     "join tblMelding m on (m.reqId = rs.reqId)
+    FROM impRespons rs
+     join tblSchaap s on (s.levensnummer = rs.levensnummer)
+     join tblMelding m on (m.reqId = rs.reqId)
      join tblHistorie h on (m.hisId = h.hisId)
      join tblStal st on (st.stalId = h.stalId)
-    WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rs.melding = '$code'
+     join tblUbn u on (u.ubnId = st.ubnId)
+    WHERE h.skip = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rs.melding = '$code'
     GROUP BY rs.reqId, s.schaapId 
  ) lresp on (lresp.reqId = rq.reqId and lresp.schaapId = s.schaapId)
  left join impRespons lr on (lr.respId = lresp.respId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rq.code = '$code' and date_format(rq.dmmeld,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and month(rq.dmmeld) = $mndnr and  ".$radioDel." and ".$resMeld." 
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rq.code = '$code' and date_format(rq.dmmeld,'%Y') = '".mysqli_real_escape_string($db,$kzlJaar)."' and month(rq.dmmeld) = $mndnr and  ".$radioDel." and ".$resMeld." 
 
 ORDER BY m.skip, if(isnull(m.fout),0,1), rq.dmmeld desc, u.ubn, right(s.levensnummer,$Karwerk) ") or die (mysqli_error($db));
 ?>

@@ -69,8 +69,9 @@ WHERE rd.Id = '".mysqli_real_escape_string($db,$recId)."'
 $zoek_stalId = mysqli_query($db,"
 SELECT stalId
 FROM tblStal st
+ join tblUbn u on (u.ubnId = st.ubnId)
  join tblSchaap s on (st.schaapId = s.schaapId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.levensnummer = '".mysqli_real_escape_string($db,$levnr)."' and isnull(st.rel_best)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.levensnummer = '".mysqli_real_escape_string($db,$levnr)."' and isnull(st.rel_best)
 ") or die (mysqli_error($db));
     while ($st = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $st['stalId']; }
 //echo '$stalId = '.$stalId.'<br>';

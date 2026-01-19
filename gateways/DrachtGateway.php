@@ -22,7 +22,8 @@ FROM tblDracht d
  join tblVolwas v on (d.volwId = v.volwId)
  join tblSchaap s on (v.volwId = s.volwId)
  join tblStal st on (s.schaapId = st.schaapId)
-WHERE st.lidId = :lidId
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE u.lidId = :lidId
 ORDER BY d.draId
 SQL
         , [[':lidId', $lidId, Type::INT]]
