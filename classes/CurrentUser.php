@@ -1,6 +1,6 @@
 <?php // CurrentUser: weet hoe de inlog-informatie in Session wordt gezet. Weet niet hoe de sessie werkt 
 
-class CurrentUser {
+final class CurrentUser {
 
     private static $instance;
     private $space = [];

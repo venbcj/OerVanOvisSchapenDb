@@ -26,4 +26,18 @@ class Fpdf {
     public function SetFillColor() {
     }
 
+    // as reported by phpstan:
+
+    public function Image() {
+    }
+
+    public function setY() {
+    }
+
+    public function PageNo() {
+    }
+
+    public function __construct($afdrukstand = 'P', $units = 'mm', $format = 'A4') {
+    }
+
 }

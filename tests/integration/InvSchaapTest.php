@@ -2,34 +2,41 @@
 
 class InvSchaapTest extends IntegrationCase {
 
+    private const PAGE = '/InvSchaap.php';
+
     private const LEVNR_NIET_IN_DB = '9';
     private const LEVNR_IN_FIXTURE = '4';
     private const EEN_RAS = '3';
 
-    public function testPostInvSchaap() {
-        $this->post("/InvSchaap.php", ['ingelogd' => 1, 'txtLevnr' => 1]);
+    public function teardown(): void {
+        parent::teardown();
+        unset($GLOBALS['schaap_gateway']);
+    }
+
+    public function testPost() {
+        $this->post(self::PAGE, ['ingelogd' => 1, 'txtLevnr' => 1]);
         $this->assertNoNoise();
         // TODO: #0004113 case met uitgeschaard
     }
 
-    public function testSaveInvSchaapZonderLevnr() {
-        $this->post("/InvSchaap.php", $this->minimal());
+    public function testSaveZonderLevnr() {
+        $this->post(self::PAGE, $this->minimal());
         $this->assertNoNoise();
         // dit test ook 1 validatie, omdat levnr en txtDmuitv beide ontbreken.
         $this->assertFout('Bij overlijden moet datum t.b.v. uitval zijn ingevuld.');
     }
 
-    public function testSaveInvSchaapMetLevnr() {
+    public function testSaveMetLevnr() {
         $this->uses_db();
-        $this->post("/InvSchaap.php", $this->minimal([
+        $this->post(self::PAGE, $this->minimal([
             'txtLevnr' => self::LEVNR_NIET_IN_DB,
         ]));
         $this->assertNoNoise();
         $this->assertFout('Het geslacht moet zijn ingevuld.');
     }
 
-    public function testValidatieInvSchaapRas() {
-        $this->post("/InvSchaap.php", $this->minimal([
+    public function testValidatieRas() {
+        $this->post(self::PAGE, $this->minimal([
             'txtLevnr' => self::LEVNR_NIET_IN_DB,
             'txtDmuitv' => '1-1-1980',
             'kzlSekse' => 'ram',
@@ -38,8 +45,8 @@ class InvSchaapTest extends IntegrationCase {
         $this->assertFout('Het ras moet zijn ingevuld.');
     }
 
-    public function testValidatieInvSchaapMoeder() {
-        $this->post("/InvSchaap.php", $this->minimal([
+    public function testValidatieMoeder() {
+        $this->post(self::PAGE, $this->minimal([
             'txtLevnr' => self::LEVNR_NIET_IN_DB,
             'txtDmuitv' => '1-1-1980',
             'kzlSekse' => 'ram',
@@ -51,8 +58,8 @@ class InvSchaapTest extends IntegrationCase {
         $this->assertFout('Het moederdier moet zijn ingevuld.');
     }
 
-    public function testValidatieInvSchaapGeenOverlijden() {
-        $this->post("/InvSchaap.php", $this->minimal([
+    public function testValidatieGeenOverlijden() {
+        $this->post(self::PAGE, $this->minimal([
             'txtLevnr' => self::LEVNR_NIET_IN_DB,
             'kzlSekse' => 'ram',
             'kzlFase' => 'lam',
@@ -65,8 +72,8 @@ class InvSchaapTest extends IntegrationCase {
         // TODO: er zijn nog twee redenen voor deze fout
     }
 
-    public function testValidatieInvSchaapPrematuurOverlijden() {
-        $this->post("/InvSchaap.php", $this->minimal([
+    public function testValidatiePrematuurOverlijden() {
+        $this->post(self::PAGE, $this->minimal([
             'txtLevnr' => self::LEVNR_NIET_IN_DB,
             'kzlSekse' => 'ram',
             'kzlFase' => 'lam',
@@ -79,8 +86,8 @@ class InvSchaapTest extends IntegrationCase {
         $this->assertFout('Datum overlijden kan niet voor geboortedatum liggen !');
     }
 
-    public function testValidatieInvSchaapOverlijdenVoorAanschaf() {
-        $this->post("/InvSchaap.php", $this->minimal([
+    public function testValidatieOverlijdenVoorAanschaf() {
+        $this->post(self::PAGE, $this->minimal([
             'txtLevnr' => self::LEVNR_NIET_IN_DB,
             'kzlSekse' => 'ram',
             'kzlFase' => 'lam',
@@ -94,8 +101,8 @@ class InvSchaapTest extends IntegrationCase {
         $this->assertFout('Datum overlijden kan niet voor aanschafdatum liggen !');
     }
 
-    public function testValidatieInvSchaapPrematureAanschaf() {
-        $this->post("/InvSchaap.php", $this->minimal([
+    public function testValidatiePrematureAanschaf() {
+        $this->post(self::PAGE, $this->minimal([
             'txtLevnr' => self::LEVNR_NIET_IN_DB,
             'kzlSekse' => 'ram',
             'kzlFase' => 'lam',
@@ -109,8 +116,8 @@ class InvSchaapTest extends IntegrationCase {
         $this->assertFout('Datum aanschaf kan niet voor geboortedatum liggen !');
     }
 
-    public function testValidatieInvSchaapOngeplaatstLam() {
-        $this->post("/InvSchaap.php", $this->minimal([
+    public function testValidatieOngeplaatstLam() {
+        $this->post(self::PAGE, $this->minimal([
             'txtLevnr' => self::LEVNR_NIET_IN_DB,
             'kzlSekse' => 'ram',
             'kzlFase' => 'lam',
@@ -122,9 +129,9 @@ class InvSchaapTest extends IntegrationCase {
         $this->assertFout('Plaats het lam ook nog in een verblijf.');
     }
 
-    public function testValidatieInvSchaapAlAanwezig() {
+    public function testValidatieAlAanwezig() {
         $this->runfixture('schaap-4');
-        $this->post("/InvSchaap.php", $this->minimal([
+        $this->post(self::PAGE, $this->minimal([
             'txtLevnr' => self::LEVNR_IN_FIXTURE,
             'kzlSekse' => 'ram',
             'kzlFase' => 'lam',
@@ -135,8 +142,8 @@ class InvSchaapTest extends IntegrationCase {
         $this->assertFout('Dit dier staat al op de stallijst.');
     }
 
-    public function testValidatieInvSchaapVolwassenAanschaf() {
-        $this->post("/InvSchaap.php", $this->minimal([
+    public function testValidatieVolwassenAanschaf() {
+        $this->post(self::PAGE, $this->minimal([
             'txtLevnr' => self::LEVNR_NIET_IN_DB,
             'kzlSekse' => 'ram',
             'kzlFase' => 'vader', // nog een testcase evenzo 'moeder'
@@ -147,10 +154,10 @@ class InvSchaapTest extends IntegrationCase {
         $this->assertFout('Bij invoer van een volwassen dier is de aanschafdatum verplicht.');
     }
 
-    public function testValidatieInvSchaapGeborenVoorAanschaf() {
+    public function testValidatieGeborenVoorAanschaf() {
         $this->runfixture('schaap-4');
         $this->runfixture('moeder-4');
-        $this->post("/InvSchaap.php", $this->minimal([
+        $this->post(self::PAGE, $this->minimal([
             'txtLevnr' => self::LEVNR_NIET_IN_DB,
             'kzlSekse' => 'ram',
             'kzlFase' => 'lam',
@@ -163,10 +170,10 @@ class InvSchaapTest extends IntegrationCase {
         $this->assertFout('Geboortedatum kan niet voor aanvoerdatum van moederdier liggen.');
     }
 
-    public function testValidatieInvSchaapGeborenNaAfvoer() {
+    public function testValidatieGeborenNaAfvoer() {
         $this->runfixture('schaap-4');
         $this->runfixture('moeder-4-afgevoerd');
-        $this->post("/InvSchaap.php", $this->minimal([
+        $this->post(self::PAGE, $this->minimal([
             'txtLevnr' => self::LEVNR_NIET_IN_DB,
             'kzlSekse' => 'ram',
             'kzlFase' => 'lam',
@@ -179,8 +186,135 @@ class InvSchaapTest extends IntegrationCase {
         $this->assertFout('Geboortedatum kan niet na afvoerdatum van moederdier liggen.');
     }
 
-    // TODO: case "geboortedatum na eerste geboortedatum
-    // TODO: case aanvoerdatum voor laatste afvoerdatum
+    public function testValidatieGeborenNaEerstedm() {
+        $this->runfixture('schaap-4');
+        $this->runfixture('moeder-4');
+        $fake = new SchaapGatewayStub();
+        $fake->prime('zoek_eerder_levensnummer', [
+            [
+                'schaapId' => 6,
+                'mdrId' => null,
+                'volwId' => null,
+                'dmgeb' => null,
+                'dmeerste' => '1920-01-01', // de veroorzaker: txtGebdm ligt hier na
+                'eerstedm' => '01-01-1920',
+                'dmaanw' => null,
+                'dmafv' => null,
+                'afvdm' => null,
+            ]
+        ]);
+        $GLOBALS['schaap_gateway'] = $fake;
+        $this->post(self::PAGE, $this->minimal([
+            # 'txtLevnr' => self::LEVNR_NIET_IN_DB, # dit levert fout op: schaapId wordt niet gezet en vervolgens bevraagd.
+            'txtLevnr' => 6,
+            'kzlSekse' => 'ram',
+            'kzlFase' => 'lam',
+            'kzlRas' => self::EEN_RAS,
+            'txtGebdm' => '5-5-2000',
+            'kzlHok' => 3,
+            'kzlOoi' => 9,
+        ]));
+        $this->assertNoNoise();
+        $this->assertFout('Geboortedatum kan niet na 01-01-1920 liggen.');
+    }
+
+    // todo: wat betekent dit? aanvoer is toch altijd voor afvoer?
+    public function testValidatieAanvoerVoorAfvoer() {
+        $this->runfixture('schaap-4');
+        $this->runfixture('moeder-4');
+        $fake = new SchaapGatewayStub();
+        $fake->prime('zoek_eerder_levensnummer', [
+            [
+                'schaapId' => 6,
+                'mdrId' => null,
+                'volwId' => null,
+                'dmgeb' => null,
+                'dmeerste' => '2020-01-01',
+                'eerstedm' => '01-01-1920',
+                'dmaanw' => null,
+                'dmafv' => '2010-01-01', // de veroorzaker: txtDmaanv ligt hier voor
+                'afvdm' => '01-01-2010',
+            ]
+        ]);
+        $GLOBALS['schaap_gateway'] = $fake;
+        $this->post(self::PAGE, $this->minimal([
+            'txtLevnr' => 6,
+            'kzlSekse' => 'ram',
+            'kzlFase' => 'moeder',
+            'kzlRas' => self::EEN_RAS,
+            'txtAanv' => '01-01-2000',
+            'kzlHok' => 3,
+            'kzlOoi' => 9,
+        ]));
+        $this->assertNoNoise();
+        $this->assertFout('Aanvoerdatum kan niet voor 01-01-2010 liggen.');
+    }
+
+    public function testValidatieDood() {
+        $this->runfixture('schaap-4-dood');
+        $fake = new SchaapGatewayStub();
+        $fake->prime('zoek_eerder_levensnummer', [
+            [
+                'schaapId' => 6,
+                'mdrId' => null,
+                'volwId' => null,
+                'dmgeb' => null,
+                'dmeerste' => '2020-01-01',
+                'eerstedm' => '01-01-1920',
+                'dmaanw' => null,
+                'dmafv' => '2010-01-01',
+                'afvdm' => '01-01-2010',
+            ]
+        ]);
+        $GLOBALS['schaap_gateway'] = $fake;
+        $this->post(self::PAGE, $this->minimal([
+            'txtLevnr' => 4,
+            'kzlSekse' => 'ram',
+            'kzlFase' => 'moeder',
+            'kzlReden' => 1,
+            'txtUitvdm' => '2010-12-12',
+            'kzlRas' => self::EEN_RAS,
+            'txtAanv' => '05-05-2010',
+            'kzlHok' => 3,
+            'kzlOoi' => 9,
+        ]));
+        $this->assertNoNoise();
+        $this->assertFout('Dit is een overleden schaap.');
+    }
+
+    public function testValidatieLevensnummerBestaat() {
+        $this->runfixture('schaap-4');
+        $fake = new SchaapGatewayStub();
+        $fake->prime('zoek_eerder_levensnummer', [
+            [
+                'schaapId' => 6,
+                'mdrId' => null,
+                'volwId' => null,
+                'dmgeb' => null,
+                'dmeerste' => '2020-01-01',
+                'eerstedm' => '01-01-1920',
+                'dmaanw' => null,
+                'dmafv' => '2010-01-01',
+                'afvdm' => '01-01-2010',
+            ]
+        ]);
+        $GLOBALS['schaap_gateway'] = $fake;
+        $this->post(self::PAGE, $this->minimal([
+            'txtLevnr' => 6,
+            'kzlSekse' => 'ram',
+            'kzlFase' => 'moeder',
+            'kzlReden' => 1,
+            'txtUitvdm' => '2010-12-12',
+            'kzlRas' => self::EEN_RAS,
+            'txtAanv' => '05-05-2010',
+            'kzlHok' => 3,
+            'kzlOoi' => 9,
+        ]));
+        $this->assertNoNoise();
+        $this->assertFout('Dit levensnummer bestaat al.');
+    }
+
+
     // TODO: case dood schaap
     // TODO: case levensnummer komt al voor
     // TODO: case korte draagtijd (BCB: is dat juist? Kan dit ook: lam 1 in september, schaap wordt meteen weer zwanger, lam 2 doodgeboren in november?)
@@ -198,7 +332,7 @@ class InvSchaapTest extends IntegrationCase {
     // TODO: case aantal_ubn > 1
     public function testMeerdereUbnsToontKeuzelijst() {
         $this->runfixture('user-1-more-ubns');
-        $this->get('/InvSchaap.php', ['ingelogd' => 1]);
+        $this->get(self::PAGE, ['ingelogd' => 1]);
         $this->assertOptieCount('kzlUbn', 3);
     }
 
@@ -206,7 +340,7 @@ class InvSchaapTest extends IntegrationCase {
     public function testMeerdereUbnsKeuze() {
         $this->runfixture('schaap-4');
         $this->runfixture('moeder-4-afgevoerd');
-        $this->post("/InvSchaap.php", $this->minimal([
+        $this->post(self::PAGE, $this->minimal([
             'txtLevnr' => self::LEVNR_NIET_IN_DB,
             'kzlSekse' => 'ram',
             'kzlFase' => 'lam',

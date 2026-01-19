@@ -20,6 +20,8 @@ use PhpParser\Node\Stmt\Expression;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\RectorDefinition\RectorDefinition;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 
 final class SplitSqlConcatenationRector extends AbstractRector {
 

@@ -23,6 +23,7 @@ $reader = $lid_gateway->findReader($lidId);
 //writable horizontal : 219-(10*2)=189mm
 
 $pdf = new RasPdf($Afdrukstand,'mm','A4'); //use new class
+$pdf->setReader($reader);
 
 //define new alias for total page numbers
 $pdf->AliasNbPages('{pages}');

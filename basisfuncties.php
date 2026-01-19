@@ -653,3 +653,8 @@ function getReadername($datb, $lidid, $naam, $n) {
 
     return $readername;
 }
+
+// komt voor in de code, geen idee wat het zou moeten doen
+function mens_datum($str) {
+    return $str;
+}

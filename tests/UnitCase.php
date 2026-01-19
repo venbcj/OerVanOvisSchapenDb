@@ -7,6 +7,8 @@ class UnitCase extends TestCase {
     // Database aanspreken in unit-tests vind ik eigenlijk niet okee. Code is nog niet ver genoeg --BCB
 
     protected $db;
+    private $tablecounts = [];
+    private $expectedincrements = [];
 
     protected function uses_db() {
         require_once "just_connect_db.php";

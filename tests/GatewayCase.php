@@ -1,6 +1,6 @@
 <?php
 
-class GatewayCase extends UnitCase {
+class GatewayCase extends IntegrationCase {
 
     protected const LIDID = 1;
 

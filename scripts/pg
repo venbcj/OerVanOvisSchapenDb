@@ -27,7 +27,7 @@ TXT
 fi
 cover-include none
 cover-include $PAGE
-OTHERS=$(grep -oP '(?<=include ")([^"]*)(?=")' $PAGE)
+OTHERS=$(grep -oP '(?<=include ")([^"]*)(?=")' $PAGE|sort -u)
 for c in $OTHERS; do
     cover-include $c
 done

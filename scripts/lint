@@ -12,3 +12,5 @@ echo 'run linter'
 phpcbf $FILE
 echo 'clean up'
 sed -i -f scripts/_after_phpcbf.sed $FILE
+# dit zou ik ook graag in het after-script opnemen
+sed -i '${/?>/d}' $FILE

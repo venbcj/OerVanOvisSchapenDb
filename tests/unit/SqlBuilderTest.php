@@ -2,6 +2,8 @@
 
 class SqlBuilderTest extends UnitCase {
 
+    private $sut;
+
     public function setup(): void {
         $this->sut = new SqlBuilder(Db::instance());
     }

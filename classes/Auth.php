@@ -33,7 +33,7 @@ class Auth {
         }
         // Einde In de demo omgeving worden de basis gegevens elke maand opnieuw vervangen.
         if (isset($_POST['knpBasis'])) {
-            demo_userdelete();
+            demo_userdelete($db, $dtb, $lidId);
             demo_table_insert($db, $lidId);
         }
         // Laatste inlog vastleggen

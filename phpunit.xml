@@ -36,7 +36,15 @@
         <directory>ongebruikt</directory>
         <directory>utils</directory>
       </exclude>
-      <directory>.</directory>
+      <file>./InvSchaap.php</file>
+      <file>./kalender.php</file>
+      <file>./login.php</file>
+      <file>./menu1.php</file>
+      <file>./validate-invschaap.js.php</file>
     </whitelist>
   </filter>
+  <logging>
+    <log type="coverage-html" target="./coverage-html"/>
+    <log type="coverage-clover" target="./coverage.xml"/>
+  </logging>
 </phpunit>
