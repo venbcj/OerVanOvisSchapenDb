@@ -232,6 +232,7 @@ FROM tblHok h
         FROM tblBezet b
          join tblHistorie h on (b.hisId = h.hisId)
          join tblStal st on (h.stalId = st.stalId)
+         join tblUbn u on (u.ubnId = st.ubnId)
          left join 
          (
             SELECT b.bezId, min(h2.hisId) hist
@@ -243,7 +244,8 @@ FROM tblHok h
  and h1.hisId < h2.hisId)) )
              join tblActie a2 on (a2.actId = h2.actId)
              join tblStal st on (h1.stalId = st.stalId)
-            WHERE st.lidId = :lidId
+             join tblUbn u on (u.ubnId = st.ubnId)
+            WHERE u.lidId = :lidId
  and a2.uit = 1
  and h1.skip = 0
  and h2.skip = 0
@@ -265,7 +267,7 @@ FROM tblHok h
             WHERE actId = 3
  and skip = 0
          ) prnt on (st.schaapId = prnt.schaapId)
-        WHERE st.lidId = :lidId
+        WHERE u.lidId = :lidId
  and h.skip = 0
  and ( (isnull(spn.datum)
  and isnull(prnt.datum)) or h.datum < spn.datum)
@@ -274,6 +276,7 @@ FROM tblHok h
         FROM tblBezet b
          join tblHistorie h on (b.hisId = h.hisId)
          join tblStal st on (h.stalId = st.stalId)
+         join tblUbn u on (u.ubnId = st.ubnId)
          left join 
          (
             SELECT b.bezId, min(h2.hisId) hist
@@ -285,7 +288,8 @@ FROM tblHok h
  and h1.hisId < h2.hisId)) )
              join tblActie a2 on (a2.actId = h2.actId)
              join tblStal st on (h1.stalId = st.stalId)
-            WHERE st.lidId = :lidId
+             join tblUbn u on (u.ubnId = st.ubnId)
+            WHERE u.lidId = :lidId
  and a2.uit = 1
  and h1.skip = 0
  and h2.skip = 0
@@ -307,7 +311,7 @@ FROM tblHok h
             WHERE actId = 3
  and skip = 0
          ) prnt on (st.schaapId = prnt.schaapId)
-        WHERE st.lidId = :lidId
+        WHERE u.lidId = :lidId
  and h.skip = 0
  and ((h.datum >= spn.datum
  and (isnull(prnt.datum) or h.datum < prnt.datum)) or (isnull(spn.datum)
@@ -317,6 +321,7 @@ FROM tblHok h
         FROM tblBezet b
          join tblHistorie h on (b.hisId = h.hisId)
          join tblStal st on (h.stalId = st.stalId)
+         join tblUbn u on (u.ubnId = st.ubnId)
          left join 
          (
             SELECT b.bezId, min(h2.hisId) hist
@@ -328,7 +333,8 @@ FROM tblHok h
  and h1.hisId < h2.hisId)) )
              join tblActie a2 on (a2.actId = h2.actId)
              join tblStal st on (h1.stalId = st.stalId)
-            WHERE st.lidId = :lidId
+             join tblUbn u on (u.ubnId = st.ubnId)
+            WHERE u.lidId = :lidId
  and a2.uit = 1
  and h1.skip = 0
  and h2.skip = 0
@@ -343,7 +349,7 @@ FROM tblHok h
             WHERE actId = 3
  and skip = 0
          ) prnt on (st.schaapId = prnt.schaapId)
-        WHERE st.lidId = :lidId
+        WHERE u.lidId = :lidId
  and h.skip = 0
  and h.datum >= prnt.datum
     ) hokIn
@@ -469,8 +475,9 @@ left join (
              join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
              join tblActie a2 on (a2.actId = h2.actId)
              join tblStal st on (h1.stalId = st.stalId)
+             join tblUbn u on (u.ubnId = st.ubnId)
              join tblPeriode p on (p.periId = b.periId)
-            where st.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and isnull(p.dmafsluit)
+            where u.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and isnull(p.dmafsluit)
             group by b.bezId, h1.hisId
         ) uit
         on (uit.bezId = b.bezId)

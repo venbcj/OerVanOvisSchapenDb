@@ -195,9 +195,10 @@ FROM (
              left join (
                 SELECT n.inkId, sum(n.stdat*n.nutat) vbrat
                 FROM tblStal st
+                 join tblUbn u on (u.ubnId = st.ubnId)
                  join tblHistorie h on (h.stalId = st.stalId)
                  join tblNuttig n on (n.hisId = h.hisId)
-                WHERE st.lidId = :lidId
+                WHERE u.lidId = :lidId
  and h.skip = 0
                 GROUP BY n.inkId
              ) n on (i.inkId = n.inkId)

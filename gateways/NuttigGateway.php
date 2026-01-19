@@ -24,6 +24,7 @@ SELECT date_format(h.datum,'%Y%m') jrmnd, date_format(h.datum,'%Y') jaar, month(
  i.charge, a.wdgn_v, a.wdgn_m
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  join tblHistorie h on (st.stalId = h.stalId)
  join tblNuttig n on (h.hisId = n.hisId)
  join tblInkoop i on (n.inkId = i.inkId)
@@ -37,7 +38,7 @@ FROM tblSchaap s
     WHERE h.actId = 3 and h.skip = 0
  ) oudr on (s.schaapId = oudr.schaapId)
 WHERE h.skip = 0
- and st.lidId = :lidId
+ and u.lidId = :lidId
  and month(h.datum) = :maand
  and year(h.datum) = :jaar
  and a.artId = :artId
