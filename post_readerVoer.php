@@ -156,7 +156,7 @@ WHERE hokId = '" . mysqli_real_escape_string($db, $fldHok) . "' and doelId= '" .
                 $inleeshoeveelheid = $toedat_rd / $stdat;
                 /*echo 'noodzakelijke gegevens : artikel ' . $fldArtId . ', $inleeshoeveelheid = ' .$inleeshoeveelheid. ', $datum_rd = '. $datum_rd.', $periId = '. $periId .', $recId = '. $recId.'<br>';*/
                 if ($datum_rd <= $fldDmAfsluit) {
-                    inlezen_voer($db, $fldArtId, $inleeshoeveelheid, $datum_rd, $periId, $readId); // Zit in func_artikelnuttigen.php zie insVoerregistratie.php
+                    inlezen_voer($fldArtId, $inleeshoeveelheid, $datum_rd, $periId, $readId); // Zit in func_artikelnuttigen.php zie insVoerregistratie.php
                  /* EINDE INVOEREN */
                     $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '" . mysqli_real_escape_string($db, $readId) . "' " ;
                     /*echo $updateReader.'<br>';*/    mysqli_query($db, $updateReader) or die(mysqli_error($db));

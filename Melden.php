@@ -38,7 +38,7 @@ if (Auth::is_logged_in()) {
         // Controleren of inloggevens bestaan
         $lid_gateway = new LidGateway();
         if ($lid_gateway->hasCompleteRvo($lidId)) {
-            $viewdata['links'] = Menu::melden($db, $lidId);
+            $viewdata['links'] = Menu::melden($lidId);
         }
         View::render('melden/page', $viewdata);
     } else {

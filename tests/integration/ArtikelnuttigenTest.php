@@ -21,7 +21,7 @@ class ArtikelnuttigenTest extends IntegrationCase {
         $rest_toedat = 0;
         $toediendatum = '';
         $reduid = 0;
-        inlezen_pil($this->db, $hisid, $artid, $rest_toedat, $toediendatum, $reduid);
+        inlezen_pil($hisid, $artid, $rest_toedat, $toediendatum, $reduid);
         // THEN
         $this->assertTablesGrew();
     }
@@ -41,7 +41,7 @@ class ArtikelnuttigenTest extends IntegrationCase {
         $rest_toedat = 1; // dat is "meer dan" 0 in de basis-test
         $toediendatum = '';
         $reduid = 0;
-        inlezen_pil($this->db, $hisid, $artid, $rest_toedat, $toediendatum, $reduid);
+        inlezen_pil($hisid, $artid, $rest_toedat, $toediendatum, $reduid);
         // THEN
         $this->assertTablesGrew();
     }
@@ -89,7 +89,7 @@ class ArtikelnuttigenTest extends IntegrationCase {
         $toediendatum = '2020-01-01'; // moet geldig zijn. Relevantie wordt hier niet duidelijk
         $periode_id = 0;
         $readerid = 0;
-        inlezen_voer($this->db, $artid, $rest_toedat, $toediendatum, $periode_id, $readerid);
+        inlezen_voer($artid, $rest_toedat, $toediendatum, $periode_id, $readerid);
         $this->assertTablesGrew();
     }
 
@@ -105,7 +105,7 @@ class ArtikelnuttigenTest extends IntegrationCase {
         $toediendatum = '2020-01-01';
         $periode_id = 0;
         $readerid = 0;
-        inlezen_voer($this->db, $artid, $rest_toedat, $toediendatum, $periode_id, $readerid);
+        inlezen_voer($artid, $rest_toedat, $toediendatum, $periode_id, $readerid);
         $this->assertTablesGrew();
     }
 

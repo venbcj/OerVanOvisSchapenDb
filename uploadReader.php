@@ -28,7 +28,6 @@ if (isset($_POST['knpUpload']) && $reader == 'Biocontrol') {
                             copy($end_dir_reader . $end_file_reader, $file_r . "/" . $end_file_reader);
                             // $DelFile = $end_dir_reader.$end_file_reader;
                              rename($end_dir_reader . $end_file_reader, $Backupnaam); // hernoemen van reader_1.txt naar bijv. reader_22-6-2015 20:42:44.txt
-                            //unlink($DelFile)or die ("Kan bestand reader.txt niet verwijderen. " . mysqli_error($db));// verwijderd bestand $end_file_reader. reader.txt is fictief voor de eindgebruiker
                             include "importReader.php";
                         } else {
                             $fout = 'Er is iets fout gegaan tijdens het uploaden.';

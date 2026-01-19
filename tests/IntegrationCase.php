@@ -153,6 +153,7 @@ class IntegrationCase extends UnitCase {
             $complaint = PHP_EOL.'Er zou geen melding-alert in de pagina moeten zitten. Vindt '.$matches[1];
             $this->assertFalse($found, $complaint);
         }
+        $this->assertTrue(true); // anders krijg ik een Risky Test
     }
 
     // Heeft <select name=$name> $count <option>s?

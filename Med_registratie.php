@@ -180,7 +180,7 @@ if (Auth::is_logged_in()) {
                                 $hisId = $historie_gateway->zoek_laatste($stalId, $fldDay);
                  // hoeveelheid per dier
                                 $toedtotal = $stdat * $toedat;
-                                inlezen_pil($db, $hisId, $kzlArt, $toedtotal, $fldDay, $kzlReden);
+                                inlezen_pil($hisId, $kzlArt, $toedtotal, $fldDay, $kzlReden);
                                 $ingelezen++;
                             }
                         }

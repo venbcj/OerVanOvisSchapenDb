@@ -314,9 +314,6 @@ class InvSchaapTest extends IntegrationCase {
         $this->assertFout('Dit levensnummer bestaat al.');
     }
 
-
-    // TODO: case dood schaap
-    // TODO: case levensnummer komt al voor
     // TODO: case korte draagtijd (BCB: is dat juist? Kan dit ook: lam 1 in september, schaap wordt meteen weer zwanger, lam 2 doodgeboren in november?)
     // TODO: case te korte draagtijd
 
@@ -357,6 +354,51 @@ class InvSchaapTest extends IntegrationCase {
 
     // TODO: fixtures voor tblRas, tblRasuser; vw_kzlOoien; resultvader; moment uitval; reden uitval; tblHok
     // ==> welke asserts passen daar bij? aantal option-tags tellen binnen een benoemde select?
+
+    public function testPostGroenLam() {
+        $this->post(self::PAGE, $this->minimal([
+            'txtLevnr' => '4',
+            'kzlSekse' => 1,
+            'kzlRas' => 1,
+            // met alleen deze drie velden loop ik zo door naar een "undefined variable volwId".
+            // het scenario blijkt aanvoer_ouder
+            'kzlFase' => 'lam', // niet genoeg: "plaats het lam ook nog in een verblijf"
+            'kzlHok' => 1, // crasht op ongedefinieerde kzlReden
+            'kzlReden' => 1, // maar als ik een reden opgeef is het blijkbaar uitval, en is txtDmuitv nodig. Oh. txtUitvdm
+            'txtUitvdm' => '2010-01-01', // okee, nu crasht het op "undefined variable schaapId". Heb je een ingevoerd record nodig om er een in te voeren?
+        ]));
+        $this->assertNotFout();
+    }
+
+    # inschakelen in overleg met BvdV
+    /*
+    Laten we uitgaan van Scenario 'aankoop van een moederdier' dat niet voorkomt in de database. Dit is het meest eenvoudige scenario. Dit dier heeft dan geen ouders, zit niet in een verblijf en heeft verder geen extra info zoals geboortedatum, aankoopgewicht.
+
+Verplichte velden zijn 
+Levensnummer bijv 100073436679
+Generatie moeder = moeder -> key-waarde keuzelijst 'moeder'
+Geslacht  = ooi -> key-waarde keuzelijst 'ooi'
+Ras  = Rijnlam -> key-waarde keuzelijst '77'
+Aanvoerdatum (txtAanv) bijv 2026-01-19
+
+Volgens mij moet je in de database alleen een geldige gebruiker hebben in tblLeden en in tblUbn moet een 7 cijferig ubn bestaan van deze gebruiker (lidId)
+Functioneel moet het keuzelijst Ras wel Rijnlam bevatten.
+    In tblRas -> rasId = 77, Ras = Rijnlam en actief = 1
+    in tblRasuser -> LidId = 1 (lidId in tblLeden), rasId = 77 en actief = 1
+
+    Kun je hiermee uit de voeten?
+*/
+    public function testPostGroenRam() {
+        $this->post(self::PAGE, $this->minimal([
+            'txtLevnr' => '100073436679',
+            'kzlSekse' => 'ooi',
+            'kzlRas' => 77, // rijnlam
+            'txtAanv' => '2026-01-19',
+            'kzlFase' => 'moeder',
+            # 'txtGebdm' => '2010-01-01',
+        ]));
+        $this->assertNotFout();
+    }
 
     private function minimal($data = []) {
         return array_merge([

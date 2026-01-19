@@ -47,7 +47,6 @@ $w_hok
 $w_werknr
  */
 
-//$host = "localhost"; $user = "bvdvschaapovis"; $pw = "MSenWL44"; $dtb = $db_p;
 if ((Url::getWebroot() == 'https://test.oervanovis.nl/' || Url::getWebroot() == 'https://demo.oervanovis.nl/') && $dtb == 'k36098_bvdvSchapenDb') {
     $output[] = 'pasop.tpl.php';
 }

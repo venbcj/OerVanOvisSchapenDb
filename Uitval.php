@@ -80,8 +80,7 @@ if (Auth::is_logged_in()) {
     </table>
 <?php
         if (isset($_POST['knpNewReden__']) && !empty($_POST['txtNaam__'])) {
-            $naam = $_POST['txtNaam__'];
-            $insert_tblReden = "INSERT into tblReden set reden = '" . mysqli_real_escape_string($db, $naam) . "' ";
+            $reden_gateway->insert($_POST['txtNaam__']);
         }
 ?>
 <?php
