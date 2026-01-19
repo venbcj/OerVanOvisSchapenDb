@@ -862,9 +862,10 @@ SELECT count(hin.schaapId) aantin
 FROM (
     SELECT st.schaapId, max(hisId) hisId
     FROM tblStal st
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblHistorie h on (st.stalId = h.stalId)
      join tblActie a on (a.actId = h.actId)
-    WHERE st.lidId = :lidId
+    WHERE u.lidId = :lidId
  and isnull(st.rel_best)
  and a.aan = 1
  and h.skip = 0
@@ -881,7 +882,8 @@ FROM (
  and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = :lidId
+     join tblUbn u on (u.ubnId = st.ubnId)
+    WHERE u.lidId = :lidId
  and a1.aan = 1
  and a2.uit = 1
  and h1.skip = 0
@@ -909,9 +911,10 @@ SELECT count(hin.schaapId) aantin
 FROM (
     SELECT st.schaapId, max(hisId) hisId
     FROM tblStal st
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblHistorie h on (st.stalId = h.stalId)
      join tblActie a on (a.actId = h.actId)
-    WHERE st.lidId = :lidId
+    WHERE u.lidId = :lidId
  and isnull(st.rel_best)
  and a.aan = 1
  and h.skip = 0
@@ -928,7 +931,8 @@ FROM (
  and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = :lidId
+     join tblUbn u on (u.ubnId = st.ubnId)
+    WHERE u.lidId = :lidId
  and a1.aan = 1
  and a2.uit = 1
  and h1.skip = 0
@@ -1071,7 +1075,8 @@ SQL
 SELECT max(hisId) hisId
 FROM tblHistorie h
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = :lidId
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE u.lidId = :lidId
  and h.actId = :actId
 SQL
         , [[':lidId', $lidId, Type::INT], [':actId', $actId, Type::INT]]
@@ -1117,10 +1122,11 @@ SQL
 SELECT count(h.hisId) aant
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
+ join tblUbn u on (u.ubnId = st.ubnId)
 WHERE h.actId = 12
  and h.skip = 0
  and date_format(h.datum,'%Y') = :jaar
- and st.lidId = :lidId
+ and u.lidId = :lidId
 SQL
         , [
             [':lidId', $lidId, Type::INT],
@@ -1135,7 +1141,8 @@ SQL
 SELECT count(h.hisId) aant
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
-WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y%u') = :jaarweek and st.lidId = :lidId
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y%u') = :jaarweek and u.lidId = :lidId
 SQL
         , [[':lidId', $lidId, Type::INT], [':jaarweek', $jaarweek]]
         );
@@ -1147,7 +1154,8 @@ SQL
 SELECT count(h.hisId) aant
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
-WHERE h.actId = 12 and h.skip = 0 and date_format(h.datum,'%Y%u') = :jaarweek and st.lidId = :lidId
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE h.actId = 12 and h.skip = 0 and date_format(h.datum,'%Y%u') = :jaarweek and u.lidId = :lidId
 SQL
         , [[':lidId', $lidId, Type::INT], [':jaarweek', $jaarweek]]
         );
@@ -1159,7 +1167,8 @@ SQL
 SELECT count(h.hisId) aant
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
-WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y%u') = :jaarweek and st.lidId = :lidId
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y%u') = :jaarweek and u.lidId = :lidId
 SQL
         , [[':lidId', $lidId, Type::INT], [':jaarweek', $jaarweek]]
         );
@@ -1171,7 +1180,8 @@ SQL
 SELECT count(h.hisId) aant
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
-WHERE h.actId = 12 and h.skip = 0 and date_format(h.datum,'%Y%u') = :jaarweek and st.lidId = :lidId
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE h.actId = 12 and h.skip = 0 and date_format(h.datum,'%Y%u') = :jaarweek and u.lidId = :lidId
 SQL
         , [[':lidId', $lidId, Type::INT], [':jaarweek', $jaarweek]]
         );
@@ -1183,7 +1193,8 @@ SQL
 SELECT count(h.hisId) aant
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
-WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y%u') >= :van and date_format(h.datum,'%Y%u') <= :tot and st.lidId = :lidId
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE h.actId = 1 and h.skip = 0 and date_format(h.datum,'%Y%u') >= :van and date_format(h.datum,'%Y%u') <= :tot and u.lidId = :lidId
 SQL
         , [[':lidId', $lidId, Type::INT], [':van', $van], [':tot', $tot]]
         );
@@ -1195,7 +1206,8 @@ SQL
 SELECT count(h.hisId) aant
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
-WHERE h.actId = 12 and h.skip = 0 and date_format(h.datum,'%Y%u') >= :van and date_format(h.datum,'%Y%u') <= :tot and st.lidId = :lidId
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE h.actId = 12 and h.skip = 0 and date_format(h.datum,'%Y%u') >= :van and date_format(h.datum,'%Y%u') <= :tot and u.lidId = :lidId
 SQL
         , [[':lidId', $lidId, Type::INT], [':van', $van], [':tot', $tot]]
         );
@@ -1226,16 +1238,18 @@ left join (
     SELECT date_format(h.datum,'%Y%m') jrmnd, count(s.schaapId) mdrs
     FROM tblHistorie h
      join tblStal st on (h.stalId = st.stalId)
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblSchaap s on (s.schaapId = st.schaapId)
-    WHERE st.lidId = :lidId and h.actId = 3 and s.geslacht = 'ooi' and skip = 0
+    WHERE u.lidId = :lidId and h.actId = 3 and s.geslacht = 'ooi' and skip = 0
     GROUP BY date_format(h.datum,'%Y%m')
 ) aanv_m on (nr.jrmnd = aanv_m.jrmnd)
 left join (
     SELECT date_format(h.datum,'%Y%m') jrmnd, count(s.schaapId) mdrs
     FROM tblHistorie h
      join tblStal st on (h.stalId = st.stalId)
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblSchaap s on (s.schaapId = st.schaapId)
-    WHERE st.lidId = :lidId and h.actId = 13 and s.geslacht = 'ooi' and skip = 0
+    WHERE u.lidId = :lidId and h.actId = 13 and s.geslacht = 'ooi' and skip = 0
     GROUP BY date_format(h.datum,'%Y%m')
 ) afv_m on (nr.jrmnd = afv_m.jrmnd)
 left join (
@@ -1246,10 +1260,11 @@ left join (
      join (
         SELECT schaapId
         FROM tblStal st
+         join tblUbn u on (u.ubnId = st.ubnId)
          join tblHistorie h on (st.stalId = h.stalId)
         WHERE h.actId = 3 and skip = 0
      ) ouder on (ouder.schaapId = st.schaapId)
-    WHERE st.lidId = :lidId and h.actId = 14
+    WHERE u.lidId = :lidId and h.actId = 14
      and s.geslacht = 'ooi' and skip = 0
     GROUP BY date_format(h.datum,'%Y%m')
 ) doo_m on (nr.jrmnd = doo_m.jrmnd)
@@ -1263,8 +1278,9 @@ SQL
 SELECT min(year(h.datum)) minjaar
 FROM tblHistorie h
  join tblStal st on (st.stalId = h.stalId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  join tblSchaap s on (s.schaapId = st.schaapId)
-WHERE st.lidId = :lidId and h.datum > 0 and h.actId = 3 and s.geslacht = 'ooi' and skip = 0
+WHERE u.lidId = :lidId and h.datum > 0 and h.actId = 3 and s.geslacht = 'ooi' and skip = 0
 SQL
         , [[':lidId', $lidId, Type::INT]]
         );
@@ -1283,22 +1299,25 @@ left join (
     SELECT date_format(h.datum,'%Y%m') jrmnd, count(s.schaapId) vdrs
     FROM tblHistorie h
      join tblStal st on (h.stalId = st.stalId)
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblSchaap s on (s.schaapId = st.schaapId)
-    WHERE st.lidId = :lidId and h.actId = 3 and s.geslacht = 'ram' and skip = 0
+    WHERE u.lidId = :lidId and h.actId = 3 and s.geslacht = 'ram' and skip = 0
     GROUP BY date_format(h.datum,'%Y%m')
 ) aanv_v on (nr.jrmnd = aanv_v.jrmnd)
 left join (
     SELECT date_format(h.datum,'%Y%m') jrmnd, count(s.schaapId) vdrs
     FROM tblHistorie h
      join tblStal st on (h.stalId = st.stalId)
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblSchaap s on (s.schaapId = st.schaapId)
-    WHERE st.lidId = :lidId and h.actId = 13 and s.geslacht = 'ram' and skip = 0
+    WHERE u.lidId = :lidId and h.actId = 13 and s.geslacht = 'ram' and skip = 0
     GROUP BY date_format(h.datum,'%Y%m')
 ) afv_v on (nr.jrmnd = afv_v.jrmnd)
 left join (
     SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) vdrs
     FROM tblHistorie h
      join tblStal st on (h.stalId = st.stalId)
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblSchaap s on (s.schaapId = st.schaapId)
      join (
         SELECT schaapId
@@ -1306,7 +1325,7 @@ left join (
          join tblHistorie h on (st.stalId = h.stalId)
         WHERE h.actId = 3 and skip = 0
      ) ouder on (ouder.schaapId = st.schaapId)
-    WHERE st.lidId = :lidId and h.actId = 14
+    WHERE u.lidId = :lidId and h.actId = 14
      and s.geslacht = 'ram' and skip = 0
     GROUP BY date_format(h.datum,'%Y%m')
 ) doo_v on (nr.jrmnd = doo_v.jrmnd)
@@ -1332,6 +1351,7 @@ SQL
         SELECT date_format(h.datum,'%Y%m') jrmnd, count(distinct s.schaapId) mdrs
         FROM tblHistorie h
          join tblStal st on (h.stalId = st.stalId)
+         join tblUbn u on (u.ubnId = st.ubnId)
          join tblSchaap s on (s.schaapId = st.schaapId)
          join (
             SELECT st.schaapId, h.datum
@@ -1340,7 +1360,7 @@ SQL
             WHERE h.actId = 3
  and skip = 0
          ) ouder on (ouder.schaapId = s.schaapId)
-        WHERE st.lidId = :lidId
+        WHERE u.lidId = :lidId
  and date_format(h.datum,'%Y%m') = :jm
  and (h.actId = 2 or h.actId = 11)
  and skip = 0
@@ -1352,6 +1372,7 @@ SQL
         SELECT date_format(h.datum,'%Y%m') jrmnd, count(distinct s.schaapId) mdrs
         FROM tblHistorie h
          join tblStal st on (h.stalId = st.stalId)
+         join tblUbn u on (u.ubnId = st.ubnId)
          join tblSchaap s on (s.schaapId = st.schaapId)
          join (
             SELECT st.schaapId, h.datum
@@ -1360,7 +1381,7 @@ SQL
             WHERE h.actId = 3
  and skip = 0
          ) ouder on (ouder.schaapId = s.schaapId)
-        WHERE st.lidId = :lidId
+        WHERE u.lidId = :lidId
  and date_format(h.datum,'%Y%m') = :jm
  and (h.actId = 10 or h.actId = 13)
  and skip = 0
@@ -1372,6 +1393,7 @@ SQL
         SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) mdrs
         FROM tblHistorie h
          join tblStal st on (h.stalId = st.stalId)
+         join tblUbn u on (u.ubnId = st.ubnId)
          join tblSchaap s on (s.schaapId = st.schaapId)
          join (
             SELECT schaapId
@@ -1380,7 +1402,7 @@ SQL
             WHERE h.actId = 3
  and skip = 0
          ) ouder on (ouder.schaapId = st.schaapId)
-        WHERE st.lidId = :lidId
+        WHERE u.lidId = :lidId
  and date_format(h.datum,'%Y%m') = :jm
  and h.actId = 14
  and skip = 0
@@ -1391,16 +1413,18 @@ SQL
         SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) oudrs_m
         FROM tblHistorie h
          join tblStal st on (h.stalId = st.stalId)
+         join tblUbn u on (u.ubnId = st.ubnId)
          join tblSchaap s on (s.schaapId = st.schaapId)
          left join (
             SELECT h.stalId, datum
             FROM tblHistorie h
              join tblStal st on (st.stalId = h.stalId)
-            WHERE st.lidId = :lidId
+             join tblUbn u on (u.ubnId = st.ubnId)
+            WHERE u.lidId = :lidId
  and h.actId = 2
  and skip = 0
          ) aanv on (aanv.stalId = h.stalId)
-        WHERE st.lidId = :lidId
+        WHERE u.lidId = :lidId
  and s.geslacht = 'ooi'
  and date_format(h.datum,'%Y%m') = :jm
  and h.actId = 3
@@ -1412,7 +1436,8 @@ SQL
         SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) aant
         FROM tblHistorie h
          join tblStal st on (h.stalId = st.stalId)
-        WHERE st.lidId = :lidId
+         join tblUbn u on (u.ubnId = st.ubnId)
+        WHERE u.lidId = :lidId
  and date_format(h.datum,'%Y%m') = :jm
  and h.actId = 1
  and skip = 0
@@ -1422,7 +1447,8 @@ SQL
         SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) afv
         FROM tblHistorie h
          join tblStal st on (h.stalId = st.stalId)
-        WHERE st.lidId = :lidId
+         join tblUbn u on (u.ubnId = st.ubnId)
+        WHERE u.lidId = :lidId
  and date_format(h.datum,'%Y%m') = :jm
  and h.actId = 12
  and skip = 0
@@ -1432,6 +1458,7 @@ SQL
         SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) lam
         FROM tblHistorie h
          join tblStal st on (h.stalId = st.stalId)
+         join tblUbn u on (u.ubnId = st.ubnId)
          left join (
             SELECT schaapId
             FROM tblStal st
@@ -1439,7 +1466,7 @@ SQL
             WHERE h.actId = 3
  and skip = 0
          ) ouder on (ouder.schaapId = st.schaapId)
-        WHERE st.lidId = :lidId
+        WHERE u.lidId = :lidId
  and date_format(h.datum,'%Y%m') = :jm
  and h.actId = 14
  and skip = 0
@@ -1450,6 +1477,7 @@ SQL
     SELECT date_format(h.datum,'%Y%m') jrmnd, count(distinct s.schaapId) vdrs
     FROM tblHistorie h
      join tblStal st on (h.stalId = st.stalId)
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblSchaap s on (s.schaapId = st.schaapId)
      join (
         SELECT st.schaapId, h.datum
@@ -1458,7 +1486,7 @@ SQL
         WHERE h.actId = 3
  and skip = 0
      ) ouder on (ouder.schaapId = s.schaapId)
-    WHERE st.lidId = :lidId
+    WHERE u.lidId = :lidId
  and date_format(h.datum,'%Y%m') = :jm
  and (h.actId = 2 or h.actId = 11)
  and skip = 0
@@ -1470,6 +1498,7 @@ SQL
         SELECT date_format(h.datum,'%Y%m') jrmnd, count(distinct s.schaapId) vdrs
         FROM tblHistorie h
          join tblStal st on (h.stalId = st.stalId)
+         join tblUbn u on (u.ubnId = st.ubnId)
          join tblSchaap s on (s.schaapId = st.schaapId)
          join (
             SELECT st.schaapId, h.datum
@@ -1478,7 +1507,7 @@ SQL
             WHERE h.actId = 3
  and skip = 0
          ) ouder on (ouder.schaapId = s.schaapId)
-        WHERE st.lidId = :lidId
+        WHERE u.lidId = :lidId
  and date_format(h.datum,'%Y%m') = :jm
  and (h.actId = 10 or h.actId = 13)
  and skip = 0
@@ -1490,6 +1519,7 @@ SQL
         SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) vdrs
         FROM tblHistorie h
          join tblStal st on (h.stalId = st.stalId)
+         join tblUbn u on (u.ubnId = st.ubnId)
          join tblSchaap s on (s.schaapId = st.schaapId)
          join (
             SELECT schaapId
@@ -1498,7 +1528,7 @@ SQL
             WHERE h.actId = 3
  and skip = 0
          ) ouder on (ouder.schaapId = st.schaapId)
-        WHERE st.lidId = :lidId
+        WHERE u.lidId = :lidId
  and date_format(h.datum,'%Y%m') = :jm
  and h.actId = 14
  and skip = 0
@@ -1509,16 +1539,18 @@ SQL
         SELECT date_format(h.datum,'%Y%m') jrmnd, count(st.schaapId) oudrs_v
         FROM tblHistorie h
          join tblStal st on (h.stalId = st.stalId)
+         join tblUbn u on (u.ubnId = st.ubnId)
          join tblSchaap s on (s.schaapId = st.schaapId)
          left join (
             SELECT h.stalId, datum
             FROM tblHistorie h
              join tblStal st on (st.stalId = h.stalId)
-            WHERE st.lidId = :lidId
+             join tblUbn u on (u.ubnId = st.ubnId)
+            WHERE u.lidId = :lidId
  and h.actId = 2
  and skip = 0
          ) aanv on (aanv.stalId = h.stalId)
-        WHERE st.lidId = :lidId
+        WHERE u.lidId = :lidId
  and s.geslacht = 'ram'
  and date_format(h.datum,'%Y%m') = :jm
  and h.actId = 3
@@ -1567,9 +1599,10 @@ SQL
     SELECT date_format(datum,'%d-%m-%Y') dag, h.actId, actie, datum
     FROM tblSchaap s
      join tblStal st on (s.schaapId = st.schaapId)
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblHistorie h on (st.stalId = h.stalId)
      join tblActie a on (a.actId = h.actId)
-    WHERE st.lidId = :lidId
+    WHERE u.lidId = :lidId
  and s.schaapId = :schaapId
  and h.skip = 0
 
@@ -1601,9 +1634,10 @@ SQL
      join tblBezet b on (p.periId = b.periId)
      join tblHistorie h on (h.hisId = b.hisId)
      join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblSchaap s on (s.schaapId =st.schaapId)
     WHERE h.skip = 0
- and st.lidId = :lidId
+ and u.lidId = :lidId
  and s.schaapId = :schaapId
 
     union
@@ -1613,10 +1647,11 @@ SQL
      join tblVolwas v on (s.schaapId = v.mdrId)
      join tblSchaap lam on (v.volwId = lam.volwId)
      join tblStal st on (st.schaapId = lam.schaapId)
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblHistorie h on (st.stalId = h.stalId
  and h.actId = 1
  and h.skip = 0)
-    WHERE st.lidId = :lidId
+    WHERE u.lidId = :lidId
  and s.schaapId = :schaapId
     GROUP BY h.actId
 
@@ -1627,10 +1662,11 @@ SQL
      join tblVolwas v on (s.schaapId = v.mdrId)
      join tblSchaap lam on (v.volwId = lam.volwId)
      join tblStal st on (st.schaapId = lam.schaapId)
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblHistorie h on (st.stalId = h.stalId
  and h.actId = 1
  and h.skip = 0)
-    WHERE st.lidId = :lidId
+    WHERE u.lidId = :lidId
  and s.schaapId = :schaapId
     GROUP BY h.actId
     HAVING (max(h.datum) > min(h.datum))
@@ -1642,12 +1678,13 @@ SQL
      join tblMelding m on (rs.reqId = m.reqId)
      join tblHistorie h on (m.hisId = h.hisId)
      join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblSchaap s on (s.schaapId = st.schaapId
  and s.levensnummer = rs.levensnummer)
     WHERE rs.melding = 'GER'
  and rs.meldnr is not null
  and h.skip = 0
- and st.lidId = :lidId
+ and u.lidId = :lidId
  and s.schaapId = :schaapId
 
     union
@@ -1657,12 +1694,13 @@ SQL
      join tblMelding m on (rs.reqId = m.reqId)
      join tblHistorie h on (m.hisId = h.hisId)
      join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblSchaap s on (s.schaapId = st.schaapId
  and s.levensnummer = rs.levensnummer)
     WHERE rs.melding = 'AAN'
  and rs.meldnr is not null
  and h.skip = 0
- and st.lidId = :lidId
+ and u.lidId = :lidId
  and s.schaapId = :schaapId
 
     union
@@ -1672,12 +1710,13 @@ SQL
      join tblMelding m on (rs.reqId = m.reqId)
      join tblHistorie h on (m.hisId = h.hisId)
      join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblSchaap s on (s.schaapId = st.schaapId
  and s.levensnummer = rs.levensnummer)
     WHERE rs.melding = 'AFV'
  and rs.meldnr is not null
  and h.skip = 0
- and st.lidId = :lidId
+ and u.lidId = :lidId
  and s.schaapId = :schaapId
 
     union
@@ -1687,12 +1726,13 @@ SQL
      join tblMelding m on (rs.reqId = m.reqId)
      join tblHistorie h on (m.hisId = h.hisId)
      join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblSchaap s on (s.schaapId = st.schaapId
  and s.levensnummer = rs.levensnummer)
     WHERE rs.melding = 'DOO'
  and rs.meldnr is not null
  and h.skip = 0
- and st.lidId = :lidId
+ and u.lidId = :lidId
  and s.schaapId = :schaapId
 
     ORDER BY datum desc, actId desc
@@ -1710,9 +1750,10 @@ SELECT count(hin.schaapId) aantin
 FROM (
     SELECT st.schaapId, max(hisId) hisId
     FROM tblStal st
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblHistorie h on (st.stalId = h.stalId)
      join tblActie a on (a.actId = h.actId)
-    WHERE st.lidId = :lidId and isnull(st.rel_best) and a.aan = 1 and h.skip = 0
+    WHERE u.lidId = :lidId and isnull(st.rel_best) and a.aan = 1 and h.skip = 0
     GROUP BY st.schaapId
  ) hin
  left join tblBezet b on (hin.hisId = b.hisId)
@@ -1724,7 +1765,8 @@ FROM (
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+     join tblUbn u on (u.ubnId = st.ubnId)
+    WHERE u.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
     GROUP BY b.bezId, st.schaapId, h1.hisId
  ) uit on (uit.hisv = hin.hisId)
  left join (
@@ -1751,9 +1793,10 @@ SELECT count(hin.schaapId) aantin
 FROM (
     SELECT st.schaapId, max(hisId) hisId
     FROM tblStal st
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblHistorie h on (st.stalId = h.stalId)
      join tblActie a on (a.actId = h.actId)
-    WHERE st.lidId = :lidId and isnull(st.rel_best) and a.aan = 1 and h.skip = 0
+    WHERE u.lidId = :lidId and isnull(st.rel_best) and a.aan = 1 and h.skip = 0
     GROUP BY st.schaapId
  ) hin
  left join tblBezet b on (hin.hisId = b.hisId)
@@ -1765,7 +1808,8 @@ FROM (
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+     join tblUbn u on (u.ubnId = st.ubnId)
+    WHERE u.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
     GROUP BY b.bezId, st.schaapId, h1.hisId
  ) uit on (uit.hisv = hin.hisId)
  join (
@@ -1792,9 +1836,10 @@ SELECT count(hin.schaapId) aantin
 FROM (
     SELECT st.schaapId, max(hisId) hisId
     FROM tblStal st
+     join tblUbn u on (u.ubnId = st.ubnId)
      join tblHistorie h on (st.stalId = h.stalId)
      join tblActie a on (a.actId = h.actId)
-    WHERE st.lidId = :lidId and isnull(st.rel_best) and a.aan = 1 and h.skip = 0
+    WHERE u.lidId = :lidId and isnull(st.rel_best) and a.aan = 1 and h.skip = 0
     GROUP BY st.schaapId
  ) hin
  left join tblBezet b on (hin.hisId = b.hisId)
@@ -1806,7 +1851,8 @@ FROM (
      join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
-    WHERE st.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+     join tblUbn u on (u.ubnId = st.ubnId)
+    WHERE u.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
     GROUP BY b.bezId, st.schaapId, h1.hisId
  ) uit on (uit.hisv = hin.hisId)
  join (
@@ -1826,8 +1872,9 @@ SQL
 SELECT h.hisId
 FROM tblHistorie h
  join tblStal st on (st.stalId = h.stalId)
+ join tblUbn u on (u.ubnId = st.ubnId)
  join tblBezet b on (b.hisId = h.hisId)
-WHERE st.lidId = :%lidId
+WHERE u.lidId = :%lidId
 GROUP BY h.hisId
 ORDER BY h.hisId
 SQL
@@ -1840,7 +1887,8 @@ SQL
 SELECT h.hisId
 FROM tblHistorie h
  join tblStal st on (st.stalId = h.stalId)
-WHERE st.lidId = :%lidId and h.actId = 8
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE u.lidId = :%lidId and h.actId = 8
 SQL
         , ['lidId' => $lidId]
         );
@@ -1859,7 +1907,8 @@ SQL
         SELECT date_format(h.datum,'%Y') jaar 
         FROM tblHistorie h
          join tblStal st on (st.stalId = h.stalId)
-        WHERE st.lidId = :lidId and date_format(datum,'%Y') >= :jaarstart and h.actId = 4 and h.skip = 0
+         join tblUbn u on (u.ubnId = st.ubnId)
+        WHERE u.lidId = :lidId and date_format(datum,'%Y') >= :jaarstart and h.actId = 4 and h.skip = 0
         GROUP BY date_format(datum,'%Y')
         ORDER BY date_format(datum,'%Y') desc 
 SQL;
@@ -1879,24 +1928,26 @@ SQL;
                     SELECT date_format(h.datum,'%Y%m') jrmnd, Month(h.datum) maand, year(h.datum) jaar, count(h.hisId) speenat, count(haf.hisId) afvat
                     FROM tblHistorie h
                      join tblStal st on (st.stalId = h.stalId)
+                     join tblUbn u on (u.ubnId = st.ubnId)
                      join tblSchaap s on (s.schaapId = st.schaapId)
                      left join (
                         SELECT h.stalId, h.hisId
                         FROM tblHistorie h
                         WHERE h.actId = 12 and h.skip = 0
                      ) haf on (st.stalId = haf.stalId)
-                    WHERE st.lidId = :lidId and h.actId = 4 and h.skip = 0 and year(h.datum) = :kzlJaar
+                    WHERE u.lidId = :lidId and h.actId = 4 and h.skip = 0 and year(h.datum) = :kzlJaar
                     GROUP BY Month(h.datum), year(h.datum)
                  ) aant
                 left join (
                     SELECT date_format(h.datum,'%Y%m') jrmnd, Month(h.datum) maand, Year(h.datum) jaar, count(distinct s.schaapId) doodat
                     FROM tblSchaap s
                      join tblStal st on (s.schaapId = st.schaapId)
+                     join tblUbn u on (u.ubnId = st.ubnId)
                      join tblHistorie h on (st.stalId = h.stalId)
                      join tblHistorie ho on (st.stalId = ho.stalId and ho.actId = 14)
                      join tblHistorie hs on (st.stalId = hs.stalId and hs.actId = 4)
                      left join tblHistorie ha on (st.stalId = ha.stalId and ha.actId = 3)
-                    WHERE st.lidId = :lidId and h.actId = 4 and h.skip = 0 and isnull(ha.actId) and year(h.datum) = :kzlJaar
+                    WHERE u.lidId = :lidId and h.actId = 4 and h.skip = 0 and isnull(ha.actId) and year(h.datum) = :kzlJaar
                     GROUP BY month(h.datum), Year(h.datum)    
                  ) naopleg on (aant.jrmnd = naopleg.jrmnd)
                 left join (
@@ -1904,13 +1955,14 @@ SQL;
                     sum((haf.kg -  h.kg)*1000/ DATEDIFF(haf.datum, h.datum)) / count(st.schaapId) gemgroeidag
                     FROM tblSchaap s 
                      join tblStal st on (st.schaapId = s.schaapId)
+                     join tblUbn u on (u.ubnId = st.ubnId)
                      join tblHistorie h on (st.stalId = h.stalId and h.actId = 4)
                      join (
                         SELECT h.stalId, h.kg, h.datum
                         FROM tblHistorie h
                         WHERE h.actId = 12 and h.skip = 0
                      ) haf on (st.stalId = haf.stalId)
-                    WHERE st.lidId = :lidId and year(h.datum) = :kzlJaar
+                    WHERE u.lidId = :lidId and year(h.datum) = :kzlJaar
                     GROUP BY Month(h.datum), Year(h.datum)
                  ) groei on (aant.jrmnd = groei.jrmnd)
                  left join (
@@ -1929,8 +1981,9 @@ SQL;
                              join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
                              join tblActie a2 on (a2.actId = h2.actId)
                              join tblStal st on (h1.stalId = st.stalId)
+                             join tblUbn u on (u.ubnId = st.ubnId)
                              join tblPeriode p on (b.periId = p.periId)
-                            WHERE st.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+                            WHERE u.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
                              and p.doelId = 2 and year(h1.datum) = :kzlJaar
                             GROUP BY b.bezId, st.schaapId, h1.hisId, h1.actId
                         ) vantot
@@ -1944,8 +1997,9 @@ SQL;
                                  join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
                                  join tblActie a2 on (a2.actId = h2.actId)
                                  join tblStal st on (h1.stalId = st.stalId)
+                                 join tblUbn u on (u.ubnId = st.ubnId)
                                  join tblPeriode p on (b.periId = p.periId)
-                                WHERE st.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+                                WHERE u.lidId = :lidId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
                                  and p.doelId = 2
                                 GROUP BY b.bezId, st.schaapId, h1.hisId, h1.actId
                             ) vantot
@@ -1978,8 +2032,9 @@ SQL;
             SELECT count(distinct(month(h.datum))) mndat
             FROM tblHistorie h
              join tblStal st on (st.stalId = h.stalId)
+             join tblUbn u on (u.ubnId = st.ubnId)
              join tblSchaap s on (s.schaapId = st.schaapId)
-            WHERE st.lidId = :lidId and h.actId = 4 and h.skip = 0 and year(h.datum) = :kzlJaar
+            WHERE u.lidId = :lidId and h.actId = 4 and h.skip = 0 and year(h.datum) = :kzlJaar
 SQL;
         $args = [[':lidId', $lidId], [':kzlJaar', $kzlJaar]];
         return $this->first_field($sql, $args);
@@ -1990,20 +2045,22 @@ SQL;
             SELECT right(s.levensnummer, :Karwerk) werknr, date_format(h.datum,'%d-%m-%Y') speendm, date_format(dood.datum,'%d-%m-%Y') uitvdm, r.reden, meld.meldnr
             FROM tblSchaap s
              join tblStal st on (st.schaapId = s.schaapId)
+             join tblUbn u on (u.ubnId = st.ubnId)
              join tblHistorie h on (st.stalId = h.stalId)
              left join tblReden r on (r.redId = s.redId)
              join(
                  SELECT st.schaapId, datum
                  FROM tblStal st
+                  join tblUbn u on (u.ubnId = st.ubnId)
                   join tblHistorie h on (st.stalId = h.stalId)
-                 WHERE h.actId = 14 and h.skip = 0 and st.lidId = :lidId
+                 WHERE h.actId = 14 and h.skip = 0 and u.lidId = :lidId
              ) dood on (dood.schaapId = s.schaapId)
              left join(
                  SELECT rs.levensnummer, rs.meldnr
                  FROM impRespons rs
                  WHERE rs.meldnr is not null and rs.melding = 'DOO'
              ) meld on (meld.levensnummer = s.levensnummer)
-            WHERE s.levensnummer is not null and h.actId = 4 and h.skip = 0 and year(h.datum) = :kzlJaar and month(h.datum) = :keuze_mnd and st.lidId = :lidId
+            WHERE s.levensnummer is not null and h.actId = 4 and h.skip = 0 and year(h.datum) = :kzlJaar and month(h.datum) = :keuze_mnd and u.lidId = :lidId
             GROUP BY s.schaapId, st.stalId
 SQL;
         $args = [[':Karwerk', $Karwerk], [':lidId', $lidId], [':kzlJaar', $kzlJaar], [':keuze_mnd', $keuze_mnd]];
