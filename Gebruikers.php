@@ -81,7 +81,6 @@ if (Auth::is_logged_in()) {
             }
             $naam = $row['naam'];
             $naam = $roep . $voeg . $naam;
-            $ubn = $row['ubn'];
             $tel = $row['tel'];
             $mail = $row['mail'];
             $meld = $row['meld'];
@@ -110,6 +109,13 @@ if (Auth::is_logged_in()) {
             }
             $lstInlog = $row['lst_i'];
 
+$array_ubn = array();
+
+$ubns = $lid_gateway->get_ubns_user($lid);
+while ($gu = $ubns->fetch_assoc()) {
+	$array_ubn[] = $gu['ubn'];
+}
+
             if (isset($_POST['knpResetww_' . $lid])) {
                 $wwnew = md5($login . 'zfO3puW?Wod/UT<-|=)1VT]+{hgABEK(Yh^!Wv;5{ja{P~wX4t');
                 $lid_gateway->update_password($lid, $wwnew);
@@ -122,7 +128,13 @@ if (Auth::is_logged_in()) {
  <td> <?php echo View::link_to($alias, 'Gebruiker.php?pstId='.$lid, ['style' => 'color: blue']); ?> </td>
  <td> <?php echo $login; ?> </td>
  <td> <?php echo $naam; ?> </td>
- <td> <?php echo $ubn; ?> </td>
+ <td> <?php 
+$count = count($array_ubn);
+
+for($i=0; $i<$count; $i++){
+	echo $array_ubn[$i].'<br>';
+}
+  ?> </td>
  <td> <?php echo $tel; ?> </td>
  <td> <?php echo $mail; ?> </td>
  <td align = center style ="font-size:12px;" > <?php echo $meld; ?> </td>

@@ -619,12 +619,22 @@ SQL
     public function all() {
         return $this->run_query(
             <<<SQL
-SELECT l.lidId, l.alias, l.login, l.roep, l.voegsel, l.naam, u.ubn, l.tel, l.mail, l.meld, l.tech, l.fin, l.beheer,
+SELECT l.lidId, l.alias, l.login, l.roep, l.voegsel, l.naam, l.tel, l.mail, l.meld, l.tech, l.fin, l.beheer,
  date_format(laatste_inlog, '%d-%m-%Y %H:%i:%s') lst_i
 FROM tblLeden l
- join tblUbn u on (l.lidId = u.lidId)
 ORDER BY l.lidId
 SQL
+        );
+    }
+
+    public function get_ubns_user($lidId){
+        return $this->run_query(
+            <<<SQL
+SELECT ubn
+FROM tblUbn
+WHERE lidId = :lidId and actief = 1
+SQL
+        ,[[':lidId', $lidId, Type::INT]]
         );
     }
 
