@@ -61,9 +61,8 @@ if(isset($_POST['knpNieuw'])) { $form = "Newuser.php"; header("Location: ".$url.
 <?php
 // START LOOP
 $loop = mysqli_query($db,"
-SELECT l.lidId, l.alias, l.login, l.roep, l.voegsel, l.naam, u.ubn, l.tel, l.mail, l.meld, l.tech, l.fin, l.beheer, date_format(laatste_inlog, '%d-%m-%Y %H:%i:%s') lst_i
+SELECT l.lidId, l.alias, l.login, l.roep, l.voegsel, l.naam, l.tel, l.mail, l.meld, l.tech, l.fin, l.beheer, date_format(laatste_inlog, '%d-%m-%Y %H:%i:%s') lst_i
 FROM tblLeden l
- join tblUbn u on (l.lidId = u.lidId)
 ORDER BY l.lidId
 ") or die (mysqli_error($db));
 
@@ -75,7 +74,6 @@ ORDER BY l.lidId
         $roep = $row['roep'];
         $voeg = $row['voegsel']; if(isset($voeg)) { $voeg = ' '.$voeg.' '; } else { $voeg = ' '; }
         $naam = $row['naam']; $naam = $roep.$voeg.$naam;
-        $ubn = $row['ubn'];
         $tel = $row['tel'];
         $mail = $row['mail'];
         $meld = $row['meld']; if( $meld == 1) { $meld = 'Ja'; } else { $meld = 'Nee'; }
@@ -83,7 +81,17 @@ ORDER BY l.lidId
         $fin = $row['fin']; if( $fin == 1) { $fin = 'Ja'; } else { $fin = 'Nee'; }
         $admin = $row['beheer']; if( $admin == 1) { $admin = 'Ja'; } else { $admin = 'Nee'; }
         $lstInlog = $row['lst_i'];
+
+$array_ubn = array();
+
+$zoek_ubn = mysqli_query($db,"
+SELECT ubn
+FROM tblUbn
+ WHERE lidId = '".mysqli_real_escape_string($db,$lid)."' and actief = 1
+") or die(mysqli_error($db));
   
+while ( $zu = mysqli_fetch_assoc($zoek_ubn)) { $array_ubn[] = $zu['ubn']; }
+ 
 if (isset ($_POST['knpResetww_'.$lid])) {
 
 $wwnew = md5($login.'zfO3puW?Wod/UT<-|=)1VT]+{hgABEK(Yh^!Wv;5{ja{P~wX4t');
@@ -101,7 +109,15 @@ $goed = 'Het wachtwoord is gelijk gemaakt aan de inlognaam.';
  <td> <a href='<?php echo $url; ?>Gebruiker.php?pstId=<?php echo $lid; ?>' style = 'color : blue'> <?php echo $alias; ?> </a> </td>
  <td> <?php echo $login; ?> </td>
  <td> <?php echo $naam; ?> </td>
- <td> <?php echo $ubn; ?> </td>
+ <td> 
+<?php 
+$count = count($array_ubn);
+
+for ($i = 0; $i<$count; $i++) {
+	echo $array_ubn[$i]. '<br>';
+}
+?>
+ </td>
  <td> <?php echo $tel; ?> </td>
  <td> <?php echo $mail; ?> </td>
  <td align = center style ="font-size:12px;" > <?php echo $meld; ?> </td>
