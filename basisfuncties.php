@@ -445,7 +445,7 @@ function aanvoer_request_rvo_query($db, $reqId) {
      join tblLeden l on (u.lidId = l.lidId)
      join tblSchaap s on (st.schaapId = s.schaapId)
      join tblStal st_all on (s.schaapId = st_all.schaapId)
-     left join tblHistorie hg on (hg.stalId = st_all.stalId)
+     left join tblHistorie hg on (hg.stalId = st_all.stalId and hg.actId = 1)
      left join tblRelatie rl on (rl.relId = st.rel_herk)
      left join tblPartij p on (p.partId = rl.partId)
     WHERE rq.reqId = '".mysqli_real_escape_string($db, $reqId)."'
