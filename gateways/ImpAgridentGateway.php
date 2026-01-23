@@ -359,8 +359,13 @@ impAgrident rd
  left join (
     SELECT st.stalId, s.levensnummer, af.datum
     FROM tblSchaap s
-     join tblStal st on (s.schaapId = st.schaapId)
-     join tblUbn u on (u.ubnId = st.ubnId)
+     join (
+          SELECT max(stalId) stalId, schaapId
+          FROM tblStal st
+           join tblUbn u on (st.ubnId = u.ubnId)
+          WHERE u.lidId = :lidId
+          GROUP BY schaapId
+      ) st on (s.schaapId = st.schaapId)
      join (
         SELECT schaapId
         FROM tblStal st
@@ -379,8 +384,7 @@ impAgrident rd
  and h.skip = 0
  and u.lidId = :lidId
      ) af on (af.stalId = st.stalId)
-    WHERE u.lidId = :lidId 
- and (isnull(af.datum) or af.datum > date_add(curdate(), interval -2 month) )
+    WHERE (isnull(af.datum) or af.datum > date_add(curdate(), interval -2 month) )
     GROUP BY s.schaapId, s.levensnummer, af.datum
  ) mdr on (rd.moeder = mdr.levensnummer)
  left join (
