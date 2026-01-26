@@ -169,7 +169,7 @@ FROM tblRequest rq
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rq.def = 'J' 
  and (rp.def = 'N' || isnull(rp.def)) 
  and (date_format(rq.dmmeld,'%Y-%m-%d') <= date_format(rp.dmcreate,'%Y-%m-%d') || isnull(rp.dmcreate)) 
- and (date_format(rq.dmresponse,'%Y-%m-%d') >= date_add(curdate(),interval -30 day))
+ and ((isnull(rq.dmresponse) && date_format(rq.dmmeld,'%Y-%m-%d') >= date_add(curdate(),interval -30 day)) || date_format(rq.dmresponse,'%Y-%m-%d') >= date_add(curdate(),interval -30 day))
  and isnull(rvonr.respId)
 GROUP BY rq.reqId, rq.code
 ") or die (mysqli_error($db));
