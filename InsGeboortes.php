@@ -77,7 +77,7 @@ if (isset($_POST['knpInsert_']) ) {
     }
     
 
-$velden = "rd.Id readId,date_format(rd.datum,'%Y-%m-%d') sort, rd.datum, rd.levensnummer levnr_rd, s.levensnummer levnr_db, rd.rasId ras_rd, r.rasId ras_scan, rd.geslacht, rd.moeder, mdr.stalId mdrStalId_db, 
+$velden = "rd.Id readId,date_format(rd.datum,'%Y-%m-%d') sort, rd.datum, rd.levensnummer levnr_rd, s.levensnummer levnr_db, rd.rasId ras_rd, r.rasId ras_scan, rd.geslacht, rd.moeder, mdr.schaapId mdrId_db, mdr.stalId mdrStalId_db, 
     date_format(mdr.datum,'%Y-%m-%d') eindmdr, rd.hokId hok_rd, hb.hokId hok_scan, rd.gewicht, rd.verloop, rd.leef_dgn, rd.momId mom_rd, DATE_ADD(rd.datum, interval rd.leef_dgn day) date_dood, date_format(DATE_ADD(rd.datum, interval rd.leef_dgn day),'%d-%m-%Y') datum_dood, rd.reden red_rd, red.redId red_db, dup.dubbelen";
 
 $tabel = $impagrident_gateway->getInsGeboortesFrom();
@@ -282,7 +282,8 @@ $makeday = date_create($datum); $day = date_format($makeday, 'Y-m-d');
     if($modtech == 1) {
         $ooi_rd = $array['moeder']; //echo $ar_mdr[$kzlMoeder].'<br>'; //if (strlen($ooi_rd)== 11) {$ooi_rd = '0'.$array['moeder'];}
         $dmafvmdr = $array['eindmdr'];  /*if(!isset($dmafvmdr)) { $dmafvmdr = $jaarlater; }*/ //$einddatum = strtotime ("+".$dagen."days", $begindatum);
-        $ooi_db = $array['mdrStalId_db'];                      
+        $ooiSchId_db = $array['mdrId_db'];
+        $ooiStId_db = $array['mdrStalId_db'];
         $hok_rd = $array['hok_rd'];
         $hok_db = $array['hok_scan'];
         $verloop = $array['verloop']; 
@@ -310,7 +311,8 @@ $kzlRas = $ras_db;
 $kzlSekse = $sekse; 
 
 if($modtech == 1) {
-$kzlOoi = $ooi_db . ''; // TODO #0004197 noodfix om nulls in str_replace ed te voorkomen; vervangen door echte invoer-aanpak
+$kzlOoi = $ooiStId_db . ''; // TODO #0004197 noodfix om nulls in str_replace ed te voorkomen; vervangen door echte invoer-aanpak
+$mdrId = $ooiSchId_db;
 $kzlMoeder = $ooi_rd;
 $kzlHok = $hok_db;
     if($reader == 'Biocontrol' && !empty($var1)) { $mom_rd = 3; } // Bij $mom_rd == 3 wordt keuzelijst moment gevuld met 'uitval voor merken' en bij $kzlMom == 3 wordt het veld uitvaldatum getoond
@@ -338,10 +340,10 @@ if($modtech == 1) {
 
 unset($werpdag);
 
-$terugstalId = $stal_gateway->zoek_terug_uitscharen($kzlOoi);
+$terugstalId = $stal_gateway->zoek_terug_uitscharen($mdrId);
 
 if(isset($kzlOoi)) {
-$dmaanvmdr = $schaap_gateway->start_moeder($lidId, $kzlOoi, $terugstalId);
+$dmaanvmdr = $schaap_gateway->start_moeder($lidId, $mdrId, $terugstalId);
 $dmafvmdr = $schaap_gateway->einde_moeder($lidId, $kzlOoi);
 
 //****************
@@ -349,10 +351,10 @@ $dmafvmdr = $schaap_gateway->einde_moeder($lidId, $kzlOoi);
 //****************
 
 // Zoek vorige worp
-$lst_volwId = $schaap_gateway->zoek_vorige_worp($kzlOoi, $day);
+$lst_volwId = $schaap_gateway->zoek_vorige_worp($mdrId, $day);
 
 // Zoek een huidige worp
-[$werpday, $werpdag] = $schaap_gateway->zoek_huidige_worp($kzlOoi, $lst_volwId);
+[$werpday, $werpdag] = $schaap_gateway->zoek_huidige_worp($mdrId, $lst_volwId);
 $birthday = date_create($day);
 $date_worp = date_create($werpday);
 unset($dagen_verschil_worp);
