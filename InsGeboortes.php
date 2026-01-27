@@ -88,7 +88,8 @@ impAgrident rd
  SELECT levensnummer 
  FROM tblSchaap s
   join tblStal st on (st.schaapId = s.schaapId)
- WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best)
+   join tblUbn u on (u.ubnId = st.ubnId)
+ WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best)
  ) s on (rd.levensnummer = s.levensnummer)
  left join (
     SELECT st.stalId, s.levensnummer, af.datum
@@ -494,10 +495,11 @@ $query_start_moeder = mysqli_query($db,"
 SELECT s.levensnummer, h.datum
 FROM tblSchaap s
  join (
-	SELECT max(stalId) stalId, schaapId
-	FROM tblStal
-	WHERE stalId != '".mysqli_real_escape_string($db,$terugstalId)."' and lidId = '".mysqli_real_escape_string($db,$lidId)."' and schaapId = '".mysqli_real_escape_string($db,$kzlOoi)."'
-	GROUP BY schaapId
+	SELECT max(st.stalId) stalId, st.schaapId
+	FROM tblStal st
+    join tblUbn u on (u.ubnId = st.ubnId)
+	WHERE st.stalId != '".mysqli_real_escape_string($db,$terugstalId)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$kzlOoi)."'
+	GROUP BY st.schaapId
  ) mst on (mst.schaapId = s.schaapId)
  join tblHistorie h on (h.stalId = mst.stalId)
  join tblActie a on (a.actId = h.actId)
@@ -516,10 +518,11 @@ $zoek_einde_moeder = mysqli_query($db,"
 SELECT s.levensnummer, h.datum
 FROM tblSchaap s
  join (
-	SELECT max(stalId) stalId, schaapId
-	FROM tblStal
-	WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and schaapId = '".mysqli_real_escape_string($db,$kzlOoi)."'
-	GROUP BY schaapId
+	SELECT max(st.stalId) stalId, st.schaapId
+	FROM tblStal st
+    join tblUbn u on (u.ubnId = st.ubnId)
+	WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$kzlOoi)."'
+	GROUP BY st.schaapId
  ) st on (st.schaapId = s.schaapId)
  join tblHistorie h on (h.stalId = st.stalId)
  join tblActie a on (a.actId = h.actId)
