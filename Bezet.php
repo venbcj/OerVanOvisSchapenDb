@@ -284,7 +284,7 @@ FROM (
 		 join tblActie a2 on (a2.actId = h2.actId)
 		 join tblStal st on (h1.stalId = st.stalId)
 		 join tblUbn u on (st.ubnId = u.ubnId)
-		WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
+		WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
 		GROUP BY b.bezId
 	 ) uit on (uit.bezId = b.bezId)
 	 join tblHistorie ht on (ht.hisId = uit.hist)
@@ -333,7 +333,7 @@ FROM (
 		 join tblActie a2 on (a2.actId = h2.actId)
 		 join tblStal st on (h1.stalId = st.stalId)
 		 join tblUbn u on (st.ubnId = u.ubnId)
-		WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
+		WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
 		GROUP BY b.bezId
 	 ) uit on (uit.bezId = b.bezId)
 	 join (
