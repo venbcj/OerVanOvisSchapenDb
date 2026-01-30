@@ -329,6 +329,11 @@ FROM tblMelding m
  join tblHistorie h on (h.hisId = m. hisId)
  join tblStal st on (st.stalId = h.stalId)
  join tblSchaap s on (st.schaapId = s.schaapId)
+ left join (
+    SELECT levensnummer, meldnr
+    FROM impRespons
+    WHERE reqId = '".mysqli_real_escape_string($datb,$fldReqId)."' and meldnr is not null
+ ) rvomeldnr on (rvomeldnr.levensnummer = s.levensnummer)
 WHERE m.reqId = '".mysqli_real_escape_string($datb, $fldReqId)."' 
  and h.skip = 0
  and h.datum is not null
@@ -336,6 +341,7 @@ WHERE m.reqId = '".mysqli_real_escape_string($datb, $fldReqId)."'
  and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12
  and LENGTH(RTRIM(CAST(h.datum AS UNSIGNED))) = 8
  and m.skip <> 1
+ and isnull(rvomeldnr.meldnr)
 ");
     if ($juistaantal) {
 $row = mysqli_fetch_assoc($juistaantal);
