@@ -244,7 +244,12 @@ FROM tblMelding m
 	GROUP BY levensnummer
  ) mresp on (mresp.levensnummer = s.levensnummer)
  left join impRespons rs on (rs.respId = mresp.respId)
-WHERE h.skip = 0 and m.reqId = '".mysqli_real_escape_string($db,$reqId)."' and isnull(hide.meldId)
+ left join (
+ 	SELECT levensnummer, meldnr
+ 	FROM impRespons
+ 	WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."' and meldnr is not null
+ ) rvomeldnr on (rvomeldnr.levensnummer = s.levensnummer)
+WHERE h.skip = 0 and m.reqId = '".mysqli_real_escape_string($db,$reqId)."' and isnull(hide.meldId) and isnull(rvomeldnr.meldnr)
 ORDER BY u.ubn, m.skip, if(h.datum > curdate(),1,0 ) desc, right(s.levensnummer,".$Karwerk.")
 " ) or die (mysqli_error($db));
 
