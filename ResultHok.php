@@ -97,7 +97,7 @@ FROM tblHok h
              join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
              join tblActie a2 on (a2.actId = h2.actId)
              join tblStal st on (h1.stalId = st.stalId)
-            WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
+            WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
             GROUP BY b.bezId
          ) uit on (uit.bezId = b.bezId)
          left join tblHistorie ht on (ht.hisId = uit.hist)
@@ -130,7 +130,7 @@ FROM tblHok h
              join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
              join tblActie a2 on (a2.actId = h2.actId)
              join tblStal st on (h1.stalId = st.stalId)
-            WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
+            WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
             GROUP BY b.bezId
          ) uit on (uit.bezId = b.bezId)
          left join tblHistorie ht on (ht.hisId = uit.hist)
@@ -163,7 +163,7 @@ FROM tblHok h
              join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
              join tblActie a2 on (a2.actId = h2.actId)
              join tblStal st on (h1.stalId = st.stalId)
-            WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
+            WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
             GROUP BY b.bezId
          ) uit on (uit.bezId = b.bezId)
          left join tblHistorie ht on (ht.hisId = uit.hist)

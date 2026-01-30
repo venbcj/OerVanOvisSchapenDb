@@ -160,7 +160,7 @@ FROM (
 		 join tblActie a2 on (a2.actId = h2.actId)
 		 join tblStal st on (h1.stalId = st.stalId)
 		 join tblUbn u on (st.ubnId = u.ubnId)
-		WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
+		WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
 		GROUP BY b.bezId, st.schaapId, h1.hisId
 	 ) uit on (uit.hisv = b.hisId)
 	 join (
@@ -203,7 +203,7 @@ FROM (
 			FROM tblStal st join tblHistorie h on (st.stalId = h.stalId)
 			WHERE h.actId = 3 and h.skip = 0
 		 ) prnt on (prnt.schaapId = st.schaapId)
-		WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h1.actId != 2
+		WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
 		 and h1.datum <= coalesce(dmspn, coalesce(dmprnt,'2200-01-01'))
 		GROUP BY b.bezId, st.schaapId, h1.hisId
 	 ) uit on (uit.hisv = b.hisId)
