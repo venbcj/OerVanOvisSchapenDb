@@ -96,6 +96,11 @@ FROM tblRequest rq
  join tblUbn u on (u.ubnId = st.ubnId)
  join tblLeden l on (st.lidId = l.lidId)
  join tblSchaap s on (st.schaapId = s.schaapId)
+ left join (
+ 	SELECT levensnummer, meldnr
+ 	FROM impRespons
+ 	WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."' and meldnr is not null
+ ) rvomeldnr on (rvomeldnr.levensnummer = s.levensnummer)
 WHERE rq.reqId = '".mysqli_real_escape_string($db,$reqId)."' 
  and h.skip = 0
  and h.datum is not null
@@ -104,6 +109,7 @@ WHERE rq.reqId = '".mysqli_real_escape_string($db,$reqId)."'
  and LENGTH(RTRIM(CAST(h.datum AS UNSIGNED))) = 8
  and m.skip <> 1
  and isnull(m.fout)
+ and isnull(rvomeldnr.meldnr)
 ") or die (mysqli_error($db));
 	
     while ($row = mysqli_fetch_array($qry_txtRequest_RVO)) {
