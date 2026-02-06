@@ -123,13 +123,20 @@ FROM tblRequest rq
  ) mhd on (st.stalId = mhd.stalId and s.schaapId = mhd.schaapId)
  left join tblRelatie rl on (rl.relId = st.rel_best)
  left join tblPartij p on (rl.partId = p.partId)
+ left join (
+    SELECT levensnummer, meldnr
+    FROM impRespons
+    WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."' and meldnr is not null
+ ) rvomeldnr on (rvomeldnr.levensnummer = s.levensnummer)
 WHERE rq.reqId = '".mysqli_real_escape_string($db,$reqId)."' 
+ and h.skip = 0
  and h.datum is not null
  and h.datum >= mhd.lastdatum
  and h.datum <= (curdate() + interval 3 day)
  and p.ubn is not null
  and m.skip <> 1 and h.skip = 0
  and isnull(m.fout)
+ and isnull(rvomeldnr.meldnr)
 ");   
   
     while ($row = mysqli_fetch_array($qry_txtRequest_RVO)) {
@@ -288,7 +295,12 @@ FROM tblMelding m
     GROUP BY rs.reqId, rs.levensnummer
  ) lrs on (lrs.levensnummer = s.levensnummer)
  left join impRespons rs on (lrs.respId = rs.respId)
-WHERE h.skip = 0 and m.reqId = '".mysqli_real_escape_string($db,$reqId)."' and isnull(hide.meldId)
+ left join (
+    SELECT levensnummer, meldnr
+    FROM impRespons
+    WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."' and meldnr is not null
+ ) rvomeldnr on (rvomeldnr.levensnummer = s.levensnummer)
+WHERE h.skip = 0 and m.reqId = '".mysqli_real_escape_string($db,$reqId)."' and isnull(hide.meldId) and isnull(rvomeldnr.meldnr)
 ORDER BY u.ubn, m.skip, if (h.datum < mhd.datum, 1, if(h.datum > (curdate() + interval 3 day),1,0 )) desc, right(s.levensnummer,".$Karwerk.")
 " );
 

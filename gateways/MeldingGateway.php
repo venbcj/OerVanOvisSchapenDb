@@ -113,14 +113,20 @@ FROM tblMelding m
  and hd.actie not like '% gemeld'
     GROUP BY hd.stalId, schaapId
  ) mhd on (st.stalId = mhd.stalId and s.schaapId = mhd.schaapId)
+ left join (
+    SELECT levensnummer, levensnummer_new, meldnr
+    FROM impRespons
+    WHERE reqId = :reqId and meldnr is not null
+ ) rvomeldnr on (coalesce(rvomeldnr.levensnummer_new, rvomeldnr.levensnummer) = s.levensnummer)
 WHERE m.reqId = :reqId
+ and h.skip = 0
  and h.datum is not null
  and h.datum >= mhd.lastdatum
  and h.datum <= (curdate() + interval 3 day)
  and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12 
  and st.rel_best is not null
  and m.skip <> 1
- and h.skip = 0
+ and isnull(rvomeldnr.meldnr)
 SQL
         , [[':reqId', $reqId, Type::INT]]
         );
