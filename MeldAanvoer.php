@@ -53,7 +53,8 @@ FROM tblRequest rq
  join tblMelding m on (rq.reqId = m.reqId)
  join tblHistorie h on (h.hisId = m.hisId)
  join tblStal st on (st.stalId = h.stalId)
- join tblLeden l on (l.lidId = st.lidId)
+ join tblUbn u on (st.ubnId = u.ubnId)
+ join tblLeden l on (l.lidId = u.lidId)
 WHERE h.skip = 0 and l.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(rq.dmmeld) and rq.code = 'AAN' 
 GROUP BY l.relnr
 ") or die (mysqli_error($db));
@@ -81,17 +82,17 @@ FROM tblMelding m
 	GROUP BY schaapId
  ) mhd on (st.schaapId = mhd.schaapId)
  left join (
- 	SELECT reqId, levensnummer, levensnummer_new, max(meldnr) meldnr 
+ 	SELECT levensnummer, levensnummer_new, meldnr
  	FROM impRespons
- 	WHERE reqId = '".mysqli_real_escape_string($datb,$fldReqId)."'
- 	GROUP BY reqId, levensnummer, levensnummer_new
- ) rs on (coalesce(rs.levensnummer_new, rs.levensnummer) = s.levensnummer and rs.reqId = m.reqId)
+ 	WHERE reqId = '".mysqli_real_escape_string($datb,$fldReqId)."' and meldnr is not null
+ ) rvomeldnr on (coalesce(rvomeldnr.levensnummer_new, rvomeldnr.levensnummer) = s.levensnummer)
 WHERE m.reqId = '".mysqli_real_escape_string($datb,$fldReqId)."'
+ and h.skip = 0
  and h.datum is not null
  and (h.datum >= mhd.datum or isnull(mhd.datum))
  and h.datum <= (curdate() + interval 3 day)
  and m.skip <> 1
- and isnull(rs.meldnr)
+ and isnull(rvomeldnr.meldnr)
 "); /* Herkomst (ubn_herk) is niet verplicht te melden */
 	if($juistaantal)
 	{	$row = mysqli_fetch_assoc($juistaantal);
@@ -125,27 +126,29 @@ $root = $end_dir_reader.$input_file;
    
 /* insert field values into data.txt */
 $qry_txtRequest_RVO = mysqli_query ($db,"
-SELECT rq.reqId, l.prod, rq.def, l.urvo, l.prvo, rq.code melding, l.relnr, u.ubn, date_format(h.datum,'%d-%m-%Y'), 'NL' land, s.levensnummer, 3 soort, p.ubn ubn_herk, NULL ubn_best, NULL land_herk, date_format(hg.datum,'%d-%m-%Y'), NULL sucind, NULL foutind, NULL foutcode, NULL bericht, NULL meldnr
+SELECT rq.reqId, l.prod, rq.def, l.urvo, l.prvo, rq.code melding, l.relnr, u.ubn, date_format(h.datum,'%d-%m-%Y'), 'NL' land, s.levensnummer, 3 soort, p.ubn ubn_herk, NULL ubn_best, NULL land_herk, NULL gebdatum, NULL sucind, NULL foutind, NULL foutcode, NULL bericht, NULL meldnr
 FROM tblRequest rq
  join tblMelding m on (rq.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (h.stalId = st.stalId)
  join tblUbn u on (u.ubnId = st.ubnId)
- join tblLeden l on (st.lidId = l.lidId)
+ join tblLeden l on (u.lidId = l.lidId)
  join tblSchaap s on (st.schaapId = s.schaapId)
- join tblStal st_all on (s.schaapId = st_all.schaapId)
- left join tblHistorie hg on (hg.stalId = st_all.stalId and hg.actId = 1)
+ left join (
+ 	SELECT levensnummer, meldnr
+ 	FROM impRespons
+ 	WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."' and meldnr is not null
+ ) rvomeldnr on (rvomeldnr.levensnummer = s.levensnummer)
  left join tblRelatie rl on (rl.relId = st.rel_herk)
  left join tblPartij p on (p.partId = rl.partId)
 WHERE rq.reqId = '".mysqli_real_escape_string($db,$reqId)."'
-	and (isnull(hg.actId) or hg.actId = 1)
+	and h.skip = 0
 	and h.datum is not null
-	and (h.datum >= hg.datum or isnull(hg.datum))
 	and h.datum <= (curdate() + interval 3 day)
 	and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12 
 	and m.skip <> 1
 	and isnull(m.fout) 
-	and h.skip = 0
+	and isnull(rvomeldnr.meldnr)
 ") or die (mysqli_error($db));   /* Herkomst (ubn_herk) is niet verplicht te melden */
 
     while ($row = mysqli_fetch_array($qry_txtRequest_RVO)) {          
@@ -299,11 +302,22 @@ FROM tblMelding m
 	SELECT st.schaapId, max(datum) datum 
 	FROM tblHistorie h
 	 join tblStal st on (st.stalId = h.stalId)
-	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and 
-	 not exists (SELECT max(stl.stalId) stalId FROM tblStal stl WHERE stl.lidId = '".mysqli_real_escape_string($db,$lidId)."' and stl.stalId = st.stalId)
+	 join tblUbn u on (st.ubnId = u.ubnId)
+	WHERE h.skip = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and 
+	 not exists (
+	 	SELECT max(stl.stalId) stalId
+	 	FROM tblStal stl
+	 	 join tblUbn u on (st.ubnId = u.ubnId)
+	 	WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and stl.stalId = st.stalId
+	 )
 	GROUP BY st.schaapId
  ) lastdm on (lastdm.schaapId = s.schaapId)
-WHERE h.skip = 0 and m.reqId = '".mysqli_real_escape_string($db,$reqId)."' and isnull(hide.meldId) and isnull(rs.meldnr)
+ left join (
+ 	SELECT levensnummer, meldnr
+ 	FROM impRespons
+ 	WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."' and meldnr is not null
+ ) rvomeldnr on (rvomeldnr.levensnummer = s.levensnummer)
+WHERE h.skip = 0 and m.reqId = '".mysqli_real_escape_string($db,$reqId)."' and isnull(hide.meldId) and isnull(rs.meldnr) and isnull(rvomeldnr.meldnr)
 ORDER BY u.ubn, m.skip, s.levensnummer 
 ") or die (mysqli_error($db));
 
