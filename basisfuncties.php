@@ -302,12 +302,11 @@ FROM tblMelding m
  join tblStal st on (st.stalId = h.stalId)
  join tblSchaap s on (s.schaapId = st.schaapId)
  left join (
-    SELECT reqId, levensnummer, levensnummer_new, max(meldnr) meldnr 
+    SELECT levensnummer, levensnummer_new, meldnr
     FROM impRespons
-    WHERE reqId = '".mysqli_real_escape_string($datb,$fldReqId)."'
-    GROUP BY reqId, levensnummer, levensnummer_new
- ) rs on (coalesce(rs.levensnummer_new, rs.levensnummer) = s.levensnummer and rs.reqId = m.reqId)
-WHERE m.reqId = '".mysqli_real_escape_string($datb, $fldReqId)."' and m.skip <> 1 and h.skip = 0 and isnull(rs.meldnr)
+    WHERE reqId = '".mysqli_real_escape_string($datb,$fldReqId)."' and meldnr is not null
+ ) rvomeldnr on (coalesce(rvomeldnr.levensnummer_new, rvomeldnr.levensnummer) = s.levensnummer)
+WHERE m.reqId = '".mysqli_real_escape_string($datb, $fldReqId)."' and m.skip <> 1 and h.skip = 0 and isnull(rvomeldnr.meldnr)
 ");//Foutafhandeling zit in return FALSE
 
     if ($aantalmelden) {
@@ -330,10 +329,10 @@ FROM tblMelding m
  join tblStal st on (st.stalId = h.stalId)
  join tblSchaap s on (st.schaapId = s.schaapId)
  left join (
-    SELECT levensnummer, meldnr
+    SELECT levensnummer, levensnummer_new, meldnr
     FROM impRespons
     WHERE reqId = '".mysqli_real_escape_string($datb,$fldReqId)."' and meldnr is not null
- ) rvomeldnr on (rvomeldnr.levensnummer = s.levensnummer)
+ ) rvomeldnr on (coalesce(rvomeldnr.levensnummer_new, rvomeldnr.levensnummer) = s.levensnummer)
 WHERE m.reqId = '".mysqli_real_escape_string($datb, $fldReqId)."' 
  and h.skip = 0
  and h.datum is not null
@@ -367,17 +366,17 @@ FROM tblMelding m
     GROUP BY schaapId
  ) mhd on (st.schaapId = mhd.schaapId)
  left join (
-    SELECT reqId, levensnummer, levensnummer_new, max(meldnr) meldnr 
+    SELECT levensnummer, levensnummer_new, meldnr
     FROM impRespons
-    WHERE reqId = '".mysqli_real_escape_string($datb,$fldReqId)."'
-    GROUP BY reqId, levensnummer, levensnummer_new
- ) rs on (coalesce(rs.levensnummer_new, rs.levensnummer) = s.levensnummer and rs.reqId = m.reqId)
+    WHERE reqId = '".mysqli_real_escape_string($datb,$fldReqId)."' and meldnr is not null
+ ) rvomeldnr on (coalesce(rvomeldnr.levensnummer_new, rvomeldnr.levensnummer) = s.levensnummer)
 WHERE m.reqId = '".mysqli_real_escape_string($datb, $fldReqId)."'
+ and h.skip = 0
  and h.datum is not null
  and (h.datum >= mhd.datum or isnull(mhd.datum))
  and h.datum <= (curdate() + interval 3 day)
  and m.skip <> 1
- and isnull(rs.meldnr)
+ and isnull(rvomeldnr.meldnr)
 ");
     /* Herkomst (ubn_herk) is niet verplicht te melden */
     if ($juistaantal) {
