@@ -52,27 +52,22 @@ unset($index);
 // EINDE Declaratie HOKNUMMER
 
 $velden = "rd.Id, date_format(rd.datum,'%d-%m-%Y') datum, rd.datum sort, rd.levensnummer, rd.moeder,
+s.schaapId,
 mdr.schaapId mdr_db,
-h.actie, h.af, spn.schaapId spn, prnt.schaapId prnt, date_format(h.datum,'%d-%m-%Y') maxdatum, h.datum datummax";
+spn.schaapId spn, prnt.schaapId prnt, hg.datum gebdate";
 
 $tabel = "
 impAgrident rd
- left join (
-	 SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
-	 FROM tblSchaap s
-	  join tblStal st on (st.schaapId = s.schaapId)
-	  join tblHistorie h on (st.stalId = h.stalId)
-	 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
-	 GROUP BY s.schaapId, s.levensnummer, s.geslacht
- ) s on (rd.levensnummer = s.levensnummer)
- 
+ left join tblSchaap s on (rd.levensnummer = s.levensnummer) 
  left join tblSchaap mdr on (rd.moeder = mdr.levensnummer)
- left join tblStal st on (st.schaapId = s.schaapId and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best))
+ left join tblStal st on (st.schaapId = s.schaapId and isnull(st.rel_best))
+ left join tblUbn u on (st.ubnId = u.ubnId and u.lidId = '".mysqli_real_escape_string($db,$lidId)."')
  left join (
-	SELECT h.hisId, a.actie, a.af, h.datum
+	SELECT st.schaapId, h.datum
 	FROM tblHistorie h
-	 join tblActie a on (h.actId = a.actId)
- ) h on (h.hisId = s.hisId)
+	 join tblStal st on (st.stalId = h.stalId)
+	WHERE h.actId = 1
+ ) hg on (hg.schaapId = s.schaapId)
  left join (
 	SELECT st.schaapId
 	FROM tblStal st
@@ -125,22 +120,21 @@ if(isset($data))  {	foreach($data as $key => $array)
 	$Id = $array['Id'];
 	$datum = $array['datum'];
 	$date = $array['sort'];
+	$schaapId = $array['schaapId'];
 	$levnr = $array['levensnummer']; if (strlen($levnr)== 11) {$levnr = '0'.$array['levensnummer'];}
 	$moeder = $array['moeder'];
 	$mdr_db = $array['mdr_db'];
-	$status = $array['actie']; 
-	$af = $array['af'];
 	$spn = $array['spn'];		
-	$prnt = $array['prnt'];	 
-	$maxdm = $array['maxdatum'];
-	$dmmax = $array['datummax'];
+	$prnt = $array['prnt'];
+	$dmgeb = $array['gebdate'];
 
 // VERBLIJF MOEDER zoeken
 unset($stalId);
 $zoek_stalId = mysqli_query($db,"
-SELECT stalId
-FROM tblStal
-WHERE schaapId = '".mysqli_real_escape_string($db,$mdr_db)."' and lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(rel_best)
+SELECT st.stalId
+FROM tblStal st
+ join tblUbn u on (u.ubnId = st.ubnId)
+WHERE st.schaapId = '".mysqli_real_escape_string($db,$mdr_db)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best)
 ");
 
 while ($zs = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $zs['stalId']; }
@@ -185,11 +179,11 @@ if (isset($_POST['knpVervers_'])) { $dag = $_POST["txtDag_$Id"]; $kzlHok = $_POS
 }
 
 	 If	 
-	 ( ((isset($af) && $af == 1) || !isset($status))	|| /*levensnummer moet bestaan*/	
-		 empty($dag)				|| # of datum is leeg
-		 !isset($mdr_db)			|| # moeder bestaat niet
-		 $dmdag < $dmmax			|| # of datum ligt voor de laatst geregistreerde datum van het schaap
-		 empty($kzlHok)				   # Verblijf is leeg 
+	 ( !isset($schaapId)	|| /*levensnummer moet bestaan*/	
+		 empty($dag)			|| # of datum is leeg
+		 !isset($mdr_db)	|| # moeder bestaat niet
+		 $dmdag < $dmgeb	|| # of datum ligt voor de laatst geregistreerde datum van het schaap
+		 empty($kzlHok)		   # Verblijf is leeg 
 	 											
 	 )
 	 {	$oke = 0;	} else {	$oke = 1;	} // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
@@ -219,10 +213,10 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 	<input type = checkbox class="delete" name = <?php echo "chbDel_$Id"; ?> value = 1 <?php if(isset($cbDel)) { echo $cbDel == 1 ? 'checked' : ''; } ?> >
  </td>
  <td>
-	<input type = "text" size = 9 style = "font-size : 11px;" name = <?php echo "txtDag_$Id"; ?> value = <?php echo $dag; ?> >
+	<?php echo $dag; ?>
  </td>
 
-<?php if(!empty($status)) { ?> <td> <?php echo $levnr; } else { ?> <td style = "color : red"> <?php echo $levnr;} ?>
+<?php if(!empty($schaapId)) { ?> <td> <?php echo $levnr; } else { ?> <td style = "color : red"> <?php echo $levnr;} ?>
  </td>
 
   <td><?php echo $moeder; ?>
@@ -250,15 +244,12 @@ for ($i = 0; $i < $count; $i++){
  <!-- EINDE KZLVERBLIJF -->
 </td>
  <td style = "color : red" align="center"><?php 
- 		 if (empty($status)) 		{ echo "Levensnummer onbekend"; }
+ 		 if (empty($schaapId)) 		{ echo "Levensnummer onbekend"; }
  	else if (!isset($mdr_db)) 		{ echo "Moeder onbekend"; }
- 	else if(isset($af) && $af == 1) { echo $status; } 
+ 	else if($dmdag < $dmgeb) { echo "Datum ligt voor de geboortedatum ."; }
  ?>
-	<input type = "hidden" size = 8 style = "font-size : 9px;" name = <?php echo "txtStatus_$Id"; ?> value = <?php echo $status; ?> > <!--hiddden-->
  </td>
- <td style = "color : red"> <?php 
-if($dmdag < $dmmax) { echo "Datum ligt voor $maxdm ."; } ?>
- </td>	
+	
 </tr>
 <!--	**************************************
 	**	EINDE OPMAAK GEGEVENS	**
