@@ -249,7 +249,6 @@ FROM tblHok h
  and a2.uit = 1
  and h1.skip = 0
  and h2.skip = 0
- and h1.actId != 2
             GROUP BY b.bezId
          ) uit on (uit.bezId = b.bezId)
          left join tblHistorie ht on (ht.hisId = uit.hist)
@@ -293,7 +292,6 @@ FROM tblHok h
  and a2.uit = 1
  and h1.skip = 0
  and h2.skip = 0
- and h1.actId != 2
             GROUP BY b.bezId
          ) uit on (uit.bezId = b.bezId)
          left join tblHistorie ht on (ht.hisId = uit.hist)
@@ -338,7 +336,6 @@ FROM tblHok h
  and a2.uit = 1
  and h1.skip = 0
  and h2.skip = 0
- and h1.actId != 2
             GROUP BY b.bezId
          ) uit on (uit.bezId = b.bezId)
          left join tblHistorie ht on (ht.hisId = uit.hist)
