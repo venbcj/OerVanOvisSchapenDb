@@ -100,24 +100,17 @@ SQL;
 
     public function getInsAdoptieFrom() {
         return <<<SQL
-impAgrident rd
- left join (
-     SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
-     FROM tblSchaap s
-      join tblStal st on (st.schaapId = s.schaapId)
-      join tblUbn u on (u.ubnId = st.ubnId)
-      join tblHistorie h on (st.stalId = h.stalId)
-     WHERE u.lidId = :lidId and h.skip = 0
-     GROUP BY s.schaapId, s.levensnummer, s.geslacht
- ) s on (rd.levensnummer = s.levensnummer)
+impAgrident rd 
+ left join tblSchaap s on (rd.levensnummer = s.levensnummer)
  left join tblSchaap mdr on (rd.moeder = mdr.levensnummer)
  left join tblStal st on (st.schaapId = s.schaapId and isnull(st.rel_best))
- join tblUbn u on (u.ubnId = st.ubnId and u.lidId = :lidId)
+ left join tblUbn u on (u.ubnId = st.ubnId and u.lidId = :lidId)
  left join (
-    SELECT h.hisId, a.actie, a.af, h.datum
+    SELECT st.schaapId, h.datum
     FROM tblHistorie h
-     join tblActie a on (h.actId = a.actId)
- ) h on (h.hisId = s.hisId)
+     join tblStal st on (st.stalId = h.stalId)
+    WHERE h.actId = 1
+ ) hg on (hg.schaapId = s.schaapId)
  left join (
     SELECT st.schaapId
     FROM tblStal st
