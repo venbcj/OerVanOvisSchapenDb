@@ -52,6 +52,11 @@ FROM tblMelding m
     WHERE a.af = 1 and h.skip = 0
     GROUP BY schaapId
  ) afv on (st.schaapId = afv.schaapId)
+ left join (
+    SELECT levensnummer, levensnummer_new, meldnr
+    FROM impRespons
+    WHERE reqId = :reqId and meldnr is not null
+ ) rvomeldnr on (coalesce(rvomeldnr.levensnummer_new, rvomeldnr.levensnummer) = s.levensnummer)
 WHERE m.reqId = :reqId
  and h.skip = 0
  and h.datum is not null

@@ -102,13 +102,18 @@ FROM tblRequest rq
  join tblLeden l on (u.lidId = l.lidId)
  join tblSchaap s on (st.schaapId = s.schaapId)
  left join tblRelatie rl on (rl.relId = st.rel_herk)
- 
+ left join (
+    SELECT levensnummer, meldnr
+    FROM impRespons
+    WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."' and meldnr is not null
+ ) rvomeldnr on (rvomeldnr.levensnummer = s.levensnummer) 
 WHERE rq.reqId = '".mysqli_real_escape_string($db,$reqId)."'
  and h.skip = 0
  and h.datum is not null
  and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12 
  and m.skip <> 1
- and isnull(m.fout) 
+ and isnull(m.fout)
+ and isnull(rvomeldnr.meldnr)
 ") or die (mysqli_error($db));
 
     while ($row = mysqli_fetch_array($qry_txtRequest_RVO)) {          
@@ -261,10 +266,20 @@ FROM tblMelding m
      join tblStal st on (st.stalId = h.stalId)
      join tblUbn u on (u.ubnId = st.ubnId)
     WHERE h.skip = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and 
-     not exists (SELECT max(stl.stalId) stalId FROM tblStal stl WHERE stl.lidId = '".mysqli_real_escape_string($db,$lidId)."' and stl.stalId = st.stalId)
+     not exists (
+        SELECT max(stl.stalId) stalId
+        FROM tblStal stl
+         join tblUbn u on (stl.ubnId = u.ubnId)
+        WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and stl.stalId = st.stalId
+     )
     GROUP BY st.schaapId
  ) lastdm on (lastdm.schaapId = s.schaapId)
-WHERE h.skip = 0 and m.reqId = '".mysqli_real_escape_string($db,$reqId)."' and isnull(hide.meldId)
+ left join (
+    SELECT levensnummer, meldnr
+    FROM impRespons
+    WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."' and meldnr is not null
+ ) rvomeldnr on (rvomeldnr.levensnummer = s.levensnummer)
+WHERE h.skip = 0 and m.reqId = '".mysqli_real_escape_string($db,$reqId)."' and isnull(hide.meldId) and isnull(rvomeldnr.meldnr)
 ORDER BY u.ubn, m.skip 
 ") or die (mysqli_error($db));
 
