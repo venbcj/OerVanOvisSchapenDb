@@ -88,6 +88,11 @@ FROM tblMelding m
  ) mhd on (st.schaapId = mhd.schaapId)
  join tblRelatie r on (r.relId = st.rel_best)
  join tblPartij p on (r.partId = p.partId)
+ left join (
+    SELECT levensnummer, levensnummer_new, meldnr
+    FROM impRespons
+    WHERE reqId = :reqId and meldnr is not null
+ ) rvomeldnr on (coalesce(rvomeldnr.levensnummer_new, rvomeldnr.levensnummer) = s.levensnummer)
 WHERE m.reqId = :reqId
  and h.datum is not null
  and h.datum >= mhd.lastdatum
