@@ -45,7 +45,8 @@ FROM tblRequest rq
  join tblMelding m on (rq.reqId = m.reqId)
  join tblHistorie h on (h.hisId = m.hisId)
  join tblStal st on (st.stalId = h.stalId)
- join tblLeden l on (l.lidId = st.lidId)
+ join tblUbn u on (st.ubnId = u.ubnId)
+ join tblLeden l on (l.lidId = u.lidId)
 WHERE h.skip = 0 and l.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(rq.dmmeld) and rq.code = 'VMD' 
 GROUP BY l.relnr
 ") or die (mysqli_error($db));
@@ -73,12 +74,18 @@ FROM tblMelding m
 	WHERE a.af = 1 and h.skip = 0
 	GROUP BY schaapId
  ) afv on (st.schaapId = afv.schaapId)
+ left join (
+ 	SELECT levensnummer, levensnummer_new, meldnr
+ 	FROM impRespons
+ 	WHERE reqId = '".mysqli_real_escape_string($datb,$fldReqId)."' and meldnr is not null
+ ) rvomeldnr on (coalesce(rvomeldnr.levensnummer_new, rvomeldnr.levensnummer) = s.levensnummer)
 WHERE m.reqId = '".mysqli_real_escape_string($datb,$fldReqId)."'
  and h.skip = 0
  and h.datum is not null
  and (h.datum <= afv.datum or isnull(afv.datum))
  and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12 
  and m.skip <> 1
+ and isnull(rvomeldnr.meldnr)
 ");
 
 	if($juistaantal)
@@ -120,16 +127,21 @@ FROM tblRequest rq
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (h.stalId = st.stalId)
  join tblUbn u on (u.ubnId = st.ubnId)
- join tblLeden l on (st.lidId = l.lidId)
+ join tblLeden l on (u.lidId = l.lidId)
  join tblSchaap s on (st.schaapId = s.schaapId)
  left join tblRelatie rl on (rl.relId = st.rel_herk)
- 
+ left join (
+ 	SELECT levensnummer, meldnr
+ 	FROM impRespons
+ 	WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."' and meldnr is not null
+ ) rvomeldnr on (rvomeldnr.levensnummer = s.levensnummer)
 WHERE rq.reqId = '".mysqli_real_escape_string($db,$reqId)."'
  and h.skip = 0
  and h.datum is not null
  and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12 
  and m.skip <> 1
- and isnull(m.fout) 
+ and isnull(m.fout)
+ and isnull(rvomeldnr.meldnr)
 ") or die (mysqli_error($db));
 
     while ($row = mysqli_fetch_array($qry_txtRequest_RVO)) {          
@@ -280,11 +292,22 @@ FROM tblMelding m
 	SELECT st.schaapId, max(datum) datum 
 	FROM tblHistorie h
 	 join tblStal st on (st.stalId = h.stalId)
-	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and 
-	 not exists (SELECT max(stl.stalId) stalId FROM tblStal stl WHERE stl.lidId = '".mysqli_real_escape_string($db,$lidId)."' and stl.stalId = st.stalId)
+	 join tblUbn u on (st.ubnId = u.ubnId)
+	WHERE h.skip = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and 
+	 not exists (
+	 	SELECT max(stl.stalId) stalId
+	 	FROM tblStal stl
+	 	 join tblUbn u on (stl.ubnId = u.ubnId)
+	 	WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and stl.stalId = st.stalId
+	 )
 	GROUP BY st.schaapId
  ) lastdm on (lastdm.schaapId = s.schaapId)
-WHERE h.skip = 0 and m.reqId = '".mysqli_real_escape_string($db,$reqId)."' and isnull(hide.meldId)
+ left join (
+ 	SELECT levensnummer, meldnr
+ 	FROM impRespons
+ 	WHERE reqId = '".mysqli_real_escape_string($db,$reqId)."' and meldnr is not null
+ ) rvomeldnr on (rvomeldnr.levensnummer = s.levensnummer)
+WHERE h.skip = 0 and m.reqId = '".mysqli_real_escape_string($db,$reqId)."' and isnull(hide.meldId) and isnull(rvomeldnr.meldnr)
 ORDER BY u.ubn, m.skip 
 ") or die (mysqli_error($db));
 
