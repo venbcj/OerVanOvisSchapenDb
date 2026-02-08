@@ -15,7 +15,9 @@ $lidId = $_GET['pst'];
 $fileName = "StallijstScan_" . date('Y-m-d') . ".xlsx"; 
  
 // Definieer kolomnamen  
-$excelData[] = array('Datum', 'Levensnummer', 'geboren', 'geslacht'); 
+$excelData[] = array('Nog in te lezen'); 
+$kolomkoppen = array('Datum', 'Levensnummer', 'geboren', 'geslacht'); 
+$excelData[] = $kolomkoppen;
 
 $zoek_eerste_actuele_controle = mysqli_query($db,"
 SELECT min(datum) date
