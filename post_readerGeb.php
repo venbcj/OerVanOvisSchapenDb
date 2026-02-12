@@ -41,6 +41,7 @@ foreach ($array as $recId => $id) {
     if (!$recId) {
         continue;
     }
+    unset($levnr_rd);
     unset($fldRas);
     unset($fldSekse);
     unset($fldKg);
@@ -106,7 +107,7 @@ foreach ($array as $recId => $id) {
     // TODO hadden we hier ook $ubn zullen declareren?
             $ubnId = $ubn_gateway->zoek_ubnId($lidId);
         }
-          [$tran, $fldLevnr, $moeder, $mdrTran_rd] = $impagrident_gateway->zoek_levensnummer_transponder($recId);
+          [$tran, $levnr_rd, $moeder, $mdrTran_rd] = $impagrident_gateway->zoek_levensnummer_transponder($recId);
     // Transponder moeder inlezen als deze niet bestaat in tblSchaap
         $mdrTran_sch = $mdrTran_rd;
         [$moederId, $mdrTran_sch] = $schaap_gateway->zoek_transp_moeder($moeder);
@@ -164,7 +165,7 @@ foreach ($array as $recId => $id) {
         if (
             (
             isset($fldDag)
-            && isset($fldLevnr)
+            && isset($levnr_rd)
             && isset($fldStalIdMdr)
             && $fldDag >= $dmaanv_1_mdr
             && (!isset($dmafv_mdr) || $fldDag <= $dmafv_mdr)
@@ -174,13 +175,13 @@ foreach ($array as $recId => $id) {
             || (
             $modtech == 0
             && isset($fldDag)
-            && isset($fldLevnr)
+            && isset($levnr_rd)
             )
             // Veplichte velden zonder module Technisch
         ) {
             $scenario = 'Geboren_lam';
         } elseif (
-            !isset($fldLevnr)
+            !isset($levnr_rd)
             && isset($fldDag)
             && (
             (isset($fldStalIdMdr) && $modtech == 1)
@@ -189,7 +190,7 @@ foreach ($array as $recId => $id) {
         ) {
             $scenario = 'Dood_geboren';
             $rel_best = $rendac_Id; // werd gezet in login_logic
-            $fldLevnr = $ubn; // deze variabele bestaat niet :(
+            $levnr_rd = $ubn; // deze variabele bestaat niet :(
         }
     #  refactor-opzetje
     #  if (!function_exists('bepaal_scenario')) {
@@ -198,7 +199,7 @@ foreach ($array as $recId => $id) {
     #  if (
     #      (
     #          isset($fldDag)
-    #          && isset($fldLevnr)
+    #          && isset($levnr_rd)
     #          && isset($fldStalIdMdr)
     #          && $fldDag >= $dmaanv_1_mdr
     #          && (!isset($dmafv_mdr) || $fldDag <= $dmafv_mdr)
@@ -208,13 +209,13 @@ foreach ($array as $recId => $id) {
     #      || (
     #          $modtech == 0
     #          && isset($fldDag)
-    #          && isset($fldLevnr)
+    #          && isset($levnr_rd)
     #      )
     #      // Veplichte velden zonder module Technisch
     #  ) {
     #      $scenario = 'Geboren_lam';
     #  } else if(
-    #      !isset($fldLevnr)
+    #      !isset($levnr_rd)
     #      && isset($fldDag)
     #      && (
     #          (isset($fldStalIdMdr) && $modtech == 1)
@@ -223,12 +224,12 @@ foreach ($array as $recId => $id) {
     #  ) {
     #      $scenario = 'Dood_geboren';
     #      $rel_best = $rendac_Id;
-    #      $fldLevnr = $ubn;
+    #      $levnr_rd = $ubn;
     #    }
     #  return [
     #      'scenario' => $scenario ?? null,
     #      'rel_best' => $rel_best ?? null,
-    #      'fldLevnr' => $fldLevnr ?? null,
+    #      'fldLevnr' => $levnr_rd ?? null,
     #  ];
     #  }
     #  }
@@ -236,7 +237,7 @@ foreach ($array as $recId => $id) {
     #  // $decision_inputs = compact(explode(' ', 'fldDag fldLevnr fldStalIdMdr dmaanv_1_mdr dmafv_mdr fldHok modtech ubn rendac_Id scenario'));
     #  $decision_inputs = [
     #      'fldDag'        => $fldDag        ?? null,
-    #      'fldLevnr'      => $fldLevnr      ?? null,
+    #      'fldLevnr'      => $levnr_rd      ?? null,
     #      'fldStalIdMdr'  => $fldStalIdMdr  ?? null,
     #      'fldHok'        => $fldHok        ?? null,
     #      'modtech'      => $modtech        ?? null,
@@ -248,11 +249,11 @@ foreach ($array as $recId => $id) {
     #  $shadow = bepaal_scenario($decision_inputs);
     #  $scenario = $shadow['scenario'];
     #  $rel_best = $shadow['rel_best'];
-    #  $fldLevnr = $shadow['fldLevnr'];
+    #  $levnr_rd = $shadow['fldLevnr'];
     // TODO: *welk* scenario het is, doet kennelijk niet terzake? Als je dan toch iets uitrekent, vertrouw er dan vervolgens op.
         if (isset($scenario)) {
             // NOTE dit is de enige plek voor fldMom
-            $schaapId = $schaap_gateway->insert_tblSchaap($fldLevnr, $fldRas, $fldSekse, $volwId, $fldMom, $fldRed, $tran);
+            $schaapId = $schaap_gateway->insert_tblSchaap($levnr_rd, $fldRas, $fldSekse, $volwId, $fldMom, $fldRed, $tran);
             if (isset($schaapId) && isset($rel_best)) {
                 $schaap_gateway->wis_levensnummer_by_id($schaapId);
                 unset($levnr);
