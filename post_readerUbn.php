@@ -171,7 +171,7 @@ $zoek_relatie_aanvoer = mysqli_query($db,"
 SELECT r.relId
 FROM tblPartij p
  join tblRelatie r on (p.partId = r.partId)
-WHERE p.ubn = '".mysqli_real_escape_string($db,$ubn_herk)."' and r.relatie = 'cred'
+WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.ubn = '".mysqli_real_escape_string($db,$ubn_herk)."' and r.relatie = 'cred'
 ") or die (mysqli_error($db));
 
     $zraan = mysqli_fetch_assoc($zoek_relatie_aanvoer); 
