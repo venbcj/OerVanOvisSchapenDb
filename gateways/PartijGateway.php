@@ -205,14 +205,14 @@ SQL;
         return $this->first_field($sql, $args);
     }
 
-    public function zoek_relatie_aanvoer($ubn_herk) {
+    public function zoek_relatie_aanvoer($lidId, $ubn_herk) {
         $sql = <<<SQL
     SELECT r.relId
     FROM tblPartij p
      join tblRelatie r on (p.partId = r.partId)
-    WHERE p.ubn = :ubn_herk and r.relatie = 'cred'
+    WHERE p.lidId = :lidId and p.ubn = :ubn_herk and r.relatie = 'cred'
 SQL;
-        $args = [[':ubn_herk', $ubn_herk]];
+        $args = [[':lidId', $lidId, Type::INT],[':ubn_herk', $ubn_herk]];
         return $this->first_field($sql, $args);
     }
 

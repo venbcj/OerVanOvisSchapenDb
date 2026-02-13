@@ -76,7 +76,7 @@ foreach ($array as $recId => $id) {
                     $hisId = $hisId_afv;
                     include "maak_request.php";
                 }
-                $rel_herk = $partij_gateway->zoek_relatie_aanvoer($ubn_herk);
+                $rel_herk = $partij_gateway->zoek_relatie_aanvoer($lidId, $ubn_herk);
                 $stalId_aanv = $stal_gateway->insert_tblStal_aanvoer($lidId, $ubnId_best, $schaapId, $rel_herk);
                 $insert_tblHistorie_aanvoer = $historie_gateway->insert_tblHistorie_aanvoer($stalId_aanv, $fldDag, $fldKg);
                 
