@@ -29,7 +29,7 @@ FROM tblSchaap s
  join tblUbn u on (u.ubnId = st.ubnId)
  join tblHistorie h on (h.stalId = st.stalId)
  join tblActie a on (a.actId = h.actId)
-WHERE a.actId = 2 and h.skip = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+WHERE a.actId != 1 and a.op = 1 and h.skip = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 
 Union
 
