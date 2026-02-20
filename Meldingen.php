@@ -168,7 +168,7 @@ FROM tblRequest rq
  join tblStal st on (st.stalId = h.stalId)
  join tblUbn u on (u.ubnId = st.ubnId)
  join tblSchaap s on (s.schaapId = st.schaapId)
- left join impRespons rp on (s.levensnummer = rp.levensnummer)
+ left join impRespons rp on (s.levensnummer = rp.levensnummer and rq.reqId = rp.reqId)
  left join (
     SELECT s.levensnummer, rs.respId, rs.meldnr, rs.reqId, rs.melding
     FROM tblMelding m
