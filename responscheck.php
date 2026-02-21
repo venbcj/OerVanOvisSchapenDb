@@ -34,10 +34,10 @@ FROM tblRequest r
  join tblHistorie h on (h.hisId = m.hisId)
  join tblStal st on (st.stalId = h.stalId)
  left join(
-	SELECT max(respId) respId, reqId
+	SELECT max(respId) respId, reqId, max(dmcreate) dmcreate
 	FROM impRespons 
 	GROUP BY reqId
-	) lr on (r.reqId = lr.reqId)
+	) lr on (r.reqId = lr.reqId and coalesce(r.dmheropend,r.dmcreate) < lr.dmcreate)
  left join impRespons rp on (rp.respId = lr.respId)
 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (rp.def != 'J' or isnull(rp.meldnr)) and h.skip = 0
 GROUP BY r.reqId

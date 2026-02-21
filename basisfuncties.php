@@ -310,10 +310,10 @@ FROM tblRequest r
  join tblUbn u on (st.ubnId = u.ubnId)
  join tblSchaap s on (s.schaapId = st.schaapId)
  left join (
-    SELECT levensnummer, levensnummer_new, meldnr
+    SELECT reqId, levensnummer, levensnummer_new, meldnr
     FROM impRespons
-    WHERE reqId = '".mysqli_real_escape_string($datb,$fldReqId)."' and meldnr is not null
- ) rvomeldnr on (coalesce(rvomeldnr.levensnummer_new, rvomeldnr.levensnummer) = s.levensnummer)
+    WHERE meldnr is not null
+ ) rvomeldnr on (r.reqId = rvomeldnr.reqId and coalesce(rvomeldnr.levensnummer_new, rvomeldnr.levensnummer) = s.levensnummer)
 WHERE u.lidId = '".mysqli_real_escape_string($datb,$lidid)."' and h.skip = 0 and isnull(r.dmmeld) and code = '".mysqli_real_escape_string($datb,$fldCode)."' and isnull(rvomeldnr.meldnr)
 "); // Foutafhandeling zit in return FALSE
     if($aantalmelden)
@@ -404,9 +404,10 @@ Toegepast in :
 function zoek_controle_melding($datb,$fldReqId) {
 
 $aantalcontrole = mysqli_query($datb,"
-SELECT count(*) aant
-FROM impRespons
-WHERE def = 'N' and reqId = '".mysqli_real_escape_string($datb,$fldReqId)."'
+SELECT count(rp.respId) aant
+FROM impRespons rp
+ join tblRequest r on (r.reqId = rp.reqId)
+WHERE def = 'N' and reqId = '".mysqli_real_escape_string($datb,$fldReqId)."' and coalesce(r.dmheropend,r.dmcreate) < rp.dmcreate
 ");//Foutafhandeling zit in return FALSE
 
     if($aantalcontrole)

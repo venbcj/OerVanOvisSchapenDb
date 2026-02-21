@@ -36,7 +36,7 @@ if (isset($_POST['knpOpenReq']) ) {
 // Foute meldingen heropenen
 	$req_open = $_POST['kzlFouteMeld']; //echo '$req_open = '.$req_open.'<br>';
 
-	$update_tblRequest = "UPDATE tblRequest set def = 'N', dmmeld = NULL WHERE reqId = '".mysqli_real_escape_string($db,$req_open)."' ";
+	$update_tblRequest = "UPDATE tblRequest set def = 'N', dmmeld = NULL, dmheropend = now() WHERE reqId = '".mysqli_real_escape_string($db,$req_open)."' ";
 
  /* echo $update_tblRequest.'<br>';*/ mysqli_query($db,$update_tblRequest) or die (mysqli_error($db));
 // Einde Foute meldingen heropenen
