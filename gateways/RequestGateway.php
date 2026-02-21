@@ -33,10 +33,17 @@ FROM tblRequest r
  join tblHistorie h on (m.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
  join tblUbn u on (st.ubnId = u.ubnId)
+ join tblSchaap s on (s.schaapId = st.schaapId)
+ left join (
+    SELECT reqId, levensnummer, levensnummer_new, meldnr
+    FROM impRespons
+    WHERE meldnr is not null
+ ) rvomeldnr on (r.reqId = rvomeldnr.reqId and coalesce(rvomeldnr.levensnummer_new, rvomeldnr.levensnummer) = s.levensnummer)
 WHERE u.lidId = '".$this->db->real_escape_string($lidid)."'
  and h.skip = 0
  and isnull(r.dmmeld)
  and code = '".$this->db->real_escape_string($fldCode)."'
+ and isnull(rvomeldnr.meldnr)
 "); // Foutafhandeling zit in return FALSE
     if ($vw) {
         $row = $vw->fetch_assoc();
@@ -54,13 +61,15 @@ FROM tblRequest r
  join tblStal st on (st.stalId = h.stalId)
  join tblUbn u on (st.ubnId = u.ubnId)
  left join(
-    SELECT max(respId) respId, reqId
+    SELECT max(respId) respId, reqId, max(dmcreate) dmcreate
     FROM impRespons 
     GROUP BY reqId
-    ) lr on (r.reqId = lr.reqId)
+    ) lr on (r.reqId = lr.reqId and coalesce(r.dmheropend,r.dmcreate) < lr.dmcreate)
  left join impRespons rp on (rp.respId = lr.respId)
-WHERE u.lidId = '".$this->db->real_escape_string($lidId)."' and (rp.def != 'J' or isnull(rp.meldnr)) and h.skip = 0
-GROUP BY r.reqId
+WHERE u.lidId = '".$this->db->real_escape_string($lidId)."'
+and (rp.def != 'J' or isnull(rp.meldnr))
+and h.skip = 0
+GROUP BY r.reqId, r.code
 ORDER BY r.reqId
 ");
     }

@@ -395,11 +395,14 @@ Toegepast in :
 - MeldOmnummer.php */
 
 // Zoek controle melding
-function zoek_controle_melding($datb, $fldReqId) {
+function zoek_controle_melding($datb, $ReqId) {
     $aantalcontrole = mysqli_query($datb, "
-SELECT count(*) aant
-FROM impRespons
-WHERE def = 'N' and reqId = '".mysqli_real_escape_string($datb, $fldReqId)."'
+SELECT count(rp.respId) aant
+FROM impRespons rp
+ join tblRequest r on (r.reqId = rp.reqId)
+WHERE def = 'N' 
+ and reqId = '".mysqli_real_escape_string($datb, $ReqId)."'
+ and coalesce(r.dmheropend,r.dmcreate) < rp.dmcreate
 ");//Foutafhandeling zit in return FALSE
 
     if ($aantalcontrole) {
