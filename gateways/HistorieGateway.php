@@ -2083,7 +2083,7 @@ SQL;
         $this->run_query($sql, $args);
     }
 
-    public function insert_tblHistorie($stalId, $fldDmDracht) {
+    public function insert_tblHistorie_19($stalId, $fldDmDracht) {
         $sql = <<<SQL
         INSERT INTO tblHistorie SET stalId = :stalId, datum = :fldDmDracht, actId = 19
 SQL;

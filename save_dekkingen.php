@@ -100,7 +100,7 @@ foreach ($multip_array as $recId => $id) {
                         $stal_gateway = new StalGateway();
                         $stalId = $stal_gateway->zoek_stalId($mdrId, $lidId);
                         $historie_gateway = new HistorieGateway();
-                        $hisId = $historie_gateway->insert_tblHistorie($stalId, $fldDmDracht);
+                        $hisId = $historie_gateway->insert_tblHistorie_19($stalId, $fldDmDracht);
                     $dracht_gateway = new DrachtGateway();
                     $dracht_gateway->insert_tblDracht($recId, $hisId);
             }
