@@ -49,7 +49,7 @@ $zoek_startjaar_user = mysqli_query($db,"
 SELECT date_format(min(dmcreatie),'%Y') jaar 
 FROM tblStal
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
-") or die (mysqli_error($db));
+") or die ('01 '.mysqli_error($db));
     while($jr1 = mysqli_fetch_array($zoek_startjaar_user)) { $jaar1 = $jr1['jaar']; }
 
 $jaarstart = date("Y")-3; if($jaar1 > $jaarstart && $dtb == "bvdvSchapenDb") { $jaarstart = $jaar1; }  // Alleen in productieomg rapport tonen vanaf startjaar user
@@ -63,7 +63,7 @@ FROM tblHistorie h
 WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(h.datum,'%Y') >= '$jaarstart' and h.actId = 1 and h.skip = 0 and v.mdrId is not null
 GROUP BY date_format(h.datum,'%Y')
 ORDER BY date_format(h.datum,'%Y') desc 
-") or die (mysqli_error($db));
+") or die ('02 '.mysqli_error($db));
 ?>
 <form action = "Mndoverz_fok.php" method = "post">
 <tr>
@@ -251,7 +251,7 @@ FROM (
     GROUP BY geb_jrmnd
  ) kgvoer on (aant.jrmnd = kgvoer.geb_jrmnd)
 ORDER BY aant.maand desc
-") or die (mysqli_error($db));
+") or die ('03 '.mysqli_error($db));
 ?>
 
 </td>
@@ -453,7 +453,7 @@ FROM (
  ) dagen_per_geboortejaarmaand on (Kg_per_dag_per_periode.periId = dagen_per_geboortejaarmaand.periId)
 
  GROUP BY dagen_per_geboortejaarmaand.jaarmaand
-") or die (mysqli_error($db));
+") or die ('04 '.mysqli_error($db));
 
 while($kgd = mysqli_fetch_array($kg_per_maand)) { $mndkg = $kgd['kgMnd']; } if(!isset($mndkg)) { $mndkg = 0; }
 // Einde Kg voer per Maand
@@ -567,7 +567,7 @@ FROM tblHistorie h
  join tblSchaap s on (s.schaapId = st.schaapId)
  join tblVolwas v on (v.volwId = s.volwId)
 WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 1 and h.skip = 0 and year(h.datum) = '".mysqli_real_escape_string($db,$kzlJaar)."' and v.mdrId is not null
-") or die (mysqli_error($db));
+") or die ('05 '.mysqli_error($db));
     while($rij = mysqli_fetch_array($zoek_aantal_maanden)) { $mndat = $rij['mndat']; }
 if (empty($mndat)) $mndat = 1; // niet 0, want daar deelt het niet lekker door
     
@@ -575,6 +575,7 @@ $zoek_aantal_maanden_groei = mysqli_query($db,"
 SELECT count(distinct(month(h.datum))) mndat
 FROM tblHistorie h
  join tblStal st on (st.stalId = h.stalId)
+INNER JOIN tblUbn u USING (ubnId)
  join tblSchaap s on (s.schaapId = st.schaapId)
  join tblVolwas v on (v.volwId = s.volwId)
  join (
@@ -585,7 +586,7 @@ FROM tblHistorie h
     WHERE h.actId = 4 and h.skip = 0
  ) spn on (spn.schaapId = s.schaapId)
 WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 1 and h.skip = 0 and year(h.datum) = '".mysqli_real_escape_string($db,$kzlJaar)."' and v.mdrId is not null
-") or die (mysqli_error($db));
+") or die ('06 '.mysqli_error($db));
 $mndat_gr = 1;
     while($rij = mysqli_fetch_array($zoek_aantal_maanden_groei)) { $mndat_gr = $rij['mndat']; }
 // Gemiddelden ?>
@@ -692,7 +693,7 @@ FROM tblSchaap s
  ) meld on (meld.levensnummer = s.levensnummer)
 WHERE s.levensnummer is not null and h.actId = 1 and h.skip = 0 and (isnull(spn.schaapId) or spn.datum > dood.datum) and year(h.datum) = '".mysqli_real_escape_string($db,$kzlJaar)."' and month(h.datum) = '".mysqli_real_escape_string($db,$keuze_mnd)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 GROUP BY s.schaapId, st.stalId
-") or die (mysqli_error($db));
+") or die ('07 '.mysqli_error($db));
     while($zos = mysqli_fetch_array($zoek_overleden_schapen)) {
 
     $werknr = $zos['werknr'];

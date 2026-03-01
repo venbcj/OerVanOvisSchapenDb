@@ -81,7 +81,3 @@ if($dagen > 0) { $groei = round((($kg - $kg1) / $dagen),2).' kg in '.$dagen.' da
 // Gegevens exporteren naar Excel en downloaden als xlsx-bestand 
 $xlsx = CodexWorld\PhpXlsxGenerator::fromArray( $excelData ); 
 $xlsx->downloadAs($fileName);
-
-exit; 
- 
-?>

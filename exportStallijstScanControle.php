@@ -67,7 +67,3 @@ if($query->num_rows > 0){
 // Gegevens exporteren naar Excel en downloaden als xlsx-bestand 
 $xlsx = CodexWorld\PhpXlsxGenerator::fromArray( $excelData ); 
 $xlsx->downloadAs($fileName);
-
-exit; 
- 
-?>

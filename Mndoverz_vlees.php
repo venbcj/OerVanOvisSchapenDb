@@ -121,15 +121,10 @@ if (Auth::is_logged_in()) { if ($modtech ==1) {
 </tr>
 
 <?php 
-        while($row = mysqli_fetch_array($result))/*    $row zorgt voor de waardes per maand     */
-               { $mndnr = $row['maand'];
-               $kg_per_maand = $Periode_gateway->kg_per_maand($lidId, $kzlJaar, $mndnr);
-       
-       #echo $kg_per_maand.'<br><br><br>';
-       
-       $kg_per_maand = mysqli_query($db,$kg_per_maand);
-       
-       while($kgd = mysqli_fetch_array($kg_per_maand)) { $mndkg = $kgd['kgMnd']; }
+        while($row = mysqli_fetch_array($result)) {
+            /*    $row zorgt voor de waardes per maand     */
+            $mndnr = $row['maand'];
+            $mndkg = $Periode_gateway->kg_per_maand($lidId, $kzlJaar, $mndnr);
        // Einde Kg voer per Maand
        ?>        
        <tr align = "center">
@@ -160,7 +155,8 @@ if (Auth::is_logged_in()) { if ($modtech ==1) {
         <td width = 1> </td>
         <td width = 50> </td>
        </tr>                
-       <?php        }
+<?php        
+        }
         // totalen 
         ?>
 <tr align = "center">

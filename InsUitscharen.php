@@ -192,7 +192,7 @@ if (isset($status)) { echo $fase ;} ?>
 // Wachtdagen bepalen
 if(isset($schaapId)) {
     $schaap_gateway = new SchaapGateway();
-    $zoek_pil = $schaap_gateway->zoek_pil($lidId, $date, $schaapId);
+    $zoek_pil = $schaap_gateway->zoek_pil_8($lidId, $date, $schaapId);
 
 $vandaag = date('Y-m-d');
         while($row = $zoek_pil->fetch_array())

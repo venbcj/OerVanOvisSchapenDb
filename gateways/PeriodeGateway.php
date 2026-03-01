@@ -539,7 +539,7 @@ join
 GROUP BY dagen_per_speenjaarmaand.jaarmaand
 SQL;
         $args = [[':lidId', $lidId], [':kzlJaar', $kzlJaar], [':mndnr', $mndnr]];
-        return $this->run_query($sql, $args);
+        return $this->first_field($sql, $args);
     }
 
     public function zoek_in_database($recId) {

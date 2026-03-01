@@ -134,19 +134,6 @@ foreach ($array as $recId => $id) {
             unset($volwId);
             $volwId = $schaap_gateway->zoek_huidige_worp_geb($mdrId, $fldDag);
         // Stap 2 is overbodig. Als er een drachtige ooi bestaat moet deze hetzelfde volwId hebben als de volwId o.b.v. de laatste dekking zonder worp. Aan die volwId hangt immers de drachtregistratie.
-        /*
-        if(!isset($volwId)) { // Stap 2 : Zoek drachtige ooi zonder worp binnen 145 dagen t.o.v. de geboortedatum $fldDag
-        $zoek_actuele_dracht = mysqli_query($db,"
-         SELECT v.volwId
-         FROM tblVolwas v
-          join tblDracht d on (v.volwId = d.volwId)
-          join tblHistorie h on (d.hisId = h.hisId)
-          left join tblSchaap s on (s.volwId v.volwId)
-         WHERE h.skip = 0 and v.mdrId = '".mysqli_real_escape_string($db,$fldMoeder)."' and isnull(s.volwId) and date_add(h.datum, interval 145 day) > '".mysqli_real_escape_string($db,$fldDag)."'
-         ") or die (mysqli_error($db));
-          while ( $zadr = mysqli_fetch_assoc($zoek_actuele_dracht)) { $volwId = $zadr['volwId']; }
-        }
-         */ // EInde Stap 2 : Zoek drachtige ooi zonder worp binnen 145 dagen t.o.v. de geboortedatum $fldDag
             if (!isset($volwId)) {
                 $volwId = $volwas_gateway->zoek_actuele_dekking_binnen_145dagen($mdrId, $fldDag);
             } // EInde Stap 3 : Zoek actuele dekking zonder worp en zonder registratie dracht

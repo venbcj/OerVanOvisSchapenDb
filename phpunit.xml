@@ -36,11 +36,7 @@
         <directory>ongebruikt</directory>
         <directory>utils</directory>
       </exclude>
-      <file>./InvSchaap.php</file>
-      <file>./kalender.php</file>
-      <file>./login.php</file>
-      <file>./menu1.php</file>
-      <file>./validate-invschaap.js.php</file>
+      <directory>.</directory>
     </whitelist>
   </filter>
   <logging>

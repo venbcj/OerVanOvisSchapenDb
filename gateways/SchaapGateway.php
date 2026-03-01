@@ -2941,7 +2941,7 @@ SQL
         );
     }
 
-    public function zoek_pil($lidId, $date, $schaapId) {
+    public function zoek_pil_8($lidId, $date, $schaapId) {
         return $this->run_query(
             <<<SQL
 SELECT date_format(h.datum,'%d-%m-%Y') datum, art.naam, DATEDIFF( (h.datum + interval art.wdgn_v day), :date) resterend
@@ -5494,6 +5494,23 @@ SQL;
 SQL;
         $args = [[':Karwerk', $Karwerk], [':volwId', $volwId, Type::INT], [':mnd', $mnd], [':jaar', $jaar]];
         return $this->run_query($sql, $args);
+    }
+
+    public function zoek_pil($date, $lidId, $schaapId){
+        $sql = <<<SQL
+    SELECT date_format(h.datum,'%d-%m-%Y') datum, art.naam, DATEDIFF( (h.datum + interval art.wdgn_v day), :date) resterend
+    FROM tblSchaap s
+     join tblStal st on (st.schaapId = s.schaapId)
+     join tblHistorie h on (h.stalId = st.stalId)
+     join tblActie a on (a.actId = h.actId)
+     left join tblNuttig n on (h.hisId = n.hisId)
+     left join tblInkoop i on (i.inkId = n.inkId)
+     left join tblArtikel art on (i.artId = art.artId)
+    WHERE st.lidId = :lidId and s.schaapId = :schaapId and h.actId = 8 and h.skip = 0
+     and :date < (h.datum + interval art.wdgn_v day)
+SQL;
+        $args = [[':date', $date], [':lidId', $lidId, Type::INT], [':schaapId', $schaapId, Type::INT]];
+        return $this->first_row($sql, $args);
     }
 
 }

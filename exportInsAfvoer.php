@@ -9,11 +9,8 @@ include_once 'connect_db.php';
 require_once 'PhpXlsxGenerator.php'; 
 
 $lidId = $_GET['pst'];
-
-// Bepalen aantal karakters werknr
-$result = mysqli_query($db,"SELECT kar_werknr FROM tblLeden WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."';") or die (mysqli_error($db));
-    while ($row = mysqli_fetch_assoc($result))
-        { $Karwerk = $row['kar_werknr']; }
+$lid_gateway = new LidGateway();
+$Karwerk = $lid_gateway->zoek_karwerk($lidId);
         
 // Excel-bestandsnaam om te downloaden 
 $fileName = "Inlezen_afvoer_" . date('Y-m-d') . ".xlsx";
@@ -174,24 +171,9 @@ $levnr_vorig = $levnr;
      
 // Wachtdagen bepalen
 if(isset($schaapId)) {
-$zoek_pil = mysqli_query($db,"
-SELECT date_format(h.datum,'%d-%m-%Y') datum, art.naam, DATEDIFF( (h.datum + interval art.wdgn_v day), '".mysqli_real_escape_string($db,$date)."') resterend
-FROM tblSchaap s
- join tblStal st on (st.schaapId = s.schaapId)
- join tblHistorie h on (h.stalId = st.stalId)
- join tblActie a on (a.actId = h.actId)
- left join tblNuttig n on (h.hisId = n.hisId)
- left join tblInkoop i on (i.inkId = n.inkId)
- left join tblArtikel art on (i.artId = art.artId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.schaapId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 8 and h.skip = 0
- and '".mysqli_real_escape_string($db,$date)."' < (h.datum + interval art.wdgn_v day)
-") or die (mysqli_error($db));  
-
+$schaap_gateway = new SchaapGateway();
+[ $pildm, $pil, $wdgn_v ] = $schaap_gateway->zoek_pil($date, $lidId, $schaapId);
 $vandaag = date('Y-m-d');
-        while($row = mysqli_fetch_array($zoek_pil))
-        { $pildm = $row['datum']; 
-          $pil = $row['naam']; 
-          $wdgn_v = $row['resterend']; }
 }
 // Einde Wachtdagen bepalen
 
@@ -214,7 +196,3 @@ $vandaag = date('Y-m-d');
 // Gegevens exporteren naar Excel en downloaden als xlsx-bestand 
 $xlsx = CodexWorld\PhpXlsxGenerator::fromArray( $excelData ); 
 $xlsx->downloadAs($fileName);
-
-exit; 
- 
-?>

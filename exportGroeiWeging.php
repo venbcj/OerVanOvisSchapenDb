@@ -115,7 +115,3 @@ if(isset($vorige_weging)) { $berekening = round((($kg - $vorige_kg) / $factor),2
 // Gegevens exporteren naar Excel en downloaden als xlsx-bestand 
 $xlsx = CodexWorld\PhpXlsxGenerator::fromArray( $excelData ); 
 $xlsx->downloadAs($fileName);
-
-exit; 
- 
-?>

@@ -240,7 +240,3 @@ $vandaag = date('Y-m-d');
 // Gegevens exporteren naar Excel en downloaden als xlsx-bestand 
 $xlsx = CodexWorld\PhpXlsxGenerator::fromArray( $excelData ); 
 $xlsx->downloadAs($fileName);
-
-exit; 
- 
-?>

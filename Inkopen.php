@@ -244,11 +244,7 @@ foreach ($opties as $key => $waarde) {
                 $rc = $row['crediteur'];
                 $nutId = $row['nutId'];
                 $voedId = $row['voedId'];
-        /*if(isset($_POST['knpDelete_'.$inkid])) {
-        // crediteur toevoegen
-        $delete_inkoop = "DELETE FROM tblInkoop WHERE inkId = ".mysqli_real_escape_string($db,$inkid) ;
-            mysqli_query($db,$delete_inkoop);
-        }*/ ?>
+?>
 <tr class= "<?php echo $jaar; ?> selectt" >
  <td align = center style = "font-size:12px;"><?php echo $inkdm; ?></td><td width = "1"></td>
  <td style = "font-size:16px;"><?php echo "$naam";?></td>
