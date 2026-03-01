@@ -16,6 +16,8 @@
     "require-dev": {
         "phpunit/phpunit": "^8",
         "rector/rector": "^2",
-        "nikic/php-parser": "^5.7"
-    }
+        "nikic/php-parser": "^5.7",
+        "approvals/approval-tests": "*"
+    },
+    "minimum-stability": "dev"
 }

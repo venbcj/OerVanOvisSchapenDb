@@ -388,7 +388,7 @@ Functioneel moet het keuzelijst Ras wel Rijnlam bevatten.
 
     Kun je hiermee uit de voeten?
 */
-    public function testPostGroenRam() {
+    public function testPostGroenOoi() {
         $this->post(self::PAGE, $this->minimal([
             'txtLevnr' => '100073436679',
             'kzlSekse' => 'ooi',
