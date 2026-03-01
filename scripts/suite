@@ -1,6 +1,7 @@
 #!/bin/bash
+COVER=$(cover p)
 export XDEBUG_MODE=develop,debug
-if [ $(cover p) == 'on' ]; then
+if [ $COVER == 'on' ]; then
     export XDEBUG_MODE=coverage
 fi
 WHAT=tests
@@ -9,3 +10,14 @@ if [ -n "$*" ]; then
 fi
 echo "vendor/bin/phpunit $WHAT"
 vendor/bin/phpunit $WHAT
+if [ $COVER == 'on' ]; then
+    CURRENT_WINDOW=$(xdotool getwindowfocus)
+    COVERAGE_WINDOW=$(xdotool search --name 'Code Coverage'|head -1)
+    if [ "$COVERAGE_WINDOW" == "" ]; then
+        firefox http://basq/coverage/oer
+    else
+        xdotool windowactivate $COVERAGE_WINDOW
+        xdotool key F5
+    fi
+    xdotool windowactivate $CURRENT_WINDOW
+fi

@@ -877,9 +877,7 @@ FROM (
     FROM tblBezet b
      join tblHistorie h1 on (b.hisId = h1.hisId)
      join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId
- and ((h1.datum < h2.datum) or (h1.datum = h2.datum
- and h1.hisId < h2.hisId)) )
+     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
      join tblUbn u on (u.ubnId = st.ubnId)
@@ -926,9 +924,7 @@ FROM (
     FROM tblBezet b
      join tblHistorie h1 on (b.hisId = h1.hisId)
      join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId
- and ((h1.datum < h2.datum) or (h1.datum = h2.datum
- and h1.hisId < h2.hisId)) )
+     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
      join tblActie a2 on (a2.actId = h2.actId)
      join tblStal st on (h1.stalId = st.stalId)
      join tblUbn u on (u.ubnId = st.ubnId)
