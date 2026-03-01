@@ -346,11 +346,12 @@ impAgrident rd
  SELECT levensnummer 
  FROM tblSchaap s
   join tblStal st on (st.schaapId = s.schaapId)
- WHERE lidId = :lidId
+  join tblUbn u on (u.ubnId = st.ubnId)
+ WHERE u.lidId = :lidId
  and isnull(st.rel_best)
  ) s on (rd.levensnummer = s.levensnummer)
  left join (
-    SELECT st.stalId, s.levensnummer, af.datum
+    SELECT st.stalId, s.schaapId, s.levensnummer, af.datum, af.actie_af
     FROM tblSchaap s
      join (
           SELECT max(stalId) stalId, schaapId
@@ -364,12 +365,12 @@ impAgrident rd
         FROM tblStal st
          join tblHistorie h on (h.stalId = st.stalId)
         WHERE h.actId = 3
- and h.skip = 0
+         and h.skip = 0
      ) prnt on (prnt.schaapId = s.schaapId)
      left join (
-       SELECT st.stalId, datum, hisId
+       SELECT st.stalId, datum, hisId, a.actie actie_af
        FROM tblStal st
-        join tblUbn u on (u.ubnId = st.ubnId)
+        join tblUbn u on (st.ubnId = u.ubnId)
         join tblHistorie h on (st.stalId = h.stalId)
         join tblActie a on (a.actId = h.actId)
        WHERE a.af = 1

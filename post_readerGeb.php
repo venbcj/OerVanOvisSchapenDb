@@ -36,6 +36,7 @@ $schaap_gateway = new SchaapGateway();
 $stal_gateway = new StalGateway();
 $ubn_gateway = new UbnGateway();
 $volwas_gateway = new VolwasGateway();
+$hok_gateway = new HokGateway();
 
 foreach ($array as $recId => $id) {
     if (!$recId) {
@@ -46,9 +47,11 @@ foreach ($array as $recId => $id) {
     unset($fldSekse);
     unset($fldKg);
     unset($fldStalIdMdr);
+    unset($fldHokMdr);
     unset($fldMom);
     unset($fldUitvdag);
     unset($fldRed);
+
     foreach ($id as $key => $value) {
         if ($key == 'chbkies') {
             $fldKies = $value;
@@ -74,8 +77,11 @@ foreach ($array as $recId => $id) {
         if ($key == 'kzlOoi' && !empty($value)) {
             $fldStalIdMdr = $value;
         }
-        if ($key == 'kzlHok' && !empty($value)) {
-            $fldHok = $value;
+        if ($key == 'kzlHokLam' && !empty($value)) {
+            $fldHokLam = $value;
+        }
+        if ($key == 'kzlHokMdr' && !empty($value)) {
+            $fldHokMdr = $value;
         }
         if ($key == 'kzlMom' && !empty($value)) {
             $fldMom = $value;
@@ -169,7 +175,7 @@ foreach ($array as $recId => $id) {
             && isset($fldStalIdMdr)
             && $fldDag >= $dmaanv_1_mdr
             && (!isset($dmafv_mdr) || $fldDag <= $dmafv_mdr)
-            && isset($fldHok)
+            && isset($fldHokLam)
             )
             // Veplichte velden bij module Technisch. Moeder is verplicht bij module technisch
             || (
@@ -272,9 +278,60 @@ foreach ($array as $recId => $id) {
             }
         // Einde Insert tblHistorie
             if ($modtech == 1 && !isset($rel_best)) {
-                $insert_tblBezet = $bezet_gateway->insert_tblBezet($hisId, $fldHok);
-            }
-            if ($modmeld == 1 && !isset($rel_best)) {
+                $insert_tblBezet = $bezet_gateway->insert_tblBezet($hisId, $fldHokLam);
+            
+
+
+
+
+// Moeder volgt lam naar hetzelfde verblijf als het lam mits het lam niet naar Lambar gaat. Er wordt eerst gekeken in welk verblijf de moeder voor het laatst is geplaatst. Mogelijk zit de ooi al is het verblijf van het lam.
+          unset($hokIdOoi_in);
+
+$zoek_hokId_Lambar = $hok_gateway->zoek_lambar($lidId);
+
+$zhl = mysqli_fetch_assoc($zoek_hokId_Lambar); $hokId_lambar = $zhl['hokId'];
+
+
+if(isset($fldHokMdr)) { // kijk of moeder nu in een verblijf zit en zoek naar een terugwerkende kracht mutatie
+$zoek_laatste_verblijf_moeder = $hok_gateway->zoek_laatste_verblijf_moeder($fldStalIdMdr);
+
+$zlvm = mysqli_fetch_assoc($zoek_laatste_verblijf_moeder); 
+  $hokIdOoi_in = $zlvm['hokId'];
+  $day_in = $zlvm['day_in'];
+  $actId_in = $zlvm['actId_in'];
+  $actId_uit = $zlvm['actId_uit'];
+  $day_uit = $zlvm['day_uit'];
+  $ooi_af = $zlvm['af'];
+
+if($hokIdOoi_in <> $fldHokMdr) { // Bij meerdere lammeren hoeft moeder maar 1x te worden overgplaatst. Na eerste lam is $hokIdOoi_in == $fldHokMdr
+
+unset($actId);
+if( (empty($hokIdOoi_in) /* Betreft scenario 7 uit incident 0004244 */) || ($ooi_af == 0 && !empty($day_uit) && $day_uit <= $fldDag) /*scenario 4 uit incident 0004244 */)     { $actId = 6; }         
+else if($day_in > $fldDag)  { $actId = $actId_in; } /* Betreft terugwerkende kracht mutatie zie scenario 1 uit incident 0004244 */
+else { $actId = 5; } // uit incident 0004244 scenario 3, 5 en 6
+
+if(isset($actId)) { // Moeder (over)plaatsen in verblijf
+  $hisIdOoi = $historie_gateway->insert_tblHistorie($fldStalIdMdr, $fldDag, $actId);
+
+  $insert_tblBezet_ooi = $bezet_gateway->insert_tblBezet($hisIdOoi, $fldHokMdr); 
+
+} // Einde Moeder (over)plaatsen in verblijf
+
+} // Einde if($hokIdOoi_in <> $fldHokMdr)
+
+} // Einde if(isset($fldHokMdr))
+// Einde Moeder volgt lam naar hetzelfde verblijf als het lam.
+
+
+
+
+
+
+
+
+
+
+
                 // @TODO: is de spelling echt "GER", of had dit "GEB" moeten zijn? Nu ja, het is nu al in de hele applicatie "GER". Maak hier constanten voor, of een enum, of een hele klasse --BCB
                 $Melding = 'GER'; //geboren
                 include "maak_request.php";

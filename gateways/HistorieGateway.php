@@ -2114,6 +2114,15 @@ SQL;
         return $this->first_field($sql, $args);
     }
 
+    public function insert_tblHistorie($stalId, $day, $actId) {
+        $sql = <<<SQL
+    INSERT INTO tblHistorie set stalId = :stalId, datum = :day, actId = :actId
+SQL;
+        $args = [[':stalId', $stalId], [':day', $day], [':actId', $actId]];
+        $this->run_query($sql, $args);
+        return $this->db->insert_id;
+    }
+
     public function insert_tblHistorie_18($fldStalIdMdr, $fldDrachtDay) {
         $sql = <<<SQL
     INSERT INTO tblHistorie set stalId = :fldStalIdMdr, datum = :fldDrachtDay, actId = 18

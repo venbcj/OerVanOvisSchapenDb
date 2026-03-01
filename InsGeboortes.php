@@ -43,8 +43,7 @@ $versie = '09-04-2025'; /* De subquery mdr binnen query data aangepast. Uitgesch
 $versie = '10-07-2025'; /* De index van kzlOoi gewijzigd van schaapId naar stalId zodat het ubnId makkelijker kan worden opgehaald */
 $versie = '29-08-2025'; /* Controle of ubn kan worden gevonden bij gebruikers die geen module technisch hebben toegevoegd */
 
- Session::start();
- ?>   
+ Session::start(); ?>   
 <!DOCTYPE html>
 <html>
 <head>
@@ -78,7 +77,7 @@ if (isset($_POST['knpInsert_']) ) {
     
 
 $velden = "rd.Id readId,date_format(rd.datum,'%Y-%m-%d') sort, rd.datum, rd.levensnummer levnr_rd, s.levensnummer levnr_db, rd.rasId ras_rd, r.rasId ras_scan, rd.geslacht, rd.moeder, mdr.schaapId mdrId_db, mdr.stalId mdrStalId_db, 
-    date_format(mdr.datum,'%Y-%m-%d') eindmdr, rd.hokId hok_rd, hb.hokId hok_scan, rd.gewicht, rd.verloop, rd.leef_dgn, rd.momId mom_rd, DATE_ADD(rd.datum, interval rd.leef_dgn day) date_dood, date_format(DATE_ADD(rd.datum, interval rd.leef_dgn day),'%d-%m-%Y') datum_dood, rd.reden red_rd, red.redId red_db, dup.dubbelen";
+   mdr.datum dmeindmdr, date_format(mdr.datum,'%d-%m-%Y') einddmmdr, mdr.actie_af, rd.hokId hok_rd, hb.hokId hok_scan, rd.gewicht, rd.verloop, rd.leef_dgn, rd.momId mom_rd, DATE_ADD(rd.datum, interval rd.leef_dgn day) date_dood, date_format(DATE_ADD(rd.datum, interval rd.leef_dgn day),'%d-%m-%Y') datum_dood, rd.reden red_rd, red.redId red_db, dup.dubbelen";
 
 $tabel = $impagrident_gateway->getInsGeboortesFrom();
     $WHERE = $impagrident_gateway->getInsGeboortesWhere($lidId);
@@ -105,13 +104,12 @@ $data = $paginator->fetch_data($velden, "ORDER BY sort, rd.Id");
 <?php if($modtech == 1) { ?>
  <th>Gewicht<hr></th>
  <th>Moederdier<hr></th>
- <th>Verblijf<hr></th>
- <?php if($reader == 'Biocontrol') { ?> <th></th> <?php } 
-  else if($reader == 'Agrident')   { ?> <th>Worpverloop<hr></th> <?php } ?> 
-  <th>Uitval moment<hr></th>
-  <th>Uitval datum<br>(voor merken) <hr></th>
- <?php if($reader == 'Biocontrol') { ?> <th></th> <?php } 
-  else if($reader == 'Agrident')   { ?> <th>Reden uitval<hr></th> <?php } ?>
+ <th>Verblijf lam<hr></th>
+ <th width="84">Verblijf ooi<hr></th>
+ <th>Worpverloop<hr></th>
+ <th>Uitval moment<hr></th>
+ <th>Uitval datum<br>(voor merken) <hr></th>
+ <th>Reden uitval<hr></th>
  <th><hr></th>
  
 <?php } ?>
@@ -281,7 +279,9 @@ $makeday = date_create($datum); $day = date_format($makeday, 'Y-m-d');
 
     if($modtech == 1) {
         $ooi_rd = $array['moeder']; //echo $ar_mdr[$kzlMoeder].'<br>'; //if (strlen($ooi_rd)== 11) {$ooi_rd = '0'.$array['moeder'];}
-        $dmafvmdr = $array['eindmdr'];  /*if(!isset($dmafvmdr)) { $dmafvmdr = $jaarlater; }*/ //$einddatum = strtotime ("+".$dagen."days", $begindatum);
+        $dmafvmdr = $array['dmeindmdr'];  /*if(!isset($dmafvmdr)) { $dmafvmdr = $jaarlater; }*/ //$einddatum = strtotime ("+".$dagen."days", $begindatum);
+        $afvdmmdr = $array['einddmmdr'];
+        $actie_af_mdr = $array['actie_af'];
         $ooiSchId_db = $array['mdrId_db'];
         $ooiStId_db = $array['mdrStalId_db'];
         $hok_rd = $array['hok_rd'];
@@ -327,7 +327,7 @@ $uitvdag = $_POST["txtUitvaldm_$Id"]; $makeday = strtotime($_POST["txtUitvaldm_$
    $kzlSekse = $_POST["kzlSekse_$Id"];
 
 if($modtech == 1) { 
-  $kzlHok = $_POST["kzlHok_$Id"];
+  $kzlHokLam = $_POST["kzlHokLam_$Id"];
   $kzlMom = $_POST["kzlMom_$Id"];
   $gewicht = $_POST["txtKg_$Id"];
  if(!empty($_POST["kzlOoi_$Id"])) { $kzlOoi = $_POST["kzlOoi_$Id"]; 
@@ -373,40 +373,74 @@ if($dagen_verschil_worp == 0 || $dagen_verschil_worp > 183) { unset($werpdag); }
 // Als kzlOoi niet bestaat mag een gebruiker geen meerdere ubn's hebben want dan kan het ubn (van de gebruiker) o.b.v. het moederdier niet worden gevonden. In tblStal wordt nl. het ubn van de gebruiker opgeslagen.
     $aant_ubn = $ubn_gateway->countPerLid($lidId);
 }
+
+
+// Controle of moeder lam kan volgen naar het verblijf van het lam
+unset($hokIdOoi_in);
+unset($day_in);
+//unset();
+
+$zoek_hokId_Lambar = $hok_gateway->zoek_lambar($lidId);
+
+$zhl = mysqli_fetch_assoc($zoek_hokId_Lambar); $hokId_lambar = $zhl['hokId'];
+
+
+unset($ooi_af);
+$zoek_laatste_verblijf_moeder = $hok_gateway->zoek_laatste_verblijf_moeder($kzlOoi);
+
+$zlvm = mysqli_fetch_assoc($zoek_laatste_verblijf_moeder); 
+   
+   $hokIdOoi_in = $zlvm['hokId'];
+   $hoknrOoi_in = $zlvm['hoknr'];
+   $day_in = $zlvm['day_in'];
+   $actId_uit = $zlvm['actId_uit'];
+   $day_uit = $zlvm['day_uit'];
+   $ooi_af = $zlvm['af'];
+
+// Einde Controle of moeder lam kan volgen naar het verblijf van het lam
     
 unset($dmaanvmdr);
 unset($onjuist);
+unset($boodschap_verblijf_ooi);
 unset($color);
 
 /* Controle bij zowel levend als dood geboren */
 if (empty($datum))             { $color = 'red';  $onjuist =  'De datum ontbreekt.'; }
 else if ($modtech == 1 && isset($_POST['knpVervers_']) && empty($kzlOoi)) { $color = 'red';  $onjuist = 'Moederdier ontbreekt'; }
 else if ($modtech == 1 && isset($dmaanvmdr) && $day < $dmaanvmdr) { $color = 'red'; $onjuist = 'Geboortedatum ligt voor aanvoer moeder.'; }
-else if ($modtech == 1 && isset($dmafvmdr) && $day > $dmafvmdr)  { $color = 'red'; $onjuist = 'Geboortedatum ligt na afvoer moeder.'; }
+else if ($modtech == 1 && isset($dmafvmdr) && $day > $dmafvmdr)  { $color = 'red'; $onjuist = 'Geboortedatum ligt na afvoer moeder.'; } /* Dit is ook scenario 2 uit incident 0004244 excl. actie uitscharen */
 else if ($modtech == 1 && isset($ar_mdr[$kzlMoeder])) { $color = 'red'; $onjuist = $ar_mdr[$kzlMoeder]; }
 else if($modtech == 1 && isset($werpdag))             { $color = 'red'; $onjuist = 'Werpdatum ooi is '.$werpdag; }
 else if($modtech == 0 && $aant_ubn > 1)             { $color = 'red'; $onjuist = 'Ubn kan niet worden bepaald.'; } /*Gebruiker heeft meerdere ubn's en geen module Technisch. Alleen bij module technisch bestaat het moederdier en moederdier bepaald het eigen ubn (in tblStal) dat bij het lam hoort. Zonder moederdier en meerdere ubn's kan het juiste ubn dus niet worden bepaald */
 /* Einde Controle bij zowel levend als dood geboren */
 
 If (!empty($levnr_rd)) { /* Controle bij levend geborenen */
-if($levnr_db > 0)                   { $color = 'red';  $onjuist = 'Dit levensnummer bestaat al.'; }
-else if (isset($levnr_dupl) )       { $color = 'blue'; $onjuist = 'Dubbel in de reader.'; }
-else if (strlen($levnr_rd) <> 12)   { $color = 'red';  $onjuist = 'Dit levensnummer is geen 12 karakters lang.'; }
-else if (Validate::numeriek($levnr_rd) == 1)  { $color = 'red';  $onjuist =  "Levensnummer bevat een letter."; } 
-else if (strlen($array['levnr_rd']) == 11 && strlen($levnr_rd) == 12) { $onjuist =  "Toevoeging voorloopnul levensnummer !"; }
-else if($modtech == 1 && empty($kzlHok))              { $color = 'red'; $onjuist = 'Het verblijf is niet ingevuld'; }
+if($levnr_db > 0)                  { $color = 'red';  $onjuist = 'Dit levensnummer bestaat al.'; }
+else if(isset($levnr_dupl) )       { $color = 'blue'; $onjuist = 'Dubbel in de reader.'; }
+else if(strlen($levnr_rd) <> 12)   { $color = 'red';  $onjuist = 'Dit levensnummer is geen 12 karakters lang.'; }
+else if(Validate::numeriek($levnr_rd) == 1)  { $color = 'red';  $onjuist =  "Levensnummer bevat een letter."; } 
+else if(strlen($array['levnr_rd']) == 11 && strlen($levnr_rd) == 12) { $onjuist =  "Toevoeging voorloopnul levensnummer !"; }
+else if($modtech == 1 && empty($kzlHokLam))  { $color = 'red'; $onjuist = 'Het verblijf is niet ingevuld'; }
+
+if ($kzlHokLam == $hokIdOoi_in) { $boodschap_verblijf_ooi = 'Ooi zit al in '.$hoknrOoi_in.'.'; }
+else if ($kzlHokLam == $hokId_lambar) { $boodschap_verblijf_ooi = ''; }
+/* else if($modtech == 1 && !empty($hokIdOoi_in) && $hokIdOoi_in <> $kzlHokLam && $day_in > $day) /* twk_mutatie scenario 1 uit incident 0004244 */
+else if ($modtech == 1 && isset($dmafvmdr) && $day > $dmafvmdr)  { $boodschap_verblijf_ooi = 'Ooi is op '.$afvdmmdr.' '.strtolower($actie_af_mdr).'.'; } /* Dit is ook scenario 2 uit incident 0004244 excl. actie uitscharen */
+else if ($modtech == 1 && $actId_uit == 10 && $day_uit <= $day)  { $boodschap_verblijf_ooi = 'Ooi is uitgeschaard.'; } /* Dit is actie uitscharen binnen scenario 2b uit incident 0004244 */
 
 }
 
 else If (!isset($levnr_rd) || empty($levnr_rd) || $levnr_rd == '') { /* Controle bij dood geborenen */
 if ($kzlMom == 3 && $uitvday <= $day) { $color = 'red'; $onjuist = 'Dit moment van uitval ligt voor de geboortedatum.'; }
+
+$boodschap_verblijf_ooi = '';
 }
 
  
-     if    ( isset($onjuist)) { $oke = 0; } else { $oke = 1; }  // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
+    if   ( isset($onjuist)) { $oke = 0; } else { $oke = 1; }  // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
 // EINDE Controleren of ingelezen waardes worden gevonden . 
 
-     if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1) /* Als onvolledig is gewijzigd naar volledig juist */ {$cbKies = 1; $cbDel = $_POST["chbDel_$Id"]; }
+    if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1) /* Als onvolledig is gewijzigd naar volledig juist */ {$cbKies = 1; $cbDel = $_POST["chbDel_$Id"]; }
 else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDel = $_POST["chbDel_$Id"]; } 
    else { $cbKies = $oke; } // $cbKies is tbv het vasthouden van de keuze inlezen of niet ?>
 
@@ -418,20 +452,20 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 <tr style = "font-size:14px;">
  <td align = center> <?php //echo $Id; ?>
 
-    <input type = hidden size = 1 name = <?php echo "chbkies_$Id"; ?> value = 0 > <!-- hiddden -->
-    <input type = checkbox           name = <?php echo "chbkies_$Id"; ?> value = 1 
-      <?php echo $cbKies == 1 ? 'checked' : ''; /* Als voorwaarde goed zijn of checkbox is aangevinkt */    
+   <input type = hidden size = 1 name = <?php echo "chbkies_$Id"; ?> value = 0 > <!-- hiddden -->
+   <input type = checkbox       name = <?php echo "chbkies_$Id"; ?> value = 1 
+     <?php echo $cbKies == 1 ? 'checked' : ''; /* Als voorwaarde goed zijn of checkbox is aangevinkt */    
 
-      if ($oke == 0) /*Als voorwaarde niet klopt */ { ?> disabled <?php } else { ?> class="checkall" <?php } /* class="checkall" zorgt dat alles kan worden uit- of aangevinkt*/ ?> >
-    <input type = hidden size = 1 name = <?php echo "laatsteOke_$Id"; ?> value = <?php echo $oke; ?> > <!-- hiddden -->
+     if ($oke == 0) /*Als voorwaarde niet klopt */ { ?> disabled <?php } else { ?> class="checkall" <?php } /* class="checkall" zorgt dat alles kan worden uit- of aangevinkt*/ ?> >
+   <input type = hidden size = 1 name = <?php echo "laatsteOke_$Id"; ?> value = <?php echo $oke; ?> > <!-- hiddden -->
  </td>
  <td align = center>
-    <input type = hidden size = 1 name = <?php echo "chbDel_$Id"; ?> value = 0 >
-    <input type = checkbox class="delete" name = <?php echo "chbDel_$Id"; ?> value = 1 <?php if(isset($cbDel)) { echo $cbDel == 1 ? 'checked' : ''; } ?> >
+   <input type = hidden size = 1 name = <?php echo "chbDel_$Id"; ?> value = 0 >
+   <input type = checkbox class="delete" name = <?php echo "chbDel_$Id"; ?> value = 1 <?php if(isset($cbDel)) { echo $cbDel == 1 ? 'checked' : ''; } ?> >
  </td>
  <td>
 <?php if (isset($_POST['knpVervers_'])) { $datum = $_POST["txtDatum_$Id"]; } ?>
-    <input type = "text" size = 7 style = "font-size : 11px;" name = <?php echo "txtDatum_$Id"; ?> value = <?php echo $datum; ?> >
+   <input type = "text" size = 7 style = "font-size : 11px;" name = <?php echo "txtDatum_$Id"; ?> value = <?php echo $datum; ?> >
  </td>
 <?php if ($levnr_db == 0 && strlen($levnr_rd) == 12 && Validate::numeriek($levnr_rd) == 0) { ?> 
  <td>
@@ -441,12 +475,12 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 <!-- KZLRAS -->
  <select style="width:65;" <?php echo " name=\"kzlRas_$Id\" "; ?> value = "" style = "font-size:12px;">
   <option></option>
-<?php    $count = count($rasId);    
+<?php $count = count($rasId);    
 for ($i = 0; $i < $count; $i++){
 
-    $opties = array($rasId[$i]=>$rasnm[$i]);
-            foreach($opties as $key => $waarde)
-            {
+   $opties = array($rasId[$i]=>$rasnm[$i]);
+         foreach($opties as $key => $waarde)
+         {
   if ((!isset($_POST['knpVervers_']) && $ras_rd == $rasId[$i]) || (isset($_POST["kzlRas_$Id"]) && $_POST["kzlRas_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
@@ -458,8 +492,8 @@ for ($i = 0; $i < $count; $i++){
  ?> </select>
 <?php if(!isset($_POST['knpVervers_']) && !isset($_POST['knpInsert_']) && $ras_rd<> NULL && empty($ras_db) && empty($_POST["kzlRas_$Id"]) && $levnr_rd > 0 ) {
     
-    if($reader == 'Agrident') { $ras_rd = ''; } echo "$ras_rd"; ?> <b style = "color : red;"> ! </b>  <?php } ?>
-     <!-- EINDE KZLRAS -->
+   if($reader == 'Agrident') { $ras_rd = ''; } echo "$ras_rd"; ?> <b style = "color : red;"> ! </b>  <?php } ?>
+    <!-- EINDE KZLRAS -->
  </td>
  <td>
 <!-- KZLGESLACHT --> 
@@ -479,7 +513,7 @@ foreach ( $opties as $key => $waarde)
     ?> </select> <!-- EINDE KZLGESLACHT -->
  </td>
 <?php if($modtech == 1) { // Velden die worden getoond bij module technisch 
-if(isset($_POST["knpVervers_"])) {    $gewicht = $_POST["txtKg_$Id"];    } ?>    
+if(isset($_POST["knpVervers_"])) {  $gewicht = $_POST["txtKg_$Id"];  } ?>    
  <td align = center> <input type = "text" name = <?php echo "txtKg_$Id"; ?> style = "font-size : 11px;" size = 1 value = <?php echo $gewicht;?> ></td>
  <td style = "font-size : 11px;">
 <!-- KZLMOEDER -->
@@ -505,17 +539,17 @@ if(!isset($_POST['knpVervers_']) && !isset($_POST['knpInsert_']) && $ooi_rd <> N
     <!-- EINDE KZLMOEDER --> </td>
 
  <td style = "font-size : 9px;">
- <!-- KZLHOKNR --> 
- <select style="width:84;" <?php echo " name=\"kzlHok_$Id\" "; ?> value = "" style = "font-size:12px;">
+ <!-- KZLHOKNR LAM --> 
+ <select style="width:84;" <?php echo " name=\"kzlHokLam_$Id\" "; ?> value = "" style = "font-size:12px;">
   <option></option>
 
-<?php    $count = count($hoknum);
+<?php $count = count($hoknum);
 for ($i = 0; $i < $count; $i++){
 
     $opties = array($hoknId[$i]=>$hoknum[$i]);
             foreach($opties as $key => $waarde)
             {
-  if ((!isset($_POST['knpVervers_']) && $hok_rd == $hoknId[$i]) || (isset($_POST["kzlHok_$Id"]) && $_POST["kzlHok_$Id"] == $key)){
+  if ((!isset($_POST['knpVervers_']) && $hok_rd == $hoknId[$i]) || (isset($_POST["kzlHokLam_$Id"]) && $_POST["kzlHokLam_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
@@ -524,11 +558,38 @@ for ($i = 0; $i < $count; $i++){
 }
 ?>    </select>
 <?php
-if(!isset($_POST['knpVervers_']) && !isset($_POST['knpInsert_']) && $hok_rd <> NULL && empty($hok_db) && empty($_POST["kzlHok_$Id"]) && $levnr_rd > 0 ) {
+if(!isset($_POST['knpVervers_']) && !isset($_POST['knpInsert_']) && $hok_rd <> NULL && empty($hok_db) && empty($_POST["kzlHokLam_$Id"]) && $levnr_rd > 0 ) {
 
 if($reader == 'Agrident') { $hok_rd = ''; } echo "$hok_rd"; ?> <b style = "color : red;"> ! </b>  <?php } ?>
 
-    </td> <!-- EINDE KZLHOKNR -->
+    </td> <!-- EINDE KZLHOKNR LAM -->
+ <td align = "center" style = "color : blue ; font-size : 11px;">
+
+<?php if (isset($boodschap_verblijf_ooi)) { echo $boodschap_verblijf_ooi; } else { ?>
+ <!-- KZLHOKNR MOEDER --> 
+ <select style="width:84;" <?php echo " name=\"kzlHokMdr_$Id\" "; ?> value = "" style = "font-size:12px;">
+  <option></option>
+
+<?php $count = count($hoknum);
+for ($i = 0; $i < $count; $i++){
+
+   $opties = array($hoknId[$i]=>$hoknum[$i]);
+         foreach($opties as $key => $waarde)
+         {
+  if ((!isset($_POST['knpVervers_']) && $hok_rd == $hokRaak[$i]) || (isset($_POST["kzlHokMdr_$Id"]) && $_POST["kzlHokMdr_$Id"] == $key)){
+    echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
+  } else { 
+    echo '<option value="' . $key . '" >' . $waarde . '</option>';  
+  }      
+         }
+}
+?> </select>
+<?php
+if(!isset($_POST['knpVervers_']) && !isset($_POST['knpInsert_']) && $hok_rd <> NULL && empty($hok_db) && empty($_POST["kzlHokMdr_$Id"]) && $levnr_rd > 0 ) {
+
+if($reader == 'Agrident') { $hok_rd = ''; } echo "$hok_rd"; ?> <b style = "color : red;"> ! </b>  <?php } ?>
+<?php } ?>
+   </td> <!-- EINDE KZLHOKNR MOEDER -->
 
  <td style = "font-size : 11px;"> <?php echo $verloop; ?>
  </td>
@@ -544,15 +605,15 @@ for ($i = 0; $i < $count; $i++){
 
   $opties = array($momId[$i]=>$momnt[$i]);
 
-            foreach($opties as $key => $waarde)
-            {
+         foreach($opties as $key => $waarde)
+         {
 
   if ((!isset($_POST['knpVervers_']) && $mom_rd == $momId[$i]) || (isset($_POST["kzlMom_$Id"]) && $_POST["kzlMom_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
   }        
-            }
+         }
 }
  ?> </select> <!-- EINDE KZLMOMENT UITVAL -->    
  </td>
@@ -566,18 +627,18 @@ if($reader == 'Agrident' && $mom_rd != 2) { /*Bij onvolledig dood geboren niet t
 <!-- KZLREDEN UITVAL bij Agrident-->
 <select style="width:180;" <?php echo " name=\"kzlRed_$Id\" "; ?> value = "" style = "font-size:12px;">
   <option></option>
-<?php    $count = count($redId);
+<?php $count = count($redId);
 for ($i = 0; $i < $count; $i++){
 
-    $opties = array($redId[$i]=>$reden[$i]);
-            foreach($opties as $key => $waarde)
-            {
+   $opties = array($redId[$i]=>$reden[$i]);
+         foreach($opties as $key => $waarde)
+         {
   if ((!isset($_POST['knpVervers_']) && $red_rd == $redId[$i]) || (isset($_POST["kzlRed_$Id"]) && $_POST["kzlRed_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
   }        
-            }
+         }
 }
  ?> </select> 
 <?php 
@@ -593,7 +654,7 @@ if(!isset($_POST['knpVervers_']) && !isset($_POST['knpInsert_']) && $red_rd <> N
 
 
 
-         unset($dmafvmdr); ?>
+       unset($dmafvmdr); ?>
 
 <td style = "color : <?php echo $color; ?> ; font-size : 11px;" >  <?php 
 
@@ -627,3 +688,383 @@ include "menu1.php"; } ?>
 ?>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
