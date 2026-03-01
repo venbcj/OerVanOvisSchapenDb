@@ -48,6 +48,7 @@ foreach($array as $recId => $id) {
   unset($fldSekse);
   unset($fldKg);
   unset($fldStalIdMdr);
+  unset($fldHokMdr);
   unset($fldMom);
   unset($fldUitvdag);
   unset($fldRed);
@@ -79,7 +80,9 @@ foreach($array as $recId => $id) {
 
   if ($key == 'kzlOoi' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldStalIdMdr = $value; }
 
-  if ($key == 'kzlHok' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldHok = $value; }
+  if ($key == 'kzlHokLam' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldHokLam = $value; }
+
+  if ($key == 'kzlHokMdr' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldHokMdr = $value; }
 
   
   if ($key == 'kzlMom' && !empty($value)) { /*echo $key.'='.$value.' ';*/ $fldMom = $value; }
@@ -91,6 +94,7 @@ foreach($array as $recId => $id) {
 
 
                             } // Einde Alle velden vullen in variabelen
+
 
 // (extra) controle of readerregel reeds is verwerkt. Voor als de pagina 2x wordt verstuurd bij fouten op de pagina
 unset($verwerkt);
@@ -340,7 +344,7 @@ unset($rel_best);
 
 //if(!isset($dmafv_mdr)) { $dmafv_mdr = $fldDag; }
 if (
- (isset($fldDag) && isset($levnr_rd) && isset($fldStalIdMdr) && $fldDag >= $dmaanv_1_mdr && (!isset($dmafv_mdr) || $fldDag <= $dmafv_mdr) && isset($fldHok)) // Veplichte velden bij module Technisch. Moeder is verplicht bij module technisch
+ (isset($fldDag) && isset($levnr_rd) && isset($fldStalIdMdr) && $fldDag >= $dmaanv_1_mdr && (!isset($dmafv_mdr) || $fldDag <= $dmafv_mdr) && isset($fldHokLam)) // Veplichte velden bij module Technisch. Moeder is verplicht bij module technisch
 || ($modtech == 0 && isset($fldDag) && isset($levnr_rd) ) // Veplichte velden zonder module Technisch
 ) { $scenario = 'Geboren_lam'; }
 
@@ -349,7 +353,6 @@ else if(!isset($levnr_rd) && isset($fldDag) && ((isset($fldStalIdMdr) && $modtec
     $rel_best = $rendac_Id;
     $levnr_rd = $ubn;
   }
-
 
 if(isset($scenario)) {
 // SCHAAP invoeren
@@ -390,9 +393,9 @@ WHERE schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
     while ( $zst = mysqli_fetch_assoc ($zoek_stalId)) { $stalId = $zst['stalId']; }
       
 
-  $insert_tblHistorie = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$fldDag)."', kg = " . db_null_input($fldKg) . ", actId = 1 "; 
+  $insert_tblHistorie_geb = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$fldDag)."', kg = " . db_null_input($fldKg) . ", actId = 1 "; 
 
-/*echo "$insert_tblHistorie".'<br>';   ##*/mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
+/*echo "$insert_tblHistorie_geb".'<br>';   ##*/mysqli_query($db,$insert_tblHistorie_geb) or die (mysqli_error($db));
 
 $zoek_hisId = mysqli_query($db,"
 SELECT hisId
@@ -411,11 +414,83 @@ $insert_tblHistorie_14 = "INSERT INTO tblHistorie set stalId = '".mysqli_real_es
 // Einde Insert tblHistorie
 
 if($modtech == 1 && !isset($rel_best)) {
-// Insert tblBezet 
-  $insert_tblBezet = "INSERT INTO tblBezet set hisId = ".mysqli_real_escape_string($db,$hisId).", hokId = ".mysqli_real_escape_string($db,$fldHok)." " ;
+
+// Lam in verblijf plaatsen
+  $insert_tblBezet = "INSERT INTO tblBezet set hisId = '".mysqli_real_escape_string($db,$hisId)."', hokId = '".mysqli_real_escape_string($db,$fldHokLam)."' " ;
 /*echo "$insert_tblBezet".'<br>'; ##*/mysqli_query($db,$insert_tblBezet) or die (mysqli_error($db));  
-// Einde Insert tblBezet  
-}
+// Einde Lam in verblijf plaatsen
+
+// Moeder volgt lam naar hetzelfde verblijf als het lam mits het lam niet naar Lambar gaat. Er wordt eerst gekeken in welk verblijf de moeder voor het laatst is geplaatst. Mogelijk zit de ooi al is het verblijf van het lam.
+unset($hokIdOoi_in);
+
+$zoek_hokId_Lambar = mysqli_query($db,"
+SELECT hokId
+FROM tblHok
+WHERE hoknr = 'lambar' and lidId = '".mysqli_real_escape_string($db,$lidId)."'
+") or die (mysqli_error($db));
+
+$zhl = mysqli_fetch_assoc($zoek_hokId_Lambar); $hokId_lambar = $zhl['hokId'];
+
+
+if(isset($fldHokMdr)) { // kijk of moeder nu in een verblijf zit en zoek naar een terugwerkende kracht mutatie
+$zoek_laatste_verblijf_moeder = mysqli_query($db,"
+SELECT b.hokId, b.hisId, h.datum day_in, h.actId actId_in, uit.hist, ht.actId actId_uit, at.af, ht.datum day_uit
+FROM (
+  SELECT max(bezId) bezId
+  FROM tblBezet b
+   join tblHistorie h on (h.hisId = b.hisId)
+  WHERE h.stalId = '".mysqli_real_escape_string($db,$fldStalIdMdr)."'
+ ) b_max
+ join tblBezet b on (b_max.bezId = b.bezId)
+ join tblHistorie h on (h.hisId = b.hisId)
+ left join 
+ (
+  SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
+  FROM tblBezet b
+   join tblHistorie h1 on (b.hisId = h1.hisId)
+   join tblActie a1 on (a1.actId = h1.actId)
+   join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+   join tblActie a2 on (a2.actId = h2.actId)
+   join tblStal st on (h1.stalId = st.stalId)
+  WHERE st.stalId = '".mysqli_real_escape_string($db,$fldStalIdMdr)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+  GROUP BY b.bezId, st.schaapId, h1.hisId
+ ) uit on (b.hisId = uit.hisv)
+ left join tblHistorie ht on (ht.hisId = uit.hist)
+ left join tblActie at on (at.actId = ht.actId)
+") or die (mysqli_error($db));
+
+$zlvm = mysqli_fetch_assoc($zoek_laatste_verblijf_moeder); $hokIdOoi_in = $zlvm['hokId']; $day_in = $zlvm['day_in']; $actId_in = $zlvm['actId_in']; $actId_uit = $zlvm['actId_uit']; $day_uit = $zlvm['day_uit']; $ooi_af = $zlvm['af'];
+
+if($hokIdOoi_in <> $fldHokMdr) { // Bij meerdere lammeren hoeft moeder maar 1x te worden overgplaatst. Na eerste lam is $hokIdOoi_in == $fldHokMdr
+
+unset($actId);
+if( (empty($hokIdOoi_in) /* Betreft scenario 7 uit incident 0004244 */) || ($ooi_af == 0 && !empty($day_uit) && $day_uit <= $fldDag) /*scenario 4 uit incident 0004244 */)     { $actId = 6; }         
+else if($day_in > $fldDag)  { $actId = $actId_in; } /* Betreft terugwerkende kracht mutatie zie scenario 1 uit incident 0004244 */
+else { $actId = 5; } // uit incident 0004244 scenario 3, 5 en 6
+
+if(isset($actId)) { // Moeder (over)plaatsen in verblijf
+  $insert_tblHistorie_overpl_mdr = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$fldStalIdMdr)."', datum = '".mysqli_real_escape_string($db,$fldDag)."', actId = '".mysqli_real_escape_string($db,$actId)."' " ;
+/*echo "$insert_tblHistorie_overpl_mdr".'<br>'; ##*/mysqli_query($db,$insert_tblHistorie_overpl_mdr) or die (mysqli_error($db)); 
+
+$zoek_hisId_ooi = mysqli_query($db,"
+SELECT max(hisId) hisId
+FROM tblHistorie
+WHERE stalId = '".mysqli_real_escape_string($db,$fldStalIdMdr)."'
+") or die (mysqli_error($db));
+
+$zho = mysqli_fetch_assoc($zoek_hisId_ooi); $hisIdOoi = $zho['hisId'];
+
+  $insert_tblBezet_ooi = "INSERT INTO tblBezet set hisId = '".mysqli_real_escape_string($db,$hisIdOoi)."', hokId = '".mysqli_real_escape_string($db,$fldHokMdr)."' " ;
+/*echo "$insert_tblBezet_ooi".'<br>'; ##*/mysqli_query($db,$insert_tblBezet_ooi) or die (mysqli_error($db)); 
+
+} // Einde Moeder (over)plaatsen in verblijf
+
+} // Einde if($hokIdOoi_in <> $fldHokMdr)
+
+} // Einde if(isset($fldHokMdr))
+// Einde Moeder volgt lam naar hetzelfde verblijf als het lam.
+  
+} // Einde if($modtech == 1 && !isset($rel_best))
 
 if ($modmeld == 1 && !isset($rel_best)) { // Insert tblMeldingen 
 $Melding = 'GER'; //geboren

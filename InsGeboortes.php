@@ -80,7 +80,7 @@ function numeriek($subject) {
 
 
 $velden = "rd.Id readId,date_format(rd.datum,'%Y-%m-%d') sort, rd.datum, rd.levensnummer levnr_rd, s.levensnummer levnr_db, rd.rasId ras_rd, r.rasId ras_scan, rd.geslacht, rd.moeder, mdr.schaapId mdrId_db, mdr.stalId mdrStalId_db, 
-	date_format(mdr.datum,'%Y-%m-%d') eindmdr, rd.hokId hok_rd, hb.hokId hok_scan, rd.gewicht, rd.verloop, rd.leef_dgn, rd.momId mom_rd, DATE_ADD(rd.datum, interval rd.leef_dgn day) date_dood, date_format(DATE_ADD(rd.datum, interval rd.leef_dgn day),'%d-%m-%Y') datum_dood, rd.reden red_rd, red.redId red_db, dup.dubbelen";
+	mdr.datum dmeindmdr, date_format(mdr.datum,'%d-%m-%Y') einddmmdr, mdr.actie_af, rd.hokId hok_rd, hb.hokId hok_scan, rd.gewicht, rd.verloop, rd.leef_dgn, rd.momId mom_rd, DATE_ADD(rd.datum, interval rd.leef_dgn day) date_dood, date_format(DATE_ADD(rd.datum, interval rd.leef_dgn day),'%d-%m-%Y') datum_dood, rd.reden red_rd, red.redId red_db, dup.dubbelen";
 
 $tabel = "
 impAgrident rd
@@ -88,18 +88,18 @@ impAgrident rd
  SELECT levensnummer 
  FROM tblSchaap s
   join tblStal st on (st.schaapId = s.schaapId)
-   join tblUbn u on (u.ubnId = st.ubnId)
+  join tblUbn u on (u.ubnId = st.ubnId)
  WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best)
  ) s on (rd.levensnummer = s.levensnummer)
  left join (
-    SELECT st.stalId, s.levensnummer, af.datum
+    SELECT st.stalId, s.schaapId, s.levensnummer, af.datum, af.actie_af
     FROM tblSchaap s
      join (
       SELECT max(stalId) stalId, schaapId
       FROM tblStal st
        join tblUbn u on (st.ubnId = u.ubnId)
       WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-      GROUP BY schaapId
+      GROUP BY st.schaapId
       ) st on (s.schaapId = st.schaapId)
      join (
         SELECT schaapId
@@ -108,7 +108,7 @@ impAgrident rd
         WHERE h.actId = 3 and h.skip = 0
      ) prnt on (prnt.schaapId = s.schaapId)
      left join (
-       SELECT st.stalId, datum, hisId
+       SELECT st.stalId, datum, hisId, a.actie actie_af
        FROM tblStal st
         join tblUbn u on (st.ubnId = u.ubnId)
         join tblHistorie h on (st.stalId = h.stalId)
@@ -116,7 +116,7 @@ impAgrident rd
        WHERE a.af = 1 and h.actId != 10 and h.skip = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
      ) af on (af.stalId = st.stalId)
     WHERE (isnull(af.datum) or af.datum > date_add(curdate(), interval -2 month) )
-    GROUP BY s.schaapId, s.levensnummer, af.datum
+    GROUP BY st.stalId, s.levensnummer, af.datum
  ) mdr on (rd.moeder = mdr.levensnummer)
  left join (
     SELECT ru.rasId
@@ -176,13 +176,12 @@ echo /*'$page_numbers : '.*/$page_numbers/*.'<br> '.$record_numbers.'<br>'*/;
 <?php if($modtech == 1) { ?>
  <th>Gewicht<hr></th>
  <th>Moederdier<hr></th>
- <th>Verblijf<hr></th>
- <?php if($reader == 'Biocontrol') { ?> <th></th> <?php } 
-  else if($reader == 'Agrident')   { ?> <th>Worpverloop<hr></th> <?php } ?> 
-  <th>Uitval moment<hr></th>
-  <th>Uitval datum<br>(voor merken) <hr></th>
- <?php if($reader == 'Biocontrol') { ?> <th></th> <?php } 
-  else if($reader == 'Agrident')   { ?> <th>Reden uitval<hr></th> <?php } ?>
+ <th>Verblijf lam<hr></th>
+ <th width="84">Verblijf ooi<hr></th>
+ <th>Worpverloop<hr></th>
+ <th>Uitval moment<hr></th>
+ <th>Uitval datum<br>(voor merken) <hr></th>
+ <th>Reden uitval<hr></th>
  <th><hr></th>
  
 <?php } ?>
@@ -413,8 +412,10 @@ $makeday = date_create($datum); $day = date_format($makeday, 'Y-m-d');
 
 	if($modtech == 1) {
 		$ooi_rd = $array['moeder']; //echo $ar_mdr[$kzlMoeder].'<br>'; //if (strlen($ooi_rd)== 11) {$ooi_rd = '0'.$array['moeder'];}
-		$dmafvmdr = $array['eindmdr'];  /*if(!isset($dmafvmdr)) { $dmafvmdr = $jaarlater; }*/ //$einddatum = strtotime ("+".$dagen."days", $begindatum);
-      $ooiSchId_db = $array['mdrStalId_db'];
+		$dmafvmdr = $array['dmeindmdr'];  /*if(!isset($dmafvmdr)) { $dmafvmdr = $jaarlater; }*/ //$einddatum = strtotime ("+".$dagen."days", $begindatum);
+      $afvdmmdr = $array['einddmmdr'];  /*if(!isset($dmafvmdr)) { $dmafvmdr = $jaarlater; }*/ //$einddatum = strtotime ("+".$dagen."days", $begindatum);
+      $actie_af_mdr = $array['actie_af'];  /*if(!isset($dmafvmdr)) { $dmafvmdr = $jaarlater; }*/ //$einddatum = strtotime ("+".$dagen."days", $begindatum);
+      $ooiSchId_db = $array['mdrId_db'];
 		$ooiStId_db = $array['mdrStalId_db'];
 		$hok_rd = $array['hok_rd'];
 		$hok_db = $array['hok_scan'];
@@ -446,7 +447,7 @@ if($modtech == 1) {
 $kzlOoi = $ooiStId_db;
 $mdrId = $ooiSchId_db;
 $kzlMoeder = $ooi_rd;
-$kzlHok = $hok_db;
+$kzlHokLam = $hok_db;
     if($reader == 'Biocontrol' && !empty($var1)) { $mom_rd = 3; } // Bij $mom_rd == 3 wordt keuzelijst moment gevuld met 'uitval voor merken' en bij $kzlMom == 3 wordt het veld uitvaldatum getoond
 $kzlMom = $mom_rd; 
 	} 
@@ -459,15 +460,16 @@ $uitvdag = $_POST["txtUitvaldm_$Id"]; $makeday = strtotime($_POST["txtUitvaldm_$
    $kzlSekse = $_POST["kzlSekse_$Id"];
 
 if($modtech == 1) { 
-  $kzlHok = $_POST["kzlHok_$Id"];
+  $kzlHokLam = $_POST["kzlHokLam_$Id"];
   $kzlMom = $_POST["kzlMom_$Id"];
   $gewicht = $_POST["txtKg_$Id"];
  if(!empty($_POST["kzlOoi_$Id"])) { $kzlOoi = $_POST["kzlOoi_$Id"]; 
 
 $zoek_levensnummer_ooi = mysqli_query($db,"
 SELECT levensnummer
-FROM tblSchaap 
-WHERE schaapId = '".mysqli_real_escape_string($db,$kzlOoi)."'
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId) 
+WHERE st.stalId = '".mysqli_real_escape_string($db,$kzlOoi)."'
 ") or die (mysqli_error($db)); 
       while($zlo = mysqli_fetch_array($zoek_levensnummer_ooi))
       { $kzlMoeder = $zlo['levensnummer']; }
@@ -498,7 +500,7 @@ FROM tblSchaap s
  join (
 	SELECT max(st.stalId) stalId, st.schaapId
 	FROM tblStal st
-    join tblUbn u on (u.ubnId = st.ubnId)
+    join tblUbn u on (st.ubnId = u.ubnId)
 	WHERE st.stalId != '".mysqli_real_escape_string($db,$terugstalId)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$mdrId)."'
 	GROUP BY st.schaapId
  ) mst on (mst.schaapId = s.schaapId)
@@ -522,7 +524,7 @@ FROM tblSchaap s
 	SELECT max(st.stalId) stalId, st.schaapId
 	FROM tblStal st
     join tblUbn u on (u.ubnId = st.ubnId)
-	WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$kzlOoi)."'
+	WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.stalId = '".mysqli_real_escape_string($db,$kzlOoi)."'
 	GROUP BY st.schaapId
  ) st on (st.schaapId = s.schaapId)
  join tblHistorie h on (h.stalId = st.stalId)
@@ -605,33 +607,89 @@ WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
   while ( $zau = mysqli_fetch_assoc($zoek_aantal_ubn)) { $aant_ubn = $zau['aant_ubn']; }
 
 }
-    
+
+// Controle of moeder lam kan volgen naar het verblijf van het lam
+unset($hokIdOoi_in);
+unset($day_in);
+//unset();
+
+$zoek_hokId_Lambar = mysqli_query($db,"
+SELECT hokId
+FROM tblHok
+WHERE hoknr = 'lambar' and lidId = '".mysqli_real_escape_string($db,$lidId)."'
+") or die (mysqli_error($db));
+
+$zhl = mysqli_fetch_assoc($zoek_hokId_Lambar); $hokId_lambar = $zhl['hokId'];
+
+
+unset($ooi_af);
+$zoek_laatste_verblijf_moeder = mysqli_query($db,"
+SELECT b.hokId, ho.hoknr, b.hisId, h.datum day_in, uit.hist, ht.actId, at.af, ht.datum day_uit
+FROM (
+  SELECT max(bezId) bezId
+  FROM tblBezet b
+   join tblHistorie h on (h.hisId = b.hisId)
+  WHERE h.stalId = '".mysqli_real_escape_string($db,$kzlOoi)."'
+ ) b_max
+ join tblBezet b on (b_max.bezId = b.bezId)
+ join tblHok ho on (b.hokId = ho.hokId)
+ join tblHistorie h on (h.hisId = b.hisId)
+ left join 
+ (
+  SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
+  FROM tblBezet b
+   join tblHistorie h1 on (b.hisId = h1.hisId)
+   join tblActie a1 on (a1.actId = h1.actId)
+   join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+   join tblActie a2 on (a2.actId = h2.actId)
+   join tblStal st on (h1.stalId = st.stalId)
+  WHERE st.stalId = '".mysqli_real_escape_string($db,$kzlOoi)."' and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
+  GROUP BY b.bezId, st.schaapId, h1.hisId
+ ) uit on (b.hisId = uit.hisv)
+ left join tblHistorie ht on (ht.hisId = uit.hist)
+ left join tblActie at on (at.actId = ht.actId)
+") or die (mysqli_error($db));
+
+$zlvm = mysqli_fetch_assoc($zoek_laatste_verblijf_moeder); $hokIdOoi_in = $zlvm['hokId']; $hoknrOoi_in = $zlvm['hoknr']; $day_in = $zlvm['day_in']; $actId_uit = $zlvm['actId']; $day_uit = $zlvm['day_uit']; $ooi_af = $zlvm['af'];
+
+// Einde Controle of moeder lam kan volgen naar het verblijf van het lam
+
+
 unset($dmaanvmdr);
 unset($onjuist);
+unset($boodschap_verblijf_ooi);
 unset($color);
 
 /* Controle bij zowel levend als dood geboren */
 if (empty($datum))             { $color = 'red';  $onjuist =  'De datum ontbreekt.'; }
 else if ($modtech == 1 && isset($_POST['knpVervers_']) && empty($kzlOoi)) { $color = 'red';  $onjuist = 'Moederdier ontbreekt'; }
 else if ($modtech == 1 && isset($dmaanvmdr) && $day < $dmaanvmdr) { $color = 'red'; $onjuist = 'Geboortedatum ligt voor aanvoer moeder.'; }
-else if ($modtech == 1 && isset($dmafvmdr) && $day > $dmafvmdr)  { $color = 'red'; $onjuist = 'Geboortedatum ligt na afvoer moeder.'; }
+else if ($modtech == 1 && isset($dmafvmdr) && $day > $dmafvmdr)  { $color = 'red'; $onjuist = 'Geboortedatum ligt na afvoer moeder.'; } /* Dit is ook scenario 2 uit incident 0004244 excl. actie uitscharen */
 else if ($modtech == 1 && isset($ar_mdr[$kzlMoeder])) { $color = 'red'; $onjuist = $ar_mdr[$kzlMoeder]; }
 else if($modtech == 1 && isset($werpdag))             { $color = 'red'; $onjuist = 'Werpdatum ooi is '.$werpdag; }
 else if($modtech == 0 && $aant_ubn > 1)             { $color = 'red'; $onjuist = 'Ubn kan niet worden bepaald.'; } /*Gebruiker heeft meerdere ubn's en geen module Technisch. Alleen bij module technisch bestaat het moederdier en moederdier bepaald het eigen ubn (in tblStal) dat bij het lam hoort. Zonder moederdier en meerdere ubn's kan het juiste ubn dus niet worden bepaald */
 /* Einde Controle bij zowel levend als dood geboren */
 
 If (!empty($levnr_rd)) { /* Controle bij levend geborenen */
-if($levnr_db > 0)                   { $color = 'red';  $onjuist = 'Dit levensnummer bestaat al.'; }
-else if (isset($levnr_dupl) )       { $color = 'blue'; $onjuist = 'Dubbel in de reader.'; }
-else if (strlen($levnr_rd) <> 12)   { $color = 'red';  $onjuist = 'Dit levensnummer is geen 12 karakters lang.'; }
-else if (numeriek($levnr_rd) == 1)  { $color = 'red';  $onjuist =  "Levensnummer bevat een letter."; } 
-else if (strlen($array['levnr_rd']) == 11 && strlen($levnr_rd) == 12) { $onjuist =  "Toevoeging voorloopnul levensnummer !"; }
-else if($modtech == 1 && empty($kzlHok))              { $color = 'red'; $onjuist = 'Het verblijf is niet ingevuld'; }
+if($levnr_db > 0)                  { $color = 'red';  $onjuist = 'Dit levensnummer bestaat al.'; }
+else if(isset($levnr_dupl) )       { $color = 'blue'; $onjuist = 'Dubbel in de reader.'; }
+else if(strlen($levnr_rd) <> 12)   { $color = 'red';  $onjuist = 'Dit levensnummer is geen 12 karakters lang.'; }
+else if(numeriek($levnr_rd) == 1)  { $color = 'red';  $onjuist =  "Levensnummer bevat een letter."; } 
+else if(strlen($array['levnr_rd']) == 11 && strlen($levnr_rd) == 12) { $onjuist =  "Toevoeging voorloopnul levensnummer !"; }
+else if($modtech == 1 && empty($kzlHokLam))  { $color = 'red'; $onjuist = 'Het verblijf is niet ingevuld'; }
+
+if ($kzlHokLam == $hokIdOoi_in) { $boodschap_verblijf_ooi = 'Ooi zit al in '.$hoknrOoi_in.'.'; }
+else if ($kzlHokLam == $hokId_lambar) { $boodschap_verblijf_ooi = ''; }
+/* else if($modtech == 1 && !empty($hokIdOoi_in) && $hokIdOoi_in <> $kzlHokLam && $day_in > $day) /* twk_mutatie scenario 1 uit incident 0004244 */
+else if ($modtech == 1 && isset($dmafvmdr) && $day > $dmafvmdr)  { $boodschap_verblijf_ooi = 'Ooi is op '.$afvdmmdr.' '.strtolower($actie_af_mdr).'.'; } /* Dit is ook scenario 2 uit incident 0004244 excl. actie uitscharen */
+else if ($modtech == 1 && $actId_uit == 10 && $day_uit <= $day)  { $boodschap_verblijf_ooi = 'Ooi is uitgeschaard.'; } /* Dit is actie uitscharen binnen scenario 2b uit incident 0004244 */
 
 }
 
 else If (!isset($levnr_rd) || empty($levnr_rd) || $levnr_rd == '') { /* Controle bij dood geborenen */
 if ($kzlMom == 3 && $uitvday <= $day) { $color = 'red'; $onjuist = 'Dit moment van uitval ligt voor de geboortedatum.'; }
+
+$boodschap_verblijf_ooi = '';
 }
 
  
@@ -780,8 +838,8 @@ if(!isset($_POST['knpVervers_']) && !isset($_POST['knpInsert_']) && $ooi_rd <> N
 	<!-- EINDE KZLMOEDER --> </td>
 
  <td style = "font-size : 9px;">
- <!-- KZLHOKNR --> 
- <select style="width:84;" <?php echo " name=\"kzlHok_$Id\" "; ?> value = "" style = "font-size:12px;">
+ <!-- KZLHOKNR LAM --> 
+ <select style="width:84;" <?php echo " name=\"kzlHokLam_$Id\" "; ?> value = "" style = "font-size:12px;">
   <option></option>
 
 <?php	$count = count($hoknum);
@@ -790,7 +848,7 @@ for ($i = 0; $i < $count; $i++){
 	$opties = array($hoknId[$i]=>$hoknum[$i]);
 			foreach($opties as $key => $waarde)
 			{
-  if ((!isset($_POST['knpVervers_']) && $hok_rd == $hokRaak[$i]) || (isset($_POST["kzlHok_$Id"]) && $_POST["kzlHok_$Id"] == $key)){
+  if ((!isset($_POST['knpVervers_']) && $hok_rd == $hokRaak[$i]) || (isset($_POST["kzlHokLam_$Id"]) && $_POST["kzlHokLam_$Id"] == $key)){
     echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
   } else { 
     echo '<option value="' . $key . '" >' . $waarde . '</option>';  
@@ -799,12 +857,39 @@ for ($i = 0; $i < $count; $i++){
 }
 ?>	</select>
 <?php
-if(!isset($_POST['knpVervers_']) && !isset($_POST['knpInsert_']) && $hok_rd <> NULL && empty($hok_db) && empty($_POST["kzlHok_$Id"]) && $levnr_rd > 0 ) {
+if(!isset($_POST['knpVervers_']) && !isset($_POST['knpInsert_']) && $hok_rd <> NULL && empty($hok_db) && empty($_POST["kzlHokLam_$Id"]) && $levnr_rd > 0 ) {
 
 if($reader == 'Agrident') { $hok_rd = ''; } echo "$hok_rd"; ?> <b style = "color : red;"> ! </b>  <?php } ?>
 
-	</td> <!-- EINDE KZLHOKNR -->
+	</td> <!-- EINDE KZLHOKNR LAM -->
+ <td align = "center" style = "color : blue ; font-size : 11px;">
 
+<?php if (isset($boodschap_verblijf_ooi)) { echo $boodschap_verblijf_ooi; } else { ?>
+ <!-- KZLHOKNR MOEDER --> 
+ <select style="width:84;" <?php echo " name=\"kzlHokMdr_$Id\" "; ?> value = "" style = "font-size:12px;">
+  <option></option>
+
+<?php $count = count($hoknum);
+for ($i = 0; $i < $count; $i++){
+
+   $opties = array($hoknId[$i]=>$hoknum[$i]);
+         foreach($opties as $key => $waarde)
+         {
+  if ((!isset($_POST['knpVervers_']) && $hok_rd == $hokRaak[$i]) || (isset($_POST["kzlHokMdr_$Id"]) && $_POST["kzlHokMdr_$Id"] == $key)){
+    echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
+  } else { 
+    echo '<option value="' . $key . '" >' . $waarde . '</option>';  
+  }      
+         }
+}
+?> </select>
+<?php
+if(!isset($_POST['knpVervers_']) && !isset($_POST['knpInsert_']) && $hok_rd <> NULL && empty($hok_db) && empty($_POST["kzlHokMdr_$Id"]) && $levnr_rd > 0 ) {
+
+if($reader == 'Agrident') { $hok_rd = ''; } echo "$hok_rd"; ?> <b style = "color : red;"> ! </b>  <?php } ?>
+
+   </td> <!-- EINDE KZLHOKNR MOEDER -->
+<?php } ?>
  <td style = "font-size : 11px;"> <?php echo $verloop; ?>
  </td>
 
