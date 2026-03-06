@@ -528,13 +528,13 @@ if(isset($_POST['txtTerugdm'])) {
     if($terugdate < $dmUitsch) {
         $fout = "De datum mag niet voor de datum van uitscharen liggen.";
     } else {
-        $partId = $relatie_gateway->zoek_bestemming($last_stalId);
+        [$partId, $ubnId] = $relatie_gateway->zoek_bestemming($last_stalId);
         $rel_herk = $relatie_gateway->zoek_crediteur($partId);
         if(!isset($rel_herk)) {
             $fout = "Het bedrijf van herkomst bestaat nog niet als crediteur. Maak deze eerst aan op de pagina Relaties. "; 
         } else {
             // @TODO: #0004217 voeg ubn toe aan formulier
-            $stal_gateway->insert($lidId, $ubn = null, $schaapId, $rel_herk);
+            $stal_gateway->insert($lidId, $ubnId, $schaapId, $rel_herk);
             $new_stalId = zoek_max_stalId($lidId,$schaapId);
             if($new_stalId > $last_stalId) {
                 // extra controle if($new_stalId > $last_stalId)

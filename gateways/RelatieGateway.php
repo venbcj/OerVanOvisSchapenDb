@@ -3,9 +3,9 @@
 class RelatieGateway extends Gateway {
 
     public function zoek_bestemming($last_stalId) {
-        return $this->first_field(
+        return $this->first_row(
             <<<SQL
-SELECT r.partId
+SELECT r.partId, ubnId
 FROM tblStal st
  join tblRelatie r on (st.rel_best = r.relId)
 WHERE st.stalId = :stalId
