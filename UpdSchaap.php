@@ -949,12 +949,12 @@ $terugdatum = date_create($_POST['txtTerugdm']); $terugdate = date_format($terug
 	else {
 
 $zoek_bestemming = mysqli_query($db,"
-SELECT r.partId
+SELECT r.partId, st.ubnId
 FROM tblStal st
  join tblRelatie r on (st.rel_best = r.relId)
 WHERE st.stalId = '".mysqli_real_escape_string($db,$last_stalId)."'
 ") or die(mysqli_error($db));
-	while( $zb = mysqli_fetch_assoc($zoek_bestemming)) { $partId = $zb['partId']; }
+	while( $zb = mysqli_fetch_assoc($zoek_bestemming)) { $partId = $zb['partId']; $ubnId = $zb['ubnId']; }
 
 $zoek_herkomst = mysqli_query($db,"
 SELECT relId
@@ -965,7 +965,7 @@ WHERE partId = '".mysqli_real_escape_string($db,$partId)."' and relatie = 'cred'
 
 if(!isset($rel_herk)) { $fout = "Het bedrijf van herkomst bestaat nog niet als crediteur. Maak deze eerst aan op de pagina Relaties. "; }
 else {
-$insert_tblStal = "INSERT INTO tblStal set lidId = '".mysqli_real_escape_string($db,$lidId)."', schaapId = '".mysqli_real_escape_string($db,$schaapId)."', rel_herk = '".mysqli_real_escape_string($db,$rel_herk)."' ";
+$insert_tblStal = "INSERT INTO tblStal set lidId = '".mysqli_real_escape_string($db,$lidId)."', ubnId = '".mysqli_real_escape_string($db,$ubnId)."', schaapId = '".mysqli_real_escape_string($db,$schaapId)."', rel_herk = '".mysqli_real_escape_string($db,$rel_herk)."' ";
 
 	mysqli_query($db,$insert_tblStal) or die(mysqli_error($db));
 
