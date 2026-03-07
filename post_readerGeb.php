@@ -48,6 +48,7 @@ foreach($array as $recId => $id) {
   unset($fldSekse);
   unset($fldKg);
   unset($fldStalIdMdr);
+  unset($volwId);
   unset($fldHokMdr);
   unset($fldMom);
   unset($fldUitvdag);
@@ -226,8 +227,6 @@ Een fictieve drachtdatum wordt niet vastgelegd. Deze moet reeds bestaan anders w
 
 if(isset($fldStalIdMdr)) {
 
-unset($volwId);
-
 // Stap 1 : Zoek een huidige worp o.b.v. moeder en geboortedatum
  $zoek_huidige_worp = mysqli_query($db,"
    SELECT l.volwId
@@ -341,6 +340,7 @@ $updateDracht = "UPDATE tblVolwas set verloop = '".mysqli_real_escape_string($db
 // ***************************
 
 unset($rel_best);
+unset($scenario);
 
 //if(!isset($dmafv_mdr)) { $dmafv_mdr = $fldDag; }
 if (
