@@ -47,6 +47,7 @@ foreach ($array as $recId => $id) {
     unset($fldSekse);
     unset($fldKg);
     unset($fldStalIdMdr);
+    unset($volwId);
     unset($fldHokMdr);
     unset($fldMom);
     unset($fldUitvdag);
@@ -131,7 +132,6 @@ foreach ($array as $recId => $id) {
     Een fictieve drachtdatum wordt niet vastgelegd. Deze moet reeds bestaan anders wordt deze niet met terugwerkende kracht aangemaakt.
     */
         if (isset($fldStalIdMdr)) {
-            unset($volwId);
             $volwId = $schaap_gateway->zoek_huidige_worp_geb($mdrId, $fldDag);
         // Stap 2 is overbodig. Als er een drachtige ooi bestaat moet deze hetzelfde volwId hebben als de volwId o.b.v. de laatste dekking zonder worp. Aan die volwId hangt immers de drachtregistratie.
             if (!isset($volwId)) {
@@ -155,6 +155,7 @@ foreach ($array as $recId => $id) {
     //    GEGEVENS INLEZEN
     // ***************************
         unset($rel_best);
+        unset($scenario);
         if (
             (
             isset($fldDag)
