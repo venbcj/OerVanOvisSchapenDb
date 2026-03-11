@@ -121,7 +121,7 @@ $root = $end_dir_reader.$input_file;
 /* insert field values into data.txt */
 $qry_txtRequest_RVO = mysqli_query ($db,"
 SELECT rq.reqId, l.prod, rq.def, l.urvo, l.prvo, rq.code melding, l.relnr, u.ubn, date_format(h.datum,'%d-%m-%Y'), 'NL' land, h.oud_nummer, 3 soort,
- 'NL' land_new, s.levensnummer, NULL land_herk, NULL gebDatum, NULL sucind, NULL foutind, NULL foutcode, NULL bericht, meldnr
+ 'NL' land_new, s.levensnummer, NULL land_herk, NULL gebDatum, NULL sucind, NULL foutind, NULL foutcode, NULL bericht, NULL meldnr
 FROM tblRequest rq
  join tblMelding m on (rq.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
