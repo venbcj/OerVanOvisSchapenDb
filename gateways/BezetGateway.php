@@ -11,43 +11,30 @@ FROM tblBezet b
  join tblUbn u on (st.ubnId = u.ubnId)
  left join 
  (
-    SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
+    SELECT h.hisId hisId_in,
+        LEAD(h.hisId) OVER (
+            PARTITION BY h.stalId
+            ORDER BY h.datum, h.hisId
+        ) AS hisId_tot
+    FROM tblHistorie h
+     join tblStal st on (st.stalId = h.stalId)
      join tblUbn u on (st.ubnId = u.ubnId)
-     left join (
-        SELECT st.schaapId, h.datum dmspn
-        FROM tblStal st
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 4
-     ) spn on (spn.schaapId = st.schaapId)
-     left join (
-        SELECT st.schaapId, h.datum dmprnt
-        FROM tblStal st
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 3
-     ) prnt on (prnt.schaapId = st.schaapId)
-    WHERE u.lidId = :lidId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-     and h1.datum <= coalesce(dmspn, coalesce(dmprnt,'2200-01-01'))
-    GROUP BY b.bezId, st.schaapId, h1.hisId
- ) uit on (b.hisId = uit.hisv)
+     join tblActie a on (h.actId = a.actId)
+    WHERE u.lidId = :lidId and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
+ ) uit on (b.hisId = uit.hisId_in)
  left join (
-    SELECT st.schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0
+   SELECT st.schaapId
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 4 and h.skip = 0
  ) spn on (spn.schaapId = st.schaapId)
  left join (
-    SELECT st.schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
+   SELECT st.schaapId
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE u.lidId = :lidId and isnull(uit.bezId) and isnull(spn.schaapId) and isnull(prnt.schaapId) and h.skip = 0
+WHERE u.lidId = :lidId and isnull(uit.hisId_tot) and isnull(spn.schaapId) and isnull(prnt.schaapId) and h.skip = 0
 SQL
         , [[':lidId', $lidId, Type::INT]]
         );
@@ -62,30 +49,30 @@ FROM tblBezet b
  join tblUbn u on (st.ubnId = u.ubnId)
  left join 
  (
-    SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
+    SELECT h.hisId hisId_in, 
+        LEAD(h.hisId) OVER (
+            PARTITION BY h.stalId
+            ORDER BY h.datum, h.hisId
+        ) AS hisId_tot
+    FROM tblHistorie h
+     join tblStal st on (st.stalId = h.stalId)
      join tblUbn u on (st.ubnId = u.ubnId)
-    WHERE u.lidId = :lidId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-    GROUP BY b.bezId, st.schaapId, h1.hisId
- ) uit on (b.hisId = uit.hisv)
+     join tblActie a on (h.actId = a.actId)
+    WHERE u.lidId = :lidId and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
+ ) uit on (b.hisId = uit.hisId_in)
  join (
-    SELECT st.schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0
+   SELECT st.schaapId
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 4 and h.skip = 0
  ) spn on (spn.schaapId = st.schaapId)
  left join (
-    SELECT st.schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
+   SELECT st.schaapId
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE u.lidId = :lidId and isnull(uit.bezId) and isnull(prnt.schaapId) and h.skip = 0
+WHERE u.lidId = :lidId and isnull(uit.hisId_tot) and isnull(prnt.schaapId) and h.skip = 0
 SQL
         , [[':lidId', $lidId, Type::INT]]
         );
@@ -95,40 +82,40 @@ SQL
        return $this->first_field(<<<SQL
 SELECT count(hin.schaapId) aantin
 FROM (
-    SELECT st.schaapId, max(hisId) hisId
-    FROM tblStal st
-     join tblUbn u on (st.ubnId = u.ubnId)
-     join tblHistorie h on (st.stalId = h.stalId)
-     join tblActie a on (a.actId = h.actId) 
-    WHERE u.lidId = :lidId and isnull(st.rel_best) and a.aan = 1 and h.skip = 0
-    GROUP BY st.schaapId
+   SELECT st.schaapId, max(hisId) hisId
+   FROM tblStal st
+    join tblUbn u on (st.ubnId = u.ubnId)
+    join tblHistorie h on (st.stalId = h.stalId)
+    join tblActie a on (a.actId = h.actId) 
+   WHERE u.lidId = :lidId and isnull(st.rel_best) and a.aan = 1 and h.skip = 0
+   GROUP BY st.schaapId
  ) hin
  left join tblBezet b on (hin.hisId = b.hisId)
  left join (
-    SELECT b.bezId, st.schaapId, h1.hisId hisv, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
+    SELECT h.hisId hisId_in, 
+        LEAD(h.hisId) OVER (
+            PARTITION BY h.stalId
+            ORDER BY h.datum, h.hisId
+        ) AS hisId_tot
+    FROM tblHistorie h
+     join tblStal st on (st.stalId = h.stalId)
      join tblUbn u on (st.ubnId = u.ubnId)
-    WHERE u.lidId = :lidId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-    GROUP BY b.bezId, st.schaapId, h1.hisId
- ) uit on (uit.hisv = hin.hisId)
+     join tblActie a on (h.actId = a.actId)
+    WHERE u.lidId = :lidId and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
+ ) uit on (b.hisId = uit.hisId_in)
  left join (
-    SELECT st.schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0
+   SELECT st.schaapId
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 4 and h.skip = 0
  ) spn on (spn.schaapId = hin.schaapId)
  left join (
-    SELECT st.schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
+   SELECT st.schaapId
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = hin.schaapId)
-WHERE (isnull(b.hokId) or uit.hist is not null)
+WHERE (isnull(b.hokId) or uit.hisId_tot is not null)
 SQL
        , [[':lidId', $lidId, Type::INT]]
        );
@@ -147,233 +134,232 @@ SQL
 SELECT h.hokId, h.hoknr, count(distinct schaap_geb) maxgeb, count(distinct schaap_spn) maxspn, count(distinct schaap_prnt) maxprnt, min(dmin) eerste_in, max(dmuit) laatste_uit
 FROM (
     SELECT b.hokId, st.schaapId schaap_geb, NULL schaap_spn, NULL schaap_prnt, h.datum dmin, NULL dmuit
-    FROM tblBezet b
-     join tblHistorie h on (b.hisId = h.hisId)
-     join tblStal st on (st.stalId = h.stalId)
-     join tblUbn u on (st.ubnId = u.ubnId)
-     left join 
-     (
-        SELECT b.bezId, min(h2.hisId) hist
-        FROM tblBezet b
-         join tblHistorie h1 on (b.hisId = h1.hisId)
-         join tblActie a1 on (a1.actId = h1.actId)
-         join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-         join tblActie a2 on (a2.actId = h2.actId)
-         join tblStal st on (h1.stalId = st.stalId)
-         join tblUbn u on (st.ubnId = u.ubnId)
-        WHERE u.lidId = :lidId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-        GROUP BY b.bezId
-     ) uit on (uit.bezId = b.bezId)
-     left join (
-        SELECT st.schaapId, h.datum
-        FROM tblStal st
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 4 and h.skip = 0
-     ) spn on (spn.schaapId = st.schaapId)
-     left join (
-        SELECT st.schaapId, h.datum
-        FROM tblStal st
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 3 and h.skip = 0
-     ) prnt on (prnt.schaapId = st.schaapId)
-    WHERE u.lidId = :lidId and isnull(uit.bezId)
-    and isnull(spn.schaapId)
-    and isnull(prnt.schaapId)
-     and h.skip = 0
+   FROM tblBezet b
+    join tblHistorie h on (b.hisId = h.hisId)
+    join tblStal st on (st.stalId = h.stalId)
+    join tblUbn u on (st.ubnId = u.ubnId)
+    left join 
+    (
+       SELECT h.hisId hisId_in, h.stalId, h.datum, h.actId,
+           LEAD(h.hisId) OVER (
+               PARTITION BY h.stalId
+               ORDER BY h.datum, h.hisId
+           ) AS hisId_tot
+       FROM tblHistorie h
+        join tblStal st on (st.stalId = h.stalId)
+        join tblUbn u on (st.ubnId = u.ubnId)
+        join tblActie a on (h.actId = a.actId)
+       WHERE u.lidId = :lidId and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
+    ) uit on (b.hisId = uit.hisId_in)
+    left join (
+      SELECT st.schaapId, h.datum
+      FROM tblStal st
+       join tblHistorie h on (st.stalId = h.stalId)
+      WHERE h.actId = 4 and h.skip = 0
+    ) spn on (spn.schaapId = st.schaapId)
+    left join (
+      SELECT st.schaapId, h.datum
+      FROM tblStal st
+       join tblHistorie h on (st.stalId = h.stalId)
+      WHERE h.actId = 3 and h.skip = 0
+    ) prnt on (prnt.schaapId = st.schaapId)
+   WHERE u.lidId = :lidId and isnull(uit.hisId_tot)
+   and isnull(spn.schaapId)
+   and isnull(prnt.schaapId)
+   and h.skip = 0
 
     UNION
 
     SELECT b.hokId, st.schaapId schaap_geb, NULL schaap_spn, NULL schaap_prnt, h.datum dmin, ht.datum dmuit
-    FROM tblBezet b
-     join tblHistorie h on (h.hisId = b.hisId)
-     join 
-     (
-        SELECT b.bezId, min(h2.hisId) hist
-        FROM tblBezet b
-         join tblHistorie h1 on (b.hisId = h1.hisId)
-         join tblActie a1 on (a1.actId = h1.actId)
-         join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-         join tblActie a2 on (a2.actId = h2.actId)
-         join tblStal st on (h1.stalId = st.stalId)
-         join tblUbn u on (st.ubnId = u.ubnId)
-        WHERE u.lidId = :lidId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-        GROUP BY b.bezId
-     ) uit on (uit.bezId = b.bezId)
-     join tblHistorie ht on (ht.hisId = uit.hist)
-     join tblStal st on (st.stalId = h.stalId)
-     join tblUbn u on (st.ubnId = u.ubnId)
-     left join (
-        SELECT h.hisId, st.schaapId, h.datum
-        FROM tblStal st
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 4 and h.skip = 0
-     ) spn on (spn.schaapId = st.schaapId)
-     left join (
-        SELECT st.schaapId, h.datum
-        FROM tblStal st
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 3 and h.skip = 0
-     ) prnt on (prnt.schaapId = st.schaapId)
-     left join (
-        SELECT p.hokId, max(p.dmafsluit) dmstop
-        FROM tblPeriode p
-         join tblHok h on (h.hokId = p.hokId)
-        WHERE h.lidId = :lidId and p.doelId = 1 and dmafsluit is not null
-        GROUP BY p.hokId
-     ) endgeb on (endgeb.hokId = b.hokId)
-    WHERE u.lidId = :lidId and ht.datum > coalesce(dmstop,'1973-09-11') 
-     and ( isnull(spn.schaapId)  or (spn.datum  > coalesce(dmstop,'1973-09-11') and 
-             ( h.datum < spn.datum || (h.datum = spn.datum && h.hisId < spn.hisId) ) )
-          )
-     and ( isnull(prnt.schaapId) or (prnt.datum > coalesce(dmstop,'1973-09-11') and h.datum < prnt.datum) )
-     and h.skip = 0
+   FROM tblBezet b
+    join tblHistorie h on (h.hisId = b.hisId)
+    join 
+    (
+       SELECT h.hisId hisId_in, 
+           LEAD(h.hisId) OVER (
+               PARTITION BY h.stalId
+               ORDER BY h.datum, h.hisId
+           ) AS hisId_tot
+       FROM tblHistorie h
+        join tblStal st on (st.stalId = h.stalId)
+        join tblUbn u on (st.ubnId = u.ubnId)
+        join tblActie a on (h.actId = a.actId)
+       WHERE u.lidId = :lidId and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
+    ) uit on (b.hisId = uit.hisId_in)
+    join tblHistorie ht on (ht.hisId = uit.hisId_tot)
+    join tblStal st on (st.stalId = h.stalId)
+    join tblUbn u on (st.ubnId = u.ubnId)
+    left join (
+      SELECT h.hisId, st.schaapId, h.datum
+      FROM tblStal st
+       join tblHistorie h on (st.stalId = h.stalId)
+      WHERE h.actId = 4 and h.skip = 0
+    ) spn on (spn.schaapId = st.schaapId)
+    left join (
+      SELECT st.schaapId, h.datum
+      FROM tblStal st
+       join tblHistorie h on (st.stalId = h.stalId)
+      WHERE h.actId = 3 and h.skip = 0
+    ) prnt on (prnt.schaapId = st.schaapId)
+    left join (
+      SELECT p.hokId, max(p.dmafsluit) dmstop
+      FROM tblPeriode p
+       join tblHok h on (h.hokId = p.hokId)
+      WHERE h.lidId = :lidId and p.doelId = 1 and dmafsluit is not null
+      GROUP BY p.hokId
+    ) endgeb on (endgeb.hokId = b.hokId)
+   WHERE u.lidId = :lidId and ht.datum > coalesce(dmstop,'1973-09-11') 
+    and ( isnull(spn.schaapId)  or (spn.datum  > coalesce(dmstop,'1973-09-11') and 
+         ( h.datum < spn.datum || (h.datum = spn.datum && h.hisId < spn.hisId) ) )
+       )
+    and ( isnull(prnt.schaapId) or (prnt.datum > coalesce(dmstop,'1973-09-11') and h.datum < prnt.datum) )
+    and h.skip = 0
 
     UNION
 
     SELECT b.hokId, NULL schaap_geb, st.schaapId schaap_spn, NULL schaap_prnt, h.datum dmin, NULL dmuit
-    FROM tblBezet b
-     join tblHistorie h on (b.hisId = h.hisId)
-     join tblStal st on (st.stalId = h.stalId)
-     join tblUbn u on (st.ubnId = u.ubnId)
-     left join 
-     (
-        SELECT b.bezId, min(h2.hisId) hist
-        FROM tblBezet b
-         join tblHistorie h1 on (b.hisId = h1.hisId)
-         join tblActie a1 on (a1.actId = h1.actId)
-         join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-         join tblActie a2 on (a2.actId = h2.actId)
-         join tblStal st on (h1.stalId = st.stalId)
-         join tblUbn u on (st.ubnId = u.ubnId)
-        WHERE u.lidId = :lidId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-        GROUP BY b.bezId
-     ) uit on (uit.bezId = b.bezId)
-     join (
-        SELECT st.schaapId, h.datum
-        FROM tblStal st
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 4 and h.skip = 0
-     ) spn on (spn.schaapId = st.schaapId)
-     left join (
-        SELECT st.schaapId, h.datum
-        FROM tblStal st
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 3 and h.skip = 0
-     ) prnt on (prnt.schaapId = st.schaapId)
-    WHERE u.lidId = :lidId and isnull(uit.bezId)
+   FROM tblBezet b
+    join tblHistorie h on (b.hisId = h.hisId)
+    join tblStal st on (st.stalId = h.stalId)
+    join tblUbn u on (st.ubnId = u.ubnId)
+    left join 
+    (
+       SELECT h.hisId hisId_in, 
+           LEAD(h.hisId) OVER (
+               PARTITION BY h.stalId
+               ORDER BY h.datum, h.hisId
+           ) AS hisId_tot
+       FROM tblHistorie h
+        join tblStal st on (st.stalId = h.stalId)
+        join tblUbn u on (st.ubnId = u.ubnId)
+        join tblActie a on (h.actId = a.actId)
+       WHERE u.lidId = :lidId and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
+    ) uit on (b.hisId = uit.hisId_in)
+    join (
+      SELECT st.schaapId, h.datum
+      FROM tblStal st
+       join tblHistorie h on (st.stalId = h.stalId)
+      WHERE h.actId = 4 and h.skip = 0
+    ) spn on (spn.schaapId = st.schaapId)
+    left join (
+      SELECT st.schaapId, h.datum
+      FROM tblStal st
+       join tblHistorie h on (st.stalId = h.stalId)
+      WHERE h.actId = 3 and h.skip = 0
+    ) prnt on (prnt.schaapId = st.schaapId)
+   WHERE u.lidId = :lidId and isnull(uit.hisId_tot)
+   and (isnull(prnt.schaapId) or h.datum < prnt.datum)
+   and h.skip = 0
+
+    UNION
+
+    SELECT b.hokId, NULL schaap_geb, st.schaapId schaap_spn, NULL schaap_prnt, h.datum dmin, ht.datum dmuit
+   FROM tblBezet b
+    join tblHistorie h on (h.hisId = b.hisId)
+    join 
+    (
+       SELECT h.hisId hisId_in, 
+           LEAD(h.hisId) OVER (
+               PARTITION BY h.stalId
+               ORDER BY h.datum, h.hisId
+           ) AS hisId_tot
+       FROM tblHistorie h
+        join tblStal st on (st.stalId = h.stalId)
+        join tblUbn u on (st.ubnId = u.ubnId)
+        join tblActie a on (h.actId = a.actId)
+       WHERE u.lidId = :lidId and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
+    ) uit on (b.hisId = uit.hisId_in)
+    join tblHistorie ht on (ht.hisId = uit.hisId_tot)
+    join tblStal st on (st.stalId = h.stalId)
+    join tblUbn u on (st.ubnId = u.ubnId)
+    join (
+      SELECT h.hisId, st.schaapId, h.datum
+      FROM tblStal st
+       join tblHistorie h on (st.stalId = h.stalId)
+      WHERE h.actId = 4 and h.skip = 0
+    ) spn on (spn.schaapId = st.schaapId)
+    left join (
+      SELECT st.schaapId, h.datum
+      FROM tblStal st
+       join tblHistorie h on (st.stalId = h.stalId)
+      WHERE h.actId = 3 and h.skip = 0
+    ) prnt on (prnt.schaapId = st.schaapId)
+    left join (
+      SELECT p.hokId, max(p.dmafsluit) dmstop
+      FROM tblPeriode p
+       join tblHok h on (h.hokId = p.hokId)
+      WHERE h.lidId = :lidId and p.doelId = 2 and dmafsluit is not null
+      GROUP BY p.hokId
+    ) endspn on (endspn.hokId = b.hokId)
+   WHERE u.lidId = :lidId and ht.datum > coalesce(dmstop,'1973-09-11') 
+    and (h.datum > spn.datum || (h.datum = spn.datum && h.hisId >= spn.hisId) )
     and (isnull(prnt.schaapId) or h.datum < prnt.datum)
     and h.skip = 0
 
     UNION
 
-    SELECT b.hokId, NULL schaap_geb, st.schaapId schaap_spn, NULL schaap_prnt, h.datum dmin, ht.datum dmuit
-    FROM tblBezet b
-     join tblHistorie h on (h.hisId = b.hisId)
-     join 
-     (
-        SELECT b.bezId, min(h2.hisId) hist
-        FROM tblBezet b
-         join tblHistorie h1 on (b.hisId = h1.hisId)
-         join tblActie a1 on (a1.actId = h1.actId)
-         join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-         join tblActie a2 on (a2.actId = h2.actId)
-         join tblStal st on (h1.stalId = st.stalId)
-         join tblUbn u on (st.ubnId = u.ubnId)
-        WHERE u.lidId = :lidId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-        GROUP BY b.bezId
-     ) uit on (uit.bezId = b.bezId)
-     join tblHistorie ht on (ht.hisId = uit.hist)
-     join tblStal st on (st.stalId = h.stalId)
-     join tblUbn u on (st.ubnId = u.ubnId)
-     join (
-        SELECT h.hisId, st.schaapId, h.datum
-        FROM tblStal st
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 4 and h.skip = 0
-     ) spn on (spn.schaapId = st.schaapId)
-     left join (
-        SELECT st.schaapId, h.datum
-        FROM tblStal st
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 3 and h.skip = 0
-     ) prnt on (prnt.schaapId = st.schaapId)
-     left join (
-        SELECT p.hokId, max(p.dmafsluit) dmstop
-        FROM tblPeriode p
-         join tblHok h on (h.hokId = p.hokId)
-        WHERE h.lidId = :lidId and p.doelId = 2 and dmafsluit is not null
-        GROUP BY p.hokId
-     ) endspn on (endspn.hokId = b.hokId)
-    WHERE u.lidId = :lidId
-     and ht.datum > coalesce(dmstop,'1973-09-11') 
-     and (h.datum > spn.datum || (h.datum = spn.datum && h.hisId >= spn.hisId) )
-     and (isnull(prnt.schaapId) or h.datum < prnt.datum)
-     and h.skip = 0
-
-    UNION
-
     SELECT b.hokId, NULL schaap_geb, NULL schaap_spn, st.schaapId schaap_prnt, h.datum dmin, NULL dmuit
-    FROM tblBezet b
-     join tblHistorie h on (b.hisId = h.hisId)
-     join tblStal st on (st.stalId = h.stalId)
-     join tblUbn u on (st.ubnId = u.ubnId)
-     left join 
-     (
-        SELECT b.bezId, min(h2.hisId) hist
-        FROM tblBezet b
-         join tblHistorie h1 on (b.hisId = h1.hisId)
-         join tblActie a1 on (a1.actId = h1.actId)
-         join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-         join tblActie a2 on (a2.actId = h2.actId)
-         join tblStal st on (h1.stalId = st.stalId)
-         join tblUbn u on (st.ubnId = u.ubnId)
-        WHERE u.lidId = :lidId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-        GROUP BY b.bezId
-     ) uit on (uit.bezId = b.bezId)
-     join (
-        SELECT st.schaapId
-        FROM tblStal st
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 3 and h.skip = 0
-     ) prnt on (prnt.schaapId = st.schaapId)
-    WHERE u.lidId = :lidId and isnull(uit.bezId) and h.skip = 0
+   FROM tblBezet b
+    join tblHistorie h on (b.hisId = h.hisId)
+    join tblStal st on (st.stalId = h.stalId)
+    join tblUbn u on (st.ubnId = u.ubnId)
+    left join 
+    (
+       SELECT h.hisId hisId_in,
+           LEAD(h.hisId) OVER (
+               PARTITION BY h.stalId
+               ORDER BY h.datum, h.hisId
+           ) AS hisId_tot
+       FROM tblHistorie h
+        join tblStal st on (st.stalId = h.stalId)
+        join tblUbn u on (st.ubnId = u.ubnId)
+        join tblActie a on (h.actId = a.actId)
+       WHERE u.lidId = :lidId and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
+    ) uit on (b.hisId = uit.hisId_in)
+    join (
+      SELECT st.schaapId
+      FROM tblStal st
+       join tblHistorie h on (st.stalId = h.stalId)
+      WHERE h.actId = 3 and h.skip = 0
+    ) prnt on (prnt.schaapId = st.schaapId)
+   WHERE u.lidId = :lidId and isnull(uit.hisId_tot) and h.skip = 0
 
     UNION
 
     SELECT b.hokId, NULL schaap_geb, NULL schaap_spn, st.schaapId schaap_prnt, h.datum dmin, ht.datum dmuit
-    FROM tblBezet b
-     join tblHistorie h on (h.hisId = b.hisId)
-     join 
-     (
-        SELECT b.bezId, min(h2.hisId) hist
-        FROM tblBezet b
-         join tblHistorie h1 on (b.hisId = h1.hisId)
-         join tblActie a1 on (a1.actId = h1.actId)
-         join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-         join tblActie a2 on (a2.actId = h2.actId)
-         join tblStal st on (h1.stalId = st.stalId)
-         join tblUbn u on (st.ubnId = u.ubnId)
-        WHERE u.lidId = :lidId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-        GROUP BY b.bezId, st.schaapId, h1.hisId
-     ) uit on (uit.bezId = b.bezId)
-     join tblHistorie ht on (ht.hisId = uit.hist)
-     join tblStal st on (st.stalId = h.stalId)
-     join tblUbn u on (st.ubnId = u.ubnId)
-     join (
-        SELECT h.hisId, st.schaapId, h.datum
-        FROM tblStal st
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 3 and h.skip = 0
-     ) prnt on (prnt.schaapId = st.schaapId)
-     left join (
-        SELECT p.hokId, max(p.dmafsluit) dmstop
-        FROM tblPeriode p
-         join tblHok h on (h.hokId = p.hokId)
-        WHERE h.lidId = :lidId and p.doelId = 3 and dmafsluit is not null
-        GROUP BY p.hokId
-     ) endspn on (endspn.hokId = b.hokId)
-    WHERE u.lidId = :lidId and ht.datum > coalesce(dmstop,'1973-09-11') 
-     and (h.datum > prnt.datum || (h.datum = prnt.datum && h.hisId >= prnt.hisId) ) and h.skip = 0
+   FROM tblBezet b
+    join tblHistorie h on (h.hisId = b.hisId)
+    join 
+    (
+       SELECT h.hisId hisId_in,
+           LEAD(h.hisId) OVER (
+               PARTITION BY h.stalId
+               ORDER BY h.datum, h.hisId
+           ) AS hisId_tot
+       FROM tblHistorie h
+        join tblStal st on (st.stalId = h.stalId)
+        join tblUbn u on (st.ubnId = u.ubnId)
+        join tblActie a on (h.actId = a.actId)
+       WHERE u.lidId = :lidId and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
+    ) uit on (b.hisId = uit.hisId_in)
+    join tblHistorie ht on (ht.hisId = uit.hisId_tot)
+    join tblStal st on (st.stalId = h.stalId)
+    join tblUbn u on (st.ubnId = u.ubnId)
+    join (
+      SELECT h.hisId, st.schaapId, h.datum
+      FROM tblStal st
+       join tblHistorie h on (st.stalId = h.stalId)
+      WHERE h.actId = 3 and h.skip = 0
+    ) prnt on (prnt.schaapId = st.schaapId)
+    left join (
+      SELECT p.hokId, max(p.dmafsluit) dmstop
+      FROM tblPeriode p
+       join tblHok h on (h.hokId = p.hokId)
+      WHERE h.lidId = :lidId and p.doelId = 3 and dmafsluit is not null
+      GROUP BY p.hokId
+    ) endspn on (endspn.hokId = b.hokId)
+   WHERE u.lidId = :lidId and ht.datum > coalesce(dmstop,'1973-09-11') 
+    and (h.datum > prnt.datum || (h.datum = prnt.datum && h.hisId >= prnt.hisId) ) and h.skip = 0
  ) ingebr
  join tblHok h on (ingebr.hokId = h.hokId)
 GROUP BY h.hokId, h.hoknr
@@ -425,39 +411,34 @@ SQL
 
     // uit Bezet
     // (iets met dezelfde titel staat ook in Hoklijsten. Is het dezelfde query?)
-    public function zoek_nu_in_verblijf_prnt($hokId) {
+    public function zoek_nu_in_verblijf_prnt($lidId, $hokId) {
         return $this->first_field(<<<SQL
 SELECT count(distinct(st.schaapId)) aantin
 FROM tblStal st
  join tblHistorie h on (h.stalId = st.stalId)
  join tblBezet b on (b.hisId = h.hisId)
  left join (
-    SELECT b.bezId, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId
- and ((h1.datum < h2.datum) or (h1.datum = h2.datum
- and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-    WHERE b.hokId = :hokId
- and a2.uit = 1
- and h1.skip = 0
- and h2.skip = 0
-    GROUP BY b.bezId, h1.hisId
- ) uit on (b.bezId = uit.bezId)
+   SELECT h.hisId hisId_in, 
+        LEAD(h.hisId) OVER (
+            PARTITION BY h.stalId
+            ORDER BY h.datum, h.hisId
+        ) AS hisId_tot
+    FROM tblHistorie h
+     join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (st.ubnId = u.ubnId)
+     join tblActie a on (h.actId = a.actId)
+    WHERE u.lidId = :lidId and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
+ ) uit on (uit.hisId_in = b.hisId)
  join (
-    SELECT schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3
- and h.skip = 0
+   SELECT schaapId
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE b.hokId = :hokId
- and isnull(uit.bezId)
- and h.skip = 0
+
+WHERE b.hokId = :hokId and isnull(uit.hisId_tot) and h.skip = 0
 SQL
-        , [[':hokId', $hokId, Type::INT]]
+        , [[':lidId', $lidId, Type::INT],[':hokId', $hokId, Type::INT]]
         );
     }
 
@@ -516,47 +497,48 @@ SQL
         );
     }
 
-    public function zoek_verlaten_geb_excl_overpl_en_uitval($hokId, $dmstopgeb) {
+    public function zoek_verlaten_geb_excl_overpl_en_uitval($lidId, $hokId, $dmstopgeb) {
         return $this->first_field(<<<SQL
-SELECT count(uit.bezId) aantuit
+SELECT count(uit.hisId_tot) aantuit
 FROM tblBezet b
  join tblHistorie h on (h.hisId = b.hisId)
  join tblStal st on (h.stalId = st.stalId)
  join 
  (
-    SELECT b.bezId, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
-    WHERE b.hokId = :hokId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-    GROUP BY b.bezId, st.schaapId, h1.hisId
- ) uit on (uit.bezId = b.bezId)
- join tblHistorie ht on (ht.hisId = uit.hist)
+   SELECT h.hisId hisId_in, 
+        LEAD(h.hisId) OVER (
+            PARTITION BY h.stalId
+            ORDER BY h.datum, h.hisId
+        ) AS hisId_tot
+    FROM tblHistorie h
+     join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (st.ubnId = u.ubnId)
+     join tblActie a on (h.actId = a.actId)
+    WHERE u.lidId = :lidId and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
+ ) uit on (uit.hisId_in = b.hisId)
+ join tblHistorie ht on (ht.hisId = uit.hisId_tot)
  left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0
+   SELECT st.schaapId, h.datum
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 4 and h.skip = 0
  ) spn on (spn.schaapId = st.schaapId)
  left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
+   SELECT st.schaapId, h.datum
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
 WHERE b.hokId = :hokId and ht.datum > :dmstopgeb and ht.actId != 5 and ht.actId != 14
 and (isnull(spn.schaapId) or ht.datum = spn.datum)
 and (isnull(prnt.schaapId) or ht.datum < prnt.datum)
 and h.skip = 0
 SQL
-        , [[':hokId', $hokId, Type::INT], [':dmstopgeb', $dmstopgeb, Type::DATE]]
+        , [[':lidId', $lidId, Type::INT], [':hokId', $hokId, Type::INT], [':dmstopgeb', $dmstopgeb, Type::DATE]]
         );
     }
 
-    public function zoek_verlaten_spn_excl_overpl_en_uitval($hokId, $dmstopspn) {
+    public function zoek_verlaten_spn_excl_overpl_en_uitval($lidId, $hokId, $dmstopspn) {
         return $this->first_field(<<<SQL
 SELECT count(b.bezId) aantuit
 FROM tblBezet b
@@ -564,156 +546,154 @@ FROM tblBezet b
  join tblStal st on (h.stalId = st.stalId)
  left join 
  (
-    SELECT b.bezId, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
-    WHERE b.hokId = :hokId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-    GROUP BY b.bezId
- ) uit on (uit.bezId = b.bezId)
- left join tblHistorie ht on (ht.hisId = uit.hist)
+   SELECT h.hisId hisId_in, 
+        LEAD(h.hisId) OVER (
+            PARTITION BY h.stalId
+            ORDER BY h.datum, h.hisId
+        ) AS hisId_tot
+    FROM tblHistorie h
+     join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (st.ubnId = u.ubnId)
+     join tblActie a on (h.actId = a.actId)
+    WHERE u.lidId = :lidId and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
+ ) uit on (uit.hisId_in = b.hisId)
+ left join tblHistorie ht on (ht.hisId = uit.hisId_tot)
  join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0
+   SELECT st.schaapId, h.datum
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 4 and h.skip = 0
  ) spn on (spn.schaapId = st.schaapId)
  left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
+   SELECT st.schaapId, h.datum
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE b.hokId = :hokId 
-and ((isnull(ht.datum) and prnt.schaapId is not null) or ht.datum > :dmstopspn)
+WHERE b.hokId = :hokId and ((isnull(ht.datum) and prnt.schaapId is not null) or ht.datum > :dmstopspn)
 and (isnull(ht.actId) or (ht.actId != 4 and ht.actId != 5 and ht.actId != 14))
-and (ht.datum >= spn.datum or (isnull(uit.bezId) and prnt.schaapId is not null and h.datum < spn.datum))
+and (ht.datum >= spn.datum or (isnull(uit.hisId_tot) and prnt.schaapId is not null and h.datum < spn.datum))
 and h.skip = 0
 SQL
-        , [[':hokId', $hokId, Type::INT], [':dmstopspn', $dmstopspn, Type::DATE]]
+        , [[':lidId', $lidId, Type::INT], [':hokId', $hokId, Type::INT], [':dmstopspn', $dmstopspn, Type::DATE]]
         );
     }
 
-    public function zoek_overplaatsing_geb($hokId, $dmstopgeb) {
+    public function zoek_overplaatsing_geb($lidId, $hokId, $dmstopgeb) {
         return $this->first_field(<<<SQL
-SELECT count(uit.bezId) aant
+SELECT count(b.bezId) aant
 FROM tblBezet b
  join tblHistorie h on (h.hisId = b.hisId)
  join tblStal st on (h.stalId = st.stalId)
  join 
  (
-    SELECT b.bezId, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
-    WHERE b.hokId = :hokId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-    GROUP BY b.bezId
- ) uit on (uit.bezId = b.bezId)
- join tblHistorie ht on (ht.hisId = uit.hist)
+   SELECT h.hisId hisId_in, 
+        LEAD(h.hisId) OVER (
+            PARTITION BY h.stalId
+            ORDER BY h.datum, h.hisId
+        ) AS hisId_tot
+    FROM tblHistorie h
+     join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (st.ubnId = u.ubnId)
+     join tblActie a on (h.actId = a.actId)
+    WHERE u.lidId = :lidId and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
+ ) uit on (uit.hisId_in = b.hisId)
+ join tblHistorie ht on (ht.hisId = uit.hisId_tot)
  left join (
-    SELECT st.schaapId, h.hisId his_spn, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0
+   SELECT st.schaapId, h.hisId his_spn, h.datum
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 4 and h.skip = 0
  ) spn on (spn.schaapId = st.schaapId)
  left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
+   SELECT st.schaapId, h.datum
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
 WHERE b.hokId = :hokId and ht.actId = 5
-  and (
-    ht.datum > :dmstopgeb
-    or (ht.datum = :dmstopgeb
-        and h.datum = :dmstopgeb
-        and h.hisId < ht.hisId)
-  )
-and (isnull(spn.schaapId) or ht.datum < spn.datum or (ht.datum = spn.datum and his_spn > hist))
+ and (ht.datum > :dmstopgeb or (ht.datum = :dmstopgeb and h.datum = :dmstopgeb and h.hisId < ht.hisId))
+and (isnull(spn.schaapId) or ht.datum < spn.datum or (ht.datum = spn.datum and his_spn > hisId_tot))
 and (isnull(prnt.schaapId) or ht.datum < prnt.datum)
 and h.skip = 0
 SQL
-        , [[':hokId', $hokId, Type::INT], [':dmstopgeb', $dmstopgeb, Type::DATE]]
+        , [[':lidId', $lidId, Type::INT], [':hokId', $hokId, Type::INT], [':dmstopgeb', $dmstopgeb, Type::DATE]]
         );
     }   
 
-    public function zoek_overplaatsing_spn($hokId, $dmstopspn) {
+    public function zoek_overplaatsing_spn($lidId, $hokId, $dmstopspn) {
         return $this->first_field(<<<SQL
-SELECT count(uit.bezId) aant
+SELECT count(b.bezId) aant
 FROM tblBezet b
  join tblHistorie h on (h.hisId = b.hisId)
  join tblStal st on (h.stalId = st.stalId)
  join 
  (
-    SELECT b.bezId, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
-    WHERE b.hokId = :hokId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-    GROUP BY b.bezId
- ) uit on (uit.bezId = b.bezId)
- join tblHistorie ht on (ht.hisId = uit.hist)
+   SELECT h.hisId hisId_in, 
+        LEAD(h.hisId) OVER (
+            PARTITION BY h.stalId
+            ORDER BY h.datum, h.hisId
+        ) AS hisId_tot
+    FROM tblHistorie h
+     join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (st.ubnId = u.ubnId)
+     join tblActie a on (h.actId = a.actId)
+    WHERE u.lidId = :lidId and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
+ ) uit on (uit.hisId_in = b.hisId)
+ join tblHistorie ht on (ht.hisId = uit.hisId_tot)
  join (
-    SELECT st.schaapId, h.hisId his_spn, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0
+   SELECT st.schaapId, h.hisId his_spn, h.datum
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 4 and h.skip = 0
  ) spn on (spn.schaapId = st.schaapId)
  left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
+   SELECT st.schaapId, h.datum
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
 WHERE b.hokId = :hokId and ht.actId = 5
  and (ht.datum > :dmstopspn or (ht.datum = :dmstopspn and h.datum = :dmstopspn and h.hisId < ht.hisId))
-and (ht.datum > spn.datum or (ht.datum = spn.datum and his_spn < hist))
+and (ht.datum > spn.datum or (ht.datum = spn.datum and his_spn < hisId_tot))
 and (isnull(prnt.schaapId) or h.datum < prnt.datum)
 and h.skip = 0
 SQL
-        , [[':hokId', $hokId, Type::INT], [':dmstopspn', $dmstopspn, Type::DATE]]
+        , [[':lidId', $lidId, Type::INT], [':hokId', $hokId, Type::INT], [':dmstopspn', $dmstopspn, Type::DATE]]
         );
     }
 
-    public function zoek_overleden_geb($hokId, $dmstopgeb) {
+    public function zoek_overleden_geb($lidId, $hokId, $dmstopgeb) {
        return $this->first_field(<<<SQL
-SELECT count(uit.bezId) aantuit
+SELECT count(b.bezId) aantuit
 FROM tblBezet b
  join 
  (
-    SELECT b.bezId, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
-    WHERE b.hokId = :hokId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-    GROUP BY b.bezId
- ) uit on (uit.bezId = b.bezId)
- join tblHistorie ht on (ht.hisId = uit.hist)
+   SELECT h.hisId hisId_in, 
+        LEAD(h.hisId) OVER (
+            PARTITION BY h.stalId
+            ORDER BY h.datum, h.hisId
+        ) AS hisId_tot
+    FROM tblHistorie h
+     join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (st.ubnId = u.ubnId)
+     join tblActie a on (h.actId = a.actId)
+    WHERE u.lidId = :lidId and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
+ ) uit on (uit.hisId_in = b.hisId)
+ join tblHistorie ht on (ht.hisId = uit.hisId_tot)
  join tblHistorie h on (b.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
  left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0
+   SELECT st.schaapId, h.datum
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 4 and h.skip = 0
  ) spn on (spn.schaapId = st.schaapId)
  left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
+   SELECT st.schaapId, h.datum
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
 WHERE b.hokId = :hokId and ht.actId = 14
  and ht.datum > :dmstopgeb
@@ -721,89 +701,91 @@ WHERE b.hokId = :hokId and ht.actId = 14
  and isnull(prnt.schaapId)
  and h.skip = 0
 SQL
-        , [[':hokId', $hokId, Type::INT], [':dmstopgeb', $dmstopgeb, Type::DATE]]
+        , [[':lidId', $lidId, Type::INT], [':hokId', $hokId, Type::INT], [':dmstopgeb', $dmstopgeb, Type::DATE]]
        );
     }
 
-    public function zoek_overleden_spn($hokId, $dmstopspn) {
+    public function zoek_overleden_spn($lidId, $hokId, $dmstopspn) {
         return $this->first_field(<<<SQL
-SELECT count(uit.bezId) aantuit
+SELECT count(b.bezId) aantuit
 FROM tblBezet b
  join 
  (
-    SELECT b.bezId, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
-    WHERE b.hokId = :hokId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-    GROUP BY b.bezId
- ) uit on (uit.bezId = b.bezId)
- join tblHistorie ht on (ht.hisId = uit.hist)
+   SELECT h.hisId hisId_in, 
+        LEAD(h.hisId) OVER (
+            PARTITION BY h.stalId
+            ORDER BY h.datum, h.hisId
+        ) AS hisId_tot
+    FROM tblHistorie h
+     join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (st.ubnId = u.ubnId)
+     join tblActie a on (h.actId = a.actId)
+    WHERE u.lidId = :lidId and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
+ ) uit on (uit.hisId_in = b.hisId)
+ join tblHistorie ht on (ht.hisId = uit.hisId_tot)
  join tblHistorie h on (h.hisId = b.hisId)
  join tblStal st on (h.stalId = st.stalId)
  join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0
+   SELECT st.schaapId, h.datum
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 4 and h.skip = 0
  ) spn on (spn.schaapId = st.schaapId)
  left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
+   SELECT st.schaapId, h.datum
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
 WHERE b.hokId = :hokId and ht.actId = 14
- and ht.datum > :dmstopspn
+ and ht.datum > :$dmstopspn
  and isnull(prnt.schaapId)
  and h.skip = 0
 SQL
-        , [[':hokId', $hokId, Type::INT], [':dmstopspn', $dmstopspn, Type::DATE]]
+        , [[':lidId', $lidId, Type::INT], [':hokId', $hokId, Type::INT], [':dmstopspn', $dmstopspn, Type::DATE]]
         );
     }
 
-    public function zoek_moeders_van_lam($hokId) {
+    public function zoek_moeders_van_lam($lidId, $hokId) {
         return $this->first_field(<<<SQL
 SELECT count(distinct v.mdrId) aantmdr
 FROM tblBezet b
  left join 
  (
-    SELECT b.bezId, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
-    WHERE b.hokId = :hokId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-    GROUP BY b.bezId
- ) uit on (uit.bezId = b.bezId)
+   SELECT h.hisId hisId_in, 
+        LEAD(h.hisId) OVER (
+            PARTITION BY h.stalId
+            ORDER BY h.datum, h.hisId
+        ) AS hisId_tot
+    FROM tblHistorie h
+     join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (st.ubnId = u.ubnId)
+     join tblActie a on (h.actId = a.actId)
+    WHERE u.lidId = :lidId and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
+ ) uit on (uit.hisId_in = b.hisId)
  join tblHistorie h on (b.hisId = h.hisId)
  join tblStal st on (st.stalId = h.stalId)
  left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0
+   SELECT st.schaapId, h.datum
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 4 and h.skip = 0
  ) spn on (spn.schaapId = st.schaapId)
  left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
+   SELECT st.schaapId, h.datum
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
  join tblSchaap s on (st.schaapId = s.schaapId)
  join tblVolwas v on (s.volwId = v.volwId)
-WHERE b.hokId = :hokId and isnull(uit.bezId)
+WHERE b.hokId = :hokId and isnull(uit.hisId_tot)
  and isnull(spn.schaapId)
  and isnull(prnt.schaapId)
  and h.skip = 0
 SQL
         , [
-            [':hokId', $hokId, Type::INT],
+            [':lidId', $lidId, Type::INT], [':hokId', $hokId, Type::INT],
         ]
         );
     }
@@ -1620,7 +1602,7 @@ SQL;
         return $this->run_query($sql, $args);
     }
 
-    public function zoek_nu_in_verblijf_geb($hokId)        {
+    public function zoek_nu_in_verblijf_geb($lidId, $hokId)        {
         $sql = <<<SQL
 SELECT count(b.bezId) aantin
 FROM tblBezet b
@@ -1628,35 +1610,35 @@ FROM tblBezet b
  join tblStal st on (st.stalId = h.stalId)
  left join 
  (
-    SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
-    WHERE b.hokId = :hokId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-    GROUP BY b.bezId, h1.hisId
- ) uit on (uit.hisv = b.hisId)
+   SELECT h.hisId hisId_in, 
+        LEAD(h.hisId) OVER (
+            PARTITION BY h.stalId
+            ORDER BY h.datum, h.hisId
+        ) AS hisId_tot
+    FROM tblHistorie h
+     join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (st.ubnId = u.ubnId)
+     join tblActie a on (h.actId = a.actId)
+    WHERE u.lidId = :lidId and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
+ ) uit on (uit.hisId_in = b.hisId)
  left join (
-    SELECT st.schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0
+   SELECT st.schaapId, h.datum
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 4 and h.skip = 0
  ) spn on (spn.schaapId = st.schaapId)
  left join (
-    SELECT st.schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
+   SELECT st.schaapId, h.datum
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE b.hokId = :hokId
-and isnull(uit.bezId)
+WHERE b.hokId = :hokId and isnull(uit.hisId_tot)
 and isnull(spn.schaapId)
 and isnull(prnt.schaapId)
 and h.skip = 0
 SQL;
-        $args = [[':hokId', $hokId, Type::INT]];
+        $args = [[':lidId', $lidId, Type::INT],[':hokId', $hokId, Type::INT]];
         return $this->first_field($sql, $args);
     }
 
@@ -1715,7 +1697,7 @@ SQL;
         return $this->run_query($sql, $args);
     }
 
-    public function zoek_nu_in_verblijf_spn($hokId)    {
+    public function zoek_nu_in_verblijf_spn($lidId, $hokId)    {
 $sql = <<<SQL
 SELECT count(b.bezId) aantin
 FROM tblBezet b
@@ -1723,34 +1705,34 @@ FROM tblBezet b
  join tblStal st on (st.stalId = h.stalId)
  left join 
  (
-    SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
-    FROM tblBezet b
-     join tblHistorie h1 on (b.hisId = h1.hisId)
-     join tblActie a1 on (a1.actId = h1.actId)
-     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-     join tblActie a2 on (a2.actId = h2.actId)
-     join tblStal st on (h1.stalId = st.stalId)
-    WHERE b.hokId = :hokId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-    GROUP BY b.bezId, h1.hisId
- ) uit on (uit.hisv = b.hisId)
+   SELECT h.hisId hisId_in, 
+        LEAD(h.hisId) OVER (
+            PARTITION BY h.stalId
+            ORDER BY h.datum, h.hisId
+        ) AS hisId_tot
+    FROM tblHistorie h
+     join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (st.ubnId = u.ubnId)
+     join tblActie a on (h.actId = a.actId)
+    WHERE u.lidId = :lidId and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
+ ) uit on (uit.hisId_in = b.hisId)
  join (
-    SELECT st.schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4 and h.skip = 0
+   SELECT st.schaapId, h.datum
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 4 and h.skip = 0
  ) spn on (spn.schaapId = st.schaapId)
  left join (
-    SELECT st.schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
+   SELECT st.schaapId, h.datum
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 3 and h.skip = 0
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE b.hokId = :hokId
- and h.skip = 0
- and isnull(uit.bezId)
- and isnull(prnt.schaapId)
+WHERE b.hokId = :hokId and isnull(uit.hisId_tot)
+and isnull(prnt.schaapId)
+and h.skip = 0
 SQL;
-        $args = [[':hokId', $hokId, Type::INT]];
+        $args = [[':lidId', $lidId, Type::INT],[':hokId', $hokId, Type::INT]];
         return $this->first_field($sql, $args);
     }
 

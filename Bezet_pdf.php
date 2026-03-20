@@ -61,7 +61,7 @@ while ($row = $doorloop_verblijf->fetch_assoc()) {
     $pdf->Cell(75, 3, '', '', 0, '', false);
     $pdf->Cell(30, 3, $hok, '', 1, '', false);
     $bezet_gateway = new BezetGateway();
-    $nu_geb = $bezet_gateway->zoek_nu_in_verblijf_geb($hokId);
+    $nu_geb = $bezet_gateway->zoek_nu_in_verblijf_geb($lidId, $hokId);
     if ($nu_geb > 0) {
  // Als er lammeren voor spenen in het verblijf zitten
         $pdf->Ln(7);
@@ -127,7 +127,7 @@ while ($row = $doorloop_verblijf->fetch_assoc()) {
         }
     }
     $bezet_gateway = new BezetGateway();
-    $nu_spn = $bezet_gateway->zoek_nu_in_verblijf_spn($hokId);
+    $nu_spn = $bezet_gateway->zoek_nu_in_verblijf_spn($lidId, $hokId);
     if ($nu_spn > 0) {
      // Als er lammeren na spenen in het verblijf zitten
         $pdf->Ln(7);

@@ -70,21 +70,21 @@ if (Auth::is_logged_in()) {
         if (!isset($dmstopspn)) {
             $dmstopspn = '1973-09-11';
         }
-        $aanwezig1 = $bezet_gateway->zoek_nu_in_verblijf_geb($row['hokId']);
-        $aanwezig2 = $bezet_gateway->zoek_nu_in_verblijf_spn($row['hokId']);
+        $aanwezig1 = $bezet_gateway->zoek_nu_in_verblijf_geb($lidId, $row['hokId']);
+        $aanwezig2 = $bezet_gateway->zoek_nu_in_verblijf_spn($lidId, $row['hokId']);
         $extra['aanwezig'] = $aanwezig1 + $aanwezig2;
-        $extra['aanwezig3'] = $bezet_gateway->zoek_nu_in_verblijf_prnt($row['hokId']);
+        $extra['aanwezig3'] = $bezet_gateway->zoek_nu_in_verblijf_prnt($lidId, $row['hokId']);
         $aanwezig_incl = $extra['aanwezig'] + $extra['aanwezig3']; // wordt niet gebruikt
-        $uit_geb = $bezet_gateway->zoek_verlaten_geb_excl_overpl_en_uitval($row['hokId'], $dmstopgeb);
-        $uit_spn = $bezet_gateway->zoek_verlaten_spn_excl_overpl_en_uitval($row['hokId'], $dmstopspn);
+        $uit_geb = $bezet_gateway->zoek_verlaten_geb_excl_overpl_en_uitval($lidId, $row['hokId'], $dmstopgeb);
+        $uit_spn = $bezet_gateway->zoek_verlaten_spn_excl_overpl_en_uitval($lidId, $row['hokId'], $dmstopspn);
         $extra['uit'] = $uit_geb + $uit_spn;
-        $overpl_geb = $bezet_gateway->zoek_overplaatsing_geb($row['hokId'], $dmstopgeb);
-        $overpl_spn = $bezet_gateway->zoek_overplaatsing_spn($row['hokId'], $dmstopspn);
+        $overpl_geb = $bezet_gateway->zoek_overplaatsing_geb($lidId, $row['hokId'], $dmstopgeb);
+        $overpl_spn = $bezet_gateway->zoek_overplaatsing_spn($lidId, $row['hokId'], $dmstopspn);
         $extra['overpl'] = $overpl_geb + $overpl_spn;
-        $uitval1 = $bezet_gateway->zoek_overleden_geb($row['hokId'], $dmstopgeb);
-        $uitval2 = $bezet_gateway->zoek_overleden_spn($row['hokId'], $dmstopspn);
+        $uitval1 = $bezet_gateway->zoek_overleden_geb($lidId, $row['hokId'], $dmstopgeb);
+        $uitval2 = $bezet_gateway->zoek_overleden_spn($lidId, $row['hokId'], $dmstopspn);
         $extra['uitval'] = $uitval1 + $uitval2;
-        $extra['mdrs'] = $bezet_gateway->zoek_moeders_van_lam($row['hokId']);
+        $extra['mdrs'] = $bezet_gateway->zoek_moeders_van_lam($lidId, $row['hokId']);
         $extra['dmvan'] = '';
         $extra['van'] = '';
         $extra['tot'] = '';
