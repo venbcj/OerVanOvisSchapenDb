@@ -87,63 +87,22 @@ WHERE levensnummer = '" . mysqli_real_escape_string($db, $fldLevnr) . "'
         }
     // CONTROLE op alle verplichten velden bij overplaatsen lam
         if (!empty($fldDag) && isset($fldHok)) {
-            if ($reader == 'Agrident') {
-                $zoek_levensnummer_doelgroep = mysqli_query($db, "
-SELECT rd.levensnummer levnr, p.doelId
+            
+$zoek_levensnummer_doelgroep = mysqli_query($db, "
+SELECT rd.levensnummer levnr
 FROM impAgrident rd
- left join (
-    SELECT s.levensnummer, p.doelId
-    FROM tblBezet b
-     left join (
-        SELECT h1.hisId hisv, min(h2.hisId) hist
-        FROM tblHistorie h1
-         join tblActie a1 on (a1.actId = h1.actId)
-         join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-         join tblActie a2 on (a2.actId = h2.actId)
-         join tblStal st on (h1.stalId = st.stalId)
-         join tblUbn u on (u.ubnId = st.ubnId)
-        WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-        GROUP BY h1.hisId
-     ) tot on (b.hisId = tot.hisv)
-     join tblPeriode p on (p.periId = b.periId)
-     join tblHistorie h on (b.hisId = h.hisId)
-     join tblStal st on (h.stalId = st.stalId)
-     join tblSchaap s on (s.schaapId = st.schaapId)
-    WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(tot.hist) and h.skip = 0
- ) p on (rd.levensnummer = p.levensnummer)
 WHERE rd.Id = '" . mysqli_real_escape_string($db, $recId) . "'
 ") or die(mysqli_error($db));
-            } else {
-                $zoek_levensnummer_doelgroep = mysqli_query($db, "
-SELECT rd.levnr_ovpl levnr, p.doelId
-FROM impReader rd
- left join (
-    SELECT s.levensnummer, p.doelId
-    FROM tblBezet b
-     left join (
-        SELECT h1.hisId hisv, min(h2.hisId) hist
-        FROM tblHistorie h1
-         join tblActie a1 on (a1.actId = h1.actId)
-         join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-         join tblActie a2 on (a2.actId = h2.actId)
-         join tblStal st on (h1.stalId = st.stalId)
-         join tblUbn u on (u.ubnId = st.ubnId)
-        WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0
-        GROUP BY h1.hisId
-     ) tot on (b.hisId = tot.hisv)
-     join tblPeriode p on (p.periId = b.periId)
-     join tblHistorie h on (b.hisId = h.hisId)
-     join tblStal st on (h.stalId = st.stalId)
-     join tblSchaap s on (s.schaapId = st.schaapId)
- ) p on (rd.levnr_ovpl = p.levensnummer)
-WHERE rd.readId = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(mysqli_error($db));
-            }
-            while ($dl = mysqli_fetch_assoc($zoek_levensnummer_doelgroep)) {
-                $levnr = $dl['levnr']; /*$doelId = $dl['doelId'];*/
+             
+    while ($dl = mysqli_fetch_assoc($zoek_levensnummer_doelgroep)) {
+        $levnr = $dl['levnr']; /*$doelId = $dl['doelId'];*/
             }
         //echo '$levnr = '.$levnr.'<br>';
-            $zoek_stalId = mysqli_query($db, "
+
+unset($stalId);
+unset($day_uit);
+
+$zoek_stalId = mysqli_query($db, "
 SELECT stalId
 FROM tblStal st
  join tblUbn u on (u.ubnId = st.ubnId)
@@ -153,29 +112,38 @@ WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.levensnummer =
     while ($st = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $st['stalId']; }
 //echo '$stalId = '.$stalId.'<br>';
 
-/*$zoek_doelgr = /* Nodig als nieuw hok nog leeg is */ /*mysqli_query($db," 
-SELECT p.doelId
-FROM tblPeriode p 
- join tblBezet b on (b.periId = p.periId)
- join (
-    SELECT max(bezId) bezId
-    FROM tblBezet b
-     join tblHistorie h on (b.hisId = h.hisId)
-     join tblStal st on (st.stalId = h.stalId)
-    WHERE st.stalId = '".mysqli_real_escape_string($db,$stalId)."'
- ) mb on (mb.bezId = b.bezId)
+if(isset($stalId)) {
+$zoek_datum_verblijf_verlaten = mysqli_query($db,"
+SELECT max(datum) datum
+FROM tblHistorie h
+ join tblActie a on (h.actId = a.actId)
+WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."' and a.uit = 1
 ") or die (mysqli_error($db));
-    while ($dl = mysqli_fetch_assoc($zoek_doelgr)) { $doelId = $dl['doelId']; }*/
 
+	$zdvv = mysqli_fetch_assoc($zoek_datum_verblijf_verlaten); $day_uit = $zdvv['datum'];
+	
+if(isset($day_uit)) { // Als verblijf is verlaten en nog op de stallijst staat (rel_best is immers null)
+$zoek_laatste_datum_in_verblijf = mysqli_query($db,"
+SELECT max(datum) datum
+FROM tblHistorie h
+ join tblBezet b on (h.hisId = b.hisId)
+WHERE stalId = '".mysqli_real_escape_string($db,$stalId)."'
+") or die (mysqli_error($db));
+
+	$zldiv = mysqli_fetch_assoc($zoek_laatste_datum_in_verblijf); $day_in = $zldiv['datum'];
+
+}	
+
+if(isset($day_uit) && $day_uit > $day_in) { $actId = 6; } else { $actId = 5; }
     
-    $insert_tblHistorie = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$fldDag)."', actId = 5 ";
+    $insert_tblHistorie = "INSERT INTO tblHistorie set stalId = '".mysqli_real_escape_string($db,$stalId)."', datum = '".mysqli_real_escape_string($db,$fldDag)."', actId = '".mysqli_real_escape_string($db,$actId)."' ";
         mysqli_query($db,$insert_tblHistorie) or die (mysqli_error($db));
 
 $zoek_hisId = mysqli_query($db,"
 SELECT max(hisId) hisId
 FROM tblHistorie h 
  join tblStal st on (h.stalId = st.stalId)
-WHERE st.stalId = '" . mysqli_real_escape_string($db, $stalId) . "' and actId = 5
+WHERE st.stalId = '" . mysqli_real_escape_string($db,$stalId) . "' and actId = '".mysqli_real_escape_string($db,$actId)."'
 ") or die(mysqli_error($db));
             while ($hi = mysqli_fetch_assoc($zoek_hisId)) {
                 $hisId = $hi['hisId'];
@@ -183,21 +151,18 @@ WHERE st.stalId = '" . mysqli_real_escape_string($db, $stalId) . "' and actId = 
             $insert_tblBezet = "INSERT INTO tblBezet set hisId = '" . mysqli_real_escape_string($db, $hisId) . "', hokId = '" . mysqli_real_escape_string($db, $fldHok) . "' ";
         /*echo $insert_tblBezet.'<br>';*/        mysqli_query($db, $insert_tblBezet) or die(mysqli_error($db));
             unset($periId);
-            if ($reader == 'Agrident') {
-                $updateReader = "UPDATE impAgrident SET verwerkt = 1 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "' ";
-            } else {
-                $updateReader = "UPDATE impReader SET verwerkt = 1 WHERE readId = '" . mysqli_real_escape_string($db, $recId) . "' ";
-            }
+
+       $updateReader = "UPDATE impAgrident SET verwerkt = 1 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "' ";
+
             mysqli_query($db, $updateReader) or die(mysqli_error($db));
+} // Einde if(isset($stalId)) 
         }
     // EINDE CONTROLE op alle verplichten velden bij spenen lam
     }
     if ($fldKies == 0 && $fldDel == 1) {
-        if ($reader == 'Agrident') {
+
                $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "' " ;
-        } else {
-            $updateReader = "UPDATE impReader set verwerkt = 1 WHERE readId = '" . mysqli_real_escape_string($db, $recId) . "' " ;
-        }
+
     /*echo $updateReader.'<br>';*/    mysqli_query($db, $updateReader) or die(mysqli_error($db));
     }
 }
