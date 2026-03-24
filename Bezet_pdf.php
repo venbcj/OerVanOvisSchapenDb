@@ -75,28 +75,31 @@ while ($row = $doorloop_verblijf->fetch_assoc()) {
         $pdf->SetDrawColor(50, 50, 100);
     // kopregel 1
         $pdf->Cell(5, 3, '', '', 0, '', false);
-        $pdf->Cell(24, 3, '', '', 0, 'C', false);
+        $pdf->Cell(18, 3, '', '', 0, 'C', false);
+        $pdf->Cell(18, 3, '', '', 0, 'C', false);
         $pdf->Cell(12, 3, 'Laatst', '', 0, 'C', false);
         $pdf->Cell(24, 3, '', '', 0, 'C', false);
-        $pdf->Cell(24, 3, '', '', 0, 'C', false);
+        $pdf->Cell(18, 3, '', '', 0, 'C', false);
         $pdf->Cell(24, 3, '', '', 0, 'C', false);
         $pdf->Cell(24, 3, '', '', 0, 'C', false);
         $pdf->Cell(24, 3, '', '', 1, 'C', false);
     // kopregel 2
         $pdf->Cell(5, 3, '', '', 0, '', false);
-        $pdf->Cell(24, 3, '', '', 0, 'C', false);
+        $pdf->Cell(18, 3, '', '', 0, 'C', false);
+        $pdf->Cell(18, 3, '', '', 0, 'C', false);
         $pdf->Cell(12, 3, 'gewogen', '', 0, 'C', false);
         $pdf->Cell(24, 3, '', '', 0, 'C', false);
-        $pdf->Cell(24, 3, '', '', 0, 'C', false);
+        $pdf->Cell(18, 3, '', '', 0, 'C', false);
         $pdf->Cell(24, 3, '', '', 0, 'C', false);
         $pdf->Cell(24, 3, '', '', 0, 'C', false);
         $pdf->Cell(24, 3, 'Fictieve', '', 1, 'C', false);
     // kopregel 3
         $pdf->Cell(5, 3, '', '', 0, '', false);
-        $pdf->Cell(24, 3, 'Werknr', '', 0, 'C', false);
+        $pdf->Cell(18, 3, 'Ubn', '', 0, 'C', false);
+        $pdf->Cell(18, 3, 'Werknr', '', 0, 'C', false);
         $pdf->Cell(12, 3, 'gewicht (kg)', '', 0, 'C', false);
         $pdf->Cell(24, 3, 'Ras', '', 0, 'C', false);
-        $pdf->Cell(24, 3, 'Geslacht', '', 0, 'C', false);
+        $pdf->Cell(18, 3, 'Geslacht', '', 0, 'C', false);
         $pdf->Cell(24, 3, 'Geboortedatum', '', 0, 'C', false);
         $pdf->Cell(24, 3, 'Datum in verblijf', '', 0, 'C', false);
         $pdf->Cell(24, 3, 'speendatum', '', 0, 'C', false);
@@ -104,6 +107,7 @@ while ($row = $doorloop_verblijf->fetch_assoc()) {
         $bezet_gateway = new BezetGateway();
         $hok_inhoud_geb = $bezet_gateway->hok_inhoud_geb($Karwerk, $hokId);
         while ($row = $hok_inhoud_geb->fetch_array()) {
+				 $ubn = $row['ubn'];
                  $werknr = $row['werknr'];
                  $lstkg = $row['lstkg'];
                  $ras = $row['ras'];
@@ -116,7 +120,8 @@ while ($row = $doorloop_verblijf->fetch_assoc()) {
                $pdf->SetFont('Times', '', 8);
                $pdf->SetDrawColor(200, 200, 200); // Grijs
                 $pdf->Cell(5, 3, '', '', 0, '', false);
-                $pdf->Cell(24, 3, $werknr, 'T', 0, 'C', false);
+                $pdf->Cell(18, 3, $ubn, 'T', 0, 'C', false);
+                $pdf->Cell(18, 3, $werknr, 'T', 0, 'C', false);
                 $pdf->Cell(12, 3, $lstkg, 'T', 0, 'C', false);
                 $pdf->Cell(24, 3, $ras, 'T', 0, 'C', false);
                 $pdf->Cell(24, 3, $geslacht, 'T', 0, 'C', false);
@@ -141,34 +146,38 @@ while ($row = $doorloop_verblijf->fetch_assoc()) {
         $pdf->SetDrawColor(50, 50, 100);
         // kopregel 1
         $pdf->Cell(5, 3, '', '', 0, '', false);
-        $pdf->Cell(24, 3, '', '', 0, 'C', false);
+        $pdf->Cell(18, 3, '', '', 0, 'C', false);
+        $pdf->Cell(18, 3, '', '', 0, 'C', false);
         $pdf->Cell(12, 3, 'Laatst', '', 0, 'C', false);
         $pdf->Cell(24, 3, '', '', 0, 'C', false);
-        $pdf->Cell(24, 3, '', '', 0, 'C', false);
+        $pdf->Cell(18, 3, '', '', 0, 'C', false);
         $pdf->Cell(24, 3, '', '', 0, 'C', false);
         $pdf->Cell(24, 3, '', '', 0, 'C', false);
         $pdf->Cell(24, 3, '', '', 1, 'C', false);
         // kopregel 2
         $pdf->Cell(5, 3, '', '', 0, '', false);
-        $pdf->Cell(24, 3, '', '', 0, 'C', false);
+        $pdf->Cell(18, 3, '', '', 0, 'C', false);
+        $pdf->Cell(18, 3, '', '', 0, 'C', false);
         $pdf->Cell(12, 3, 'gewogen', '', 0, 'C', false);
         $pdf->Cell(24, 3, '', '', 0, 'C', false);
-        $pdf->Cell(24, 3, '', '', 0, 'C', false);
+        $pdf->Cell(18, 3, '', '', 0, 'C', false);
         $pdf->Cell(24, 3, '', '', 0, 'C', false);
         $pdf->Cell(24, 3, '', '', 0, 'C', false);
         $pdf->Cell(24, 3, 'Fictieve', '', 1, 'C', false);
         // kopregel 3
         $pdf->Cell(5, 3, '', '', 0, '', false);
-        $pdf->Cell(24, 3, 'Werknr', '', 0, 'C', false);
+        $pdf->Cell(18, 3, 'Ubn', '', 0, 'C', false);
+        $pdf->Cell(18, 3, 'Werknr', '', 0, 'C', false);
         $pdf->Cell(12, 3, 'gewicht (kg)', '', 0, 'C', false);
         $pdf->Cell(24, 3, 'Ras', '', 0, 'C', false);
-        $pdf->Cell(24, 3, 'Geslacht', '', 0, 'C', false);
+        $pdf->Cell(18, 3, 'Geslacht', '', 0, 'C', false);
         $pdf->Cell(24, 3, 'Geboortedatum', '', 0, 'C', false);
         $pdf->Cell(24, 3, 'Datum in verblijf', '', 0, 'C', false);
         $pdf->Cell(24, 3, 'afleverdatum', '', 1, 'C', false);
         $bezet_gateway = new BezetGateway();
         $hok_inhoud_spn = $bezet_gateway->hok_inhoud_spn($Karwerk, $hokId);
         while ($row = $hok_inhoud_spn->fetch_array()) {
+             $ubn = $row['ubn'];
              $werknr = $row['werknr'];
              $lstkg = $row['lstkg'];
              $ras = $row['ras'];
@@ -179,10 +188,11 @@ while ($row = $doorloop_verblijf->fetch_assoc()) {
                $pdf->SetFont('Times', '', 8);
                $pdf->SetDrawColor(200, 200, 200); // Grijs
             $pdf->Cell(5, 3, '', '', 0, '', false);
-            $pdf->Cell(24, 3, $werknr, 'T', 0, 'C', false);
+            $pdf->Cell(18, 3, $ubn, 'T', 0, 'C', false);
+            $pdf->Cell(18, 3, $werknr, 'T', 0, 'C', false);
             $pdf->Cell(12, 3, $lstkg, 'T', 0, 'C', false);
             $pdf->Cell(24, 3, $ras, 'T', 0, 'C', false);
-            $pdf->Cell(24, 3, $geslacht, 'T', 0, 'C', false);
+            $pdf->Cell(18, 3, $geslacht, 'T', 0, 'C', false);
             $pdf->Cell(24, 3, $gebdm, 'T', 0, 'C', false);
             $pdf->Cell(24, 3, $vanaf, 'T', 0, 'C', false);
             $pdf->Cell(24, 3, $ficdm, 'T', 1, 'C', false);
@@ -203,18 +213,20 @@ while ($row = $doorloop_verblijf->fetch_assoc()) {
         $pdf->SetDrawColor(50, 50, 100);
         // kopregel 1
         $pdf->Cell(5, 3, '', '', 0, '', false);
-        $pdf->Cell(24, 3, '', '', 0, 'C', false);
+        $pdf->Cell(18, 3, '', '', 0, 'C', false);
+        $pdf->Cell(18, 3, '', '', 0, 'C', false);
         $pdf->Cell(12, 3, 'Laatst', '', 0, 'C', false);
         $pdf->Cell(24, 3, '', '', 0, 'C', false);
-        $pdf->Cell(24, 3, '', '', 0, 'C', false);
+        $pdf->Cell(18, 3, '', '', 0, 'C', false);
         $pdf->Cell(24, 3, '', '', 0, 'C', false);
         $pdf->Cell(24, 3, '', '', 1, 'C', false);
         // kopregel 2
         $pdf->Cell(5, 3, '', '', 0, '', false);
-        $pdf->Cell(24, 3, '', '', 0, 'C', false);
+        $pdf->Cell(18, 3, '', '', 0, 'C', false);
+        $pdf->Cell(18, 3, '', '', 0, 'C', false);
         $pdf->Cell(12, 3, 'gewogen', '', 0, 'C', false);
         $pdf->Cell(24, 3, '', '', 0, 'C', false);
-        $pdf->Cell(24, 3, '', '', 0, 'C', false);
+        $pdf->Cell(18, 3, '', '', 0, 'C', false);
         $pdf->Cell(24, 3, '', '', 0, 'C', false);
         $pdf->Cell(24, 3, '', '', 1, 'C', false);
         // kopregel 3
@@ -222,12 +234,13 @@ while ($row = $doorloop_verblijf->fetch_assoc()) {
         $pdf->Cell(24, 3, 'Werknr', '', 0, 'C', false);
         $pdf->Cell(12, 3, 'gewicht (kg)', '', 0, 'C', false);
         $pdf->Cell(24, 3, 'Ras', '', 0, 'C', false);
-        $pdf->Cell(24, 3, 'Geslacht', '', 0, 'C', false);
+        $pdf->Cell(18, 3, 'Geslacht', '', 0, 'C', false);
         $pdf->Cell(24, 3, 'Geboortedatum', '', 0, 'C', false);
         $pdf->Cell(24, 3, 'Datum in verblijf', '', 1, 'C', false);
         $bezet_gateway = new BezetGateway();
         $hok_inhoud_vanaf_aanwas = $bezet_gateway->hok_inhoud_vanaf_aanwas($Karwerk, $hokId);
         while ($row = $hok_inhoud_vanaf_aanwas->fetch_array()) {
+             $ubn = $row['ubn'];
              $werknr = $row['werknr'];
              $ras = $row['ras'];
              $geslacht = $row['geslacht'];
@@ -237,10 +250,11 @@ while ($row = $doorloop_verblijf->fetch_assoc()) {
                $pdf->SetFont('Times', '', 8);
                $pdf->SetDrawColor(200, 200, 200); // Grijs
             $pdf->Cell(5, 3, '', '', 0, '', false);
-            $pdf->Cell(24, 3, $werknr, 'T', 0, 'C', false);
+            $pdf->Cell(18, 3, $ubn, 'T', 0, 'C', false);
+            $pdf->Cell(18, 3, $werknr, 'T', 0, 'C', false);
             $pdf->Cell(12, 3, $lstkg, 'T', 0, 'C', false);
             $pdf->Cell(24, 3, $ras, 'T', 0, 'C', false);
-            $pdf->Cell(24, 3, $geslacht, 'T', 0, 'C', false);
+            $pdf->Cell(18, 3, $geslacht, 'T', 0, 'C', false);
             $pdf->Cell(24, 3, $gebdm, 'T', 0, 'C', false);
             $pdf->Cell(24, 3, $vanaf, 'T', 1, 'C', false);
         }

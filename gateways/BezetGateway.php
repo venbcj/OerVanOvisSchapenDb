@@ -1644,10 +1644,11 @@ SQL;
 
     public function hok_inhoud_geb($Karwerk, $hokId)        {
         $sql = <<<SQL
-            SELECT s.schaapId, right(s.levensnummer,:Karwerk) werknr, r.ras, s.geslacht, date_format(hg.datum,'%d-%m-%Y') geb, date_format(h.datum,'%d-%m-%Y') van, date_format(hg.datum + interval 7 week,'%d-%m-%Y') ficspn, right(mdr.levensnummer,:Karwerk) mdr, lastkg.kg lstkg
+            SELECT u.ubn, s.schaapId, right(s.levensnummer,:Karwerk) werknr, r.ras, s.geslacht, date_format(hg.datum,'%d-%m-%Y') geb, date_format(h.datum,'%d-%m-%Y') van, date_format(hg.datum + interval 7 week,'%d-%m-%Y') ficspn, right(mdr.levensnummer,:Karwerk) mdr, lastkg.kg lstkg
             FROM tblBezet b
              join tblHistorie h on (b.hisId = h.hisId)
              join tblStal st on (st.stalId = h.stalId)
+             join tblUbn u on (st.ubnId = u.ubnId)
              join tblSchaap s on (s.schaapId = st.schaapId)
              left join tblRas r on (r.rasId = s.rasId)
              left join tblVolwas v on (v.volwId = s.volwId)
@@ -1738,10 +1739,11 @@ SQL;
 
     public function hok_inhoud_spn($Karwerk, $hokId)        {
         $sql = <<<SQL
-            SELECT s.schaapId, right(s.levensnummer,:Karwerk) werknr, r.ras, s.geslacht, date_format(hg.datum,'%d-%m-%Y') geb, date_format(spn.datum,'%d-%m-%Y') spn, date_format(h.datum,'%d-%m-%Y') van, date_format(hg.datum + interval 7 week,'%d-%m-%Y') ficspn, date_format(hg.datum + interval 130 day,'%d-%m-%Y') ficafv, right(mdr.levensnummer,:Karwerk) mdr, lastkg.kg lstkg
+            SELECT u.ubn, s.schaapId, right(s.levensnummer,:Karwerk) werknr, r.ras, s.geslacht, date_format(hg.datum,'%d-%m-%Y') geb, date_format(spn.datum,'%d-%m-%Y') spn, date_format(h.datum,'%d-%m-%Y') van, date_format(hg.datum + interval 7 week,'%d-%m-%Y') ficspn, date_format(hg.datum + interval 130 day,'%d-%m-%Y') ficafv, right(mdr.levensnummer,:Karwerk) mdr, lastkg.kg lstkg
             FROM tblBezet b
              join tblHistorie h on (b.hisId = h.hisId)
              join tblStal st on (st.stalId = h.stalId)
+             join tblUbn u on (st.ubnId = u.ubnId)
              join tblSchaap s on (s.schaapId = st.schaapId)
              left join tblRas r on (r.rasId = s.rasId)
              left join tblVolwas v on (v.volwId = s.volwId)
@@ -1793,41 +1795,37 @@ SQL;
 
     public function zoek_nu_in_verblijf_prnt_pdf($hokId){
         $sql = <<<SQL
-    SELECT count(b.hisId) aantin
-    FROM (
-        SELECT b.hisId, b.hokId
-        FROM tblBezet b
-         join tblHistorie h on (b.hisId = h.hisId)
-         join tblStal st on (st.stalId = h.stalId)
-         join (
-            SELECT st.schaapId, h.hisId, h.datum
-            FROM tblStal st
-            join tblHistorie h on (st.stalId = h.stalId)
-            WHERE h.actId = 3 and h.skip = 0
-        ) prnt on (prnt.schaapId = st.schaapId)
-        WHERE b.hokId = :hokId and h.skip = 0 and h.datum >= prnt.datum
-     ) b
-     join tblHistorie h on (b.hisId = h.hisId)
+    SELECT count(s.schaapId) aantin
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join (
+    SELECT max(h.hisId) hisId, h.stalId
+    FROM tblHistorie h
      join tblStal st on (st.stalId = h.stalId)
-     left join 
-     (
-        SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
-        FROM tblBezet b
-         join tblHistorie h1 on (b.hisId = h1.hisId)
-         join tblActie a1 on (a1.actId = h1.actId)
-         join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-         join tblActie a2 on (a2.actId = h2.actId)
-         join tblStal st on (h1.stalId = st.stalId)
-        WHERE b.hokId = :hokId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
-        GROUP BY b.bezId, h1.hisId
-     ) uit on (uit.hisv = b.hisId)
-     join (
-        SELECT st.schaapId
-        FROM tblStal st
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 3 and h.skip = 0
-     ) prnt on (prnt.schaapId = st.schaapId)
-    WHERE b.hokId = :hokId and isnull(uit.bezId)
+     join tblBezet b on (b.hisId = h.hisId)
+    WHERE b.hokId = :hokId
+    GROUP BY h.stalId
+ ) hmax on (hmax.stalId = st.stalId)
+ join tblHistorie h on (h.hisId = hmax.hisId)
+ join tblBezet b on (b.hisId = h.hisId)
+ left join (
+    SELECT b.bezId, min(h2.hisId) hist
+    FROM tblBezet b
+     join tblHistorie h1 on (b.hisId = h1.hisId)
+     join tblActie a1 on (a1.actId = h1.actId)
+     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+     join tblActie a2 on (a2.actId = h2.actId)
+    WHERE b.hokId = :hokId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
+    GROUP BY b.bezId
+ ) uit on (uit.bezId = b.bezId)
+ join (
+    SELECT schaapId
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3
+ ) prnt on (prnt.schaapId = st.schaapId)
+
+WHERE b.hokId = :hokId and isnull(uit.bezId) and h.skip = 0
 SQL;
         $args = [[':hokId', $hokId, Type::INT]];
         return $this->first_field($sql, $args);
@@ -1835,61 +1833,55 @@ SQL;
 
     public function hok_inhoud_vanaf_aanwas($Karwerk, $hokId)        {
         $sql = <<<SQL
-            SELECT s.schaapId, right(s.levensnummer,:Karwerk) werknr, r.ras, s.geslacht, date_format(hg.datum,'%d-%m-%Y') geb, date_format(prnt.datum,'%d-%m-%Y') aanw, date_format(h.datum,'%d-%m-%Y') van, b.hisId,
-                lastkg.kg lstkg
-            FROM (
-                SELECT b.hisId, b.hokId
-                FROM tblBezet b
-                 join tblHistorie h on (b.hisId = h.hisId)
-                 join tblStal st on (st.stalId = h.stalId)
-                 join (
-                    SELECT st.schaapId, h.hisId, h.datum
-                    FROM tblStal st
-                    join tblHistorie h on (st.stalId = h.stalId)
-                    WHERE h.actId = 3 and h.skip = 0
-                ) prnt on (prnt.schaapId = st.schaapId)
-                WHERE b.hokId = :hokId and h.skip = 0 and h.datum >= prnt.datum
-             ) b
-             join tblHistorie h on (b.hisId = h.hisId)
-             join tblStal st on (st.stalId = h.stalId)
-             join tblSchaap s on (s.schaapId = st.schaapId)
-             left join tblRas r on (r.rasId = s.rasId)
-             left join tblVolwas v on (v.volwId = s.volwId)
-             left join tblSchaap mdr on (v.mdrId = mdr.schaapId)
-             left join 
-             (
-                SELECT b.bezId, h1.hisId hisv, min(h2.hisId) hist
-                FROM tblBezet b
-                 join tblHistorie h1 on (b.hisId = h1.hisId)
-                 join tblActie a1 on (a1.actId = h1.actId)
-                 join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
-                 join tblActie a2 on (a2.actId = h2.actId)
-                 join tblStal st on (h1.stalId = st.stalId)
-                WHERE b.hokId = :hokId and a1.aan = 1 and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
-                GROUP BY b.bezId, h1.hisId
-             ) uit on (uit.hisv = b.hisId)
-             left join (
-                SELECT st.schaapId, h.datum
-                FROM tblStal st
-                 join tblHistorie h on (st.stalId = h.stalId)
-                WHERE h.actId = 1 and h.skip = 0
-             ) hg on (hg.schaapId = st.schaapId)
-             join (
-                SELECT st.schaapId, h.datum
-                FROM tblStal st
-                 join tblHistorie h on (st.stalId = h.stalId)
-                WHERE h.actId = 3 and h.skip = 0
-             ) prnt on (prnt.schaapId = st.schaapId)
-             left join (
-                SELECT st.schaapId, max(h.hisId) hisId
-                FROM tblStal st
-                 join tblHistorie h on (st.stalId = h.stalId)
-                WHERE h.kg is not null
-                GROUP BY st.schaapId
-             ) hkg on (hkg.schaapId = st.schaapId)
-             left join tblHistorie lastkg on (lastkg.hisId = hkg.hisId)
-            WHERE b.hokId = :hokId and isnull(uit.bezId)
-            ORDER BY right(s.levensnummer,:Karwerk)
+            SELECT u.ubn, s.schaapId, right(s.levensnummer,:Karwerk) werknr, r.ras, s.geslacht, date_format(hg.datum,'%d-%m-%Y') geb, date_format(prnt.datum,'%d-%m-%Y') aanw, date_format(h.datum,'%d-%m-%Y') van, b.hisId,
+    lastkg.kg lstkg
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+ join tblUbn u on (u.ubnId = st.ubnId)
+ join (
+    SELECT max(h.hisId) hisId, h.stalId
+    FROM tblHistorie h
+     join tblStal st on (st.stalId = h.stalId)
+     join tblBezet b on (b.hisId = h.hisId)  
+    WHERE b.hokId = :hokId
+    GROUP BY h.stalId
+ ) hmax on (hmax.stalId = st.stalId)
+ join tblHistorie h on (h.hisId = hmax.hisId)
+ join tblBezet b on (b.hisId = h.hisId)
+ left join (
+    SELECT b.bezId, min(h2.hisId) hist
+    FROM tblBezet b
+     join tblHistorie h1 on (b.hisId = h1.hisId)
+     join tblActie a1 on (a1.actId = h1.actId)
+     join tblHistorie h2 on (h1.stalId = h2.stalId and ((h1.datum < h2.datum) or (h1.datum = h2.datum and h1.hisId < h2.hisId)) )
+     join tblActie a2 on (a2.actId = h2.actId)
+    WHERE b.hokId = :hokId and a2.uit = 1 and h1.skip = 0 and h2.skip = 0 and h2.actId != 3
+    GROUP BY b.bezId
+ ) uit on (uit.bezId = b.bezId)
+ join (
+    SELECT schaapId, h.datum
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3
+ ) prnt on (prnt.schaapId = st.schaapId)
+ left join (
+    SELECT st.schaapId, h.datum
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 1 and h.skip = 0
+ ) hg on (hg.schaapId = st.schaapId)
+ left join tblRas r on (r.rasId = s.rasId)
+ left join (
+    SELECT st.schaapId, max(h.hisId) hisId
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.kg is not null
+    GROUP BY st.schaapId
+ ) hkg on (hkg.schaapId = st.schaapId)
+ left join tblHistorie lastkg on (lastkg.hisId = hkg.hisId)
+
+WHERE b.hokId = :hokId and isnull(uit.bezId) and h.skip = 0
+ORDER BY right(s.levensnummer,:Karwerk)
 SQL;
         $args = [[':Karwerk', $Karwerk], [':hokId', $hokId, Type::INT]];
         return $this->run_query($sql, $args);
