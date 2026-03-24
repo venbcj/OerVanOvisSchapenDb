@@ -461,7 +461,6 @@ function aanvoer_request_rvo_query($db, $reqId) {
         and h.datum is not null
         and (h.datum >= hg.datum or isnull(hg.datum))
         and h.datum <= (curdate() + interval 3 day)
-        and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12 
         and m.skip <> 1
         and isnull(m.fout) 
         and h.skip = 0
