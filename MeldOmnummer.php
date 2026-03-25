@@ -110,7 +110,6 @@ FROM tblRequest rq
 WHERE rq.reqId = '".mysqli_real_escape_string($db,$reqId)."'
  and h.skip = 0
  and h.datum is not null
- and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12 
  and m.skip <> 1
  and isnull(m.fout)
  and isnull(rvomeldnr.meldnr)

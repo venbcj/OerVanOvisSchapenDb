@@ -61,7 +61,6 @@ WHERE m.reqId = :reqId
  and h.skip = 0
  and h.datum is not null
  and (h.datum <= afv.datum or isnull(afv.datum))
- and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12 
  and m.skip <> 1
 SQL
  , [[':reqId', $fldReqId, Type::INT]],
@@ -97,7 +96,6 @@ WHERE m.reqId = :reqId
  and h.datum is not null
  and h.datum >= mhd.lastdatum
  and h.datum <= curdate()
- and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12 
  and p.ubn is not null    
  and m.skip <> 1
  and h.skip = 0                            
@@ -133,7 +131,6 @@ WHERE m.reqId = :reqId
  and h.datum is not null
  and h.datum >= mhd.lastdatum
  and h.datum <= (curdate() + interval 3 day)
- and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12 
  and st.rel_best is not null
  and m.skip <> 1
  and isnull(rvomeldnr.meldnr)
