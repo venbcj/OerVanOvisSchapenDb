@@ -93,7 +93,6 @@ WHERE m.reqId = '".mysqli_real_escape_string($datb,$fldReqId)."'
  and h.datum is not null
  and h.datum >= mhd.lastdatum
  and h.datum <= (curdate() + interval 3 day)
- and LENGTH(RTRIM(CAST(s.levensnummer AS UNSIGNED))) = 12 
  and st.rel_best is not null
  and m.skip <> 1
  and isnull(rvomeldnr.meldnr)
