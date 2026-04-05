@@ -38,8 +38,8 @@ class RequestGatewayTest extends GatewayCase {
     }
 
     public function test_setDef() {
-        $reqId = null;
-        $def = null;
+        $reqId = '';
+        $def = '';
         $result = $this->sut->setDef($reqId, $def);
         $this->assertNotFalse($result);
     }

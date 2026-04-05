@@ -160,6 +160,7 @@ SQL
         , [
             [':lidId', $lidId, Type::INT],
             [':schaapId', $schaapId, Type::INT],
+            [':datum', $datum, Type::DATE],
         ]
         );
     }

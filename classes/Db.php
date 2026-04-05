@@ -5,6 +5,7 @@ class Db {
     private static $instance = null;
     private $connection = null;
     private $logger;
+    private $builder;
 
     public static function instance($db = null) {
         if (is_null(self::$instance)) {

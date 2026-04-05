@@ -31,6 +31,7 @@ foreach ($multip_array as $recId => $id) {
     unset($fldBest);
     unset($fldSkip);
 
+    $txtDag = '';
     foreach ($id as $key => $value) {
         if ($key == 'kzlDef') {
             $fldDef = $value;
