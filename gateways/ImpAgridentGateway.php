@@ -799,8 +799,8 @@ impAgrident rd
      GROUP BY s.schaapId, s.levensnummer, s.geslacht
  ) s on (rd.levensnummer = s.levensnummer)
  left join tblSchaap new on (rd.nieuw_nummer = new.levensnummer)
- left join tblStal st on (st.schaapId = s.schaapId
- left join tblUbn u on (u.ubnId = st.ubnId)
+ left join tblStal st on (st.schaapId = s.schaapId)
+ left join tblUbn u on (u.ubnId = st.ubnId
  and u.lidId = :lidId
  and isnull(st.rel_best))
  left join (

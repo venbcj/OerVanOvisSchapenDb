@@ -32,19 +32,19 @@ class BezetGatewayTest extends GatewayCase {
 
     public function test_zoek_nu_in_verblijf_geb() {
         $hokId = null;
-        $result = $this->sut->zoek_nu_in_verblijf_geb($lidId, $hokId);
+        $result = $this->sut->zoek_nu_in_verblijf_geb(self::LIDID, $hokId);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_nu_in_verblijf_spn() {
         $hokId = null;
-        $result = $this->sut->zoek_nu_in_verblijf_spn($lidId, $hokId);
+        $result = $this->sut->zoek_nu_in_verblijf_spn(self::LIDID, $hokId);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_nu_in_verblijf_prnt() {
         $hokId = null;
-        $result = $this->sut->zoek_nu_in_verblijf_prnt($lidId, $hokId);
+        $result = $this->sut->zoek_nu_in_verblijf_prnt(self::LIDID, $hokId);
         $this->assertNotFalse($result);
     }
 
@@ -57,48 +57,48 @@ class BezetGatewayTest extends GatewayCase {
     public function test_zoek_verlaten_geb_excl_overpl_en_uitval() {
         $hokId = null;
         $dmstopgeb = null;
-        $result = $this->sut->zoek_verlaten_geb_excl_overpl_en_uitval($lidId, $hokId, $dmstopgeb);
+        $result = $this->sut->zoek_verlaten_geb_excl_overpl_en_uitval(self::LIDID, $hokId, $dmstopgeb);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_verlaten_spn_excl_overpl_en_uitval() {
         $hokId = null;
         $dmstopspn = null;
-        $result = $this->sut->zoek_verlaten_spn_excl_overpl_en_uitval($lidId, $hokId, $dmstopspn);
+        $result = $this->sut->zoek_verlaten_spn_excl_overpl_en_uitval(self::LIDID, $hokId, $dmstopspn);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_overplaatsing_geb() {
         $hokId = null;
         $dmstopgeb = null;
-        $result = $this->sut->zoek_overplaatsing_geb($lidId, $hokId, $dmstopgeb);
+        $result = $this->sut->zoek_overplaatsing_geb(self::LIDID, $hokId, $dmstopgeb);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_overplaatsing_spn() {
         $hokId = null;
         $dmstopspn = null;
-        $result = $this->sut->zoek_overplaatsing_spn($lidId, $hokId, $dmstopspn);
+        $result = $this->sut->zoek_overplaatsing_spn(self::LIDID, $hokId, $dmstopspn);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_overleden_geb() {
         $hokId = null;
         $dmstopgeb = null;
-        $result = $this->sut->zoek_overleden_geb($lidId, $hokId, $dmstopgeb);
+        $result = $this->sut->zoek_overleden_geb(self::LIDID, $hokId, $dmstopgeb);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_overleden_spn() {
         $hokId = null;
         $dmstopspn = null;
-        $result = $this->sut->zoek_overleden_spn($lidId, $hokId, $dmstopspn);
+        $result = $this->sut->zoek_overleden_spn(self::LIDID, $hokId, $dmstopspn);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_moeders_van_lam() {
         $hokId = null;
-        $result = $this->sut->zoek_moeders_van_lam($lidId, $hokId);
+        $result = $this->sut->zoek_moeders_van_lam(self::LIDID, $hokId);
         $this->assertNotFalse($result);
     }
 

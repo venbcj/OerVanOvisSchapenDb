@@ -121,14 +121,15 @@ $koppel = $volwas_gateway->zoek_laatste_koppel_na_laatste_worp_obv_moeder($kzlMd
     }
 // Einde Controle op dubbele invoer achter elkaar en dekking binnen 60 dagen
 
+        $historie_gateway = new HistorieGateway();
     if(!isset($fout) && $registratie == 'dekking') {
-        insert_tblHistorie_18($stalId,$txtDay);
+        $historie_gateway->insert_tblHistorie_18($stalId,$txtDay);
         $hisId = zoek_max_hisId_stal($stalId,18);
         insert_dekking_mdr($hisId,$kzlMdr,$kzlVdr);
     } else if(!isset($fout) && $registratie == 'dracht') {
         insert_dracht_mdr($kzlMdr,$kzlVdr,$txtGrootte);
         $volwId = zoek_max_volwId_mdr($kzlMdr,$kzlVdr);
-        insert_tblHistorie_19($stalId,$txtDay);
+        $historie_gateway->insert_tblHistorie_19($stalId,$txtDay);
         $hisId = zoek_max_hisId_stal($stalId,19);
         $dracht_gateway->insert_dracht($volwId, $hidId);
     }
@@ -254,7 +255,7 @@ if(!isset($max_worp) || (isset($dmwerp_plus_60dgn) && $dmwerp_plus_60dgn <= $txt
 
 $stalId = $stal_gateway->zoek_stal($lidId,$mdrId);
 
-insert_tblHistorie_18($stalId,$txtDay);
+$historie_gateway->insert_tblHistorie_18($stalId,$txtDay);
 
 $hisId = zoek_max_hisId_stal($stalId,18);
 

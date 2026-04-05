@@ -1,9 +1,9 @@
 <?php
 
-class OoilamSelectieTest extends IntegrationCase {
+class AlertWorpSelectieTest extends IntegrationCase {
 
     public function test_get() {
-        $this->get('/OoilamSelectie.php', [
+        $this->get('/AlertWorpSelectie.php', [
             'ingelogd' => 1,
         ]);
         $this->assertNoNoise();
@@ -11,7 +11,7 @@ class OoilamSelectieTest extends IntegrationCase {
 
     public function test_post_stuur() {
         // todo fixture waarmee zoek_dieren data oplevert
-        $this->post('/OoilamSelectie.php', [
+        $this->post('/AlertWorpSelectie.php', [
             'ingelogd_' => 1,
             'knpStuur_' => 1,
             'txtWorpVan_' => '2010-01-01',
@@ -28,7 +28,7 @@ class OoilamSelectieTest extends IntegrationCase {
         $schaap_gateway->prime('toon_meerlingen', [
             ['aantal' => 4, 'worp' => 4]
         ]);
-        $this->post('/OoilamSelectie.php', [
+        $this->post('/AlertWorpSelectie.php', [
             'ingelogd_' => 1,
             'knpZoek_' => 1,
             'txtWorpVan_' => '2000-01-01',
@@ -39,7 +39,7 @@ class OoilamSelectieTest extends IntegrationCase {
 
     public function test_geen_rechten() {
         $this->runSQL("UPDATE tblLeden SET tech=0");
-        $this->get('/OoilamSelectie.php', [
+        $this->get('/AlertWorpSelectie.php', [
             'ingelogd' => 1,
         ]);
         $this->assertPresent('<img src="ooikaart_php');

@@ -126,7 +126,6 @@ LoslopersVerkopen.php
 MaandTotalen.php
 MedOverzSchaap.php
 Med_rapportage.php
-Med_registratie.php
 Meerlingen2.php
 Meerlingen3.php
 Meerlingen5.php

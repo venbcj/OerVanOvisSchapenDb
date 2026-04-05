@@ -13,14 +13,14 @@ FROM tblRequest r
  join tblSchaap s on (s.schaapId = st.schaapId)
 WHERE m.meldId = '$recId'
 ");
-$rec = $vw->fetch_assoc();
-return $rec;
+        $rec = $vw->fetch_assoc();
+        return $rec;
     }
 
     public function setDef($reqId, $def) {
         $this->db->query("
-UPDATE tblRequest SET def = '".$this->db->real_escape_string($def)."'
-WHERE reqId = '".$this->db->real_escape_string($reqId)."' ");
+UPDATE tblRequest SET def = '" . $this->db->real_escape_string($def) . "'
+WHERE reqId = '" . $this->db->real_escape_string($reqId) . "' ");
     }
 
     // wordt een aantal keer aangeroepen met steeds een andere fldcode...
@@ -39,21 +39,21 @@ FROM tblRequest r
     FROM impRespons
     WHERE meldnr is not null
  ) rvomeldnr on (r.reqId = rvomeldnr.reqId and coalesce(rvomeldnr.levensnummer_new, rvomeldnr.levensnummer) = s.levensnummer)
-WHERE u.lidId = '".$this->db->real_escape_string($lidid)."'
+WHERE u.lidId = '" . $this->db->real_escape_string($lidid) . "'
  and h.skip = 0
  and isnull(r.dmmeld)
- and code = '".$this->db->real_escape_string($fldCode)."'
+ and code = '" . $this->db->real_escape_string($fldCode) . "'
  and isnull(rvomeldnr.meldnr)
 "); // Foutafhandeling zit in return FALSE
-    if ($vw) {
-        $row = $vw->fetch_assoc();
+        if ($vw) {
+            $row = $vw->fetch_assoc();
             return $row['aant'];
-    }
-    return false; // Foutafhandeling
+        }
+        return false; // Foutafhandeling
     }
 
     public function zoekLaatsteResponse($lidId) {
-return $this->db->query("
+        return $this->run_query("
 SELECT r.reqId, r.code
 FROM tblRequest r
  join tblMelding m on (r.reqId = m.reqId)
@@ -66,7 +66,7 @@ FROM tblRequest r
     GROUP BY reqId
     ) lr on (r.reqId = lr.reqId and coalesce(r.dmheropend,r.dmcreate) < lr.dmcreate)
  left join impRespons rp on (rp.respId = lr.respId)
-WHERE u.lidId = '".$this->db->real_escape_string($lidId)."'
+WHERE u.lidId = '" . $this->db->real_escape_string($lidId) . "'
 and (rp.def != 'J' or isnull(rp.meldnr))
 and h.skip = 0
 GROUP BY r.reqId, r.code
@@ -80,13 +80,13 @@ SELECT count(h.hisId) defat
 FROM tblRequest rq
  join tblMelding m on (rq.reqId = m.reqId)
  join tblHistorie h on (m.hisId = h.hisId)
-WHERE stalId = '".$this->db->real_escape_string($stalId)."' and h.skip = 1 and rq.def = 1 and m.skip = 0
+WHERE stalId = '" . $this->db->real_escape_string($stalId) . "' and h.skip = 1 and rq.def = 1 and m.skip = 0
 ");
-return $vw->fetch_row()[0];
-}
+        return $vw->fetch_row()[0];
+    }
 
-public function hasOpenRequests($lidId) {
-    $field = $this->first_field(<<<SQL
+    public function hasOpenRequests($lidId) {
+        $field = $this->first_field(<<<SQL
 SELECT count(*) aant
 FROM tblRequest r
  join tblMelding m on (r.reqId = m.reqId)
@@ -98,14 +98,13 @@ WHERE u.lidId = :lidId
  and r.dmmeld is null
  and coalesce(m.skip, 0) <> 1
 SQL
-    , [[':lidId', $lidId, Type::INT]]
-    );
-    return $field > 0;
-}
+    , [[':lidId', $lidId, Type::INT]]);
+        return $field > 0;
+    }
 
-public function zoek_open_request($lidId, $code) {
-    return $this->first_field(
-        <<<SQL
+    public function zoek_open_request($lidId, $code) {
+        return $this->first_field(
+            <<<SQL
 SELECT r.reqId
 FROM tblRequest r
  join tblMelding m on (r.reqId = m.reqId)
@@ -119,58 +118,62 @@ WHERE u.lidId = :lidId
 GROUP BY r.reqId
 HAVING (count(r.reqId) < 60)
 SQL
-    , [[':lidId', $lidId, Type::INT], [':code', $code]]
-    );
-}
+            ,
+            [[':lidId', $lidId, Type::INT], [':code', $code]]
+        );
+    }
 
-public function insert($lidId, $fldCode) {
-    $this->run_query(
-        <<<SQL
+    public function insert($lidId, $fldCode) {
+        $this->run_query(
+            <<<SQL
 INSERT INTO tblRequest SET lidId_new = :lidId, code = :code
 SQL
-    , [[':lidId', $lidId, Type::INT], [':code', $fldCode]]
-    );
-    return $this->db->insert_id;
-}
+            ,
+            [[':lidId', $lidId, Type::INT], [':code', $fldCode]]
+        );
+        return $this->db->insert_id;
+    }
 
-public function update($reqId) {
-    $this->run_query(
-        <<<SQL
+    public function update($reqId) {
+        $this->run_query(
+            <<<SQL
 UPDATE tblRequest SET lidId_new = NULL
 where reqId = :reqId
 SQL
-    , [[':reqId', $reqId, Type::INT]]
-    );
-}
+            ,
+            [[':reqId', $reqId, Type::INT]]
+        );
+    }
 
-public function update_response_date($reqId, $dmresponse) {
-    $this->run_query(
-        <<<SQL
+    public function update_response_date($reqId, $dmresponse) {
+        $this->run_query(
+            <<<SQL
 UPDATE tblRequest SET dmresponse = :dmresponse
 where reqId = :reqId
 SQL
-    , [[':reqId', $reqId, Type::INT], [':dmresponse', $dmresponse]]
-    );
-}
+            ,
+            [[':reqId', $reqId, Type::INT], [':dmresponse', $dmresponse]]
+        );
+    }
 
-public function findById($reqId) {
-    return $this->first_record(
-        <<<SQL
+    public function findById($reqId) {
+        return $this->first_record(
+            <<<SQL
     SELECT r.def, r.code
     FROM tblRequest r
     WHERE reqId = :reqId
 SQL
-    , [[':reqId', $reqId, Type::INT]]
-        , ['def' => null, 'code' => null]
-    );
-}
+            ,
+            [[':reqId', $reqId, Type::INT]],
+            ['def' => null, 'code' => null]
+        );
+    }
 
-public function delete_ids($ids) {
-    $this->run_query(<<<SQL
+    public function delete_ids($ids) {
+        $this->run_query(<<<SQL
 DELETE FROM tblRequest WHERE :%reqId
 SQL
-    , ['reqId' => $ids]
-    );
-}
+    , ['reqId' => $ids]);
+    }
 
 }

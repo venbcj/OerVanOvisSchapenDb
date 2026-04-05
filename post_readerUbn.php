@@ -48,8 +48,12 @@ foreach ($array as $recId => $id) {
     // CONTROLE op alle verplichten velden bij afvoer
         if (isset($fldDag)) {
             $zoek_data_reader = $impagrident_gateway->zoek_data_reader($recId);
+            $ubn_best = 0;
+            $schaapId = 0;
+            $ubnId_best = 0;
+            $hokId = 0;
             while ($zdr = $zoek_data_reader->fetch_assoc()) {
-                $levnr = $zdr['levensnummer'];
+                $levnr = $zdr['levensnummer']; // wordt niet gebruikt .. ? --BCB
                 $ubnId_best = $zdr['ubnId'];
                 $ubn_best = $zdr['ubn'];
                 $schaapId = $zdr['schaapId'];

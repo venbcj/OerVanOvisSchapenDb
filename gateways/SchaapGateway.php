@@ -9,7 +9,7 @@ SELECT schaapId
 FROM tblSchaap
 WHERE levensnummer = :levensnummer
 SQL
-        ,
+            ,
             [[':levensnummer', $fldLevnr]],
             0
         );
@@ -22,8 +22,9 @@ SELECT schaapId, transponder
 FROM tblSchaap
 WHERE levensnummer = :levnr
 SQL
-        , [[':levnr', $levnr]]
-            , [null, null]
+            ,
+            [[':levnr', $levnr]],
+            [null, null]
         );
     }
 
@@ -44,7 +45,7 @@ WHERE s.geslacht = 'ram'
  and u.lidId = :lidId
 GROUP BY st.stalId
 SQL
-        ,
+            ,
             [[':lidId', $lidId]]
         );
     }
@@ -66,7 +67,7 @@ WHERE s.geslacht = 'ram'
 GROUP BY st.stalId, levensnummer, scan
 ORDER BY right(levensnummer, $Karwerk)
 SQL
-        ,
+            ,
             [[':lidId', $lidId]]
         );
     }
@@ -89,7 +90,7 @@ WHERE s.geslacht = 'ram'
 GROUP BY st.stalId, levensnummer
 ORDER BY right(levensnummer, $Karwerk)
 SQL
-        ,
+            ,
             [[':lidId', $lidId]]
         );
         return $vw->fetch_all(MYSQLI_ASSOC);
@@ -102,7 +103,7 @@ SELECT right(levensnummer, $Karwerk) werknr
 FROM tblSchaap
 WHERE schaapId = :schaapId
 SQL
-        ,
+            ,
             [[':schaapId', $mdrId]]
         );
     }
@@ -115,7 +116,7 @@ FROM tblSchaap
 WHERE levensnummer = :levensnummer
  and schaapId <> :schaapId
 SQL
-        ,
+            ,
             [
                 [':levensnummer', $fldLevnr],
                 [':schaapId', $schaapId, Type::INT]
@@ -130,7 +131,7 @@ SQL
 UPDATE tblSchaap SET levensnummer = :new
         WHERE levensnummer = :old
 SQL
-        ,
+            ,
             [
                 [':new', $new],
                 [':old', $old],
@@ -144,7 +145,7 @@ SQL
 UPDATE tblSchaap SET geslacht = :geslacht
         WHERE levensnummer = :levensnummer
 SQL
-        ,
+            ,
             [
                 [':levensnummer', $levensnummer],
                 [':geslacht', $geslacht]
@@ -158,7 +159,7 @@ SQL
 UPDATE tblSchaap SET transponder = :transponder
         WHERE schaapId = :schaapId
 SQL
-        ,
+            ,
             [
                 [':schaapId', $schaapId],
                 [':transponder', $transponder]
@@ -202,7 +203,7 @@ WHERE u.lidId = :lidId
  and $Sekse
  and $Ouder
 SQL
-        ,
+            ,
             [[':lidId', $lidId, Type::INT]]
         );
     }
@@ -223,7 +224,8 @@ FROM tblSchaap s
 WHERE u.lidId = :lidId
  and isnull(st.rel_best)
 SQL
-        , [[':lidId', $lidId, Type::INT]]
+            ,
+            [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -258,7 +260,7 @@ FROM tblSchaap s
     WHERE u.lidId = :lidId
      GROUP BY u.lidId, st.schaapId
   ) mst on (mst.schaapId = s.schaapId)
- join tblUbn u on (u.ubnId = mst.ubnId)
+ join tblUbn u on (u.ubnId = mst.lidId)
  join (
      SELECT h.stalId, h.actId
      FROM tblHistorie h
@@ -275,7 +277,7 @@ WHERE u.lidId = :lidId
  and $Sekse
  and $Ouder
 SQL
-        ,
+            ,
             [[':lidId', $lidId, Type::INT]]
         );
     }
@@ -308,7 +310,7 @@ WHERE true
   AND h.actId = 8
 GROUP BY date_format(h.datum, '%Y%m')
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':month', $M],
@@ -346,7 +348,7 @@ SQL
   AND u.lidId = :lidId
         GROUP BY concat(date_format(h.datum, '%Y'), month(h.datum))
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':month', $M],
@@ -386,7 +388,7 @@ WHERE true
   AND eu.lidId = :lidId
 GROUP BY e.eenheid
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':month', $M],
@@ -406,7 +408,7 @@ FROM tblSchaap s
 WHERE u.lidId = :lidId
  and isnull(st.rel_best)
 SQL
-        ,
+            ,
             [[':lidId', $lidId, Type::INT]]
         );
     }
@@ -427,7 +429,7 @@ date_format(hg.datum, '%Y%m%d') gebdm_sort, date_format(hg.datum, '%d-%m-%Y') ge
 s.geslacht, prnt.datum aanw, best.naam, haf.actId
     $FROM
 SQL
-        ,
+            ,
             [[':lidId', $lidId, Type::INT]]
         );
     }
@@ -513,7 +515,7 @@ WHERE u.lidId = :lidId
  and isnull(haf.actId)
 ORDER BY u.ubn, right(s.levensnummer, $Karwerk)
 SQL
-        ,
+            ,
             [[':lidId', $lidId, Type::INT]]
         );
     }
@@ -544,7 +546,7 @@ GROUP BY v.volwId
 HAVING count(st.schaapId) in (:nr)
 ORDER BY date_format(h.datum, '%Y') desc, date_format(h.datum, '%m') desc
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':schaapId', $Ooiid, Type::INT],
@@ -573,7 +575,7 @@ WHERE u.lidId = :lidId
 GROUP BY v.volwId
 ORDER BY date_format(h.datum, '%Y%m') desc
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':schaapId', $Ooiid, Type::INT],
@@ -597,7 +599,7 @@ WHERE s.volwId = :volwId
  and h.skip = 0
 GROUP BY date_format(h.datum, '%Y'), date_format(h.datum, '%m')
 SQL
-        ,
+            ,
             [[':volwId', $volwId, Type::INT]],
             ['', '']
         ));
@@ -615,7 +617,7 @@ WHERE s.volwId = :volwId
  and h.skip = 0
 ORDER BY coalesce(geslacht, 'zzz')
 SQL
-        ,
+            ,
             [[':volwId', $Volwid]],
             [null, null]
         );
@@ -635,7 +637,7 @@ WHERE s.volwId = :volwId
  and date_format(h.datum, '%Y') = :year
  and h.skip = 0
 SQL
-        ,
+            ,
             [
                 [':volwId', $Volwid],
                 [':geslacht', $Geslacht],
@@ -662,7 +664,7 @@ WHERE u.lidId = :lidId
 GROUP BY h.datum, r.relId, p.naam
 ORDER BY r.uitval, h.datum desc
 SQL
-        ,
+            ,
             [[':lidId', $lidId, Type::INT]]
         );
     }
@@ -702,7 +704,7 @@ FROM tblSchaap s
  ) maxdm on (st.stalId = maxdm.stalId)
 WHERE s.geslacht = 'ooi'
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':year', $jaar]
@@ -745,7 +747,7 @@ FROM tblSchaap s
 
 WHERE (isnull(ouder.datum) or ouder.datum > :jan1)
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':year', $jaar],
@@ -797,7 +799,7 @@ or isnull(st.rel_best))
 WHERE isnull(ouder.datum)
  and date_format(dood.datum, '%Y') = :jaar
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':jaar', $jaar],
@@ -844,7 +846,7 @@ FROM tblSchaap s
  ) maxdm on (st.stalId = maxdm.stalId)
 WHERE s.geslacht = 'ooi' and date_format(dood.datum, '%Y') = :jaar
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':jaar', $jaar],
@@ -866,7 +868,7 @@ WHERE u.lidId = :lidId
  and date_format(hg.datum, '%Y') = :year
  and isnull(hkoop.hisId)
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':year', $jaar],
@@ -885,7 +887,7 @@ WHERE u.lidId = :lidId and s.levensnummer is not null
 GROUP BY s.schaapId, s.levensnummer
 ORDER BY s.levensnummer
 SQL
-        ,
+            ,
             [[':lidId', $lidId, Type::INT]]
         );
     }
@@ -902,7 +904,7 @@ WHERE u.lidId = :lidId
 GROUP BY s.schaapId, right(s.levensnummer, $Karwerk)
 ORDER BY right(s.levensnummer, $Karwerk)
 SQL
-        ,
+            ,
             [[':lidId', $lidId, Type::INT]]
         );
     }
@@ -921,7 +923,7 @@ WHERE u.lidId = :lidId
 GROUP BY s.schaapId, concat(st.kleur, ' ', st.halsnr)
 ORDER BY st.kleur, st.halsnr
 SQL
-        ,
+            ,
             [[':lidId', $lidId, Type::INT]]
         );
     }
@@ -940,7 +942,7 @@ WHERE u.lidId = :lidId
 GROUP BY mdr.schaapId, right(mdr.levensnummer, $Karwerk)
 ORDER BY right(mdr.levensnummer, $Karwerk)
 SQL
-        ,
+            ,
             [[':lidId', $lidId, Type::INT]]
         );
     }
@@ -959,7 +961,7 @@ WHERE u.lidId = :lidId
 GROUP BY vdr.schaapId, right(vdr.levensnummer, $Karwerk)
 ORDER BY right(vdr.levensnummer, $Karwerk)
 SQL
-        ,
+            ,
             [[':lidId', $lidId, Type::INT]]
         );
     }
@@ -1017,7 +1019,7 @@ FROM tblSchaap s
 WHERE u.lidId = :lidId
  and $WHERE
 SQL
-        ,
+            ,
             [[':lidId', $lidId, Type::INT]],
             ['gebdm' => null, 'dmkoop' => null]
         );
@@ -1033,7 +1035,7 @@ FROM tblSchaap s
  left join tblSchaap vdr on (v.vdrId = vdr.schaapId)
 WHERE $WHERE
 SQL
-        ,
+            ,
             []
         );
     }
@@ -1131,7 +1133,7 @@ FROM tblSchaap s
 WHERE $WHERE
 ORDER BY if(isnull(s.levensnummer), 'Geen', ''), dmgeb desc, status
 SQL
-        ,
+            ,
             [[':lidId', $lidId, Type::INT]]
         );
     }
@@ -1646,7 +1648,7 @@ FROM
 
 ORDER BY date_format(date, '%Y-%m-%d 00:00:00') desc, hisId desc
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':schaapId', $schaapId, Type::INT]
@@ -1669,7 +1671,7 @@ WHERE h.actId = 1
  and h.skip = 0
  and s.volwId = :volwId
 SQL
-        ,
+            ,
             [[':volwId', $max_worp]]
         );
     }
@@ -1706,7 +1708,7 @@ WHERE s.geslacht = 'ram'
  and isnull(afv.stalId)
 ORDER BY right(s.levensnummer, $Karwerk)
 SQL
-        ,
+            ,
             [[':lidId', $lidId, Type::INT]]
         );
     }
@@ -1751,7 +1753,7 @@ with recursive sheep (schaapId, levnr, geslacht, ras, volwId_s, mdrId, levnr_ma,
 GROUP BY s.schaapId, levnr, geslacht, ras, volwId_s, levnr_ma, ras_ma, levnr_pa, ras_pa
 ORDER BY s.schaapId
 SQL
-        ,
+            ,
             [[':schaapId', $schaapId, Type::INT]]
         );
     }
@@ -1767,7 +1769,7 @@ FROM tblSchaap s
 WHERE u.lidId = :lidId
  and st.schaapId = :schaapId
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':schaapId', $schaapId, Type::INT]
@@ -1782,7 +1784,7 @@ SELECT levensnummer
 FROM tblSchaap s
 WHERE s.schaapId = :schaapId
 SQL
-        ,
+            ,
             [
                 [':schaapId', $schaapId, Type::INT]
             ]
@@ -1796,7 +1798,7 @@ SELECT schaapId
 FROM tblSchaap s
 WHERE s.levensnummer = :levensnummer
 SQL
-        ,
+            ,
             [
                 [':levensnummer', $levensnummer]
             ]
@@ -1810,7 +1812,7 @@ UPDATE tblSchaap
 set levensnummer = :levensnummer
 WHERE schaapId = :schaapId
 SQL
-        ,
+            ,
             [
                 [':schaapId', $schaapId, Type::INT],
                 [':levensnummer', $levensnummer]
@@ -1825,7 +1827,7 @@ SELECT fokkernr
 FROM tblSchaap
 WHERE schaapId = :schaapId
 SQL
-        ,
+            ,
             [
                 [':schaapId', $schaapId, Type::INT]
             ]
@@ -1838,7 +1840,7 @@ SQL
 UPDATE tblSchaap set fokkernr = :fokkernr
  WHERE schaapId = :schaapId
 SQL
-        ,
+            ,
             [
                 [':schaapId', $schaapId, Type::INT],
                 [':fokkernr', $newfokrnr]
@@ -1852,7 +1854,7 @@ SQL
 UPDATE tblSchaap set geslacht = :geslacht
  WHERE schaapId = :schaapId
 SQL
-        ,
+            ,
             [
                 [':schaapId', $schaapId, Type::INT],
                 [':geslacht', $newsekse]
@@ -1867,7 +1869,7 @@ SELECT rasId
 FROM tblSchaap
 WHERE schaapId = :schaapId
 SQL
-        ,
+            ,
             [
                 [':schaapId', $schaapId, Type::INT]
             ]
@@ -1880,7 +1882,7 @@ SQL
 UPDATE tblSchaap set rasId = :rasId
 WHERE schaapId = :schaapId
 SQL
-        ,
+            ,
             [
                 [':schaapId', $schaapId, Type::INT],
                 [':rasId', $rasId, Type::INT]
@@ -1896,7 +1898,7 @@ FROM tblVolwas v
  join tblSchaap s on (v.volwId = s.volwId)
 WHERE s.schaapId = :schaapId
 SQL
-        ,
+            ,
             [[':schaapId', $schaapId, Type::INT]],
             [null, null]
         );
@@ -1940,7 +1942,7 @@ join tblSchaap s on (v.volwId = s.volwId)
 set v.mdrId = :mdrId
 WHERE s.schaapId = :schaapId
 SQL
-        ,
+            ,
             [
                 [':schaapId', $schaapId, Type::INT],
                 [':mdrId', $mdrId, Type::INT],
@@ -1956,7 +1958,7 @@ SQL
     set v.vdrId = :vdrId
     WHERE s.schaapId = :schaapId
 SQL
-        ,
+            ,
             [
                 [':schaapId', $schaapId, Type::INT],
                 [':vdrId', $newvdrId, Type::INT],
@@ -1970,7 +1972,7 @@ SQL
 UPDATE tblSchaap set volwId = :volwId
 WHERE schaapId = :schaapId
 SQL
-        ,
+            ,
             [
                 [':schaapId', $schaapId, Type::INT],
                 [':volwId', $volwId, Type::INT],
@@ -1985,7 +1987,7 @@ SELECT redId
 FROM tblSchaap
 WHERE schaapId = :schaapId
 SQL
-        ,
+            ,
             [
                 [':schaapId', $schaapId, Type::INT],
             ]
@@ -1998,7 +2000,7 @@ SQL
 UPDATE tblSchaap set redId = :redId
  WHERE schaapId = :schaapId
 SQL
-        ,
+            ,
             [
                 [':schaapId', $schaapId, Type::INT],
                 [':redId', $redId, Type::INT],
@@ -2011,7 +2013,7 @@ SQL
             <<<SQL
 SELECT geslacht FROM tblSchaap WHERE schaapId = :schaapId
 SQL
-        ,
+            ,
             [
                 [':schaapId', $schaapId, Type::INT],
             ]
@@ -2028,7 +2030,7 @@ WHERE lidId = :lidId
  and halsnr = :halsnr
  and isnull(rel_best)
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':kleur', $kleur],
@@ -2049,7 +2051,7 @@ WHERE u.lidId = :lidId
 GROUP BY s.schaapId, s.levensnummer
 ORDER BY s.levensnummer
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
             ]
@@ -2070,7 +2072,7 @@ WHERE u.lidId = :lidId
 GROUP BY mdr.schaapId, right(mdr.levensnummer, $Karwerk)
 ORDER BY right(mdr.levensnummer, $Karwerk)
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
             ]
@@ -2108,7 +2110,7 @@ WHERE u.lidId = :lidId
  $WHERE
 ORDER BY right(mdr.levensnummer, $Karwerk), right(s.levensnummer, $Karwerk), h.hisId
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
             ]
@@ -2141,7 +2143,7 @@ WHERE u.lidId = :lidId
 $WHERE
 ORDER BY h.datum desc, h.actId, right(mdr.levensnummer, $Karwerk), right(s.levensnummer, $Karwerk), h.hisId
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
             ]
@@ -2292,7 +2294,7 @@ WHERE rs.melding = 'DOO'
 
 ORDER BY datum desc, actId desc
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':schaapId', $schaapId, Type::INT],
@@ -2399,7 +2401,7 @@ WHERE st.schaapId = :schaapId
 
 ORDER BY right(s.levensnummer, $Karwerk)
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':schaapId', $schaapId, Type::INT],
@@ -2412,7 +2414,7 @@ SQL
             <<<SQL
 UPDATE tblSchaap SET momId = NULL, redId = NULL WHERE schaapId = :schaapId
 SQL
-        ,
+            ,
             [[':schaapId', $schaapId, Type::INT]]
         );
     }
@@ -2433,7 +2435,7 @@ From (
  and mdr.schaapId = :schaapId
 ) datum
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':schaapId', $schaapId, Type::INT],
@@ -2451,7 +2453,7 @@ INNER JOIN tblUbn u USING (ubnId)
 WHERE u.lidId = :lidId
  and s.levensnummer IN (:levensnummers)
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':levensnummers', $levensnummers],
@@ -2466,7 +2468,7 @@ SELECT s.schaapId, s.levensnummer
 FROM tblSchaap s
 WHERE s.levensnummer IN (:levensnummers)
 SQL
-        ,
+            ,
             [
                 [':levensnummers', $levensnummers],
             ]
@@ -2506,7 +2508,7 @@ WHERE $part
 and s.levensnummer is not null
 ORDER BY s.levensnummer
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT]
             ]
@@ -2547,7 +2549,7 @@ and s.levensnummer is not null
 GROUP BY s.schaapId, right(s.levensnummer, $Karwerk)
 ORDER BY right(s.levensnummer, $Karwerk)
 SQL
-        ,
+            ,
             [[':lidId', $lidId, Type::INT]]
         );
     }
@@ -2771,7 +2773,7 @@ FROM (
 WHERE $filter
 ORDER BY generatie, werknr, lstgeblam desc
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
             ]
@@ -2801,7 +2803,7 @@ FROM tblSchaap s
  left join tblBezet b on (h.hisId = b.hisId)
 WHERE s.geslacht = 'ooi' and $WHERE_mdr
 SQL
-        ,
+            ,
             [[':lidId', $lidId, Type::INT]]
         );
     }
@@ -2823,7 +2825,7 @@ and s.schaapId = :schaapId
 and a.soort = 'pil'
 GROUP BY s.levensnummer
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':schaapId', $schaapId, Type::INT]
@@ -2839,7 +2841,7 @@ FROM tblHistorie h
  join tblStal st on (st.stalId = h.stalId)
 WHERE h.hisId = :hisId
 SQL
-        ,
+            ,
             [[':hisId', $hisId, Type::INT]],
             [0, 0]
         );
@@ -2860,7 +2862,7 @@ WHERE a.af = 1
  and h.skip = 0
 GROUP BY p.naam, date_format(h.datum, '%d-%m-%Y')
 SQL
-        ,
+            ,
             [
                 [':bestm', $bestm],
                 [':date', $date],
@@ -2889,7 +2891,8 @@ FROM tblSchaap s
  ) geb on (geb.schaapId = s.schaapId)
  WHERE s.schaapId = :schaapId
 SQL
-        , [[':schaapId', $schaapId, Type::INT]]
+            ,
+            [[':schaapId', $schaapId, Type::INT]]
         );
     }
 
@@ -2907,7 +2910,7 @@ WHERE a.af = 1
  and h.skip = 0
 ORDER BY right(s.levensnummer, $Karwerk)
 SQL
-        ,
+            ,
             [
                 [':bestm', $bestm],
                 [':date', $date],
@@ -2933,7 +2936,7 @@ WHERE u.lidId = :lidId
  and h.skip = 0
  and (h.datum + interval art.wdgn_v day) >= sysdate()
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':schaapId', $schaapId, Type::INT]
@@ -2959,7 +2962,7 @@ WHERE u.lidId = :lidId
  and h.skip = 0
  and :date < (h.datum + interval art.wdgn_v day)
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':schaapId', $schaapId, Type::INT],
@@ -2986,7 +2989,7 @@ WHERE u.lidId = :lidId
  and h.skip = 0
  and :date < (h.datum + interval art.wdgn_v day)
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':schaapId', $schaapId, Type::INT],
@@ -3167,7 +3170,8 @@ WHERE (hv.hisId is not null or d.volwId is not null)
  and v.mdrId = :schaapId
 GROUP BY v.mdrId
 SQL
-        , [[':lidId', $lidId, Type::INT], [':schaapId', $schaapId, Type::INT]]
+            ,
+            [[':lidId', $lidId, Type::INT], [':schaapId', $schaapId, Type::INT]]
         );
     }
 
@@ -3267,7 +3271,7 @@ FROM tblSchaap s
  ) haf on (s.schaapId = haf.schaapId)
 WHERE levensnummer = :levnr
 SQL
-        ,
+            ,
             [[':levnr', $levnr]]
         );
     }
@@ -3293,7 +3297,8 @@ WHERE v.mdrId = :mdrId
  and h.skip = 0
  and isnull(ha.schaapId)
 SQL
-        , [[':mdrId', $mdrId, Type::INT]]
+            ,
+            [[':mdrId', $mdrId, Type::INT]]
         );
     }
 
@@ -3308,7 +3313,7 @@ WHERE h.actId = 1
  and h.skip = 0
  and l.volwId = :volwId
 SQL
-        ,
+            ,
             [[':volwId', $volwId, Type::INT]]
         );
         if ($vw->num_rows) {
@@ -3328,7 +3333,7 @@ INSERT INTO tblSchaap SET
  momId = :momId,
  redId = :redId
 SQL
-        ,
+            ,
             [
                 [':levnr', $levnr],
                 [':rasId', $rasId],
@@ -3348,11 +3353,12 @@ INSERT INTO tblSchaap set levensnummer = :levnr,
  rasId = :rasId,
  geslacht = :sekse
 SQL
-        , [
+            ,
+            [
             [':levnr', $levnr],
             [':rasId', $ras, Type::INT],
             [':sekse', $sekse]
-        ]
+            ]
         );
         return $this->db->insert_id;
     }
@@ -3362,7 +3368,7 @@ SQL
             <<<SQL
 UPDATE tblSchaap SET levensnummer = NULL WHERE levensnummer = :ubn
 SQL
-        ,
+            ,
             [[':ubn', $ubn, Type::INT]]
         );
     }
@@ -3569,7 +3575,7 @@ WHERE s.levensnummer is not null
 ) a
 ORDER BY werknr
 SQL
-        ,
+            ,
             [[':lidId', $lidId, Type::INT]]
         );
     }
@@ -3583,7 +3589,8 @@ WHERE lidId = :lidId
  and actId = 9
  and isnull(verwerkt)
 SQL
-        , [[':lidId', $lidId, Type::INT]]
+            ,
+            [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -3610,10 +3617,11 @@ WHERE u.lidId = :lidId
 GROUP BY s.schaapId, s.levensnummer, h.datum, a.naam, i.charge, n.stdat, e.eenheid, r.reden
 ORDER BY h.datum desc, i.inkId
 SQL
-        , [
+            ,
+            [
             [':lidId', $lidId, Type::INT],
             [':schaapId', $schaapId, Type::INT],
-        ]
+            ]
         );
     }
 
@@ -3747,7 +3755,8 @@ left join (
 GROUP BY schaapId, ooi
 ORDER BY $order
 SQL
-        , [[':lidId', $lidId, Type::INT]]
+            ,
+            [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -3770,7 +3779,7 @@ WHERE u.lidId = :lidId
 GROUP BY date_format(h.datum,'%m')
 ORDER BY date_format(h.datum,'%m')
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':schaapId', $ooiId, Type::INT],
@@ -3813,7 +3822,7 @@ WHERE lam.levensnummer is not null
 GROUP BY lam.levensnummer, lam.geslacht, h.datum, mdr.levensnummer, mx.mdm, st.stalId
 ORDER BY right(lam.levensnummer,$Karwerk)
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':van', $van, Type::DATE],
@@ -3856,7 +3865,7 @@ WHERE lam.levensnummer is not null
 GROUP BY lam.levensnummer, lam.geslacht, h.datum, mdr.levensnummer, mx.mdm, st.stalId
 ORDER BY right(lam.levensnummer,$Karwerk)
 SQL
-        ,
+            ,
             [
                 [':lidId', $lidId, Type::INT],
                 [':van', $van, Type::DATE],
@@ -3909,7 +3918,8 @@ WHERE u.lidId = :lidId
  and isnull(hdo.datum)
 GROUP BY mdr.levensnummer, r.ras, hg.datum, date_format(haf.datum,'%d-%m-%Y'), date_format(hdo.datum,'%d-%m-%Y')
 SQL
-        , [[':lidId', $lidId, Type::INT]]
+            ,
+            [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -3936,11 +3946,12 @@ WHERE s.geslacht = 'ooi'
 GROUP BY aant
 ORDER BY aant desc
 SQL
-        , [
+            ,
+            [
             [':lidId', $lidId, Type::INT],
             [':van', $van],
             [':tot', $tot],
-        ]
+            ]
         );
     }
 
@@ -3954,7 +3965,8 @@ FROM tblSchaap s
 WHERE u.lidId = :lidId
  and isnull(st.rel_best)
 SQL
-        , [[':lidId', $lidId, Type::INT]]
+            ,
+            [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -3975,7 +3987,8 @@ WHERE u.lidId = :lidId
  and isnull(st.rel_best)
 ORDER BY h.actId, s.geslacht, right(s.levensnummer,$Karwerk)
 SQL
-        , [[':lidId', $lidId, Type::INT]]
+            ,
+            [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -4104,7 +4117,8 @@ WHERE isnull(st.rel_best)
  and s.transponder is not null
  and s.schaapId = 9590
 SQL
-        , [[':lidId', $lidId, Type::INT]]
+            ,
+            [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -4156,10 +4170,11 @@ FROM tblSchaap mdr
 GROUP BY mdr.levensnummer, mdr.geslacht, r.ras, date_format(hg.datum,'%d-%m-%Y'), date_format(hop.datum,'%d-%m-%Y')
 ORDER BY right(mdr.levensnummer,$Karwerk) desc
 SQL
-        , [
+            ,
+            [
             [':lidId', $lidId, Type::INT],
             [':ooi', $ooi, Type::INT]
-        ]
+            ]
         );
     }
 
@@ -4188,10 +4203,11 @@ FROM tblSchaap s
 WHERE u.lidId = :lidId and v.mdrId = :ooi
 ORDER BY hg.datum
 SQL
-        , [
+            ,
+            [
             [':lidId', $lidId, Type::INT],
             [':ooi', $ooi, Type::INT]
-        ]
+            ]
         );
     }
 
@@ -4213,7 +4229,8 @@ WHERE u.lidId = :lidId
  and isnull(st.rel_best)
 ORDER BY right(s.levensnummer, $Karwerk)
 SQL
-        , [[':lidId', $lidId, Type::INT]]
+            ,
+            [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -4390,7 +4407,8 @@ left join
  ) prnt on (prnt.schaapId = st.schaapId)
 WHERE b.hokId = :hokId and isnull(uit.bezId) and h.skip = 0 and prnt.schaapId is not null
 SQL
-        , [[':hokId', $hokId, Type::INT]]
+            ,
+            [[':hokId', $hokId, Type::INT]]
         );
     }
 
@@ -4468,14 +4486,15 @@ FROM tblSchaap s
      FROM tblStal st
       join tblUbn u on (u.ubnId = st.ubnId)
       join tblHistorie h on (st.stalId = h.stalId)
-     WHERE h.actId = 3 and h.skip = 0
+     WHERE h.actId = 3 and h.skip = 0 AND u.lidId = :lidId
  ) prnt on (prnt.schaapId = st.schaapId)
-WHERE u.lidId = :lidId
- and s.geslacht = 'ooi'
+WHERE 
+ s.geslacht = 'ooi'
  and isnull(haf.hisId)
 ORDER BY right(s.levensnummer,$Karwerk)
 SQL
-        , [[':lidId', $lidId, Type::INT]]
+            ,
+            [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -4486,6 +4505,7 @@ SQL
 SELECT st.schaapId, right(s.levensnummer,$Karwerk) werknr
 FROM tblSchaap s 
  join tblStal st on (st.schaapId = s.schaapId)
+INNER JOIN tblUbn u USING(ubnId)
  left join (
     SELECT stalId, hisId, datum
      FROM tblHistorie h
@@ -4504,7 +4524,8 @@ WHERE u.lidId = :lidId
  and ( isnull(haf.hisId) or date_add(haf.datum,interval 2 month) > CURRENT_DATE() )
 ORDER BY right(levensnummer,$Karwerk)
 SQL
-        , [[':lidId', $lidId, Type::INT]]
+            ,
+            [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -4516,7 +4537,8 @@ FROM tblSchaap vdr
  join tblVolwas v on (v.vdrId = vdr.schaapId)
 WHERE v.volwId = :volwId
 SQL
-        , [[':volwId', $volwId, Type::INT]]
+            ,
+            [[':volwId', $volwId, Type::INT]]
         );
     }
 
@@ -4543,7 +4565,8 @@ FROM tblSchaap s
 WHERE u.lidId = :lidId and s.geslacht = 'ooi' and isnull(haf.hisId)
 ORDER BY right(s.levensnummer,$Karwerk)
 SQL
-        , [[':lidId', $lidId, Type::INT]]
+            ,
+            [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -4576,11 +4599,12 @@ and not exists (
  and h.actId = ha.actId-1
  and s.schaapId = :schaapId )
 SQL
-        , [
+            ,
+            [
             [':lidId', $lidId, Type::INT],
             [':schaapId', $schaapId, Type::INT],
             [':stalId', $stalId, Type::INT]
-        ]
+            ]
         );
     }
 
@@ -4602,10 +4626,11 @@ WHERE a.af = 1
  and h.actId != 10
  and h.skip = 0        
 SQL
-        , [
+            ,
+            [
             [':lidId', $lidId, Type::INT],
             [':schaapId', $schaapId, Type::INT],
-        ]
+            ]
         );
     }
 
@@ -4633,10 +4658,11 @@ WHERE v.mdrId = :schaapId
  and date_add(h.datum,interval 30 day) < :day
  and isnull(ha.schaapId)
 SQL
-        , [
+            ,
+            [
             [':schaapId', $schaapId, Type::INT],
             [':day', $day]
-        ]
+            ]
         );
     }
 
@@ -4653,11 +4679,12 @@ WHERE v.mdrId = :mdrId
  and h.skip = 0
  and v.volwId > :volwId
 SQL
-        , [
+            ,
+            [
             [':mdrId', $mdrId, Type::INT],
             [':volwId', $volwId, Type::INT],
-        ]
-        , [null, null]
+            ],
+            [null, null]
         );
     }
 
@@ -4709,11 +4736,12 @@ FROM tblSchaap s
 WHERE u.lidId = :lidId
  and st.schaapId = :schaapId
 SQL
-        , [
+            ,
+            [
             [':lidId', $lidId, Type::INT],
             [':schaapId', $schaapId, Type::INT],
-        ]
-        , ['schaapId' => null, 'geslacht' => null, 'prnt' => null, 's_af' => null]
+            ],
+            ['schaapId' => null, 'geslacht' => null, 'prnt' => null, 's_af' => null]
         );
     }
 
@@ -4737,7 +4765,8 @@ FROM tblSchaap s
  left join tblRas r on (r.rasId = s.rasId)
 WHERE s.levensnummer = :levensnummer
 SQL
-        , [[':levensnummer', $levensnummer]]
+            ,
+            [[':levensnummer', $levensnummer]]
         );
     }
 
@@ -4767,7 +4796,8 @@ FROM tblSchaap s
  left join tblRas r on (r.rasId = s.rasId)
 WHERE s.schaapId = :schaapId
 SQL
-        , [[':schaapId', $schaapId, Type::INT]]
+            ,
+            [[':schaapId', $schaapId, Type::INT]]
         );
     }
 
@@ -4789,7 +4819,8 @@ WHERE isnull(rd.levensnummer)
  and isnull(st.rel_best)
  and u.lidId = :lidId
 SQL
-        , [[':lidId', $lidId, Type::INT]]
+            ,
+            [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -4831,7 +4862,8 @@ FROM tblSchaap s
  ) lstsc on (lstsc.schaapId = s.schaapId)
 WHERE isnull(rd.levensnummer) and isnull(st.rel_best) and u.lidId = :lidId
 SQL
-        , [[':lidId', $lidId, Type::INT]]
+            ,
+            [[':lidId', $lidId, Type::INT]]
         );
     }
 
@@ -4859,12 +4891,13 @@ WHERE s.geslacht = 'ooi'
  and w.aant = :aant
 ORDER BY levensnummer
 SQL
-        , [
+            ,
+            [
             [':lidId', $lidId, Type::INT],
             [':datumvan', $datumvan],
             [':datumtot', $datumtot],
             [':aant', $aant, Type::INT]
-        ]
+            ]
         );
     }
 
@@ -4881,7 +4914,8 @@ WHERE h.actId = 1
  and date_format(h.datum,'%Y') = :jaar
  and u.lidId = :lidId
 SQL
-        , [[':lidId', $lidId, Type::INT], [':jaar', $jaar]]
+            ,
+            [[':lidId', $lidId, Type::INT], [':jaar', $jaar]]
         );
     }
 
@@ -4908,8 +4942,7 @@ FROM tblSchaap s
  ) hgeb on (s.schaapId = hgeb.schaapId)
 WHERE s.schaapId = :schaapId
 SQL
-        , [[':schaapId', $schaapId, Type::INT]]
-        );
+        , [[':schaapId', $schaapId, Type::INT]]);
     }
 
     public function zoek_vandaag_ingevoerd_met_levnr($lidId) {
@@ -4922,8 +4955,7 @@ WHERE s.levensnummer is not null
  and date_format(s.dmcreatie,'%Y-%m-%d') = CURRENT_DATE()
  and u.lidId = :lidId
 SQL
-        , [[':lidId', $lidId, Type::INT]]
-        );
+        , [[':lidId', $lidId, Type::INT]]);
     }
 
     public function zoek_vandaag_ingevoerd_zonder_levnr($lidId) {
@@ -4936,8 +4968,7 @@ WHERE isnull(s.levensnummer)
  and date_format(s.dmcreatie,'%Y-%m-%d') = CURRENT_DATE()
  and u.lidId = :lidId
 SQL
-        , [[':lidId', $lidId, Type::INT]]
-        );
+        , [[':lidId', $lidId, Type::INT]]);
     }
 
     public function zoek_mindag($schaapId) {
@@ -4954,8 +4985,7 @@ FROM tblSchaap s
  join tblHistorie hm on (hm.hisId = hmax.hisId)
 WHERE s.schaapId = :schaapId
 SQL
-        , [[':schaapId', $schaapId, Type::INT]]
-        );
+        , [[':schaapId', $schaapId, Type::INT]]);
     }
 
     public function schapen_geboren($lidId, $Karwerk) {
@@ -5000,8 +5030,7 @@ FROM tblSchaap s
 WHERE (isnull(b.hokId) or uit.hist is not null) and isnull(spn.schaapId) and isnull(prnt.schaapId)
 ORDER BY right(s.levensnummer,$Karwerk)
 SQL
-        , [[':lidId', $lidId, Type::INT]]
-        );
+        , [[':lidId', $lidId, Type::INT]]);
     }
 
     public function schapen_speen($lidId, $Karwerk) {
@@ -5046,8 +5075,7 @@ FROM tblSchaap s
 WHERE (isnull(b.hokId) or uit.hist is not null) and isnull(prnt.schaapId)
 ORDER BY right(s.levensnummer,$Karwerk)
 SQL
-        , [[':lidId', $lidId, Type::INT]]
-        );
+        , [[':lidId', $lidId, Type::INT]]);
     }
 
     public function schapen_vanaf_aanwas($lidId, $Karwerk) {
@@ -5086,8 +5114,7 @@ FROM tblSchaap s
 WHERE (isnull(b.hokId) or uit.hist is not null)
 ORDER BY right(s.levensnummer,$Karwerk)
 SQL
-        , [[':lidId', $lidId, Type::INT]]
-        );
+        , [[':lidId', $lidId, Type::INT]]);
     }
 
     public function list_for($lidId) {
@@ -5100,16 +5127,14 @@ WHERE u.lidId = :%lidId
 GROUP BY s.schaapId
 ORDER BY s.schaapId
 SQL
-        , ['lidId' => $lidId]
-        );
+        , ['lidId' => $lidId]);
     }
 
     public function delete_ids($ids) {
         $this->run_query(<<<SQL
 DELETE FROM tblSchaap WHERE :%schaapId
 SQL
-        , ['schaapId' => $ids]
-        );
+        , ['schaapId' => $ids]);
     }
 
     public function zoek_laatste_worpdatum($ooiId) {
@@ -5386,7 +5411,7 @@ SQL;
 SQL;
         $args = [[':lidId', $lidId, Type::INT], [':ooiId', $ooiId, Type::INT]];
         return $this->run_query($sql, $args);
-    }    
+    }
 
     public function zoek_aantal_ooitjes($volwId, $mnd, $jaar) {
         $sql = <<<SQL

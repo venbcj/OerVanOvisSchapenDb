@@ -31,7 +31,7 @@ class Gateway {
             Logger::instance()->debug($statement);
         }
         $res = $this->db->query($statement);
-        if (LOG_QUERIES && $this->db->error) {
+        if ($this->db->error) {
             Logger::instance()->warning($this->db->error);
         }
         return $res;
@@ -91,7 +91,7 @@ class Gateway {
         $vw = $this->run_query($SQL, $args);
         $res = [];
         while ($row = $vw->fetch_row()) {
-            $res[] = $row[0];  
+            $res[] = $row[0];
         }
         return $res;
     }
@@ -110,10 +110,9 @@ class Gateway {
     //   zet deze methode ze allemaal om in pdo-string-argumenten
     // Uitschrijven is uiteraard preciezer.
     protected function struct_to_args($form) {
-        return array_map(function($key, $value) {
+        return array_map(function ($key, $value) {
             return [":$key", $value];
-        }, array_keys($form), array_values($form)
-        );
+        }, array_keys($form), array_values($form));
     }
 
 }
