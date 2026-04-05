@@ -46,7 +46,7 @@ foreach ($array as $recId => $id) {
 SELECT transponder, levensnummer
 FROM impAgrident
 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         while ($ztr = mysqli_fetch_assoc($zoek_transp_rd)) {
             $tran_rd = $ztr['transponder'];
             $levnr_rd = $ztr['levensnummer'];
@@ -55,14 +55,14 @@ WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "'
 SELECT schaapId, transponder
 FROM tblSchaap
 WHERE levensnummer = '" . mysqli_real_escape_string($db, $levnr_rd) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         while ($ztd = mysqli_fetch_assoc($zoek_transp_db)) {
             $schaapId_db = $ztd['schaapId'];
             $tran_db = $ztd['transponder'];
         }
         if (isset($schaapId_db) && $tran_rd <> $tran_db) {
             $updateSchaap = "UPDATE tblSchaap set transponder = '" . mysqli_real_escape_string($db, $tran_rd) . "' WHERE schaapId = '" . mysqli_real_escape_string($db, $schaapId_db) . "' " ;
-            /*echo $updateSchaap.'<br>';*/    mysqli_query($db, $updateSchaap) or die(mysqli_error($db));
+            /*echo $updateSchaap.'<br>';*/    mysqli_query($db, $updateSchaap) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         }
     }
 // Einde Transponder nummer inlezen als deze nog niet bestaat in tblSchaap
@@ -73,13 +73,13 @@ WHERE levensnummer = '" . mysqli_real_escape_string($db, $levnr_rd) . "'
 SELECT verwerkt
 FROM impAgrident
 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     } else {
         $zoek_readerRegel_verwerkt = mysqli_query($db, "
 SELECT verwerkt
 FROM impReader
 WHERE readId = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     }
     while ($verw = mysqli_fetch_array($zoek_readerRegel_verwerkt)) {
         $verwerkt = $verw['verwerkt'];
@@ -96,7 +96,7 @@ FROM tblStal st
  join tblSchaap s on (st.schaapId = s.schaapId)
  join impAgrident rd on (rd.levensnummer = s.levensnummer)
 WHERE rd.Id = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             } else {
                 $zoek_stalId = mysqli_query($db, "
 SELECT max(stalId) stalId
@@ -104,7 +104,7 @@ FROM tblStal st
  join tblSchaap s on (st.schaapId = s.schaapId)
  join impReader rd on (rd.levnr_pil = s.levensnummer)
 WHERE rd.readId = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             }
             while ($st = mysqli_fetch_assoc($zoek_stalId)) {
                 $stalId = $st['stalId'];
@@ -117,7 +117,7 @@ SELECT h.datum date, date_format(h.datum,'%d-%m-%Y') datum
 FROM tblHistorie h
  join tblActie a on (a.actId = h.actId)
 WHERE h.stalId = '" . mysqli_real_escape_string($db, $stalId) . "' and a.af = 1
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             while ($afv = mysqli_fetch_assoc($zoek_afvoerdatum)) {
                 $dmafv = $afv['date'];
                 $afvdm = $afv['datum'];
@@ -129,7 +129,7 @@ SELECT s.levensnummer
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
 WHERE st.stalId = '" . mysqli_real_escape_string($db, $stalId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
                 while ($lev = mysqli_fetch_assoc($zoek_levensnummer)) {
                     $levnr = $lev['levensnummer'];
                 }
@@ -142,7 +142,7 @@ WHERE st.stalId = '" . mysqli_real_escape_string($db, $stalId) . "'
 SELECT a.naam, a.stdat
 FROM tblArtikel a
 WHERE artId = '" . mysqli_real_escape_string($db, $fldArtId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
                 while ($std = mysqli_fetch_assoc($zoek_artikel_gegevens)) {
                     $naam = $std['naam'];
                     $stdat = $std['stdat'];
@@ -157,7 +157,7 @@ FROM tblInkoop i
      GROUP BY inkId
  ) n on (i.inkId = n.inkId)
 WHERE i.artId = '" . mysqli_real_escape_string($db, $fldArtId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
                 while ($check = mysqli_fetch_assoc($zoek_totale_voorraad)) {
                     $tot_vrd = $check['vrdat'];
                 }
@@ -165,12 +165,12 @@ WHERE i.artId = '" . mysqli_real_escape_string($db, $fldArtId) . "'
                     $fout = "De voorraad van " . $naam . " is niet toereikend";
                 } else {
                     $insert_tblHistorie = "INSERT INTO tblHistorie set stalId = '" . mysqli_real_escape_string($db, $stalId) . "', datum = '" . mysqli_real_escape_string($db, $fldDay) . "', actId = 8 ";
-                /*echo $insert_tblHistorie.'<br>';*/        mysqli_query($db, $insert_tblHistorie) or die(mysqli_error($db));
+                /*echo $insert_tblHistorie.'<br>';*/        mysqli_query($db, $insert_tblHistorie) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
                     $zoek_hisId = mysqli_query($db, "
 SELECT max(hisId) hisId
 FROM tblHistorie
 WHERE actId = 8 and stalId = '" . mysqli_real_escape_string($db, $stalId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
                     while ($hi = mysqli_fetch_assoc($zoek_hisId)) {
                         $hisId = $hi['hisId'];
                     }
@@ -180,7 +180,7 @@ WHERE actId = 8 and stalId = '" . mysqli_real_escape_string($db, $stalId) . "'
                     } else {
                         $updateReader = "UPDATE impReader SET verwerkt = 1 WHERE readId = '" . mysqli_real_escape_string($db, $recId) . "' " ;
                     }
-                /*echo $updateReader.'<br>';*/    mysqli_query($db, $updateReader) or die(mysqli_error($db));
+                /*echo $updateReader.'<br>';*/    mysqli_query($db, $updateReader) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
                 }
             }
          /* EINDE INVOEREN  EINDE */
@@ -194,7 +194,7 @@ WHERE actId = 8 and stalId = '" . mysqli_real_escape_string($db, $stalId) . "'
         } else {
             $updateReader = "UPDATE impReader set verwerkt = 1 WHERE readId = '" . mysqli_real_escape_string($db, $recId) . "' " ;
         }
-        /*echo $updateReader.'<br>';*/        mysqli_query($db, $updateReader) or die(mysqli_error($db));
+        /*echo $updateReader.'<br>';*/        mysqli_query($db, $updateReader) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     }
 //echo '<br>'.'einde '.$recId.'<br>';
 }

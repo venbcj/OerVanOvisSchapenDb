@@ -38,7 +38,7 @@ SELECT hisId
 FROM tblStal st
  join tblHistorie h on (st.stalId = h.stalId)
 WHERE st.schaapId = '" . mysqli_real_escape_string($db, $recId) . "' and h.actId = 3 and h.skip = 0
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             while ($ge = mysqli_fetch_assoc($zoek_generatie)) {
                 $aanw = $ge['hisId'];
             }
@@ -52,7 +52,7 @@ SELECT hisId
 FROM tblStal st
  join tblHistorie h on (st.stalId = h.stalId)
 WHERE st.schaapId = '" . mysqli_real_escape_string($db, $recId) . "' and h.actId = 4 and h.skip = 0
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             while ($sp = mysqli_fetch_assoc($zoek_spenen)) {
                 $speen = $sp['hisId'];
             }
@@ -68,7 +68,7 @@ SELECT stalId
 FROM tblStal st
  join tblUbn u on (u.ubnId = st.ubnId)
 WHERE isnull(st.rel_best) and st.schaapId = '".mysqli_real_escape_string($db,$recId)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
                 while ($st = mysqli_fetch_assoc($zoek_stalId)) {
                     $stalId = $st['stalId'];
                 }
@@ -86,7 +86,7 @@ WHERE isnull(st.rel_best) and st.schaapId = '".mysqli_real_escape_string($db,$re
 INSERT INTO tblHistorie
 set stalId = '" . mysqli_real_escape_string($db, $stalId) . "', datum = '" . mysqli_real_escape_string($db, $updDag) . "', kg = " . db_null_input($updKg) . ", actId = '" . mysqli_real_escape_string($db, $actId) . "'
 ";
-                    mysqli_query($db, $insert_tblHistorie) or die(mysqli_error($db));
+                    mysqli_query($db, $insert_tblHistorie) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
                     if (isset($kzlHok)) {
            // Als moet worden overgplaatst en dus niet volwassen dieren die verblijf alleen verlaten
                         $zoek_hisId = mysqli_query($db, "
@@ -95,7 +95,7 @@ FROM tblHistorie h
  join tblStal st on (st.stalId = h.stalId)
  join tblUbn u on (u.ubnId = st.ubnId)
 WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = '".mysqli_real_escape_string($db,$actId)."'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
                         while ($hi = mysqli_fetch_assoc($zoek_hisId)) {
                                                $hisId = $hi['hisId'];
                         }
@@ -105,7 +105,7 @@ WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = '".mys
                         if (isset($hisId)) {
                                          // $hisId bestaat niet bij verlaten volwassen dieren
                                         $insert_tblBezet = "INSERT INTO tblBezet set hisId = '" . mysqli_real_escape_string($db, $hisId) . "', hokId = '" . mysqli_real_escape_string($db, $newHok) . "' ";
-                                mysqli_query($db, $insert_tblBezet) or die(mysqli_error($db));
+                                mysqli_query($db, $insert_tblBezet) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
                         }
                     }
                  // Einde if(isset($kzlHok))

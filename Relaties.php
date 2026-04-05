@@ -135,7 +135,7 @@ $zoek_partId = mysqli_query($db,"
 SELECT partId 
 FROM tblPartij 
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and naam = '".mysqli_real_escape_string($db,$insPartij)."'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     while( $par = mysqli_fetch_assoc($zoek_partId)) { $insPartId = $par['partId']; }
 
 $relatie = $_POST[kzlRelatie_];    
@@ -149,7 +149,7 @@ SELECT relId
 FROM tblPartij p
  join tblRelatie r on (p.partId = r.partId)
 WHERE p.lidId = '".mysqli_real_escape_string($db,$lidId)."' and p.naam = '".mysqli_real_escape_string($db,$insPartij)."'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     while( $rel = mysqli_fetch_assoc($zoek_relId)) { $insRelId = $rel['relId']; }
 
         $insert_tblAdres = "INSERT INTO tblAdres SET relId = '".mysqli_real_escape_string($db,$insRelId)."', straat = " . db_null_input($insStraat) . ", nr = " . db_null_input($insNr) . ", pc = " . db_null_input($insPc) . ", plaats = " . db_null_input($insPlaats) ;
@@ -255,7 +255,7 @@ $insert_adres = "INSERT INTO tblAdres set relId = '".mysqli_real_escape_string($
 <?php echo View::link_to('contacten', 'Contact.php?pstid='.$partId, ['style' => 'color: blue']); ?>
 </td>
 <?php
-$zoek_cred = mysqli_query($db,"SELECT relId FROM tblRelatie WHERE partId = '".mysqli_real_escape_string($db,$partId)."' and relatie = 'cred' ") or die(mysqli_error($db)); 
+$zoek_cred = mysqli_query($db,"SELECT relId FROM tblRelatie WHERE partId = '".mysqli_real_escape_string($db,$partId)."' and relatie = 'cred' ") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db)); 
     while( $cr = mysqli_fetch_assoc($zoek_cred)) { $cred_exists = $cr['relId']; } 
 if(!isset($cred_exists)) { ?>
  <td> <input type= "submit" name= <?php echo "knpCred_$Id"; ?> value= "maak ook crediteur" style = "font-size:9px;" > </td> <?php } unset($cred_exists); ?>
@@ -393,7 +393,7 @@ FROM tblRelatie r
 WHERE partId = '".mysqli_real_escape_string($db,$partId)."' and relatie = 'deb' or (
     exists( SELECT relId FROM tblRelatie rl WHERE rl.partId = r.partId and rl.partId = '".mysqli_real_escape_string($db,$partId)."' and rl.uitval = 1)
 )
-") or die(mysqli_error($db)); 
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db)); 
     while( $cr = mysqli_fetch_assoc($zoek_deb)) { $deb_exists = $cr['relId']; } 
 if(!isset($deb_exists)) { ?>
  <td> <input type= "submit" name= <?php echo "knpDeb_$Id"; ?> value= "maak ook debiteur" style = "font-size:9px;" > </td> <?php } unset($deb_exists); ?>

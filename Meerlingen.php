@@ -78,7 +78,7 @@ FROM (
 GROUP BY schaapId, ooi
 
 ORDER BY $order
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 
 while($jm = mysqli_fetch_assoc($ooien_met_meerlingworpen)) { 
 
@@ -95,7 +95,7 @@ FROM tblSchaap s
  join tblUbn u on (u.ubnId = st.ubnId)
  join tblVolwas v on (s.volwId = v.volwId)
 WHERE isnull(s.geslacht) and v.mdrId =  '".mysqli_real_escape_string($db,$ooiId)."'  and u.lidId = '".mysqli_real_escape_string($db,$ooiId)."'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 
 while($ga = mysqli_fetch_assoc($zoek_aantal_geengeslacht_tbv_hoofding)) { $geengeslacht = $ga['aant']; }
  ?>
@@ -150,7 +150,7 @@ FROM tblSchaap s
  join tblHistorie h on (st.stalId = h.stalId)
 WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."' and s.geslacht = 'ooi' and h.actId = 1 and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."' and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."' and h.skip = 0
         
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 
 while($oa = mysqli_fetch_assoc($zoek_aantal_ooitjes)) { $ooi_st = $oa['aant']; }
 
@@ -162,7 +162,7 @@ FROM tblSchaap s
 WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."' and s.geslacht = 'ooi' and h.actId = 1 and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."' and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."' and h.skip = 0
 GROUP BY s.schaapId
         
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 
 while($ow = mysqli_fetch_assoc($zoek_werknr_ooitjes)) { 
     $wnr = $ow['werknr'];
@@ -181,7 +181,7 @@ FROM tblSchaap s
  join tblHistorie h on (st.stalId = h.stalId)
 WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."' and s.geslacht = 'ram' and h.actId = 1 and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."' and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."' and h.skip = 0
 
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 
 while($ra = mysqli_fetch_assoc($zoek_aantal_ramtjes)) { $ram_st = $ra['aant']; }
 
@@ -193,7 +193,7 @@ FROM tblSchaap s
 WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."' and s.geslacht = 'ram' and h.actId = 1 and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."' and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."' and h.skip = 0
 GROUP BY s.schaapId
         
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 
 while($rw = mysqli_fetch_assoc($zoek_werknr_ramtjes)) { 
     $wnr = $rw['werknr'];
@@ -212,7 +212,7 @@ FROM tblSchaap s
  join tblHistorie h on (st.stalId = h.stalId)
 WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."' and isnull(s.geslacht) and h.actId = 1 and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."' and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."' and h.skip = 0
 
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 
 while($ga = mysqli_fetch_assoc($zoek_aantal_geengeslacht)) { $gg_st = $ga['aant']; }
 
@@ -224,7 +224,7 @@ FROM tblSchaap s
 WHERE s.volwId = '".mysqli_real_escape_string($db,$volwId)."' and isnull(s.geslacht) and h.actId = 1 and date_format(h.datum,'%m')*1 = '".mysqli_real_escape_string($db,$mnd)."' and date_format(h.datum,'%Y') = '".mysqli_real_escape_string($db,$jaar)."' and h.skip = 0
 GROUP BY s.schaapId
         
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 
 while($gw = mysqli_fetch_assoc($zoek_werknr_geengeslacht)) { 
     $wnr = $gw['werknr'];

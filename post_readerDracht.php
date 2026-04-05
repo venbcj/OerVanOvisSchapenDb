@@ -49,7 +49,7 @@ foreach ($array as $recId => $id) {
 SELECT verwerkt
 FROM impAgrident
 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     while ($verw = mysqli_fetch_array($zoek_readerRegel_verwerkt)) {
         $verwerkt = $verw['verwerkt'];
     }
@@ -73,7 +73,7 @@ FROM tblVolwas v
     WHERE h.actId = 3 and skip = 0
  ) ha on (k.schaapId = ha.schaapId)
 WHERE isnull(s.volwId) and v.mdrId = '" . mysqli_real_escape_string($db, $fldOoi) . "' and isnull(ha.schaapId)
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             while ($lkzw = mysqli_fetch_assoc($zoek_laatste_koppel_zonder_worp_obv_alleen_moederdier)) {
                 $volwId = $lkzw['volwId'];
             }
@@ -81,12 +81,12 @@ WHERE isnull(s.volwId) and v.mdrId = '" . mysqli_real_escape_string($db, $fldOoi
                  // Als er geen koppel en dus ook geen dekking is geregistreerd
                 // koppel registreren zonder dekdatum
                 $insertKoppel = "INSERT INTO tblVolwas SET mdrId = '" . mysqli_real_escape_string($db, $fldOoi) . "', vdrId = " . db_null_input($fldRam) . ", grootte = " . db_null_input($fldGrootte) ;
-                mysqli_query($db, $insertKoppel) or die(mysqli_error($db));
+                mysqli_query($db, $insertKoppel) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
                 $zoek_volwId = mysqli_query($db, "
 SELECT max(volwId) volwId
 FROM tblVolwas
 WHERE mdrId = '" . mysqli_real_escape_string($db, $fldOoi) . "' and " . db_null_filter(vdrId, $fldRam) . "
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
                 while ($zv = mysqli_fetch_assoc($zoek_volwId)) {
                     $volwId = $zv['volwId'];
                 }
@@ -98,17 +98,17 @@ WHERE mdrId = '" . mysqli_real_escape_string($db, $fldOoi) . "' and " . db_null_
 SELECT grootte
 FROM tblVolwas
 WHERE volwId = '" . mysqli_real_escape_string($db, $volwId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
                 while ($zvd = mysqli_fetch_assoc($zoek_grootte_db)) {
                         $grootte_db = $zvd['grootte'];
                 }
                 if (isset($fldRam)) {
                     $update_tblVolwas = "UPDATE tblVolwas set vdrId = '" . mysqli_real_escape_string($db, $fldRam) . "' WHERE volwId = '" . mysqli_real_escape_string($db, $volwId) . "' ";
-                    mysqli_query($db, $update_tblVolwas) or die(mysqli_error($db));
+                    mysqli_query($db, $update_tblVolwas) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
                 }
                 if ($fldGrootte <> $grootte_db) {
                     $update_tblVolwas = "UPDATE tblVolwas set grootte = " . db_null_input($fldGrootte) . " WHERE volwId = '" . mysqli_real_escape_string($db, $volwId) . "' ";
-                    mysqli_query($db, $update_tblVolwas) or die(mysqli_error($db));
+                    mysqli_query($db, $update_tblVolwas) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
                 }
             }
          // Einde Bij bestaand volwId kunnen gegevens zijn gewijzigd
@@ -117,25 +117,25 @@ WHERE volwId = '" . mysqli_real_escape_string($db, $volwId) . "'
 SELECT max(stalId) stalId
 FROM tblStal
 WHERE schaapId = '" . mysqli_real_escape_string($db, $fldOoi) . "' and lidId = '" . mysqli_real_escape_string($db, $lidId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             while ($zs = mysqli_fetch_assoc($zoek_stalId)) {
                 $stalId = $zs['stalId'];
             }
             $insert_tblHistorie = "INSERT INTO tblHistorie SET stalId = '" . mysqli_real_escape_string($db, $stalId) . "', datum = '" . mysqli_real_escape_string($db, $fldDag) . "', actId = 19 ";
-            mysqli_query($db, $insert_tblHistorie) or die(mysqli_error($db));
+            mysqli_query($db, $insert_tblHistorie) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             $zoek_hisId = mysqli_query($db, "
 SELECT max(hisId) hisId
 FROM tblHistorie
 WHERE actId = 19 and stalId = '" . mysqli_real_escape_string($db, $stalId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             while ($zh = mysqli_fetch_assoc($zoek_hisId)) {
                 $hisId = $zh['hisId'];
             }
             $insert_tblDracht = "INSERT INTO tblDracht SET readId = '" . mysqli_real_escape_string($db, $recId) . "', volwId = '" . mysqli_real_escape_string($db, $volwId) . "', hisId = '" . mysqli_real_escape_string($db, $hisId) . "' ";
-            mysqli_query($db, $insert_tblDracht) or die(mysqli_error($db));
+            mysqli_query($db, $insert_tblDracht) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         // Einde Registreren dracht
             $updateReader = "UPDATE impAgrident SET verwerkt = 1 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "' ";
-            mysqli_query($db, $updateReader) or die(mysqli_error($db));
+            mysqli_query($db, $updateReader) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             unset($fldOoi);
             unset($fldRam);
             unset($volwId);
@@ -148,7 +148,7 @@ WHERE actId = 19 and stalId = '" . mysqli_real_escape_string($db, $stalId) . "'
         if ($reader == 'Agrident') {
                $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "' " ;
         }
-        mysqli_query($db, $updateReader) or die(mysqli_error($db));
+        mysqli_query($db, $updateReader) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     }
     unset($fldlevnr);
 }

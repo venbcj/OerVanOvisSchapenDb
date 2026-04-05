@@ -40,7 +40,7 @@ foreach ($array as $recId => $id) {
 SELECT verwerkt
 FROM impAgrident
 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     while ($verw = mysqli_fetch_array($zoek_readerRegel_verwerkt)) {
         $verwerkt = $verw['verwerkt'];
     }
@@ -52,7 +52,7 @@ WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "'
 SELECT levensnummer levnr_aanv, transponder
 FROM impAgrident
 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         while ($lv = mysqli_fetch_assoc($zoek_levnr)) {
             $dbLevnr = $lv['levnr_aanv'];
             $transp_rd = $lv['transponder'];
@@ -63,7 +63,7 @@ WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "'
 SELECT schaapId, transponder
 FROM tblSchaap
 WHERE levensnummer = '" . mysqli_real_escape_string($db, $dbLevnr) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             while ($sId = mysqli_fetch_assoc($zoek_schaapId)) {
                 $schaapId = $sId['schaapId'];
                 $transp_db = $sId['transponder'];
@@ -71,7 +71,7 @@ WHERE levensnummer = '" . mysqli_real_escape_string($db, $dbLevnr) . "'
         // Transpondernummer inlezen
             if (!isset($transp_db) && isset($transp_rd)) {
                 $update_tblSchaap = "UPDATE tblSchaap set transponder = '" . mysqli_real_escape_string($db, $transp_rd) . "' WHERE schaapId = '" . mysqli_real_escape_string($db, $schaapId) . "' ";
-                /*echo $update_tblSchaap.'<br>';*/        mysqli_query($db, $update_tblSchaap) or die(mysqli_error($db));
+                /*echo $update_tblSchaap.'<br>';*/        mysqli_query($db, $update_tblSchaap) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             }
         // Einde Transpondernummer inlezen
         // Zoek relId van herkomst (crediteur dus)
@@ -122,22 +122,22 @@ WHERE r.relatie = 'cred' and p.ubn = '" . mysqli_real_escape_string($db, $ubn_be
         // Einde Zoek relId van herkomst (crediteur dus)
         // Insert tblStal
             $insert_tblStal = "INSERT INTO tblStal set lidId = '" . mysqli_real_escape_string($db, $lidId) . "', ubnId = '" . mysqli_real_escape_string($db, $fldUbn) . "', schaapId = '" . mysqli_real_escape_string($db, $schaapId) . "', rel_herk = " . db_null_input($fldHerk) . " ";
-        /*echo $insert_tblStal.'<br>';*/        mysqli_query($db, $insert_tblStal) or die(mysqli_error($db));
+        /*echo $insert_tblStal.'<br>';*/        mysqli_query($db, $insert_tblStal) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         // Einde Insert tblStal
         // Insert tblHistorie
             $stalId = zoek_max_stalId($lidId, $schaapId);
           // Insert aanvoer
             $insert_tblHistorie_aank = "INSERT INTO tblHistorie set stalId = '" . mysqli_real_escape_string($db, $stalId) . "', datum = '" . mysqli_real_escape_string($db, $fldDay) . "', actId = 11 ";
-        /*echo $insert_tblHistorie_aank.'<br>';*/        mysqli_query($db, $insert_tblHistorie_aank) or die(mysqli_error($db));
+        /*echo $insert_tblHistorie_aank.'<br>';*/        mysqli_query($db, $insert_tblHistorie_aank) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             if (isset($fldHok)) {
                 $hisId_aanv = zoek_hisId_stal($stalId, 11);
                 $insert_tblBezet = "INSERT INTO tblBezet set hisId = '" . mysqli_real_escape_string($db, $hisId_aanv) . "', hokId = '" . mysqli_real_escape_string($db, $fldHok) . "' ";
-                /*echo $insert_tblBezet.'<br>';*/        mysqli_query($db, $insert_tblBezet) or die(mysqli_error($db));
+                /*echo $insert_tblBezet.'<br>';*/        mysqli_query($db, $insert_tblBezet) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             }
           // Einde Insert aanvoer
         // Einde Insert tblHistorie
             $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "' ";
-        /*echo $updateReader.'<br>';*/        mysqli_query($db, $updateReader) or die(mysqli_error($db));
+        /*echo $updateReader.'<br>';*/        mysqli_query($db, $updateReader) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             if ($modmeld == 1) {
                 // Insert tblMeldingen
                 $hisId = zoek_hisId_stal($stalId, 11);
@@ -152,7 +152,7 @@ WHERE r.relatie = 'cred' and p.ubn = '" . mysqli_real_escape_string($db, $ubn_be
  // Einde if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt))
     if ($fldKies == 0 && $fldDel == 1) {
         $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "' " ;
-  /*echo $updateReader.'<br>';*/        mysqli_query($db, $updateReader) or die(mysqli_error($db));
+  /*echo $updateReader.'<br>';*/        mysqli_query($db, $updateReader) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     }
     unset($dbLevnr);
 }

@@ -82,7 +82,7 @@ $zoek_schaap_database = mysqli_query($db, "
 SELECT transponder
 FROM tblSchaap
 WHERE levensnummer = '".mysqli_real_escape_string($db, $LEVNR)."'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 
     while ($zsd = mysqli_fetch_assoc($zoek_schaap_database)) {
 return $zsd['transponder'];
@@ -103,7 +103,7 @@ FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join tblUbn u on (st.ubnId = u.ubnId)
 WHERE levensnummer = '".mysqli_real_escape_string($db, $LEVNR)."' and u.lidId = '" . mysqli_real_escape_string($db, $LIDID) . "' and isnull(rel_best)
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 
     while ($zss = mysqli_fetch_assoc($zoek_schaap_stallijst)) {
 return $zss['schaapId'];
@@ -123,7 +123,7 @@ SELECT max(st.stalId) stalId
 FROM tblStal st
  join tblUbn u on (st.ubnId = u.ubnId)
 WHERE u.lidId = '".mysqli_real_escape_string($db, $LIDID)."' and st.schaapId = '".mysqli_real_escape_string($db, $Schaapid)."'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 
 while ($zmst = mysqli_fetch_assoc($zoek_max_stalId)) {
         return $zmst['stalId'];
@@ -143,7 +143,7 @@ $zoek_hisId_stal = mysqli_query($db, "
 SELECT hisId
 FROM tblHistorie
 WHERE stalId = '".mysqli_real_escape_string($db, $STALID)."' and actId = '" . mysqli_real_escape_string($db, $ACTID) . "' and skip = 0
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 
 while ($zhst = mysqli_fetch_assoc($zoek_hisId_stal)) {
         return $zhst['hisId'];
@@ -162,7 +162,7 @@ $zoek_max_hisId_stal = mysqli_query($db, "
 SELECT max(hisId) hisId
 FROM tblHistorie
 WHERE stalId = '".mysqli_real_escape_string($db, $STALID)."' and actId = '" . mysqli_real_escape_string($db, $ACTID) . "' and skip = 0
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 
 while ($zmhst = mysqli_fetch_assoc($zoek_max_hisId_stal)) {
         return $zmhst['hisId'];
@@ -182,7 +182,7 @@ FROM tblActie a
  join tblHistorie h on (a.actId = h.actId)
  join tblStal st on (st.stalId = h.stalId)
 WHERE a.af = 1 and st.stalId = '".mysqli_real_escape_string($db, $STALID)."' and h.skip = 0
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 
 while ($zhsa = mysqli_fetch_assoc($zoek_hisId_stal_af)) {
         return $zhsa['hisId'];
@@ -201,7 +201,7 @@ SELECT hisId
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
 WHERE schaapId = '".mysqli_real_escape_string($db, $SCHAAPID)."' and actId = '" . mysqli_real_escape_string($db, $ACTID) . "' and skip = 0
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 
 while ($zhs = mysqli_fetch_assoc($zoek_hisId_schaap)) {
         return $zhs['hisId'];
@@ -233,7 +233,7 @@ SELECT min(datum) datum1
 FROM tblStal st 
 join tblHistorie h on (h.stalId = st.stalId)
 WHERE actId != 1 and schaapId = '".mysqli_real_escape_string($db, $SCHAAPID)."' and h.skip = 0
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 
 while ($zd = mysqli_fetch_assoc($zoek_datum)) {
         return $zd['datum1'];
@@ -250,7 +250,7 @@ function insert_dekking_mdr($HISID, $MDRID, $VDRID){
 global $db;
 
 $insert_tblVolwas = "INSERT INTO tblVolwas set hisId = '".mysqli_real_escape_string($db, $HISID)."', mdrId = '".mysqli_real_escape_string($db, $MDRID)."', vdrId = " . db_null_input($VDRID);
-/*echo $insert_tblVolwas;*/     mysqli_query($db, $insert_tblVolwas) or die(mysqli_error($db));
+/*echo $insert_tblVolwas;*/     mysqli_query($db, $insert_tblVolwas) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 }
 
 /**********************************************************************
@@ -261,7 +261,7 @@ function insert_dracht_mdr($MDRID, $VDRID, $WORPGR){
 global $db;
 
 $insert_tblVolwas = "INSERT INTO tblVolwas set mdrId = '".mysqli_real_escape_string($db, $MDRID)."', vdrId = " . db_null_input($VDRID) . ", grootte = " . db_null_input($WORPGR) ;
-/*echo $insert_tblVolwas;*/     mysqli_query($db, $insert_tblVolwas) or die(mysqli_error($db));
+/*echo $insert_tblVolwas;*/     mysqli_query($db, $insert_tblVolwas) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 }
 
 /**********************************************************************
@@ -276,7 +276,7 @@ $zoek_volwId = mysqli_query($db, "
 SELECT max(volwId) volwId
 FROM tblVolwas
 WHERE mdrId = '".mysqli_real_escape_string($db, $MDRID)."' and " . db_null_filter(vdrId, $VDRID) . "
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     while ($zv = mysqli_fetch_assoc($zoek_volwId)) {
 return $zv['volwId'];
     }
@@ -423,7 +423,7 @@ function zoek_oudste_request_niet_definitief_gemeld($db, $lidId) {
      join tblLeden l on (l.lidId = u.lidId)
     WHERE h.skip = 0 and l.lidId = '".mysqli_real_escape_string($db, $lidId)."' and isnull(rq.dmmeld) and rq.code = 'AAN' 
     GROUP BY l.relnr
-    ") or die(mysqli_error($db));
+    ") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     while ($req = mysqli_fetch_assoc($zoek_oudste_request_niet_definitief_gemeld)) {
         $reqId = $req['reqId'];
     }
@@ -435,7 +435,7 @@ function alias_voor_lid($db, $lidId) {
     SELECT alias
     FROM tblLeden
     WHERE lidId = '".mysqli_real_escape_string($db, $lidId)."'
-    ") or die(mysqli_error($db));
+    ") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     while ($row = mysqli_fetch_assoc($qry_Leden)) {
         $alias = $row['alias'];
     }
@@ -518,7 +518,7 @@ SELECT max(stalId) stalId
 FROM tblStal st
  join tblSchaap s on (st.schaapId = s.schaapId)
 WHERE s.levensnummer = '".mysqli_real_escape_string($db, $levnr)."' and st.stalId != ".mysqli_real_escape_string($db, $stalId)."
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     while ($vor = mysqli_fetch_assoc($eerder_stalId)) {
         $vorigStalId = $vor['stalId'];
     }
@@ -540,13 +540,13 @@ function zoek_naam_partij($db, $rel_hrk) {
 function registreer_melddatum($db, $reqId) {
     // Melddatum registreren in tblRequest bij > 0 te melden en definitieve melding
     $upd_tblRequest = "UPDATE tblRequest SET dmmeld = now() WHERE reqId = '".mysqli_real_escape_string($db, $reqId)."' and def = 'J' ";
-    mysqli_query($db, $upd_tblRequest) or die(mysqli_error($db));
+    mysqli_query($db, $upd_tblRequest) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 }
 
 function registreer_melddatum_definitief($db, $reqId) {
     // Melddatum registreren in tblRequest bij 0 te melden
     $upd_tblRequest = "UPDATE tblRequest SET dmmeld = now(), def = 'J' WHERE reqId = '".mysqli_real_escape_string($db, $reqId)."' ";
-    mysqli_query($db, $upd_tblRequest) or die(mysqli_error($db));
+    mysqli_query($db, $upd_tblRequest) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 }
 
 function zoek_request_definitief($db, $reqId) {
@@ -554,7 +554,7 @@ function zoek_request_definitief($db, $reqId) {
     SELECT r.def 
     FROM tblRequest r 
     WHERE r.reqId = '".mysqli_real_escape_string($db, $reqId)."' 
-    ") or die(mysqli_error($db));
+    ") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     $def = '';
     while ($defi = mysqli_fetch_assoc($definitief)) {
         $def = $defi['def'];
@@ -570,7 +570,7 @@ function zoek_eerste_stalrecord($lidId) {
         FROM tblStal st
          join tblUbn u on (st.ubnId = u.ubnId)
         WHERE u.lidId = '".mysqli_real_escape_string($db, $lidId)."'
-            ") or die(mysqli_error($db));
+            ") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     while ($ym = mysqli_fetch_assoc($maand_voorbij)) {
         $controle_maand = $ym['maand'];
     }

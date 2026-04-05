@@ -41,13 +41,13 @@ foreach ($array as $recId => $id) {
 SELECT verwerkt
 FROM impAgrident
 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     } else {
         $zoek_readerRegel_verwerkt = mysqli_query($db, "
 SELECT verwerkt
 FROM impReader
 WHERE readId = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     }
     while ($verw = mysqli_fetch_array($zoek_readerRegel_verwerkt)) {
         $verwerkt = $verw['verwerkt'];
@@ -62,7 +62,7 @@ SELECT s.schaapId
 FROM impAgrident rd
  join tblSchaap s on (s.levensnummer = rd.levensnummer)
 WHERE rd.Id = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             while ($zs = mysqli_fetch_assoc($zoek_schaapId)) {
                 $schaapId = $zs['schaapId'];
             }
@@ -71,7 +71,7 @@ WHERE rd.Id = '" . mysqli_real_escape_string($db, $recId) . "'
 SELECT stalId
 FROM tblStal
 WHERE schaapId = '" . mysqli_real_escape_string($db, $schaapId) . "' and lidId = '" . mysqli_real_escape_string($db, $lidId) . "' and isnull(rel_best)
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             while ($st = mysqli_fetch_assoc($zoek_stalId)) {
                 $stalId = $st['stalId'];
             }
@@ -79,15 +79,15 @@ WHERE schaapId = '" . mysqli_real_escape_string($db, $schaapId) . "' and lidId =
             $update_tblStal = "UPDATE tblStal set kleur = '" . mysqli_real_escape_string($db, $fldKleur) . "', halsnr = '" . mysqli_real_escape_string($db, $fldHalsnr) . "'
         WHERE stalId = '" . mysqli_real_escape_string($db, $stalId) . "'
      ";
-            mysqli_query($db, $update_tblStal) or die(mysqli_error($db));
+            mysqli_query($db, $update_tblStal) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             $updateReader = "UPDATE impAgrident SET verwerkt = 1 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "' ";
-            mysqli_query($db, $updateReader) or die(mysqli_error($db));
+            mysqli_query($db, $updateReader) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         }
     // EINDE CONTROLE op alle verplichten velden
     }
  // Einde if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt))
     if ($fldKies == 0 && $fldDel == 1) {
         $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "' " ;
-        mysqli_query($db, $updateReader) or die(mysqli_error($db));
+        mysqli_query($db, $updateReader) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     }
 }

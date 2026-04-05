@@ -47,13 +47,13 @@ foreach ($array as $recId => $id) {
 SELECT verwerkt
 FROM impAgrident
 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     } else {
         $zoek_readerRegel_verwerkt = mysqli_query($db, "
 SELECT verwerkt
 FROM impReader
 WHERE readId = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     }
     while ($verw = mysqli_fetch_array($zoek_readerRegel_verwerkt)) {
         $verwerkt = $verw['verwerkt'];
@@ -64,31 +64,31 @@ WHERE readId = '" . mysqli_real_escape_string($db, $recId) . "'
     // CONTROLE op alle verplichten velden bij uitval
         if (isset($flddag) && isset($fldlevnr)) {
             $update_tblSchaap = "UPDATE tblSchaap SET redId = " . db_null_input($updreden) . " WHERE levensnummer = '" . mysqli_real_escape_string($db, $fldlevnr) . "' ";
-            mysqli_query($db, $update_tblSchaap) or die(mysqli_error($db));
+            mysqli_query($db, $update_tblSchaap) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         // Update tblStal
             $zoek_stalId = mysqli_query($db, "
 SELECT stalId 
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
 WHERE lidId = '" . mysqli_real_escape_string($db, $lidId) . "' and levensnummer = '" . mysqli_real_escape_string($db, $fldlevnr) . "' and isnull(rel_best)
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             while ($stId = mysqli_fetch_assoc($zoek_stalId)) {
                 $stalId = $stId['stalId'];
             }
             $insert_tblHistorie = "INSERT INTO tblHistorie SET stalId = '" . mysqli_real_escape_string($db, $stalId) . "', datum = '" . mysqli_real_escape_string($db, $flddag) . "', actId = 14 ";
-                mysqli_query($db, $insert_tblHistorie) or die(mysqli_error($db));
+                mysqli_query($db, $insert_tblHistorie) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         // Update tblStal
             $update_tblStal = "UPDATE tblStal SET rel_best = '" . mysqli_real_escape_string($db, $rendac_Id) . "' WHERE stalId = '" . mysqli_real_escape_string($db, $stalId) . "' ";
-                mysqli_query($db, $update_tblStal) or die(mysqli_error($db));
+                mysqli_query($db, $update_tblStal) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         // Einde Update tblStaplek
             if ($reader == 'Agrident') {
                     $updateReader = "UPDATE impAgrident SET verwerkt = 1 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "' ";
             } else {
                 $updateReader = "UPDATE impReader SET verwerkt = 1 WHERE readId = '" . mysqli_real_escape_string($db, $recId) . "' ";
             }
-            mysqli_query($db, $updateReader) or die(mysqli_error($db));
+            mysqli_query($db, $updateReader) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             if ($modmeld == 1) {
-                $zoek_hisId = mysqli_query($db, "SELECT hisId FROM tblHistorie WHERE stalId = '" . mysqli_real_escape_string($db, $stalId) . "' and actId = 14 and skip = 0 ") or die(mysqli_error($db));
+                $zoek_hisId = mysqli_query($db, "SELECT hisId FROM tblHistorie WHERE stalId = '" . mysqli_real_escape_string($db, $stalId) . "' and actId = 14 and skip = 0 ") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
                 while ($hId = mysqli_fetch_assoc($zoek_hisId)) {
                     $hisId = $hId['hisId'];
                 }
@@ -105,6 +105,6 @@ WHERE lidId = '" . mysqli_real_escape_string($db, $lidId) . "' and levensnummer 
         } else {
             $updateReader = "UPDATE impReader SET verwerkt = 1 WHERE readId = '" . mysqli_real_escape_string($db, $recId) . "' " ;
         }
-    /*echo $updateReader.'<br>';*/        mysqli_query($db, $updateReader) or die(mysqli_error($db));
+    /*echo $updateReader.'<br>';*/        mysqli_query($db, $updateReader) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     }
 }

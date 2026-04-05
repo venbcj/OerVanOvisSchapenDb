@@ -64,7 +64,7 @@ if (!isset($headers['Authorization'])) { // Als in de headers geen index 'Autori
     if (count($authorization) == 2 && trim($authorization[0]) == "Bearer" && strlen(trim($authorization[1])) == 64) {
 
         $statement = "SELECT lidId from tblLeden where readerkey = '".mysqli_real_escape_string($db,$authorization[1])."'" ;
-        $zoek_lidId_result = mysqli_query($db, $statement) or die(mysqli_error($db));
+        $zoek_lidId_result = mysqli_query($db, $statement) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 
         $row = mysqli_fetch_assoc($zoek_lidId_result);
 

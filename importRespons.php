@@ -45,7 +45,7 @@ if (!isset($fout)) {
             }
         }
         $insert_qry .= ';';
-        mysqli_query($db, $insert_qry) or die(mysqli_error($db));
+        mysqli_query($db, $insert_qry) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     }
     // Einde Inlezen response bestand in tabel impRespons
 

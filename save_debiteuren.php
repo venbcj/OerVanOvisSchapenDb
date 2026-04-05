@@ -16,7 +16,7 @@ foreach ($multip_array as $recId => $id) {
     SELECT relId
     FROM tblRelatie
     WHERE relId = '" . mysqli_real_escape_string($db, $recId) . "' and relatie = 'deb'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     while ($zrc = mysqli_fetch_assoc($zoek_relatie_debiteur)) {
         $relId = $zrc['relId'];
     }
@@ -72,7 +72,7 @@ foreach ($multip_array as $recId => $id) {
      join tblRelatie r on (p.partId = r.partId)
      left join tblAdres a on (a.relId = r.relId)
     WHERE r.relId = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         while ($zd = mysqli_fetch_assoc($zoek_debiteur)) {
             $ubn_db = $zd['ubn'];
             $naam_db = $zd['naam'];
@@ -88,7 +88,7 @@ foreach ($multip_array as $recId => $id) {
 SELECT count(p.partId) aant
 FROM tblPartij p
 WHERE p.ubn = '" . mysqli_real_escape_string($db, $fldUbn) . "' and p.lidId = '" . mysqli_real_escape_string($db, $lidId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
                 while ($dub_ubn = mysqli_fetch_assoc($zoek_bestaand_ubn)) {
                      $aant_ubn = $dub_ubn['aant'];
                 }
@@ -102,7 +102,7 @@ WHERE p.ubn = '" . mysqli_real_escape_string($db, $fldUbn) . "' and p.lidId = '"
     SET ubn = " . db_null_input($fldUbn) . "
     WHERE r.relId = '" . mysqli_real_escape_string($db, $recId) . "'
 ";
-                /*echo $wijzigUbn.'<br>';*/ mysqli_query($db, $wijzigUbn) or die(mysqli_error($db));
+                /*echo $wijzigUbn.'<br>';*/ mysqli_query($db, $wijzigUbn) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             }
         }
     // Einde Wijzigen ubn
@@ -114,7 +114,7 @@ WHERE p.ubn = '" . mysqli_real_escape_string($db, $fldUbn) . "' and p.lidId = '"
     SET naam = " . db_null_input($fldNaam) . "
     WHERE r.relId = '" . mysqli_real_escape_string($db, $recId) . "'
 ";
-            mysqli_query($db, $wijzigNaam) or die(mysqli_error($db));
+            mysqli_query($db, $wijzigNaam) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         }
     // Einde Wijzigen naam
     // Wijzigen naamreader
@@ -125,7 +125,7 @@ WHERE p.ubn = '" . mysqli_real_escape_string($db, $fldUbn) . "' and p.lidId = '"
     set naamreader = " . db_null_input($fldPres) . " 
     WHERE r.relId = '" . mysqli_real_escape_string($db, $recId) . "'
 ";
-            /*echo '$wijzigNaamreader = '.$wijzigNaamreader.'<br>';*/    mysqli_query($db, $wijzigNaamreader) or die(mysqli_error($db));
+            /*echo '$wijzigNaamreader = '.$wijzigNaamreader.'<br>';*/    mysqli_query($db, $wijzigNaamreader) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         }
     // Einde Wijzigen naamreader
     // geheel ADRES invoeren
@@ -138,7 +138,7 @@ WHERE p.ubn = '" . mysqli_real_escape_string($db, $fldUbn) . "' and p.lidId = '"
     INSERT INTO tblAdres
     SET relId = '" . mysqli_real_escape_string($db, $recId) . "', straat = " . db_null_input($fldStraat) . ", nr = " . db_null_input($fldNr) . ", pc = " . db_null_input($fldPc) . ", plaats = " . db_null_input($fldPlaats) . "
 ";
-            /*echo $invoeradres.'<br>';*/ mysqli_query($db, $invoeradres) or die(mysqli_error($db));
+            /*echo $invoeradres.'<br>';*/ mysqli_query($db, $invoeradres) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         }
     // Einde geheel ADRES invoeren
         if (isset($adrId_db)) {
@@ -147,7 +147,7 @@ WHERE p.ubn = '" . mysqli_real_escape_string($db, $fldUbn) . "' and p.lidId = '"
     FROM tblRelatie r
      join tblAdres a on (a.relId = r.relId)
     WHERE r.relId = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             while ($zag = mysqli_fetch_assoc($zoek_adres_gegevens)) {
                 $straat_db = $zag['straat'];
                 $huisnr_db = $zag['nr'];
@@ -163,7 +163,7 @@ WHERE p.ubn = '" . mysqli_real_escape_string($db, $fldUbn) . "' and p.lidId = '"
     SET straat = " . db_null_input($fldStraat) . " 
     WHERE r.relId = '" . mysqli_real_escape_string($db, $recId) . "'
 ";
-                /*echo $wijzigStraat.'<br>';*/ mysqli_query($db, $wijzigStraat) or die(mysqli_error($db));
+                /*echo $wijzigStraat.'<br>';*/ mysqli_query($db, $wijzigStraat) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             }
         // Einde Wijzigen straat
         // Wijzigen huisnummer
@@ -175,7 +175,7 @@ WHERE p.ubn = '" . mysqli_real_escape_string($db, $fldUbn) . "' and p.lidId = '"
     SET nr = " . db_null_input($fldNr) . "
     WHERE r.relId = '" . mysqli_real_escape_string($db, $recId) . "'
 ";
-                /*echo $wijzigNummer.'<br>';*/ mysqli_query($db, $wijzigNummer) or die(mysqli_error($db));
+                /*echo $wijzigNummer.'<br>';*/ mysqli_query($db, $wijzigNummer) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             }
         // Einde Wijzigen huisnummer
         // Wijzigen postcode
@@ -187,7 +187,7 @@ WHERE p.ubn = '" . mysqli_real_escape_string($db, $fldUbn) . "' and p.lidId = '"
     SET pc = " . db_null_input($fldPc) . " 
     WHERE r.relId = '" . mysqli_real_escape_string($db, $recId) . "'
 ";
-                /*echo $wijzigPostcode.'<br>';*/ mysqli_query($db, $wijzigPostcode) or die(mysqli_error($db));
+                /*echo $wijzigPostcode.'<br>';*/ mysqli_query($db, $wijzigPostcode) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             }
         // Einde Wijzigen postcode
         // Wijzigen plaats
@@ -199,7 +199,7 @@ WHERE p.ubn = '" . mysqli_real_escape_string($db, $fldUbn) . "' and p.lidId = '"
     SET plaats = " . db_null_input($fldPlaats) . "
     WHERE r.relId = '" . mysqli_real_escape_string($db, $recId) . "'
 ";
-                /*echo $wijzigPlaats.'<br>';*/ mysqli_query($db, $wijzigPlaats) or die(mysqli_error($db));
+                /*echo $wijzigPlaats.'<br>';*/ mysqli_query($db, $wijzigPlaats) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             }
         // Einde Wijzigen plaats
         }
@@ -211,7 +211,7 @@ WHERE p.ubn = '" . mysqli_real_escape_string($db, $fldUbn) . "' and p.lidId = '"
     SET tel = " . db_null_input($fldTel) . " 
     WHERE r.relId = '" . mysqli_real_escape_string($db, $recId) . "'
 ";
-            /*echo $wijzigTelefoon.'<br>';*/ mysqli_query($db, $wijzigTelefoon) or die(mysqli_error($db));
+            /*echo $wijzigTelefoon.'<br>';*/ mysqli_query($db, $wijzigTelefoon) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         }
     // Einde Wijzigen telefoon
     // Wijzigen actief
@@ -221,7 +221,7 @@ WHERE p.ubn = '" . mysqli_real_escape_string($db, $fldUbn) . "' and p.lidId = '"
     SET actief = '" . mysqli_real_escape_string($db, $fldActief) . "' 
     WHERE relId = '" . mysqli_real_escape_string($db, $recId) . "'
 ";
-            /*echo $wijzigActief.'<br>';*/ mysqli_query($db, $wijzigActief) or die(mysqli_error($db));
+            /*echo $wijzigActief.'<br>';*/ mysqli_query($db, $wijzigActief) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         }
     // Einde Wijzigen actief
     }

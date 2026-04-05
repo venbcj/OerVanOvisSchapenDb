@@ -39,7 +39,7 @@ foreach ($array as $recId => $id) {
 SELECT verwerkt
 FROM impAgrident
 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     while ($verw = mysqli_fetch_array($zoek_readerRegel_verwerkt)) {
         $verwerkt = $verw['verwerkt'];
     }
@@ -53,24 +53,24 @@ WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "'
 SELECT stalId
 FROM tblStal
 WHERE schaapId = '" . mysqli_real_escape_string($db, $fldOoi) . "' and lidId = '" . mysqli_real_escape_string($db, $lidId) . "' and isnull(rel_best)
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             while ($zs = mysqli_fetch_assoc($zoek_stalId)) {
                      $stalId = $zs['stalId'];
             }
             $insert_tblHistorie = "INSERT INTO tblHistorie SET stalId = '" . mysqli_real_escape_string($db, $stalId) . "', datum = '" . mysqli_real_escape_string($db, $fldDag) . "', actId = 18 ";
-        /*echo $insert_tblHistorie.'<br>';*/        mysqli_query($db, $insert_tblHistorie) or die(mysqli_error($db));
+        /*echo $insert_tblHistorie.'<br>';*/        mysqli_query($db, $insert_tblHistorie) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             $zoek_hisId = mysqli_query($db, "
 SELECT max(hisId) hisId
 FROM tblHistorie
 WHERE stalId = '" . mysqli_real_escape_string($db, $stalId) . "' and datum = '" . mysqli_real_escape_string($db, $fldDag) . "' and actId = 18
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             while ($zh = mysqli_fetch_assoc($zoek_hisId)) {
                      $hisId = $zh['hisId'];
             }
             $insert_tblVolwas = "INSERT INTO tblVolwas SET readId = '" . mysqli_real_escape_string($db, $recId) . "', hisId = '" . mysqli_real_escape_string($db, $hisId) . "', mdrId = '" . mysqli_real_escape_string($db, $fldOoi) . "', vdrId = " . db_null_input($fldRam);
-        /*echo $insert_tblVolwas.'<br>';*/        mysqli_query($db, $insert_tblVolwas) or die(mysqli_error($db));
+        /*echo $insert_tblVolwas.'<br>';*/        mysqli_query($db, $insert_tblVolwas) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             $updateReader = "UPDATE impAgrident SET verwerkt = 1 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "' ";
-        /*echo $updateReader.'<br>';*/        mysqli_query($db, $updateReader) or die(mysqli_error($db));
+        /*echo $updateReader.'<br>';*/        mysqli_query($db, $updateReader) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             unset($fldOoi);
             unset($fldRam);
         // EINDE CONTROLE op alle verplichten velden
@@ -80,7 +80,7 @@ WHERE stalId = '" . mysqli_real_escape_string($db, $stalId) . "' and datum = '" 
  // Einde if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt))
     if ($fldKies == 0 && $fldDel == 1) {
         $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "' " ;
-   /*echo $updateReader.'<br>';*/        mysqli_query($db, $updateReader) or die(mysqli_error($db));
+   /*echo $updateReader.'<br>';*/        mysqli_query($db, $updateReader) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     }
     unset($fldlevnr);
 }

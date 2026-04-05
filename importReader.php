@@ -30,7 +30,7 @@ for ($i = 0; $i < $c; $i++) {
         }
     }
     $insert_qry .= ', lidId = ' . $lidId . ';';
-    mysqli_query($db, $insert_qry) or die(mysqli_error($db));
+    mysqli_query($db, $insert_qry) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 }
 
 // VERWIJDEREN VAN HET BESTAND bijv. READER_1.TXT TUSSEN ALLE PHP BESTANDEN verplaatsen en hernoemen is gebeurd in uploadReader.php
@@ -51,7 +51,7 @@ $zoek_aantal_geborenENuitval = mysqli_query($db, "
 select count(readId) aantid
 from impReader
 where lidId = " . mysqli_real_escape_string($db, $lidId) . " and levnr_geb is not null and (moment1 is not null or moment2 is not null)
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 while ($qrycntr = mysqli_fetch_assoc($zoek_aantal_geborenENuitval)) {
     if (!empty($qrycntr['aantid'])) {
         $ScheidUitvalVanGeboren = mysqli_query($db, "
@@ -59,18 +59,18 @@ select datum, tijd, teller, moeder, moment1, moment2
 from impReader 
 where lidId = " . mysqli_real_escape_string($db, $lidId) . " and isnull(verwerkt) and levnr_geb is not null and (moment1 is not null or moment2 is not null)
 order by teller
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         while ($qryins = mysqli_fetch_assoc($ScheidUitvalVanGeboren)) {
             $insertimpreader = mysqli_query($db, "
  INSERT INTO impReader SET datum = '$qryins[datum]', tijd = '$qryins[tijd]', teller = '$qryins[teller]', moeder = '$qryins[moeder]', 
     moment1 = '$qryins[moment1]', moment2 = '$qryins[moment2]',
     lidId = " . mysqli_real_escape_string($db, $lidId) . " ;
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         }
         $GeborenLamUniekMaken = mysqli_query($db, "
 UPDATE impReader SET moment1 = NULL, moment2 = NULL
 where lidId = " . mysqli_real_escape_string($db, $lidId) . " and isnull(verwerkt) and levnr_geb is not null and (moment1 is not null or moment2 is not null)
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     }
 }
 // EINDE BEWERKING 1 : Eerst worden de 1 of 2 uitgevallen lammeren gescheiden van het geboren lam
@@ -79,7 +79,7 @@ $zoek_naar_2_uitval = mysqli_query($db, "
 select count(readId) aantid
 from impReader
 where lidId = " . mysqli_real_escape_string($db, $lidId) . " and isnull(verwerkt) and isnull(levnr_geb) and moment2 is not null
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 while ($dubl_do = mysqli_fetch_assoc($zoek_naar_2_uitval)) {
     if (!empty($dubl_do['aantid'])) {
      /* Als er waardes bestaan dan eerst nieuwe records invoegen daarna pas update query of te wel
@@ -90,16 +90,16 @@ select readId, datum, tijd, teller, moeder, moment2
 from impReader
 where lidId = " . mysqli_real_escape_string($db, $lidId) . " and isnull(verwerkt) and isnull(levnr_geb) and moment2 is not null
 order by teller
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         while ($qry = mysqli_fetch_assoc($zoek_2_uitval)) {
-            $insert_impReader = mysqli_query($db, "INSERT INTO impReader SET datum = '$qry[datum]', tijd = '$qry[tijd]', teller = '$qry[teller]', moeder = '$qry[moeder]', moment1 = '$qry[moment2]', lidId = " . mysqli_real_escape_string($db, $lidId) . "  ") or die(mysqli_error($db));
+            $insert_impReader = mysqli_query($db, "INSERT INTO impReader SET datum = '$qry[datum]', tijd = '$qry[tijd]', teller = '$qry[teller]', moeder = '$qry[moeder]', moment1 = '$qry[moment2]', lidId = " . mysqli_real_escape_string($db, $lidId) . "  ") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             $readId = $qry['readId'];
-            $update_impReader = mysqli_query($db, "UPDATE impReader SET moment2 = NULL WHERE readId = " . mysqli_real_escape_string($db, $readId) . "  ") or die(mysqli_error($db));
+            $update_impReader = mysqli_query($db, "UPDATE impReader SET moment2 = NULL WHERE readId = " . mysqli_real_escape_string($db, $readId) . "  ") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         }
 
         $bijwerkimpreader = mysqli_query($db, "
 update impReader SET moment1 = moment2 where lidId = " . mysqli_real_escape_string($db, $lidId) . " and isnull(levnr_geb) and isnull(moment1)
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 // EINDE BEWERKING 2 : Daarna worden twee uitgevallen lammeren gescheiden indien van toepassing.
     }
 }
@@ -107,7 +107,7 @@ update impReader SET moment1 = moment2 where lidId = " . mysqli_real_escape_stri
 if ($modtech == 0) { // geboren lammeren zonder levensnummer mogen niet voorkomen als de module technisch niet wordt gebruikt
     mysqli_query($db, "
 update impReader SET verwerkt = 1 where lidId = " . mysqli_real_escape_string($db, $lidId) . " and isnull(levnr_geb) and teller is not null and isnull(verwerkt)
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 }
 
 // EINDE BEWERKING TABEL IMPREADER

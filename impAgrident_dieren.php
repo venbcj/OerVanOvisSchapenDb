@@ -35,7 +35,7 @@ foreach ($inhoud as $key => $waarde) {
                 $insert_qry .= $insert_qry_dier;
                 $insert_qry .= ' lidId = ' . mysqli_real_escape_string($db, $lidid) . ';';
                 echo $insert_qry;
-                mysqli_query($db, $insert_qry) or die(mysqli_error($db));
+                mysqli_query($db, $insert_qry) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
                 unset($insert_qry_dier);
                 unset($insert_qry);
             }

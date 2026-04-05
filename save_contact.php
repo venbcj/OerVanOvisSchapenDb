@@ -50,7 +50,7 @@ foreach ($multip_array as $recId => $id) {
     SELECT letter, roep, voeg, naam, tel, gsm, mail, functie, actief
     FROM tblPersoon
     WHERE persId = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         while ($zp = mysqli_fetch_assoc($zoek_persoon)) {
             $letter_db = $zp['letter'];
             $roep_db = $zp['roep'];
@@ -69,7 +69,7 @@ foreach ($multip_array as $recId => $id) {
     SET letter = " . db_null_input($fldLetter) . " 
     WHERE persId = '" . mysqli_real_escape_string($db, $recId) . "'
 ";
-            mysqli_query($db, $wijzigvoorletters) or die(mysqli_error($db));
+            mysqli_query($db, $wijzigvoorletters) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         }
     //unset($letter); // Alleen nodig als een geheel record uit een tabel niet bestaat. Dat is bij contactpersonen niet het geval.
     // Einde Wijzigen voorletters
@@ -80,7 +80,7 @@ foreach ($multip_array as $recId => $id) {
     SET roep = " . db_null_input($fldRoep) . "
     WHERE persId = '" . mysqli_real_escape_string($db, $recId) . "'
 ";
-            mysqli_query($db, $wijzigroepnaam) or die(mysqli_error($db));
+            mysqli_query($db, $wijzigroepnaam) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         }
     //unset($roep);
     // Einde Wijzigen roepnaam
@@ -91,7 +91,7 @@ foreach ($multip_array as $recId => $id) {
     SET voeg = " . db_null_input($fldVgsl) . "
     WHERE persId = '" . mysqli_real_escape_string($db, $recId) . "'
 ";
-            mysqli_query($db, $wijzigtussenvoegsel) or die(mysqli_error($db));
+            mysqli_query($db, $wijzigtussenvoegsel) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         }
     //unset($voeg);
     // Einde Wijzigen tussenvoegsel
@@ -102,7 +102,7 @@ foreach ($multip_array as $recId => $id) {
     SET naam = " . db_null_input($fldNaam) . "
     WHERE persId = '" . mysqli_real_escape_string($db, $recId) . "'
 ";
-            mysqli_query($db, $wijzignaam) or die(mysqli_error($db));
+            mysqli_query($db, $wijzignaam) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         }
     //unset($naam);
     // Einde Wijzigen naam
@@ -113,7 +113,7 @@ foreach ($multip_array as $recId => $id) {
     SET tel = " . db_null_input($fldTel) . "
     WHERE persId = '" . mysqli_real_escape_string($db, $recId) . "'
 ";
-            mysqli_query($db, $wijzigtelefoon) or die(mysqli_error($db));
+            mysqli_query($db, $wijzigtelefoon) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         }
     //unset($tel);
     // Einde Wijzigen telefoon
@@ -124,7 +124,7 @@ foreach ($multip_array as $recId => $id) {
     SET gsm = " . db_null_input($fldGsm) . "
     WHERE persId = '" . mysqli_real_escape_string($db, $recId) . "'
 ";
-            mysqli_query($db, $wijzigmobiel) or die(mysqli_error($db));
+            mysqli_query($db, $wijzigmobiel) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         }
     //unset($gsm);
     // Einde Wijzigen mobiel
@@ -135,7 +135,7 @@ foreach ($multip_array as $recId => $id) {
     SET mail = " . db_null_input($fldMail) . "
     WHERE persId = '" . mysqli_real_escape_string($db, $recId) . "'
 ";
-            mysqli_query($db, $wijzigemail) or die(mysqli_error($db));
+            mysqli_query($db, $wijzigemail) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         }
     //unset($mail);
     // Einde Wijzigen email
@@ -146,7 +146,7 @@ foreach ($multip_array as $recId => $id) {
     SET functie = " . db_null_input($fldFunctie) . "
     WHERE persId = '" . mysqli_real_escape_string($db, $recId) . "'
 ";
-            mysqli_query($db, $wijzigfunctie) or die(mysqli_error($db));
+            mysqli_query($db, $wijzigfunctie) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         }
     //unset($func);
     // Einde Wijzigen functie
@@ -157,7 +157,7 @@ foreach ($multip_array as $recId => $id) {
     SET actief = '" . $fldActief . "'
     WHERE persId = '" . mysqli_real_escape_string($db, $recId) . "'
 ";
-            mysqli_query($db, $wijzigactief) or die(mysqli_error($db));
+            mysqli_query($db, $wijzigactief) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         }
 // Einde Wijzigen actief
     }

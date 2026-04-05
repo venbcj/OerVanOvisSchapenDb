@@ -51,7 +51,7 @@ $zoek_crediteur = mysqli_query($db,"
      join tblRelatie r on (p.partId = r.partId)
      left join tblAdres a on (a.relId = r.relId)
     WHERE r.relId = '".mysqli_real_escape_string($db,$recId)."' and (r.uitval != 1 or isnull(uitval))
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     while( $zc = mysqli_fetch_assoc($zoek_crediteur)) { 
         $ubn_db = $zc['ubn'];
         $naam_db = $zc['naam'];
@@ -70,7 +70,7 @@ $zoek_bestaand_ubn = mysqli_query($db,"
 SELECT count(p.partId) aant
 FROM tblPartij p
 WHERE p.ubn = '".mysqli_real_escape_string($db,$fldUbn)."' and p.lidId = '" . mysqli_real_escape_string($db, $lidId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     while( $dub_ubn = mysqli_fetch_assoc($zoek_bestaand_ubn)) { $aant_ubn = $dub_ubn['aant']; }
 }
 
@@ -133,7 +133,7 @@ $zoek_adres_gegevens = mysqli_query($db,"
     FROM tblRelatie r
      join tblAdres a on (a.relId = r.relId)
     WHERE r.relId = '".mysqli_real_escape_string($db,$recId)."'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     while( $zag = mysqli_fetch_assoc($zoek_adres_gegevens)) { 
         $straat_db = $zag['straat'];
         $huisnr_db = $zag['nr'];
@@ -223,7 +223,7 @@ $zoek_rendac = mysqli_query($db,"
     FROM tblRelatie r
      join tblPartij p on (r.partId = p.partId)
     WHERE r.relId = '".mysqli_real_escape_string($db,$recId)."' and p.naam = 'Rendac'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     while( $zr = mysqli_fetch_assoc($zoek_rendac)) { $rel_ren = $zr['relId']; }
 
 

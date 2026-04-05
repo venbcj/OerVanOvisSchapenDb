@@ -7,7 +7,7 @@ $zoek_dracht = mysqli_query($db, "
 SELECT count(datum) aant 
 FROM impReader 
 WHERE lidId = " . mysqli_real_escape_string($db, $lidId) . " and `moeder_dr` is not NULL and isnull(verwerkt)
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 while ($dra = mysqli_fetch_assoc($zoek_dracht)) {
     $aantdra = $dra['aant'];
 }
@@ -17,7 +17,7 @@ $lammeren = mysqli_query($db, "
 SELECT count(datum) aant 
 FROM impReader 
 WHERE lidId = " . mysqli_real_escape_string($db, $lidId) . " and teller is not NULL and isnull(verwerkt)
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 while ($rec_g = mysqli_fetch_assoc($lammeren)) {
     $aantgeb = $rec_g['aant'];
 }
@@ -27,7 +27,7 @@ $gespeenden = mysqli_query($db, "
 SELECT count(datum) aant 
 FROM impReader 
 WHERE lidId = " . mysqli_real_escape_string($db, $lidId) . " and teller_sp is not NULL and levnr_sp is not null and isnull(verwerkt)
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 while ($rec_spn = mysqli_fetch_assoc($gespeenden)) {
     $aantspn = $rec_spn['aant'];
 }
@@ -37,7 +37,7 @@ $uitgevallen = mysqli_query($db, "
 SELECT count(datum) aant 
 FROM impReader 
 WHERE lidId = " . mysqli_real_escape_string($db, $lidId) . " and teller_uitv is not NULL and isnull(verwerkt)
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 while ($rec_u = mysqli_fetch_assoc($uitgevallen)) {
     $aantuitv = $rec_u['aant'];
 }
@@ -47,7 +47,7 @@ $afgeleverden = mysqli_query($db, "
 SELECT count(datum) aant 
 FROM impReader 
 WHERE lidId = " . mysqli_real_escape_string($db, $lidId) . " and teller_afv is not NULL and isnull(verwerkt)
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 while ($rec_afl = mysqli_fetch_assoc($afgeleverden)) {
     $aantafl = $rec_afl['aant'];
 }
@@ -57,7 +57,7 @@ $aanvoer = mysqli_query($db, "
 SELECT count(datum) aant 
 FROM impReader 
 WHERE lidId = " . mysqli_real_escape_string($db, $lidId) . " and teller_aanv is not NULL and isnull(verwerkt)
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 while ($rec_aan = mysqli_fetch_assoc($aanvoer)) {
     $aantaanw = $rec_aan['aant'];
 }
@@ -67,7 +67,7 @@ $overplaatsen = mysqli_query($db, "
 SELECT count(datum) aant 
 FROM impReader 
 WHERE lidId = " . mysqli_real_escape_string($db, $lidId) . " and teller_ovpl is not NULL and isnull(verwerkt)
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 while ($rec_ovpl = mysqli_fetch_assoc($overplaatsen)) {
     $aantovpl = $rec_ovpl['aant'];
 }
@@ -81,7 +81,7 @@ FROM impReader rs
     WHERE teller_ovpl is not null and isnull(verwerkt) 
  ) ro ON (rs.lidId = ro.lidId and rs.levnr_sp = ro.levnr_ovpl)
 WHERE rs.lidId = " . mysqli_real_escape_string($db, $lidId) . " and rs.teller_sp is not null and isnull(rs.verwerkt)
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 while ($rec_sp = mysqli_fetch_assoc($SpenenEnOverpl)) {
     $speen_ovpl = $rec_sp['aantsp'];
 }
@@ -91,7 +91,7 @@ $medicijn = mysqli_query($db, "
 SELECT count(datum) aant 
 FROM impReader 
 WHERE lidId = " . mysqli_real_escape_string($db, $lidId) . " and teller_pil is not NULL and isnull(verwerkt)
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 while ($rec_pil = mysqli_fetch_assoc($medicijn)) {
     $aantpil = $rec_pil['aant'];
 }
@@ -101,7 +101,7 @@ $wegingen = mysqli_query($db, "
 SELECT count(datum) aant 
 FROM impReader 
 WHERE lidId = " . mysqli_real_escape_string($db, $lidId) . " and teller_sp is not NULL and levnr_weeg is not null and isnull(verwerkt)
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
 while ($rec_wg = mysqli_fetch_assoc($wegingen)) {
     $aantwg = $rec_wg['aant'];
 }

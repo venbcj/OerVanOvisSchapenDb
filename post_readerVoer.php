@@ -40,7 +40,7 @@ echo 'Het gekozen afsluitdatum = ' . $fldDmAfsluit . '<br>';*/
 SELECT hokId, artId, doelId
 FROM impAgrident
 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     while ($zhvd = mysqli_fetch_array($zoek_hok_voer_doelId)) {
         $hokId_rd = $zhvd['hokId'];
         $artId_rd = $zhvd['artId'];
@@ -50,7 +50,7 @@ WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "'
 SELECT Id, coalesce(toedat_upd,toedat) toedat, datum
 FROM impAgrident
 WHERE actId = 8888 and isnull(verwerkt) and lidId = '" . mysqli_real_escape_string($db, $lidId) . "' and hokId = '" . mysqli_real_escape_string($db, $hokId_rd) . "' and artId = '" . mysqli_real_escape_string($db, $artId_rd) . "' and doelId = '" . mysqli_real_escape_string($db, $doelId_rd) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
     while ($zgr = mysqli_fetch_array($zoek_gegevens_uit_reader)) {
         $readId = $zgr['Id'];
         $datum_rd = $zgr['datum'];
@@ -61,7 +61,7 @@ WHERE actId = 8888 and isnull(verwerkt) and lidId = '" . mysqli_real_escape_stri
 SELECT verwerkt
 FROM impAgrident
 WHERE Id = '" . mysqli_real_escape_string($db, $readId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         while ($verw = mysqli_fetch_array($zoek_readerRegel_verwerkt)) {
              $verwerkt = $verw['verwerkt'];
         }
@@ -84,7 +84,7 @@ WHERE Id = '" . mysqli_real_escape_string($db, $readId) . "'
 SELECT a.artId, a.naam, a.stdat
 FROM tblArtikel a
 WHERE a.artId = '" . mysqli_real_escape_string($db, $fldArtId) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             while ($zga = mysqli_fetch_assoc($zoek_gegevens_gekozen_artikel)) {
                 $naam = $zga['naam'];
                 $stdat = $zga['stdat'];
@@ -94,7 +94,7 @@ WHERE a.artId = '" . mysqli_real_escape_string($db, $fldArtId) . "'
 SELECT sum(coalesce(toedat_upd, toedat)) toedtot
 FROM impAgrident
 WHERE hokId = '" . mysqli_real_escape_string($db, $hokId_rd) . "' and artId = '" . mysqli_real_escape_string($db, $artId_rd) . "' and doelId = '" . mysqli_real_escape_string($db, $doelId_rd) . "' and actId = 8888 and isnull(verwerkt)
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             while ($ztkg = mysqli_fetch_assoc($zoek_totaalaantal_kg_van_oorspronkelijk_verblijf_artikel_en_doelgroep)) {
                 $toedtot = $ztkg['toedtot'];
             }
@@ -110,7 +110,7 @@ FROM tblArtikel a
  ) n on (i.inkId = n.inkId)
 WHERE i.artId = '" . mysqli_real_escape_string($db, $fldArtId) . "'
 GROUP BY a.stdat
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
             while ($zv = mysqli_fetch_assoc($zoek_voorraad_voer)) {
                  $voer_vrd = $zv['vrdat'];
             }
@@ -131,7 +131,7 @@ GROUP BY a.stdat
 SELECT periId
 FROM tblPeriode
 WHERE hokId = '" . mysqli_real_escape_string($db, $fldHok) . "' and doelId = '" . mysqli_real_escape_string($db, $doelId_rd) . "' and dmafsluit = '" . mysqli_real_escape_string($db, $fldDmAfsluit) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
                     while ($zp = mysqli_fetch_assoc($zoek_periode)) {
                              $periId = $zp['periId'];
                     }
@@ -139,12 +139,12 @@ WHERE hokId = '" . mysqli_real_escape_string($db, $fldHok) . "' and doelId = '" 
                          $fout = "Deze afsluitdatum bestaat al.";
                     } elseif (!isset($periId)) {
                         $insert_tblPeriode = "INSERT INTO tblPeriode set hokId = '" . mysqli_real_escape_string($db, $fldHok) . "', doelId= '" . mysqli_real_escape_string($db, $doelId_rd) . "', dmafsluit = '" . mysqli_real_escape_string($db, $fldDmAfsluit) . "' ";
-                /*echo $insert_tblPeriode.'<br>';*/        mysqli_query($db, $insert_tblPeriode) or die(mysqli_error($db));
+                /*echo $insert_tblPeriode.'<br>';*/        mysqli_query($db, $insert_tblPeriode) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
                         $zoek_periId = mysqli_query($db, "
 SELECT periId
 FROM tblPeriode
 WHERE hokId = '" . mysqli_real_escape_string($db, $fldHok) . "' and doelId= '" . mysqli_real_escape_string($db, $doelId_rd) . "' and dmafsluit = '" . mysqli_real_escape_string($db, $fldDmAfsluit) . "'
-") or die(mysqli_error($db));
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
                         while ($pi = mysqli_fetch_assoc($zoek_periId)) {
                              $periId = $pi['periId'];
                         }
@@ -159,7 +159,7 @@ WHERE hokId = '" . mysqli_real_escape_string($db, $fldHok) . "' and doelId= '" .
                     inlezen_voer($fldArtId, $inleeshoeveelheid, $datum_rd, $periId, $readId); // Zit in func_artikelnuttigen.php zie insVoerregistratie.php
                  /* EINDE INVOEREN */
                     $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '" . mysqli_real_escape_string($db, $readId) . "' " ;
-                    /*echo $updateReader.'<br>';*/    mysqli_query($db, $updateReader) or die(mysqli_error($db));
+                    /*echo $updateReader.'<br>';*/    mysqli_query($db, $updateReader) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
                 }
                  // Einde if($datum_rd <= $fldDmAfsluit)
             }
@@ -168,7 +168,7 @@ WHERE hokId = '" . mysqli_real_escape_string($db, $fldHok) . "' and doelId= '" .
      // Einde if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt))
         if ($fldKies == 0 && $fldDel == 1) {
             $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '" . mysqli_real_escape_string($db, $readId) . "' " ;
-            /*echo $updateReader.'<br>';*/        mysqli_query($db, $updateReader) or die(mysqli_error($db));
+            /*echo $updateReader.'<br>';*/        mysqli_query($db, $updateReader) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
         }
     }
  //Einde while($zri = mysqli_fetch_array($zoek_gegevens_uit_reader))
