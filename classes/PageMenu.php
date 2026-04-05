@@ -1,6 +1,6 @@
 <?php
 
-class Menu {
+class PageMenu {
 
     public static function melden($lidId) {
         $request_gateway = new RequestGateway();
