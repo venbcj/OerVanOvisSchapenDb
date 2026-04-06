@@ -10,8 +10,17 @@
 
     <li class="dropdown"><span>Reader</span>
         <div class="dropdown-content-smal">
-            <?php echo View::link_to('Inlezen reader', 'InlezenReader.php', ['class' => 'black']); ?> 
-            <?php echo View::link_to('Raederalerts', 'Alerts.php', ['class' => 'black']); ?>
+            <?php echo View::link_to('Inlezen reader', 'InlezenReader.php', ['class' => 'black']); ?>
+
+            <ul class="nested-dropdown">
+            <li class="dropdown2"><span>Readeralerts</span>
+                <div class="dropdown-content2">
+                    <?php echo View::link_to('Ooitjes uit meerlingen', 'AlertWorpSelectie.php', ['class' => 'black']); ?>
+                    <?php echo View::link_to('Controle levensnummers', 'AlertLevnrSelectie.php', ['class' => 'black']); ?>
+                </div>
+            </li>
+            </ul>
+
         </div>
     </li>
 

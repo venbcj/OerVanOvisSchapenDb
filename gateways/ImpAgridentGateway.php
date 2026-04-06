@@ -1807,6 +1807,114 @@ SQL;
         ];
     }
 
+    public function getSpookLevensnummer($lidId, $van, $tot){
+        return $this->run_query(
+            <<<SQL
+SELECT 'Nummers die ook niet bestaan in tblHistorie als oud nummer' toel, a.transponder, a.levensnummer, date_format(a.dmcreate,'%d-%m-%Y') datum, ac.actie taak, a.dmcreate
+FROM impAgrident a
+ join tblActie ac on (ac.actId = a.actId)
+ left join tblSchaap s on (a.levensnummer = s.levensnummer)
+ left join tblHistorie h on (a.levensnummer = h.oud_nummer)
+WHERE ((a.verwerkt = 1 and a.actId = 1) or (a.actId != 17))
+and isnull(s.schaapId)
+and isnull(h.hisId)
+and a.levensnummer is not null
+and a.lidId = :lidId
+and date_format(a.dmcreate,'%Y-%m-%d') >= :van
+and date_format(a.dmcreate,'%Y-%m-%d') <= :tot
+
+UNION
+
+SELECT 'Nieuwe nummers bij omnummeren', a.nieuw_transponder, a.nieuw_nummer, date_format(a.dmcreate,'%d-%m-%Y') datum, ac.actie taak, a.dmcreate
+FROM impAgrident a
+ join tblActie ac on (ac.actId = a.actId)
+ left join tblSchaap s on (a.nieuw_nummer = s.levensnummer)
+WHERE a.actId = 17
+and isnull(s.schaapId)
+and a.levensnummer is not null
+and a.lidId = :lidId
+and date_format(a.dmcreate,'%Y-%m-%d') >= :van
+and date_format(a.dmcreate,'%Y-%m-%d') <= :tot
+
+UNION
+
+SELECT 'Oude nummers bij omnummeren', a.transponder, a.levensnummer, date_format(a.dmcreate,'%d-%m-%Y') datum, ac.actie taak, a.dmcreate
+FROM impAgrident a
+ join tblActie ac on (ac.actId = a.actId)
+ left join tblHistorie h on (a.levensnummer = h.oud_nummer)
+WHERE a.actId = 17
+and isnull(h.hisId)
+and a.levensnummer is not null
+and a.lidId = :lidId
+and date_format(a.dmcreate,'%Y-%m-%d') >= :van
+and date_format(a.dmcreate,'%Y-%m-%d') <= :tot
+
+ORDER BY dmcreate
+            SQL
+                ,
+                [
+                [':lidId', $lidId, Type::INT],
+                [':van', $van],
+                [':tot', $tot],
+                ]
+        );
+    
+    }
+    
+    public function getSpookTransponder($lidId, $van, $tot){
+        return $this->run_query(
+            <<<SQL
+SELECT 'Nummers die ook niet bestaan in tblHistorie als oud nummer' toel, a.transponder, a.levensnummer
+FROM impAgrident a
+ left join tblSchaap s on (a.levensnummer = s.levensnummer)
+ left join tblHistorie h on (a.levensnummer = h.oud_nummer)
+WHERE ((a.verwerkt = 1 and a.actId = 1) or (a.actId != 17))
+and isnull(s.schaapId)
+and isnull(h.hisId)
+and a.levensnummer is not null
+and a.lidId = :lidId
+and date_format(a.dmcreate,'%Y-%m-%d') >= :van
+and date_format(a.dmcreate,'%Y-%m-%d') <= :tot
+and a.transponder is not null
+
+UNION
+
+SELECT 'Nieuwe nummers bij omnummeren', a.nieuw_transponder, a.nieuw_nummer
+FROM impAgrident a
+ left join tblSchaap s on (a.nieuw_nummer = s.levensnummer)
+WHERE a.actId = 17
+and isnull(s.schaapId)
+and a.levensnummer is not null
+and a.lidId = :lidId
+and date_format(a.dmcreate,'%Y-%m-%d') >= :van
+and date_format(a.dmcreate,'%Y-%m-%d') <= :tot
+and a.transponder is not null
+
+UNION
+
+SELECT 'Oude nummers bij omnummeren', a.transponder, a.levensnummer
+FROM impAgrident a
+ left join tblHistorie h on (a.levensnummer = h.oud_nummer)
+WHERE a.actId = 17
+and isnull(h.hisId)
+and a.levensnummer is not null
+and a.lidId = :lidId
+and date_format(a.dmcreate,'%Y-%m-%d') >= :van
+and date_format(a.dmcreate,'%Y-%m-%d') <= :tot
+and a.transponder is not null
+
+ORDER BY dmcreate
+            SQL
+                ,
+                [
+                [':lidId', $lidId, Type::INT],
+                [':van', $van],
+                [':tot', $tot],
+                ]
+        );
+    }
+
+
     public function getLoslopersPlaatsenFrom() {
         return <<<SQL
 tblSchaap s
