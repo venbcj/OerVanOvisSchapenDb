@@ -168,7 +168,7 @@ FROM tblSchaap l
      join tblBezet b on (h.hisId = b.hisId)
      join tblStal st on (st.stalId = h.stalId)
      join tblUbn u on (u.ubnId = st.ubnId)
-    WHERE u.lidId = 22
+    WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
     GROUP BY st.stalId
  ) b_day_in_adop on (b_day_in_adop.stalId = ast.stalId)
  left join (
@@ -177,7 +177,7 @@ FROM tblSchaap l
      join tblBezet b on (h.hisId = b.hisId)
      join tblStal st on (st.stalId = h.stalId)
      join tblUbn u on (u.ubnId = st.ubnId)
-    WHERE u.lidId = 22
+    WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
     GROUP BY h.stalId, h.datum
  ) b_in_adop on (b_in_adop.stalId = ast.stalId and b_day_in_adop.datum = b_in_adop.datum)
  left join tblBezet b_adop on (b_in_adop.hisId = b_adop.hisId)
@@ -192,7 +192,7 @@ FROM tblSchaap l
      join tblStal st on (st.stalId = h.stalId)
      join tblUbn u on (st.ubnId = u.ubnId)
      join tblActie a on (h.actId = a.actId)
-    WHERE u.lidId = 22 and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
+    WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
  ) uit_adop on (b_in_adop.hisId = uit_adop.hisId_in)
  left join tblHistorie ht_adop on (uit_adop.hisId_tot = ht_adop.hisId)
  left join tblActie at_adop on (at_adop.actId = ht_adop.actId)
