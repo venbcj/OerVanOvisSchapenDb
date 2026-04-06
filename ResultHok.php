@@ -72,14 +72,7 @@ include "login.php"; ?>
 
                 <TD valign = 'top'>
 <?php
-if (Auth::is_logged_in()) { if($modtech ==1) {
-// TODO: #0004104 (BV) sorteren.js zit niet in de repo!
-?>
-<script src="sorteren.js"></script>
-<?php
-
-    $result = $hok_gateway->resultaten($lidId);
-?>
+if (Auth::is_logged_in()) { if($modtech ==1) { ?>
 
 <table Border = 0 id="sortableTable" align = "center">
   <thead>
@@ -96,8 +89,8 @@ if (Auth::is_logged_in()) { if($modtech ==1) {
     </tr>
 </thead>
 <tbody>
-<?php
-while ($row = $result->fetch_array())
+<?php   $result = $hok_gateway->resultaten($lidId);
+        while ($row = $result->fetch_array())
         { 
            $hoknr = $row['hoknr'];
            $doelgr = $row['doel']; 
