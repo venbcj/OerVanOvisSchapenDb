@@ -55,6 +55,7 @@
             <?php echo View::link_to('Groeiresultaten per weging', 'GroeiresultaatWeging.php', ['class' => $tech_color]); ?>
             <?php # TODO: #0004121 omschrijving is anders dan in menu1! ?>
             <?php echo View::link_to('Periode resultaten', 'ResultHok.php', ['class' => $tech_color]); ?>
+            <?php echo View::link_to('Adoptie', 'Adoptierapport.php', ['class' => $tech_color]); ?>
 
         <ul class="nested-dropdown">
         <li class="dropdown2"><span>Ooi rapporten</span>
