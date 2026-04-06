@@ -94,7 +94,16 @@ if($num_rows == 0){  $color_RVO = 'black'; } else { $color_RVO = 'red'; }
 	<li class="dropdown"><span>Reader</span>
 	  <div class="dropdown-content-smal">
 	  	<a href='<?php echo $url;?>InlezenReader.php' style = 'color : black'>Inlezen reader</a></br></br>
-	  	<a href='<?php echo $url; ?>Alerts.php' style = 'color : black'>Raederalerts</a></br></br>
+	  	
+	  	<ul class="nested-dropdown">
+        <li class="dropdown2"><span>Raederalerts</span></br></br>
+            <div class="dropdown-content2">
+             <a href='<?php echo $url; ?>AlertWorpSelectie.php' style = 'color : black'>Ooitjes uit meerlingen</a></br></br>
+             <a href='<?php echo $url; ?>AlertLevnrSelectie.php' style = 'color : black'>Controle levensnummers</a></br></br>
+            </div>
+        </li>
+        </ul>
+
 	  </div>
 	</li>
 
@@ -128,6 +137,7 @@ if($num_rows == 0){  $color_RVO = 'black'; } else { $color_RVO = 'red'; }
 	  	<a href='<?php echo $url;?>GroeiresultaatSchaap.php' style = "color : <?php echo $colorTech; ?> ;">Groeiresultaten per schaap</a></br></br>
 	  	<a href='<?php echo $url;?>GroeiresultaatWeging.php' style = "color : <?php echo $colorTech; ?> ;">Groeiresultaten per weging</a></br></br>
 	  	<a href='<?php echo $url;?>ResultHok.php' style = "color : <?php echo $colorTech; ?> ;">Periode resultaten</a></br></br>
+        <a href='<?php echo $url;?>Adoptierapport.php' style = "color : <?php echo $colorTech; ?> ;">Adoptie</a></br></br>
 
 
 	  	
