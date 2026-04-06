@@ -16,7 +16,7 @@ Session::start();
 <body>
 <?php
 $titel = 'Ooitjes uit meerlingen';
-$file = "OoilamSelectie.php";
+$file = "AlertWorpSelectie.php";
 include "login.php";
 ?>
         <TD valign = 'top' align = 'center'>
@@ -38,7 +38,7 @@ if (Auth::is_logged_in()) {
             $toon_meerlingen = $schaap_gateway->toon_meerlingen($lidId, $van, $tot);
         }
 ?>
-<form action= "OoilamSelectie.php" method="post">
+<form action= "AlertWorpSelectie.php" method="post">
 <table border = 0> 
 <tr>
 <td align="right"><i>Worpen vanaf &nbsp</i></td>
