@@ -786,7 +786,7 @@ Union
 	SELECT 'omnummeren' qry,  h.hisId, concat('Oud nummer ', h.oud_nummer) toel
 	From tblHistorie h
 	 join tblStal st on (h.stalId = st.stalId)
-	Where st.lidId = 13 and h.actId = 17 and h.skip = 0
+	Where st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 17 and h.skip = 0
 
 ) toel
 on (his.hisId = toel.hisId)
