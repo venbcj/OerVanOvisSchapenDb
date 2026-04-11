@@ -17,6 +17,7 @@
                 <div class="dropdown-content2">
                     <?php echo View::link_to('Ooitjes uit meerlingen', 'AlertWorpSelectie.php', ['class' => 'black']); ?>
                     <?php echo View::link_to('Controle levensnummers', 'AlertLevnrSelectie.php', ['class' => 'black']); ?>
+                    <?php echo View::link_to('Schapen per verblijf', 'AlertHoknrSelectie.php', ['class' => 'black']); ?>
                 </div>
             </li>
             </ul>

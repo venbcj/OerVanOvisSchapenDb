@@ -2122,4 +2122,94 @@ SQL;
         return $this->first_field($sql, $args);
     }
 
+
+    public function zoek_nu_in_hok($lidId, $hokId)        {
+        $sql = <<<SQL
+SELECT s.levensnummer, s.transponder
+FROM tblBezet b
+ join tblHistorie h on (b.hisId = h.hisId)
+ join tblStal st on (st.stalId = h.stalId)
+ join tblSchaap s on (st.schaapId = s.schaapId)
+ left join 
+ (
+    SELECT h.hisId hisId_in, 
+        LEAD(h.hisId) OVER (
+            PARTITION BY h.stalId
+            ORDER BY h.datum, h.hisId
+        ) AS hisId_tot
+    FROM tblHistorie h
+     join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (st.ubnId = u.ubnId)
+     join tblActie a on (h.actId = a.actId)
+    WHERE u.lidId = :lidId and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
+ ) uit on (uit.hisId_in = b.hisId)
+WHERE b.hokId = :hokId and isnull(uit.hisId_tot) and h.skip = 0
+SQL;
+        $args = [
+            [':lidId', $lidId, Type::INT],
+            [':hokId', $hokId, Type::INT]
+        ];
+        return $this->run_query($sql, $args);
+    }
+
+
+    public function zoek_nu_in_hok_met_transponder($lidId, $hokId)        {
+        $sql = <<<SQL
+SELECT s.levensnummer, s.transponder
+FROM tblBezet b
+ join tblHistorie h on (b.hisId = h.hisId)
+ join tblStal st on (st.stalId = h.stalId)
+ join tblSchaap s on (st.schaapId = s.schaapId)
+ left join 
+ (
+    SELECT h.hisId hisId_in, 
+        LEAD(h.hisId) OVER (
+            PARTITION BY h.stalId
+            ORDER BY h.datum, h.hisId
+        ) AS hisId_tot
+    FROM tblHistorie h
+     join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (st.ubnId = u.ubnId)
+     join tblActie a on (h.actId = a.actId)
+    WHERE u.lidId = :lidId and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
+ ) uit on (uit.hisId_in = b.hisId)
+WHERE b.hokId = :hokId and isnull(uit.hisId_tot) and h.skip = 0 and s.transponder is not null
+ORDER BY s.transponder
+SQL;
+        $args = [
+            [':lidId', $lidId, Type::INT],
+            [':hokId', $hokId, Type::INT]
+        ];
+        return $this->run_query($sql, $args);
+    }
+
+    public function hok_nu_bezet($lidId) {
+        return $this->run_query(
+    <<<SQL 
+SELECT b.hokId, ho.hoknr
+FROM tblBezet b
+ join tblHok ho on (b.hokId = ho.hokId)
+ join tblHistorie h on (b.hisId = h.hisId)
+ join tblStal st on (st.stalId = h.stalId)
+ left join 
+ (
+    SELECT h.hisId hisId_in, 
+        LEAD(h.hisId) OVER (
+            PARTITION BY h.stalId
+            ORDER BY h.datum, h.hisId
+        ) AS hisId_tot
+    FROM tblHistorie h
+     join tblStal st on (st.stalId = h.stalId)
+     join tblUbn u on (st.ubnId = u.ubnId)
+     join tblActie a on (h.actId = a.actId)
+    WHERE u.lidId = :lidId and h.skip = 0 and (a.aan = 1 or a.uit = 1 or a.af = 1)
+ ) uit on (uit.hisId_in = b.hisId)
+WHERE ho.lidId = :lidId and isnull(uit.hisId_tot) and h.skip = 0
+GROUP BY b.hokId, ho.hoknr
+ORDER BY ho.hoknr
+SQL
+        , [[':lidId', $lidId, Type::INT]]
+        );
+    }
+
 }
