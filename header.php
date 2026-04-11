@@ -100,6 +100,7 @@ if($num_rows == 0){  $color_RVO = 'black'; } else { $color_RVO = 'red'; }
             <div class="dropdown-content2">
              <a href='<?php echo $url; ?>AlertWorpSelectie.php' style = 'color : black'>Ooitjes uit meerlingen</a></br></br>
              <a href='<?php echo $url; ?>AlertLevnrSelectie.php' style = 'color : black'>Controle levensnummers</a></br></br>
+             <a href='<?php echo $url; ?>AlertHoknrSelectie.php' style = 'color : black'>Schapen per verblijf</a></br></br>
             </div>
         </li>
         </ul>
