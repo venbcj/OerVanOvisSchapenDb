@@ -247,6 +247,7 @@ $tot = date("Ym");
 <?php
 
 // TOTALEN
+unset($fasen);
 $sekse = 's.geslacht is not null';
 $ouder = 'isnull(oudr.hisId)';
 $werknrs = aantal_fase($db,$lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
@@ -325,11 +326,14 @@ $result = "
 SELECT date_format(h.datum,'%Y%m') jrmnd, date_format(h.datum,'%Y') jaar, month(h.datum) maand, 
  right(s.levensnummer,$Karwerk) werknr, s.geslacht, oudr.hisId ouder, 
  date_format(h.datum,'%d-%m-%Y') toedm, h.datum, DATEDIFF(CURRENT_DATE(),h.datum) rest, round(sum(n.nutat*n.stdat),2) totat, e.eenheid,
- i.charge, a.wdgn_v, a.wdgn_m
+ i.charge, a.wdgn_v, a.wdgn_m,
+ r.reden
 FROM tblSchaap s
  join tblStal st on (s.schaapId = st.schaapId)
  join tblHistorie h on (st.stalId = h.stalId)
  join tblNuttig n on (h.hisId = n.hisId)
+ left join tblRedenuser ru on (ru.reduId = n.reduId)
+ left join tblReden r on (ru.redId = r.redId)
  join tblInkoop i on (n.inkId = i.inkId)
  join tblArtikel a on (i.artId = a.artId)
  join tblEenheiduser eu on (eu.enhuId = a.enhuId)
@@ -366,6 +370,8 @@ $result = mysqli_query($db,$result) or die (mysqli_error($db));
 <th width = 1></th>
 <th style = "text-align:center;"valign="bottom";width= 80>Wachtdagen resterend <br> vlees &nbsp&nbsp&nbsp melk <hr></th>
 <th width = 1></th>
+<th style = "text-align:center;"valign="bottom";width= 80>Reden<hr></th>
+<th width = 1></th>
 
 <th width=60></th>
  </tr>
@@ -396,6 +402,8 @@ if(!empty($row['ouder'])) { if($geslacht == 'ooi') {$fase = 'moeder'; } else if(
  <td width = 100 style = "font-size:15px;"> <?php echo $row['charge']; ?> <br> </td>
  <td width = 1> </td>
  <td width = 100 style = "font-size:15px;"> <?php echo $restdgn_v.' &nbsp&nbsp&nbsp&nbsp '.$restdgn_m; ?> <br> </td>
+ <td width = 1> </td>
+ <td width = 100 style = "font-size:15px;"> <?php echo $row['reden']; ?> <br> </td>
  <td width = 1> </td>
  <td width = 50> </td>
 </tr>				
