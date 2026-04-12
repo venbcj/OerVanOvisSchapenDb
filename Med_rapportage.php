@@ -125,6 +125,7 @@ $maxjaar = date("Y");*/
 <tr><td colspan = 9><hr></td></tr>
 <?php
                 // TOTALEN
+								unset($fasen);
                 $sekse = 's.geslacht is not null';
                 $ouder = 'isnull(oudr.hisId)';
                 $werknrs = $schaap_gateway->med_aantal_fase($lidId,$mndnr,$jr,$kzlpil,$sekse,$ouder);
@@ -221,6 +222,8 @@ $maxjaar = date("Y");*/
 <th width = 1></th>
 <th style = "text-align:center;"valign="bottom";width= 80>Wachtdagen resterend <br> vlees &nbsp&nbsp&nbsp melk <hr></th>
 <th width = 1></th>
+<th style = "text-align:center;"valign="bottom";width= 80>Reden<hr></th>
+<th width = 1></th>
 <th width=60></th>
 </tr>
 <?php
@@ -264,6 +267,8 @@ $maxjaar = date("Y");*/
  <td width = 100 style = "font-size:15px;"> <?php echo $row['charge']; ?> <br> </td>
  <td width = 1> </td>
  <td width = 100 style = "font-size:15px;"> <?php echo $restdgn_v.' &nbsp&nbsp&nbsp&nbsp '.$restdgn_m; ?> <br> </td>
+ <td width = 1> </td>
+ <td width = 100 style = "font-size:15px;"> <?php echo $row['reden']; ?> <br> </td>
  <td width = 1> </td>
  <td width = 50> </td>
 </tr>
