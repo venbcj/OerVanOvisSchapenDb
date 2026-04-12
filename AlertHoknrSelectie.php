@@ -32,9 +32,9 @@ while($zls = mysqli_fetch_assoc($zoek_laatste_selectie))
 			{
 				$old_volgnr = $zls['volgnr']; }
 
-if(!isset($old_volgnr)) { $volgnr = 1; } else { $volgnr = $old_volgnr + 1; }
+if(empty($old_volgnr)) { $volgnr = 1; } else { $volgnr = $old_volgnr + 1; }
 
-$schapen_met_transponder = "
+$zoek_nu_in_hok_met_transponder = "
 SELECT s.levensnummer, s.transponder
 FROM tblBezet b
  join tblHistorie h on (b.hisId = h.hisId)
@@ -57,7 +57,7 @@ WHERE b.hokId = '".mysqli_real_escape_string($db,$hokId)."' and isnull(uit.hisId
 ORDER BY s.transponder
 ";
 
-$zoek_transponder = mysqli_query($db,$schapen_met_transponder) or die (mysqli_error($db));	
+$zoek_transponder = mysqli_query($db,$zoek_nu_in_hok_met_transponder) or die (mysqli_error($db));	
 	while($zt = mysqli_fetch_assoc($zoek_transponder))
 			{
 				$transponder = $zt['transponder'].$zt['levensnummer']; 
@@ -80,7 +80,7 @@ $goed = 'De levensnummers zijn verstuurd en staan klaar om naar de reader te wor
 <tr>
 <td><i>Verblijf</i></td>
 </tr>
-<?php $verblijven_in_gebruik = mysqli_query($db,"
+<?php $verblijven_nu_bezet = mysqli_query($db,"
 SELECT b.hokId, ho.hoknr
 FROM tblBezet b
  join tblHok ho on (b.hokId = ho.hokId)
@@ -107,7 +107,7 @@ ORDER BY ho.hoknr
 <tr>
 <td><select name="kzlHok" style="width:100;" >
 	 <option></option>	
-	<?PHP	while($row = mysqli_fetch_array($verblijven_in_gebruik))
+	<?PHP	while($row = mysqli_fetch_array($verblijven_nu_bezet))
 			{
 			
 				$opties= array($row['hokId']=>$row['hoknr']);
@@ -139,7 +139,7 @@ ORDER BY ho.hoknr
 
 $hokId = $_POST['kzlHok'];
 
-$aantal_schapen = "
+$aantal_nu_in_hok = "
 SELECT count(h.hisId) aant
 FROM tblBezet b
  join tblHistorie h on (b.hisId = h.hisId)
@@ -160,7 +160,7 @@ FROM tblBezet b
 WHERE b.hokId = '".mysqli_real_escape_string($db,$hokId)."' and isnull(uit.hisId_tot) and h.skip = 0
 ";
 
-$schapen_ook_zonder_transponder = "
+$zoek_nu_in_hok = "
 SELECT s.levensnummer, s.transponder
 FROM tblBezet b
  join tblHistorie h on (b.hisId = h.hisId)
@@ -183,11 +183,10 @@ WHERE b.hokId = '".mysqli_real_escape_string($db,$hokId)."' and isnull(uit.hisId
 ORDER BY s.transponder
 ";
 
-$aantal_schapen = mysqli_query($db,$aantal_schapen) or die (mysqli_error($db));
-	while($tl = mysqli_fetch_assoc($aantal_schapen))
-			{
-				$aantal = $tl['aant']; 
-			}	?>
+$aantal_nu_in_hok = mysqli_query($db,$aantal_nu_in_hok) or die (mysqli_error($db));
+	$anih = mysqli_fetch_assoc($aantal_nu_in_hok);
+	$aantal = $anih['aant'];
+				?>
 <tr>
 	<td colspan = 5>Dit zijn de levensnummers uit het gekozen verblijf. <br>Klik op de knop 'Verstuur' om deze levensnummers <br> klaar te zetten om naar de reader te sturen.<br> </td>
 </tr>
@@ -202,7 +201,7 @@ $aantal_schapen = mysqli_query($db,$aantal_schapen) or die (mysqli_error($db));
 
 
 <?php
-$toon_levensnummers = mysqli_query($db,$schapen_ook_zonder_transponder) or die (mysqli_error($db));	
+$toon_levensnummers = mysqli_query($db,$zoek_nu_in_hok) or die (mysqli_error($db));	
 	while($tl = mysqli_fetch_assoc($toon_levensnummers))
 			{
 				$transp = $tl['transponder'];
@@ -212,12 +211,12 @@ $toon_levensnummers = mysqli_query($db,$schapen_ook_zonder_transponder) or die (
 <tr align = "center" style = "font-size : 14px;"  >
  <td></td>
  <td> <?php echo $levnr; ?> </td>
- <td><?php if(!isset($transp)) { echo 'Transponder is onbekend! '; } ?></td>
+ <td><?php if(empty($transp)) { echo 'Transponder is onbekend! '; } ?></td>
 </tr>
 <tr> <td colspan = 4 ><hr></td>
 </tr>
 
-<?php } // Einde while($mrl = mysqli_fetch_assoc($zoek_meerlingen_ooi)) 
+<?php } // Einde while($mrl = mysqli_fetch_assoc($toon_levensnummers)) 
 	} // Einde if(isset($_POST['knpToon_']) || isset($_POST['knpStuur_'])) ?>
 </table>		
 
