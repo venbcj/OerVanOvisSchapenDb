@@ -13,7 +13,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = 'top' align = c
 
 <?php
 $titel = 'Ooitjes uit meerlingen';
-$file = "OoilamSelectie.php";
+$file = "AlertWorpSelectie.php";
 Include "login.php"; ?>
 
 		<TD valign = 'top' align = 'center'>
@@ -50,7 +50,7 @@ $toon_meerlingen = mysqli_query($db,$query) or die (mysqli_error($db));
 
 } ?>
 
-<form action= "OoilamSelectie.php" method="post">
+<form action= "AlertWorpSelectie.php" method="post">
 <table border = 0> 
 
 <tr>
