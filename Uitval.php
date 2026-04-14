@@ -4,7 +4,7 @@ $versie = '28-12-2016'; /* Vinkje bij toevoegen medicijnen wordt nu opgeslagen. 
 $versie = '11-03-2017'; /* Naast $Id ook $it (item) toegevoegd aan naam van de velden om opslaan reden en moment te kunnen splitsen. Hidden velden verwijderd. */
 $versie = '11-03-2017'; /* Aanvullen reden als beheerder toegevoegd */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
-$versie = '30-5-2020'; /* Scannummer bij reader Agrident verwijderd bij momenten. 1-6 veld afvoer toegevoegd */
+$versie = '30-5-2020'; /* Scannummer bij reader Agrident verwijderd bij momenten. 1-6-2020 veld afvoer toegevoegd */
 $versie = '20-6-2020'; /* Verschillende redenen disabled bij reader Agrident */
 $versie = '12-02-2021'; /* Uitval gesplitst in Doodgeboren en sterfte SQL beveiligd met quotes. Titel gewijzigd */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
@@ -13,6 +13,7 @@ $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzi
 <!DOCTYPE html>
 <html>
 <head>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <title>beheer</title>
 </head>
 <body>
@@ -24,9 +25,75 @@ Include "login.php"; ?>
 
 		<TD valign = 'top'>
 <?php
-if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { 
+if (isset($_SESSION["U1"]) && isset($_SESSION["W1"]) && isset($_SESSION["I1"])) { ?>
 
-if (isset($_POST['knpSaveUitv__']) || isset($_POST['knpSaveReden__'])) { include "save_uitvalredenen.php"; } ?>
+	<script>
+function verplicht() {
+var eigenReden = document.getElementById("txtReden"); var eigenReden_v = eigenReden.value;
+
+	 if(eigenReden_v.length > 50) eigenReden.focus() 	+ alert("De Reden mag max 50 karakters zijn.");
+}
+</script>
+<?php
+if (isset($_POST['knpSaveUitv__']) || isset($_POST['knpSaveReden__'])) { include "save_uitvalredenen.php"; }
+
+
+if (isset ($_POST['knpInsertRedenEigen__'])) { 
+
+if (empty($_POST['txtRedenEigen__']))			{ $fout = "Er is geen eigen reden ingevoerd."; }
+else {
+$txtReden = $_POST['txtRedenEigen__'];
+
+$zoek_reden = mysqli_query($db,"
+SELECT reden
+FROM tblReden r
+ join tblRedenuser ru
+WHERE r.reden = '". mysqli_real_escape_string($db,$txtReden)."' and ru.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+") or die (mysqli_error($db));
+
+	while( $zr = mysqli_fetch_assoc($zoek_reden)) { $eigenreden_db = $zr['reden']; }
+
+if(isset($eigenreden_db)) { $fout = "Deze reden bestaat al."; }
+else{
+
+$query_reden_toevoegen = "
+  INSERT INTO tblReden
+  SET reden = '".mysqli_real_escape_string($db,$txtReden)."',
+      eigen = '".mysqli_real_escape_string($db,$lidId)."'";
+
+				/*echo $query_reden_toevoegen;*/ mysqli_query($db,$query_reden_toevoegen) or die (mysqli_error($db));
+
+$zoek_RedId = mysqli_query($db,"
+SELECT redId
+FROM tblReden
+WHERE eigen = '".mysqli_real_escape_string($db,$lidId)."'
+") or die (mysqli_error($db));
+	while( $zr = mysqli_fetch_assoc($zoek_RedId)) { $redId = $zr['redId']; }
+
+if (isset($_POST['boxUitvalEigen__']))	{ $insUitv = 1; } else { $insUitv = 0; }
+		if (isset($_POST['boxPilEigen__']))		{ $insPil = 1; } else { $insPil = 0; }
+		if (isset($_POST['boxSterfteEigen__']))	{ $insSterf = 1; } else { $insSterf = 0; }
+
+$query_redenuser_toevoegen = "
+  INSERT INTO tblRedenuser
+  SET lidId = '".mysqli_real_escape_string($db,$lidId)."',
+      redId = '".mysqli_real_escape_string($db,$redId)."',
+      uitval = '".mysqli_real_escape_string($db,$insUitv)."',
+      pil = '".mysqli_real_escape_string($db,$insPil)."',
+      sterfte = '".mysqli_real_escape_string($db,$insSterf)."'
+      ";
+
+				/*echo $query_redenuser_toevoegen;*/ mysqli_query($db,$query_redenuser_toevoegen) or die (mysqli_error($db));
+
+$update_tblReden = "
+UPDATE tblReden set eigen = 1 WHERE eigen = '".mysqli_real_escape_string($db,$lidId)."' ";
+
+		mysqli_query($db,$update_tblReden) or die (mysqli_error($db));
+} // Einde else van if(isset($eigenreden_db))
+
+} // Einde else van if (empty($_POST['txtRedenEigen__']))
+
+} // Einde if (isset ($_POST['knpInsertRedenEigen__'])) ?>
 
 <table border = 0 ><tr><td>
 <?php
@@ -39,20 +106,7 @@ if (isset($_POST['knpInsertReden__'])) {
 	
 	if (empty($redId)) 						{ $fout = "U heeft geen reden geselecteerd."; }
 	else
-	{
-// Zoeken naar reden op duplicaten
-$controle = mysqli_query($db,"
-SELECT count(redId) aantal
-FROM tblRedenuser
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and redId = '".mysqli_real_escape_string($db,$redId)."'
-GROUP BY redId
-") or die (mysqli_error($db));
-		while ($row = mysqli_fetch_assoc($controle))
-		{
-			$dubbel = ("{$row['aantal']}");
-		} // Einde Zoeken naar reden op duplicaten	
-	
-	
+	{	
 		if (isset($_POST['boxUitval__']))	{ $insUitv = 1; } else { $insUitv = 0; }
 		if (isset($_POST['boxPil__']))		{ $insPil = 1; } else { $insPil = 0; }
 		if (isset($_POST['boxSterfte__']))	{ $insSterf = 1; } else { $insSterf = 0; }
@@ -93,11 +147,24 @@ $insert_tblReden = "INSERT into tblReden set reden = '".mysqli_real_escape_strin
 <?php } ?>
 
 <table border = 0 >
-<th colspan = 5> Redenen tbv uitval en medicatie <br><hr></th>
-<tr style ="font-size:12px;"><td>Nieuwe reden</td><td>Dood-<br>geboren</td><td>Medicatie</td><td>Afvoer</td><td>Sterfte</td></tr>
+<th colspan = 10> Redenen tbv uitval en medicatie <br><hr></th>
+<tr style ="font-size:12px;">
+ <td> <b>Nieuwe reden</b></td>
+ <td>Dood-<br>geboren</td>
+ <td>Medicatie</td>
+ <td>Afvoer</td>
+ <td>Sterfte</td>
+ <!-- Velden eigen reden -->
+ <td width="100"></td>
+ <td><b>Eigen reden</b></td>
+ <td>Dood-<br>geboren</td>
+ <td>Medicatie</td>
+ <td>Sterfte</td>
+ <!-- Einde Velden eigen reden -->
+</tr>
 
 <tr align = "center">
-<td>
+ <td>
 <!-- KZLREDEN -->
 <?php
 
@@ -120,7 +187,7 @@ ORDER BY r.reden
 			{
 						$keuze = '';
 		
-		if( (!isset($_POST['knpInsert__']) && $redId == $raak) || (isset($_POST['kzlReden__']) && $_POST['kzlReden__'] == $key) )
+		if( (!isset($_POST['knpInsertReden__']) && $redId == $raak) || (isset($_POST['kzlReden__']) && $_POST['kzlReden__'] == $key) )
 		{
 			echo '<option value="' . $key . '" selected>' . $waarde . '</option>';
 		}
@@ -140,11 +207,31 @@ ORDER BY r.reden
  <td><input type="checkbox" name="boxPil__" id="c2" value="1" title = "Is reden tbv medicatie ja/nee ?"></td>
  <td></td>
  <td><input type="checkbox" name="boxSterfte__" id="c4" value="1" title = "Is reden tbv sterfte ja/nee ?"></td>
-</tr>
-<tr><td colspan = 5 align = "center"><input type = "submit" name="knpInsertReden__" value = "Toevoegen" ><hr>
-</td></tr>
+<!-- Velden eigen reden -->
+<td></td>
+<td>
+ <input type="text" name="txtRedenEigen__" id="txtReden">
+</td>
 
-<tr><td></td></tr>
+ <td><input type="checkbox" name="boxUitvalEigen__" id="c1" value="1" title = "Is reden tbv uitval ja/nee ?"></td>
+ <td><input type="checkbox" name="boxPilEigen__" id="c2" value="1" title = "Is reden tbv medicatie ja/nee ?"></td>
+ <td><input type="checkbox" name="boxSterfteEigen__" id="c4" value="1" title = "Is reden tbv sterfte ja/nee ?"></td>
+ <!-- Einde Velden eigen reden -->
+
+
+
+
+
+</tr>
+<tr>
+ <td colspan = 5 align = "center"><input type = "submit" name="knpInsertReden__" value = "Toevoegen" ><hr></td>
+ <!-- Velden eigen reden -->
+ <td></td>
+ <td colspan = 4 align = "center"><input type = "submit" name="knpInsertRedenEigen__" onfocus = "verplicht()" value = "Toevoegen" ><hr>
+ </td>
+ <!-- Einde Velden eigen reden -->
+</tr>
+
 <tr align = "center" style ="font-size:12px;"> 
  <td align="left"><b><i>&nbsp&nbspReden</i></b></td> 
  <td><b><i>Dood-<br>geboren</i></b></td> 
@@ -153,8 +240,11 @@ ORDER BY r.reden
  <td><b><i>Sterfte</i></b></td>
 </tr>
 
+<tr>
+ <td colspan = 5></td>
+ <td ><input type = "submit" name="knpSaveReden__" value = "Opslaan" style = "font-size:12px;"></td>
+</tr>
 
-<tr><td colspan = 5></td><td colspan = 8 align = right ><input type = "submit" name="knpSaveReden__" value = "Opslaan" style = "font-size:12px;"></td></tr>
 <?php
 $it = 'reden';
 // START LOOP
@@ -210,6 +300,10 @@ ORDER BY if(uitval+pil = 2, 1 ,uitval+pil) desc, reden
  <td valign = top>
 <?php
 //	****************************************
+//	** EINDE REDENEN UITVAL EN MEDICATIE **
+//	****************************************
+
+//	****************************************
 //	**	  MOMENTEN VAN UITVAL	   **
 //	****************************************
 ?>
@@ -217,9 +311,6 @@ ORDER BY if(uitval+pil = 2, 1 ,uitval+pil) desc, reden
 <th colspan = 5> Momenten tbv uitval <br><hr></th>
 <tr height = 30 style ="font-size:12px;">
  <td></td>
-<?php if($reader != 'Agrident') { ?>
- <td width = 40 align = "center" ><b><i> scan code </i></b></td>
-<?php } ?>
  <td align = "center" ><b><i>actief</i></b></td>
 
 </td>
@@ -231,7 +322,7 @@ ORDER BY if(uitval+pil = 2, 1 ,uitval+pil) desc, reden
 $it = 'moment';
 // START LOOP
 $qry_lus = mysqli_query($db,"
-SELECT momuId, scan, mu.actief
+SELECT momuId, mu.actief
 FROM tblMoment m
  join tblMomentuser mu on (m.momId = mu.momId)
 WHERE mu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and m.actief = 1
@@ -241,11 +332,10 @@ ORDER BY momuId
 	while($lus = mysqli_fetch_assoc($qry_lus))
 	{
             $Id = ("{$lus['momuId']}"); 
-            $scan = ("{$lus['scan']}"); 
             $actief = ("{$lus['actief']}"); 
 
 $query = mysqli_query($db,"
-SELECT moment, scan, mu.actief
+SELECT moment, mu.actief
 FROM tblMoment m
  join tblMomentuser mu on (m.momId = mu.momId)
 WHERE momuId = '".mysqli_real_escape_string($db,$Id)."' and m.actief = 1
@@ -255,11 +345,6 @@ ORDER BY moment
 		{	?>
 <tr>
  <td><?php echo $lus['moment']; ?> </td>
-<?php if($reader != 'Agrident') { ?>
- <td>
- <input type="text" name= <?php echo "txtScan_$it"."_$Id"; ?> size = 1 value = <?php echo $lus['scan']; ?>	> 
- </td>
-<?php } ?> 
  <td align = "center">
  <input type="hidden" name= <?php echo "chbActief_$it"."_$Id"; ?> size = 1 value = 0 > <!-- hiddden -->
  <input type="checkbox" name= <?php echo "chbActief_$it"."_$Id"; ?> id="c1" value="1"	<?php echo $actief == 1 ? 'checked' : ''; ?> title = "Is dit uitvalmoment te gebruiken ja/nee ?"/>
@@ -272,9 +357,9 @@ ORDER BY moment
 </form>
  </td>
 </tr>
-</table><?php
+</table> <?php
 //	****************************************
-//	**	MOMENTEN VAN UITVAL	   ** end
+//	**		EINDE MOMENTEN VAN UITVAL	  **
 //	****************************************
 ?>
 
