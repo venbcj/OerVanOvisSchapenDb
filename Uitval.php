@@ -7,7 +7,7 @@ $versie = '28-12-2016'; /* Vinkje bij toevoegen medicijnen wordt nu opgeslagen. 
 $versie = '11-03-2017'; /* Naast Id ook it (item) toegevoegd aan naam van de velden om opslaan reden en moment te kunnen splitsen. Hidden velden verwijderd. */
 $versie = '11-03-2017'; /* Aanvullen reden als beheerder toegevoegd */
 $versie = '28-9-2018'; /* titel.php verwijderd. Zit in header.php samen met Style.css */
-$versie = '30-5-2020'; /* Scannummer bij reader Agrident verwijderd bij momenten. 1-6 veld afvoer toegevoegd */
+$versie = '30-5-2020'; /* Scannummer bij reader Agrident verwijderd bij momenten. 1-6-2020 veld afvoer toegevoegd */
 $versie = '20-6-2020'; /* Verschillende redenen disabled bij reader Agrident */
 $versie = '12-02-2021'; /* Uitval gesplitst in Doodgeboren en sterfte SQL beveiligd met quotes. Titel gewijzigd */
 $versie = '26-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = 'top'> 31-12-24 include login voor include header gezet */
@@ -16,9 +16,11 @@ Session::start();
 <!DOCTYPE html>
 <html>
 <head>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <title>beheer</title>
 </head>
 <body>
+
 <?php
 $titel = 'Redenen en momenten';
 $file = "Uitval.php";
@@ -29,9 +31,40 @@ include "login.php";
 if (Auth::is_logged_in()) {
     $reden_gateway = new RedenGateway();
     $moment_gateway = new MomentGateway();
+    include "validate-reden.js.php";
     if (isset($_POST['knpSaveUitv__']) || isset($_POST['knpSaveReden__'])) {
         include "save_uitvalredenen.php";
     }
+
+if (isset($_POST['knpInsertRedenEigen__'])) { 
+	if (empty($_POST['txtRedenEigen__'])) {
+		$fout = "Er is geen eigen reden ingevoerd.";
+	} else {
+		$txtReden = $_POST['txtRedenEigen__'];
+        $eigenreden_db = $reden_gateway->zoek_reden_duplicaten($txtRas, $lidId);
+
+	if(isset($eigenreden_db)) {
+		$fout = "Deze reden bestaat al.";
+	} else {
+
+            $reden_gateway->insert_reden($_POST['txtNaam__'], $lidId);
+
+$zoek_RedId = zoek_eigen_reden($lidId);
+	while( $zr = mysqli_fetch_assoc($zoek_RedId)) { $redId = $zr['redId']; }
+
+if (isset($_POST['boxUitvalEigen__']))	{ $insUitv = 1; } else { $insUitv = 0; }
+		if (isset($_POST['boxPilEigen__']))		{ $insPil = 1; } else { $insPil = 0; }
+		if (isset($_POST['boxSterfteEigen__']))	{ $insSterf = 1; } else { $insSterf = 0; }
+
+$query_redenuser_toevoegen = $reden_gateway->query_redenuser_toevoegen($lidId, $redId, $insUitv, $insPil, $insSterf);
+
+$update_tblReden = update_reden($lidId);
+
+} // Einde else van if(isset($eigenreden_db))
+
+} // Einde else van if (empty($_POST['txtRedenEigen__']))
+
+} // Einde if (isset($_POST['knpInsertRedenEigen__']))
 ?>
 <table border = 0 ><tr><td>
 <?php
@@ -62,7 +95,7 @@ if (Auth::is_logged_in()) {
             } else {
                 $insSterf = 0;
             }
-            $query_reden_toevoegen = $reden_gateway->query_reden_toevoegen($lidId, $redId, $insUitv, $insPil, $insSterf);
+            $query_redenuser_toevoegen = $reden_gateway->query_redenuser_toevoegen($lidId, $redId, $insUitv, $insPil, $insSterf);
         }
     }
 ?>
@@ -80,7 +113,7 @@ if (Auth::is_logged_in()) {
     </table>
 <?php
         if (isset($_POST['knpNewReden__']) && !empty($_POST['txtNaam__'])) {
-            $reden_gateway->insert($_POST['txtNaam__']);
+            $reden_gateway->insert_reden($_POST['txtNaam__']);
         }
 ?>
 <?php
@@ -88,7 +121,7 @@ if (Auth::is_logged_in()) {
 ?>
 <table border = 0 >
 <th colspan = 5> Redenen tbv uitval en medicatie <br><hr></th>
-<tr style ="font-size:12px;"><td>Nieuwe reden</td><td>Dood-<br>geboren</td><td>Medicatie</td><td>Afvoer</td><td>Sterfte</td></tr>
+<tr style ="font-size:12px;"><td>Nieuwe reden</td><td>Dood-<br>geboren</td><td>Medicatie</td><td>Afvoer</td><td>Sterfte</td><td width="100"></td> <td><b>Eigen reden</b></td><td>Dood-<br>geboren</td><td>Medicatie</td><td>Sterfte</td></tr>
 <tr align = "center">
 <td>
 <?php
@@ -125,9 +158,21 @@ if (Auth::is_logged_in()) {
  <td><input type="checkbox" name="boxPil__" id="c2" value="1" title = "Is reden tbv medicatie ja/nee ?"></td>
  <td></td>
  <td><input type="checkbox" name="boxSterfte__" id="c4" value="1" title = "Is reden tbv sterfte ja/nee ?"></td>
+<td></td>
+<td>
+ <input type="text" name="txtRedenEigen__" id="txtReden">
+</td>
+
+ <td><input type="checkbox" name="boxUitvalEigen__" id="c1" value="1" title = "Is reden tbv uitval ja/nee ?"></td>
+ <td><input type="checkbox" name="boxPilEigen__" id="c2" value="1" title = "Is reden tbv medicatie ja/nee ?"></td>
+ <td><input type="checkbox" name="boxSterfteEigen__" id="c4" value="1" title = "Is reden tbv sterfte ja/nee ?"></td>
 </tr>
 <tr><td colspan = 5 align = "center"><input type = "submit" name="knpInsertReden__" value = "Toevoegen" ><hr>
-</td></tr>
+</td>
+<td></td>
+ <td colspan = 4 align = "center"><input type = "submit" name="knpInsertRedenEigen__" onfocus = "verplicht()" value = "Toevoegen" ><hr>
+ </td>
+</tr>
 <tr><td></td></tr>
 <tr align = "center" style ="font-size:12px;">
  <td align="left"><b><i>&nbsp&nbspReden</i></b></td>
@@ -136,7 +181,7 @@ if (Auth::is_logged_in()) {
  <td><b><i>Afvoer</i></b></td>
  <td><b><i>Sterfte</i></b></td>
 </tr>
-<tr><td colspan = 5></td><td colspan = 8 align = right ><input type = "submit" name="knpSaveReden__" value = "Opslaan" style = "font-size:12px;"></td></tr>
+<tr><td colspan = 5></td><td><input type = "submit" name="knpSaveReden__" value = "Opslaan" style = "font-size:12px;"></td></tr>
 <?php
     $it = 'reden';
     $loop = $reden_gateway->loop($lidId);
@@ -191,6 +236,10 @@ if (Auth::is_logged_in()) {
  <td width = 100></td>
  <td valign = top>
 <?php
+	//	****************************************
+	//	** EINDE REDENEN UITVAL EN MEDICATIE **
+	//	****************************************
+
     //    ****************************************
     //    **      MOMENTEN VAN UITVAL       **
     //    ****************************************
@@ -199,13 +248,6 @@ if (Auth::is_logged_in()) {
 <th colspan = 5> Momenten tbv uitval <br><hr></th>
 <tr height = 30 style ="font-size:12px;">
  <td></td>
-<?php
-    if ($reader != 'Agrident') {
-?>
-     <td width = 40 align = "center" ><b><i> scan code </i></b></td>
-<?php
-    }
-?>
  <td align = "center" ><b><i>actief</i></b></td>
 </td>
  <td width = 100 align = right><input type = "submit" name= "knpSaveUitv__" value = "Opslaan" style = "font-size:12px;"></td>
@@ -223,16 +265,6 @@ if (Auth::is_logged_in()) {
 <tr>
  <td><?php echo $lus['moment']; ?>
  </td>
-<?php
-            if ($reader != 'Agrident') {
-?>
- <td>
- <input type="text" name= <?php echo "txtScan_$it" . "_$Id"; ?>
- size = 1 value = <?php echo $lus['scan']; ?>    >
- </td>
-<?php
-            }
-?>
  <td align = "center">
  <input type="hidden" name= <?php echo "chbActief_$it" . "_$Id"; ?>
  size = 1 value = 0 > <!-- hiddden -->
