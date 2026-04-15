@@ -166,7 +166,7 @@ SQL;
         return $this->first_field($sql, $args);
     }
 
-    public function query_reden_toevoegen($lidId, $redId, $insUitv, $insPil, $insSterf) {
+    public function query_redenuser_toevoegen($lidId, $redId, $insUitv, $insPil, $insSterf) {
         $sql = <<<SQL
             INSERT INTO tblRedenuser SET
              lidId = :lidId,
@@ -243,8 +243,44 @@ SQL;
         $this->run_query($sql, $args);
     }
 
-    public function insert($naam) {
-        $this->run_query("INSERT into tblReden set reden = :reden", [[':reden', $naam]]);
+    public function insert_reden($naam, $eigen = 0) {
+        $this->run_query("INSERT into tblReden set reden = :reden, eigen = :eigen"
+            , [
+                [':reden', $naam],
+                [':eigen', $eigen]
+            ]);
     }
 
+    public function zoek_reden_duplicaten($reden, $lidId) {
+        $sql = <<<SQL
+            SELECT reden
+            FROM tblReden r
+             join tblRedenuser ru on (r.redId = ru.redId)
+            WHERE r.reden = :reden and ru.lidId = :lidId
+SQL;
+        $args = [[':reden', $reden], [':lidId', $lidId, Type::INT]];
+        $this->run_query($sql, $args);
+    }
+
+    public function zoek_eigen_reden($lidId) {
+        return $this->run_query(
+<<<SQL
+SELECT redId
+FROM tblReden
+WHERE eigen = :lidId
+SQL,
+    [[':lidId', $lidId]]
+        );
+    }
+
+    public function update_reden($lidId) {
+        $sql = <<<SQL
+            UPDATE tblReden
+            SET eigen = 1 
+            WHERE eigen = :lidId
+        SQL;
+
+        $args = [[':lidId', $lidId]];
+        $this->run_query($sql, $args);
+    }
 }
