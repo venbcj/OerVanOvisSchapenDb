@@ -5,7 +5,7 @@
 *    Define Some vars
 ********/
 define("MIN_PER_PAGE", 10); 
-define("MAX_PER_PAGE", 100);
+define("MAX_PER_PAGE", 60);
 define("DEF_PER_PAGE", $RPP); //Standaard aantal per pagina in eerste instantie bepaald in login.php
 define("OFF_PER_PAGE", 100); //
 define("THIS_PAGE", $_SERVER['PHP_SELF']); // Geeft de pagina naam terug bijv. /Schapendb/InsGeboortes.php bron : https://www.w3schools.com/php/php_form_validation.asp
