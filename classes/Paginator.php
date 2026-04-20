@@ -1,7 +1,7 @@
 <?php
 
 define("MIN_PER_PAGE", 10);
-define("MAX_PER_PAGE", 100);
+define("MAX_PER_PAGE", 60);
 
 class Paginator {
 
