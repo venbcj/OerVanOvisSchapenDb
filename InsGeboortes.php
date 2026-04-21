@@ -252,7 +252,7 @@ while ($mdr = mysqli_fetch_assoc($moederdier))
 unset($index); 
 // EINDE Declaratie MOEDERDIER
 
-// Declaratie HOKNUMMER			// lower(if(isnull(scan),'6karakters',scan)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.
+// Declaratie HOKNUMMER
 $qryHoknummer = mysqli_query($db,"
 SELECT hokId, scan, hoknr
 FROM tblHok
@@ -273,14 +273,14 @@ unset($index);
 
 // Declaratie MOMENT
 $qryMoment = "
-SELECT m.momId, moment, lower(if(isnull(scan),'6karakters',scan)) scan
+SELECT m.momId, moment
 FROM tblMoment m
  join tblMomentuser mu on (m.momId = mu.momId)
 WHERE mu.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 
 union
 
-SELECT 3, 'uitval voor merken', 3 scan
+SELECT 3, 'uitval voor merken'
 FROM dual
 
 ORDER BY momId"; 
@@ -292,15 +292,13 @@ while ($mom = mysqli_fetch_assoc($moment))
 { 
    $momId[$index] = $mom['momId'];
    $momnt[$index] = $mom['moment'];
-  if($reader == 'Biocontrol')  { $momRaak[$index] = $mom['scan']; }
-  if($reader == 'Agrident')  { $momRaak[$index] = $mom['momId']; }
+   $momRaak[$index] = $mom['momId'];
    $index++; 
 } 
 unset($index); 
 // EINDE Declaratie MOMENT
 
-// Declaratie REDEN bij Agrident
-// lower(if(isnull(scan),'6karakters',scan)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.
+// Declaratie REDEN
 $qryReden = "
 SELECT r.redId, r.reden
 FROM tblReden r
@@ -319,7 +317,7 @@ while ($red = mysqli_fetch_assoc($redenen))
    $index++; 
 } 
 unset($index); 
-// EINDE Declaratie REDEN bij Agrident
+// EINDE Declaratie REDEN
 
 // ARRAY Zoek naar meerdere werpdatums per moeder
 

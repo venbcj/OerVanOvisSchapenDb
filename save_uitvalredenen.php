@@ -44,8 +44,6 @@ foreach($id as $key => $value) {
 		 if ($key == 'chbAfvoer') {  $fldAfoer = $value; /*echo $key.'='.$value."<br/>";*/  }
 		 if ($key == 'chbSterfte') {  $fldSterfte = $value; /*echo $key.'='.$value."<br/>";*/  }
 	
-	
-		 if ($key == 'txtScan' && !empty($value)) {  $fldScan = "'".$value."'"; }
    		 if ($key == 'chbActief') {  $fldActief = $value; /*echo $key.'='.$value."<br/>";*/  }  	/*echo '$fldActief = '.$fldActief.'<br>'; */
 }
 
@@ -99,33 +97,6 @@ if($fldSterfte <> $dbSterf) {
 /*** CODE M.B.T. UITVALMOMENT ***/
 
 if(isset($recId) && $recId >0 && $item == 'moment') {
-
-$zoek_scan = mysqli_query($db,"
-SELECT scan
-FROM tblMomentuser
-WHERE momuId = '".mysqli_real_escape_string($db,$recId)."'
-") or die (mysqli_error($db));
-	while( $m = mysqli_fetch_assoc($zoek_scan)) { $dbScan = $m['scan']; }
-
-unset($scan_aant);
-if(isset($fldScan)) {
-$zoek_dubbele_scan = mysqli_query($db,"
-SELECT count(scan) aant
-FROM tblMomentuser
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and scan = '".mysqli_real_escape_string($db,$fldScan)."'
-") or die (mysqli_error($db));
-	while( $sc = mysqli_fetch_assoc($zoek_dubbele_scan)) { $scan_aant = $sc['aant']; }
-}
-
-	if(!isset($dbScan)) { $dbScan = 'NULL'; } else {$dbScan = "'".$dbScan."'"; } /*echo '$dbScan = '.$dbScan.'<br>';*/
-
-				
-if(isset($fldScan) && $fldScan <> $dbScan && isset($scan_aant) && $scan_aant > 0) { $fout = "Deze scancode bestaat al."; }
-
-else if(isset($fldScan) && $fldScan <> $dbScan) { // Bij Agrident raeder bestaat $fldScan niet 				
-	$update_scan = "UPDATE tblMomentuser SET scan = '".mysqli_real_escape_string($db,$fldScan)."' WHERE momuId = '".mysqli_real_escape_string($db,$recId)."'	";
-/*echo $update_scan.$recId."<br/>";*/		mysqli_query($db,$update_scan) or die (mysqli_error($db));  
- }
 
 $zoek_actief = mysqli_query($db,"
 SELECT actief
