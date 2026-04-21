@@ -5,12 +5,12 @@ class MomentGateway extends Gateway {
     public function kzlMoment($lidId) {
         return $this->run_query(
             <<<SQL
-SELECT m.momId, moment, lower(if(isnull(scan),'6karakters',scan)) scan
+SELECT m.momId, moment
 FROM tblMoment m
  join tblMomentuser mu on (m.momId = mu.momId)
 WHERE mu.lidId = :lidId
 union
-SELECT 3, 'uitval voor merken', 3 scan
+SELECT 3, 'uitval voor merken'
 FROM dual
 ORDER BY momId
 SQL
@@ -38,7 +38,7 @@ SQL
 
     public function qry_lus($lidId) {
         $sql = <<<SQL
-        SELECT momuId, scan, mu.actief
+        SELECT momuId, mu.actief
         FROM tblMoment m
          join tblMomentuser mu on (m.momId = mu.momId)
         WHERE mu.lidId = :lidId and m.actief = 1
@@ -50,7 +50,7 @@ SQL;
 
     public function detail($Id) {
         $sql = <<<SQL
-                SELECT moment, scan, mu.actief
+                SELECT moment, mu.actief
                 FROM tblMoment m
                  join tblMomentuser mu on (m.momId = mu.momId)
                 WHERE momuId = :Id and m.actief = 1
@@ -60,33 +60,6 @@ SQL;
         return $this->run_query($sql, $args);
     }
 
-    public function zoek_scan($recId) {
-        $sql = <<<SQL
-        SELECT scan
-        FROM tblMomentuser
-        WHERE momuId = :recId
-SQL;
-        $args = [[':recId', $recId, Type::INT]];
-        return $this->run_query($sql, $args);
-    }
-
-    public function zoek_dubbele_scan($lidId, $fldScan) {
-        $sql = <<<SQL
-        SELECT count(scan) aant
-        FROM tblMomentuser
-        WHERE lidId = :lidId and scan = :fldScan
-SQL;
-        $args = [[':lidId', $lidId, Type::INT], [':fldScan', $fldScan]];
-        return $this->run_query($sql, $args);
-    }
-
-    public function update_scan($fldScan, $recId) {
-        $sql = <<<SQL
-            UPDATE tblMomentuser SET scan = :fldScan WHERE momuId = :recId
-SQL;
-        $args = [[':fldScan', $fldScan], [':recId', $recId, Type::INT]];
-        return $this->run_query($sql, $args);
-    }
 
     public function zoek_actief($recId) {
         $sql = <<<SQL

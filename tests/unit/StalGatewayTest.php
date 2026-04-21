@@ -254,13 +254,6 @@ class StalGatewayTest extends GatewayCase {
         $this->assertNotFalse($result);
     }
 
-    public function test_update_scan() {
-        $stalId = null;
-        $scan = null;
-        $result = $this->sut->update_scan($stalId, $scan);
-        $this->assertNotFalse($result);
-    }
-
     public function test_jaargeboortes() {
         $jaar = null;
         $result = $this->sut->jaargeboortes(self::LIDID, $jaar);

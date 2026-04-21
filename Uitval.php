@@ -257,7 +257,6 @@ $update_tblReden = update_reden($lidId);
     $qry_lus = $moment_gateway->qry_lus($lidId);
     while ($lus = $qry_lus->fetch_assoc()) {
         $Id = ("{$lus['momuId']}");
-        $scan = ("{$lus['scan']}");
         $actief = ("{$lus['actief']}");
         $query = $moment_gateway->detail($Id);
         while ($lus = $query->fetch_assoc()) {
