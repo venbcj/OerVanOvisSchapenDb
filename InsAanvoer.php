@@ -95,6 +95,7 @@ impAgrident rd
  	WHERE u.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and a.af = 1 and h.skip = 0
  ) afv on (afv.datum = lstDate.datum and afv.schaapId = lstDate.schaapId)
  left join tblPartij p on (rd.ubn = p.ubn and p.lidId = '" . mysqli_real_escape_string($db,$lidId) . "')
+ left join tblRelatie rel on (rel.partId = p.partId)
  left join (
 	SELECT ru.lidId, r.rasId
 	FROM tblRas r
@@ -115,7 +116,7 @@ impAgrident rd
  ) dup on (rd.Id = dup.Id)
 ";
 
-$WHERE = "WHERE rd.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and (rd.actId = 2 or rd.actId = 3) and isnull(rd.verwerkt)";
+$WHERE = "WHERE rd.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and (rd.actId = 2 or rd.actId = 3) and isnull(rd.verwerkt) and rel.actief = 1";
 
 include "paginas.php";
 
