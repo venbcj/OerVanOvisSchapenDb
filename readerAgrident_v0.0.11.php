@@ -56,7 +56,19 @@ if (!isset($headers['Authorization'])) { // Als in de headers geen index 'Autori
  
 
 switch ($_SERVER['REQUEST_METHOD']) { // Switch
-	case 'POST':      
+	case 'POST':  
+
+$zoek_laatste_volgnr = mysqli_query($db,"
+SELECT max(inleesnr) volgnr_old
+FROM impAgrident
+WHERE lidId = ". mysqli_real_escape_string($db,$lidid) ."
+") or die(mysqli_error($db));
+
+$zlv = mysqli_fetch_assoc($zoek_laatste_volgnr);
+$old_volgnr = $zlv['volgnr_old'];
+
+$new_volgnr = ($old_volgnr === null) ? 1 : $old_volgnr + 1;
+	    
 		$input = file_get_contents('php://input'); // php://input is de rauwe data. nl. het json bestand.
 
 

@@ -80,7 +80,7 @@ $insert_qry_lam = "";
 
 $insert_qry = $insert_qry_mdr;
 $insert_qry .= $insert_qry_lam;
-$insert_qry .= ' lidId = '.mysqli_real_escape_string($db,$lidid).';';
+$insert_qry .= ' inleesnr = ' . mysqli_real_escape_string($db,$new_volgnr) . ', lidId = ' . mysqli_real_escape_string($db,$lidid) . ';';
 
 
 echo $insert_qry; mysqli_query($db,$insert_qry) or die (mysqli_error($db));

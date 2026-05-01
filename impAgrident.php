@@ -1,7 +1,6 @@
 <?php /*15-11-2020 bestand gekopieerd van impGroepsgeboorte.php en diverse imp... bestanden teruggebracht naar dit ene bestand 
 26-11-2022 Als datum is "0001-01-01T00:00:00" dan Null zie taak Aanvoer */
 
-
 $cnt_velden = count($velden);
 
 			 foreach($inhoud as $index => $waarde) {			 	
@@ -20,7 +19,7 @@ else { $insert_qry .= "$velden[$h] = '" . mysqli_real_escape_string($db, $waarde
 
 } // for($h = 0;
 
-$insert_qry .= ' lidId = ' . mysqli_real_escape_string($db,$lidid) . ';';
+$insert_qry .= ' inleesnr = ' . mysqli_real_escape_string($db,$new_volgnr) . ', lidId = ' . mysqli_real_escape_string($db,$lidid) . ';';
 
 echo $insert_qry; mysqli_query($db,$insert_qry) or die (mysqli_error($db));
 

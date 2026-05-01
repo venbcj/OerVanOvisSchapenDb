@@ -33,7 +33,7 @@ else { $insert_qry .= "$velden[$h] = '" . mysqli_real_escape_string($db, $waarde
 
 } // for($h = 0;
 
-$insert_qry .= ' lidId = ' . mysqli_real_escape_string($db,$lidid) . ';';
+$insert_qry .= ' inleesnr = ' . mysqli_real_escape_string($db,$new_volgnr) . ', lidId = ' . mysqli_real_escape_string($db,$lidid) . ';';
 
 echo $insert_qry; mysqli_query($db,$insert_qry) or die (mysqli_error($db));
 
