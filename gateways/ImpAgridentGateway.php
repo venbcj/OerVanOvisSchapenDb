@@ -70,6 +70,7 @@ impAgrident rd
      WHERE u.lidId = :lidId and a.af = 1 and h.skip = 0
  ) afv on (afv.datum = lstDate.datum and afv.schaapId = lstDate.schaapId)
  left join tblPartij p on (rd.ubn = p.ubn and p.lidId = :lidId)
+ left join tblRelatie rel on (rel.partId = p.partId)
  left join (
     SELECT ru.lidId, r.rasId
     FROM tblRas r
@@ -93,7 +94,7 @@ SQL;
 
     public function getInsAanvoerWhere($lidId) {
         return [
-            "WHERE rd.lidId = :lidId and (rd.actId = 2 or rd.actId = 3) and isnull(rd.verwerkt)",
+            "WHERE rd.lidId = :lidId and (rd.actId = 2 or rd.actId = 3) and isnull(rd.verwerkt) and rel.actief = 1",
             [[':lidId', $lidId, Type::INT]]
         ];
     }
