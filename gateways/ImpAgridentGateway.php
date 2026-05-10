@@ -1816,7 +1816,7 @@ FROM impAgrident a
  join tblActie ac on (ac.actId = a.actId)
  left join tblSchaap s on (a.levensnummer = s.levensnummer)
  left join tblHistorie h on (a.levensnummer = h.oud_nummer)
-WHERE ((a.verwerkt = 1 and a.actId = 1) or (a.actId != 17))
+WHERE ((a.verwerkt = 1 and a.actId = 1) or (a.actId != 1 and a.verwerkt = null)) and a.actId != 17
 and isnull(s.schaapId)
 and isnull(h.hisId)
 and a.levensnummer is not null
@@ -1849,6 +1849,16 @@ and a.levensnummer is not null
 and a.lidId = :lidId
 and date_format(a.dmcreate,'%Y-%m-%d') >= :van
 and date_format(a.dmcreate,'%Y-%m-%d') <= :tot
+
+UNION 
+
+SELECT 'Moeders uit impAgrident die ook niet bestaan in tblHistorie als oud nummer' toel, a.moedertransponder, a.moeder, date_format(a.dmcreate,'%d-%m-%Y') datum, ac.actie taak, a.dmcreate
+FROM impAgrident a
+ join tblActie ac on (ac.actId = a.actId)
+ left join tblSchaap s on (a.moeder = s.levensnummer)
+ left join tblHistorie h on (a.moeder = h.oud_nummer)
+WHERE isnull(s.schaapId) and isnull(h.hisId) and a.moeder is not null and a.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(a.dmcreate,'%Y-%m-%d') >= '".mysqli_real_escape_string($db,$van)."' and date_format(a.dmcreate,'%Y-%m-%d') <= '".mysqli_real_escape_string($db,$tot)."'
+GROUP BY a.moedertransponder, a.moeder, date_format(a.dmcreate,'%d-%m-%Y'), ac.actie, a.dmcreate
 
 ORDER BY dmcreate
             SQL
