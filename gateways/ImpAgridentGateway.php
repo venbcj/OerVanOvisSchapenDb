@@ -462,7 +462,7 @@ impAgrident rd
  and (r.relatie = 'cred' or isnull(r.relatie))
  ) rel_herk on (u_herk.ubn = rel_herk.ubn)
  left join (
-    SELECT st.schaapId, h.hisId, a.actie, a.af
+    SELECT st.stalId, st.schaapId, h.hisId, a.actie, a.af
     FROM tblStal st
      join tblUbn u on (u.ubnId = st.ubnId)
      join tblHistorie h on (st.stalId = h.stalId)
@@ -470,7 +470,7 @@ impAgrident rd
     WHERE u.lidId = :lidId
  and a.af = 1
  and h.skip = 0
- ) haf on (s.schaapId = haf.schaapId)
+ ) haf on (s.schaapId = haf.schaapId and haf.stalId = st_max.stalIdmax)
  left join (
     SELECT st.schaapId, h.datum
      FROM tblStal st
