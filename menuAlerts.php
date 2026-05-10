@@ -11,8 +11,8 @@ Menu : </br>
 Home</a> <br/>
 <hr/style ='color : #E2E2E2'> <br/>
 <hr/style ='color : #E2E2E2'>
-<?php  if($modtech == 1) { ?> <a href='<?php echo $url;?>OoilamSelectie.php' style = 'color : blue'> <?php }
-					else { ?> <a href='<?php echo $url;?>OoilamSelectie.php' style = 'color : grey'> <?php } ?>
+<?php  if($modtech == 1) { ?> <a href='<?php echo $url;?>AlertWorpSelectie.php' style = 'color : blue'> <?php }
+					else { ?> <a href='<?php echo $url;?>AlertWorpSelectie.php' style = 'color : grey'> <?php } ?>
 Ooitjes uit meerlingen</a>
 <hr/style ='color : #E2E2E2'> <br/>
 <hr/style ='color : #E2E2E2'> <br/>
