@@ -13,7 +13,7 @@ include "javascriptsAfhandeling.js.php";
 $menu_items = [
     (object)['caption' => 'Home', 'href' => 'Home.php', 'class' => 'blue'],
     '',
-    (object)['caption' => 'Ooitjes uit meerlingen', 'href' => 'OoilamSelectie.php', 'class' => $tech_color],
+    (object)['caption' => 'Ooitjes uit meerlingen', 'href' => 'AlertWorpSelectie.php', 'class' => $tech_color],
     '',
     '',
     '',
