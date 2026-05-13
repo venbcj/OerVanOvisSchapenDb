@@ -812,6 +812,39 @@ foreach ( $opties as $key => $waarde)
 <?php if($modtech == 1) { // Velden die worden getoond bij module technisch 
 if(isset($_POST["knpVervers_"])) {	$gewicht = $_POST["txtKg_$Id"];	} ?>	
  <td align = center> <input type = "text" name = <?php echo "txtKg_$Id"; ?> style = "font-size : 11px;" size = 1 value = <?php echo $gewicht;?> ></td>
+
+<?php
+$zoek_ooi_in_kzlmoeder = mysqli_query($db,"
+SELECT st.stalId
+FROM (
+   SELECT max(stalId) stalId, schaapId
+   FROM tblStal
+   WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
+   GROUP BY schaapId
+ ) stm
+ join tblStal st on (stm.stalId = st.stalId)
+ join tblSchaap s on (st.schaapId = s.schaapId)
+ join (
+   SELECT schaapId
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 3 and h.skip = 0
+ ) ouder on (ouder.schaapId = st.schaapId)
+ left join (
+   SELECT st.stalId, datum
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+    join tblActie a on (h.actId = a.actId)
+   WHERE a.af = 1 and h.actId <> 10 and lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
+   ) afv on (afv.stalId = st.stalId)
+WHERE s.geslacht = 'ooi' and (isnull(afv.stalId) or afv.datum > date_add(curdate(), interval -2 month) )
+and st.stalId = '".mysqli_real_escape_string($db,$ooiStId_db)."'
+") or die(mysqli_error($db));
+
+$zoik = mysqli_fetch_assoc($zoek_ooi_in_kzlmoeder); $ooi_in_kzl = $zoik['stalId'];
+?>
+
+
  <td style = "font-size : 11px;">
 <!-- KZLMOEDER -->
 <?php $width = 25+(8*$Karwerk); //echo $kzlOoi; #/# ?>
@@ -832,7 +865,15 @@ for ($i = 0; $i < $count; $i++){
 }
 ?> </select> 
 <?php 
-if(!isset($_POST['knpVervers_']) && !isset($_POST['knpInsert_']) && $ooi_rd <> NULL && empty($ooiStId_db) && empty($_POST["kzlOoi_$Id"]) ) {echo $ooi_rd; ?> <b style = "color : red;"> ! </b>  <?php } ?>
+
+
+
+
+if(
+   (!isset($_POST['knpVervers_']) && !isset($_POST['knpInsert_']) && $ooi_rd <> NULL && !isset($ooiStId_db) && !isset($_POST["kzlOoi_$Id"]))
+||
+   (!isset($_POST['knpVervers_']) && !isset($ooi_in_kzl))
+) {echo $ooi_rd; ?> <b style = "color : red;"> ! </b>  <?php } ?>
 	<!-- EINDE KZLMOEDER --> </td>
 
  <td style = "font-size : 9px;">
