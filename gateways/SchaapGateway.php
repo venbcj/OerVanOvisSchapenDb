@@ -1950,6 +1950,42 @@ SQL
         );
     }
 
+    public function zoek_ooi_in_kzlmoeder($lidId, $ooiStId_db) {
+        $this->run_query(
+<<<SQL
+SELECT st.stalId
+FROM (
+   SELECT max(stalId) stalId, schaapId
+   FROM tblStal
+   WHERE lidId = :lidId
+   GROUP BY schaapId
+ ) stm
+ join tblStal st on (stm.stalId = st.stalId)
+ join tblSchaap s on (st.schaapId = s.schaapId)
+ join (
+   SELECT schaapId
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+   WHERE h.actId = 3 and h.skip = 0
+ ) ouder on (ouder.schaapId = st.schaapId)
+ left join (
+   SELECT st.stalId, datum
+   FROM tblStal st
+    join tblHistorie h on (st.stalId = h.stalId)
+    join tblActie a on (h.actId = a.actId)
+   WHERE a.af = 1 and h.actId <> 10 and lidId = :lidId and h.skip = 0
+   ) afv on (afv.stalId = st.stalId)
+WHERE s.geslacht = 'ooi' and (isnull(afv.stalId) or afv.datum > date_add(curdate(), interval -2 month) )
+and st.stalId = :ooiStId_db
+SQL
+    ,
+    [
+        [':lidId', $lidId, Type::INT],
+        [':ooiStId_db', $ooiStId_db, Type::INT],
+    ]
+        );
+    }
+
     public function update_vader($schaapId, $newvdrId) {
         $this->run_query(
             <<<SQL
