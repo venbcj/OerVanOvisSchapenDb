@@ -110,7 +110,7 @@ echo $page_numbers; ?></td>
 <?php
 // Declaratie ubn
 $declaratie_kzlUbn = mysqli_query($db,"
-SELECT ubnId, ubn
+SELECT ubnId, ubn, adres
 FROM tblUbn
 WHERE lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and actief = 1
 ORDER BY ubn
@@ -119,8 +119,11 @@ ORDER BY ubn
 $index = 0; 
 while ($du = mysqli_fetch_array($declaratie_kzlUbn)) 
 {
+	if(!isset($du['adres'])) { $eigenUbn = $du['ubn']; }
+	else { $eigenUbn = $du['ubn'].' - '.$du['adres']; }
+
    $ubnId[$index] = $du['ubnId']; 
-   $ubnnm[$index] = $du['ubn'];
+   $ubnnm[$index] = $eigenUbn;
    $ubnRaak[$index] = $du['ubnId'];
    $index++; 
 }

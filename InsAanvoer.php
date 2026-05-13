@@ -154,19 +154,22 @@ echo $page_numbers; ?></td>
 
 <?php
 // Declaratie kzlUbn
-$qryUbn = mysqli_query($db,"
-SELECT ubnId, ubn
+$declaratie_kzlUbn = mysqli_query($db,"
+SELECT ubnId, ubn, adres
 FROM tblUbn
 WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief = 1
 ORDER BY ubn
 ") or die (mysqli_error($db));
 
 $index = 0; 
-while ($qu = mysqli_fetch_assoc($qryUbn)) 
+while ($du = mysqli_fetch_assoc($declaratie_kzlUbn)) 
 { 
-   $kzlUbnId[$index] = $qu['ubnId'];
-   $ubnnm[$index] = $qu['ubn'];
-   $ubnRaak[$index] = $qu['ubnId'];
+	if(!isset($du['adres'])) { $eigenUbn = $du['ubn']; }
+	else { $eigenUbn = $du['ubn'].' - '.$du['adres']; }
+
+   $kzlUbnId[$index] = $du['ubnId'];
+   $ubnnm[$index] = $eigenUbn;
+   $ubnRaak[$index] = $du['ubnId'];
    $index++;
 } 
 unset($index);

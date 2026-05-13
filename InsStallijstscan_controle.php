@@ -54,7 +54,7 @@ stal.levensnummer levnr_stal, hg.gebdm, dup.dubbelen ";
 $tabel = "
 impAgrident rd
  left join (
-	SELECT max(h.hisId) hisId, st.stalId, u.ubn, s.schaapId, s.levensnummer, s.geslacht, s.rasId, st.lidId
+	SELECT max(h.hisId) hisId, st.stalId, u.ubn, s.schaapId, s.levensnummer, s.geslacht, s.rasId, u.lidId
 	FROM tblSchaap s
 	 join tblStal st on (st.schaapId = s.schaapId)
 	 join tblUbn u on (st.ubnId = u.ubnId)
@@ -62,20 +62,20 @@ impAgrident rd
 	WHERE st.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and h.skip = 0
 	GROUP BY st.stalId, s.schaapId, s.levensnummer, s.geslacht, s.rasId, st.lidId
  ) stal on (rd.levensnummer = stal.levensnummer)
- left join tblRas r on (s.rasId = r.rasId)
+ left join tblRas r on (rd.rasId = r.rasId)
  left join (
  	SELECT schaapId ouder
  	FROM tblStal st
  	 join tblHistorie h on (h.stalId = st.stalId)
  	WHERE actId = 3 and h.skip = 0
- ) ouder on (ouder.ouder = s.schaapId)
+ ) ouder on (ouder.ouder = stal.schaapId)
  left join (
  	SELECT st.stalId, actie
 	FROM tblActie a
 	 join tblHistorie h on (a.actId = h.actId)
 	 join tblStal st on (st.stalId = h.stalId)
 	WHERE a.af = 1 and st.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and h.skip = 0
- ) af on (af.stalId = s.stalId)
+ ) af on (af.stalId = stal.stalId)
 
  left join (
  		SELECT lsthk.hisId actueel_hisId_hok, lsthk.stalId
@@ -102,7 +102,7 @@ impAgrident rd
 			 left join tblBezet b on (b.hisId = lsthk.hisId)
 				WHERE lsthk.hisId is not null and isnull(hist)
 
-	) act_b on (act_b.stalId = s.stalId)
+	) act_b on (act_b.stalId = stal.stalId)
  left join tblBezet b on (act_b.actueel_hisId_hok = b.hisId)
  left join tblHok hk on (hk.hokId = b.hokId)
 
@@ -111,7 +111,7 @@ impAgrident rd
 	FROM tblHistorie h
 	 join tblStal st on (st.stalId = h.stalId)
 	WHERE h.actId = 1 and h.skip = 0
- ) hg on (s.schaapId = hg.schaapId)
+ ) hg on (stal.schaapId = hg.schaapId)
  left join (
  	SELECT rd.Id, count(dup.Id) dubbelen
 	FROM impAgrident rd
@@ -125,7 +125,7 @@ $WHERE = "WHERE rd.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and r
 
 include "paginas.php";
 
-$data = $page_nums->fetch_data($velden, "ORDER BY s.lidId asc, dup.dubbelen desc, actId desc, rd.datum, rd.Id"); ?>
+$data = $page_nums->fetch_data($velden, "ORDER BY stal.lidId asc, dup.dubbelen desc, actId desc, rd.datum, rd.Id"); ?>
 
 <form action="InsStallijstscan_controle.php" method = "post">
 
@@ -187,7 +187,7 @@ echo $page_numbers; ?></td>
 <?php
 // Declaratie ubn
 $declaratie_kzlUbn = mysqli_query($db,"
-SELECT ubnId, ubn
+SELECT ubnId, ubn, adres
 FROM tblUbn
 WHERE lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and actief = 1
 ORDER BY ubn
@@ -196,8 +196,11 @@ ORDER BY ubn
 $index = 0; 
 while ($du = mysqli_fetch_array($declaratie_kzlUbn)) 
 {
+	if(!isset($du['adres'])) { $eigenUbn = $du['ubn']; }
+	else { $eigenUbn = $du['ubn'].' - '.$du['adres']; }
+
    $ubnId[$index] = $du['ubnId']; 
-   $ubnnm[$index] = $du['ubn'];
+   $ubnnm[$index] = $eigenUbn;
    $ubnRaak[$index] = $du['ubnId'];
    $index++; 
 }
