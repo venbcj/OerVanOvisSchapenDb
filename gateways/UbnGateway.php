@@ -101,7 +101,7 @@ SQL
     public function lijst($lidId) {
         return $this->run_query(
             <<<SQL
-SELECT ubnId, ubn
+SELECT ubnId, ubn, adres
 FROM tblUbn
 WHERE lidId = :lidId and actief = 1
 ORDER BY ubn

@@ -97,9 +97,13 @@ echo $paginator->show_page_numbers(); ?></td>
 $declaratie_kzlUbn = $ubn_gateway->lijst($lidId);
 $index = 0; 
 while ($du = $declaratie_kzlUbn->fetch_array()) {
-    $ubnId[$index] = $du['ubnId']; 
-    $ubnnm[$index] = $du['ubn'];
-    $index++; 
+
+	if(!isset($du['adres'])) { $eigenUbn = $du['ubn']; }
+	else { $eigenUbn = $du['ubn'].' - '.$du['adres']; }
+
+  $ubnId[$index] = $du['ubnId']; 
+  $ubnnm[$index] = $eigenUbn;
+  $index++; 
 }
 unset($index);
 // Einde Declaratie ubn

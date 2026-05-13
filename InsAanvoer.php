@@ -97,12 +97,16 @@ echo $paginator->show_page_numbers(); ?></td>
 
 <?php
 // Declaratie kzlUbn
-$qryUbn = $ubn_gateway->lijst($lidId);
+$declaratie_kzlUbn = $ubn_gateway->lijst($lidId);
 
 $index = 0; 
-while ($qu = $qryUbn->fetch_assoc()) { 
-   $kzlUbnId[$index] = $qu['ubnId'];
-   $ubnnm[$index] = $qu['ubn'];
+while ($du = $declaratie_kzlUbn->fetch_assoc()) { 
+
+	if(!isset($du['adres'])) { $eigenUbn = $du['ubn']; }
+	else { $eigenUbn = $du['ubn'].' - '.$du['adres']; }
+	
+   $kzlUbnId[$index] = $du['ubnId'];
+   $ubnnm[$index] = $eigenUbn;
    $index++;
 } 
 unset($index);
