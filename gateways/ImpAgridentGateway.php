@@ -2388,8 +2388,16 @@ SQL;
     }
 
 
-        public function heeft_dubbele_imports($lidId, $actId): bool {
-        $result = $this->run_query(
+    public function heeft_dubbele_imports_zonder_ubnId($lidId, $actId) {
+        return $this->heeft_dubbele_imports($lidId, $actId, "IS NULL");
+    }
+
+    public function heeft_dubbele_imports_met_ubnId($lidId, $actId) {
+        return $this->heeft_dubbele_imports($lidId, $actId, "IS NOT NULL");
+    }
+
+    private function heeft_dubbele_imports($lidId, $actId, $ubnCondition): bool {
+    $result = $this->run_query(
             <<<SQL
 SELECT EXISTS (
     SELECT 1
@@ -2398,12 +2406,12 @@ SELECT EXISTS (
         SELECT 
             datum,
             levensnummer,
-            MIN(inleesnr) AS eerste_inleesnr,
-            COUNT(*) AS cnt
+            MIN(inleesnr) AS eerste_inleesnr
         FROM impAgrident
         WHERE actId = :actId
           AND (verwerkt IS NULL OR verwerkt = '')
           AND lidId = :lidId
+          AND ubnId $ubnCondition
         GROUP BY datum, levensnummer
         HAVING COUNT(*) > 1
     ) d
@@ -2413,6 +2421,7 @@ SELECT EXISTS (
       AND ia.actId = :actId
       AND (ia.verwerkt IS NULL OR ia.verwerkt = '')
       AND ia.lidId = :lidId
+      AND ia.ubnId $ubnCondition
 ) AS heeft_duplicaten
 SQL
         , [
@@ -2423,10 +2432,18 @@ SQL
     $row = $result->fetch();
     
     return (bool)$row['heeft_duplicaten'];
-}
+    }
 
 
-    public function delete_dubbel_import($lidId, $actId) {
+    public function verwerk_dubbele_import_zonder_ubnId($lidId, $actId) {
+        return $this->verwerk_dubbele_import($lidId, $actId, "IS NULL");
+    }
+
+    public function verwerk_dubbele_import_met_ubnId($lidId, $actId) {
+        return $this->verwerk_dubbele_import($lidId, $actId, "IS NOT NULL");
+    }
+
+    private function verwerk_dubbele_import($lidId, $actId, $ubnCondition) {
         $this->run_query(
             <<<SQL
 UPDATE impAgrident ia
@@ -2439,6 +2456,7 @@ JOIN (
     WHERE actId = :actId
       AND (verwerkt IS NULL OR verwerkt = '')
       AND lidId = :lidId
+      AND ubnId $ubnCondition
     GROUP BY datum, levensnummer
     HAVING COUNT(*) > 1
 ) d
@@ -2449,12 +2467,13 @@ WHERE ia.inleesnr <> d.eerste_inleesnr
   AND ia.actId = :actId
   AND (ia.verwerkt IS NULL OR ia.verwerkt = '')
   AND ia.lidId = :lidId
+  AND ia.ubnId $ubnCondition
 SQL
         , [
             [':lidId', $lidId, Type::INT],
             [':actId', $actId, Type::INT]
         ]);
 
-        }
+    }
 
 }
