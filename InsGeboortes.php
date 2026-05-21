@@ -77,7 +77,7 @@ if (isset($_POST['knpInsert_']) ) {
     
 if (isset($_POST['knpDelDubbelen'])) {
 
-    $sqlUpdate = $impagrident_gateway->delete_dubbel_import($lidId, 1);
+    $impagrident_gateway->verwerk_dubbele_import_zonder_ubnId($lidId, 1);
 }    
 
 $velden = "rd.Id readId,date_format(rd.datum,'%Y-%m-%d') sort, rd.datum, rd.levensnummer levnr_rd, s.levensnummer levnr_db, rd.rasId ras_rd, r.rasId ras_scan, rd.geslacht, rd.moeder, mdr.schaapId mdrId_db, mdr.stalId mdrStalId_db, 
@@ -98,7 +98,7 @@ $data = $paginator->fetch_data($velden, "ORDER BY sort, rd.Id"); ?>
  <td colspan = 1 align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
  <td colspan = 3 style = "font-size : 12px;"><?php if(!isset($_POST['knpVervers_']) && !isset($_POST['knpInsert_'])) { ?><b style = "color : red;">!</b> = waarde uit reader niet gevonden. <br> <?php } ?> </td>
  <td colspan="3" align="right">
-<?php if ($impagrident_gateway->heeft_dubbele_imports($lidId, 1)) { ?>
+<?php if ($impagrident_gateway->heeft_dubbele_imports_zonder_ubnId($lidId, 1)) { ?>
    <button type="submit" name="knpDelDubbelen">
             Verwijder dubbele imports
           </button>
