@@ -1857,7 +1857,7 @@ FROM impAgrident a
  join tblActie ac on (ac.actId = a.actId)
  left join tblSchaap s on (a.moeder = s.levensnummer)
  left join tblHistorie h on (a.moeder = h.oud_nummer)
-WHERE isnull(s.schaapId) and isnull(h.hisId) and a.moeder is not null and a.lidId = '".mysqli_real_escape_string($db,$lidId)."' and date_format(a.dmcreate,'%Y-%m-%d') >= '".mysqli_real_escape_string($db,$van)."' and date_format(a.dmcreate,'%Y-%m-%d') <= '".mysqli_real_escape_string($db,$tot)."'
+WHERE isnull(s.schaapId) and isnull(h.hisId) and a.moeder is not null and a.lidId = :lidId and date_format(a.dmcreate,'%Y-%m-%d') >= :van and date_format(a.dmcreate,'%Y-%m-%d') <= :tot
 GROUP BY a.moedertransponder, a.moeder, date_format(a.dmcreate,'%d-%m-%Y'), ac.actie, a.dmcreate
 
 ORDER BY dmcreate
@@ -2386,5 +2386,66 @@ SQL;
         $args = [[':lidId', $lidId, Type::INT]];
         return $this->first_field($sql, $args);
     }
+
+
+        public function dubbel_ingelezen($lidId, $actId) {
+        $this->run_query(
+            <<<SQL
+SELECT DISTINCT ia.inleesnr
+FROM impAgrident ia
+JOIN (
+    SELECT 
+        datum,
+        levensnummer,
+        MIN(inleesnr) AS eerste_inleesnr,
+        COUNT(*) AS cnt
+    FROM impAgrident
+    WHERE actId = :actId
+      AND (verwerkt IS NULL OR verwerkt = '')
+      AND lidId = :lidId
+    GROUP BY datum, levensnummer
+    HAVING COUNT(*) > 1
+) d
+    ON ia.datum = d.datum
+   AND ia.levensnummer = d.levensnummer
+WHERE ia.inleesnr <> d.eerste_inleesnr
+  AND ia.actId = :actId
+  AND (ia.verwerkt IS NULL OR ia.verwerkt = '')
+  AND ia.lidId = :lidId
+ORDER BY ia.inleesnr
+SQL
+        , [[':lidId', $lidId, Type::INT], [':actId', $actId, Type::INT]]
+        );
+    }
+
+
+    public function delete_dubbel_import($lidId, $actId) {
+        $this->run_query(
+            <<<SQL
+UPDATE impAgrident ia
+JOIN (
+    SELECT 
+        datum,
+        levensnummer,
+        MIN(inleesnr) AS eerste_inleesnr
+    FROM impAgrident
+    WHERE actId = :actId
+      AND (verwerkt IS NULL OR verwerkt = '')
+      AND lidId = :lidId
+    GROUP BY datum, levensnummer
+    HAVING COUNT(*) > 1
+) d
+    ON ia.datum = d.datum
+   AND ia.levensnummer = d.levensnummer
+SET ia.verwerkt = 2
+WHERE ia.inleesnr <> d.eerste_inleesnr
+  AND ia.actId = :actId
+  AND (ia.verwerkt IS NULL OR ia.verwerkt = '')
+  AND ia.lidId = :lidId
+SQL
+        , [[':lidId', $lidId, Type::INT],[':actId', $actId, Type::INT]]
+        );
+
+        }
 
 }

@@ -75,6 +75,10 @@ if (isset($_POST['knpInsert_']) ) {
     include "post_readerGeb.php";
     }
     
+if (isset($_POST['knpDelDubbelen'])) {
+
+    $sqlUpdate = $impagrident_gateway->delete_dubbel_import($lidId, 1);
+}    
 
 $velden = "rd.Id readId,date_format(rd.datum,'%Y-%m-%d') sort, rd.datum, rd.levensnummer levnr_rd, s.levensnummer levnr_db, rd.rasId ras_rd, r.rasId ras_scan, rd.geslacht, rd.moeder, mdr.schaapId mdrId_db, mdr.stalId mdrStalId_db, 
    mdr.datum dmeindmdr, date_format(mdr.datum,'%d-%m-%Y') einddmmdr, mdr.actie_af, rd.hokId hok_rd, hb.hokId hok_scan, rd.gewicht, rd.verloop, rd.leef_dgn, rd.momId mom_rd, DATE_ADD(rd.datum, interval rd.leef_dgn day) date_dood, date_format(DATE_ADD(rd.datum, interval rd.leef_dgn day),'%d-%m-%Y') datum_dood, rd.reden red_rd, red.redId red_db, dup.dubbelen";
@@ -85,6 +89,14 @@ $tabel = $impagrident_gateway->getInsGeboortesFrom();
 include "paginas.php";
 $data = $paginator->fetch_data($velden, "ORDER BY sort, rd.Id");
 
+$dubbel_ingelezen = $impagrident_gateway->dubbel_ingelezen($lidId, 1); 
+
+$dubbeleInleesnrs = [];
+
+while ($di = mysqli_fetch_assoc($dubbel_ingelezen)) 
+{ 
+   $dubbeleInleesnrs[] = $di['inleesnr'];
+}
 ?>
 <table border = 0>
 <tr> <form action="InsGeboortes.php" method = "post">
@@ -93,7 +105,15 @@ $data = $paginator->fetch_data($velden, "ORDER BY sort, rd.Id");
  <td colspan = 2 align = center style = "font-size : 14px;"><?php echo $paginator->show_page_numbers(); ?></td>
  <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $paginator->show_rpp(); ?> </td>
  <td colspan = 1 align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
- <td colspan = 3 style = "font-size : 12px;"><?php if(!isset($_POST['knpVervers_']) && !isset($_POST['knpInsert_'])) { ?><b style = "color : red;">!</b> = waarde uit reader niet gevonden. <br> <?php } ?> </td></tr>
+ <td colspan = 3 style = "font-size : 12px;"><?php if(!isset($_POST['knpVervers_']) && !isset($_POST['knpInsert_'])) { ?><b style = "color : red;">!</b> = waarde uit reader niet gevonden. <br> <?php } ?> </td>
+ <td colspan="3" align="right">
+<?php if (!empty($dubbeleInleesnrs)) { ?>
+   <button type="submit" name="knpDelDubbelen">
+            Verwijder dubbele imports
+          </button>
+<?php } ?>
+ </td>
+</tr>
 <tr valign = bottom style = "font-size : 12px;">
  <th>Inlezen<br><b style = "font-size : 10px;">Ja/Nee</b><br> <input type="checkbox" id="selectall" checked /> <hr></th>
  <th>Verwij-<br>deren<br> <input type="checkbox" id="selectall_del" /> <hr></th>
