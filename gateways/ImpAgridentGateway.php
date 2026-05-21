@@ -2388,35 +2388,42 @@ SQL;
     }
 
 
-        public function dubbel_ingelezen($lidId, $actId) {
-        $this->run_query(
+        public function heeft_dubbele_imports($lidId, $actId): bool {
+        $result = $this->run_query(
             <<<SQL
-SELECT DISTINCT ia.inleesnr
-FROM impAgrident ia
-JOIN (
-    SELECT 
-        datum,
-        levensnummer,
-        MIN(inleesnr) AS eerste_inleesnr,
-        COUNT(*) AS cnt
-    FROM impAgrident
-    WHERE actId = :actId
-      AND (verwerkt IS NULL OR verwerkt = '')
-      AND lidId = :lidId
-    GROUP BY datum, levensnummer
-    HAVING COUNT(*) > 1
-) d
-    ON ia.datum = d.datum
-   AND ia.levensnummer = d.levensnummer
-WHERE ia.inleesnr <> d.eerste_inleesnr
-  AND ia.actId = :actId
-  AND (ia.verwerkt IS NULL OR ia.verwerkt = '')
-  AND ia.lidId = :lidId
-ORDER BY ia.inleesnr
+SELECT EXISTS (
+    SELECT 1
+    FROM impAgrident ia
+    JOIN (
+        SELECT 
+            datum,
+            levensnummer,
+            MIN(inleesnr) AS eerste_inleesnr,
+            COUNT(*) AS cnt
+        FROM impAgrident
+        WHERE actId = :actId
+          AND (verwerkt IS NULL OR verwerkt = '')
+          AND lidId = :lidId
+        GROUP BY datum, levensnummer
+        HAVING COUNT(*) > 1
+    ) d
+        ON ia.datum = d.datum
+       AND ia.levensnummer = d.levensnummer
+    WHERE ia.inleesnr <> d.eerste_inleesnr
+      AND ia.actId = :actId
+      AND (ia.verwerkt IS NULL OR ia.verwerkt = '')
+      AND ia.lidId = :lidId
+) AS heeft_duplicaten
 SQL
-        , [[':lidId', $lidId, Type::INT], [':actId', $actId, Type::INT]]
-        );
-    }
+        , [
+            [':lidId', $lidId, Type::INT],
+            [':actId', $actId, Type::INT]
+        ]);
+
+    $row = $result->fetch();
+    
+    return (bool)$row['heeft_duplicaten'];
+}
 
 
     public function delete_dubbel_import($lidId, $actId) {
@@ -2443,8 +2450,10 @@ WHERE ia.inleesnr <> d.eerste_inleesnr
   AND (ia.verwerkt IS NULL OR ia.verwerkt = '')
   AND ia.lidId = :lidId
 SQL
-        , [[':lidId', $lidId, Type::INT],[':actId', $actId, Type::INT]]
-        );
+        , [
+            [':lidId', $lidId, Type::INT],
+            [':actId', $actId, Type::INT]
+        ]);
 
         }
 
