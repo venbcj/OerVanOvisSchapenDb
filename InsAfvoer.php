@@ -58,6 +58,14 @@ If (isset($_POST['knpInsert_'])) {
     include "post_readerAfv.php";#Deze include moet voor de verversing in de functie header()
     }
     
+if (isset($_POST['knpDelDubbelen'])) {
+
+    $impagrident_gateway->verwerk_dubbele_import_zonder_ubnId($lidId, 12);
+}
+
+    //echo 'De dubbele imports zijn verwijderd.';
+}
+
 $velden = "rd.Id readId, rd.datum, right(rd.levensnummer,$Karwerk) werknr, rd.levensnummer levnr, rd.ubn ubn_afv, r.ubn ctrubn, rd.reden redId_rd, red.reduId reduId_db, gewicht kg, s.schaapId, s.geslacht, ouder.datum dmaanw, lower(haf.actie) actie, haf.af, hs.datum dmspeen, ak.datum dmaankoop, date_format(max.datummax_afv,'%d-%m-%Y') maxdatum_afv, max.datummax_afv, date_format(max.datummax_kg,'%d-%m-%Y') maxdatum_kg, max.datummax_kg, b.bezId ";
 
 $tabel = $impagrident_gateway->getInsAfvoerFrom();
@@ -75,7 +83,15 @@ $data = $paginator->fetch_data($velden, "ORDER BY right(rd.levensnummer,$Karwerk
  <td colspan = 2 align = center style = "font-size : 14px;"><?php echo $paginator->show_page_numbers(); ?></td>
  <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $paginator->show_rpp(); ?> </td>
  <td align = 'right'> <input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
- <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td></tr>
+ <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td>
+ <td colspan="3" align="right">
+<?php if ($impagrident_gateway->heeft_dubbele_imports_zonder_ubnId($lidId, 12)) { ?>
+   <button type="submit" name="knpDelDubbelen">
+            Verwijder dubbele imports
+          </button>
+<?php } ?>
+ </td>
+</tr>
 <tr valign = bottom style = "font-size : 12px;">
  <th>Afvoeren<br><b style = "font-size : 10px;">Ja/Nee</b><br> <input type="checkbox" id="selectall" checked /> <hr></th>
  <th>Verwij-<br>deren <input type="checkbox" id="selectall_del" /> <hr></th>
