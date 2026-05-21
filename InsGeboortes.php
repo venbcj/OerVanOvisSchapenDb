@@ -87,17 +87,8 @@ $tabel = $impagrident_gateway->getInsGeboortesFrom();
     $WHERE = $impagrident_gateway->getInsGeboortesWhere($lidId);
 
 include "paginas.php";
-$data = $paginator->fetch_data($velden, "ORDER BY sort, rd.Id");
+$data = $paginator->fetch_data($velden, "ORDER BY sort, rd.Id"); ?>
 
-$dubbel_ingelezen = $impagrident_gateway->dubbel_ingelezen($lidId, 1); 
-
-$dubbeleInleesnrs = [];
-
-while ($di = mysqli_fetch_assoc($dubbel_ingelezen)) 
-{ 
-   $dubbeleInleesnrs[] = $di['inleesnr'];
-}
-?>
 <table border = 0>
 <tr> <form action="InsGeboortes.php" method = "post">
  <td colspan = 3 style = "font-size : 13px;"> 
@@ -107,7 +98,7 @@ while ($di = mysqli_fetch_assoc($dubbel_ingelezen))
  <td colspan = 1 align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
  <td colspan = 3 style = "font-size : 12px;"><?php if(!isset($_POST['knpVervers_']) && !isset($_POST['knpInsert_'])) { ?><b style = "color : red;">!</b> = waarde uit reader niet gevonden. <br> <?php } ?> </td>
  <td colspan="3" align="right">
-<?php if (!empty($dubbeleInleesnrs)) { ?>
+<?php if ($impagrident_gateway->heeft_dubbele_imports($lidId, 1)) { ?>
    <button type="submit" name="knpDelDubbelen">
             Verwijder dubbele imports
           </button>
