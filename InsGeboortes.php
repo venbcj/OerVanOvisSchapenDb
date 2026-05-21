@@ -74,6 +74,38 @@ if (isset($_POST['knpInsert_']) ) {
 	Include "post_readerGeb.php"; #Deze include moet voor de vervversing in de functie header()
 	}
 	
+   if (isset($_POST['knpDelDubbelen'])) {
+
+    $sqlUpdate = mysqli_query($db,"
+        UPDATE impAgrident ia
+        JOIN (
+            SELECT 
+                datum,
+                levensnummer,
+                MIN(inleesnr) AS eerste_inleesnr
+            FROM impAgrident
+            WHERE actId = 1
+              AND (verwerkt IS NULL OR verwerkt = '')
+              AND lidId = '".mysqli_real_escape_string($db,$lidId)."'
+            GROUP BY datum, levensnummer
+            HAVING COUNT(*) > 1
+        ) d
+            ON ia.datum = d.datum
+           AND ia.levensnummer = d.levensnummer
+        SET ia.verwerkt = 2
+        WHERE ia.inleesnr <> d.eerste_inleesnr
+          AND ia.actId = 1
+          AND (ia.verwerkt IS NULL OR ia.verwerkt = '')
+          AND ia.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    ");
+
+    if (!$sqlUpdate) {
+    die(mysqli_error($db));
+}
+
+    //echo 'De dubbele imports zijn verwijderd.';
+}
+
 function numeriek($subject) {
 	if (preg_match('/([[a-zA-Z])/', $subject, $matches)) {  /*var_dump($matches[1]); */ return 1; }
 }
@@ -147,7 +179,39 @@ $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.ac
 
 include "paginas.php";
 
-$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id"); ?>
+$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id"); 
+
+$dubbel_ingelezen = mysqli_query($db,"
+SELECT DISTINCT ia.inleesnr
+FROM impAgrident ia
+JOIN (
+    SELECT 
+        datum,
+        levensnummer,
+        MIN(inleesnr) AS eerste_inleesnr,
+        COUNT(*) AS cnt
+    FROM impAgrident
+    WHERE actId = 1
+      AND (verwerkt IS NULL OR verwerkt = '')
+      AND lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    GROUP BY datum, levensnummer
+    HAVING COUNT(*) > 1
+) d
+    ON ia.datum = d.datum
+   AND ia.levensnummer = d.levensnummer
+WHERE ia.inleesnr <> d.eerste_inleesnr
+  AND ia.actId = 1
+  AND (ia.verwerkt IS NULL OR ia.verwerkt = '')
+  AND ia.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+ORDER BY ia.inleesnr
+") or die (mysqli_error($db)); 
+
+$dubbeleInleesnrs = [];
+
+while ($di = mysqli_fetch_assoc($dubbel_ingelezen)) 
+{ 
+   $dubbeleInleesnrs[] = $di['inleesnr'];
+} ?>
 
 
 
@@ -165,7 +229,15 @@ echo /*'$page_numbers : '.*/$page_numbers/*.'<br> '.$record_numbers.'<br>'*/;
 //echo '$page_nums->pagina_string : '. $page_nums->pagina_string; ?></td>
  <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
  <td colspan = 1 align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
- <td colspan = 3 style = "font-size : 12px;"><?php if(!isset($_POST['knpVervers_']) && !isset($_POST['knpInsert_'])) { ?><b style = "color : red;">!</b> = waarde uit reader niet gevonden. <br> <?php } ?> </td></tr>
+ <td colspan = 3 style = "font-size : 12px;"><?php if(!isset($_POST['knpVervers_']) && !isset($_POST['knpInsert_'])) { ?><b style = "color : red;">!</b> = waarde uit reader niet gevonden. <br> <?php } ?> </td>
+ <td colspan="3" align="right">
+<?php if (!empty($dubbeleInleesnrs)) { ?>
+   <button type="submit" name="knpDelDubbelen">
+            Verwijder dubbele imports
+          </button>
+<?php } ?>
+ </td>
+</tr>
 <tr valign = bottom style = "font-size : 12px;">
  <th>Inlezen<br><b style = "font-size : 10px;">Ja/Nee</b><br> <input type="checkbox" id="selectall" checked /> <hr></th>
  <th>Verwij-<br>deren<br> <input type="checkbox" id="selectall_del" /> <hr></th>

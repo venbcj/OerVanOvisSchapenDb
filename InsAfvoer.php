@@ -55,6 +55,38 @@ If (isset($_POST['knpInsert_'])) {
 	Include "post_readerAfv.php";#Deze include moet voor de verversing in de functie header()
 	}
 	
+   if (isset($_POST['knpDelDubbelen'])) {
+
+    $sqlUpdate = mysqli_query($db,"
+        UPDATE impAgrident ia
+        JOIN (
+            SELECT 
+                datum,
+                levensnummer,
+                MIN(inleesnr) AS eerste_inleesnr
+            FROM impAgrident
+            WHERE actId = 12 and ubnId is null
+              AND (verwerkt IS NULL OR verwerkt = '')
+              AND lidId = '".mysqli_real_escape_string($db,$lidId)."'
+            GROUP BY datum, levensnummer
+            HAVING COUNT(*) > 1
+        ) d
+            ON ia.datum = d.datum
+           AND ia.levensnummer = d.levensnummer
+        SET ia.verwerkt = 2
+        WHERE ia.inleesnr <> d.eerste_inleesnr
+          AND ia.actId = 12 and ubnId is null
+          AND (ia.verwerkt IS NULL OR ia.verwerkt = '')
+          AND ia.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    ");
+
+    if (!$sqlUpdate) {
+    die(mysqli_error($db));
+}
+
+    //echo 'De dubbele imports zijn verwijderd.';
+}
+
 // Aantal nog in te lezen AFGELEVERDEN
 /*if($reader == 'Biocontrol') {
 $afgeleverden = mysqli_query($db,"SELECT count(*) aant
@@ -74,7 +106,7 @@ $afgeleverden = mysqli_query($db,"SELECT count(*) aant
 // EINDE Aantal nog in te lezen AFGELEVERDEN
 
 
-$velden = "rd.Id readId, rd.datum, right(rd.levensnummer,".mysqli_real_escape_string($db,$Karwerk).") werknr, rd.levensnummer levnr, rd.ubn ubn_afv, r.ubn ctrubn, rd.reden redId_rd, red.reduId reduId_db, gewicht kg, s.schaapId, s.geslacht, ouder.datum dmaanw, lower(haf.actie) actie, haf.af, hs.datum dmspeen, ak.datum dmaankoop, date_format(max.datummax_afv,'%d-%m-%Y') maxdatum_afv, max.datummax_afv, date_format(max.datummax_kg,'%d-%m-%Y') maxdatum_kg, max.datummax_kg, b.bezId ";
+$velden = "rd.Id readId, rd.datum, right(rd.levensnummer,".mysqli_real_escape_string($db,$Karwerk).") werknr, rd.levensnummer levnr, rd.ubn ubn_afv, r.ubn ctrubn, rd.reden redId_rd, red.reduId reduId_db, gewicht kg, s.schaapId, s.geslacht, ouder.datum dmaanw, lower(haf.actie) actie, haf.af, hs.datum dmspeen, ak.datum dmaankoop, date_format(max.datummax_afv,'%d-%m-%Y') maxdatum_afv, max.datummax_afv, date_format(max.datummax_kg,'%d-%m-%Y') maxdatum_kg, max.datummax_kg, b.bezId, dup.dubbelen ";
 
 $tabel = "
 impAgrident rd
@@ -226,6 +258,13 @@ impAgrident rd
 	GROUP BY s.levensnummer
  ) b on (rd.levensnummer = b.levensnummer)
  left join tblRedenuser red on (rd.reden = red.redId and red.lidId = '".mysqli_real_escape_string($db,$lidId)."')
+ left join (
+ 	SELECT rd.Id, count(dup.Id) dubbelen
+	FROM impAgrident rd
+	 join impAgrident dup on (rd.lidId = dup.lidId and rd.levensnummer = dup.levensnummer and rd.Id <> dup.Id and rd.actId = dup.actId)
+	WHERE rd.actId = 12 and rd.ubnId is null and dup.ubnId is null and isnull(dup.verwerkt)
+	GROUP BY rd.Id
+ ) dup on (rd.Id = dup.Id)
 ";
 
 $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 12 and isnull(rd.ubnId) and isnull(rd.verwerkt) ";
@@ -234,6 +273,37 @@ include "paginas.php";
 
 $data = $page_nums-> fetch_data($velden, "ORDER BY right(rd.levensnummer,".mysqli_real_escape_string($db,$Karwerk).") "); 
 
+$dubbel_ingelezen = mysqli_query($db,"
+SELECT DISTINCT ia.inleesnr
+FROM impAgrident ia
+JOIN (
+    SELECT 
+        datum,
+        levensnummer,
+        MIN(inleesnr) AS eerste_inleesnr,
+        COUNT(*) AS cnt
+    FROM impAgrident
+    WHERE actId = 12 and ubnId is null
+      AND (verwerkt IS NULL OR verwerkt = '')
+      AND lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    GROUP BY datum, levensnummer
+    HAVING COUNT(*) > 1
+) d
+    ON ia.datum = d.datum
+   AND ia.levensnummer = d.levensnummer
+WHERE ia.inleesnr <> d.eerste_inleesnr
+  AND ia.actId = 12 and ubnId is null
+  AND (ia.verwerkt IS NULL OR ia.verwerkt = '')
+  AND ia.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+ORDER BY ia.inleesnr
+") or die (mysqli_error($db)); 
+
+$dubbeleInleesnrs = [];
+
+while ($di = mysqli_fetch_assoc($dubbel_ingelezen)) 
+{ 
+   $dubbeleInleesnrs[] = $di['inleesnr'];
+}
 ?>
 
 <table border = 0>
@@ -250,7 +320,15 @@ echo /*'$page_numbers : '.*/$page_numbers/*.'<br> '.$record_numbers.'<br>'*/;
 //echo '$page_nums->pagina_string : '. $page_nums->pagina_string; ?></td>
  <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
  <td align = 'right'> <input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
- <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td></tr>
+ <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td>
+ <td colspan="3" align="right">
+<?php if (!empty($dubbeleInleesnrs)) { ?>
+   <button type="submit" name="knpDelDubbelen">
+            Verwijder dubbele imports
+          </button>
+<?php } ?>
+ </td>
+</tr>
 <tr valign = bottom style = "font-size : 12px;">
  <th>Afvoeren<br><b style = "font-size : 10px;">Ja/Nee</b><br> <input type="checkbox" id="selectall" checked /> <hr></th>
  <th>Verwij-<br>deren <input type="checkbox" id="selectall_del" /> <hr></th>
@@ -327,6 +405,7 @@ $date	   = date('Y-m-d', strtotime($date));
 	$Id = $array['readId'];
 	$werknr = $array['werknr'];
 	$levnr = $array['levnr'];
+	$levnr_dupl = $array['dubbelen']; // twee keer in reader bestand
 	$ubnbest = $array['ubn_afv'];
 	$ubn_db = $array['ctrubn'];
 	$redId_rd = $array['redId_rd'];
@@ -355,20 +434,46 @@ if (isset($_POST['knpVervers_'])) {
 	$makeday = date_create($_POST["txtAfvoerdag_$Id"]); $date =  date_format($makeday, 'Y-m-d'); 
 }
 
+// Wachtdagen bepalen
+unset($wdgn_v);
+
+if(isset($schaapId)) {
+$zoek_pil = mysqli_query($db,"
+SELECT date_format(h.datum,'%d-%m-%Y') datum, art.naam, DATEDIFF( (h.datum + interval art.wdgn_v day), '".mysqli_real_escape_string($db,$date)."') resterend
+FROM tblSchaap s
+ join tblStal st on (st.schaapId = s.schaapId)
+ join tblHistorie h on (h.stalId = st.stalId)
+ join tblActie a on (a.actId = h.actId)
+ left join tblNuttig n on (h.hisId = n.hisId)
+ left join tblInkoop i on (i.inkId = n.inkId)
+ left join tblArtikel art on (i.artId = art.artId)
+WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and h.actId = 8 and h.skip = 0
+ and '".mysqli_real_escape_string($db,$date)."' < (h.datum + interval art.wdgn_v day)
+") or die (mysqli_error($db));	
+
+$vandaag = date('Y-m-d');
+		while($row = mysqli_fetch_array($zoek_pil))
+		{ $pildm = $row['datum']; 
+		  $pil = $row['naam']; 
+		  $wdgn_v = $row['resterend']; }
+}
+// Einde Wachtdagen bepalen
+
+unset($onjuist);
+unset($color);
+
 // t.b.v. checkbox Afvoeren
-	 If	 
-	 ( !isset($schaapId) || $status == 'overleden' || $status == 'afgeleverd' || $status == 'uitgeschaard' || /*levensnummer moet aanwezig zijn */
-		 empty($datum)							|| # of datum is leeg
-		 $date < $dmmax_bij_afvoer							|| # of datum ligt voor de laatst geregistreerde datum van het schaap
-		 ($modtech == 1 && !isset($speen) && !isset($aank))		|| # speendatum ontbreekt bij dieren die niet zijn aangekocht.
-		 //($modtech == 1 && !isset($aank) && !isset($bezet))		|| # aankoopdatum ontbreekt van dieren die niet in een hok hebben gezeten.
-		 //($modtech == 1 && empty($kg) && $fase == 'lam')			|| # of gewicht is leeg
-		 //$status == 'afgeleverd'	15-2-19 : dubbel benoemd			|| # of is reeds afgeleverd
-		// $status == 'overleden'	15-2-19 : dubbel benoemd			|| # of is reeds overleden
-		empty($kzlRelatie)  		 		   # bestemming is onbekend						 
-	 											
-	 )
-	 {	$oke_afv = 0;	} else { $oke_afv = 1;	} // $oke_afv kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
+	 if(!isset($schaapId)) { $color = 'red';  $onjuist = 'Levensnummer onbekend'; }
+else if(isset($levnr_dupl) )       { $color = 'blue'; $onjuist = 'Dubbel in de reader.'; }
+else if($status == 'afgeleverd') { $color = 'red';  $onjuist = "Dit schaap is reeds $status.";}
+else if($status == 'overleden' || $status == 'uitgeschaard') { $color = 'red';  $onjuist = "Dit schaap is $status.";}
+else if(empty($datum)) { $color = 'red'; $onjuist = "Datum is onbekend.";}
+else if ($date < $dmmax_bij_afvoer) { $color = 'red'; $onjuist = "Datum ligt voor $maxdm_bij_afvoer."; }
+else if ($modtech == 1 && !isset($speen) && !isset($aank)) { $color = 'red'; $onjuist = "Dit schaap heeft nog geen speendatum."; }
+else if(empty($kzlRelatie)) { $color = 'red'; $onjuist = "Bestemming is onbekend."; }
+else if(isset($wdgn_v)) { $color = 'red'; $onjuist = $pildm.' - '.$pil; }
+
+	 if ( isset($onjuist)) {	$oke_afv = 0;	} else { $oke_afv = 1;	} // $oke_afv kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
 // Einde t.b.v. checkbox Afvoeren
 
 // t.b.v. checkbox Alleen wegen
@@ -479,42 +584,15 @@ for ($i = 0; $i < $count; $i++){
 	</td> <!-- EINDE KZLREDEN -->
 	
  <td width = 80 align = "center"><?php 
-if (isset($status)) { echo $fase ;} ?>
+if (isset($status)) { echo $fase; } ?>
  </td> <?php
-// Wachtdagen bepalen
-if(isset($schaapId)) {
-$zoek_pil = mysqli_query($db,"
-SELECT date_format(h.datum,'%d-%m-%Y') datum, art.naam, DATEDIFF( (h.datum + interval art.wdgn_v day), '".mysqli_real_escape_string($db,$date)."') resterend
-FROM tblSchaap s
- join tblStal st on (st.schaapId = s.schaapId)
- join tblHistorie h on (h.stalId = st.stalId)
- join tblActie a on (a.actId = h.actId)
- left join tblNuttig n on (h.hisId = n.hisId)
- left join tblInkoop i on (i.inkId = n.inkId)
- left join tblArtikel art on (i.artId = art.artId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and s.schaapId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 8 and h.skip = 0
- and '".mysqli_real_escape_string($db,$date)."' < (h.datum + interval art.wdgn_v day)
-") or die (mysqli_error($db));	
 
-$vandaag = date('Y-m-d');
-		while($row = mysqli_fetch_array($zoek_pil))
-		{ $pildm = $row['datum']; 
-		  $pil = $row['naam']; 
-		  $wdgn_v = $row['resterend']; }
-}
-// Einde Wachtdagen bepalen
 ?>
- <td align = center ><?php if(isset($wdgn_v)) { echo $wdgn_v; } ?></td>
+ <td align = center ><?php if(isset($wdgn_v)) { echo $wdgn_v; } unset($wdgn_v); ?></td>
 <!-- Foutmeldingen -->
- <td colspan = 2 width = 300 style = "color : red"> <?php
-	if(!isset($schaapId)) 					  { echo 'Levensnummer onbekend.'; }
-	else if($status == 'afgeleverd')   { echo "Dit schaap is reeds $status."; } 
-	else if($status == 'overleden' || $status == 'uitgeschaard')   { echo "Dit schaap is $status."; } 
-	else if(isset($fase) && $date < $dmmax_bij_afvoer)   { echo "Datum ligt voor $maxdm_bij_afvoer."; } 
-	else if($date < $dmmax_bij_wegen)   { echo "Datum ligt voor $maxdm_bij_wegen."; } 
-	else if($modtech == 1 && !isset($speen) && !isset($aank)) { echo "Dit schaap heeft nog geen speendatum."; }
-	else if(isset($wdgn_v)) { echo $pildm.' - '.$pil; } unset($wdgn_v);
-	//else if($modtech == 1 && !isset($aank) && !isset($bezet)) { echo "Dit schaap heeft nog geen aankoopdatum."; } 
+ <td colspan = 2 width = 300 style = "color : <?php echo $color; ?>"> <?php 
+
+ if (isset($onjuist)) { echo $onjuist; }
 	unset($status); ?>
  </td>	
  <td>	
