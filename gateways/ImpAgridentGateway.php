@@ -287,6 +287,13 @@ impAgrident rd
     GROUP BY s.levensnummer
  ) b on (rd.levensnummer = b.levensnummer)
  left join tblRedenuser red on (rd.reden = red.redId and red.lidId = :lidId)
+ left join (
+    SELECT rd.Id, count(dup.Id) dubbelen
+    FROM impAgrident rd
+     join impAgrident dup on (rd.lidId = dup.lidId and rd.levensnummer = dup.levensnummer and rd.Id <> dup.Id and rd.actId = dup.actId)
+    WHERE rd.actId = 12 and rd.ubnId is null and dup.ubnId is null and isnull(dup.verwerkt)
+    GROUP BY rd.Id
+ ) dup on (rd.Id = dup.Id)
 SQL;
     }
 

@@ -66,7 +66,7 @@ if (isset($_POST['knpDelDubbelen'])) {
     //echo 'De dubbele imports zijn verwijderd.';
 }
 
-$velden = "rd.Id readId, rd.datum, right(rd.levensnummer,$Karwerk) werknr, rd.levensnummer levnr, rd.ubn ubn_afv, r.ubn ctrubn, rd.reden redId_rd, red.reduId reduId_db, gewicht kg, s.schaapId, s.geslacht, ouder.datum dmaanw, lower(haf.actie) actie, haf.af, hs.datum dmspeen, ak.datum dmaankoop, date_format(max.datummax_afv,'%d-%m-%Y') maxdatum_afv, max.datummax_afv, date_format(max.datummax_kg,'%d-%m-%Y') maxdatum_kg, max.datummax_kg, b.bezId ";
+$velden = "rd.Id readId, rd.datum, right(rd.levensnummer,$Karwerk) werknr, rd.levensnummer levnr, rd.ubn ubn_afv, r.ubn ctrubn, rd.reden redId_rd, red.reduId reduId_db, gewicht kg, s.schaapId, s.geslacht, ouder.datum dmaanw, lower(haf.actie) actie, haf.af, hs.datum dmspeen, ak.datum dmaankoop, date_format(max.datummax_afv,'%d-%m-%Y') maxdatum_afv, max.datummax_afv, date_format(max.datummax_kg,'%d-%m-%Y') maxdatum_kg, max.datummax_kg, b.bezId, dup.dubbelen ";
 
 $tabel = $impagrident_gateway->getInsAfvoerFrom();
 $WHERE = $impagrident_gateway->getInsAfvoerWhere($lidId);
@@ -149,6 +149,7 @@ $date       = date('Y-m-d', strtotime($date));
     $Id = $array['readId'];
     $werknr = $array['werknr'];
     $levnr = $array['levnr'];
+    $levnr_dupl = $array['dubbelen']; // twee keer in reader bestand
     $ubnbest = $array['ubn_afv'];
     $ubn_db = $array['ctrubn'];
     $redId_rd = $array['redId_rd'];
@@ -177,20 +178,28 @@ if (isset($_POST['knpVervers_'])) {
     $makeday = date_create($_POST["txtAfvoerdag_$Id"]); $date =  date_format($makeday, 'Y-m-d'); 
 }
 
+// Wachtdagen bepalen
+if(isset($schaapId)) {
+    $schaap_gateway = new SchaapGateway();
+    [$pildm, $pil, $wdgn_v] = $schaap_gateway->zoek_pil_afvoer($lidId, $schaapId, $date);
+$vandaag = date('Y-m-d');
+}
+// Einde Wachtdagen bepalen
+
+unset($onjuist);
+unset($color);
 // t.b.v. checkbox Afvoeren
-     If     
-     ( !isset($schaapId) || $status == 'overleden' || $status == 'afgeleverd' || $status == 'uitgeschaard' || /*levensnummer moet aanwezig zijn */
-         empty($datum)                            || # of datum is leeg
-         $date < $dmmax_bij_afvoer                            || # of datum ligt voor de laatst geregistreerde datum van het schaap
-         ($modtech == 1 && !isset($speen) && !isset($aank))        || # speendatum ontbreekt bij dieren die niet zijn aangekocht.
-         //($modtech == 1 && !isset($aank) && !isset($bezet))        || # aankoopdatum ontbreekt van dieren die niet in een hok hebben gezeten.
-         //($modtech == 1 && empty($kg) && $fase == 'lam')            || # of gewicht is leeg
-         //$status == 'afgeleverd'    15-2-19 : dubbel benoemd            || # of is reeds afgeleverd
-        // $status == 'overleden'    15-2-19 : dubbel benoemd            || # of is reeds overleden
-        empty($kzlRelatie)                      # bestemming is onbekend                         
-                                                 
-     )
-     {    $oke_afv = 0;    } else { $oke_afv = 1;    } // $oke_afv kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
+     if(!isset($schaapId)) { $color = 'red';  $onjuist = 'Levensnummer onbekend'; }
+else if(isset($levnr_dupl) )       { $color = 'blue'; $onjuist = 'Dubbel in de reader.'; }
+else if($status == 'afgeleverd') { $color = 'red';  $onjuist = "Dit schaap is reeds $status."; }
+else if($status == 'overleden' || $status == 'uitgeschaard') { $color = 'red';  $onjuist = "Dit schaap is $status."; }
+else if(empty($datum)) { $color = 'red'; $onjuist = "Datum is onbekend.";}
+else if ($date < $dmmax_bij_afvoer) { $color = 'red'; $onjuist = "Datum ligt voor $maxdm_bij_afvoer."; }
+else if ($modtech == 1 && !isset($speen) && !isset($aank)) { $color = 'red'; $onjuist = "Dit schaap heeft nog geen speendatum."; }
+else if(empty($kzlRelatie)) { $color = 'red'; $onjuist = "Bestemming is onbekend."; }
+else if(isset($wdgn_v)) { $color = 'red'; $onjuist = $pildm.' - '.$pil; }
+
+     if (isset($onjuist)) {    $oke_afv = 0;    } else { $oke_afv = 1;    } // $oke_afv kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
 // Einde t.b.v. checkbox Afvoeren
 
 // t.b.v. checkbox Alleen wegen
@@ -303,27 +312,14 @@ if( $redId_rd <> NULL && empty($reduId_db) && empty($_POST["kzlReden_$Id"]) ) { 
     </td> <!-- EINDE KZLREDEN -->
     
  <td width = 80 align = "center"><?php 
-if (isset($status)) { echo $fase ;} ?>
- </td> <?php
-// Wachtdagen bepalen
-if(isset($schaapId)) {
-    $schaap_gateway = new SchaapGateway();
-    [$pildm, $pil, $wdgn_v] = $schaap_gateway->zoek_pil_afvoer($lidId, $schaapId, $date);
-$vandaag = date('Y-m-d');
-}
-// Einde Wachtdagen bepalen
-?>
- <td align = center ><?php if(isset($wdgn_v)) { echo $wdgn_v; } ?></td>
+if (isset($status)) { echo $fase; } ?>
+ </td> 
+ <td align = center ><?php if(isset($wdgn_v)) { echo $wdgn_v; } unset($wdgn_v); ?></td>
 <!-- Foutmeldingen -->
- <td colspan = 2 width = 300 style = "color : red"> <?php
-    if(!isset($schaapId))                       { echo 'Levensnummer onbekend.'; }
-    else if($status == 'afgeleverd')   { echo "Dit schaap is reeds $status."; } 
-    else if($status == 'overleden' || $status == 'uitgeschaard')   { echo "Dit schaap is $status."; } 
-    else if(isset($fase) && $date < $dmmax_bij_afvoer)   { echo "Datum ligt voor $maxdm_bij_afvoer."; } 
-    else if($date < $dmmax_bij_wegen)   { echo "Datum ligt voor $maxdm_bij_wegen."; } 
-    else if($modtech == 1 && !isset($speen) && !isset($aank)) { echo "Dit schaap heeft nog geen speendatum."; }
-    else if(isset($wdgn_v)) { echo $pildm.' - '.$pil; } unset($wdgn_v);
-    //else if($modtech == 1 && !isset($aank) && !isset($bezet)) { echo "Dit schaap heeft nog geen aankoopdatum."; } 
+ <td colspan = 2 width = 300 style = "color : <?php echo $color; ?>"> <?php
+    
+    if (isset($onjuist)) { echo $onjuist; }
+     
     unset($status); ?>
  </td>    
  <td>    
