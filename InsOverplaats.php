@@ -44,6 +44,31 @@ If (isset ($_POST['knpInsert_'])) {
 	//header("Location: ".$url."InsOverplaats.php");
 	}
 
+if (isset($_POST['knpDelDubbelen'])) {
+
+    $sqlUpdate = mysqli_query($db,"
+        UPDATE impAgrident ia
+        JOIN (
+            SELECT datum, levensnummer, hokId, MIN(inleesnr) AS eerste_inleesnr
+            FROM impAgrident
+            WHERE actId = 5
+              AND (verwerkt IS NULL OR verwerkt = '')
+              AND lidId = '".mysqli_real_escape_string($db,$lidId)."'
+            GROUP BY datum, levensnummer, hokId
+            HAVING COUNT(*) > 1
+        ) d ON (ia.datum = d.datum and ia.levensnummer = d.levensnummer and ia.hokId = d.hokId)
+        SET ia.verwerkt = 2
+        WHERE ia.inleesnr <> d.eerste_inleesnr
+          AND ia.actId = 5
+          AND (ia.verwerkt IS NULL OR ia.verwerkt = '')
+          AND ia.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    ");
+
+    if (!$sqlUpdate) {
+    die(mysqli_error($db));
+		}
+
+}
 
 $velden = "rd.Id readId, str_to_date(rd.datum,'%Y-%m-%d') sort , rd.datum, rd.verwerkt, rd.levensnummer levnr, rd.hokId hok_rd, hb.hokId hok_db,
 rs.Id readId_sp,
@@ -109,16 +134,46 @@ include "paginas.php";
 
 $data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id");
 
- ?>
+$dubbel_ingelezen = mysqli_query($db,"
+SELECT EXISTS (
+    SELECT 1
+    FROM impAgrident ia
+    JOIN (
+        SELECT datum, levensnummer, hokId, MIN(inleesnr) AS eerste_inleesnr
+        FROM impAgrident
+        WHERE actId = 5
+          AND (verwerkt IS NULL OR verwerkt = '')
+          AND lidId = '".mysqli_real_escape_string($db,$lidId)."'
+        GROUP BY datum, levensnummer, hokId
+        HAVING COUNT(*) > 1
+    ) d ON (ia.datum = d.datum and ia.levensnummer = d.levensnummer and ia.hokId = d.hokId)
+    WHERE ia.inleesnr <> d.eerste_inleesnr
+      AND ia.actId = 5
+      AND (ia.verwerkt IS NULL OR ia.verwerkt = '')
+      AND ia.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+) AS heeft_duplicaten
+") or die (mysqli_error($db)); 
+
+$di = mysqli_fetch_assoc($dubbel_ingelezen); ?>
+
+<form action="InsOverplaats.php" method = "post">
 <table border = 0>
-<tr> <form action="InsOverplaats.php" method = "post">
+<tr>
  <td colspan = 2 style = "font-size : 13px;">
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
  <td colspan = 2 align = "center" style = "font-size : 14px;"><?php 
 echo $page_numbers; ?></td>
  <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
  <td colspan = 3 align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
- <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td></tr>
+ <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td>
+ <td colspan="3" align="right">
+<?php if ($di['heeft_duplicaten']) { ?>
+   <button type="submit" name="knpDelDubbelen">
+            Verwijder dubbele imports
+   </button>
+<?php } ?>
+ </td>
+</tr>
 <tr valign = bottom style = "font-size : 12px;">
  <th>Inlezen<br><b style = "font-size : 10px;">Ja/Nee</b><br> <input type="checkbox" id="selectall" checked /> <hr></th>
  <th>Verwij-<br>deren<br> <input type="checkbox" id="selectall_del" /> <hr></th>
