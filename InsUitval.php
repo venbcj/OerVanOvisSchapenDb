@@ -45,24 +45,15 @@ $impagrident_gateway = new ImpAgridentGateway();
 If (isset($_POST['knpInsert_'])) {
     include "post_readerUitv.php"; #Deze include moet voor de vervversing in de functie header()
 }
-if($reader == 'Agrident') {
+
     $velden = "rd.Id readId, date_format(rd.datum,'%Y-%m-%d') sort, rd.datum, rd.levensnummer levnr, rd.reden reden_uitv, ru.reduId dbreduId,
         lower(h.actie) actie, h.af, s.geslacht, ouder.datum dmaanw, date_format(max.datummax,'%Y-%m-%d') datummax, date_format(max.datummax,'%d-%m-%Y') maxdatum"; 
     $tabel = $impagrident_gateway->getInsUitvalAgridentFrom();
     $WHERE = $impagrident_gateway->getInsUitvalAgridentWhere($lidId);
     $order_by = "ORDER BY sort, rd.Id";
-} else {
-    $velden = "rd.readId, str_to_date(rd.datum,'%d/%m/%Y') sort, rd.datum, rd.levnr_uitv levnr, rd.reden_uitv, ru.reduId dbreduId,
-        lower(h.actie) actie, h.af, s.geslacht, ouder.datum dmaanw, date_format(max.datummax,'%Y-%m-%d') datummax, date_format(max.datummax,'%d-%m-%Y') maxdatum"; 
-    $tabel = $impagrident_gateway->getInsUitvalBiocontrolFrom();
-    $WHERE = $impagrident_gateway->getInsUitvalBiocontrolWhere($lidId);
-    $order_by = "ORDER BY sort, rd.readId";
-}
 
 include "paginas.php";
-$data = $paginator->fetch_data($velden, $order_by); 
-
-?>
+$data = $paginator->fetch_data($velden, $order_by); ?>
 
 <table border = 0>
 <tr> <form action="InsUitval.php" method = "post">

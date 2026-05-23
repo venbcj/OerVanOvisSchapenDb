@@ -324,21 +324,17 @@ if(isset($actId)) { // Moeder (over)plaatsen in verblijf
                 $Melding = 'GER'; //geboren
                 include "maak_request.php";
             }
-            if ($reader == 'Agrident') {
+
                 $impagrident_gateway->updateReaderAgrident($recId);
-            } else {
-                $impagrident_gateway->updateReaderBiocontrol($recId);
-            }
+
         }
     // ***************************
     //   EINDE GEGEVENS INLEZEN
     // ***************************
     }
     if ($fldKies == 0 && $fldDel == 1) {
-        if ($reader == 'Agrident') {
+
             $impagrident_gateway->updateReaderAgrident($recId);
-        } else {
-            $updateReader = $impagrident_gateway->updateReaderBiocontrol($recId);
-        }
+
     }
 }

@@ -743,52 +743,9 @@ left join tblRedenuser ru on (rd.reden = ru.reduId)
 SQL;
     }
 
-    public function getInsMedicijnBiocontrolFrom() {
-        return <<<SQL
-impReader rd 
-left join tblSchaap s on (rd.levnr_pil = s.levensnummer)
-left join tblStal st on (s.schaapId = st.schaapId)
-left join tblUbn u on (u.ubnId = st.ubnId and u.lidId = rd.lidId)
-left join (
-    SELECT c.scan, a.artId, c.stdat, a.actief, ru.pil, ru.reduId, r.reden
-    FROM tblCombireden c 
-     join tblArtikel a on (a.artId = c.artId)
-     join tblRedenuser  ru on (ru.reduId = c.reduId)
-     join tblReden r on (ru.redId = r.redId)
-    WHERE ru.lidId = :lidId
- ) cr on (cr.scan = rd.reden_pil)
-left join 
-(
-    SELECT min(i.inkId) inkId, a.artId, a.naam, a.stdat, e.eenheid, sum(i.inkat-coalesce(n.vbrat,0)) vrdat
-    FROM tblEenheid e
-     join tblEenheiduser eu on (e.eenhId = eu.eenhId)
-     join tblInkoop i on (i.enhuId = eu.enhuId)
-     join tblArtikel a on (i.artId = a.artId)
-     left join (
-        SELECT n.inkId, sum(n.nutat*n.stdat) vbrat
-        FROM tblNuttig n
-         join tblHistorie h on (n.hisId = h.hisId)
-         join tblStal st on (h.stalId = st.stalId)
-         join tblUbn u on (u.ubnId = st.ubnId)
-        WHERE u.lidId = :lidId and h.skip = 0
-        GROUP BY n.inkId
-     ) n on (i.inkId = n.inkId)
-    WHERE eu.lidId = :lidId and i.inkat-coalesce(n.vbrat,0) > 0 and a.soort = 'pil'
-    GROUP BY a.artId, a.naam, a.stdat, e.eenheid
-) i on (cr.artId = i.artId)
-SQL;
-    }
-
     public function getInsMedicijnAgridentWhere($lidId) {
         return [
             "WHERE rd.lidId = :lidId and rd.actId = 8 and isnull(rd.verwerkt) ",
-            [[':lidId', $lidId, Type::INT]]
-        ];
-    }
-
-    public function getInsMedicijnBiocontrolWhere($lidId) {
-        return [
-            "WHERE rd.lidId = :lidId and rd.teller_pil is not null and isnull(rd.verwerkt) ",
             [[':lidId', $lidId, Type::INT]]
         ];
     }
@@ -901,72 +858,6 @@ SQL;
         ];
     }
 
-    public function getInsOverplaatsBiocontrolFrom() {
-        return <<<SQL
-impReader rd
- left join (
-    SELECT levnr_sp, readId 
-    FROM impReader 
-    WHERE lidId = :lidId
- and teller_sp is not null
- and isnull(verwerkt)
- ) rs on (rd.levnr_ovpl = rs.levnr_sp)
- left join (
-     SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
-     FROM tblSchaap s
-      join tblStal st on (st.schaapId = s.schaapId)
-      join tblUbn u on (u.ubnId = st.ubnId)
-      join tblHistorie h on (st.stalId = h.stalId)
-     WHERE u.lidId = :lidId
- and h.skip = 0
-     GROUP BY s.schaapId, s.levensnummer, s.geslacht
- ) s on (rd.levnr_ovpl = s.levensnummer)
- left join tblStal st on (st.schaapId = s.schaapId
- and isnull(st.rel_best))
- left join tblUbn u on (u.ubnId = st.ubnId and u.lidId = :lidId)
- left join (
-    SELECT h.hisId, a.actie, a.af, h.datum
-    FROM tblHistorie h
-     join tblActie a on (h.actId = a.actId)
-    WHERE h.skip = 0
- ) h on (h.hisId = s.hisId)
- left join (
-    SELECT st.schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4
- and h.skip = 0
- ) spn on (spn.schaapId = s.schaapId)
- left join (
-    SELECT st.schaapId
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3
- and h.skip = 0
- ) prnt on (prnt.schaapId = s.schaapId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 14
- and h.skip = 0
- ) hu on (hu.schaapId = s.schaapId)
- left join (
-    SELECT scan
-    FROM tblHok
-    WHERE lidId = :lidId
- and actief = 1
- ) hb on (rd.hok_ovpl = hb.scan)
-SQL;
-    }
-
-    public function getInsOverplaatsBiocontrolWhere($lidId) {
-        return [
-            "WHERE rd.lidId = :lidId and rd.teller_ovpl is not null and isnull(rd.verwerkt) and isnull(rs.readId) ",
-            [[':lidId', $lidId, Type::INT]]
-        ];
-    }
-
     public function getInsSpenenAgridentFrom() {
         return <<<SQL
 impAgrident rd
@@ -1045,85 +936,7 @@ SQL;
             [[':lidId', $lidId, Type::INT]]
         ];
     }
-
-    public function getInsSpenenBiocontrolFrom() {
-        return <<<SQL
-impReader rd
- left join (
-    SELECT r.lidId, r.levnr_ovpl, r.hok_ovpl
-    FROM impReader r
-    WHERE r.teller_ovpl is not null
- and isnull(r.verwerkt) 
- ) ro on (rd.lidId = ro.lidId
- and rd.levnr_sp = ro.levnr_ovpl)
- left join (
-     SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
-     FROM tblSchaap s
-      join tblStal st on (st.schaapId = s.schaapId)
-      join tblUbn u on (u.ubnId = st.ubnId)
-      join tblHistorie h on (st.stalId = h.stalId)
-     WHERE u.lidId = :lidId
- and h.skip = 0
-     GROUP BY s.schaapId, s.levensnummer, s.geslacht
- ) s on (rd.levnr_sp = s.levensnummer)
- left join (
-    SELECT h.hisId, a.actie, a.af
-    FROM tblHistorie h
-     join tblActie a on (h.actId = a.actId)
-     WHERE h.skip = 0
- ) h on (h.hisId = s.hisId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 4
- and h.skip = 0
- ) hs on (hs.schaapId = s.schaapId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3
- and h.skip = 0
- ) ouder on (ouder.schaapId = s.schaapId)
- left join tblHok kh on (coalesce(rd.hok_sp,ro.hok_ovpl) = kh.scan
- and kh.lidId = :lidId)
- left join (
-     SELECT rd.readId, count(dup.readId) dubbelen
-    FROM impReader rd
-     join impReader dup on (rd.lidId = dup.lidId
- and rd.levnr_sp = dup.levnr_sp
- and rd.readId <> dup.readId)
-    WHERE rd.teller_sp is not null
- and rd.lidId = :lidId
- and ISNULL(rd.verwerkt)
- and ISNULL(dup.verwerkt)
-    GROUP BY rd.readId
- ) dup on (rd.readId = dup.readId)
- left join (
-    SELECT m.levensnummer, max(m.datum) datum
-    FROM (
-        SELECT s.levensnummer, h.datum
-        FROM tblSchaap s 
-         join tblStal st on (st.schaapId = s.schaapId)
-         join tblUbn u on (u.ubnId = st.ubnId)
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE u.lidId = :lidId
- and s.levensnummer is not null
- and h.skip = 0
-    ) m
-    GROUP BY m.levensnummer 
- ) lstday on (lstday.levensnummer = rd.levnr_sp )
-SQL;
-    }
-
-    public function getInsSpenenBiocontrolWhere($lidId) {
-        return [
-            "WHERE rd.lidId = :lidId and rd.teller_sp is not null and isnull(rd.verwerkt)",
-            [[':lidId', $lidId, Type::INT]]
-        ];
-    }
-
+    
     public function getInsStallijstscanFrom() {
         return <<<SQL
 impAgrident rd
@@ -1576,105 +1389,6 @@ SQL
         ];
     }
 
-    public function getInsUitvalBiocontrolFrom() {
-        return <<<SQL
-impReader rd
- left join (
-    SELECT r.reduId, r.lidId 
-    FROM tblRedenuser r
-    WHERE r.lidId = :lidId
- and r.uitval = 1
- ) ru on (ru.reduId = rd.reden_uitv
- and ru.lidId = rd.lidId)
- left join (
-     SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
-     FROM tblSchaap s
-      join tblStal st on (st.schaapId = s.schaapId)
-      join tblUbn u on (u.ubnId = st.ubnId)
-      join tblHistorie h on (st.stalId = h.stalId)
-     WHERE u.lidId = :lidId
- and h.skip = 0
-     GROUP BY s.schaapId, s.levensnummer, s.geslacht
- ) s on (rd.levnr_uitv = s.levensnummer)
- left join (
-    SELECT h.hisId, a.actie, a.af
-    FROM tblHistorie h
-     join tblActie a on (h.actId = a.actId)
-    WHERE h.skip = 0
- ) h on (h.hisId = s.hisId)
- left join (
-    SELECT st.schaapId, h.datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3
- and h.skip = 0
- ) ouder on (ouder.schaapId = s.schaapId)
- left join (
-    SELECT sd.schaapId, max(sd.datum) datummax 
-    FROM (
-        SELECT st.schaapId, max(h.datum) datum
-        FROM tblStal st
-         join tblUbn u on (u.ubnId = st.ubnId)
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE u.lidId = :lidId
- and h.skip = 0
-        GROUP BY st.schaapId         
-
-        union
-
-        SELECT  mdr.schaapId, min(h.datum) datum
-        FROM tblSchaap mdr
-         join tblVolwas v on (mdr.schaapId = v.mdrId)
-         join tblSchaap lam on (v.volwId = lam.volwId)
-         join tblStal st on (st.schaapId = lam.schaapId)
-         join tblUbn u on (u.ubnId = st.ubnId)
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 1
- and h.skip = 0
- and u.lidId = :lidId
-        GROUP BY mdr.schaapId
-
-        Union
-
-        SELECT mdr.schaapId, max(h.datum) datum
-        FROM tblSchaap mdr
-         join tblVolwas v on (mdr.schaapId = v.mdrId)
-         join tblSchaap lam on (v.volwId = lam.volwId)
-         join tblStal st on (st.schaapId = lam.schaapId)
-         join tblUbn u on (u.ubnId = st.ubnId)
-         join tblHistorie h on (st.stalId = h.stalId)
-        WHERE h.actId = 1
- and h.skip = 0
- and u.lidId = :lidId
-        GROUP BY mdr.schaapId, h.actId
-        HAVING (max(h.datum) > min(h.datum))
-
-        Union
-
-        SELECT s.schaapId, p.dmafsluit datum
-        FROM tblVoeding vd
-         join tblPeriode p on (p.periId = vd.periId)
-         join tblBezet b on (b.periId = p.periId)
-         join tblHistorie h on (h.hisId = b.hisId)
-         join tblStal st on (st.stalId = h.stalId)
-         join tblUbn u on (u.ubnId = st.ubnId)
-         join tblSchaap s on (s.schaapId = st.schaapId)
-        WHERE h.skip = 0
- and u.lidId = :lidId
-        GROUP BY s.schaapId, p.dmafsluit
-    ) sd
-    GROUP BY sd.schaapId
- ) max on (s.schaapId = max.schaapId)
-SQL
-        ; 
-    }
-
-    public function getInsUitvalBiocontrolWhere($lidId) {
-        return [
-            "WHERE rd.lidId = :lidId and rd.teller_uitv is not null and isnull(rd.verwerkt) ",
-            [[':lidId', $lidId, Type::INT]]
-        ];
-    }
 
     public function getInsVoerregistratieFrom() {
         return <<<SQL
@@ -2158,13 +1872,6 @@ SQL;
         $this->run_query($sql, $args);
     }
 
-    public function updateReaderBiocontrol($recId) {
-        $sql = <<<SQL
-        UPDATE impReader set verwerkt = 1 WHERE readId = :recId
-SQL;
-        $args = [[':recId', $recId, Type::INT]];
-        $this->run_query($sql, $args);
-    }
 
     public function zoek_data_reader($recId) {
         $sql = <<<SQL

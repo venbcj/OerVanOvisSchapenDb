@@ -48,21 +48,13 @@ if (Auth::is_logged_in()) {
         include "post_readerOvp.php"; #Deze include moet voor de vervversing in de functie header()
     }
 
-    if ($reader == 'Agrident') {
         $velden = "rd.Id readId, str_to_date(rd.datum,'%Y-%m-%d') sort , rd.datum, rd.verwerkt, rd.levensnummer levnr, rd.hokId hok_rd, hb.hokId hok_db,
             rs.Id readId_sp,
             h.actie status, h.af, spn.schaapId spn, prnt.schaapId prnt, s.geslacht, date_format(h.datum,'%d-%m-%Y') maxdatum, h.datum datummax";
         $tabel = $impagrident_gateway->getInsOverplaatsAgridentFrom();
         $WHERE = $impagrident_gateway->getInsOverplaatsAgridentWhere($lidId);
         $order_by = "ORDER BY sort, rd.Id";
-    } else {
-        $velden = "rd.readId, str_to_date(rd.datum,'%d/%m/%Y') sort , rd.datum, rd.verwerkt, rd.levnr_ovpl levnr, rd.hok_ovpl hok_rd, hb.scan hok_db, 
-            rs.readId readId_sp,
-            h.actie status, h.af, spn.schaapId spn, prnt.schaapId prnt, s.geslacht, date_format(h.datum,'%d-%m-%Y') maxdatum, h.datum datummax";
-        $tabel = $impagrident_gateway->getInsOverplaatsBiocontrolFrom();
-        $WHERE = $impagrident_gateway->getInsOverplaatsBiocontrolWhere($lidId);
-        $order_by = "ORDER BY sort, rd.readId";
-    }
+
     include "paginas.php";
     $data = $paginator->fetch_data($velden, $order_by);
 ?>

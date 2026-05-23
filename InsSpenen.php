@@ -51,7 +51,6 @@ If (isset($_POST['knpInsert_']))  {
     include "post_readerSpn.php"; #Deze include moet voor de vervversing in de functie header()
 }
 
-if($reader == 'Agrident') {
     $velden = "str_to_date(rd.datum,'%Y-%m-%d') sort , rd.datum, rd.Id readId, rd.levensnummer levnr, rd.gewicht kg,
         coalesce(rd.hokId,ro.hokId) rd_hok, kh.hokId db_scan,
         dup.dubbelen,
@@ -63,19 +62,6 @@ if($reader == 'Agrident') {
     $tabel = $impagrident_gateway->getInsSpenenAgridentFrom();
     $WHERE = $impagrident_gateway->getInsSpenenAgridentWhere($lidId);
     $order_by = "ORDER BY sort, rd.Id";
-} else {
-    $velden = "str_to_date(rd.datum,'%d/%m/%Y') sort , rd.datum, rd.readId, rd.levnr_sp levnr, round((rd.speenkg/100),2) kg,
-        coalesce(rd.hok_sp,ro.hok_ovpl) rd_hok, kh.scan db_scan,
-        dup.dubbelen,
-        s.levensnummer, s.geslacht,
-        lower(h.actie) actie, h.af,
-        date_format(hs.datum,'%d-%m-%Y') speendm, hs.datum dmspeen, ouder.datum dmaanw,
-        lstday.datum dmlst ";
-
-    $tabel = $impagrident_gateway->getInsSpenenBiocontrolFrom();
-    $WHERE = $impagrident_gateway->getInsSpenenBiocontrolWhere($lidId);
-    $order_by = "ORDER BY sort, rd.readId";
-}
 
 include "paginas.php";
 $data = $paginator->fetch_data($velden, $order_by); 

@@ -135,19 +135,8 @@ class ImpAgridentGatewayTest extends GatewayCase {
         $this->assertNotFalse($result);
     }
 
-    public function test_getInsMedicijnBiocontrolFrom() {
-        
-        $result = $this->sut->getInsMedicijnBiocontrolFrom();
-        $this->assertNotFalse($result);
-    }
-
     public function test_getInsMedicijnAgridentWhere() {
         $result = $this->sut->getInsMedicijnAgridentWhere(self::LIDID);
-        $this->assertNotFalse($result);
-    }
-
-    public function test_getInsMedicijnBiocontrolWhere() {
-        $result = $this->sut->getInsMedicijnBiocontrolWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -173,17 +162,6 @@ class ImpAgridentGatewayTest extends GatewayCase {
         $this->assertNotFalse($result);
     }
 
-    public function test_getInsOverplaatsBiocontrolFrom() {
-        
-        $result = $this->sut->getInsOverplaatsBiocontrolFrom();
-        $this->assertNotFalse($result);
-    }
-
-    public function test_getInsOverplaatsBiocontrolWhere() {
-        $result = $this->sut->getInsOverplaatsBiocontrolWhere(self::LIDID);
-        $this->assertNotFalse($result);
-    }
-
     public function test_getInsSpenenAgridentFrom() {
         
         $result = $this->sut->getInsSpenenAgridentFrom();
@@ -192,17 +170,6 @@ class ImpAgridentGatewayTest extends GatewayCase {
 
     public function test_getInsSpenenAgridentWhere() {
         $result = $this->sut->getInsSpenenAgridentWhere(self::LIDID);
-        $this->assertNotFalse($result);
-    }
-
-    public function test_getInsSpenenBiocontrolFrom() {
-        
-        $result = $this->sut->getInsSpenenBiocontrolFrom();
-        $this->assertNotFalse($result);
-    }
-
-    public function test_getInsSpenenBiocontrolWhere() {
-        $result = $this->sut->getInsSpenenBiocontrolWhere(self::LIDID);
         $this->assertNotFalse($result);
     }
 
@@ -266,16 +233,6 @@ class ImpAgridentGatewayTest extends GatewayCase {
         $this->assertNotFalse($result);
     }
 
-    public function test_getInsUitvalBiocontrolFrom() {
-        
-        $result = $this->sut->getInsUitvalBiocontrolFrom();
-        $this->assertNotFalse($result);
-    }
-
-    public function test_getInsUitvalBiocontrolWhere() {
-        $result = $this->sut->getInsUitvalBiocontrolWhere(self::LIDID);
-        $this->assertNotFalse($result);
-    }
 
     public function test_getInsVoerregistratieFrom() {
         
