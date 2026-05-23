@@ -46,11 +46,17 @@ If (isset($_POST['knpInsert_'])) {
     include "post_readerUitv.php"; #Deze include moet voor de vervversing in de functie header()
 }
 
-    $velden = "rd.Id readId, date_format(rd.datum,'%Y-%m-%d') sort, rd.datum, rd.levensnummer levnr, rd.reden reden_uitv, ru.reduId dbreduId,
-        lower(h.actie) actie, h.af, s.geslacht, ouder.datum dmaanw, date_format(max.datummax,'%Y-%m-%d') datummax, date_format(max.datummax,'%d-%m-%Y') maxdatum"; 
-    $tabel = $impagrident_gateway->getInsUitvalAgridentFrom();
-    $WHERE = $impagrident_gateway->getInsUitvalAgridentWhere($lidId);
-    $order_by = "ORDER BY sort, rd.Id";
+if (isset($_POST['knpDelDubbelen'])) {
+
+    $impagrident_gateway->verwerk_dubbele_import_zonder_ubnId($lidId, 14);
+
+}
+
+$velden = "rd.Id readId, date_format(rd.datum,'%Y-%m-%d') sort, rd.datum, rd.levensnummer levnr, rd.reden reden_uitv, ru.reduId dbreduId,
+    lower(h.actie) actie, h.af, s.geslacht, ouder.datum dmaanw, date_format(max.datummax,'%Y-%m-%d') datummax, date_format(max.datummax,'%d-%m-%Y') maxdatum"; 
+$tabel = $impagrident_gateway->getInsUitvalAgridentFrom();
+$WHERE = $impagrident_gateway->getInsUitvalAgridentWhere($lidId);
+$order_by = "ORDER BY sort, rd.Id";
 
 include "paginas.php";
 $data = $paginator->fetch_data($velden, $order_by); ?>
@@ -63,7 +69,15 @@ $data = $paginator->fetch_data($velden, $order_by); ?>
 echo $paginator->show_page_numbers(); ?></td>
  <td colspan = 2 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $paginator->show_rpp(); ?> </td>
  <td align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
- <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td></tr>
+ <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td>
+ <td colspan="3" align="right">
+<?php if ($impagrident_gateway->heeft_dubbele_imports_zonder_ubnId($lidId, 14)) { ?>
+   <button type="submit" name="knpDelDubbelen">
+            Verwijder dubbele imports
+   </button>
+<?php } ?>
+ </td>
+</tr>
 <tr valign = bottom style = "font-size : 12px;">
  <th>Inlezen<br><b style = "font-size : 10px;">Ja/Nee</b><br> <input type="checkbox" id="selectall" checked /> <hr></th>
  <th>Verwij-<br>deren<br> <input type="checkbox" id="selectall_del" /> <hr></th>
