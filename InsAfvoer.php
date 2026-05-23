@@ -61,7 +61,6 @@ If (isset($_POST['knpInsert_'])) {
 if (isset($_POST['knpDelDubbelen'])) {
 
     $impagrident_gateway->verwerk_dubbele_import_zonder_ubnId($lidId, 12);
-}
 
     //echo 'De dubbele imports zijn verwijderd.';
 }
