@@ -2148,6 +2148,35 @@ SQL
     return (bool)$row['heeft_duplicaten'];
     }
 
+    public function heeft_dubbele_imports_overplaatsing($lidId) {
+    $result = $this-.run_query(
+        <<<SQL
+SELECT EXISTS (
+    SELECT 1
+    FROM impAgrident ia
+    JOIN (
+        SELECT datum, levensnummer, hokId, MIN(inleesnr) AS eerste_inleesnr
+        FROM impAgrident
+        WHERE actId = 5
+          AND (verwerkt IS NULL OR verwerkt = '')
+          AND lidId = :lidId
+        GROUP BY datum, levensnummer, hokId
+        HAVING COUNT(*) > 1
+    ) d ON (ia.datum = d.datum and ia.levensnummer = d.levensnummer and ia.hokId = d.hokId)
+    WHERE ia.inleesnr <> d.eerste_inleesnr
+      AND ia.actId = 5
+      AND (ia.verwerkt IS NULL OR ia.verwerkt = '')
+      AND ia.lidId = :lidId
+) AS heeft_duplicaten
+SQL
+        , [
+            [':lidId', $lidId, Type::INT]
+        ]);
+
+    $row = $result->fetch();
+
+    return (bool)$row['heeft_duplicaten'];
+    }
 
     public function verwerk_dubbele_import_zonder_ubnId($lidId, $actId) {
         return $this->verwerk_dubbele_import($lidId, $actId, "IS NULL");
@@ -2188,6 +2217,30 @@ SQL
             [':actId', $actId, Type::INT]
         ]);
 
+    }
+
+    public function verwerk_dubbele_import_overplaatsing($lidId){
+        $this->run_query(
+            <<<SQL
+UPDATE impAgrident ia
+JOIN (
+    SELECT datum, levensnummer, hokId, MIN(inleesnr) AS eerste_inleesnr
+    FROM impAgrident
+    WHERE actId = 5
+      AND (verwerkt IS NULL OR verwerkt = '')
+      AND lidId = :lidId
+    GROUP BY datum, levensnummer, hokId
+    HAVING COUNT(*) > 1
+) d ON (ia.datum = d.datum and ia.levensnummer = d.levensnummer and ia.hokId = d.hokId)
+SET ia.verwerkt = 2
+WHERE ia.inleesnr <> d.eerste_inleesnr
+  AND ia.actId = 5
+  AND (ia.verwerkt IS NULL OR ia.verwerkt = '')
+  AND ia.lidId = :lidId            
+SQL
+        , [
+            [':lidId', $lidId, Type::INT]
+        ]);
     }
 
 }

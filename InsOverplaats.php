@@ -48,6 +48,12 @@ if (Auth::is_logged_in()) {
         include "post_readerOvp.php"; #Deze include moet voor de vervversing in de functie header()
     }
 
+if (isset($_POST['knpDelDubbelen'])) {
+
+    $impagrident_gateway->verwerk_dubbele_import_overplaatsing($lidId);
+
+}
+
         $velden = "rd.Id readId, str_to_date(rd.datum,'%Y-%m-%d') sort , rd.datum, rd.verwerkt, rd.levensnummer levnr, rd.hokId hok_rd, hb.hokId hok_db,
             rs.Id readId_sp,
             h.actie status, h.af, spn.schaapId spn, prnt.schaapId prnt, s.geslacht, date_format(h.datum,'%d-%m-%Y') maxdatum, h.datum datummax";
@@ -66,7 +72,15 @@ if (Auth::is_logged_in()) {
     echo $paginator->show_page_numbers(); ?></td>
  <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $paginator->show_rpp(); ?> </td>
  <td colspan = 3 align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
- <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td></tr>
+ <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td>
+ <td colspan="3" align="right">
+<?php if ($impagrident_gateway->heeft_dubbele_imports_overplaatsing($lidId)) { ?>
+   <button type="submit" name="knpDelDubbelen">
+            Verwijder dubbele imports
+   </button>
+<?php } ?>
+ </td>
+</tr>
 <tr valign = bottom style = "font-size : 12px;">
  <th>Inlezen<br><b style = "font-size : 10px;">Ja/Nee</b><br> <input type="checkbox" id="selectall" checked /> <hr></th>
  <th>Verwij-<br>deren<br> <input type="checkbox" id="selectall_del" /> <hr></th>
