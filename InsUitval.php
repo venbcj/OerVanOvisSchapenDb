@@ -44,9 +44,41 @@ If (isset($_POST['knpInsert_'])) {
 	Include "post_readerUitv.php"; #Deze include moet voor de vervversing in de functie header()
 	//header("Location: ".$url."insUitval.php"); 
 	}
-if($reader == 'Agrident') {
+
+if (isset($_POST['knpDelDubbelen'])) {
+
+    $sqlUpdate = mysqli_query($db,"
+        UPDATE impAgrident ia
+        JOIN (
+            SELECT 
+                datum,
+                levensnummer,
+                MIN(inleesnr) AS eerste_inleesnr
+            FROM impAgrident
+            WHERE actId = 14
+              AND (verwerkt IS NULL OR verwerkt = '')
+              AND lidId = '".mysqli_real_escape_string($db,$lidId)."'
+            GROUP BY datum, levensnummer
+            HAVING COUNT(*) > 1
+        ) d
+            ON ia.datum = d.datum
+           AND ia.levensnummer = d.levensnummer
+        SET ia.verwerkt = 2
+        WHERE ia.inleesnr <> d.eerste_inleesnr
+          AND ia.actId = 14
+          AND (ia.verwerkt IS NULL OR ia.verwerkt = '')
+          AND ia.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    ");
+
+    if (!$sqlUpdate) {
+    die(mysqli_error($db));
+}
+
+    //echo 'De dubbele imports zijn verwijderd.';
+}
+
 $velden = "rd.Id readId, date_format(rd.datum,'%Y-%m-%d') sort, rd.datum, rd.levensnummer levnr, rd.reden reden_uitv, ru.reduId dbreduId,
-lower(h.actie) actie, h.af, s.geslacht, ouder.datum dmaanw, date_format(max.datummax,'%Y-%m-%d') datummax, date_format(max.datummax,'%d-%m-%Y') maxdatum"; 
+lower(h.actie) actie, h.af, s.geslacht, ouder.datum dmaanw, date_format(max.datummax,'%Y-%m-%d') datummax, date_format(max.datummax,'%d-%m-%Y') maxdatum, dup.dubbelen"; 
 
 $tabel = "
 impAgrident rd
@@ -121,110 +153,69 @@ impAgrident rd
 	) sd
 	GROUP BY sd.schaapId
  ) max on (s.schaapId = max.schaapId)
+ left join (
+ 	SELECT rd.Id, count(dup.Id) dubbelen
+	FROM impAgrident rd
+	 join impAgrident dup on (rd.lidId = dup.lidId and rd.levensnummer = dup.levensnummer and rd.Id <> dup.Id and rd.actId = dup.actId)
+	WHERE rd.actId = 14 and isnull(dup.verwerkt)
+	GROUP BY rd.Id
+ ) dup on (rd.Id = dup.Id)
 "; 
 
 $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 14 and isnull(rd.verwerkt) ";
 
 include "paginas.php";
 
-$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id");
-}
+$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id"); 
 
-else {
-$velden = "rd.readId, str_to_date(rd.datum,'%d/%m/%Y') sort, rd.datum, rd.levnr_uitv levnr, rd.reden_uitv, ru.reduId dbreduId,
-lower(h.actie) actie, h.af, s.geslacht, ouder.datum dmaanw, date_format(max.datummax,'%Y-%m-%d') datummax, date_format(max.datummax,'%d-%m-%Y') maxdatum"; 
 
-$tabel = "
-impReader rd
- left join (
-	SELECT r.reduId, r.lidId 
-	FROM tblRedenuser r
-	WHERE r.lidId = '".mysqli_real_escape_string($db,$lidId)."' and r.uitval = 1
- ) ru on (ru.reduId = rd.reden_uitv and ru.lidId = rd.lidId)
- left join (
-	 SELECT max(h.hisId) hisId, s.schaapId, s.levensnummer, s.geslacht
-	 FROM tblSchaap s
-	  join tblStal st on (st.schaapId = s.schaapId)
-	  join tblHistorie h on (st.stalId = h.stalId)
-	 WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
-	 GROUP BY s.schaapId, s.levensnummer, s.geslacht
- ) s on (rd.levnr_uitv = s.levensnummer)
- left join (
-	SELECT h.hisId, a.actie, a.af
-	FROM tblHistorie h
-	 join tblActie a on (h.actId = a.actId)
-	WHERE h.skip = 0
- ) h on (h.hisId = s.hisId)
- left join (
-	SELECT st.schaapId, h.datum
-	FROM tblStal st
-	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 3 and h.skip = 0
- ) ouder on (ouder.schaapId = s.schaapId)
- left join (
-	SELECT sd.schaapId, max(sd.datum) datummax 
-	FROM (
-		SELECT st.schaapId, max(h.datum) datum
-		FROM tblStal st
-		 join tblHistorie h on (st.stalId = h.stalId)
-		WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)/* max datum uit tblHistorie */."' and h.skip = 0
-		GROUP BY st.schaapId		 
-		
-		union
-		
-		SELECT  mdr.schaapId, min(h.datum) datum
-		FROM tblSchaap mdr
-		 join tblVolwas v on (mdr.schaapId = v.mdrId)
-		 join tblSchaap lam on (v.volwId = lam.volwId)
-		 join tblStal st on (st.schaapId = lam.schaapId)
-		 join tblHistorie h on (st.stalId = h.stalId)
-		WHERE h.actId = 1 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)/* Eerste worp */."'
-		GROUP BY mdr.schaapId
+$dubbel_ingelezen = mysqli_query($db,"
+SELECT EXISTS (
+    SELECT 1
+    FROM impAgrident ia
+    JOIN (
+        SELECT 
+            datum,
+            levensnummer,
+            MIN(inleesnr) AS eerste_inleesnr,
+            COUNT(*) AS cnt
+        FROM impAgrident
+        WHERE actId = 14
+          AND (verwerkt IS NULL OR verwerkt = '')
+          AND lidId = '".mysqli_real_escape_string($db,$lidId)."'
+        GROUP BY datum, levensnummer
+        HAVING COUNT(*) > 1
+    ) d
+        ON ia.datum = d.datum
+       AND ia.levensnummer = d.levensnummer
+    WHERE ia.inleesnr <> d.eerste_inleesnr
+      AND ia.actId = 14
+      AND (ia.verwerkt IS NULL OR ia.verwerkt = '')
+      AND ia.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+) AS heeft_duplicaten
+") or die (mysqli_error($db)); 
 
-		Union
+$di = mysqli_fetch_assoc($dubbel_ingelezen);
 
-		SELECT mdr.schaapId, max(h.datum) datum
-		FROM tblSchaap mdr
-		 join tblVolwas v on (mdr.schaapId = v.mdrId)
-		 join tblSchaap lam on (v.volwId = lam.volwId)
-		 join tblStal st on (st.schaapId = lam.schaapId)
-		 join tblHistorie h on (st.stalId = h.stalId)
-		WHERE h.actId = 1 and h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)/* Laatste worp */."'
-		GROUP BY mdr.schaapId, h.actId
-		HAVING (max(h.datum) > min(h.datum))
-
-		Union
-
-		SELECT s.schaapId, p.dmafsluit datum
-		FROM tblVoeding vd
-		 join tblPeriode p on (p.periId = vd.periId)
-		 join tblBezet b on (b.periId = p.periId)
-		 join tblHistorie h on (h.hisId = b.hisId)
-		 join tblStal st on (st.stalId = h.stalId)
-		 join tblSchaap s on (s.schaapId = st.schaapId)
-		WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)/* Gevoerd */."'
-		GROUP BY s.schaapId, p.dmafsluit
-	) sd
-	GROUP BY sd.schaapId
- ) max on (s.schaapId = max.schaapId)
-"; 
-
-$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.teller_uitv is not null and isnull(rd.verwerkt) ";
-
-include "paginas.php";
-
-$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.readId"); 
-} ?>
-
+?>
+<form action="InsUitval.php" method = "post">
 <table border = 0>
-<tr> <form action="InsUitval.php" method = "post">
+<tr>
  <td colspan = 2 style = "font-size : 13px;">
   <input type = "submit" name = "knpVervers_" value = "Verversen"></td>
  <td colspan = 2 align = "center" style = "font-size : 14px;"><?php 
 echo $page_numbers; ?></td>
  <td colspan = 2 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
  <td align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
- <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td></tr>
+ <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td>
+ <td colspan="3" align="right">
+<?php if ($di['heeft_duplicaten']) { ?>
+   <button type="submit" name="knpDelDubbelen">
+            Verwijder dubbele imports
+          </button>
+<?php } ?>
+ </td>
+</tr>
 <tr valign = bottom style = "font-size : 12px;">
  <th>Inlezen<br><b style = "font-size : 10px;">Ja/Nee</b><br> <input type="checkbox" id="selectall" checked /> <hr></th>
  <th>Verwij-<br>deren<br> <input type="checkbox" id="selectall_del" /> <hr></th>
@@ -262,6 +253,7 @@ $date  = date('Y-m-d', strtotime($day));
 	
 	$Id = $array['readId'];
 	$levnr = $array['levnr'];
+	$levnr_dupl = $array['dubbelen']; // twee keer in reader bestand
 	$redenId = $array['reden_uitv'];
 	$reden_exist = $array['dbreduId'];
 	$geslacht = $array['geslacht']; 
@@ -275,13 +267,15 @@ $date  = date('Y-m-d', strtotime($day));
 $kzlReden = $reden_exist;
 if (isset($_POST['knpVervers_'])) { $makeday = date_create($_POST["txtuitvdm_$Id"]); $date =  date_format($makeday, 'Y-m-d'); 
 	$kzlReden = $_POST["kzlreden_$Id"]; }
-	 If	 
-	 (	!isset($af) || $af == 1			|| /*levensnummer moet bestaan en het dier moet aanweig zijn */	
-		 empty($datum)					|| # of datum is leeg
-		 $date < $dmmax					|| # of datum ligt voor de laatst geregistreerde datum van het schaap
-		empty($kzlReden)				   # reden uitval is onbekend
-	 )
-	 {	$oke = 0;	} else {	$oke = 1;	} // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
+	 
+	 if (!isset($af)) { $color = 'red';  $onjuist = 'Levensnummer onbekend'; }
+else if(isset($levnr_dupl) )  { $color = 'blue'; $onjuist = 'Dubbel in de reader.'; }
+elseif ($af == 1)	{ $color = 'red';  $onjuist = "Dit schaap is reeds ".strtolower($status); }
+elseif (empty($datum)) { $color = 'red';  $onjuist = 'Datum onbekend'; }
+elseif ($date < $dmmax) { $color = 'red';  $onjuist = "Datum ligt voor ".$maxdm; }
+elseif (empty($kzlReden)) { $color = 'red';  $onjuist = 'Reden onbekend'; }
+	 
+	if ( isset($onjuist)) {	$oke = 0;	} else {	$oke = 1;	} // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
 // EINDE Controleren of ingelezen waardes worden gevonden .
 
 	 if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1) /* Als onvolledig is gewijzigd naar volledig juist */ {$cbKies = 1; $cbDel = $_POST["chbDel_$Id"]; }
@@ -342,10 +336,8 @@ for ($i = 0; $i < $count; $i++){
  <td align = "center">
  <?php if(isset($af) && $af == 0) { echo $fase; } ?>
  </td>
- <td colspan = 2 align = 'left' style = "color : red"><?php 
- if (!isset($af)) {echo "Levensnummer onbekend";} 
- else if(isset($af) && $af == 1){ echo "Dit schaap is reeds ".strtolower($status).".";} 
- else if($date < $dmmax) { echo "Datum ligt voor $maxdm."; } ?>
+ <td colspan = 2 align = 'left' style = "color : <?php echo $color; ?> "><?php 
+if (isset($onjuist)) { echo $onjuist; } ?>
  </td>	
 </tr>
 <!--	**************************************

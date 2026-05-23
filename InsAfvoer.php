@@ -55,7 +55,7 @@ If (isset($_POST['knpInsert_'])) {
 	Include "post_readerAfv.php";#Deze include moet voor de verversing in de functie header()
 	}
 	
-   if (isset($_POST['knpDelDubbelen'])) {
+if (isset($_POST['knpDelDubbelen'])) {
 
     $sqlUpdate = mysqli_query($db,"
         UPDATE impAgrident ia
@@ -86,25 +86,6 @@ If (isset($_POST['knpInsert_'])) {
 
     //echo 'De dubbele imports zijn verwijderd.';
 }
-
-// Aantal nog in te lezen AFGELEVERDEN
-/*if($reader == 'Biocontrol') {
-$afgeleverden = mysqli_query($db,"SELECT count(*) aant
-								  FROM impReader
-								  WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and teller_afv is not NULL and isnull(verwerkt) ") or die (mysqli_error($db));
-		$row = mysqli_fetch_assoc($afgeleverden);
-			$aantafl = $row['aant'];
-}
-
-if($reader == 'Agrident') {
-$afgeleverden = mysqli_query($db,"SELECT count(*) aant
-								  FROM impVerplaatsing
-								  WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and wat = 'Afvoer' and isnull(verwerkt) ") or die (mysqli_error($db));
-		$row = mysqli_fetch_assoc($afgeleverden);
-			$aantafl = $row['aant'];
-}*/
-// EINDE Aantal nog in te lezen AFGELEVERDEN
-
 
 $velden = "rd.Id readId, rd.datum, right(rd.levensnummer,".mysqli_real_escape_string($db,$Karwerk).") werknr, rd.levensnummer levnr, rd.ubn ubn_afv, r.ubn ctrubn, rd.reden redId_rd, red.reduId reduId_db, gewicht kg, s.schaapId, s.geslacht, ouder.datum dmaanw, lower(haf.actie) actie, haf.af, hs.datum dmspeen, ak.datum dmaankoop, date_format(max.datummax_afv,'%d-%m-%Y') maxdatum_afv, max.datummax_afv, date_format(max.datummax_kg,'%d-%m-%Y') maxdatum_kg, max.datummax_kg, b.bezId, dup.dubbelen ";
 
