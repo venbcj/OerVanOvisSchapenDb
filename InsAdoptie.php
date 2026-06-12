@@ -36,6 +36,12 @@ If (isset ($_POST['knpInsert_'])) {
     include "post_readerAdop.php"; #Deze include moet voor de vervversing in de functie header()
     }
 
+if (isset($_POST['knpDelDubbelen'])) {
+
+    $impagrident_gateway->verwerk_dubbele_import_zonder_ubnId($lidId, 15);
+
+}
+
 // Declaratie HOKNUMMER            // lower(if(isnull(scan),'6karakters',scan)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.
 $qryHoknummer = $hok_gateway->hoknummer($lidId);
 
@@ -51,7 +57,7 @@ unset($index);
 $velden = "rd.Id, date_format(rd.datum,'%d-%m-%Y') datum, rd.datum sort, rd.levensnummer, rd.moeder,
 s.schaapId,
 mdr.schaapId mdr_db,
-spn.schaapId spn, prnt.schaapId prnt, hg.datum gebdate";
+spn.schaapId spn, prnt.schaapId prnt, hg.datum gebdate, dup.dubbelen";
 
 $tabel = $impagrident_gateway->getInsAdoptieFrom();
 $WHERE = $impagrident_gateway->getInsAdoptieWhere($lidId);
@@ -88,6 +94,7 @@ echo $paginator->show_page_numbers(); ?></td>
     $date = $array['sort'];
 		$schaapId = $array['schaapId'];
     $levnr = $array['levensnummer']; if (strlen($levnr)== 11) {$levnr = '0'.$array['levensnummer'];}
+    $levnr_dupl = $array['dubbelen']; // twee keer in reader bestand
     $moeder = $array['moeder'];
     $mdr_db = $array['mdr_db'];
     $spn = $array['spn'];        
@@ -111,15 +118,19 @@ if (isset($_POST['knpVervers_'])) { $dag = $_POST["txtDag_$Id"]; $kzlHok = $_POS
     $makeday = date_create($_POST["txtDag_$Id"]); $dmdag =  date_format($makeday, 'Y-m-d');
 }
 
-     If     
-     ( !isset($schaapId)    || /*levensnummer moet bestaan*/    
-         empty($dag)        || # of datum is leeg
-         !isset($mdr_db)    || # moeder bestaat niet
-         $dmdag < $dmgeb    || # of datum ligt voor de laatst geregistreerde datum van het schaap
-         empty($kzlHok)        # Verblijf is leeg 
-                                                 
-     )
-     { $oke = 0; } else { $oke = 1; } // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
+unset($onjuist);
+unset($color);
+     if(!isset($schaapId)) 		{ $color = 'red';  $onjuist = 'Levensnummer onbekend'; }   
+else if(isset($levnr_dupl) )  { $color = 'blue'; $onjuist = 'Dubbel in de reader.'; }
+else if(empty($dag)) 					{ $color = 'red';  $onjuist = "Datum is onbekend.";}
+else if(!isset($mdr_db)) 			{ $color = 'red';  $onjuist = 'Moeder onbekend.'; }   
+else if($dmdag < $dmgeb) 			{ $color = 'red';  $onjuist = 'Datum ligt voor de geboortedatum.'; }   
+else if(empty($kzlHok)) 			{ $color = 'red';  $onjuist = 'Verblijf is onbekend.'; }   
+         
+
+
+
+     if (isset($onjuist)) { $oke = 0; } else { $oke = 1; } // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
 // EINDE Controleren of ingelezen waardes worden gevonden .  
 
      if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1) /* Als onvolledig is gewijzigd naar volledig juist */ {$cbKies = 1; $cbDel = $_POST["chbDel_$Id"]; }
@@ -176,10 +187,10 @@ for ($i = 0; $i < $count; $i++){
 
  <!-- EINDE KZLVERBLIJF -->
 </td>
- <td style = "color : red" align="center"><?php 
-      if (empty($schaapId))         { echo "Levensnummer onbekend"; }
- else if (!isset($mdr_db))         { echo "Moeder onbekend"; }
- else if($dmdag < $dmgeb) { echo "Datum ligt voor de geboortedatum ."; } 
+ <td style = "color : <?php echo $color; ?>" align="center"><?php 
+      
+if (isset($onjuist)) { echo $onjuist; }
+
  ?>
  </td>
     
