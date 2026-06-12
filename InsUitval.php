@@ -52,8 +52,8 @@ if (isset($_POST['knpDelDubbelen'])) {
 
 }
 
-$velden = "rd.Id readId, date_format(rd.datum,'%Y-%m-%d') sort, rd.datum, rd.levensnummer levnr, rd.reden reden_uitv, ru.reduId dbreduId,
-    lower(h.actie) actie, h.af, s.geslacht, ouder.datum dmaanw, date_format(max.datummax,'%Y-%m-%d') datummax, date_format(max.datummax,'%d-%m-%Y') maxdatum"; 
+$velden = "rd.Id readId, date_format(rd.datum,'%Y-%m-%d') sort, rd.datum, rd.levensnummer levnr, s.schaapId, rd.reden reden_uitv, ru.reduId dbreduId,
+    lower(h.actie) actie, h.af, s.geslacht, ouder.datum dmaanw, date_format(max.datummax,'%Y-%m-%d') datummax, date_format(max.datummax,'%d-%m-%Y') maxdatum, dup.dubbelen"; 
 $tabel = $impagrident_gateway->getInsUitvalAgridentFrom();
 $WHERE = $impagrident_gateway->getInsUitvalAgridentWhere($lidId);
 $order_by = "ORDER BY sort, rd.Id";
@@ -114,6 +114,8 @@ $date  = date('Y-m-d', strtotime($day));
     
     $Id = $array['readId'];
     $levnr = $array['levnr'];
+    $schaapId = $array['schaapId'];
+    $levnr_dupl = $array['dubbelen']; // twee keer in reader bestand
     $redenId = $array['reden_uitv'];
     $reden_exist = $array['dbreduId'];
     $geslacht = $array['geslacht']; 
@@ -127,13 +129,18 @@ $date  = date('Y-m-d', strtotime($day));
 $kzlReden = $reden_exist;
 if (isset($_POST['knpVervers_'])) { $makeday = date_create($_POST["txtuitvdm_$Id"]); $date =  date_format($makeday, 'Y-m-d'); 
     $kzlReden = $_POST["kzlreden_$Id"]; }
-     If     
-     (    !isset($af) || $af == 1            || /*levensnummer moet bestaan en het dier moet aanweig zijn */    
-         empty($datum)                    || # of datum is leeg
-         $date < $dmmax                    || # of datum ligt voor de laatst geregistreerde datum van het schaap
-        empty($kzlReden)                   # reden uitval is onbekend
-     )
-     {    $oke = 0;    } else {    $oke = 1;    } // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
+
+unset($onjuist);
+unset($color);
+
+     if (!isset($schaapId)) { $color = 'red';  $onjuist = 'Levensnummer onbekend'; }
+else if(isset($levnr_dupl) )  { $color = 'blue'; $onjuist = 'Dubbel in de reader.'; }
+elseif ($af == 1)   { $color = 'red';  $onjuist = "Dit schaap is reeds ".strtolower($status); }
+elseif (empty($datum)) { $color = 'red';  $onjuist = 'Datum onbekend'; }
+elseif ($date < $dmmax) { $color = 'red';  $onjuist = "Datum ligt voor ".$maxdm; }
+elseif (empty($kzlReden)) { $color = 'red';  $onjuist = 'Reden onbekend'; }
+
+     if ( isset($onjuist)) { $oke = 0; } else { $oke = 1; } // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
 // EINDE Controleren of ingelezen waardes worden gevonden .
 
      if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1) /* Als onvolledig is gewijzigd naar volledig juist */ {$cbKies = 1; $cbDel = $_POST["chbDel_$Id"]; }
@@ -194,10 +201,8 @@ for ($i = 0; $i < $count; $i++){
  <td align = "center">
  <?php if(isset($af) && $af == 0) { echo $fase; } ?>
  </td>
- <td colspan = 2 align = 'left' style = "color : red"><?php 
- if (!isset($af)) {echo "Levensnummer onbekend";} 
- else if(isset($af) && $af == 1){ echo "Dit schaap is reeds ".strtolower($status).".";} 
- else if($date < $dmmax) { echo "Datum ligt voor $maxdm."; } ?>
+ <td colspan = 2 align = 'left' style = "color : <?php echo $color; ?>"><?php 
+if (isset($onjuist)) { echo $onjuist; } ?>
  </td>    
 </tr>
 <!--    **************************************
