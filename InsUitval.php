@@ -77,7 +77,7 @@ if (isset($_POST['knpDelDubbelen'])) {
     //echo 'De dubbele imports zijn verwijderd.';
 }
 
-$velden = "rd.Id readId, date_format(rd.datum,'%Y-%m-%d') sort, rd.datum, rd.levensnummer levnr, rd.reden reden_uitv, ru.reduId dbreduId,
+$velden = "rd.Id readId, date_format(rd.datum,'%Y-%m-%d') sort, rd.datum, rd.levensnummer levnr, s.schaapId, rd.reden reden_uitv, ru.reduId dbreduId,
 lower(h.actie) actie, h.af, s.geslacht, ouder.datum dmaanw, date_format(max.datummax,'%Y-%m-%d') datummax, date_format(max.datummax,'%d-%m-%Y') maxdatum, dup.dubbelen"; 
 
 $tabel = "
@@ -251,8 +251,12 @@ $day = str_replace('/', '-', $var);
 $datum = date('d-m-Y', strtotime($day));
 $date  = date('Y-m-d', strtotime($day));
 	
+unset($onjuist);
+unset($color);
+
 	$Id = $array['readId'];
-	$levnr = $array['levnr'];
+	$levnr_rd = $array['levnr'];
+	$schaapId = $array['schaapId'];
 	$levnr_dupl = $array['dubbelen']; // twee keer in reader bestand
 	$redenId = $array['reden_uitv'];
 	$reden_exist = $array['dbreduId'];
@@ -268,7 +272,7 @@ $kzlReden = $reden_exist;
 if (isset($_POST['knpVervers_'])) { $makeday = date_create($_POST["txtuitvdm_$Id"]); $date =  date_format($makeday, 'Y-m-d'); 
 	$kzlReden = $_POST["kzlreden_$Id"]; }
 	 
-	 if (!isset($af)) { $color = 'red';  $onjuist = 'Levensnummer onbekend'; }
+	 if (!isset($schaapId)) { $color = 'red';  $onjuist = 'Levensnummer onbekend'; }
 else if(isset($levnr_dupl) )  { $color = 'blue'; $onjuist = 'Dubbel in de reader.'; }
 elseif ($af == 1)	{ $color = 'red';  $onjuist = "Dit schaap is reeds ".strtolower($status); }
 elseif (empty($datum)) { $color = 'red';  $onjuist = 'Datum onbekend'; }
@@ -306,11 +310,11 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
  </td>
  <?php if(isset($af) && $af == 0) { ?> <td align = "center"> <?php } 
  														 else { ?> <td align = "center" style = "color : red"> <?php } 
-echo $levnr; ?>
-<input type = "hidden" name = <?php echo  "txtlevuitv_$Id"; ?> value = <?php echo $levnr; ?> size = 8 style = "font-size : 9px;">
+echo $levnr_rd; ?>
+<input type = "hidden" name = <?php echo  "txtlevuitv_$Id"; ?> value = <?php echo $levnr_rd; ?> size = 8 style = "font-size : 9px;">
  </td>
  </td>
-<input type = "hidden" name = <?php echo  "txtlevuitv_$Id"; ?> value = <?php echo $levnr; ?> size = 8 style = "font-size : 9px;">
+<input type = "hidden" name = <?php echo  "txtlevuitv_$Id"; ?> value = <?php echo $levnr_rd; ?> size = 8 style = "font-size : 9px;">
  </td>
  <td align = "center">
 <!-- KZLREDEN UITVAL -->
@@ -330,7 +334,7 @@ for ($i = 0; $i < $count; $i++){
 			}
 } 
 ?> </select><b style = "color : red;">
-<?php if( $redenId <> NULL && empty($reden_exist) && empty($_POST["kzlreden_$Id"]) && empty($levnr)) {echo $redenId;?> <b style = "color : red;"> ! </b> <?php } ?></b>
+<?php if( $redenId <> NULL && empty($reden_exist) && empty($_POST["kzlreden_$Id"]) && empty($levnr_rd)) {echo $redenId;?> <b style = "color : red;"> ! </b> <?php } ?></b>
 
  </td> <!-- EINDE KZLREDEN UITVAL -->
  <td align = "center">
