@@ -732,9 +732,10 @@ SQL
         );
     }
 
-    public function zoek_laatste_hisid($lidId, $schaapId) {
-        return $this->first_field(<<<SQL
-SELECT max(hisId) hisId
+    public function zoek_laatste_historie($lidId, $schaapId){
+        return $this->first_field(
+<<<SQL
+SELECT max(datum) datum
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
  join tblUbn u on (st.ubnId = u.ubnId)
@@ -743,8 +744,23 @@ SQL
         , [
             [':lidId', $lidId, Type::INT],
             [':schaapId', $schaapId, Type::INT],
-        ]
-        );
+        ]);
+    }
+    
+    public function zoek_laatste_hisId($maxHisDay) {
+        return $this->first_field(
+<<<SQL
+SELECT max(hisId) hisId
+FROM tblHistorie h
+ join tblStal st on (h.stalId = st.stalId)
+ join tblUbn u on (st.ubnId = u.ubnId)
+WHERE u.lidId = :lidId and st.schaapId = :schaapId and h.datum = :maxHisDay
+SQL
+        , [
+            [':lidId', $lidId, Type::INT],
+            [':schaapId', $schaapId, Type::INT],
+            [':maxHisDay', $maxHisDay, Type::DATE],
+        ]);
     }
 
     public function zoek_afgevoerd($maxhis) {

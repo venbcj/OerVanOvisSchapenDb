@@ -613,7 +613,8 @@ $rasId = '';
 
 
 // Is het dier afgevoerd
-    $maxhis = $historie_gateway->zoek_laatste_hisId($lidId, $schaapId);
+    $maxHisDay  = $historie_gateway->zoek_laatste_historie($lidId, $schaapId);
+    $maxhis = $historie_gateway->zoek_laatste_hisId($lidId, $schaapId, $maxHisDay);
     $zoek_afgevoerd = $historie_gateway->zoek_afgevoerd($maxhis);
     $actie_afv = '';
 
