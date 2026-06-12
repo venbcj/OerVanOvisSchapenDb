@@ -32,6 +32,34 @@ If (isset ($_POST['knpInsert_'])) {
 	//header("Location: ".$url."InsOverplaats.php");
 	}
 
+if (isset($_POST['knpDelDubbelen'])) {
+
+    $sqlUpdate = mysqli_query($db,"
+        UPDATE impAgrident a
+        JOIN (
+            SELECT datum, levensnummer, MIN(inleesnr) AS eerste_inleesnr
+            FROM impAgrident
+            WHERE actId = 15 and ubnId is null
+              AND (verwerkt IS NULL OR verwerkt = '')
+              AND lidId = '".mysqli_real_escape_string($db,$lidId)."'
+            GROUP BY datum, levensnummer
+            HAVING COUNT(*) > 1
+        ) d
+            ON (a.datum = d.datum and a.levensnummer = d.levensnummer)
+        SET a.verwerkt = 2
+        WHERE a.inleesnr <> d.eerste_inleesnr
+          AND a.actId = 15 and ubnId is null
+          AND (a.verwerkt IS NULL OR a.verwerkt = '')
+          AND a.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    ");
+
+    if (!$sqlUpdate) {
+    die(mysqli_error($db));
+}
+
+    //echo 'De dubbele imports zijn verwijderd.';
+}
+
 // Declaratie HOKNUMMER			// lower(if(isnull(scan),'6karakters',scan)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.
 $qryHoknummer = mysqli_query($db,"
 SELECT hokId, hoknr, lower(if(isnull(scan),'6karakters',scan)) scan
@@ -54,7 +82,7 @@ unset($index);
 $velden = "rd.Id, date_format(rd.datum,'%d-%m-%Y') datum, rd.datum sort, rd.levensnummer, rd.moeder,
 s.schaapId,
 mdr.schaapId mdr_db,
-spn.schaapId spn, prnt.schaapId prnt, hg.datum gebdate";
+spn.schaapId spn, prnt.schaapId prnt, hg.datum gebdate, dup.dubbelen";
 
 $tabel = "
 impAgrident rd
@@ -86,6 +114,13 @@ impAgrident rd
 	 join tblHistorie h on (st.stalId = h.stalId)
 	WHERE h.actId = 14 and h.skip = 0
  ) hu on (hu.schaapId = s.schaapId)
+ left join (
+ 	SELECT rd.Id, count(dup.Id) dubbelen
+	FROM impAgrident rd
+	 join impAgrident dup on (rd.lidId = dup.lidId and rd.levensnummer = dup.levensnummer and rd.Id <> dup.Id and rd.actId = dup.actId)
+	WHERE rd.actId = 15 and isnull(dup.verwerkt)
+	GROUP BY rd.Id
+ ) dup on (rd.Id = dup.Id)
 ";
 
 $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.actId = 15 and isnull(rd.verwerkt) ";
@@ -93,7 +128,29 @@ $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.ac
 include "paginas.php";
 
 $data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id");
- ?>
+
+$dubbel_ingelezen = mysqli_query($db,"
+SELECT EXISTS (
+    SELECT 1
+    FROM impAgrident a
+    JOIN (
+        SELECT datum, levensnummer, moeder, MIN(inleesnr) AS eerste_inleesnr
+        FROM impAgrident
+        WHERE actId = 15
+          AND (verwerkt IS NULL OR verwerkt = '')
+          AND lidId = '".mysqli_real_escape_string($db,$lidId)."'
+        GROUP BY datum, levensnummer, moeder
+        HAVING COUNT(*) > 1
+    ) d ON (a.datum = d.datum and a.levensnummer = d.levensnummer and a.moeder = d.moeder)
+    WHERE a.inleesnr <> d.eerste_inleesnr
+      AND a.actId = 15
+      AND (a.verwerkt IS NULL OR a.verwerkt = '')
+      AND a.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+) AS heeft_duplicaten
+") or die (mysqli_error($db)); 
+
+$di = mysqli_fetch_assoc($dubbel_ingelezen); ?>
+
 <table border = 0>
 <tr> <form action="InsAdoptie.php" method = "post">
  <td colspan = 2 style = "font-size : 13px;">
@@ -102,7 +159,15 @@ $data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id");
 echo $page_numbers; ?></td>
  <td colspan = 3 align = left style = "font-size : 13px;"> Regels Per Pagina: <?php echo $kzlRpp; ?> </td>
  <td colspan = 3 align = 'right'><input type = "submit" name = "knpInsert_" value = "Inlezen">&nbsp &nbsp </td>
- <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td></tr>
+ <td colspan = 2 style = "font-size : 12px;"><b style = "color : red;">!</b> = waarde uit reader niet gevonden. </td>
+ <td colspan="3" align="right">
+<?php if ($di['heeft_duplicaten']) { ?>
+   <button type="submit" name="knpDelDubbelen">
+            Verwijder dubbele imports
+   </button>
+<?php } ?>
+ </td>
+</tr>
 <tr valign = bottom style = "font-size : 12px;">
  <th>Inlezen<br><b style = "font-size : 10px;">Ja/Nee</b><br> <input type="checkbox" id="selectall" checked /> <hr></th>
  <th>Verwij-<br>deren<br> <input type="checkbox" id="selectall_del" /> <hr></th>
@@ -122,6 +187,7 @@ if(isset($data))  {	foreach($data as $key => $array)
 	$date = $array['sort'];
 	$schaapId = $array['schaapId'];
 	$levnr = $array['levensnummer']; if (strlen($levnr)== 11) {$levnr = '0'.$array['levensnummer'];}
+	$levnr_dupl = $array['dubbelen']; // twee keer in reader bestand
 	$moeder = $array['moeder'];
 	$mdr_db = $array['mdr_db'];
 	$spn = $array['spn'];		
@@ -178,15 +244,16 @@ if (isset($_POST['knpVervers_'])) { $dag = $_POST["txtDag_$Id"]; $kzlHok = $_POS
 	$makeday = date_create($_POST["txtDag_$Id"]); $dmdag =  date_format($makeday, 'Y-m-d');
 }
 
-	 If	 
-	 ( !isset($schaapId)	|| /*levensnummer moet bestaan*/	
-		 empty($dag)			|| # of datum is leeg
-		 !isset($mdr_db)	|| # moeder bestaat niet
-		 $dmdag < $dmgeb	|| # of datum ligt voor de laatst geregistreerde datum van het schaap
-		 empty($kzlHok)		   # Verblijf is leeg 
-	 											
-	 )
-	 {	$oke = 0;	} else {	$oke = 1;	} // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
+unset($onjuist);
+unset($color);
+	  if (!isset($schaapId)) 		{ $color = 'red';  $onjuist = 'Levensnummer onbekend'; }
+elseif (isset($levnr_dupl))   { $color = 'blue'; $onjuist = 'Dubbel in de reader.'; }
+elseif (empty($dag)) 					{ $color = 'red';  $onjuist = "Datum is onbekend.";}
+elseif (!isset($mdr_db)) 			{ $color = 'red';  $onjuist = "Moeder onbekend"; }
+elseif ($dmdag < $dmgeb)	 		{ $color = 'red';  $onjuist = "Datum ligt voor de geboortedatum."; }
+elseif (empty($kzlHok))	 			{ $color = 'red';  $onjuist = "Verblijf is onbekend."; }
+	
+	if ( isset($onjuist)) {	$oke = 0;	} else {	$oke = 1;	} // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
 // EINDE Controleren of ingelezen waardes worden gevonden .  
 
 	 if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1) /* Als onvolledig is gewijzigd naar volledig juist */ {$cbKies = 1; $cbDel = $_POST["chbDel_$Id"]; }
@@ -243,11 +310,10 @@ for ($i = 0; $i < $count; $i++){
 
  <!-- EINDE KZLVERBLIJF -->
 </td>
- <td style = "color : red" align="center"><?php 
- 		 if (empty($schaapId)) 		{ echo "Levensnummer onbekend"; }
- 	else if (!isset($mdr_db)) 		{ echo "Moeder onbekend"; }
- 	else if($dmdag < $dmgeb) { echo "Datum ligt voor de geboortedatum ."; }
- ?>
+ <td style = "color : <?php echo $color; ?>" align="center"><?php 
+ 
+ if (isset($onjuist)) { echo $onjuist; }
+	unset($status); ?>
  </td>
 	
 </tr>
