@@ -1126,11 +1126,22 @@ $show = mysqli_query($db,$show) or die (mysqli_error($db));
 
 
 // Is het dier afgevoerd
+$zoek_laatste_historie  = mysqli_query($db,"
+SELECT max(datum) datum
+FROM tblHistorie h
+ join tblStal st on (h.stalId = st.stalId)
+WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+") or die (mysqli_error($db));	
+
+	while($zlh = mysqli_fetch_array($zoek_laatste_historie))
+	{ $maxday = $zlh['datum']; }
+
+
 $zoek_laatste_hisId  = mysqli_query($db,"
 SELECT max(hisId) hisId
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and datum = '".mysqli_real_escape_string($db,$maxday)."'
 ") or die (mysqli_error($db));	
 
 	while($zlh = mysqli_fetch_array($zoek_laatste_hisId))
@@ -1146,7 +1157,7 @@ WHERE hisId = '".mysqli_real_escape_string($db,$maxhis)."' and a.af = 1
 
 	while($za = mysqli_fetch_array($zoek_afgevoerd))
 	{ 
-	$afvhis = $za['afvhisId']; // Nodig tijdens bijwerken van afvoer en bepalen van een na laatste hisId
+	$afvhis = $za['afvhisId']; // Nodig tijdens bijwerken van afvoer en bepalen van één na laatste hisId
 	$afvdm = $za['afvoerdm'];
 	$afvkg = $za['afvoerkg'];
 	$actId_afv = $za['actId'];
