@@ -1378,6 +1378,13 @@ impAgrident rd
     ) sd
     GROUP BY sd.schaapId
  ) max on (s.schaapId = max.schaapId)
+ left join (
+    SELECT rd.Id, count(dup.Id) dubbelen
+    FROM impAgrident rd
+     join impAgrident dup on (rd.lidId = dup.lidId and rd.levensnummer = dup.levensnummer and rd.Id <> dup.Id and rd.actId = dup.actId)
+    WHERE rd.actId = 14 and isnull(dup.verwerkt)
+    GROUP BY rd.Id
+ ) dup on (rd.Id = dup.Id)
 SQL
         ; 
     }
