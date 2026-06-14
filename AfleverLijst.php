@@ -55,7 +55,25 @@ GROUP BY p.naam, date_format(h.datum,'%d-%m-%Y')
 $bestemming = $za['naam'];
 $datum =  $za['datum'];
 $aantal = $za['tal'];
+    } 
+
+$zoek_afvoer_acties = mysqli_query($db,"
+SELECT a.actie
+FROM tblStal st
+ join tblHistorie h on (st.stalId = h.stalId)
+ join tblActie a on (h.actId = a.actId)
+WHERE a.af = 1 and st.rel_best = '".mysqli_real_escape_string($db,$bestm)."' and h.datum = '".mysqli_real_escape_string($db,$date)."' and h.skip = 0
+GROUP BY a.actie
+") or die (mysqli_error($db));
+    
+$acties = [];
+
+    while ($zaa = mysqli_fetch_array($zoek_afvoer_acties))
+    {
+$acties[] = $zaa['actie'];
     } ?>
+
+
 <table border = 0 >
 
     
@@ -86,8 +104,15 @@ $aantal = $za['tal'];
 <td colspan = 2 align = \"left\"><i style = \"font-size:14px;\"> Aantal schapen :</i></td> 
 <td colspan = 2><b style = \"font-size:15px;\"><?php echo $aantal; ?> </b></td>
 </tr>
-<?php
-?>
+
+<tr >
+<td></td> 
+<td colspan = 10></td> 
+<td colspan = 2 align = \"left\"><i style = \"font-size:14px;\"> Actie :</i></td> 
+<td colspan = 2><b style = \"font-size:15px;\"><?php echo implode(', ', $acties); ?> </b></td>
+</tr>
+
+
 <tr style = \"font-size:12px;\">
 <th width = 0 height = 30></th>
 <th style = \"text-align:center;\" valign = bottom width= 100>Levensnummer<hr></th>
