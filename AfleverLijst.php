@@ -40,7 +40,15 @@ $hisId = $_POST['kzlPost'] ?? ''; // kzlPost bestaat in ZoekAfldm.php
 
 /*Telt aantal schapen per bestemming/afleverdatum*/
 [$bestemming, $datum, $aantal] = $schaap_gateway->zoek_aflevergegevens($bestm, $date);
-?>
+
+$zoek_afvoeracties = $schaap_gateway->zoek_afvoeracties($bestm, $date);
+
+$acties = [];
+
+while ($zaa = $zoek_afvoeracties->fetch_assoc()) {
+    $acties[] = $zaa['actie'];
+} ?>
+
 <table id="schaapdetails" border="0">
 <tr>
 <td></td>
@@ -66,6 +74,13 @@ $hisId = $_POST['kzlPost'] ?? ''; // kzlPost bestaat in ZoekAfldm.php
 <td colspan = 10></td> 
 <td colspan = 2 align = \"left\"><i style = \"font-size:14px;\"> Aantal schapen :</i></td> 
 <td colspan = 2><b style = \"font-size:15px;\"><?php echo $aantal; ?> </b></td>
+</tr>
+
+<tr >
+<td></td> 
+<td colspan = 10></td> 
+<td colspan = 2 align = \"left\"><i style = \"font-size:14px;\"> Actie :</i></td> 
+<td colspan = 2><b style = \"font-size:15px;\"><?php echo implode(', ', $acties); ?> </b></td>
 </tr>
 
 <tr style = \"font-size:12px;\">

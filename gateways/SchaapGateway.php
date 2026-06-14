@@ -2907,6 +2907,25 @@ SQL
         );
     }
 
+
+    public function zoek_afvoeracties($bestm, $date){
+        return $this->run_query(
+<<<SQL
+SELECT a.actie
+FROM tblStal st
+ join tblHistorie h on (st.stalId = h.stalId)
+ join tblActie a on (h.actId = a.actId)
+WHERE a.af = 1 and st.rel_best = :bestm and h.datum = :date and h.skip = 0
+GROUP BY a.actie
+SQL
+        ,
+        [
+            [':bestm', $bestm, Type::INT],
+            [':date', $date, Type::DATE]
+        ]);
+
+    }
+
     public function zoek_schaap_aanvoer($schaapId) {
         return $this->run_query(
             <<<SQL
