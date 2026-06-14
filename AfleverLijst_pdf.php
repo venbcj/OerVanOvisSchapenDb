@@ -30,6 +30,16 @@ while ($row = $zoek->fetch_assoc()) {
     $relId = $row['rel_best'];
     $bestemming = $row['naam'];
 }
+
+$schaap_gateway = new SchaapGateway();
+$zoek_afvoeractie = $historie_gateway->zoek_afvoeracties($relId, $afvDate);
+
+  $acties[];
+
+  while ($zaa = $zoek_afvoeractie->fetch_assoc()) {
+    $acties[] = $zaa['actie'];
+}
+
 $lid_gateway = new LidGateway();
 $Karwerk = $lid_gateway->zoek_karwerk($lidId);
 $schpn = $historie_gateway->count_afleverlijst($lidId, $afvDate, $relId, $Karwerk);

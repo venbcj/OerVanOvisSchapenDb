@@ -24,7 +24,7 @@ $excelData[] = array('Levensnummer', 'Werknr', 'Gewicht', 'Medicijn', 'Datum toe
  
 // Haal records op uit de database en sla ze op in een array 
 $query = $db->query("
-SELECT st.lidId, s.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr, h.kg, pil.datum, pil.naam, pil.wdgn_v
+SELECT st.lidId, s.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr, a.actie, h.kg, pil.datum, pil.naam, pil.wdgn_v
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
  join tblSchaap s on (s.schaapId = st.schaapId)
@@ -47,12 +47,13 @@ if($query->num_rows > 0){
     $levnr = $row['levensnummer'];
     $werknr = $row['werknr'];
     $gewicht = $row['kg'];
+    $actie = $row['actie'];
     $medicijn = $row['naam']; 
     $datum_pil = $row['datum']; 
     $wdgn = $row['wdgn_v'];
 
 
-        $lineData  = array($levnr, $werknr, $gewicht, $medicijn, $datum_pil, $wdgn); 
+        $lineData  = array($levnr, $werknr, $gewicht, $actie, $medicijn, $datum_pil, $wdgn); 
         $excelData[] = $lineData; 
     } 
 } 

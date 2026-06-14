@@ -29,19 +29,20 @@ include "login.php";
         <TD align = "center" valign = "top">
 <?php 
 if (Auth::is_logged_in()) {
-    if (!isset($schaap_gateway)) {
-        $schaap_gateway = new SchaapGateway();
+    if (!isset($historie_gateway)) {
+        $historie_gateway = new SchaapGateway();
     }
+    
 //include vw_Voeding
 
 $hisId = $_POST['kzlPost'] ?? ''; // kzlPost bestaat in ZoekAfldm.php 
 
-[$date, $bestm] = $schaap_gateway->zoek_datum_bestemming($hisId);
+[$date, $bestm] = $historie_gateway->zoek_datum_bestemming($hisId);
 
 /*Telt aantal schapen per bestemming/afleverdatum*/
-[$bestemming, $datum, $aantal] = $schaap_gateway->zoek_aflevergegevens($bestm, $date);
+[$bestemming, $datum, $aantal] = $historie_gateway->zoek_aflevergegevens($bestm, $date);
 
-$zoek_afvoeracties = $schaap_gateway->zoek_afvoeracties($bestm, $date);
+$zoek_afvoeracties = $historie_gateway->zoek_afvoeracties($bestm, $date);
 
 $acties = [];
 
@@ -100,7 +101,7 @@ while ($zaa = $zoek_afvoeracties->fetch_assoc()) {
 <td colspan = 2 ><a href="exportAfleverlijst.php?pst=<?php echo $lidId; ?>&best=<?php echo $bestm; ?>&date=<?php echo $date; ?>"> Export-xlsx </a></td>
 
 <?php
-$zoek_schaap = $schaap_gateway->zoek_schaap_aflever($bestm, $date, $Karwerk);
+$zoek_schaap = $historie_gateway->zoek_schaap_aflever($bestm, $date, $Karwerk);
 while ($zs = $zoek_schaap->fetch_assoc()) {
     $levnr = $zs['levensnummer'];
     if(!isset($levnr)) {
@@ -119,7 +120,7 @@ while ($zs = $zoek_schaap->fetch_assoc()) {
     <td width = 100 style = "font-size:15px;"> <?php echo $kg; ?> <br> </td>
     <td colspan = 6><table border = 0>
 <?php
-            $zoek_pil = $schaap_gateway->zoek_pil_aflever($lidId, $schaapId);
+            $zoek_pil = $historie_gateway->zoek_pil_aflever($lidId, $schaapId);
 $vandaag = date('Y-m-d');
         while($row = mysqli_fetch_array($zoek_pil)) {
             If (!empty($row['datum'])) {

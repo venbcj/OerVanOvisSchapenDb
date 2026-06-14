@@ -8,6 +8,7 @@ global $rapport;
 global $headerWidth;
 global $imageWidth;
 global $bestemming;
+global $acties;
 global $afvDatum;
 global $schpn;
 
@@ -35,9 +36,10 @@ global $schpn;
         $this->SetFont('Times','I',7);
         $this->Ln(5);
 
-        $this->Cell(145,4,'',0,0,'',false);         $this->Cell(40,4,'Bestemming : '.$bestemming,0,1,'L',false);
-        $this->Cell(145,4,'',0,0,'',false);            $this->Cell(40,4,'Afleverdatum : '.$afvDatum,0,1,'L',false);
-        $this->Cell(145,4,'',0,0,'',false);            $this->Cell(40,4,'Aantal schapen : '.$schpn,0,1,'L',false);
+        $this->Cell(145,4,'',0,0,'',false);     $this->Cell(40,4,'Bestemming : '.$bestemming,0,1,'L',false);
+        $this->Cell(145,4,'',0,0,'',false);     $this->Cell(40,4,'Afleverdatum : '.$afvDatum,0,1,'L',false);
+        $this->Cell(145,4,'',0,0,'',false);     $this->Cell(40,4,'Aantal schapen : '.$schpn,0,1,'L',false);
+        $this->Cell(145,4,'',0,0,'',false);     $this->Cell(40,4,'Actie : '.implode(', ',$acties),0,1,'L',false);
 
 //dummy cell to give line spacing
         //$this->Cell(0,5,'',0,1);
