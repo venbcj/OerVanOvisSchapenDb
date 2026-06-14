@@ -39,6 +39,21 @@ While ($row = mysqli_fetch_assoc($zoek)) {
   $bestemming = $row['naam'];
 }
 
+$zoek_afvoer_acties = mysqli_query($db,"
+SELECT a.actie
+FROM tblStal st
+ join tblHistorie h on (st.stalId = h.stalId)
+ join tblActie a on (h.actId = a.actId)
+WHERE a.af = 1 and st.rel_best = '".mysqli_real_escape_string($db,$relId)."' and h.datum = '".mysqli_real_escape_string($db,$afvDate)."' and h.skip = 0
+GROUP BY a.actie
+") or die (mysqli_error($db));
+    
+$acties = [];
+
+    while ($zaa = mysqli_fetch_assoc($zoek_afvoer_acties))
+    {
+$acties[] = $zaa['actie'];
+    }
 
 $zoek_karwerk = mysqli_query($db,"
 SELECT kar_werknr 
@@ -65,6 +80,7 @@ global $rapport;
 global $headerWidth;
 global $imageWidth;
 global $bestemming;
+global $acties;
 global $afvDatum;
 global $schpn;
 
@@ -95,6 +111,7 @@ global $schpn;
     $this->Cell(145,4,'',0,0,'',false);     $this->Cell(40,4,'Bestemming : '.$bestemming,0,1,'L',false);
     $this->Cell(145,4,'',0,0,'',false);     $this->Cell(40,4,'Afleverdatum : '.$afvDatum,0,1,'L',false);
     $this->Cell(145,4,'',0,0,'',false);     $this->Cell(40,4,'Aantal schapen : '.$schpn,0,1,'L',false);
+    $this->Cell(145,4,'',0,0,'',false);     $this->Cell(40,4,'Actie : '.implode(', ',$acties),0,1,'L',false);
 
 //dummy cell to give line spacing
     //$this->Cell(0,5,'',0,1);
