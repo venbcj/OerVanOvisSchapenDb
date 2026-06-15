@@ -2185,7 +2185,7 @@ SQL;
 
     public function hok_nu_bezet($lidId) {
         return $this->run_query(
-    <<<SQL 
+    <<<SQL
 SELECT b.hokId, ho.hoknr
 FROM tblBezet b
  join tblHok ho on (b.hokId = ho.hokId)

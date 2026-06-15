@@ -1589,7 +1589,7 @@ WHERE isnull(s.schaapId) and isnull(h.hisId) and a.moeder is not null and a.lidI
 GROUP BY a.moedertransponder, a.moeder, date_format(a.dmcreate,'%d-%m-%Y'), ac.actie, a.dmcreate
 
 ORDER BY dmcreate
-            SQL
+SQL
                 ,
                 [
                 [':lidId', $lidId, Type::INT],
@@ -1643,7 +1643,7 @@ and date_format(a.dmcreate,'%Y-%m-%d') <= :tot
 and a.transponder is not null
 
 ORDER BY dmcreate
-            SQL
+SQL
                 ,
                 [
                 [':lidId', $lidId, Type::INT],
