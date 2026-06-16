@@ -13,7 +13,7 @@ $versie = '16-12-2024'; /* Wijzigen van drachtdaatum met dekdatum ouder dan 1 ja
 $versie = '18-12-2024'; /* query Declaratie vaderdier aangepast. Aanwas hoeft niet meer zijn aangemaakt bij de ingelogde gebruiker. */
 $versie = '31-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 Include "login.php"; voor Include "header.php" gezet */
 $versie = '21-01-2025'; /* In subquery vmax_mdr_met_vdr h.skip = 0 toegevoegd */
-$versie = '12-03-2025'; /* In query $zoek_dekkingen tabel 'join tblHistorie h on (stm.stalId = h.stalId and v.hisId = h.hisId)' toegevoegd om de relaties met andere stalId's uit tblStal (bijv. uitgeschaarden) uit te sluiten. Dit veroorzaakte nl. dubbel aantal worpen */
+$versie = '12-03-2025'; /* In query $zoek_dekkingen tabel 'join tblHistorie h on (stOoi.stalId = h.stalId and v.hisId = h.hisId)' toegevoegd om de relaties met andere stalId's uit tblStal (bijv. uitgeschaarden) uit te sluiten. Dit veroorzaakte nl. dubbel aantal worpen */
 $versie = '26-03-2025'; /* Verblijf tijdens dekking toegevoegd aan historie */
 
 session_start(); ?>  
@@ -808,7 +808,8 @@ for($jaar = $current_year; $jaar >= $first_year; $jaar--) { ?>
 	 <th>Drachtdatum<hr></th>
 	 <th>Worpgrootte<hr></th>
 	 <th>Werpdatum<hr></th>
-	 <th>Verblijf<hr></th>
+	 <th>Verblijf<br>tijdens dekking<hr></th>
+	 <th>Huidige status<hr></th>
  </tr> 
 
 <?php
@@ -819,8 +820,9 @@ SELECT v.volwId, v.hisId, dekdate, dekdatum, v.mdrId, right(mdr.levensnummer,$Ka
 lst_volwId
 FROM tblVolwas v
  join tblSchaap mdr on (v.mdrId = mdr.schaapId)
- join tblStal stm on (stm.schaapId = mdr.schaapId)
- join tblHistorie h on (stm.stalId = h.stalId and v.hisId = h.hisId)
+ join tblStal stOoi on (stOoi.schaapId = mdr.schaapId)
+ join tblUbn uOoi on (stOoi.ubnId = uOoi.ubnId)
+ join tblHistorie h on (v.hisId = h.hisId)
  left join (
  	SELECT hisId, h.datum dekdate, date_format(h.datum,'%d-%m-%Y') dekdatum, year(h.datum) dekjaar, skip
  	FROM tblHistorie h
@@ -869,7 +871,7 @@ FROM tblVolwas v
     WHERE (dek.hisId is not null or dra.volwId is not null) and isnull(ha.schaapId)
     GROUP BY mdrId
  ) lst_v on (lst_v.mdrId = v.mdrId)
-WHERE stm.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (isnull(stl.lidId) or stl.lidId = '".mysqli_real_escape_string($db,$lidId)."') and (dekdatum is not null or drachtdatum is not null) and coalesce(dekjaar, dekjaar_obv_worp, drachtjaar) = '".mysqli_real_escape_string($db,$jaar)."' and isnull(stm.rel_best)
+WHERE uOoi.lidId = '".mysqli_real_escape_string($db,$lidId)."' and (isnull(stl.lidId) or stl.lidId = '".mysqli_real_escape_string($db,$lidId)."') and (dekdatum is not null or drachtdatum is not null) and coalesce(dekjaar, dekjaar_obv_worp, drachtjaar) = '".mysqli_real_escape_string($db,$jaar)."'
 GROUP BY v.volwId, v.hisId, dekdatum, v.mdrId, mdr.levensnummer, v.vdrId, drachtdatum, werpdatum, v.grootte
 ORDER BY right(mdr.levensnummer,$Karwerk), dekdate desc
 ";
@@ -989,6 +991,25 @@ while ($zvtd = mysqli_fetch_array($zoek_verblijf_tijdens_dekking))
 
 /* Einde Zoek het verblijf tijdens het dekken */
 
+/* Huidige status moederdier (afvoer) */
+unset($status);
+
+$zoek_status_ooi = mysqli_query($db,"
+SELECT actie
+FROM tblHistorie h
+ join tblActie a on (a.actId = h.actId)
+ join ( 
+ 	SELECT max(stalId) stalId
+ 	FROM tblStal
+ 	WHERE schaapId = '".mysqli_real_escape_string($db,$mdrId)."'
+ ) maxSt on (maxSt.stalId = h.stalId)
+ join tblStal st on (st.stalId = maxSt.stalId) 
+WHERE a.af = 1 and st.rel_best is not null
+") or die (mysqli_error($db)); 
+
+while ($zso = mysqli_fetch_array($zoek_status_ooi)) 
+{ $status = $zso['actie']; }
+/* Einde Huidige status moederdier (afvoer) */
 
 if($Id <> $lst_volwId && !isset($lamrn) && (!isset($_POST['radAllDekkingen']) || $_POST['radAllDekkingen'] == '0') )
 /* Eerdere dekkingen en dekkingen zonder worp en keuze Eerdere dekkingen niet tonen */
@@ -1078,8 +1099,10 @@ foreach ( $opties as $key => $waarde)
 
  <td><?php echo $werpdm; ?></td>
 
-
  <td><?php echo $verblijf; ?></td>
+
+ <td><?php if(isset($status)) { echo $status; } ?></td>
+
 
 </tr>
 
