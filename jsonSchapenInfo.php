@@ -60,7 +60,7 @@ WHERE lidId = '".mysqli_real_escape_string($db,$lidid)."';
 	while ($row = mysqli_fetch_assoc($result)) 	{ $Karwerk = $row['kar_werknr']; }
 
 $zoek_info = mysqli_query($db,"
-SELECT concat(transponder,levensnummer) tran, coalesce(s.geslacht,'Onbekend') geslacht, coalesce(r.ras,'Onbekend') ras, coalesce(ldek.dekdm_max,'n.v.t.') lastdek, coalesce(dram.werknr,'n.v.t.') dekram, coalesce(lw.worp,'n.v.t.') lastworp, coalesce(lw.werpdm,'n.v.t.') lastwerpdm,
+SELECT concat(transponder,levensnummer) tran, coalesce(s.geslacht,'Onbekend') geslacht, coalesce(r.ras,'Onbekend') ras, coalesce(ldek.dekdm_max,'n.v.t.') lastdekdm , coalesce(dram.werknr,'n.v.t.') dekram, coalesce(dram.ras,'n.v.t.') dekramRas, coalesce(lw.worp,'n.v.t.') lastworp, coalesce(lw.werpdm,'n.v.t.') lastwerpdm,
 	coalesce(aant_d, 0) aant_d,
 	coalesce(aant_w, 0) aant_w,
 	coalesce(round(aant_lam/aant_w,2),0) gemWorp, 
@@ -69,9 +69,23 @@ SELECT concat(transponder,levensnummer) tran, coalesce(s.geslacht,'Onbekend') ge
 	coalesce(maxworp, 0) maxworp,
 	coalesce(aantalmaxworp, 0) aantalmaxworp
 
+
 FROM tblSchaap s
  left join tblRas r on (s.rasId = r.rasId)
  join tblStal st on (s.schaapId = st.schaapId)
+ join tblUbn u on (st.ubnId = u.ubnId)
+ join (
+ 	SELECT max(st.stalId) stalId, st.schaapId
+ 	FROM tblStal st
+ 	 join tblUbn u on (st.ubnId = u.ubnId)
+ 	GROUP BY schaapId
+ ) maxSt on (maxSt.schaapId = s.schaapId)
+ left join (
+ 	SELECT h.stalId, h.actId
+ 	FROM tblHistorie h
+ 	 join tblActie a on (h.actId = a.actId)
+ 	WHERE a.af = 1
+ ) haf on (maxSt.stalId = haf.stalId)
  left join (
  	SELECT st.schaapId, max(h.datum) datum, date_format(max(h.datum),'%d-%m-%Y') dekdm_max
  	FROM tblHistorie h
@@ -85,14 +99,16 @@ FROM tblSchaap s
  	FROM tblVolwas v
  	 join tblHistorie h on (v.hisId = h.hisId)
  	 join tblStal st on (h.stalId = st.stalId)
- 	WHERE h.skip = 0 and lidId = '".mysqli_real_escape_string($db,$lidid)."'
+	 join tblUbn u on (st.ubnId = u.ubnId)
+ 	WHERE h.skip = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidid)."'
  	GROUP BY h.datum
  ) lstVId on (lstVId.datum = ldek.datum)
  left join (
- 	SELECT v.volwId, right(levensnummer, $Karwerk) werknr
+ 	SELECT v.volwId, right(levensnummer, $Karwerk) werknr, r.ras
  	FROM tblSchaap s
  	 join tblStal st on (s.schaapId = st.schaapId)
- 	 join tblVolwas v on (v.vdrId = s.schaapId) 
+ 	 join tblVolwas v on (v.vdrId = s.schaapId)
+ 	 left join tblRas r on (s.rasId = r.rasId)
  	WHERE lidId = '".mysqli_real_escape_string($db,$lidid)."'
  ) dram on (dram.volwId = lstVId.mvolwId)
  left join (
@@ -101,7 +117,14 @@ FROM tblSchaap s
 		SELECT max(volwId) volwId, mdrId
 		FROM tblVolwas v
 		 join tblStal st on (st.schaapId = v.mdrId)
-		WHERE isnull(rel_best) and lidId = '".mysqli_real_escape_string($db,$lidid)."'
+		 join tblUbn u on (st.ubnId = u.ubnId)
+		 left join (
+		 	SELECT h.actId, h.stalId
+		 	FROM tblHistorie h
+		 	 join tblActie a on (a.actId = h.actId)
+		 	WHERE a.af = 1
+		 ) haf on (haf.stalId = st.stalId)
+		WHERE (isnull(rel_best) or haf.actId = 10) and u.lidId = '".mysqli_real_escape_string($db,$lidid)."'
 		GROUP BY mdrId
 	) v
 	 join tblSchaap l on (l.volwId = v.volwId)
@@ -114,15 +137,29 @@ FROM tblSchaap s
 	SELECT count(hisId) aant_d, mdrId
 	FROM tblVolwas v
 	 join tblStal st on (st.schaapId = v.mdrId)
-	WHERE isnull(rel_best) and lidId = '".mysqli_real_escape_string($db,$lidid)."'
+	 join tblUbn u on (st.ubnId = u.ubnId)
+	 left join (
+	 	SELECT h.actId, h.stalId
+	 	FROM tblHistorie h
+	 	 join tblActie a on (a.actId = h.actId)
+	 	WHERE a.af = 1
+	 ) haf on (haf.stalId = st.stalId)
+	WHERE (isnull(rel_best) or haf.actId = 10) and u.lidId = '".mysqli_real_escape_string($db,$lidid)."'
 	GROUP BY mdrId
  ) dekat on (dekat.mdrId = s.schaapId)
   left join (
 	SELECT count(DISTINCT(v.volwId)) aant_w, mdrId
 	FROM tblVolwas v
 	 join tblStal st on (st.schaapId = v.mdrId)
+	 join tblUbn u on (st.ubnId = u.ubnId)
+	 left join (
+	 	SELECT h.actId, h.stalId
+	 	FROM tblHistorie h
+	 	 join tblActie a on (a.actId = h.actId)
+	 	WHERE a.af = 1
+	 ) haf on (haf.stalId = st.stalId)
 	 join tblSchaap s on (s.volwId = v.volwId)
-	WHERE isnull(rel_best) and lidId = '".mysqli_real_escape_string($db,$lidid)."'
+	WHERE (isnull(rel_best) or haf.actId = 10) and u.lidId = '".mysqli_real_escape_string($db,$lidid)."'
 	GROUP BY mdrId
  ) w on (w.mdrId = s.schaapId)
  left join (
@@ -130,7 +167,14 @@ FROM tblSchaap s
 	FROM tblSchaap s 
 	 join tblVolwas v on (s.volwId = v.volwId)
 	 join tblStal st on (st.schaapId = v.mdrId)
-	WHERE isnull(rel_best) and lidId = '".mysqli_real_escape_string($db,$lidid)."'
+	 join tblUbn u on (st.ubnId = u.ubnId)
+	 left join (
+	 	SELECT h.actId, h.stalId
+	 	FROM tblHistorie h
+	 	 join tblActie a on (a.actId = h.actId)
+	 	WHERE a.af = 1
+	 ) haf on (haf.stalId = st.stalId)
+	WHERE (isnull(rel_best) or haf.actId = 10) and u.lidId = '".mysqli_real_escape_string($db,$lidid)."'
 	GROUP BY mdrId
  ) lm on (w.mdrId = lm.mdrId)
  left join (
@@ -138,7 +182,14 @@ FROM tblSchaap s
 	FROM tblSchaap s 
 	 join tblVolwas v on (s.volwId = v.volwId)
 	 join tblStal st on (st.schaapId = v.mdrId)
-	WHERE isnull(rel_best) and lidId = '".mysqli_real_escape_string($db,$lidid)."' and levensnummer is not null
+	 join tblUbn u on (st.ubnId = u.ubnId)
+	 left join (
+	 	SELECT h.actId, h.stalId
+	 	FROM tblHistorie h
+	 	 join tblActie a on (a.actId = h.actId)
+	 	WHERE a.af = 1
+	 ) haf on (haf.stalId = st.stalId)
+	WHERE (isnull(rel_best) or haf.actId = 10) and u.lidId = '".mysqli_real_escape_string($db,$lidid)."' and levensnummer is not null
 	GROUP BY mdrId
  ) le on (w.mdrId = le.mdrId)
  left join (
@@ -146,7 +197,14 @@ FROM tblSchaap s
 	FROM tblSchaap s 
 	 join tblVolwas v on (s.volwId = v.volwId)
 	 join tblStal st on (st.schaapId = v.mdrId)
-	WHERE isnull(rel_best) and lidId = '".mysqli_real_escape_string($db,$lidid)."' and isnull(levensnummer)
+	 join tblUbn u on (st.ubnId = u.ubnId)
+	 left join (
+	 	SELECT h.actId, h.stalId
+	 	FROM tblHistorie h
+	 	 join tblActie a on (a.actId = h.actId)
+	 	WHERE a.af = 1
+	 ) haf on (haf.stalId = st.stalId)
+	WHERE (isnull(rel_best) or haf.actId = 10) and u.lidId = '".mysqli_real_escape_string($db,$lidid)."' and isnull(levensnummer)
 	GROUP BY mdrId
  ) d on (w.mdrId = d.mdrId)
  left join (
@@ -158,7 +216,14 @@ FROM tblSchaap s
 			FROM tblSchaap s 
 			 join tblVolwas v on (s.volwId = v.volwId)
 			 join tblStal st on (st.schaapId = v.mdrId)
-			WHERE isnull(rel_best) and lidId = '".mysqli_real_escape_string($db,$lidid)."'
+			 join tblUbn u on (st.ubnId = u.ubnId)
+			 left join (
+			 	SELECT h.actId, h.stalId
+			 	FROM tblHistorie h
+			 	 join tblActie a on (a.actId = h.actId)
+			 	WHERE a.af = 1
+			 ) haf on (haf.stalId = st.stalId)
+			WHERE (isnull(rel_best) or haf.actId = 10) and u.lidId = '".mysqli_real_escape_string($db,$lidid)."'
 			GROUP BY s.volwId, mdrId
 		 ) wgr
 		GROUP BY mdrId
@@ -168,13 +233,20 @@ FROM tblSchaap s
 		FROM tblSchaap s 
 		 join tblVolwas v on (s.volwId = v.volwId)
 		 join tblStal st on (st.schaapId = v.mdrId)
-		WHERE isnull(rel_best) and lidId = '".mysqli_real_escape_string($db,$lidid)."'
+		 join tblUbn u on (st.ubnId = u.ubnId)
+		 left join (
+		 	SELECT h.actId, h.stalId
+		 	FROM tblHistorie h
+		 	 join tblActie a on (a.actId = h.actId)
+		 	WHERE a.af = 1
+		 ) haf on (haf.stalId = st.stalId)
+		WHERE (isnull(rel_best) or haf.actId = 10) and u.lidId = '".mysqli_real_escape_string($db,$lidid)."'
 		GROUP BY s.volwId, mdrId
 	 ) wgr on (mw.mdrId = wgr.mdrId and mw.maxworp = wgr.worp)
 	GROUP BY mw.mdrId, maxworp
  ) amw on (w.mdrId = amw.mdrId)
 
-WHERE isnull(st.rel_best) and lidId = '".mysqli_real_escape_string($db,$lidid)."' and s.transponder is not null
+WHERE (isnull(st.rel_best) or haf.actId = 10) and u.lidId = '".mysqli_real_escape_string($db,$lidid)."' and s.transponder is not null
 ") or die (mysqli_error($db)); 
 
 $rows = mysqli_num_rows($zoek_info);
@@ -185,8 +257,9 @@ if(isset($zoek_info) && $rows > 0) {
 	while($zi = mysqli_fetch_array($zoek_info))
 		{
 			$geslacht = $zi['geslacht'];
-			$lastdek = $zi['lastdek']; if($geslacht == 'ram') { $lastdek = 'n.v.t.'; }
-			$lastdekram = $zi['dekram']; if($geslacht == 'ram') { $lastdek = 'n.v.t.'; }
+			$lastdekdm = $zi['lastdekdm']; if($geslacht == 'ram') { $lastdekdm = 'n.v.t.'; }
+			$lastdekram = $zi['dekram']; if($geslacht == 'ram') { $lastdekram = 'n.v.t.'; }
+			$lastDekramRas = $zi['dekramRas']; if($geslacht == 'ram') { $lastDekramRas = 'n.v.t.'; }
 			$lastworp = $zi['lastworp']; if($geslacht == 'ram') { $lastworp = 'n.v.t.'; }
 			$lastwerpdm = $zi['lastwerpdm']; if($geslacht == 'ram') { $lastwerpdm = '00-00-0000'; }
 
@@ -201,7 +274,7 @@ if(isset($zoek_info) && $rows > 0) {
 			$aantMaxWorp = $zi['aantalmaxworp']; if($geslacht == 'ram') { $aantMaxWorp = 'n.v.t.'; }	
 
 
-			$opties[] = array('Transponder' => $zi['tran'], 'Geslacht' => $geslacht, 'Ras' => $zi['ras'], 'Laatstedek' => $lastdek, 'Laatstedekram' => $lastdekram, 'Laatsteworp' => $lastworp, 'Laatstewerpdm' => $lastwerpdm, 'Dekaantal' => $aantDek, 'Worpaantal' => $aantWorp, 'Gemiddeldeworp' => $gemWorp, 'Lamaantal' => $aantLam, 'PercLevend' => $PercLevend, 'Maxworp' => $maxWorp, 'Aantmaxworp' => $aantMaxWorp);
+			$opties[] = array('Transponder' => $zi['tran'], 'Geslacht' => $geslacht, 'Ras' => $zi['ras'], 'Laatstedekdm' => $lastdekdm, 'Laatste_dekram_werknr' => $lastdekram, 'Laatste_dekram_ras' => $lastDekramRas, 'Laatsteworp' => $lastworp, 'Laatstewerpdm' => $lastwerpdm, 'Dekaantal' => $aantDek, 'Worpaantal' => $aantWorp, 'Gemiddeldeworp' => $gemWorp, 'Lamaantal' => $aantLam, 'PercLevend' => $PercLevend, 'Maxworp' => $maxWorp, 'Aantmaxworp' => $aantMaxWorp, 'Peildatum' =>  date('d-m-Y') );
 
 			}
 }
