@@ -83,9 +83,9 @@ SELECT v.volwId, v.hisId, dekdate, dekdatum, v.mdrId, right(mdr.levensnummer,$Ka
 lst_volwId
 FROM tblVolwas v
  join tblSchaap mdr on (v.mdrId = mdr.schaapId)
- join tblStal stm on (stm.schaapId = mdr.schaapId)
- join tblUbn um on (stm.ubnId = um.ubnId)
- join tblHistorie h on (stm.stalId = h.stalId
+ join tblStal stMdr on (stMdr.schaapId = mdr.schaapId)
+ join tblUbn uMdr on (stMdr.ubnId = uMdr.ubnId)
+ join tblHistorie h on (stMdr.stalId = h.stalId
  and v.hisId = h.hisId)
  left join (
     SELECT hisId, h.datum dekdate, date_format(h.datum,'%d-%m-%Y') dekdatum, year(h.datum) dekjaar, skip
@@ -144,11 +144,10 @@ FROM tblVolwas v
  and isnull(ha.schaapId)
     GROUP BY mdrId
  ) lst_v on (lst_v.mdrId = v.mdrId)
-WHERE um.lidId = :lidId
+WHERE uMdr.lidId = :lidId
  and (isnull(ul.lidId) or ul.lidId = :lidId)
  and (dekdatum is not null or drachtdatum is not null)
  and coalesce(dekjaar, dekjaar_obv_worp, drachtjaar) = :jaar
- and isnull(stm.rel_best)
 GROUP BY v.volwId, v.hisId, dekdatum, v.mdrId, mdr.levensnummer, v.vdrId, drachtdatum, werpdatum, v.grootte
 ORDER BY right(mdr.levensnummer,$Karwerk), dekdate desc
 SQL

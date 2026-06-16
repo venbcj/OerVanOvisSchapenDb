@@ -16,7 +16,7 @@ $versie = '16-12-2024'; /* Wijzigen van drachtdaatum met dekdatum ouder dan 1 ja
 $versie = '18-12-2024'; /* query Declaratie vaderdier aangepast. Aanwas hoeft niet meer zijn aangemaakt bij de ingelogde gebruiker. */
 $versie = '31-12-2024'; /* <TD width = 960 height = 400 valign = "top" > gewijzigd naar <TD valign = "top"> 31-12-24 include login voor include header gezet */
 $versie = '21-01-2025'; /* In subquery vmax_mdr_met_vdr h.skip = 0 toegevoegd */
-$versie = '12-03-2025'; /* In query zoek_dekkingen tabel 'join tblHistorie h on (stm.stalId = h.stalId and v.hisId = h.hisId)' toegevoegd om de relaties met andere stalId's uit tblStal (bijv. uitgeschaarden) uit te sluiten. Dit veroorzaakte nl. dubbel aantal worpen */
+$versie = '12-03-2025'; /* In query zoek_dekkingen tabel 'join tblHistorie h on (stMdr.stalId = h.stalId and v.hisId = h.hisId)' toegevoegd om de relaties met andere stalId's uit tblStal (bijv. uitgeschaarden) uit te sluiten. Dit veroorzaakte nl. dubbel aantal worpen */
 $versie = '26-03-2025'; /* Verblijf tijdens dekking toegevoegd aan historie */
 
 Session::start();
@@ -540,7 +540,8 @@ for($jaar = $current_year; $jaar >= $first_year; $jaar--) { ?>
      <th>Drachtdatum<hr></th>
      <th>Worpgrootte<hr></th>
      <th>Werpdatum<hr></th>
-     <th>Verblijf<hr></th>
+     <th>Verblijf<br>tijdens dekking<hr></th>
+     <th>Huidige status<hr></th>
  </tr> 
 
 <?php
@@ -604,14 +605,16 @@ $cnt_ooien = $vals[$mdrId];
 /*$cnt_ooien = $vals[$mdrId];
 echo $cnt_ooien.'<br>';*/
 
-/* Zoek het verblijf tijdens het dekken */
+
 unset($verblijf);
 
 $date_verblijf = $historie_gateway->zoek_datum_verblijf_tijdens_dekking($lidId, $mdrId, $dmdek);
 $hisId_verblijf = $historie_gateway->zoek_hisId_verblijf_tijdens_dekking($lidId, $mdrId, $date_verblijf);
 $verblijf = $historie_gateway->zoek_verblijf_tijdens_dekking($lidId, $hisId_verblijf, $dmdek);
 
-/* Einde Zoek het verblijf tijdens het dekken */
+unset($status);
+$status = $historie_gateway->zoek_huidige_status_moeder($mdrId);
+
 
 if($Id <> $lst_volwId && !isset($lamrn) && (!isset($_POST['radAllDekkingen']) || $_POST['radAllDekkingen'] == '0') )
 /* Eerdere dekkingen en dekkingen zonder worp en keuze Eerdere dekkingen niet tonen */
@@ -705,8 +708,9 @@ foreach ( $opties as $key => $waarde)
 
  <td><?php echo $werpdm; ?></td>
 
-
  <td><?php echo $verblijf; ?></td>
+
+ <td><?php if(isset($status)) { echo $status; } ?></td>
 
 </tr>
 

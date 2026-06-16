@@ -145,6 +145,27 @@ SQL
         );
     }
 
+public function zoek_huidge_status_moeder($mdrId){
+    return $this->first_field(
+<<<SQL
+SELECT actie
+FROM tblHistorie h
+ join tblActie a on (a.actId = h.actId)
+ join ( 
+    SELECT max(stalId) stalId
+    FROM tblStal
+    WHERE schaapId = :mdrId
+ ) maxSt on (maxSt.stalId = h.stalId)
+ join tblStal st on (st.stalId = maxSt.stalId) 
+WHERE a.af = 1 and st.rel_best is not null
+SQL
+    ,
+    [
+        [':mdrId',$mdrId,Type::INT]
+    ]);
+}
+
+
     public function dagwegingen($lidId, $schaapId, $datum) {
         return $this->first_field(<<<SQL
 SELECT count(hisId) aant
