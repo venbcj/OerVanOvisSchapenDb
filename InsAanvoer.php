@@ -151,7 +151,7 @@ unset($index);
 }
 
 // Declaratie HERKOMST            // lower(if(isnull(ubn),'6karakters',ubn)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.
-$relatienr = $partij_gateway->find_relatie($lidId);
+$relatienr = $partij_gateway->find_relatie($lidId, 'cred');
 $index = 0; 
 while ($rnr = $relatienr->fetch_assoc()) {
    $relnId[$index] = $rnr['relId'];

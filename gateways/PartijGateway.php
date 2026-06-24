@@ -51,13 +51,13 @@ SQL
         );
     }
 
-    public function find_relatie($lidId) {
+    public function find_relatie($lidId, $DebCred) {
         return $this->run_query(
             <<<SQL
 SELECT r.relId, '6karakters' ubn, concat(p.ubn, ' - ', p.naam) naam
 FROM tblPartij p join tblRelatie r on (p.partId = r.partId)    
 WHERE p.lidId = :lidId
- and relatie = 'deb'
+ and relatie = :DebCred
  and p.actief = 1
  and r.actief = 1
  and isnull(p.ubn)
@@ -66,14 +66,16 @@ SELECT r.relId, p.ubn, concat(p.ubn, ' - ', p.naam) naam
 FROM tblPartij p
  join tblRelatie r on (p.partId = r.partId)    
 WHERE p.lidId = :lidId
- and relatie = 'deb'
+ and relatie = :DebCred
  and p.actief = 1
  and r.actief = 1 
  and ubn is not null
 ORDER BY naam
 SQL
-        , [[':lidId', $lidId, Type::INT]]
-        );
+        , [
+            [':lidId', $lidId, Type::INT],
+            [':DebCred', $DebCred, Type::TXT]
+        ]);
     }
 
     public function findNaam($partId) {

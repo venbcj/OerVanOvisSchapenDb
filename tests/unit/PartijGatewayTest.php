@@ -21,8 +21,13 @@ class PartijGatewayTest extends GatewayCase {
         $this->assertNotFalse($result);
     }
 
-    public function test_find_relatie() {
-        $result = $this->sut->find_relatie(self::LIDID);
+    public function test_find_debiteur() {
+        $result = $this->sut->find_relatie(self::LIDID, 'deb');
+        $this->assertNotFalse($result);
+    }
+
+    public function test_find_crediteur() {
+        $result = $this->sut->find_relatie(self::LIDID, 'cred');
         $this->assertNotFalse($result);
     }
 

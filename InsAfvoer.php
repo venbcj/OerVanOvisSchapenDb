@@ -111,7 +111,7 @@ $data = $paginator->fetch_data($velden, "ORDER BY right(rd.levensnummer,$Karwerk
 <?php
 
 // Declaratie BESTEMMING
-$relatienr = $partij_gateway->find_relatie($lidId);
+$relatienr = $partij_gateway->find_relatie($lidId, 'deb');
 
 $index = 0; 
 $relnum = [];

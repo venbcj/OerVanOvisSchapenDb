@@ -66,7 +66,7 @@ $data = $paginator->fetch_data($velden, "ORDER BY right(rd.levensnummer,$Karwerk
 
 // Declaratie BESTEMMING            // lower(if(isnull(ubn),'6karakters',ubn)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.
     $partij_gateway = new PartijGateway();
-$relatienr = $partij_gateway->find_relatie($lidId);
+$relatienr = $partij_gateway->find_relatie($lidId, 'deb');
 $index = 0; 
 while ($rnr = $relatienr->fetch_array()) { 
    $relnId[$index] = $rnr['relId']; 
