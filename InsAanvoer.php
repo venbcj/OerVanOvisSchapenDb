@@ -116,7 +116,7 @@ impAgrident rd
  ) dup on (rd.Id = dup.Id)
 ";
 
-$WHERE = "WHERE rd.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and (rd.actId = 2 or rd.actId = 3) and isnull(rd.verwerkt) and rel.actief = 1";
+$WHERE = "WHERE rd.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and (rd.actId = 2 or rd.actId = 3) and isnull(rd.verwerkt) and rel.relatie = 'cred' and rel.actief = 1";
 
 include "paginas.php";
 
