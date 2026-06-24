@@ -94,7 +94,7 @@ SQL;
 
     public function getInsAanvoerWhere($lidId) {
         return [
-            "WHERE rd.lidId = :lidId and (rd.actId = 2 or rd.actId = 3) and isnull(rd.verwerkt) and rel.actief = 1",
+            "WHERE rd.lidId = :lidId and (rd.actId = 2 or rd.actId = 3) and isnull(rd.verwerkt) and rel.relatie = 'cred' and rel.actief = 1",
             [[':lidId', $lidId, Type::INT]]
         ];
     }
