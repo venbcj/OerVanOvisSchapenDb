@@ -224,11 +224,11 @@ impAgrident rd
 	GROUP BY schaapId
  ) max on (s.schaapId = max.schaapId)
  left join (
-	SELECT p.lidId, p.ubn
+	SELECT p.ubn
 	FROM tblPartij p
 	 join tblRelatie r on (p.partId = r.partId)
-	WHERE p.actief = 1 and r.relatie = 'deb' and r.actief = 1
- ) r on(r.ubn = rd.ubn and r.lidId = rd.lidId)
+	WHERE p.actief = 1 and r.relatie = 'deb' and r.actief = 1 and p.lidId = '".mysqli_real_escape_string($db,$lidId)."' 
+ ) r on(r.ubn = rd.ubn)
  left join (
 	SELECT max(b.bezId) bezId, s.levensnummer
 	FROM tblBezet b
