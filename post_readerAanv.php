@@ -87,8 +87,8 @@ if ($fldKies == 1 && $fldDel == 0 && !$verwerkt) { // $verwerkt is een extra con
 
 // Levensnummer ophalen
     [$levnr_rd, $transp_rd] = $impagrident_gateway->zoek_levnr_reader($recId);
-$schaapId = $schaap_gateway->zoek_schaapid($levnr_rd);
-// TODO: ... en hier doe je niets mee.
+
+    [$schaapId, $levnr_db, $transp_db] = $schaap_gateway->zoek_levnr_database($levnr_rd);
 
 // CONTROLE op alle verplichten velden bij AANVOER MOEDER- EN VADERDIEREN
 if (isset($flddag) && isset($fldUbn) && isset($levnr_rd) && (
@@ -97,7 +97,7 @@ if (isset($flddag) && isset($fldUbn) && isset($levnr_rd) && (
     (isset($levnr_db))
     ) )
 {
-    [$schaapId, $transp_db] = $schaap_gateway->zoek_schaapid_transponder($levnr_rd);
+
 if(!isset($schaapId)) {
     $schaapId = $schaap_gateway->maak_minimaal_schaap($levnr_rd, $fldRas, $fldSekse);
 }

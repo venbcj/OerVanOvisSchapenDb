@@ -479,12 +479,6 @@ class SchaapGatewayTest extends GatewayCase {
         $this->assertNotFalse($result);
     }
 
-    public function test_zoek_schaapid_transponder() {
-        $levnr = null;
-        $result = $this->sut->zoek_schaapid_transponder($levnr);
-        $this->assertNotFalse($result);
-    }
-
     public function test_zoek_stalid() {
         $result = $this->sut->zoek_stalid(self::LIDID);
         $this->assertNotFalse($result);

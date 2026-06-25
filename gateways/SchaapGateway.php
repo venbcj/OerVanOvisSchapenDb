@@ -15,16 +15,16 @@ SQL
         );
     }
 
-    public function zoek_schaapid_transponder($levnr) {
+    public function zoek_levnr_database($levnr) {
         return $this->first_row(
             <<<SQL
-SELECT schaapId, transponder
+SELECT schaapId, levensnummer, transponder
 FROM tblSchaap
 WHERE levensnummer = :levnr
 SQL
             ,
             [[':levnr', $levnr]],
-            [null, null]
+            [null, null, null]
         );
     }
 
