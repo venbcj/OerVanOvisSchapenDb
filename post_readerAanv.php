@@ -118,13 +118,17 @@ while ( $zlr = mysqli_fetch_assoc($zoek_levnr_reader)) {
 	$levnr_rd = $zlr['levnr_aanv']; 
 	$transp_rd = $zlr['transponder']; }
 
-$zoek_schaapId = mysqli_query($db,"
-SELECT schaapId
+
+$zoek_levnr_database = mysqli_query($db,"
+SELECT schaapId, levensnummer, transponder
 FROM tblSchaap
 WHERE levensnummer = '".mysqli_real_escape_string($db,$levnr_rd)."'
 ") or die (mysqli_error($db));
-	while ( $zs = mysqli_fetch_assoc($zoek_schaapId)) { $schaapId = $zs['schaapId']; }
 
+	while ( $zld = mysqli_fetch_assoc($zoek_levnr_database)) { 
+		$schaapId = $zld['schaapId']; 
+		$transp_db = $zld['transponder']; 
+		$levnr_db = $zld['levensnummer']; }
 
 
 // CONTROLE op alle verplichten velden bij AANVOER MOEDER- EN VADERDIEREN
@@ -134,15 +138,6 @@ if (isset($flddag) && isset($fldUbn) && isset($levnr_rd) && (
 	(isset($levnr_db))
 	) )
 {
-
-$zoek_schaapId = mysqli_query($db,"
-SELECT schaapId, transponder
-FROM tblSchaap
-WHERE levensnummer = '".mysqli_real_escape_string($db,$levnr_rd)."'
-") or die (mysqli_error($db));
-	while ( $sId = mysqli_fetch_assoc($zoek_schaapId)) { 
-		$schaapId = $sId['schaapId']; 
-		$transp_db = $sId['transponder']; }
 
 if(!isset($schaapId)) {
 // Insert tblSchapen
