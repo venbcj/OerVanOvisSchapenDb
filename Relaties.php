@@ -205,6 +205,7 @@ ORDER BY r.actief desc, p.naam
         $pc = $row['pc'];
         $plaats = $row['plaats'];
         $tel = $row['tel'];
+        $actief = $row['actief'];
 
 if(isset($_POST['knpCred_'.$Id])) {
 // crediteur toevoegen        
@@ -230,8 +231,8 @@ $insert_adres = "INSERT INTO tblAdres set relId = '".mysqli_real_escape_string($
 
 }
         
-?>         
-<tr style = "font-size:12px;">
+if($actief == 1) { ?>         
+<tr style = "font-size:12px;" >
  <td>
  <input type= "text" name= <?php echo "txtdebUbn_$Id"; ?> size = 5 style= "font-size : 11px" value = <?php echo $ubn; ?> ></td>
  <td><input type= "text" name= <?php echo "txtdebNaam_$Id"; ?> style= "font-size : 11px" value = <?php echo " \"$naam\" "; ?> ></td>
@@ -246,7 +247,7 @@ $insert_adres = "INSERT INTO tblAdres set relId = '".mysqli_real_escape_string($
 
  <td><input type= "text" name= <?php echo "txtdebPlaats_$Id"; ?> size = 17 style= "font-size : 11px" value = <?php echo " \"$plaats\" "; ?> ></td>
  <td><input type= "text" name= <?php echo "txtdebTel_$Id"; ?> size = 12 style= "font-size : 11px" value = <?php echo " \"$tel\" "; ?> style= "width: 80px;"></td>
- <td><input type = "checkbox" name = <?php echo "chkdebActief_$Id"; ?> id= "c1" style= "font-size : 11px" value= "1" <?php echo $row['actief'] == 1 ? 'checked' : ''; ?>         title = "Is debiteur te gebruiken ja/nee ?"> </td>
+ <td><input type = "checkbox" name = <?php echo "chkdebActief_$Id"; ?> id= "c1" style= "font-size : 11px" value= "1" <?php echo $actief == 1 ? 'checked' : ''; ?>         title = "Is debiteur te gebruiken ja/nee ?"> </td>
         
  <td width = 80>
 <?php echo View::link_to('meer gegevens', 'Relatie.php?pstid='.$partId, ['style' => 'color: blue']); ?>
@@ -261,12 +262,37 @@ if(!isset($cred_exists)) { ?>
  <td> <input type= "submit" name= <?php echo "knpCred_$Id"; ?> value= "maak ook crediteur" style = "font-size:9px;" > </td> <?php } unset($cred_exists); ?>
 
     </td>
-        
-<?php    }    ?>
+
+ <td> </td>
+</tr>
+<?php	}	else { ?>
+<tr style = "font-size:12px; color:grey;" >
+ <td>
+ <?php echo $ubn; ?></td>
+ <td> <?php echo $naam; ?> </td>
+ <td> </td>
+ <td> <?php echo $straat; ?> </td>
+ <td> <?php echo $nr; ?> </td>
+ <td> <?php echo $pc; ?> </td>
+ <td> <?php echo $plaats; ?> </td>
+ <td> <?php echo $tel; ?> </td>
+ <td><input type = "checkbox" name = <?php echo "chkdebActief_$Id"; ?> id= "c1" style= "font-size : 11px" value= "1" <?php echo $actief == 1 ? 'checked' : ''; ?> 		title = "Is debiteur te gebruiken ja/nee ?"> </td>
+
+ <td width = 80>  </td>
+ <td> </td>
+<?php
+$zoek_cred = mysqli_query($db,"SELECT relId FROM tblRelatie WHERE partId = '".mysqli_real_escape_string($db,$partId)."' and relatie = 'cred' ") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db)); 
+    while( $cr = mysqli_fetch_assoc($zoek_cred)) { $cred_exists = $cr['relId']; } 
+if(!isset($cred_exists)) { ?>
+ <td> <input type= "submit" name= <?php echo "knpCred_$Id"; ?> value= "maak ook crediteur" style = "font-size:9px;" > </td> <?php } unset($cred_exists); ?>
+
+	</td>
 
  <td> </td>
 </tr>
 
+<?php } // einde else van if($actief == 1) 
+   } // einde while loop $zoek_debiteuren ?>
 </td>
 </tr>
             <!-------------------------------------------------
@@ -353,6 +379,7 @@ $insert_adres = "INSERT INTO tblAdres set relId = '".mysqli_real_escape_string($
 // Einde Als adres bestaat ook adres toevoegen aan debiteur-relatie. 
 
 }
+if($actief == 1) { 
 ?>         
 <tr style = "font-size:12px;">
  <td>
@@ -399,12 +426,50 @@ if(!isset($deb_exists)) { ?>
  <td> <input type= "submit" name= <?php echo "knpDeb_$Id"; ?> value= "maak ook debiteur" style = "font-size:9px;" > </td> <?php } unset($deb_exists); ?>
 
     </td>
-        
-<?php    }    ?>
-
  <td> </td>
 </tr>
 
+<?php	}	// einde if($actief == 1) 
+else { ?> 
+<tr style = "font-size:12px; color:grey;">
+ <td>
+<?php if($uitval <> 1) { 
+ echo $ubn; } ?> </td>
+ <td>
+<?php echo $naam; ?> 
+ </td>
+
+ <td> </td>
+ 
+ <td> <?php echo $straat; ?> </td>
+ <td> <?php echo $nr; ?> </td> 
+ <td> <?php echo $pc; ?> </td>
+ <td> <?php echo $plaats; ?> </td>
+ <td> <?php echo $tel; ?> </td>
+ <td>
+ <input type = "checkbox" name = <?php echo "chkcreActief_$Id"; ?> id= "c1" style= "font-size : 11px" value= "1" <?php echo $actief == 1 ? 'checked' : ''; if($uitval == 1) { ?> disabled <?php } ?> > </td>
+		
+ <td width = 80>  </td>
+ <td> </td>
+<?php
+$zoek_deb = mysqli_query($db,"
+SELECT relId 
+FROM tblRelatie r
+WHERE partId = '".mysqli_real_escape_string($db,$partId)."' and relatie = 'deb' or (
+	exists( SELECT relId FROM tblRelatie rl WHERE rl.partId = r.partId and rl.partId = '".mysqli_real_escape_string($db,$partId)."' and rl.uitval = 1)
+)
+") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db)); 
+	while( $cr = mysqli_fetch_assoc($zoek_deb)) { $deb_exists = $cr['relId']; } 
+if(!isset($deb_exists)) { ?>
+ <td> <input type= "submit" name= <?php echo "knpDeb_$Id"; ?> value= "maak ook debiteur" style = "font-size:9px;" > </td> <?php } unset($deb_exists); ?>
+
+	</td>
+		
+
+ <td> </td>
+</tr>
+<?php } // einde else van if($actief == 1) 
+} // einde while loop $zoek_crediteuren ?>
 </td>
 </tr>
             <!-------------------------------------------------
