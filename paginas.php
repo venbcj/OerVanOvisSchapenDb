@@ -39,7 +39,24 @@ class Page_numbers
         $this->total_records = $this->count_records();
         $this->rpp = isset($_GET['rpp']) && is_numeric($_GET['rpp']) && $_GET['rpp'] >= MIN_PER_PAGE && $_GET['rpp'] <= MAX_PER_PAGE ? $_GET['rpp'] : DEF_PER_PAGE;
         $this->total_pages = ceil($this->total_records / $this->rpp);
-        $this->page = isset($_GET['page']) && is_numeric($_GET['page']) && $_GET['page'] > 0 && $_GET['page'] <= $this->total_pages ? $_GET['page'] : $paginasessie;
+        
+        // Als er geen records zijn, beschouwen we toch pagina 1 als geldig.
+        if ($this->total_pages < 1) {
+            $this->total_pages = 1;
+        }
+
+        // Paginanummer bepalen
+        if (isset($_GET['page']) && is_numeric($_GET['page'])) {
+            $this->page = (int)$_GET['page'];
+        } else {
+            $this->page = (int)$paginasessie;
+        }
+
+        // Ongeldige paginanummers corrigeren
+        if ($this->page < 1 || $this->page > $this->total_pages) {
+            $this->page = 1;
+        }
+
         $this->offset = ($this->page - 1) * $this->rpp;
         //$this->query_string = $this->get_query_string();
        // $this->pagina_string = $this->get_pagina_string();
