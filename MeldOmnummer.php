@@ -58,22 +58,29 @@ $aantMeld = aantal_melden($db,$reqId); // Aantal dieren te melden functie gedecl
 // Einde Aantal dieren te melden
 
 // Aantal dieren goed geregistreerd om automatisch te kunnen melden. De datum mag hier niet liggen na de afvoerdatum.
-function aantal_oke_Omnum($datb,$fldReqId) {
+function aantal_oke_Omnum($datb,$LidId,$fldReqId) {
 
 $juistaantal = mysqli_query ($datb,"
-SELECT count(*) aant 
+SELECT count(*) aant
 FROM tblMelding m
  join tblHistorie h on (h.hisId = m.hisId)
  join tblStal st on (st.stalId = h.stalId)
  join tblSchaap s on (st.schaapId = s.schaapId)
+ join (
+ 	SELECT max(st.stalId) stalId, schaapId
+ 	FROM tblStal st
+ 	 join tblUbn u on (u.ubnId = st.ubnId)
+ 	WHERE u.lidId = '".mysqli_real_escape_string($datb,$LidId)."'
+ 	GROUP BY schaapId
+ ) stMax on (stMax.schaapId = s.schaapId)
  left join (
-	SELECT schaapId, max(datum) datum 
+	SELECT st.stalId, max(datum) datum 
 	FROM tblHistorie h 
 	 join tblStal st on (h.stalId = st.stalId)
 	 join tblActie a on (h.actId = a.actId)
 	WHERE a.af = 1 and h.skip = 0
-	GROUP BY schaapId
- ) afv on (st.schaapId = afv.schaapId)
+	GROUP BY st.stalId
+ ) afv on (stMax.stalId = afv.stalId)
  left join (
  	SELECT levensnummer, levensnummer_new, meldnr
  	FROM impRespons
@@ -93,11 +100,11 @@ WHERE m.reqId = '".mysqli_real_escape_string($datb,$fldReqId)."'
 	}
 	return FALSE;
 }
-$oke = aantal_oke_Omnum($db,$reqId);
+$oke = aantal_oke_Omnum($db,$lidId,$reqId);
 // Einde Aantal dieren goed geregistreerd om automatisch te kunnen melden.
  
 // MELDEN
-if (isset($_POST['knpMeld_'])) {	Include "save_melding.php"; $aantMeld = aantal_melden($db,$reqId); $oke = aantal_oke_Omnum($db,$reqId);
+if (isset($_POST['knpMeld_'])) {	Include "save_melding.php"; $aantMeld = aantal_melden($db,$reqId); $oke = aantal_oke_Omnum($db,$lidId,$reqId);
 if( $aantMeld > 0 && $oke > 0) {
 // Bestand maken
 $qry_Leden = mysqli_query($db,"
