@@ -400,8 +400,8 @@ function zoek_controle_melding($datb, $ReqId) {
 SELECT count(rp.respId) aant
 FROM impRespons rp
  join tblRequest r on (r.reqId = rp.reqId)
-WHERE def = 'N' 
- and reqId = '".mysqli_real_escape_string($datb, $ReqId)."'
+WHERE r.def = 'N' 
+ and r.reqId = '".mysqli_real_escape_string($datb, $ReqId)."'
  and coalesce(r.dmheropend,r.dmcreate) < rp.dmcreate
 ");//Foutafhandeling zit in return FALSE
 
