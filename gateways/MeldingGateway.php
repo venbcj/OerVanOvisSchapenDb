@@ -36,22 +36,29 @@ SQL
     }
 
     // Aantal dieren goed geregistreerd om automatisch te kunnen melden. De datum mag hier niet liggen na de afvoerdatum.
-    public function aantal_oke_Omnum($fldReqId) {
+    public function aantal_oke_Omnum($LidId,$fldReqId) {
         return $this->first_field(
             <<<SQL
-SELECT count(*) aant 
+SELECT count(*) aant
 FROM tblMelding m
  join tblHistorie h on (h.hisId = m.hisId)
  join tblStal st on (st.stalId = h.stalId)
  join tblSchaap s on (st.schaapId = s.schaapId)
+ join (
+    SELECT max(st.stalId) stalId, schaapId
+    FROM tblStal st
+     join tblUbn u on (u.ubnId = st.ubnId)
+    WHERE u.lidId = :LidId
+    GROUP BY schaapId
+ ) stMax on (stMax.schaapId = s.schaapId)
  left join (
-    SELECT schaapId, max(datum) datum 
+    SELECT st.stalId, max(datum) datum 
     FROM tblHistorie h 
      join tblStal st on (h.stalId = st.stalId)
      join tblActie a on (h.actId = a.actId)
     WHERE a.af = 1 and h.skip = 0
-    GROUP BY schaapId
- ) afv on (st.schaapId = afv.schaapId)
+    GROUP BY st.stalId
+ ) afv on (stMax.stalId = afv.stalId)
  left join (
     SELECT levensnummer, levensnummer_new, meldnr
     FROM impRespons
@@ -63,7 +70,10 @@ WHERE m.reqId = :reqId
  and (h.datum <= afv.datum or isnull(afv.datum))
  and m.skip <> 1
 SQL
- , [[':reqId', $fldReqId, Type::INT]],
+ , [
+    [':LidId', $LidId, Type::INT],
+    [':reqId', $fldReqId, Type::INT]
+   ],
  false
         );
     }

@@ -26,7 +26,7 @@ class MeldingGatewayTest extends GatewayCase {
 
     public function test_aantal_oke_Omnum() {
         $fldReqId = null;
-        $result = $this->sut->aantal_oke_Omnum($fldReqId);
+        $result = $this->sut->aantal_oke_Omnum($lidId, $fldReqId);
         $this->assertNotFalse($result);
     }
 
