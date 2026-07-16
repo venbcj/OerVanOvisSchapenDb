@@ -12,7 +12,7 @@ class Paginator {
     public $records_per_page; // records per pagina
     public $page; // Getoonde pagina nummer
     private $total_pages; // totaal aantal pagina's
-    private $offset; // record waar vanaf getoond moet worden vb : 60 betekend tonen x records (per pagina) vanaf 61 (paginanr - 1 * records per pagina)
+    private $offset; // record waar vanaf moet worden getoond vb : 60 betekend tonen x records (per pagina) vanaf 61 (paginanr - 1 * records per pagina)
 
     private $base_url;
 
@@ -26,6 +26,7 @@ class Paginator {
         $this->total_records = $this->count_records();
         $this->records_per_page = $this->determine_records_per_page($rpp);
         $this->total_pages = ceil($this->total_records / $this->records_per_page);
+        $this->total_pages = max(1, $this->total_pages); // Als total_pages in eerste instantie 0 is wordt hij hier 1
         $this->page = $this->determine_page($current_page);
         $this->offset = ($this->page - 1) * $this->records_per_page;
         $this->base_url = $base_url;
@@ -36,9 +37,16 @@ class Paginator {
     }
 
     private function determine_page($current_page) {
-        return isset($_GET['page']) && is_numeric($_GET['page']) && $_GET['page'] > 0 && $_GET['page'] <= $this->total_pages
-            ? $_GET['page']
-            : $current_page;
+        $page = isset($_GET['page']) && is_numeric($_GET['page']) 
+            ? (int) $_GET['page']
+            : (int) ($current_page ?? 1);
+    
+        if ($page < 1 || $page > $this->total_pages) {
+        $page = 1;
+        }
+
+        return $page;
+
     }
 
     private function count_records() {
@@ -56,7 +64,7 @@ SQL
         return $res->fetch_row()[0];
     }
 
-    function fetch_data($fields = "*", $order = "") {
+    public function fetch_data($fields = "*", $order = "") {
         [$where, $args] = $this->get_condition();
         $statement = <<<SQL
 SELECT $fields
