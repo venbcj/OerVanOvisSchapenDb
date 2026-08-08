@@ -74,7 +74,7 @@ impAgrident rd
 	 join tblStal st on (st.schaapId = s.schaapId)
 	 join tblHistorie h on (st.stalId = h.stalId)
 	 join tblUbn u on (st.ubnId = u.ubnId)
-	WHERE u.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and h.skip = 0
+	WHERE u.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and h.skip = 0 and u.lidubn = 1
 	GROUP BY s.schaapId, s.levensnummer
  ) st on (rd.levensnummer = st.levensnummer)
  left join (
@@ -83,7 +83,7 @@ impAgrident rd
 	 join tblStal st on (st.schaapId = s.schaapId)
 	 join tblUbn u on (st.ubnId = u.ubnId)
 	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE u.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and h.skip = 0
+	WHERE u.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and h.skip = 0 and u.lidubn = 1
 	GROUP BY s.schaapId, s.levensnummer
  ) lstDate on (rd.levensnummer = lstDate.levensnummer)
  left join (
@@ -92,10 +92,14 @@ impAgrident rd
  	 join tblStal st on (h.stalId = st.stalId)
 	 join tblUbn u on (st.ubnId = u.ubnId)
  	 join tblActie a on (a.actId = h.actId)
- 	WHERE u.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and a.af = 1 and h.skip = 0
+ 	WHERE u.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and a.af = 1 and h.skip = 0 and u.lidubn = 1
  ) afv on (afv.datum = lstDate.datum and afv.schaapId = lstDate.schaapId)
  left join tblPartij p on (rd.ubn = p.ubn and p.lidId = '" . mysqli_real_escape_string($db,$lidId) . "')
- left join tblRelatie rel on (rel.partId = p.partId)
+ left join (
+ 	SELECT partId
+ 	FROM tblRelatie
+ 	WHERE relatie = 'cred' and actief = 1
+ ) cred on (cred.partId = p.partId)
  left join (
 	SELECT ru.lidId, r.rasId
 	FROM tblRas r
@@ -116,7 +120,7 @@ impAgrident rd
  ) dup on (rd.Id = dup.Id)
 ";
 
-$WHERE = "WHERE rd.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and (rd.actId = 2 or rd.actId = 3) and isnull(rd.verwerkt) and rel.relatie = 'cred' and rel.actief = 1";
+$WHERE = "WHERE rd.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and (rd.actId = 2 or rd.actId = 3) and isnull(rd.verwerkt)";
 
 include "paginas.php";
 
@@ -157,7 +161,7 @@ echo $page_numbers; ?></td>
 $declaratie_kzlUbn = mysqli_query($db,"
 SELECT ubnId, ubn, adres
 FROM tblUbn
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and actief = 1
+WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and lidubn = 1 and actief = 1
 ORDER BY ubn
 ") or die (mysqli_error($db));
 
@@ -229,7 +233,7 @@ unset($index);
 }
 
 // Declaratie HERKOMST			// lower(if(isnull(ubn),'6karakters',ubn)) zorgt ervoor dat $raak nooit leeg is. Anders worden legen velden gevonden in legen velden binnen impReader.
-$qryRelatie = ("SELECT r.relId, '6karakters' ubn, concat(p.ubn, ' - ', p.naam) naam
+$qryRelatie = ("SELECT r.relId, '6karakters' ubn, concat(' - ', p.naam) naam
 			FROM tblPartij p join tblRelatie r on (p.partId = r.partId)	
 			WHERE p.lidId = '" . mysqli_real_escape_string($db,$lidId) . "' and relatie = 'cred' and isnull(r.uitval) and p.actief = 1 and r.actief = 1
 				  and isnull(p.ubn)
