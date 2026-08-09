@@ -103,7 +103,7 @@ SQL
             <<<SQL
 SELECT ubnId, ubn, adres
 FROM tblUbn
-WHERE lidId = :lidId and actief = 1
+WHERE lidId = :lidId and lidubn = 1 and actief = 1
 ORDER BY ubn
 SQL
         , [[':lidId', $lidId, Type::INT]]

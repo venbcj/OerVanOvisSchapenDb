@@ -49,7 +49,7 @@ impAgrident rd
      join tblStal st on (st.schaapId = s.schaapId)
      join tblUbn u on (u.ubnId = st.ubnId)
      join tblHistorie h on (st.stalId = h.stalId)
-    WHERE u.lidId = :lidId and h.skip = 0
+    WHERE u.lidId = :lidId and u.lidubn = 1 and h.skip = 0
     GROUP BY s.schaapId, s.levensnummer
  ) st on (rd.levensnummer = st.levensnummer)
  left join (
@@ -58,7 +58,7 @@ impAgrident rd
      join tblStal st on (st.schaapId = s.schaapId)
      join tblUbn u on (u.ubnId = st.ubnId)
      join tblHistorie h on (st.stalId = h.stalId)
-    WHERE u.lidId = :lidId and h.skip = 0
+    WHERE u.lidId = :lidId and u.lidubn = 1 and h.skip = 0
     GROUP BY s.schaapId, s.levensnummer
  ) lstDate on (rd.levensnummer = lstDate.levensnummer)
  left join (
@@ -67,10 +67,14 @@ impAgrident rd
       join tblStal st on (h.stalId = st.stalId)
       join tblUbn u on (u.ubnId = st.ubnId)
       join tblActie a on (a.actId = h.actId)
-     WHERE u.lidId = :lidId and a.af = 1 and h.skip = 0
+     WHERE u.lidId = :lidId and u.lidubn = 1 and a.af = 1 and h.skip = 0
  ) afv on (afv.datum = lstDate.datum and afv.schaapId = lstDate.schaapId)
  left join tblPartij p on (rd.ubn = p.ubn and p.lidId = :lidId)
- left join tblRelatie rel on (rel.partId = p.partId)
+ left join (
+    SELECT partId
+    FROM tblRelatie
+    WHERE relatie = 'cred' and actief = 1
+ ) cred on (cred.partId = p.partId)
  left join (
     SELECT ru.lidId, r.rasId
     FROM tblRas r
@@ -94,7 +98,7 @@ SQL;
 
     public function getInsAanvoerWhere($lidId) {
         return [
-            "WHERE rd.lidId = :lidId and (rd.actId = 2 or rd.actId = 3) and isnull(rd.verwerkt) and rel.relatie = 'cred' and rel.actief = 1",
+            "WHERE rd.lidId = :lidId and (rd.actId = 2 or rd.actId = 3) and isnull(rd.verwerkt)",
             [[':lidId', $lidId, Type::INT]]
         ];
     }

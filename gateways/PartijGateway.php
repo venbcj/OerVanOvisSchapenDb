@@ -54,14 +54,14 @@ SQL
     public function find_relatie($lidId, $DebCred) {
         return $this->run_query(
             <<<SQL
-SELECT r.relId, '6karakters' ubn, concat(p.ubn, ' - ', p.naam) naam
+SELECT r.relId, '6karakters' ubn, concat(' - ', p.naam) naam
 FROM tblPartij p join tblRelatie r on (p.partId = r.partId)    
 WHERE p.lidId = :lidId
  and relatie = :DebCred
  and p.actief = 1
  and r.actief = 1
  and isnull(p.ubn)
-union
+UNION
 SELECT r.relId, p.ubn, concat(p.ubn, ' - ', p.naam) naam
 FROM tblPartij p
  join tblRelatie r on (p.partId = r.partId)    
