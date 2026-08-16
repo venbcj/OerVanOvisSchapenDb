@@ -278,38 +278,6 @@ WHERE s.schaapId = '".mysqli_real_escape_string($db,$kzlOoi)."'
 
 while ($moe = mysqli_fetch_assoc($zoek_moeder)) { $moeder_db = $moe['levensnummer']; }
 
-$zoek_laatste_dekking_van_ooi = mysqli_query($db,"
-SELECT v.mdrId, max(v.volwId) volwId
-FROM tblVolwas v
- left join (
-	SELECT hisId
-	FROM tblHistorie h
-	 join tblStal st on (st.stalId = h.stalId)
-	 join tblUbn u on (st.ubnId = u.ubnId)
-	WHERE h.skip = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$kzlOoi)."'
- ) hOoi on (hOoi.hisId = v.hisId)
- left join (
-	SELECT d.volwId, date_format(h.datum,'%d-%m-%Y') drachtdatum
-	FROM tblDracht d
-	 join tblHistorie h on (h.hisId = d.hisId)
-	 join tblStal st on (st.stalId = h.stalId)
-	 join tblUbn u on (st.ubnId = u.ubnId)
-	WHERE h.skip = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$kzlOoi)."'
- ) d on (v.volwId = d.volwId)
- left join tblSchaap lam on (lam.volwId = v.volwId)
- left join (
-    SELECT s.schaapId
-    FROM tblSchaap s
-     join tblStal st on (s.schaapId = st.schaapId)
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) prnt on (lam.schaapId = prnt.schaapId)
-WHERE (hOoi.hisId is not null or d.volwId is not null) and isnull(prnt.schaapId) and v.mdrId = '".mysqli_real_escape_string($db,$kzlOoi)."'
-GROUP BY v.mdrId
-") or die (mysqli_error($db));
-
-while ( $zld = mysqli_fetch_assoc($zoek_laatste_dekking_van_ooi)) { $volwId_lstOoiDekking = $zld['volwId']; }
-
 unset($lstDmDracht);
 unset($lstDrachtdm);
 $zoek_laatste_drachtdatum = mysqli_query($db,"
