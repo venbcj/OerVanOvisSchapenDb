@@ -16,7 +16,9 @@ foreach($multip_array as $ubnId => $id) {
     unset($fldDelete);
     unset($fldAdres);
     unset($fldPlaats);
-    if($ubnId > 0) {
+    if(!$ubnId) {
+        continue;
+    }
         foreach($id as $key => $value) {
             if ($key == 'chbActief') {
                 $fldActief = $value;  
@@ -50,5 +52,4 @@ foreach($multip_array as $ubnId => $id) {
         if(isset($fldDelete)) {
             $ubn_gateway->delete_by_id($ubnId);
         }
-    } // Einde if($ubnId > 0)
 } // Einde foreach($multip_array as $ubnId => $id)
