@@ -98,9 +98,9 @@ if (Auth::is_logged_in()) {
         //Als het die is afgevoerd en weer wordt aangevoerd. O.a. als het dier op een ander ubn van dezelfde gebruiker wordt gezet is dit relevant.
         $afgevoerd = $stal_gateway->zoek_in_afgevoerd($lidId, $levnr);
         $dood = $stal_gateway->zoek_dood($levnr);
-        $uitgeschaard = $stal_gateway->zoek_uitgeschaard($levnr);
-        if (isset($uitgeschaard)) {
-            $rel_herk = $stal_gateway->zoek_herkomst($uitgeschaard);
+        $uitgeschaardId = $stal_gateway->zoek_hisId_uitgeschaard($levnr);
+        if (isset($uitgeschaardId)) {
+            $rel_herk = $stal_gateway->zoek_bestemming_obv_hisId($uitgeschaardId);
         }
     }
 
@@ -364,7 +364,7 @@ else if ($modtech == 1 && isset($levnr) && !isset($txtGebkg) && $kzlFase == 'lam
             // ***************************
             if (isset($levnr) && !isset($levnr_db) && $kzlFase == 'lam' && !isset($txtDmuitv)) {
                 $scenario = 'Geboren_lam';
-            } elseif (isset($uitgeschaard)) {
+            } elseif (isset($uitgeschaardId)) {
                 $scenario = 'Inscharen';
             } elseif ((isset($kzlFase) && $kzlFase != 'lam') || (isset($levnr_db) && isset($aanwas_db))) {
                 $scenario = 'Aanvoer_ouder';

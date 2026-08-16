@@ -312,15 +312,33 @@ SQL;
         return <<<SQL
 impAgrident rd
  left join (
-     SELECT s.schaapId, s.levensnummer
+     SELECT s.schaapId, s.levensnummer, NULL actId, NULL stSchaarId
      FROM tblSchaap s
       join tblStal st on (s.schaapId = st.schaapId)
-     WHERE lidId = :lidId
-     ) mdr on (mdr.levensnummer = rd.moeder)
+     join tblUbn u on (st.ubnId = u.ubnId)
+    WHERE u.lidId = :lidId and isnull(st.rel_best) and u.lidubn = 1
+
+    UNION
+
+    SELECT s.schaapId, s.levensnummer uitgeschaarde, h.actId, stSchaar.stalId
+    FROM tblSchaap s
+     join (
+        SELECT max(st.stalId) stalId, st.schaapId
+        FROM tblStal st
+         join tblUbn u on (st.ubnId = u.ubnId)
+        WHERE u.lidId = :lidId and u.lidubn = 1
+        GROUP BY st.schaapId
+     ) stm on (stm.schaapId = s.schaapId)
+     join tblStal st on (stm.stalId = st.stalId)
+     join tblHistorie h on (h.stalId = st.stalId)
+     left join tblStal stSchaar on (stSchaar.stalId > stm.stalId and stSchaar.schaapId = stm.schaapId)
+     left join tblUbn uSchaar on (stSchaar.ubnId = uSchaar.ubnId)
+    WHERE h.actId = 10 and (uSchaar.lidId = :lidId or isnull(uSchaar.lidId)) 
+ ) mdr on (mdr.levensnummer = rd.moeder)
  left join (
      SELECT s.schaapId, s.levensnummer vader
      FROM tblSchaap s
-     ) vdr on (vdr.schaapId = rd.vdrId)
+ ) vdr on (vdr.schaapId = rd.vdrId)
 SQL;
     }
 

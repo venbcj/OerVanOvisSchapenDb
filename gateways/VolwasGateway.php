@@ -301,6 +301,19 @@ SQL
         return $this->db->insert_id;
     }
 
+    public function insert_uitgebreid($recId, $hisId, $mdrId, $vdrId = NULL) {
+        $this->run_query(
+            <<<SQL
+INSERT INTO tblVolwas set readId = :recId, hisId = :hisId, mdrId = :mdrId, vdrId = :vdrId
+SQL
+        ,  [[':recId', $recId, Type::INT], 
+            [':hisId', $hisId, Type::INT], 
+            [':mdrId', $mdrId, Type::INT],
+            [':vdrId', $vdrId, Type::INT]]
+        );
+        return $this->db->insert_id;
+    }    
+
     public function zoek_recentste_id($mdrId) {
         return $this->first_field(
             <<<SQL
@@ -374,20 +387,6 @@ SQL
         );
     }
 
-    public function zoek_drachtdatum($volwId) {
-        return $this->first_row(
-            <<<SQL
-SELECT h.datum dmdracht, date_format(h.datum,'%d-%m-%Y') drachtdm
-FROM tblVolwas v
- join tblDracht d on (v.volwId = d.volwId)
- join tblHistorie h on (d.hisId = h.hisId)
-WHERE h.skip = 0 and v.volwId = :volwId
-SQL
-        , [[':volwId', $volwId, Type::INT]]
-            , [null, null]
-        );
-    }
-
     public function zoek_werpdatum($schaapId) {
         return $this->first_row(
             <<<SQL
@@ -410,17 +409,16 @@ SQL
             <<<SQL
 SELECT max(v.volwId) volwId
 FROM tblVolwas v
- join tblSchaap l on (l.volwId = v.volwId)
- left join tblSchaap k on (k.volwId = v.volwId)
+ join tblSchaap lam on (lam.volwId = v.volwId)
  left join (
     SELECT s.schaapId
     FROM tblSchaap s
      join tblStal st on (s.schaapId = st.schaapId)
     join tblHistorie h on (st.stalId = h.stalId)
     WHERE h.actId = 3 and h.skip = 0
- ) ha on (k.schaapId = ha.schaapId)
+ ) prnt on (lam.schaapId = prnt.schaapId)
 WHERE v.mdrId = :schaapId
- and isnull(ha.schaapId)
+ and isnull(prnt.schaapId)
 SQL
         , [[':schaapId', $schaapId, Type::INT]]
         );

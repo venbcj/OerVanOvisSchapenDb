@@ -20,11 +20,15 @@ SQL
         , [[':lidId', $lidId, Type::INT], [':ubn', $ubn, Type::TXT]]);
     }
 
-    public function insert($lidId, $ubn) {
-        $this->run_query(<<<SQL
-INSERT INTO tblUbn SET lidId = :lidId, ubn = :ubn
-SQL
-        , [[':lidId', $lidId, Type::INT], [':ubn', $ubn]]);
+    public function insert($lidId, $ubn, $lidubn = NULL) {
+
+        $sql = <<<SQL 
+            INSERT INTO tblUbn SET lidId = :lidId, ubn = :ubn, lidubn = :lidubn
+        SQL
+        $args = [[':lidId',$lidId, Type::INT], [':ubn', $ubn], [':lidubn', $lidubn, Type::INT]];
+        
+        $this->run_query($sql, $args);
+        return $this->db->insert_id;
     }
 
     public function insert_with_plaats($lidId, $new_ubn, $new_adres, $new_plaats) {
@@ -45,6 +49,7 @@ SQL
 SELECT ubnId, ubn, adres, plaats, actief
 FROM tblUbn
 WHERE lidId = :lidId
+ and lidubn = 1
 ORDER BY actief desc, ubn
 SQL
         , [[':lidId', $lidId, Type::INT]]);
@@ -55,6 +60,7 @@ SQL
 SELECT adres, plaats, actief
 FROM tblUbn
 WHERE ubnId = :ubnId
+ and lidubn = 1
 ORDER BY actief desc, ubn
 SQL
         , [[':ubnId', $ubnId, Type::INT]]
@@ -120,20 +126,23 @@ SQL
 SELECT count(ubnId) aant_ubn
 FROM tblUbn 
 WHERE lidId = :lidId
+ and lidubn = 1
 SQL
         , [[':lidId', $lidId, Type::INT]]
         );
     }
 
     // :hmm zit dit ook/al in LidGateway? (ziedaar de slechte invloed van ActiveRecord)
-    public function zoek_ubnId($lidId) {
+    public function zoek_eigen_ubnIds($lidId) {
         $sql = <<<SQL
             SELECT ubnId
             FROM tblUbn
             WHERE lidId = :lidId
+             and lidubn = 1
 SQL;
         $args = [[':lidId', $lidId, Type::INT]];
         return $this->first_field($sql, $args);
     }
+
 
 }

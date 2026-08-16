@@ -249,6 +249,15 @@ SQL
         return $this->db->insert_id;
     }
 
+    public function insert_tblStal($lidId, $ubnId, $schaapId, $rel_best) {
+        $sql = <<<SQL
+    INSERT INTO tblStal set lidId = :lidId, ubnId = :ubnId, schaapId = :schaapId,  rel_best = :rel_best
+SQL;
+        $args = [[':lidId', $lidId, Type::INT], [':ubnId', $ubnId, Type::INT], [':schaapId', $schaapId, Type::INT], [':rel_best', $rel_best]];
+        $this->run_query($sql, $args);
+        return $this->db->insert_id;
+    }
+
     public function insert_uitgebreid($lidId, $schaapId, $rel_herk, $ubnId, $kleur, $halsnr, $rel_best) {
         $this->run_query(<<<SQL
 INSERT INTO tblStal SET
@@ -348,7 +357,7 @@ SQL
         );
     }
 
-    public function zoek_uitgeschaard($levnr) {
+    public function zoek_hisId_uitgeschaard($levnr) {
         return $this->first_field(
             <<<SQL
 SELECT hisId
@@ -368,7 +377,55 @@ SQL
         );
     }
 
-    public function zoek_herkomst($hisId) {
+    public function zoek_terug_uitscharen($schaapId) {
+        return $this->first_field(
+            <<<SQL
+SELECT st.stalId
+FROM tblStal st
+ join tblHistorie h on (h.stalId = st.stalId)
+WHERE h.actId = 11 and st.schaapId = :schaapId
+SQL
+        , [[':schaapId', $schaapId, Type::INT]]
+        );
+    }
+
+    public function zoek_uitgeschaarde_ooi($lidId, $mdrId) {
+        return $this->first_row(
+<<<SQL 
+SELECT h.actId, st.rel_best, stSchaar.stalId stSchaar
+FROM tblStal st
+ join (
+    SELECT max(st.stalId) stalId, st.schaapId
+    FROM tblStal st
+     join tblUbn u on (st.ubnId = u.ubnId)
+    WHERE st.schaapId = :mdrId and u.lidId = :lidId and u.lidubn = 1
+    GROUP BY st.schaapId
+ ) stm on (stm.stalId = st.stalId)
+ join tblHistorie h on (h.stalId = st.stalId)
+ left join tblStal stSchaar on (stSchaar.stalId > stm.stalId and stSchaar.schaapId = stm.schaapId)
+ left join tblUbn uSchaar on (stSchaar.ubnId = uSchaar.ubnId)
+WHERE h.actId = 10 and (uSchaar.lidId = :lidId or isnull(uSchaar.lidId))
+SQL
+            , [[':lidId',$lidId,Type::INT],
+               [':mdrId',$mdrId,Type::INT]
+              ]);
+    }
+
+    public function zoek_ubn_uitgeschaarde_lokatie($lidId,$relId){
+        return $this->first_row(
+<<<SQL
+SELECT p.ubn, u.ubnId
+FROM tblRelatie r
+ join tblPartij p on (r.partId = p.partId)
+ left join tblUbn u on (u.ubn = p.ubn)
+WHERE r.relId = :relId and ((u.lidubn = 0 and u.lidId = :lidId) or u.ubnId IS NULL)
+SQL
+        ,   [[':lidId',$lidId,Type::INT],
+             [':relId',$relId,Type::INT]
+            ]);
+    }
+
+    public function zoek_bestemming_obv_hisId($hisId) {
         return $this->first_field(
             <<<SQL
 SELECT rel_best
@@ -517,9 +574,11 @@ SELECT lower(a.actie) actie
 FROM tblStal st
  join (
      SELECT max(stalId) stalId
-     FROM tblStal
-     WHERE lidId = :lidId
- and schaapId = :schaapId
+     FROM tblStal st
+      join tblUbn u using(ubnId)
+     WHERE u.lidubn = 1
+      and u.lidId = :lidId
+      and schaapId = :schaapId
  ) maxst on (maxst.stalId = st.stalId)
  join tblHistorie h on (h.stalId = st.stalId)
  join tblActie a on (a.actId = h.actId)
@@ -528,18 +587,6 @@ WHERE a.af = 1
  and h.skip = 0
 SQL
         , [[':lidId', $lidId, Type::INT], [':schaapId', $schaapId, Type::INT]]
-        );
-    }
-
-    public function zoek_terug_uitscharen($schaapId) {
-        return $this->first_field(
-            <<<SQL
-SELECT st.stalId
-FROM tblStal st
- join tblHistorie h on (h.stalId = st.stalId)
-WHERE h.actId = 11 and st.schaapId = :schaapId
-SQL
-        , [[':schaapId', $schaapId, Type::INT]]
         );
     }
 
@@ -637,12 +684,23 @@ SQL;
 
     public function zoek_stalId($mdrId, $lidId) {
         $sql = <<<SQL
-        SELECT max(stalId) stalId
-        FROM tblStal
+        SELECT max(st.stalId) stalId
+        FROM tblStal st
         JOIN tblUbn u USING(ubnId)
-        WHERE schaapId = :mdrId and u.lidId = :lidId
+        WHERE st.schaapId = :mdrId and u.lidId = :lidId and st.rel_best is null
 SQL;
         $args = [[':mdrId', $mdrId, Type::INT], [':lidId', $lidId, Type::INT]];
+        return $this->first_field($sql, $args);
+    }
+
+    public function zoek_stalId_lokatie($mdrId, $lidId, $lidubn) {
+        $sql = <<<SQL
+        SELECT max(st.stalId) stalId
+        FROM tblStal st
+        JOIN tblUbn u USING(ubnId)
+        WHERE st.schaapId = :mdrId and st.rel_best is null and u.lidId = :lidId and u.lidubn = :lidubn
+SQL;
+        $args = [[':mdrId', $mdrId, Type::INT], [':lidId', $lidId, Type::INT], [':lidubn', $lidubn, Type::INT]];
         return $this->first_field($sql, $args);
     }
 
@@ -709,15 +767,6 @@ SQL;
 SQL;
         $args = [[':lidId', $lidId, Type::INT], [':mdrId', $mdrId, Type::INT]];
         return $this->first_field($sql, $args);
-    }
-
-    public function insert_tblStal($lidId, $ubnId, $schaapId, $rel_best) {
-        $sql = <<<SQL
-    INSERT INTO tblStal set lidId = :lidId, ubnId = :ubnId, schaapId = :schaapId,  rel_best = :rel_best
-SQL;
-        $args = [[':lidId', $lidId, Type::INT], [':ubnId', $ubnId, Type::INT], [':schaapId', $schaapId, Type::INT], [':rel_best', $rel_best]];
-        $this->run_query($sql, $args);
-        return $this->db->insert_id;
     }
 
     public function zoek_stalId_afvoer($lidId, $schaapId) {

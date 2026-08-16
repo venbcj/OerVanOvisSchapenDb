@@ -168,9 +168,9 @@ class StalGatewayTest extends GatewayCase {
         $this->assertNotFalse($result);
     }
 
-    public function test_zoek_herkomst() {
+    public function test_zoek_bestemming_obv_hisId() {
         $hisId = null;
-        $result = $this->sut->zoek_herkomst($hisId);
+        $result = $this->sut->zoek_bestemming_obv_hisId($hisId);
         $this->assertNotFalse($result);
     }
 

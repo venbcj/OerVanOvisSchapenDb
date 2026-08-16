@@ -30,13 +30,14 @@ include "login.php"; ?>
 if (Auth::is_logged_in()) {
     $schaap_gateway = new SchaapGateway();
     $impagrident_gateway = new ImpAgridentGateway();
+    $stal_gateway = new StalGateway();
 
 If (isset($_POST['knpInsert_']))  {
     include "post_readerDekken.php"; #Deze include moet voor de vervversing in de functie header()
     }
 
 unset($vdrId_rd);
-$velden = "rd.Id Id, rd.datum, rd.moeder, mdr.schaapId mdrId, rd.vdrId, vdr.vader";
+$velden = "rd.Id Id, rd.datum, rd.moeder, mdr.schaapId mdrId, rd.vdrId, vdr.vader, mdr.actId, mdr.stSchaarId";
 
 $tabel = $impagrident_gateway->getInsDekkenFrom();
 $WHERE = $impagrident_gateway->getInsDekkenWhere($lidId);
@@ -61,7 +62,7 @@ echo $paginator->show_page_numbers(); ?></td>
  <th>Dekdatum<hr></th>
  <th>Moeder<hr></th>
  <th>Vader<hr></th>
- <th><hr></th>
+ <th width="100"><hr></th>
 
 </tr>
 
@@ -164,6 +165,8 @@ $datum = date('d-m-Y', strtotime($date)); #echo '$datum = '.$datum.'<br>';
     $vdrId_rd = $array['vdrId']; // schaapId uit reader
     $vader_rd = $array['vader']; // levensnummer ram o.b.v. schaapId uit reader
 
+    $actId = $array['actId']; // kan enkel waarde 10 hebben en staat voor uitgeschaard
+    $stSchaarId = $array['stSchaarId']; // Als deze kolom een waarde heeft dan bestaat er al een stalmoment van uitgeschaarde locatie
 
 // Controleren of ingelezen waardes worden gevonden .
 if (isset($_POST['knpVervers_']) ) {
@@ -183,23 +186,22 @@ else {
 $cnt_ooien = $vals[$kzlOoi.'_'.$kzlRam];
 
 if (!empty($kzlOoi)) {
-    $moeder_db = $schaap_gateway->zoek_bestaand_levensnummer($kzlOoi);
-    $act_volwId = $schaap_gateway->zoek_laatste_dekking_van_ooi($lidId, $kzlOoi);
+    $dracht_gateway = new DrachtGateway();
     $volwas_gateway = new VolwasGateway();
-    [$dmdracht, $drachtdm] = $volwas_gateway->zoek_drachtdatum($act_volwId);
-    unset($lst_volwId);
-    unset($dmwerp);
+    $moeder_db = $schaap_gateway->zoek_bestaand_levensnummer($kzlOoi);
+    unset($lstDmDracht, $lstDrachtDm);
+    [$lstDmDracht, $lstDrachtDm] = $dracht_gateway->zoek_laatste_drachtdatum($kzlOoi);
+    unset($volwId_lstWorp);
+    unset($dmwerp, $werpdm);
     unset($dagen_verschil_worp);
-    $vdr_worp = $schaap_gateway->zoek_vader_laatste_dekkingen($act_volwId, $Karwerk);
-    $lst_volwId = $volwas_gateway->zoek_laatste_worp($kzlOoi);
-    if (isset($lst_volwId)) {
-        [$dmwerp, $werpdm] = $volwas_gateway->zoek_werpdatum($lst_volwId);
-        $date_dracht = date_create($dmdracht);
+    $volwId_lstWorp = $volwas_gateway->zoek_laatste_worp($kzlOoi);
+    if (isset($volwId_lstWorp)) {
+        [$dmwerp, $werpdm] = $volwas_gateway->zoek_werpdatum($volwId_lstWorp);
+        $date_dracht = date_create($lstDmDracht);
         $date_worp = date_create($dmwerp);
         $verschil_drachtdm_worp = date_diff($date_dracht, $date_worp);
         $dagen_verschil_worp     = $verschil_drachtdm_worp->days;
     }
-    $stal_gateway = new StalGateway();
     $afv_status_mdr = $stal_gateway->zoek_afvoerstatus_mdr($lidId, $kzlOoi);
 } // Einde if(!empty($kzlOoi)) 
 
@@ -208,7 +210,7 @@ unset($color);
 
 if (!isset($moeder_db) || empty($kzlOoi))    { $color = 'red'; $onjuist = 'Ooi '.$moeder_rd.' onbekend'; }
  else if ($cnt_ooien > 1 )                     { $color = 'blue'; $onjuist = "Dubbel in de reader."; }
- else if (isset($dmdracht))                 { $color = 'red'; $onjuist = 'Deze ooi is reeds drachtig per '.$drachtdm; }
+ else if (isset($lstDmDracht))                 { $color = 'red'; $onjuist = 'Deze ooi is reeds drachtig per '.$lstDrachtDm; }
  else if(isset($dagen_verschil_worp) && $dagen_verschil_worp < 60) { $color = 'red'; $onjuist = 'Deze ooi heeft op '.$werpdm.' nog geworpen. Een ooi kan 1x per 2 maanden werpen.'; } // moederdier heeft laatste 60 dagen al gelammerd
  else if (isset($afv_status_mdr))                      { $color = 'red'; $onjuist = 'Ooi '.$moeder_db.' is '.$afv_status_mdr; }
  else if (!isset($txtDatum) && empty($txtDatum))                      { $color = 'red'; $onjuist = 'De datum is onbekend.'; }
@@ -266,13 +268,11 @@ for ($i = 0; $i < $count; $i++){
     <!-- EINDE KZLMOEDER --> 
  </td>
  <td> 
-     <?php if(isset($vdr_worp)) { echo $vdr_worp; } else { ?>
     <!-- KZLVADER -->
  <select style= "width:<?php echo $width; ?>; font-size:12px;" name = <?php echo "kzlRam_$Id"; ?> >
  <option></option>    
 <?php    $count = count($wrknrRam);
 for ($i = 0; $i < $count; $i++){
-
         
     $opties= array($vdrkey[$i]=>$wrknrRam[$i]);
             foreach ($opties as $key => $waarde)
@@ -287,7 +287,6 @@ for ($i = 0; $i < $count; $i++){
 } ?>
  </select>
     <!-- EINDE KZLVADER -->
-<?php } // Einde if(isset($vdr_worp)) ?>
  </td>
  <td style = "color: <?php echo $color; ?> ; font-size:12px; " > <?php 
 

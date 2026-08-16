@@ -1,9 +1,13 @@
 <!-- 19-12-2021; Aangemaakt als kopie van post_readerDracht.php  -->
 <?php
 
+$ubn_gateway = new UbnGateway();
+$stal_gateway = new StalGateway();
+$historie_gateway = new HistorieGateway();
+
 $array = array();
-foreach ($_POST as $key => $value) {
-    $array[Url::getIdFromKey($key)][Url::getNameFromKey($key)] = $value;
+foreach ($_POST as $fldname => $fldvalue) {
+    $array[Url::getIdFromKey($fldname)][Url::getNameFromKey($fldname)] = $fldvalue;
 }
 foreach ($array as $recId => $id) {
     if (!$recId) {
@@ -12,6 +16,8 @@ foreach ($array as $recId => $id) {
 // Id ophalen
 #echo $recId.'<br>';
 // Einde Id ophalen
+$fldOoi = null;
+$fldRam = null;
     foreach ($id as $key => $value) {
         if ($key == 'chbKies') {
             $fldKies = $value;
@@ -46,41 +52,47 @@ WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "'
 // Einde (extra) controle of readerregel reeds is verwerkt.
     if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt)) {
      // isset($verwerkt) is een extra controle om dubbele invoer te voorkomen
+
+// Controle op uitgeschaarde schapen (moederdieren)
+unset($actId, $stalSchaarId, $stalId, $ubnId, $ubn);
+
+if(isset($fldOoi)) {
+    [$actId, $relId, $stalSchaarId] = $stal_gateway->zoek_uitgeschaarde_ooi($lidId, $fldOoi);
+}
+
+if(isset($stalSchaarId)) { $stalId = $stalSchaarId; }
+if(isset($actId) && !isset($stalSchaarId)) { //schaap is uitgeschaard en heeft nog geen stalmoment van die lokatie
+// Maak stalmoment van uitgeschaarde lokatie
+[$ubn, $ubnId] = $stal_gateway->zoek_ubn_uitgeschaarde_lokatie($lidId,$relId);
+
+If(!isset($ubnId)) { //Als de externe lokatie (ubn) nog niet voorkomt in tblUbn bij deze gebruiker
+
+$ubnId = $ubn_gateway->insert($lidId, $ubn, 0);
+
+$stalId = $stal_gateway->insert(NULL, $ubnId, $fldOoi, 4);
+} // Einde Maak stalmoment van uitgeschaarde lokatie
+// Einde Controle op uitgeschaarde schapen (moederdieren)
+
     // CONTROLE op alle verplichten velden
         if (isset($fldDag) && isset($fldOoi)) {
         // De ooi mag binnen laatste 183 dagen geen worp hebben.
-            $zoek_stalId = mysqli_query($db, "
-SELECT stalId
-FROM tblStal
-WHERE schaapId = '" . mysqli_real_escape_string($db, $fldOoi) . "' and lidId = '" . mysqli_real_escape_string($db, $lidId) . "' and isnull(rel_best)
-") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
-            while ($zs = mysqli_fetch_assoc($zoek_stalId)) {
-                     $stalId = $zs['stalId'];
+if (!isset($stalId)) { //Als deze variabele wel bestaat is dit het stalmoment van de uitgeschaarde lokatie
+            $stalId = $stal_gateway->zoek_stalId_lokatie($fldOoi, $lidId, 1);
             }
-            $insert_tblHistorie = "INSERT INTO tblHistorie SET stalId = '" . mysqli_real_escape_string($db, $stalId) . "', datum = '" . mysqli_real_escape_string($db, $fldDag) . "', actId = 18 ";
-        /*echo $insert_tblHistorie.'<br>';*/        mysqli_query($db, $insert_tblHistorie) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
-            $zoek_hisId = mysqli_query($db, "
-SELECT max(hisId) hisId
-FROM tblHistorie
-WHERE stalId = '" . mysqli_real_escape_string($db, $stalId) . "' and datum = '" . mysqli_real_escape_string($db, $fldDag) . "' and actId = 18
-") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
-            while ($zh = mysqli_fetch_assoc($zoek_hisId)) {
-                     $hisId = $zh['hisId'];
-            }
-            $insert_tblVolwas = "INSERT INTO tblVolwas SET readId = '" . mysqli_real_escape_string($db, $recId) . "', hisId = '" . mysqli_real_escape_string($db, $hisId) . "', mdrId = '" . mysqli_real_escape_string($db, $fldOoi) . "', vdrId = " . db_null_input($fldRam);
-        /*echo $insert_tblVolwas.'<br>';*/        mysqli_query($db, $insert_tblVolwas) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
-            $updateReader = "UPDATE impAgrident SET verwerkt = 1 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "' ";
-        /*echo $updateReader.'<br>';*/        mysqli_query($db, $updateReader) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
-            unset($fldOoi);
-            unset($fldRam);
+            
+$hisId = $historie_gateway->insert_tblHistorie_18($stalId, $fldDag);
+
+$volwas_gateway->insert_uitgebreid($recId, $hisId, $fldOoi, $fldRam);
+
+$impagrident_gateway->updateReaderAgrident($recId);
         // EINDE CONTROLE op alle verplichten velden
-        }
-      // Einde if(isset($fldOoi) && isset($fldRam) && isset($fldDag))
-    }
+        } // Einde if (isset($fldDag) && isset($fldOoi))
+      
+    } // Einde if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt))
  // Einde if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt))
     if ($fldKies == 0 && $fldDel == 1) {
-        $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "' " ;
-   /*echo $updateReader.'<br>';*/        mysqli_query($db, $updateReader) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
+$impagrident_gateway->updateReaderAgrident($recId);
     }
-    unset($fldlevnr);
-}
+
+} // Einde if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt))
+} // Einde foreach ($array as $recId => $id)
