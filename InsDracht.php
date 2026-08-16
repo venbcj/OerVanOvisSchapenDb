@@ -483,54 +483,17 @@ while ($sm = mysqli_fetch_assoc($zoek_afvoerstatus_mdr))
    $afv_status_mdr = $sm['actie'];
 }
 
-$zoek_laatste_dekking_van_ooi = mysqli_query($db,"
-SELECT v.mdrId, max(v.volwId) volwId
-FROM tblVolwas v
- left join (
-		SELECT hisId
-		FROM tblHistorie h
-		 join tblStal st on (st.stalId = h.stalId)
-		WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$kzlOoi)."'
- ) dek on (dek.hisId = v.hisId)
- left join (
-	SELECT d.volwId, date_format(h.datum,'%d-%m-%Y') drachtdatum
-	FROM tblDracht d 
-	 join tblHistorie h on (h.hisId = d.hisId)
-	 join tblStal st on (st.stalId = h.stalId)
-	WHERE h.skip = 0 and st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '".mysqli_real_escape_string($db,$kzlOoi)."'
- ) dra on (v.volwId = dra.volwId)
- left join tblSchaap lam on (lam.volwId = v.volwId)
- left join (
-    SELECT s.schaapId
-    FROM tblSchaap s
-     join tblStal st on (s.schaapId = st.schaapId)
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) ha on (lam.schaapId = ha.schaapId)
-WHERE (dek.hisId is not null or dra.volwId is not null) and isnull(ha.schaapId) and v.mdrId = '".mysqli_real_escape_string($db,$kzlOoi)."'
-GROUP BY v.mdrId
-") or die (mysqli_error($db));
-
-while ( $zad = mysqli_fetch_assoc($zoek_laatste_dekking_van_ooi)) { $act_volwId = $zad['volwId']; }
-
-unset($dmdracht);
-
-$zoek_drachtdatum = mysqli_query($db,"
-SELECT h.datum dmdracht, date_format(h.datum,'%d-%m-%Y') drachtdm
+unset($lstDmDracht);
+unset($lstDrachtdm);
+$zoek_laatste_drachtdatum = mysqli_query($db,"
+SELECT max(h.datum) dmdracht, date_format(max(h.datum),'%d-%m-%Y') drachtdm
 FROM tblVolwas v
  join tblDracht d on (v.volwId = d.volwId)
  join tblHistorie h on (d.hisId = h.hisId)
-WHERE h.skip = 0 and v.volwId = '".mysqli_real_escape_string($db,$act_volwId)."'
+WHERE h.skip = 0 and v.mdrId = '".mysqli_real_escape_string($db,$kzlOoi)."'
 ") or die (mysqli_error($db));
 
-while ($zddm = mysqli_fetch_assoc($zoek_drachtdatum)) { $dmdracht = $zddm['dmdracht']; $drachtdm = $zddm['drachtdm']; }
-
-$date_dracht = date_create($dmdracht);
-$date_worp = date_create($dmwerp);
-
-$verschil_drachtdm_worp = date_diff($date_dracht, $date_worp);
-$dagen_verschil_worp 	= $verschil_drachtdm_worp->days;
-
+   $zld = mysqli_fetch_assoc($zoek_laatste_drachtdatum); { $lstDmDracht = $zld['dmdracht']; $lstDrachtdm = $zld['drachtdm']; }
 
 unset($dmwerp);
 unset($werpdm);
@@ -548,7 +511,7 @@ GROUP BY  v.mdrId
 
 while ($zwd = mysqli_fetch_assoc($zoek_laatste_werpdatum)) { $dmwerp = $zwd['dmwerp']; $werpdm = $zwd['werpdm']; }
 
-$date_dracht = date_create($dmdracht);
+$date_dracht = date_create($lstDmDracht);
 $date_worp = date_create($dmwerp);
 
 $verschil_drachtdm_worp = date_diff($date_dracht, $date_worp);
@@ -568,7 +531,7 @@ if (!isset($mdrId_db) && !isset($_POST['knpVervers_']) ) { $color = 'red'; $onju
 else if (empty($kzlOoi) && isset($_POST['knpVervers_']))  { $color = 'red'; $onjuist = 'Moederdier is onbekend.'; }
 else if ($kzlDrachtig == 0)     { $color = 'blue'; $onjuist = ''; } // Drachting is nee
 else if ($cnt_ooien > 1 )       { $color = 'blue'; $onjuist = "Dubbele registratie."; }
-else if (isset($dmdracht))      { $color = 'red'; $onjuist = 'Deze ooi is reeds drachtig per '.$drachtdm; }
+else if (isset($lstDmDracht))      { $color = 'red'; $onjuist = 'Deze ooi is reeds drachtig per '.$lstDrachtdm; }
 else if(isset($dagen_verschil_worp) && $dagen_verschil_worp > 0 && $dagen_verschil_worp < 183) { $color = 'red'; $onjuist = 'Deze ooi heeft op '.$werpdm.' nog geworpen. Een ooi kan 1x per half jaar werpen.'; }
 else if (isset($afv_status_mdr))   { $color = 'red'; $onjuist = 'Ooi '.$moeder_rd.' is '.$afv_status_mdr; }
 else if (empty($txtDatum))         { $color = 'red'; $onjuist = 'De drachtdatum is onbekend'; }
