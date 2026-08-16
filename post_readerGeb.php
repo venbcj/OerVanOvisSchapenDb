@@ -112,7 +112,7 @@ foreach ($array as $recId => $id) {
         } else {
     // TODO is de ariteit juist? Een lid zou toch meerdere ubn-records kunnen hebben?
     // TODO hadden we hier ook $ubn zullen declareren?
-            $ubnId = $ubn_gateway->zoek_ubnId($lidId);
+            $ubnId = $ubn_gateway->zoek_eigen_ubnIds($lidId);
         }
           [$tran, $levnr_rd, $moeder, $mdrTran_rd] = $impagrident_gateway->zoek_levensnummer_transponder($recId);
     // Transponder moeder inlezen als deze niet bestaat in tblSchaap
@@ -252,7 +252,7 @@ foreach ($array as $recId => $id) {
                 $schaap_gateway->wis_levensnummer_by_id($schaapId);
                 unset($levnr);
             }
-            $stalId = $stal_gateway->insert_tblStal($lidId, $ubnId, $schaapId, $rel_best ?? null);
+            $stalId = $stal_gateway->insert_tblStal($lidId, $ubnId, $schaapId, $rel_herk ?? null, $rel_best ?? null);
             $hisId = $historie_gateway->insert_tblHistorie_geb($stalId, $fldDag, $fldKg);
         // t.b.v. tblBezet en/of tblMelding
             if (isset($rel_best)) {
