@@ -1,0 +1,1 @@
+ALTER TABLE `tblUbn` ADD `lidubn` TINYINT NOT NULL DEFAULT '1' AFTER `plaats`, ADD INDEX `lidubn` (`lidubn`);

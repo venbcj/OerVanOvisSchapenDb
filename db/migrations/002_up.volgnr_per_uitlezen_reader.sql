@@ -1,0 +1,1 @@
+ALTER TABLE `impAgrident` ADD `inleesnr` INT NOT NULL AFTER `Id`, ADD INDEX `inleesnr` (`inleesnr`);
