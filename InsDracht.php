@@ -228,10 +228,9 @@ if(isset($vdrId_db)) {
 $cnt_ooien = $vals[$kzlOoi];
 $stal_gateway = new StalGateway();
 $afv_status_mdr = $stal_gateway->zoek_afvoerstatus_mdr($lidId, $kzlOoi);
-$act_volwId = $volwas_gateway->zoek_laatste_dekking_van_ooi($lidId, $kzlOoi);
 
-[$dmdracht, $drachtdm] = $volwas_gateway->zoek_drachtdatum($act_volwId);
-$date_dracht = date_create($dmdracht);
+[$lstDmDracht, $lstDrachtDm] = $dracht_gateway->zoek_laatste_drachtdatum($kzlOoi);
+$date_dracht = date_create($lstDmDracht);
 $date_worp = date_create($dmwerp);
 $verschil_drachtdm_worp = date_diff($date_dracht, $date_worp);
 $dagen_verschil_worp     = $verschil_drachtdm_worp->days;
@@ -239,7 +238,7 @@ $dagen_verschil_worp     = $verschil_drachtdm_worp->days;
 unset($dagen_verschil_worp); // TODO: (BV) waarom al dat gereken hiervoor, als je de waarde meteen weggooit?
 
 [$dmwerp, $werpdm] = $volwas_gateway->zoek_laatste_werpdatum_dracht($kzlOoi);
-$date_dracht = date_create($dmdracht);
+$date_dracht = date_create($lstDmDracht);
 $date_worp = date_create($dmwerp);
 $verschil_drachtdm_worp = date_diff($date_dracht, $date_worp);
 $dagen_verschil_worp     = $verschil_drachtdm_worp->days;
@@ -251,7 +250,7 @@ if (!isset($mdrId_db) && !isset($_POST['knpVervers_']) ) { $color = 'red'; $onju
 else if (empty($kzlOoi) && isset($_POST['knpVervers_']))  { $color = 'red'; $onjuist = 'Moederdier is onbekend.'; }
 else if ($kzlDrachtig == 0)     { $color = 'blue'; $onjuist = ''; } // Drachting is nee
 else if ($cnt_ooien > 1 )       { $color = 'blue'; $onjuist = "Dubbele registratie."; }
-else if (isset($dmdracht))      { $color = 'red'; $onjuist = 'Deze ooi is reeds drachtig per '.$drachtdm; }
+else if (isset($lstDmDracht))      { $color = 'red'; $onjuist = 'Deze ooi is reeds drachtig per '.$lstDrachtDm; }
 else if(isset($dagen_verschil_worp) && $dagen_verschil_worp > 0 && $dagen_verschil_worp < 183) { $color = 'red'; $onjuist = 'Deze ooi heeft op '.$werpdm.' nog geworpen. Een ooi kan 1x per half jaar werpen.'; }
 else if (isset($afv_status_mdr))   { $color = 'red'; $onjuist = 'Ooi '.$moeder_rd.' is '.$afv_status_mdr; }
 else if (empty($txtDatum))         { $color = 'red'; $onjuist = 'De drachtdatum is onbekend'; }

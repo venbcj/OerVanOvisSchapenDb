@@ -980,12 +980,6 @@ class SchaapGatewayTest extends GatewayCase {
         $this->assertNotFalse($result);
     }
 
-    public function test_zoek_laatste_dekking_van_ooi() {
-        $schaapId = null;
-        $result = $this->sut->zoek_laatste_dekking_van_ooi(self::LIDID, $schaapId);
-        $this->assertNotFalse($result);
-    }
-
     public function test_zoek_werpdatum_laatste_dekking() {
         
         $result = $this->sut->zoek_werpdatum_laatste_dekking();

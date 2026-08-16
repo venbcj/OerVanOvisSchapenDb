@@ -174,12 +174,6 @@ class VolwasGatewayTest extends GatewayCase {
         $this->assertNotFalse($result);
     }
 
-    public function test_zoek_laatste_dekking_van_ooi() {
-        $schaapId = 1;
-        $result = $this->sut->zoek_laatste_dekking_van_ooi(self::LIDID, $schaapId);
-        $this->assertNotFalse($result);
-    }
-
     public function test_zoek_laatste_werpdatum_dracht() {
         $schaapId = 1;
         $result = $this->sut->zoek_laatste_werpdatum_dracht($schaapId);
