@@ -38,6 +38,20 @@ SQL
         );
     }
 
+    public function zoek_laatste_drachtdatum($mdrId) {
+        return $this->first_row(
+            <<<SQL
+SELECT max(h.datum) dmdracht, date_format(max(h.datum),'%d-%m-%Y') drachtdm
+FROM tblVolwas v
+ join tblDracht d on (v.volwId = d.volwId)
+ join tblHistorie h on (d.hisId = h.hisId)
+WHERE h.skip = 0 and v.mdrId = :mdrId
+SQL
+        , [[':mdrId', $mdrId, Type::INT]]
+            , [null, null]
+        );
+    }
+
     public function zoek_drachtdatum($recId) {
         $sql = <<<SQL
         SELECT h.hisId, h.datum
