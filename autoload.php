@@ -15,7 +15,8 @@ $app_folders = [
     $base . '/legacy',
     $base . '/templates',
     $base . '/fpdf_stub',
-    $base . '/gateways'
+    $base . '/gateways',
+    $bas . '/records'
 ];
 
 set_include_path(implode(PATH_SEPARATOR, $app_folders));

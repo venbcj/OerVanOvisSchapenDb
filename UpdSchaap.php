@@ -534,8 +534,7 @@ if(isset($_POST['txtTerugdm'])) {
             $fout = "Het bedrijf van herkomst bestaat nog niet als crediteur. Maak deze eerst aan op de pagina Relaties. "; 
         } else {
             // @TODO: #0004217 voeg ubn toe aan formulier
-            $stal_gateway->insert($lidId, $ubnId, $schaapId, $rel_herk);
-            $new_stalId = zoek_max_stalId($lidId,$schaapId);
+            $new_stalId = $stal_gateway->setAanvoer($ubnId, $schaapId, $rel_herk);
             if($new_stalId > $last_stalId) {
                 // extra controle if($new_stalId > $last_stalId)
                 $historie_gateway->insert_afvoer_act($new_stalId, $terugdate, 11);

@@ -234,16 +234,18 @@ WHERE hisId = :hisId
 SQL;
     }
 
-    public function insert($lidId, $ubnId, $schaapId, $rel_herk) {
+    public function insert($stalRecord) {
         $this->run_query(
             <<<SQL
-INSERT INTO tblStal set lidId = :lidId, ubnId = :ubnId, schaapId = :schaapId, rel_herk = :rel_herk
+INSERT INTO tblStal set ubnId = :ubnId, schaapId = :schaapId, kleur = :kleur, halsnr = :halsnr, rel_herk = :rel_herk, rel_best = :rel_best
 SQL
         , [
-            [':lidId', $lidId, Type::INT],
-            [':ubnId', $ubnId, Type::INT],
-            [':schaapId', $schaapId, Type::INT],
-            [':rel_herk', $rel_herk],
+            [':ubnId', $stalRecord->ubnId, Type::INT],
+            [':schaapId', $stalRecord->schaapId, Type::INT],
+            [':kleur', $stalRecord->kleur, Type::TXT],
+            [':halsnr', $stalRecord->halsnr, Type::INT],
+            [':rel_herk', $stalRecord->herkomst, Type::INT],
+            [':rel_best', $stalRecord->bestemming, Type::INT]
         ]
         );
         return $this->db->insert_id;
@@ -256,6 +258,21 @@ SQL;
         $args = [[':lidId', $lidId, Type::INT], [':ubnId', $ubnId, Type::INT], [':schaapId', $schaapId, Type::INT], [':rel_best', $rel_best]];
         $this->run_query($sql, $args);
         return $this->db->insert_id;
+    }
+
+    public function setAanvoer($ubnId, $schaapId, $relatieId, $halsnummer = null, $halskleur = null) {
+
+        $stalRecord = new StalRecord();
+
+        $stalRecord->ubnId = $ubnId;
+        $stalRecord->schaapId = $schaapId;
+        $stalRecord->kleur = $halskleur;
+        $stalRecord->halsnr = $halsnummer;
+        $stalRecord->herkomst = $relatieId;
+        $stalRecord->bestemming = null;
+
+        
+        return $this->insert($stalRecord);
     }
 
     public function insert_uitgebreid($lidId, $schaapId, $rel_herk, $ubnId, $kleur, $halsnr, $rel_best) {

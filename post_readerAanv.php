@@ -105,7 +105,7 @@ if(!isset($transp_db) && isset($transp_rd)) {
     $schaap_gateway->updateTransponder($schaapId, $transp_rd);
 }
 
-$stalId = $stal_gateway->insert($lidId, $schaapId, $fldHerk, $fldUbn, $fldKleur, $fldHnr, null);
+$stalId = $stal_gateway->setAanvoer($fldUbn, $schaapId, $fldHerk, $fldKleur, $fldHnr);
 
 if(isset($fldGebdag)) {
 $historie_gateway->insert_geboorte($stalId, $fldGebdag);
@@ -151,7 +151,7 @@ if(!isset($schaapId)) { // Als lam nog niet bestaat in tblSchaap
     }
         $schaapId = $schaap_gateway->maak_schaap($levnr_rd, $fldRas, $fldSekse, $volwId, null, null);
     }
-    $stalId = $stal_gateway->insert($lidId, $fldUbn, $schaapId, $fldHerk);
+    $stalId = $stal_gateway->setAanvoer($fldUbn, $schaapId, $fldHerk);
 // $zoek_hisId is voor tblBezet én tblMelding
 $hisId = $historie_gateway->herstel_invoeren($stalId, $flddag, $fldKg, 2);    
 if($modtech == 1) {

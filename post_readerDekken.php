@@ -69,7 +69,7 @@ If(!isset($ubnId)) { //Als de externe lokatie (ubn) nog niet voorkomt in tblUbn 
 
 $ubnId = $ubn_gateway->insert($lidId, $ubn, 0);
 
-$stalId = $stal_gateway->insert(NULL, $ubnId, $fldOoi, 4);
+$stalId = $stal_gateway->setAanvoer($ubnId, $fldOoi, 4); // 4 is een niet bestaand relId omdat de herkomst van de uitgeschaarde lokatie niet relevant is. Het vullen van het veld rel_herk is zo wel eenduidig in tblStal
 } // Einde Maak stalmoment van uitgeschaarde lokatie
 // Einde Controle op uitgeschaarde schapen (moederdieren)
 
