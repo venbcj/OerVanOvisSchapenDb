@@ -127,7 +127,7 @@ if (Auth::is_logged_in()) {
         } // Einde if (isset($levnr))
 
         if (!isset($_POST['kzlUbn'])) { // Dit geldt als een gebruik slechts 1 ubn heeft. veld kzlUbn bestaat dan nl. niet
-            $kzlUbn = $ubn_gateway->zoek_eigen_ubnIds($lidId);
+            $kzlUbn = $ubn_gateway->get_ubnIds_user($lidId);
         } elseif (!empty($_POST['kzlUbn'])) {
             $kzlUbn = $_POST['kzlUbn'];
         }
@@ -511,7 +511,7 @@ $aantal_ubn = $ubn_gateway->countPerLid($lidId);
 if ($aantal_ubn > 1) {
     $ubns = $ubn_gateway->lijstKV($lidId);
 } else {
-    $ubn = $ubn_gateway->zoek_eigen_ubnIds($lidId);
+    $ubn = $ubn_gateway->get_ubnIds_user($lidId);
 }
 // EINDE Declaratie Ubn ?>
 
