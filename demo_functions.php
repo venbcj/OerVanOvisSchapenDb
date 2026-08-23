@@ -827,15 +827,16 @@ mysqli_query($db, $SQL);
 /********************    Het schaap deel 2    *******************************************************************/
 //Aanvullen tblStal incl veld stalId_basis als sleutelveld voor andere tabellen (foreign key)
 $SQL = "
-INSERT INTO tblStal (lidId, schaapId, kleur, halsnr, rel_herk, rel_best, stalId_basis)
-    SELECT '$lidId', s.schaapId, kleur, halsnr, rh.relId, rb.relId, st.stalId
+INSERT INTO tblStal (lidId, ubnId, schaapId, kleur, halsnr, rel_herk, rel_best, stalId_basis)
+    SELECT u.lidId, u.ubnId, s.schaapId, kleur, halsnr, rh.relId, rb.relId, st.stalId
     FROM tblStal_basis st
+     join tblUbn u USING(ubnId)
      join tblSchaap s on (st.schaapId = s.schaapId_basis)
      left join tblRelatie rh on (st.rel_herk = rh.relId_basis)
      left join tblPartij ph on (ph.partId = rh.partId)
      left join tblRelatie rb on (st.rel_best = rb.relId_basis)
      left join tblPartij pb on (pb.partId = rb.partId)
-    WHERE s.lidId_demo = '$lidId' and (isnull(ph.lidId) or ph.lidId = '$lidId') and (isnull(pb.lidId) or pb.lidId = '$lidId')
+    WHERE u.lidId = '$lidId' and s.lidId_demo = '$lidId' and (isnull(ph.lidId) or ph.lidId = '$lidId') and (isnull(pb.lidId) or pb.lidId = '$lidId')
     ORDER BY st.stalId
 ";
 mysqli_query($db, $SQL);
