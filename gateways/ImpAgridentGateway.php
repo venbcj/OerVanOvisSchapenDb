@@ -2169,7 +2169,7 @@ SQL
     }
 
     public function heeft_dubbele_imports_overplaatsing($lidId) {
-    $result = $this-.run_query(
+    $result = $this->run_query(
         <<<SQL
 SELECT EXISTS (
     SELECT 1

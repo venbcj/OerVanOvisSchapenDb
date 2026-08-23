@@ -136,5 +136,36 @@ SQL;
         $args = [[':fldActief', $fldActief], [':updId', $updId, Type::INT]];
         $this->run_query($sql, $args);
     }
+        public function update_klant() {
+            $this->run_query(
+               <<<SQL
+UPDATE tblRelaties SET ubn = ".$updubn.",
+ relnr = ".$updrelnr.",
+ wachtw = ".$updpassw.",
+ relatie = ".$updnaam." ,
+ adres = ".$updstraat." ,
+ ".$updnr." ,
+ ".$updpc." ,
+ ".$updplaats." ,
+ adres1 = ".$upd_straat." ,
+ ".$upd_nr." ,
+ ".$upd_pc." ,
+ ".$upd_plaats." ,
+ ".$updtel.",
+ ".$updfax.",
+ ".$updmail.",
+ ".$updsite.",
+ ".$updbank.",
+ ".$updact.",
+ ".$updkent.",
+ ".$updhang."
+WHERE lidId = ".mysqli_real_escape_string($db, $lidId)."
+ and relatId = '$klantid'     
+SQL
+ ,
+     [
+     ]
+            );
+        }
 
 }
