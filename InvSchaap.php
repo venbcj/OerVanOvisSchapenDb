@@ -64,7 +64,6 @@ if (Auth::is_logged_in()) {
         $schaap_gateway = new SchaapGateway();
     }
     $stal_gateway = new StalGateway();
-    $lid_gateway = new LidGateway();
     $volwas_gateway = new VolwasGateway();
     $bezet_gateway = new BezetGateway();
     $ubn_gateway = new UbnGateway();
@@ -128,7 +127,7 @@ if (Auth::is_logged_in()) {
         } // Einde if (isset($levnr))
 
         if (!isset($_POST['kzlUbn'])) { // Dit geldt als een gebruik slechts 1 ubn heeft. veld kzlUbn bestaat dan nl. niet
-            $kzlUbn = $lid_gateway->findUbn($lidId);
+            $kzlUbn = $ubn_gateway->zoek_eigen_ubnIds($lidId);
         } elseif (!empty($_POST['kzlUbn'])) {
             $kzlUbn = $_POST['kzlUbn'];
         }
@@ -512,7 +511,7 @@ $aantal_ubn = $ubn_gateway->countPerLid($lidId);
 if ($aantal_ubn > 1) {
     $ubns = $ubn_gateway->lijstKV($lidId);
 } else {
-    $ubn = $lid_gateway->findUbn($lidId);
+    $ubn = $ubn_gateway->zoek_eigen_ubnIds($lidId);
 }
 // EINDE Declaratie Ubn ?>
 

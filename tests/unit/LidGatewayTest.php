@@ -120,13 +120,13 @@ class LidGatewayTest extends GatewayCase {
         $this->assertNotFalse($result);
     }
 
-    public function test_findUbn() {
-        $result = $this->sut->findUbn(self::LIDID);
+    public function test_get_ubnIds_user() {
+        $result = $this->sut->get_ubnIds_user(self::LIDID);
         $this->assertNotFalse($result);
     }
 
-    public function test_findUbns() {
-        $result = $this->sut->findUbns(self::LIDID);
+    public function test_get_ubns_user() {
+        $result = $this->sut->get_ubns_user(self::LIDID);
         $this->assertNotFalse($result);
     }
 

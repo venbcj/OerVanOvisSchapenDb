@@ -133,15 +133,38 @@ SQL
     }
 
     // :hmm zit dit ook/al in LidGateway? (ziedaar de slechte invloed van ActiveRecord)
-    public function zoek_eigen_ubnIds($lidId) {
+    public function get_ubnIds_user($lidId) {
         $sql = <<<SQL
             SELECT ubnId
             FROM tblUbn
             WHERE lidId = :lidId
              and lidubn = 1
+             and actief = 1
 SQL;
         $args = [[':lidId', $lidId, Type::INT]];
         return $this->first_field($sql, $args);
+    }
+
+    public function get_ubns_user($lidId){
+        return $this->run_query(
+            <<<SQL
+SELECT ubn
+FROM tblUbn
+WHERE lidId = :lidId
+ and lidubn = 1
+ and actief = 1
+SQL
+        ,[[':lidId', $lidId, Type::INT]]
+        );
+    }
+
+    public function ubn_exists($ubn) {
+        return 0 < $this->first_field(
+            <<<SQL
+SELECT count(*) aant FROM tblUbn WHERE ubn = :ubn
+SQL
+        , [[':ubn', $ubn]]
+        );
     }
 
 

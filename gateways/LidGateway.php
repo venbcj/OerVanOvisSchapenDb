@@ -145,30 +145,6 @@ SQL
         );
     }
 
-    public function findUbn($lidId) {
-        return $this->first_field(
-            <<<SQL
-SELECT ubnId
-FROM tblUbn
-WHERE lidId = :lidId
- and actief = 1
-SQL
-        , [[':lidId', $lidId, Type::INT]]
-        );
-    }
-
-    public function findUbns($lidId) {
-        return $this->run_query(
-            <<<SQL
-SELECT ubn
-FROM tblUbn
-WHERE lidId = :lidId
- and actief = 1
-SQL
-        , [[':lidId', $lidId, Type::INT]]
-        );
-    }
-
     public function findAlias($lidId) {
         return $this->first_field(
             <<<SQL
@@ -627,17 +603,6 @@ SQL
         );
     }
 
-    public function get_ubns_user($lidId){
-        return $this->run_query(
-            <<<SQL
-SELECT ubn
-FROM tblUbn
-WHERE lidId = :lidId and actief = 1
-SQL
-        ,[[':lidId', $lidId, Type::INT]]
-        );
-    }
-
     public function update_password($lidId, $wwnew) {
         $this->run_query(
             <<<SQL
@@ -647,15 +612,6 @@ SQL
             [':lidId', $lidId, Type::INT],
             [':passw', $wwnew],
         ]
-        );
-    }
-
-    public function ubn_exists($ubn) {
-        return 0 < $this->first_field(
-            <<<SQL
-SELECT count(*) aant FROM tblUbn WHERE ubn = :ubn
-SQL
-        , [[':ubn', $ubn]]
         );
     }
 

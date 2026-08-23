@@ -112,7 +112,7 @@ foreach ($array as $recId => $id) {
         } else {
     // TODO is de ariteit juist? Een lid zou toch meerdere ubn-records kunnen hebben?
     // TODO hadden we hier ook $ubn zullen declareren?
-            $ubnId = $ubn_gateway->zoek_eigen_ubnIds($lidId);
+            $ubnId = $ubn_gateway->get_ubnIds_user($lidId);
         }
           [$tran, $levnr_rd, $moeder, $mdrTran_rd] = $impagrident_gateway->zoek_levensnummer_transponder($recId);
     // Transponder moeder inlezen als deze niet bestaat in tblSchaap

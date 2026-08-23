@@ -67,6 +67,7 @@ if (Auth::is_logged_in()) {
 <?php
         // START LOOP
         $lid_gateway = new LidGateway();
+        $ubn_gateway = new UbnGateway();
         $loop = $lid_gateway->all();
         while ($row = $loop->fetch_assoc()) {
             $lid = $row['lidId'];
@@ -111,7 +112,7 @@ if (Auth::is_logged_in()) {
 
 $array_ubn = array();
 
-$ubns = $lid_gateway->get_ubns_user($lid);
+$ubns = $ubn_gateway->get_ubns_user($lid);
 while ($gu = $ubns->fetch_assoc()) {
 	$array_ubn[] = $gu['ubn'];
 }

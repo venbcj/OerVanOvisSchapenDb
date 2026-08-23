@@ -58,7 +58,8 @@ if (empty($ubn)) {
 }
 if (!empty($ubn) && !empty($pword) && !empty($ctr_p) && $pword == $ctr_p && (!empty($tel) || (!empty($mail) && $isValid == true) )) {
     $lid_gateway = new LidGateway();
-    if ($lid_gateway->ubn_exists($ubn)) {
+    $ubn_gateway = new UbnGateway();
+    if ($ubn_gateway->ubn_exists($ubn)) {
         $fout = "Dit ubn bestaat al." ;
     } elseif (!empty($ubn) && Validate::numeriek($ubn) == 1) {
         $fout = "Dit ubn wordt niet herkend.";

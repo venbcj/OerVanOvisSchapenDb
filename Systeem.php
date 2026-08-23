@@ -31,6 +31,7 @@ include "login.php";
 <?php
 if (Auth::is_logged_in()) {
     $lid_gateway = new LidGateway();
+    $ubn_gateway = new UbnGateway();
     if (isset($_POST['knpSave'])) {
         if ($_POST['user']['kar_werknr'] < 1 || $_POST['user']['kar_werknr'] > 8) {
             $fout = "Het aantal karakters van een werknr moet liggen tussen 1 en 8.";
@@ -127,7 +128,7 @@ foreach ($opties as $key => $waarde) {
 </table>
 <?php
 $array_ubn = array();
-$zoek_ubn = $lid_gateway->findUbns($lidId);
+$zoek_ubn = $ubn_gateway->get_ubns_user($lidId);
 while ($zu = $zoek_ubn->fetch_array()) {
     $array_ubn[] = $zu['ubn'];
 }
