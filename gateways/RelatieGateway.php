@@ -48,6 +48,19 @@ SQL;
         return $this->first_field($sql, $args);
     }
 
+    public function findRendac($lidId) {
+        return $this->first_row(
+            <<<SQL
+    SELECT r.relId, p.ubn 
+    FROM tblPartij p
+     join tblRelatie r on (p.partId = r.partId)
+    WHERE p.lidId = :lidId and r.uitval = 1;
+SQL
+        , [[':lidId', $lidId, Type::INT]]
+            , [null, null]
+        );
+    }
+
     public function zoek_rendac($updId) {
         $sql = <<<SQL
     SELECT relId

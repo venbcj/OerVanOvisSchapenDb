@@ -12,7 +12,7 @@ class LidGatewayTest extends GatewayCase {
 
     public function testFindCrediteur() {
         $this->runfixture('crediteur');
-        $res = $this->sut->findCrediteur(self::LIDID);
+        $res = $this->sut->findRendac(self::LIDID);
         $this->assertEquals([5, 13], $res);
     }
 
@@ -227,7 +227,7 @@ class LidGatewayTest extends GatewayCase {
     }
 
     public function test_findCrediteur() {
-        $result = $this->sut->findCrediteur(self::LIDID);
+        $result = $this->sut->findRendac(self::LIDID);
         $this->assertNotFalse($result);
     }
 

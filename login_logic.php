@@ -97,6 +97,7 @@ if (!Auth::is_logged_in()) {
 
     $lid_gateway = new LidGateway();
     $hok_gateway = new HokGateway();
+    $relatie_gateway = new RelatieGateway();
 
     // Bepalen modules ja of nee
     $rechten = $lid_gateway->rechten($lidId);
@@ -116,7 +117,7 @@ if (!Auth::is_logged_in()) {
     $w_hok = max(60, 15 + 9 * $hok_gateway->findLongestHoknr($lidId));
 
     // Bepalen Id van crediteur ophalen dode dieren (Rendac)
-    $res = $lid_gateway->findCrediteur($lidId);
+    $res = $relatie_gateway->findRendac($lidId);
     [$rendac_Id, $rendac_ubn] = $res;
 
     $reader = $lid_gateway->findReader($lidId);
