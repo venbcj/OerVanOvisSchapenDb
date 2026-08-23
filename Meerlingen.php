@@ -67,11 +67,12 @@ FROM (
     SELECT mdr.schaapId, right(mdr.levensnummer,$Karwerk) ooi, v.volwId, count(lam.schaapId) worp
     FROM tblSchaap mdr
      join tblStal stm on (stm.schaapId = mdr.schaapId)
+     join tblUbn um on (um.ubnId = stm.ubnId)
      join tblVolwas v on (mdr.schaapId = v.mdrId)
      join tblSchaap lam on (v.volwId = lam.volwId)
      join tblStal st on (lam.schaapId = st.schaapId)
      join tblUbn u on (u.ubnId = st.ubnId)
-    WHERE isnull(stm.rel_best) and stm.lidId = '".mysqli_real_escape_string($db,$lidId)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    WHERE isnull(stm.rel_best) and um.lidId = '".mysqli_real_escape_string($db,$lidId)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
     GROUP BY mdr.schaapId, right(mdr.levensnummer,$Karwerk), v.volwId
     HAVING count(v.volwId) > 0
      ) perWorp

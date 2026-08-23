@@ -24,20 +24,22 @@ $excelData[] = array('Levensnummer', 'Werknr', 'Gewicht', 'Medicijn', 'Datum toe
  
 // Haal records op uit de database en sla ze op in een array 
 $query = $db->query("
-SELECT st.lidId, s.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr, a.actie, h.kg, pil.datum, pil.naam, pil.wdgn_v
+SELECT u.lidId, s.schaapId, s.levensnummer, right(s.levensnummer,$Karwerk) werknr, a.actie, h.kg, pil.datum, pil.naam, pil.wdgn_v
 FROM tblHistorie h
  join tblStal st on (h.stalId = st.stalId)
+ join tblUbn u USING(ubnId)
  join tblSchaap s on (s.schaapId = st.schaapId)
  join tblActie a on (h.actId = a.actId)
  left join (
     SELECT s.schaapId, date_format(h.datum,'%d-%m-%Y') datum, art.naam, art.wdgn_v
     FROM tblSchaap s 
      join tblStal st on (st.schaapId = s.schaapId)
+     join tblUbn u USING(ubnId)
      join tblHistorie h on (h.stalId = st.stalId)
      join tblNuttig n on (h.hisId = n.hisId)
      join tblInkoop i on (i.inkId = n.inkId)
      join tblArtikel art on (i.artId = art.artId) 
-    WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 8 and h.skip = 0 and (h.datum + interval art.wdgn_v day) >= sysdate()
+    WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.actId = 8 and h.skip = 0 and (h.datum + interval art.wdgn_v day) >= sysdate()
 ) pil on (st.schaapId = pil.schaapId)
 WHERE h.datum = '".mysqli_real_escape_string($db,$afvDate)."' and st.rel_best = '".mysqli_real_escape_string($db,$relId)."' and a.af = 1 and h.skip = 0
 ORDER BY right(s.levensnummer,$Karwerk)

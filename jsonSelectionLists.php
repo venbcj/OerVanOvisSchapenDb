@@ -78,7 +78,7 @@ $result = mysqli_query($db,"
 SELECT ubn Id, naamreader `name`
 FROM tblPartij p
  join tblRelatie r on (p.partId = r.partId)
-WHERE lidId = '".mysqli_real_escape_string($db,$lidid)."' and p.actief = 1 and r.actief = 1 and isnull(r.uitval) and ubn is not null
+WHERE p.lidId = '".mysqli_real_escape_string($db,$lidid)."' and p.actief = 1 and r.actief = 1 and isnull(r.uitval) and ubn is not null
 GROUP BY ubn, naamreader
 ORDER BY naam
 ") or die (mysqli_error($db)); 
@@ -201,14 +201,16 @@ $result = mysqli_query($db,"
 SELECT s.schaapId Id, right(s.levensnummer,$karwerk) `name`
 FROM tblSchaap s 
  join tblStal st on (st.schaapId = s.schaapId)
+ join tblUbn u USING(ubnId)
  join tblHistorie h on (h.stalId = st.stalId)
-WHERE s.geslacht = 'ram' and h.actId = 3 and h.skip = 0 and lidId = '".mysqli_real_escape_string($db,$lidid)."'
+WHERE s.geslacht = 'ram' and h.actId = 3 and h.skip = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidid)."'
 and not exists (
     SELECT st.schaapId
     FROM tblStal stal 
+     join tblUbn u USING(ubnId)
      join tblHistorie h on (h.stalId = stal.stalId)
      join tblActie a on (a.actId = h.actId)
-    WHERE stal.schaapId = s.schaapId and a.af = 1 and h.datum < DATE_ADD(CURDATE(), interval -1 year) and h.skip = 0 and lidId = '".mysqli_real_escape_string($db,$lidid)."')
+    WHERE stal.schaapId = s.schaapId and a.af = 1 and h.datum < DATE_ADD(CURDATE(), interval -1 year) and h.skip = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidid)."')
 ORDER BY right(s.levensnummer,$karwerk)
 ") or die (mysqli_error($db)); 
 

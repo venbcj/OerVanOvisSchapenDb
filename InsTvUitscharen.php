@@ -164,9 +164,10 @@ while ($zsg = mysqli_fetch_assoc($zoek_schaap_gegevens)) { $sekse = $zsg['geslac
 // Zoek historie van het schaap om te beoordelen dat het levensnummer van deze gebruiker (is geweest). Een levensnummer van een andere gebruiker wordt nl. gewoon geaccepteerd !!
 unset($stalId_gebruiker);
 $zoek_stalId = mysqli_query($db,"
-    SELECT max(stalId) stalId
-    FROM tblStal
-    WHERE schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and lidId = '".mysqli_real_escape_string($db,$lidId)."'
+    SELECT max(st.stalId) stalId
+    FROM tblStal st
+     join tblUbn u USING(ubnId)
+    WHERE st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ");
 
 while ($zs = mysqli_fetch_assoc($zoek_stalId)) { $stalId_gebruiker = $zs['stalId']; }
@@ -191,8 +192,9 @@ $zoek_laatste_keer_van_stallijst_af = mysqli_query($db,"
 SELECT max(hisId) hisId
 FROM tblHistorie h
  join tblStal st on (st.stalId = h.stalId)
+ join tblUbn u USING(ubnId)
  join tblActie a on (h.actId = a.actId)
-WHERE a.af = 1 and schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and lidId = '".mysqli_real_escape_string($db,$lidId)."'
+WHERE a.af = 1 and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ");
 
 while ($zlksa = mysqli_fetch_assoc($zoek_laatste_keer_van_stallijst_af)) { $max_his_af = $zlksa['hisId']; }

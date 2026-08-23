@@ -26,6 +26,7 @@ $query = $db->query("
 SELECT s.levensnummer, right(s.levensnummer, $Karwerk) werknum, s.transponder, date_format(hg.datum,'%d-%m-%Y') gebdm, s.geslacht, prnt.datum aanw, scan.dag
 FROM tblSchaap s
  join tblStal st on (st.schaapId = s.schaapId)
+ join tblUbn u USING(ubnId)
  left join tblHistorie hg on (st.stalId = hg.stalId and hg.actId = 1 and hg.skip = 0) 
  left join (
     SELECT st.schaapId, datum
@@ -40,11 +41,12 @@ FROM tblSchaap s
         SELECT max(hisId) hismx, schaapId
         FROM tblHistorie h
          join tblStal st on (h.stalId = st.stalId)
-        WHERE actId = 22 and h.skip = 0 and lidId = '".mysqli_real_escape_string($db,$lidId)."'
+         join tblUbn u USING(ubnId)
+        WHERE h.actId = 22 and h.skip = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
         GROUP BY schaapId
     ) contr_scan on (contr_scan.hismx = h.hisId)
  ) scan on (scan.schaapId = s.schaapId)
-WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and isnull(st.rel_best)
 ORDER BY right(s.levensnummer, $Karwerk)
 "); 
 if($query->num_rows > 0){ 

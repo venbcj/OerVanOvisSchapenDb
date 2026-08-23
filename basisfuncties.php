@@ -504,8 +504,14 @@ FROM tblMelding m
      join tblStal st on (st.stalId = h.stalId)
      join tblUbn u on (st.ubnId = u.ubnId)
     WHERE h.skip = 0 and u.lidId = '".mysqli_real_escape_string($db, $lidId)."' and 
-     not exists (SELECT max(stl.stalId) stalId FROM tblStal stl WHERE stl.lidId = '".mysqli_real_escape_string($db, $lidId)."' and stl.stalId = st.stalId)
-    GROUP BY st.schaapId
+     not exists (
+        SELECT max(stl.stalId) stalId
+        FROM tblStal stl
+         join tblUbn u USING(ubnId)
+        WHERE u.lidId = '".mysqli_real_escape_string($db, $lidId)."'
+         and u.lidubn = 1
+         and stl.stalId = st.stalId)
+        GROUP BY st.schaapId
  ) lastdm on (lastdm.schaapId = s.schaapId)
 WHERE h.skip = 0 and m.reqId = '".mysqli_real_escape_string($db, $reqId)."' and isnull(hide.meldId) and isnull(rs.meldnr)
 ORDER BY u.ubn, m.skip, s.levensnummer 

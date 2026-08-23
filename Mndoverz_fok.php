@@ -47,8 +47,9 @@ if (isset($kzlJaar)) { unset($label); } ?>
 <?php
 $zoek_startjaar_user = mysqli_query($db,"
 SELECT date_format(min(dmcreatie),'%Y') jaar 
-FROM tblStal
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
+FROM tblStal st
+ join tblUbn u USING(ubnId)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."'
 ") or die ('01 '.mysqli_error($db));
     while($jr1 = mysqli_fetch_array($zoek_startjaar_user)) { $jaar1 = $jr1['jaar']; }
 
@@ -337,7 +338,7 @@ FROM (
          FROM tblVoeding v
           join tblPeriode p on (v.periId = p.periId)
           join tblHok ho on (ho.hokId = p.hokId)
-         WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
+         WHERE ho.lidId = '".mysqli_real_escape_string($db,$lidId)."'
          GROUP BY p.periId
      ) v on (p.periId = v.periId)
      join (
