@@ -252,7 +252,7 @@ foreach ($array as $recId => $id) {
                 $schaap_gateway->wis_levensnummer_by_id($schaapId);
                 unset($levnr);
             }
-            $stalId = $stal_gateway->insert_tblStal($lidId, $ubnId, $schaapId, $rel_herk ?? null, $rel_best ?? null);
+            $stalId = $stal_gateway->setGeboorte($ubnId, $schaapId);
             $hisId = $historie_gateway->insert_tblHistorie_geb($stalId, $fldDag, $fldKg);
         // t.b.v. tblBezet en/of tblMelding
             if (isset($rel_best)) {

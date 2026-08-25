@@ -260,7 +260,42 @@ SQL;
         return $this->db->insert_id;
     }
 
-    public function setAanvoer($ubnId, $schaapId, $relatieId, $halsnummer = null, $halskleur = null) {
+    public function setGeboorte($ubnId, $schaapId) {
+
+        $stalRecord = new StalRecord();
+
+        $stalRecord->ubnId = $ubnId;
+        $stalRecord->schaapId = $schaapId;
+        $stalRecord->kleur = NULL;
+        $stalRecord->halsnr = NULL;
+        $stalRecord->herkomst = NULL;
+        $stalRecord->bestemming = NULL;
+
+        return $this->insert($stalRecord);
+
+    }
+
+    public function setDoodGeboren($ubnId, $schaapId) {
+
+        $ubn_gateway = new UbnGateway();
+        $relatie_gateway = new RelatieGateway();
+
+        $lidId = $ubn_gateway->zoekLidId($ubnId);
+        $relId = $relatie_gateway->zoekRelIdRendac($lidId);
+
+        $stalRecord = new StalRecord();
+
+        $stalRecord->ubnId = $ubnId;
+        $stalRecord->schaapId = $schaapId;
+        $stalRecord->kleur = NULL;
+        $stalRecord->halsnr = NULL;
+        $stalRecord->herkomst = NULL;
+        $stalRecord->bestemming = $relId;
+
+        return $this->insert($stalRecord);
+    }
+
+    public function setAanvoer($ubnId, $schaapId, $relatieId, $halskleur = null, $halsnummer = null) {
 
         $stalRecord = new StalRecord();
 

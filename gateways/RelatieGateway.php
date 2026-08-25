@@ -61,6 +61,18 @@ SQL
         );
     }
 
+    public function zoekRelIdRendac($lidId) {
+        return $this->first_field(
+<<<SQL 
+SELECT relId
+FROM tblRelatie r
+ join tblPartij p USING(partId)
+WHERE p.naam = 'Rendac' and lidId = :lidId 
+SQL
+    , [['lidId', $lidId, Type::INT]]);
+
+    }
+
     public function zoek_rendac($updId) {
         $sql = <<<SQL
     SELECT relId

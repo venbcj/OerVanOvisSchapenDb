@@ -167,5 +167,15 @@ SQL
         );
     }
 
+    public function zoekLidId($ubnId) {
+        $sql = <<<SQL
+SELECT lidId
+FROM tblUbn
+WHERE ubnId = :ubnId
+SQL;
+$args = [['ubnId',$ubnId,Type::INT]];
+    
+    return $this->first_field($sql, $args);
+    }
 
 }
