@@ -128,7 +128,7 @@ SQL
 SELECT max(st.stalId) stalId
 FROM tblStal st
  join tblUbn u on (st.ubnId = u.ubnId)
-WHERE u.lidId = :lidId and st.schaapId = :schaapId 
+WHERE u.lidId = :lidId and st.schaapId = :schaapId and u.lidubn = 1
 SQL
         , [
             [':lidId', $lidId, Type::INT],
@@ -310,6 +310,26 @@ SQL;
         return $this->insert($stalRecord);
     }
 
+        public function setAanvoerNaUitscharen($ubnId, $schaapId, $halskleur = null, $halsnummer = null) {
+
+        $ubn_gateway = new UbnGateway();
+        $stalRecord = new StalRecord();
+
+        $lidId = $ubn_gateway->zoekLidId($ubnId);       
+        $stalId = zoek_laatste_stalId($lidId, $schaapId);
+        [$bestId] = zoek_bestemming_laatste_afvoer_uitgeschaard($stalId);
+        [$relatieId] = zoek_herkomst_uitgeschaard($bestId);
+
+        $stalRecord->ubnId = $ubnId;
+        $stalRecord->schaapId = $schaapId;
+        $stalRecord->kleur = $halskleur;
+        $stalRecord->halsnr = $halsnummer;
+        $stalRecord->herkomst = $relatieId;
+        $stalRecord->bestemming = null;
+        
+        return $this->insert($stalRecord);
+    }
+
     public function insert_uitgebreid($lidId, $schaapId, $rel_herk, $ubnId, $kleur, $halsnr, $rel_best) {
         $this->run_query(<<<SQL
 INSERT INTO tblStal SET
@@ -335,50 +355,33 @@ SQL
         return $this->db->insert_id;
     }
 
-    public function zoek_laatste_stal($lidId, $schaapId) {
-        return $this->run_query(<<<SQL
-SELECT max(stalId) stalId
-FROM tblStal st
-INNER JOIN tblUbn u ON (st.ubnId = u.ubnId)
-WHERE u.lidId = :lidId
- and st.schaapId = :schaapId
-SQL
-        , [
-            [':lidId', $lidId, Type::INT],
-            [':schaapId', $schaapId, Type::INT],
-        ]
-        );
-    }
-
-    public function zoek_in_stallijst($lidId, $levnr) {
+    public function zoek_in_stallijst($lidId, $schaapId) {
         return $this->first_field(
             <<<SQL
-SELECT s.schaapId 
-FROM tblSchaap s
- join tblStal st on (s.schaapId = st.schaapId)
+SELECT st.schaapId 
+FROM tblStal st
  INNER JOIN tblUbn u USING(ubnId)
 WHERE u.lidId = :lidId
- and levensnummer = :levnr
+ and st.schaapId = :schaapId
  and isnull(st.rel_best)
 SQL
         ,
             [
                 [':lidId', $lidId, Type::INT],
-                [':levnr', $levnr],
+                [':schaapId', $schaapId],
             ]
         );
     }
 
-    public function zoek_in_afgevoerd($lidId, $levnr) {
+    public function zoek_in_afgevoerd($lidId, $schaapId) {
         return $this->first_field(
             <<<SQL
-SELECT s.schaapId 
-FROM tblSchaap s
- join tblStal st on (s.schaapId = st.schaapId)
+SELECT st.schaapId 
+FROM tblStal st
  join tblUbn u on (u.ubnId = st.ubnId)
  join tblHistorie h on (st.stalId = h.stalId)
 WHERE u.lidId = :lidId
- and levensnummer = :levnr
+ and st.schaapId = :schaapId
  and st.rel_best is not null
  and (h.actId = 12 or h.actId = 13)
  and h.skip = 0
@@ -386,47 +389,55 @@ SQL
         ,
             [
                 [':lidId', $lidId, Type::INT],
-                [':levnr', $levnr],
+                [':schaapId', $schaapId],
             ]
         );
     }
 
-    public function zoek_dood($levnr) {
+    public function zoek_dood($schaapId) {
         return $this->first_field(
             <<<SQL
-SELECT s.schaapId 
-FROM tblSchaap s
- join tblStal st on (s.schaapId = st.schaapId)
+SELECT st.schaapId 
+FROM tblStal st
  join tblHistorie h on (st.stalId = h.stalId)
-WHERE levensnummer = :levnr
+WHERE st.schaapId = :schaapId
  and h.actId = 14
  and h.skip = 0
 SQL
         ,
             [
-                [':levnr', $levnr],
+                [':schaapId', $schaapId],
             ]
         );
     }
 
-    public function zoek_hisId_uitgeschaard($levnr) {
-        return $this->first_field(
-            <<<SQL
-SELECT hisId
-FROM tblHistorie h
- join (
-     SELECT max(stalId) stalId
-     FROM tblStal st
-      join tblSchaap s on (s.schaapId = st.schaapId)
-     WHERE levensnummer = :levnr
- ) st on (st.stalId = h.stalId) 
-WHERE h.actId = 10 and h.skip = 0
+    public function zoek_bestemming_laatste_afvoer_uitgeschaard($lst_stalId) {
+
+        return $this->first_row(
+<<<SQL 
+    SELECT st.rel_best, concat(p.ubn, ' - ', p.naam) bestemming
+    FROM tblStal st
+     join tblHistorie h USING (stalId)
+     join tblRelatie r on (r.relId = st.rel_best)
+     join tblPartij p USING (partId)
+    WHERE st.stalId = :lst_stalId and h.actId = 10
 SQL
-        ,
-            [
-                [':levnr', $levnr],
-            ]
+      , [[':lst_stalId',$lst_stalId,Type::INT]]  );
+    }
+
+    public function zoek_herkomst_uitgeschaard($bestemming) {
+
+        return $this->first_row(
+            <<<SQL
+            SELECT rh.relId relId_h, concat(p.ubn, ' - ', p.naam) naam
+            FROM tblRelatie rb
+             join tblPartij p USING (partId)
+             join tblRelatie rh on (rh.partId = p.partId)
+            WHERE rb.relId = :bestemming and rh.relatie = 'cred'
+     SQL 
+            ,   [[':bestemming',$bestemming,Type::INT]]
         );
+
     }
 
     public function zoek_terug_uitscharen($schaapId) {
@@ -441,7 +452,7 @@ SQL
         );
     }
 
-    public function zoek_uitgeschaarde_ooi($lidId, $mdrId) {
+    public function zoek_uitgeschaarde_schaap($lidId, $schaapId) {
         return $this->first_row(
 <<<SQL 
 SELECT h.actId, st.rel_best, stSchaar.stalId stSchaar
@@ -450,7 +461,7 @@ FROM tblStal st
     SELECT max(st.stalId) stalId, st.schaapId
     FROM tblStal st
      join tblUbn u on (st.ubnId = u.ubnId)
-    WHERE st.schaapId = :mdrId and u.lidId = :lidId and u.lidubn = 1
+    WHERE st.schaapId = :schaapId and u.lidId = :lidId and u.lidubn = 1
     GROUP BY st.schaapId
  ) stm on (stm.stalId = st.stalId)
  join tblHistorie h on (h.stalId = st.stalId)
@@ -459,7 +470,7 @@ FROM tblStal st
 WHERE h.actId = 10 and (uSchaar.lidId = :lidId or isnull(uSchaar.lidId))
 SQL
             , [[':lidId',$lidId,Type::INT],
-               [':mdrId',$mdrId,Type::INT]
+               [':schaapId',$schaapId,Type::INT]
               ]);
     }
 

@@ -2,6 +2,17 @@
 
 class RelatieGateway extends Gateway {
 
+    public function zoekPartijId($relId) {
+        return $this->first_field(
+            <<<SQL 
+SELECT partId
+FROM tblRelatie
+WHERE relId = :relId
+SQL
+        , [[':relId', $relId, Type::INT]] 
+        );
+    }
+
     public function zoek_bestemming($last_stalId) {
         return $this->first_row(
             <<<SQL
@@ -25,6 +36,28 @@ SQL
         , [[':partId', $partId, Type::INT]]
         );
     }
+
+    public function keuzelijst_herkomst($lidId) {
+        $sql = <<<SQL 
+SELECT r.relId, concat(' - ', p.naam) naam
+FROM tblRelatie r
+ join tblPartij p USING(partId)
+WHERE p.lidId = :lidId and p.actief = 1 and r.actief = 1 and r.relatie = 'cred' and p.ubn is null
+
+UNION
+
+SELECT r.relId, concat(p.ubn, ' - ', p.naam) naam
+FROM tblRelatie r
+ join tblPartij p USING(partId)
+WHERE p.lidId = :lidId and p.actief = 1 and r.actief = 1 and r.relatie = 'cred' and p.ubn is not null and r.uitval is null
+SQL;
+
+$args = [[':lidId', $lidId, Type::INT]];
+
+    return $this->run_query($sql, $args);
+
+    }
+
 
     public function zoek_postcode($updId) {
         $sql = <<<SQL

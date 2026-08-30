@@ -72,6 +72,7 @@ if (Auth::is_logged_in()) {
     $reden_gateway = new RedenGateway();
     $hok_gateway = new HokGateway();
     $historie_gateway = new HistorieGateway();
+    $relatie_gateway = new RelatieGateway();
 
     // Array tbv javascript om fase automatisch te tonen bij bestaande dieren
     // @TODO (BV) deze variabele wordt nergens gebruikt. Weghalen?
@@ -93,26 +94,32 @@ if (Auth::is_logged_in()) {
     $rel_herk = null;
     $rel_best = null;
     if (isset($levnr)) {
-        $aanwezig = $stal_gateway->zoek_in_stallijst($lidId, $levnr);
+        $schaapId = $schaap_gateway->zoek_schaapid($levnr);
+        $aanwezig = $stal_gateway->zoek_in_stallijst($lidId, $schaapId);
         //Als het die is afgevoerd en weer wordt aangevoerd. O.a. als het dier op een ander ubn van dezelfde gebruiker wordt gezet is dit relevant.
-        $afgevoerd = $stal_gateway->zoek_in_afgevoerd($lidId, $levnr);
-        $dood = $stal_gateway->zoek_dood($levnr);
-        $uitgeschaardId = $stal_gateway->zoek_hisId_uitgeschaard($levnr);
-        if (isset($uitgeschaardId)) {
-            $rel_herk = $stal_gateway->zoek_bestemming_obv_hisId($uitgeschaardId);
-        }
+        $afgevoerd = $stal_gateway->zoek_in_afgevoerd($lidId, $schaapId);
+        $dood = $stal_gateway->zoek_dood($schaapId);
+
+        unset($relId_herkomst, $partij_herkomst);
+        $lst_stalId = zoek_laatste_stalId($lidId, $schaapId);
+        [$bestId_uitgeschaard, $partij_bestemming] = zoek_bestemming_laatste_afvoer_uitgeschaard($lst_stalId);
+        [$relId_herkomst, $partij_herkomst] = zoek_herkomst_uitgeschaard($bestId_uitgeschaard);
     }
+
 
     // TODO: (BV) #0004122 verwacht array_vader_uit_koppel ... maar die wordt verderop pas gezet. Klopt dit?
     // ik heb het maar vast hier gezet, ipv op regel 54 of zo
     include "validate-invschaap.js.php";
     /***********************
-     ****    OPSLAAN        ****
+     ****    OPSLAAN    ****
      ***********************/
     if (isset($_POST['knpSave'])) {
+
+unset($bestId_uitgeschaard, $partij_herkomst);
+
         #echo '$levnr = '.$levnr.'<br>';
         if (isset($levnr)) { // Zoek naar een bestaand levensnummer. Bijvoorbeeld die een andere gebruiker al eens heeft ingevoerd of opnieuw aanvoer.
-            $zoek_bestaand_levensnummer = $schaap_gateway->zoek_eerder_levensnummer($levnr);
+            $zoek_bestaand_levensnummer = $schaap_gateway->zoek_levensnummer($levnr);
             while ($lvn = $zoek_bestaand_levensnummer->fetch_assoc()) {
                 $levnr_db = $lvn['schaapId'];
                 $mdrId_db = $lvn['mdrId'];
@@ -126,7 +133,7 @@ if (Auth::is_logged_in()) {
             }
         } // Einde if (isset($levnr))
 
-        if (!isset($_POST['kzlUbn'])) { // Dit geldt als een gebruik slechts 1 ubn heeft. veld kzlUbn bestaat dan nl. niet
+        if (!isset($_POST['kzlUbn'])) { // Dit geldt als een gebruiker slechts 1 ubn heeft. Veld kzlUbn bestaat dan nl. niet
             $kzlUbn = $ubn_gateway->get_ubnIds_user($lidId);
         } elseif (!empty($_POST['kzlUbn'])) {
             $kzlUbn = $_POST['kzlUbn'];
@@ -185,6 +192,11 @@ if (Auth::is_logged_in()) {
             $txtDmaanv = date_format($aanvdm, 'Y-m-d');
         }
 
+        $kzlHerk = null;
+        if (!empty($_POST['kzlHerk'])) {
+            $kzlHerk = $_POST['kzlHerk'];
+        }
+
         $kzlMoment = null;
         if (!empty($_POST['kzlMoment'])) {
             $kzlMoment = $_POST['kzlMoment'];
@@ -223,7 +235,9 @@ if (Auth::is_logged_in()) {
         // Einde Controle moederdier bij reeds geregistreerd levensnummer
 
         // 1. CONTROLE OP JUISTE INVOER
-        if (isset($levnr) && !isset($kzlSekse) && !isset($levnr_db) && !isset($kzlMoment) && !isset($txtDmuitv) && !isset($kzlReden)) {
+        if(!isset($kzlUbn)) {
+            $fout = "Het ubn moet zijn gevuld."
+        } else if (isset($levnr) && !isset($kzlSekse) && !isset($levnr_db) && !isset($kzlMoment) && !isset($txtDmuitv) && !isset($kzlReden)) {
             $fout = "Het geslacht moet zijn ingevuld.";
         } elseif (isset($levnr) && !isset($kzlRas) && !isset($levnr_db) && !isset($kzlMoment) && !isset($txtDmuitv) && !isset($kzlReden)) {
             $fout = "Het ras moet zijn ingevuld.";
@@ -238,8 +252,8 @@ else if ($modtech == 1 && isset($levnr) && !isset($txtGebkg) && $kzlFase == 'lam
 }*/
 
         elseif (
-            (isset($kzlMoment) && !isset($txtDmuitv) )
-            || (isset($kzlReden) && !isset($txtDmuitv) )
+            (!empty($kzlMoment) && !isset($txtDmuitv) )
+            || (!empty($kzlReden) && !isset($txtDmuitv) )
             || (!isset($levnr) && !isset($txtDmuitv)  )
         ) {
             $fout = "Bij overlijden moet datum t.b.v. uitval zijn ingevuld.";
@@ -363,14 +377,14 @@ else if ($modtech == 1 && isset($levnr) && !isset($txtGebkg) && $kzlFase == 'lam
             // ***************************
             if (isset($levnr) && !isset($levnr_db) && $kzlFase == 'lam' && !isset($txtDmuitv)) {
                 $scenario = 'Geboren_lam';
-            } elseif (isset($uitgeschaardId)) {
-                $scenario = 'Inscharen';
-            } elseif ((isset($kzlFase) && $kzlFase != 'lam') || (isset($levnr_db) && isset($aanwas_db))) {
-                $scenario = 'Aanvoer_ouder';
             } elseif (isset($txtDmuitv) && isset($levnr) && !isset($levnr_db)) {
                 $scenario = 'Dood_lam_met_levensnummer';
             } elseif (isset($txtDmuitv) && !isset($levnr)) {
                 $scenario = 'Dood_lam_zonder_levensnummer';
+            } elseif ((isset($kzlFase) && $kzlFase != 'lam') || (isset($levnr_db) && isset($aanwas_db))) {
+                $scenario = 'Aanvoer_ouder';
+            } elseif (isset($relId_herkomst)) {
+                $scenario = 'Inscharen';
             }
 
             /***** 2.2.1 INLEZEN SCHAAP EN STAL  *****/
@@ -389,12 +403,18 @@ else if ($modtech == 1 && isset($levnr) && !isset($txtGebkg) && $kzlFase == 'lam
                 $volwId = $volwas_gateway->zoek_recentste_id($kzlOoi);
             }
 
-            if ($scenario == 'Dood_lam_met_levensnummer' || $scenario == 'Dood_lam_zonder_levensnummer') {
-                $rel_best = $rendac_Id;
+            if ($scenario == 'Geboren_lam') {
+                $stalId = $stal_gateway->setGeboorte($kzlUbn, $schaapId);
             }
-            $stal_gateway->insert_uitgebreid($lidId, $schaapId, $rel_herk, $kzlUbn, $kzlKleur, $txtHalsnr, $rel_best);
-            $stalId = $stal_gateway->zoek_laatste_stalId($lidId, $schaapId);
-
+            elseif ($scenario == 'Dood_lam_met_levensnummer' || $scenario == 'Dood_lam_zonder_levensnummer') {
+                $stalId = $stal_gateway->setDoodGeboren($kzlUbn, $schaapId);
+            }
+            elseif ($scenario == 'Aanvoer_ouder') {
+                $stalId = $stal_gateway->setAanvoer($kzlUbn, $schaapId, $kzlHerk, $kzlKleur, $txtHalsnr);
+            }
+            elseif ($scenario == 'Inscharen') {
+                $stalId = $stal_gateway->setAanvoerNaUitscharen($kzlUbn, $schaapId, $kzlKleur, $txtHalsnr);
+            }
             /*****  EINDE 2.2.1 INLEZEN SCHAAP EN STAL  *****/
             /*****  2.2.2 INLEZEN HISTORIE  *****/
 
@@ -722,6 +742,35 @@ echo $gebdm_db;
      <td><input type= "text" id="datepicker2" name= "txtAanv" value = <?php if (isset($txtAanvdm)) {
      echo $txtAanvdm;
      } ?> ></td>
+    </tr>
+    <tr>
+     <td>Herkomst :</td>
+     <td>
+<?php if(isset($bestId_uitgeschaard) && !isset($relId_herkomst)) {
+ echo $partij_bestemming.' is geen crediteur';
+} elseif(isset($partij_herkomst)) { echo $partij_herkomst; } else {
+
+$kzlHerkomst = $relatie_gateway->keuzelijst_herkomst($lidId); ?>
+<select name= "kzlHerk" id="herkomst">
+    <option></option>
+<?php while($kh = mysqli_fetch_assoc($kzlHerkomst))
+{ 
+    $opties = array($kh['relId']=>$kh['naam']);
+    foreach($opties as $key => $value)
+    {
+        $keuze = '';
+        if(isset($_POST['kzlHerk']) && $_POST['kzlHerk'] == $key)
+        {
+            $keuze = ' selected ';
+        }
+
+        echo '<option value="' . $key . '" ' . $keuze . '>' . $value . '</option>';
+    }
+
+} ?>
+</select>
+<?php } ?>
+     </td>
     </tr>
     </table>
 
