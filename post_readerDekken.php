@@ -57,7 +57,7 @@ WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "'
 unset($actId, $stalSchaarId, $stalId, $ubnId, $ubn);
 
 if(isset($fldOoi)) {
-    [$actId, $relId, $stalSchaarId] = $stal_gateway->zoek_uitgeschaarde_ooi($lidId, $fldOoi);
+    [$actId, $relId, $stalSchaarId] = $stal_gateway->zoek_uitgeschaarde_schaap($lidId, $fldOoi);
 }
 
 if(isset($stalSchaarId)) { $stalId = $stalSchaarId; }
