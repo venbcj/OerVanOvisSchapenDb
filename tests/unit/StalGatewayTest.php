@@ -20,6 +20,12 @@ class StalGatewayTest extends GatewayCase {
         $this->assertNull($this->sut->zoek_laatste_stalId(self::LIDID, 4));
     }
 
+        public function test_zoek_laatste_stalId() {
+        $schaapId = null;
+        $result = $this->sut->zoek_laatste_stalId(self::LIDID, $schaapId);
+        $this->assertNotFalse($result);
+    }
+
     // **************************************************************
 
     public function test_updateHerkomstByMelding() {
@@ -65,12 +71,6 @@ class StalGatewayTest extends GatewayCase {
     public function test_kzlRammen() {
         $Karwerk = 5;
         $result = $this->sut->kzlRammen(self::LIDID, $Karwerk);
-        $this->assertNotFalse($result);
-    }
-
-    public function test_zoek_laatste_stalId() {
-        $schaapId = null;
-        $result = $this->sut->zoek_laatste_stalId(self::LIDID, $schaapId);
         $this->assertNotFalse($result);
     }
 
@@ -138,33 +138,27 @@ class StalGatewayTest extends GatewayCase {
         $this->assertNotFalse($result);
     }
 
-    public function test_zoek_laatste_stal() {
-        $schaapId = null;
-        $result = $this->sut->zoek_laatste_stal(self::LIDID, $schaapId);
-        $this->assertNotFalse($result);
-    }
-
     public function test_zoek_in_stallijst() {
-        $levnr = null;
-        $result = $this->sut->zoek_in_stallijst(self::LIDID, $levnr);
+        $schaapId = null;
+        $result = $this->sut->zoek_in_stallijst(self::LIDID, $schaapId);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_in_afgevoerd() {
-        $levnr = null;
-        $result = $this->sut->zoek_in_afgevoerd(self::LIDID, $levnr);
+        $schaapId = null;
+        $result = $this->sut->zoek_in_afgevoerd(self::LIDID, $schaapId);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_dood() {
-        $levnr = null;
-        $result = $this->sut->zoek_dood($levnr);
+        $schaapId = null;
+        $result = $this->sut->zoek_dood($schaapId);
         $this->assertNotFalse($result);
     }
 
     public function test_zoek_uitgeschaard() {
-        $levnr = null;
-        $result = $this->sut->zoek_uitgeschaard($levnr);
+        $schaapId = null;
+        $result = $this->sut->zoek_herkomst_uitgeschaard(self::LIDID, $schaapId);
         $this->assertNotFalse($result);
     }
 
