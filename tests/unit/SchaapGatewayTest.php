@@ -986,9 +986,9 @@ class SchaapGatewayTest extends GatewayCase {
         $this->assertNotFalse($result);
     }
 
-    public function test_zoek_eerder_levensnummer() {
+    public function test_zoek_levensnummer() {
         $levnr = null;
-        $result = $this->sut->zoek_eerder_levensnummer($levnr);
+        $result = $this->sut->zoek_levensnummer($levnr);
         $this->assertNotFalse($result);
     }
 

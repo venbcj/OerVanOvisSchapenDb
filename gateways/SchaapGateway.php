@@ -3122,7 +3122,7 @@ SQL
     }
 
     // NOTE dit doet iets anders dan zoek_bestaand_levensnummer. Waarom is dit zoveel uitgebreider?
-    public function zoek_eerder_levensnummer($levnr) {
+    public function zoek_levensnummer($levnr) {
         return $this->run_query(
             <<<SQL
 SELECT s.schaapId, s.geslacht, s.volwId, v.mdrId, hg.datum dmgeb, h1.datum dmeerste,
