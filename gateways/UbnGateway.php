@@ -171,7 +171,7 @@ SQL
         $sql = <<<SQL
 SELECT lidId
 FROM tblUbn
-WHERE ubnId = :ubnId
+WHERE ubnId = :ubnId and lidubn = 1
 SQL;
 $args = [['ubnId',$ubnId,Type::INT]];
     
