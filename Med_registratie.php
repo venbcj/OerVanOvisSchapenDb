@@ -156,10 +156,9 @@ if (Auth::is_logged_in()) {
                     while ($s = $vw->fetch_assoc()) {
                         $schaapId = $s['schaapId'];
                         $levnsr = $s['levensnummer'];
-                        $zoek_stalId = $stal_gateway->zoek_laatste_stal($lidId, $schaapId);
+                        $stalId = $stal_gateway->zoek_laatste_stalId($lidId, $schaapId);
          // beetje raar, deze while. De query doet max en levert dus 1 record.
-                        while ($s = $zoek_stalId->fetch_assoc()) {
-                                    $stalId = $s['stalId'];
+                        
                                     // Zoek naar einddatum in geval schaap reeds is afgevoerd
                                     unset($dmafv);
                                     [$dmafv, $afvdm] = $historie_gateway->zoek_einddatum($stalId);
