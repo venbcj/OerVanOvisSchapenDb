@@ -931,13 +931,13 @@ WHERE " . db_null_filter(mdrId,$kzlOoi) . " and " . db_null_filter(vdrId,$kzlRam
 // ***************************
 if (isset($levnr) && !isset($levnr_db) && $kzlFase == 'lam' && !isset($txtDmuitv) )	{ $scenario = 'Geboren_lam'; }
 
-else if (isset($relId_herkomst)) { $scenario = 'Inscharen'; }
-
-else if ( (isset($kzlFase) && $kzlFase != 'lam') || (isset($levnr_db) && isset($aanwas_db)) ) { $scenario = 'Aanvoer_ouder'; }
-
 else if (isset($txtDmuitv) && isset($levnr) && !isset($levnr_db)) { $scenario = 'Dood_lam_met_levensnummer'; }
 
 else if (isset($txtDmuitv) && !isset($levnr)) { $scenario = 'Dood_lam_zonder_levensnummer'; }
+
+else if ( (isset($kzlFase) && $kzlFase != 'lam') || (isset($levnr_db) && isset($aanwas_db)) ) { $scenario = 'Aanvoer_ouder'; $rel_herk = $_POST['kzlHerk']; }
+
+else if (isset($relId_herkomst)) { $scenario = 'Inscharen'; }
  
 /***** 2.2.1 INLEZEN SCHAAP EN STAL  *****/
 if(!isset($fout) && isset($scenario)) { //echo '$scenario = '.$scenario.'<br>'; #/#
@@ -992,8 +992,9 @@ WHERE levensnummer = '".mysqli_real_escape_string($db,$levnr)."'
 }
 
 if($scenario == 'Dood_lam_met_levensnummer' || $scenario == 'Dood_lam_zonder_levensnummer') { $rel_best = $rendac_Id; }
+if($scenario == 'Inscharen') { $rel_herk = $relId_herkomst; }
 
-$insert_tblStal = "INSERT INTO tblStal SET lidId = '".mysqli_real_escape_string($db,$lidId)."', ubnId = '".mysqli_real_escape_string($db,$kzlUbn)."', schaapId = '".mysqli_real_escape_string($db,$schaapId)."', kleur = " . db_null_input($kzlKleur) . ", halsnr = " . db_null_input($txtHalsnr) . ", rel_herk = " . db_null_input($relId_herkomst) . ", rel_best = " . db_null_input($rel_best);
+$insert_tblStal = "INSERT INTO tblStal SET lidId = '".mysqli_real_escape_string($db,$lidId)."', ubnId = '".mysqli_real_escape_string($db,$kzlUbn)."', schaapId = '".mysqli_real_escape_string($db,$schaapId)."', kleur = " . db_null_input($kzlKleur) . ", halsnr = " . db_null_input($txtHalsnr) . ", rel_herk = " . db_null_input($rel_herk) . ", rel_best = " . db_null_input($rel_best);
 
 /*echo $insert_tblStal.'<br>';	##*/mysqli_query($db,$insert_tblStal) or die (mysqli_error($db));
 			
