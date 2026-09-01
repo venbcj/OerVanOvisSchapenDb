@@ -316,9 +316,9 @@ SQL;
         $stalRecord = new StalRecord();
 
         $lidId = $ubn_gateway->zoekLidId($ubnId);       
-        $stalId = zoek_laatste_stalId($lidId, $schaapId);
-        [$bestId] = zoek_bestemming_laatste_afvoer_uitgeschaard($stalId);
-        [$relatieId] = zoek_herkomst_uitgeschaard($bestId);
+        $stalId = $this->zoek_laatste_stalId($lidId, $schaapId);
+        [$bestId] = $this->zoek_bestemming_laatste_afvoer_uitgeschaard($stalId);
+        [$relatieId] = $this->zoek_herkomst_uitgeschaard($bestId);
 
         $stalRecord->ubnId = $ubnId;
         $stalRecord->schaapId = $schaapId;
