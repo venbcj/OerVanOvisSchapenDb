@@ -732,7 +732,7 @@ unset($color);
 
 /* Controle bij zowel levend als dood geboren */
 if (empty($datum))             { $color = 'red';  $onjuist =  'De datum ontbreekt.'; }
-else if ($modtech == 1 && isset($_POST['knpVervers_']) && empty($kzlOoi)) { $color = 'red';  $onjuist = 'Moederdier ontbreekt'; }
+else if ($modtech == 1 && (!isset($kzlOoi) || (isset($_POST['knpVervers_']) && empty($kzlOoi) )) ) { $color = 'red';  $onjuist = 'Moederdier ontbreekt'; }
 else if ($modtech == 1 && isset($dmaanvmdr) && $day < $dmaanvmdr) { $color = 'red'; $onjuist = 'Geboortedatum ligt voor aanvoer moeder.'; }
 else if ($modtech == 1 && isset($dmafvmdr) && $day > $dmafvmdr)  { $color = 'red'; $onjuist = 'Geboortedatum ligt na afvoer moeder.'; } /* Dit is ook scenario 2 uit incident 0004244 excl. actie uitscharen */
 else if ($modtech == 1 && isset($ar_mdr[$kzlMoeder])) { $color = 'red'; $onjuist = $ar_mdr[$kzlMoeder]; }
