@@ -43,12 +43,12 @@ If (isset ($_POST['knpInsert_'])) {
 	//header("Location: ".$url."InsMedicijn.php"); 
 	} 
 
-if($reader == 'Agrident') {
 $velden = "rd.Id readId, date_format(rd.datum,'%Y-%m-%d') sort, rd.datum, rd.levensnummer levnr, NULL scan, 
 
 	s.schaapId,
 	rd.artId,
 	rd.toedat,
+	i.artId artId_db,
 	round(i.stdat) stdat,
 	i.eenheid,
 	rd.reden reduId,
@@ -86,61 +86,7 @@ $WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.ac
 
 include "paginas.php";
 
-$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id");
-}
-
-else {
-$velden = "rd.readId, str_to_date(rd.datum,'%Y/%m/%d') sort, rd.datum, rd.levnr_pil levnr, rd.reden_pil scan, 
-
-	s.schaapId,
-	cr.artId,
-	1 toedat,
-	round(cr.stdat) stdat,
-	i.eenheid,
-	cr.reduId,
-	cr.actief a_act, 
-	cr.pil r_act,
-	i.inkId, i.vrdat";
-
-$tabel = "
-impReader rd 
-left join tblSchaap s on (rd.levnr_pil = s.levensnummer)
-left join tblStal st on (s.schaapId = st.schaapId and st.lidId = rd.lidId)
-left join (
-	SELECT c.scan, a.artId, c.stdat, a.actief, ru.pil, ru.reduId, r.reden
-	FROM tblCombiReden c 
-	 join tblArtikel a on (a.artId = c.artId)
-	 join tblRedenuser  ru on (ru.reduId = c.reduId)
-	 join tblReden r on (ru.redId = r.redId)
-	WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."'
- ) cr on (cr.scan = rd.reden_pil)
-left join 
-(
-	SELECT min(i.inkId) inkId, a.artId, a.naam, a.stdat, e.eenheid, sum(i.inkat-coalesce(n.vbrat,0)) vrdat
-	FROM tblEenheid e
-	 join tblEenheiduser eu on (e.eenhId = eu.eenhId)
-	 join tblInkoop i on (i.enhuId = eu.enhuId)
-	 join tblArtikel a on (i.artId = a.artId)
-	 left join (
-		SELECT n.inkId, sum(n.nutat*n.stdat) vbrat
-		FROM tblNuttig n
-		 join tblHistorie h on (n.hisId = h.hisId)
-		 join tblStal st on (h.stalId = st.stalId)
-		WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and h.skip = 0
-		GROUP BY n.inkId
-	 ) n on (i.inkId = n.inkId)
-	WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)/* deze query betreft min_inkId_met_vrd */."' and i.inkat-coalesce(n.vbrat,0) > 0 and a.soort = 'pil'
-	GROUP BY a.artId, a.naam, a.stdat, e.eenheid
-) i on (cr.artId = i.artId)
-";
-
-$WHERE = "WHERE rd.lidId = '".mysqli_real_escape_string($db,$lidId)."' and rd.teller_pil is not null and isnull(rd.verwerkt) ";
-
-include "paginas.php";
-
-$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.readId");
-
-} ?>
+$data = $page_nums->fetch_data($velden, "ORDER BY sort, rd.Id"); ?>
 
 <table border = 0>
 <tr> <form action="InsMedicijn.php" method = "post">
@@ -178,6 +124,7 @@ $date  = date('Y-m-d', strtotime($dm));
 	$schaapId = $array['schaapId']; 
 	//$inkId = $array['inkId']; #InkId uit vw_Voorraad indien voorradig anders uit tblInkoop
 	$artId_rd = $array['artId']; #Artikel uit impAgrident of uit tblCombiReden
+	$artId_db = $array['artId_db'];
 	$aantal = $array['toedat']; #Toedien aantal uit impAgrident
 	$stdat = $array['stdat']; #stdat aantal uit tblCombiReden
 	$eenheid = $array['eenheid']; 
@@ -186,7 +133,7 @@ $date  = date('Y-m-d', strtotime($dm));
 	$r_act = $array['r_act'];
 	$vrrd = $array['vrdat'];
 
-	$kzlArt = $artId_rd;
+	$kzlArt = $artId_db;
 	$kzlRedu = $reduId;
 	
 if(isset($schaapId)) {
@@ -226,9 +173,10 @@ WHERE st.lidId = '".mysqli_real_escape_string($db,$lidId)."' and st.schaapId = '
 
 // Zoek op afvoerdatum ter controle op toedien datum
 $zoek_laatste_stalId = mysqli_query($db,"
-SELECT max(stalId) stalId
-FROM tblStal
-WHERE schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
+SELECT max(st.stalId) stalId
+FROM tblStal st
+ join tblUbn u USING (ubnId)
+WHERE u.lidubn = 1 and st.schaapId = '".mysqli_real_escape_string($db,$schaapId)."'
 ") or die (mysqli_error($db));
 	while( $stl = mysqli_fetch_assoc($zoek_laatste_stalId)) { $stalId = $stl['stalId']; }
 
@@ -236,7 +184,7 @@ $zoek_afvoerdatum = mysqli_query($db,"
 SELECT h.datum date, date_format(h.datum,'%d-%m-%Y') datum
 FROM tblHistorie h
  join tblActie a on (a.actId = h.actId)
-WHERE h.stalId = '".mysqli_real_escape_string($db,$stalId)."' and a.af = 1 and h.skip = 0
+WHERE h.actId != 10 and h.stalId = '".mysqli_real_escape_string($db,$stalId)."' and a.af = 1 and h.skip = 0
 ") or die (mysqli_error($db));
 	while( $afv = mysqli_fetch_assoc($zoek_afvoerdatum)) { $dmafv = $afv['date']; $afvdm = $afv['datum']; }
 // Einde Zoek op afvoerdatum ter controle op toedien datum
@@ -333,17 +281,20 @@ WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and i.artId = '".my
 					}
 // Einde Als medicijn uit Reader niet wordt gevonden of medicijn wordt aangepast moet $stdat en $eenheid opnieuw gezocht worden.
 				
-	
-If	 ( empty($fase)   					|| /*levensnummer moet bestaan */	
-		empty($dag)						|| # of datum is leeg
-		empty($kzlArt) || $p_act <> 1	|| # medicijn bestaat niet in kezeuelijst of is niet actief
-		empty($vrrd) || $vrrd == 0		|| # medcijn niet meer op voorraad
-		empty($aantal)					|| # aantal is leeg
-		empty($stdat)					|| # Standaard hoeveelheid is leeg
-		(isset($dmafv) && $dmafv <= $date)	|| #Afvoerdatum is gelijk aan of ligt voor toedien datum
-		($r_act <> 1 && !empty($reduId))	 # reden t.b.v. medicijn niet actief
-	 )
-	 {	$oke = 0;	} else {	$oke = 1;	} // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
+unset($color);
+unset($onjuist);
+
+If (!isset($fase)) { $color = 'red'; $onjuist = 'Levensnummer onbekend'; }
+else if ((!isset($artId_db) && !isset($_POST['knpVervers_'])) || (isset($_POST['knpVervers_']) && empty($_POST["kzlPil_$Id"])) ) { $color = 'red'; $onjuist = 'Medicijn is onbekend'; }
+elseif (empty($dag)) { $color = 'red'; $onjuist = 'Datum is onbekend'; }
+elseif ($p_act <> 1) { $color = 'red'; $onjuist = 'Het medicijn is niet actief'; }
+elseif (empty($vrrd) || $vrrd == 0) { $color = 'red'; $onjuist = 'Het medicijn is niet meer op voorraad'; }
+elseif (empty($aantal))					{ $color = 'red'; $onjuist = 'Het aantal is onbekend'; }
+elseif (empty($stdat))					{ $color = 'red'; $onjuist = 'De standaard hoeveelheid is onbekend'; }
+elseif (isset($dmafv) && $dmafv <= $date)	{ $color = 'red'; $onjuist = 'De afvoerdatum moet na de toedien datum liggen'; }
+elseif ($r_act <> 1 && !empty($reduId)) { $color = 'red'; $onjuist = 'De reden is niet actie'; }
+
+	if (isset($onjuist)) {	$oke = 0;	} else {	$oke = 1;	} // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
 // EINDE De voorwaarden om in te kunnen lezen.  
 
 	 if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1) /* Als onvolledig is gewijzigd naar volledig juist */ {$cbKies = 1; $cbDel = $_POST["chbDel_$Id"]; }
@@ -507,47 +458,11 @@ for ($i = 0; $i < $count; $i++){
 	
 	
 	
- <td style = "color : red; font-size : 11px;" align="center">
+ <td style = "color : <?php echo $color; ?> ; font-size:12px; " > <?php 
 
- <?php // Kijken of artikel voorradig is
- if (isset($artId_rd)){
- //Bestaat artikel? 
- $zoek_artikel = mysqli_query($db,"
-SELECT artId, naam
-FROM tblArtikel a
- join tblEenheiduser eu on (a.enhuId = eu.enhuId)
-WHERE artId = '".mysqli_real_escape_string($db,$artId_rd)."' and lidId = '".mysqli_real_escape_string($db,$lidId)."'
-") or die (mysqli_error($db));
-	while( $art = mysqli_fetch_assoc($zoek_artikel)) { $medicijn = $art['artId']; $naam = $art['naam']; }
- //Bestaat artikel? 
+ if (isset($onjuist)) { echo '&nbsp&nbsp '.$onjuist; } ?>
 
-	if(isset($medicijn)){
-		$zoek_totale_inkoop = mysqli_query($db,"
-			SELECT sum(inkat) inkat
-			FROM tblInkoop
-			WHERE artId = '".mysqli_real_escape_string($db, $medicijn)."'
-			") or die (mysqli_error($db));
-	while( $toti = mysqli_fetch_assoc($zoek_totale_inkoop)) { $totaal_i = $toti['inkat'] + 0; }
-
-	$zoek_totaal_genuttigd = mysqli_query($db,"
-		SELECT sum(nutat*stdat) nutat
-		FROM tblNuttig n
-		 join tblInkoop i on (n.inkId = i.inkId)
-		WHERE i.artId = '".mysqli_real_escape_string($db, $medicijn)."'
-			") or die (mysqli_error($db));
-	while( $totn = mysqli_fetch_assoc($zoek_totaal_genuttigd)) { $totaal_n = $totn['nutat'] + 0; }
-
-	$pil_voorraad = $totaal_i - $totaal_n;
-	}
- }
-// Einde Kijken of artikel voorradig is
- 	if (isset($medicijn) && $pil_voorraad == 0 && !isset($_POST['knpVervers_'])){ echo $naam. " is niet op voorraad."; }
-	else if (!empty($kzlArt) && $p_act <> 1) { echo "Dit medicijn is niet meer beschikbaar."; }
-	else if (isset($reduId) && $r_act <> 1) { echo "Deze reden is niet meer beschikbaar."; }
-	else if (isset($dmafv) && $dmafv <= $date) { echo 'Datum moet voor afvoerdatum '.$afvdm.' liggen.'; }
-	
-	else if (empty($fase)) {echo "Levensnummer onbekend";} 
-	else { echo"$fase";} unset($fase); ?>
+ 
  </td>
 
 </tr>
