@@ -29,7 +29,8 @@ foreach($_POST as $key => $value) {
 foreach($array as $recId => $id) {
 
 	//echo '<br>'.'$recId = '.$recId;
-	
+if($recId > 0) {
+
   foreach($id as $key => $value) {
 
   	if ($key == 'chbkies') 	{ $fldKies = $value; }
@@ -79,11 +80,90 @@ FROM impAgrident
 WHERE Id = '".mysqli_real_escape_string($db,$recId)."'
 ") or die (mysqli_error($db)); 
 
-while($verw = mysqli_fetch_array($zoek_readerRegel_verwerkt))
-{ $verwerkt = $verw['verwerkt']; }
+$verw = mysqli_fetch_array($zoek_readerRegel_verwerkt); $verwerkt = $verw['verwerkt'];
 // Einde (extra) controle of readerregel reeds is verwerkt.
 
 if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt)) { // isset($verwerkt) is een extra controle om dubbele invoer te voorkomen
+
+if(isset($schaapId_db)) {
+unset($actId, $stalSchaarId, $stalId, $ubnId, $ubn);
+
+$zoek_uitgeschaard = mysqli_query($db,"
+SELECT h.actId, st.rel_best, stSchaar.stalId stSchaar
+FROM tblStal st
+ join (
+ 	SELECT max(st.stalId) stalId, st.schaapId
+ 	FROM tblStal st
+ 	 join tblUbn u on (st.ubnId = u.ubnId)
+ 	WHERE st.schaapId = '".mysqli_real_escape_string($db,$schaapId_db)."' and u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and u.lidubn = 1
+ 	GROUP BY st.schaapId
+ ) stm on (stm.stalId = st.stalId)
+ join tblHistorie h on (h.stalId = st.stalId)
+ left join tblStal stSchaar on (stSchaar.stalId > stm.stalId and stSchaar.schaapId = stm.schaapId)
+ left join tblUbn uSchaar on (stSchaar.ubnId = uSchaar.ubnId)
+WHERE h.actId = 10 and (uSchaar.lidId = '".mysqli_real_escape_string($db,$lidId)."' or isnull(uSchaar.lidId))
+") or die(mysqli_error($db));
+
+ 	 $zu = mysqli_fetch_assoc($zoek_uitgeschaard);
+ 	 if($zu) {
+ 	   $actId = $zu['actId']; 
+ 	   $relId = $zu['rel_best']; 
+ 	   $stalSchaarId = $zu['stSchaar']; }
+}
+
+if(isset($stalSchaarId)) { $stalId = $stalSchaarId; }
+if(isset($actId) && !isset($stalSchaarId)) { //schaap is uitgeschaard en heeft nog geen stalmoment van die lokatie
+// Maak stalmoment van uitgeschaarde lokatie
+$zoek_ubn_uitgeschaarde_lokatie = mysqli_query($db,"
+SELECT p.ubn, u.ubnId
+FROM tblRelatie r
+ join tblPartij p on (r.partId = p.partId)
+ left join tblUbn u on (u.ubn = p.ubn)
+WHERE r.relId = '".mysqli_real_escape_string($db,$relId)."' and ((u.lidubn = 0 and u.lidId = '".mysqli_real_escape_string($db,$lidId)."') or u.ubnId IS NULL)
+") or die (mysqli_error($db));
+
+$zuul = mysqli_fetch_assoc($zoek_ubn_uitgeschaarde_lokatie); {
+	$ubn = $zuul['ubn'];
+	$ubnId = $zuul['ubnId'];
+}
+
+If(!isset($ubnId)) { //Als de externe lokatie (ubn) nog niet voorkomt in tblUbn bij deze gebruiker
+$ubn_toevoegen = "
+  INSERT INTO tblUbn SET lidId = '".mysqli_real_escape_string($db,$lidId)."', ubn = '".mysqli_real_escape_string($db,$ubn)."', lidubn = 0";
+		
+/*echo "<pre>";
+echo $ubn_toevoegen;
+echo "</pre>";*/
+						  mysqli_query($db,$ubn_toevoegen) or die (mysqli_error($db));
+
+$zoek_ubnId = mysqli_query($db,"
+SELECT u.ubnId
+FROM tblUbn u
+WHERE u.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ubn = '".mysqli_real_escape_string($db,$ubn)."'
+") or die (mysqli_error($db));
+
+$zu = mysqli_fetch_assoc($zoek_ubnId);
+	$ubnId = $zu['ubnId'];
+}
+
+$stalmoment_aanmaken = "
+  INSERT INTO tblStal SET ubnId = '".mysqli_real_escape_string($db,$ubnId)."', schaapId = '".mysqli_real_escape_string($db,$schaapId_db)."', rel_herk = 4 "; // 4 bestaat niet als relId in tblRelatie en staat voor herkomst van deze gebruiker
+		
+/*echo "<pre>";
+echo $stalmoment_aanmaken;
+echo "</pre>";*/
+					 mysqli_query($db,$stalmoment_aanmaken) or die (mysqli_error($db));
+
+$zoek_stalmoment = mysqli_query($db,"
+SELECT max(stalId) stalId
+FROM tblStal
+WHERE ubnId = '".mysqli_real_escape_string($db,$ubnId)."' and schaapId = '".mysqli_real_escape_string($db,$schaapId_db)."' and rel_best IS NULL
+") or die (mysqli_error($db));
+
+$zs = mysqli_fetch_assoc($zoek_stalmoment);
+	$stalId = $zs['stalId'];
+} // Einde Maak stalmoment van uitgeschaarde lokatie
+
 
 // CONTROLE op alle verplichten velden bij medicatie
 if (isset($fldDay) && isset($fldToedat) && isset($fldArtId))
@@ -107,7 +187,7 @@ $zoek_afvoerdatum = mysqli_query($db,"
 SELECT h.datum date, date_format(h.datum,'%d-%m-%Y') datum
 FROM tblHistorie h
  join tblActie a on (a.actId = h.actId)
-WHERE h.stalId = '".mysqli_real_escape_string($db,$stalId)."' and a.af = 1
+WHERE h.actId <> 10 and h.stalId = '".mysqli_real_escape_string($db,$stalId)."' and a.af = 1
 ") or die (mysqli_error($db));
 	while( $afv = mysqli_fetch_assoc($zoek_afvoerdatum)) { $dmafv = $afv['date']; $afvdm = $afv['datum']; }
 // Einde Controle op afvoerdatum
@@ -191,7 +271,7 @@ if ($fldKies == 0 && $fldDel == 1) {
 }
 
 
-
+} // einde if($recId > 0)
 //echo '<br>'.'einde '.$recId.'<br>';
 
 	}
