@@ -46,7 +46,6 @@ foreach($array as $recId => $id) {
 	 
 									}
 // Transponder nummer inlezen als deze nog niet bestaat in tblSchaap
-if($reader == 'Agrident'){
 $zoek_transp_rd = mysqli_query($db,"
 SELECT transponder, levensnummer
 FROM impAgrident
@@ -69,27 +68,17 @@ if (isset($schaapId_db) && $tran_rd <> $tran_db) {
 
 	/*echo $updateSchaap.'<br>';*/	mysqli_query($db,$updateSchaap) or die (mysqli_error($db));
 }
-
-
-}
 // Einde Transponder nummer inlezen als deze nog niet bestaat in tblSchaap
 
 // (extra) controle of readerregel reeds is verwerkt. Voor als de pagina 2x wordt verstuurd bij fouten op de pagina
 unset($verwerkt);
-if($reader == 'Agrident') {
+
 $zoek_readerRegel_verwerkt = mysqli_query($db,"
 SELECT verwerkt
 FROM impAgrident
 WHERE Id = '".mysqli_real_escape_string($db,$recId)."'
 ") or die (mysqli_error($db)); 
-}
-else {
-$zoek_readerRegel_verwerkt = mysqli_query($db,"
-SELECT verwerkt
-FROM impReader
-WHERE readId = '".mysqli_real_escape_string($db,$recId)."'
-") or die (mysqli_error($db));
-}
+
 while($verw = mysqli_fetch_array($zoek_readerRegel_verwerkt))
 { $verwerkt = $verw['verwerkt']; }
 // Einde (extra) controle of readerregel reeds is verwerkt.
@@ -100,7 +89,6 @@ if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt)) { // isset($verwerkt) is
 if (isset($fldDay) && isset($fldToedat) && isset($fldArtId))
 {
 
-if($reader == 'Agrident') {	
 $zoek_stalId = mysqli_query($db,"
 SELECT max(stalId) stalId
 FROM tblStal st
@@ -108,16 +96,7 @@ FROM tblStal st
  join impAgrident rd on (rd.levensnummer = s.levensnummer)
 WHERE rd.Id = '".mysqli_real_escape_string($db,$recId)."'
 ") or die (mysqli_error($db));
-}
-else {
-$zoek_stalId = mysqli_query($db,"
-SELECT max(stalId) stalId
-FROM tblStal st
- join tblSchaap s on (st.schaapId = s.schaapId)
- join impReader rd on (rd.levnr_pil = s.levensnummer)
-WHERE rd.readId = '".mysqli_real_escape_string($db,$recId)."'
-") or die (mysqli_error($db));	
-}
+
 
 	while( $st = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $st['stalId']; }
 
@@ -191,12 +170,7 @@ WHERE actId = 8 and stalId = '".mysqli_real_escape_string($db,$stalId)."'
 
 inlezen_pil($db, $hisId, $fldArtId, $fldToedat, $fldDay, $fldReden);
 
-if($reader == 'Agrident')  {
     $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' " ;
-	 }
-else { 
-	$updateReader = "UPDATE impReader SET verwerkt = 1 WHERE readId = '".mysqli_real_escape_string($db,$recId)."' " ;
-	 }
 
 /*echo $updateReader.'<br>';*/	mysqli_query($db,$updateReader) or die (mysqli_error($db));
 
@@ -211,12 +185,8 @@ else {
 
 if ($fldKies == 0 && $fldDel == 1) {
 
-  if($reader == 'Agrident')  {
     $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '".mysqli_real_escape_string($db,$recId)."' " ;
- 		}
-  else {   		
-    $updateReader = "UPDATE impReader set verwerkt = 1 WHERE readId = '".mysqli_real_escape_string($db,$recId)."' " ;
-		}
+
 		/*echo $updateReader.'<br>';*/		mysqli_query($db,$updateReader) or die (mysqli_error($db));
 }
 
