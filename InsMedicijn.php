@@ -117,7 +117,7 @@ if(isset($schaapId)) {
 
 // Zoek op afvoerdatum ter controle op toedien datum
         $stalId = $stal_gateway->zoek_laatste_stal_medicijn($schaapId);
-        [$dmafv, $afvdm] = $historie_gateway->zoek_afvoerdatum($stalId);
+        [$dmafv, $afvdm] = $historie_gateway->zoek_afvoerdatum_excl_uitgeschaard($stalId);
 // Einde Zoek op afvoerdatum ter controle op toedien datum
 }    
 

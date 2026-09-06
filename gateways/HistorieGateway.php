@@ -1043,6 +1043,21 @@ SQL
         );
     }
 
+    public function zoek_afvoerdatum_excl_uitgeschaard($stalId) {
+        return $this->first_row(
+            <<<SQL
+SELECT h.datum date, date_format(h.datum,'%d-%m-%Y') datum
+FROM tblHistorie h
+ join tblActie a on (a.actId = h.actId)
+WHERE h.actId != 10
+ and h.stalId = :stalId
+ and a.af = 1
+ and h.skip = 0
+SQL
+        , [[':stalId', $stalId, Type::INT]]
+        );
+    }
+
     public function zoek_afleverlijst($his) {
         return $this->run_query(
             <<<SQL
