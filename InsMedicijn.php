@@ -53,7 +53,7 @@ If (isset ($_POST['knpInsert_'])) {
     } 
 
 $velden = "rd.Id readId, date_format(rd.datum,'%Y-%m-%d') sort, rd.datum, rd.levensnummer levnr, NULL scan, 
-    s.schaapId, rd.artId, rd.toedat, round(i.stdat) stdat, i.eenheid, rd.reden reduId, i.actief a_act, 
+    s.schaapId, rd.artId, rd.toedat, i.artId artId_db, round(i.stdat) stdat, i.eenheid, rd.reden reduId, i.actief a_act, 
     ru.pil r_act, i.inkId, i.vrdat";
 
     $tabel = $impagrident_gateway->getInsMedicijnAgridentFrom();
@@ -95,6 +95,7 @@ $date  = date('Y-m-d', strtotime($dm));
     $schaapId = $array['schaapId']; 
     //$inkId = $array['inkId']; #InkId uit vw_Voorraad indien voorradig anders uit tblInkoop
     $artId_rd = $array['artId']; #Artikel uit impAgrident of uit tblCombiReden
+    $artId_db = $array['artId_db'];
     $aantal = $array['toedat']; #Toedien aantal uit impAgrident
     $stdat = $array['stdat']; #stdat aantal uit tblCombiReden
     $eenheid = $array['eenheid']; 
@@ -103,7 +104,7 @@ $date  = date('Y-m-d', strtotime($dm));
     $r_act = $array['r_act'];
     $vrrd = $array['vrdat'];
 
-    $kzlArt = $artId_rd;
+    $kzlArt = $artId_db;
     $kzlRedu = $reduId;
     
 if(isset($schaapId)) {
@@ -149,16 +150,20 @@ if (!empty($kzlArt)) {
 }
 // Einde Als medicijn uit Reader niet wordt gevonden of medicijn wordt aangepast moet $stdat en $eenheid opnieuw gezocht worden.
     
-If     ( empty($fase)                       || /*levensnummer moet bestaan */    
-        empty($dag)                        || # of datum is leeg
-        empty($kzlArt) || $p_act <> 1    || # medicijn bestaat niet in kezeuelijst of is niet actief
-        empty($vrrd) || $vrrd == 0        || # medcijn niet meer op voorraad
-        empty($aantal)                    || # aantal is leeg
-        empty($stdat)                    || # Standaard hoeveelheid is leeg
-        (isset($dmafv) && $dmafv <= $date)    || #Afvoerdatum is gelijk aan of ligt voor toedien datum
-        ($r_act <> 1 && !empty($reduId))     # reden t.b.v. medicijn niet actief
-     )
-     {    $oke = 0;    } else {    $oke = 1;    } // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
+unset($color);
+unset($onjuist);
+
+If (!isset($fase)) { $color = 'red'; $onjuist = 'Levensnummer onbekend'; }
+else if ((!isset($artId_db) && !isset($_POST['knpVervers_'])) || (isset($_POST['knpVervers_']) && empty($_POST["kzlPil_$Id"])) ) { $color = 'red'; $onjuist = 'Medicijn is onbekend'; }
+elseif (empty($dag)) { $color = 'red'; $onjuist = 'Datum is onbekend'; }
+elseif ($p_act <> 1) { $color = 'red'; $onjuist = 'Het medicijn is niet actief'; }
+elseif (empty($vrrd) || $vrrd == 0) { $color = 'red'; $onjuist = 'Het medicijn is niet meer op voorraad'; }
+elseif (empty($aantal))                 { $color = 'red'; $onjuist = 'Het aantal is onbekend'; }
+elseif (empty($stdat))                  { $color = 'red'; $onjuist = 'De standaard hoeveelheid is onbekend'; }
+elseif (isset($dmafv) && $dmafv <= $date)   { $color = 'red'; $onjuist = 'De afvoerdatum moet na de toedien datum liggen'; }
+elseif ($r_act <> 1 && !empty($reduId)) { $color = 'red'; $onjuist = 'De reden is niet actie'; }
+
+    if (isset($onjuist)) {    $oke = 0;    } else {    $oke = 1;    } // $oke kijkt of alle velden juist zijn gevuld. Zowel voor als na wijzigen.
 // EINDE De voorwaarden om in te kunnen lezen.  
 
      if (isset($_POST['knpVervers_']) && $_POST["laatsteOke_$Id"] == 0 && $oke == 1) /* Als onvolledig is gewijzigd naar volledig juist */ {$cbKies = 1; $cbDel = $_POST["chbDel_$Id"]; }
