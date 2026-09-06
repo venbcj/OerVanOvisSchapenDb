@@ -119,7 +119,7 @@ unset($bestId_uitgeschaard, $partij_herkomst);
 
         #echo '$levnr = '.$levnr.'<br>';
         if (isset($levnr)) { // Zoek naar een bestaand levensnummer. Bijvoorbeeld die een andere gebruiker al eens heeft ingevoerd of opnieuw aanvoer.
-            $zoek_bestaand_levensnummer = $schaap_gateway->zoek_levensnummer($levnr);
+            $zoek_bestaand_levensnummer = $schaap_gateway->zoek_schaap_obv_levensnummer($levnr);
             while ($lvn = $zoek_bestaand_levensnummer->fetch_assoc()) {
                 $levnr_db = $lvn['schaapId'];
                 $mdrId_db = $lvn['mdrId'];
