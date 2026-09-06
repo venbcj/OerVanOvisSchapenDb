@@ -45,6 +45,7 @@ if (Auth::is_logged_in()) {
     $historie_gateway = new HistorieGateway();
     $inkoop_gateway = new InkoopGateway();
     $reden_gateway = new RedenGateway();
+    $artikel_gateway = new ArtikelGateway();
 
 require_once "func_artikelnuttigen.php";
 
@@ -198,24 +199,10 @@ else if (isset($_POST['knpVervers_'])) { $cbKies = $_POST["chbkies_$Id"];  $cbDe
 
 <?php 
 // Declaratie MEDICIJN (De medicijnen uit voorraad)
-$zoek_artId_op_voorraad = mysqli_query($db," 
-SELECT a.artId, a.naam, a.stdat, e.eenheid, sum(i.inkat-coalesce(n.vbrat,0)) vrdat
-FROM tblEenheid e
- join tblEenheiduser eu on (e.eenhId = eu.eenhId)
- join tblInkoop i on (i.enhuId = eu.enhuId)
- join tblArtikel a on (i.artId = a.artId)
- left join (
-    SELECT n.inkId, sum(n.nutat*n.stdat) vbrat
-    FROM tblNuttig n
-    GROUP BY n.inkId
- ) n on (i.inkId = n.inkId)
-WHERE eu.lidId = '".mysqli_real_escape_string($db,$lidId)."' and i.inkat-coalesce(n.vbrat,0) > 0 and a.soort = 'pil'
-GROUP BY a.artId, a.naam, a.stdat, e.eenheid
-ORDER BY a.naam
-") or die (mysqli_error($db));
+$vw = $artikel_gateway->zoek_pil_op_voorraad($lidId);
 
 $index = 0;
-while ($pil = mysqli_fetch_array($zoek_artId_op_voorraad))
+while ($pil = $vw->fetch_array())
 {
    $pilId[$index] = $pil['artId'];
    $pilln[$index] = $pil['naam'];
@@ -224,7 +211,6 @@ while ($pil = mysqli_fetch_array($zoek_artId_op_voorraad))
 }
 unset($index);
 // EINDE Declaratie MEDICIJN ?> 
-
 
  <td style = "font-size : 9px;" >
 <!-- KZLMEDICIJN -->
@@ -259,56 +245,26 @@ if(!empty($kzlArt) || isset($_POST['knpVervers_'])) {echo $stdat;} ?>
  </td>
 <?php 
 if(empty($reduId)) { $kzlRedu = 'NULL'; } else { $kzlRedu = $reduId; } /*echo '$kzlRedu = '.$kzlRedu;*/
-$zoek_aantal_reden = mysqli_query($db,"
-SELECT count(reduId) aant 
-FROM (
-    SELECT ru.reduId 
-    FROM tblRedenuser ru
-    WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ru.pil = 1
-   union
-    SELECT ru.reduId
-    FROM tblRedenuser ru
-    WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ru.reduId = '".mysqli_real_escape_string($db,$kzlRedu)."'
- ) B 
-") or die (mysqli_error($db)); 
-    while ($red = mysqli_fetch_array($zoek_aantal_reden)) { $records_klzReden = $red['aant'];   }  
     
 // Declaratie REDEN (De redenen waaruit kan worden gekozen)
-$queryReden = ("
-SELECT reduId, reden 
-FROM (
-    SELECT ru.reduId, r.reden  
-    FROM tblReden r
-     join tblRedenuser ru on (r.redId = ru.redId)
-    WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ru.pil = 1
-   union
-    SELECT ru.reduId, r.reden
-    FROM tblReden r
-     join tblRedenuser ru on (r.redId = ru.redId)
-    WHERE ru.lidId = '".mysqli_real_escape_string($db,$lidId)."' and ru.reduId = '".mysqli_real_escape_string($db,$kzlRedu)."'
- ) A
-GROUP BY reduId, reden
-ORDER BY reden
-              "); 
-$qryReden = mysqli_query($db,$queryReden) or die (mysqli_error($db)); 
 
+$vw = $reden_gateway->kzl_pil_reden($lidId, $kzlRedu);
 
 $index = 0; 
-while ($red = mysqli_fetch_array($qryReden)) 
+while ($red = $vw->fetch_array()) 
 { 
    $rduId[$index] = $red['reduId'];
    $redn[$index] = $red['reden'];
    $index++; 
 }
 unset($index); 
-//dan het volgende: 
 // EINDE Declaratie REDEN
 ?>
  <td>
 <!-- KZLREDEN -->
  <select style="width:145; font-size:12px;" name = <?php echo "kzlReden_$Id"; ?> >
   <option></option>
-<?php   $count = $records_klzReden;
+<?php   $count = count($redn);
 for ($i = 0; $i < $count; $i++){
 
     $opties = array($rduId[$i]=>$redn[$i]);

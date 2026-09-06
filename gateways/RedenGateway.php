@@ -29,6 +29,27 @@ SQL
         );
     }
 
+    public function kzl_pil_reden($lidId, $reduId) {
+        return $this->run_query(<<<SQL
+SELECT reduId, reden 
+FROM (
+    SELECT ru.reduId, r.reden  
+    FROM tblReden r
+     join tblRedenuser ru on (r.redId = ru.redId)
+    WHERE ru.lidId = :lidId and ru.pil = 1
+   union
+    SELECT ru.reduId, r.reden
+    FROM tblReden r
+     join tblRedenuser ru on (r.redId = ru.redId)
+    WHERE ru.lidId = :lidId and ru.reduId = :reduId
+ ) A
+GROUP BY reduId, reden
+ORDER BY reden
+ SQL 
+        , [[':lidId', $lidId, Type::INT], [':reduId', $reduId]]
+        );
+    }
+
     public function uitval_lijst_voor($lidId) {
         return $this->run_query(
             <<<SQL
