@@ -1893,15 +1893,6 @@ SQL;
         return $this->first_field($sql, $args);
     }
 
-    public function updateReaderAgrident($recId) {
-        $sql = <<<SQL
-        UPDATE impAgrident set verwerkt = 1 WHERE Id = :recId
-SQL;
-        $args = [[':recId', $recId, Type::INT]];
-        $this->run_query($sql, $args);
-    }
-
-
     public function zoek_data_reader($recId) {
         $sql = <<<SQL
     SELECT rd.levensnummer, u.ubnId, u.ubn, s.schaapId, rd.hokId

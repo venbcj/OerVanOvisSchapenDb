@@ -15,6 +15,19 @@ SQL
         );
     }
 
+    public function zoek_levensnummer($stalId) {
+        return $this->first_field(
+            <<<SQL
+SELECT s.levensnummer
+FROM tblSchaap s
+ join tblStal st on (s.schaapId = st.schaapId)
+WHERE st.stalId = :stalId
+SQL
+            ,
+            [[':stalId', $stalId, Type::INT]]
+        );
+    }
+
     public function zoek_levnr_database($levnr) {
         return $this->first_row(
             <<<SQL
@@ -5213,21 +5226,31 @@ SQL;
         return $this->first_field($sql, $args);
     }
 
-    public function zoek_transp_moeder($moeder) {
+    public function zoek_transponder($levnr) {
         $sql = <<<SQL
     SELECT schaapId, transponder
     FROM tblSchaap
-    WHERE levensnummer = :moeder
+    WHERE levensnummer = :levnr
+SQL;
+        $args = [[':levnr', $levnr]];
+        return $this->first_row($sql, $args, [0, 0]);
+    }
+
+        public function zoek_transponder_reader($recId) {
+        $sql = <<<SQL
+    SELECT transponder, levensnummer
+FROM impAgrident
+WHERE Id = :recId
 SQL;
         $args = [[':moeder', $moeder]];
         return $this->first_row($sql, $args, [0, 0]);
     }
 
-    public function update_tblSchaap($mdrTran_rd, $moederId) {
+    public function update_transponder_tblSchaap($transponder, $schaapId) {
         $sql = <<<SQL
-        UPDATE tblSchaap set transponder = :mdrTran_rd WHERE schaapId = :moederId
+        UPDATE tblSchaap set transponder = :transponder WHERE schaapId = :schaapId
 SQL;
-        $args = [[':mdrTran_rd', $mdrTran_rd], [':moederId', $moederId, Type::INT]];
+        $args = [[':transponder', $transponder], [':schaapId', $schaapId, Type::INT]];
         $this->run_query($sql, $args);
     }
 

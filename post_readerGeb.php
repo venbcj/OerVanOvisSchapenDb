@@ -117,9 +117,9 @@ foreach ($array as $recId => $id) {
           [$tran, $levnr_rd, $moeder, $mdrTran_rd] = $impagrident_gateway->zoek_levensnummer_transponder($recId);
     // Transponder moeder inlezen als deze niet bestaat in tblSchaap
         $mdrTran_sch = $mdrTran_rd;
-        [$moederId, $mdrTran_sch] = $schaap_gateway->zoek_transp_moeder($moeder);
+        [$moederId, $mdrTran_sch] = $schaap_gateway->zoek_transponder($moeder);
         if ($mdrTran_rd <> $mdrTran_sch) {
-            $schaap_gateway->update_tblSchaap($mdrTran_rd, $moederId);
+            $schaap_gateway->update_transponder_tblSchaap($mdrTran_rd, $moederId);
         }
     // Einde Transponder moeder inlezen als deze niet bestaat in tblSchaap
     /* ********************
@@ -325,7 +325,7 @@ if(isset($actId)) { // Moeder (over)plaatsen in verblijf
                 include "maak_request.php";
             }
 
-                $impagrident_gateway->updateReaderAgrident($recId);
+                $impagrident_gateway->set_verwerkt($recId);
 
         }
     // ***************************
@@ -334,7 +334,7 @@ if(isset($actId)) { // Moeder (over)plaatsen in verblijf
     }
     if ($fldKies == 0 && $fldDel == 1) {
 
-            $impagrident_gateway->updateReaderAgrident($recId);
+            $impagrident_gateway->set_verwerkt($recId);
 
     }
 }

@@ -86,14 +86,14 @@ $hisId = $historie_gateway->insert_tblHistorie_18($stalId, $fldDag);
 
 $volwas_gateway->insert_uitgebreid($recId, $hisId, $fldOoi, $fldRam);
 
-$impagrident_gateway->updateReaderAgrident($recId);
+$impagrident_gateway->set_verwerkt($recId);
         // EINDE CONTROLE op alle verplichten velden
         } // Einde if (isset($fldDag) && isset($fldOoi))
       
     } // Einde if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt))
  // Einde if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt))
     if ($fldKies == 0 && $fldDel == 1) {
-$impagrident_gateway->updateReaderAgrident($recId);
+$impagrident_gateway->set_verwerkt($recId);
     }
 
 } // Einde if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt))
