@@ -10,6 +10,14 @@ Toegepast in : InsMedicijn.php
 
 // include url Zit al in InsMedicijn.php
 $array = array();
+
+$impagrident_gateway = new ImpAgridentGateway();
+$stal_gateway = new StalGateway();
+$ubn_gateway = new UbnGateway();
+$historie_gateway = new HistorieGateway();
+$schaap_gateway = new SchaapGateway();
+$artikel_gateway = new ArtikelGateway();
+
 foreach ($_POST as $key => $value) {
     $array[Url::getIdFromKey($key)][Url::getNameFromKey($key)] = $value;
 }
@@ -41,160 +49,89 @@ foreach ($array as $recId => $id) {
         }
     }
 // Transponder nummer inlezen als deze nog niet bestaat in tblSchaap
-    if ($reader == 'Agrident') {
-        $zoek_transp_rd = mysqli_query($db, "
-SELECT transponder, levensnummer
-FROM impAgrident
-WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
-        while ($ztr = mysqli_fetch_assoc($zoek_transp_rd)) {
-            $tran_rd = $ztr['transponder'];
-            $levnr_rd = $ztr['levensnummer'];
-        }
-        $zoek_transp_db = mysqli_query($db, "
-SELECT schaapId, transponder
-FROM tblSchaap
-WHERE levensnummer = '" . mysqli_real_escape_string($db, $levnr_rd) . "'
-") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
-        while ($ztd = mysqli_fetch_assoc($zoek_transp_db)) {
-            $schaapId_db = $ztd['schaapId'];
-            $tran_db = $ztd['transponder'];
-        }
+[$tran_rd, $levnr_rd] = $schaap_gateway->zoek_transponder_reader($recId);
+
+[$schaapId_db, $tran_db] = $schaap_gateway->zoek_transponder($levnr_rd);
+
         if (isset($schaapId_db) && $tran_rd <> $tran_db) {
-            $updateSchaap = "UPDATE tblSchaap set transponder = '" . mysqli_real_escape_string($db, $tran_rd) . "' WHERE schaapId = '" . mysqli_real_escape_string($db, $schaapId_db) . "' " ;
-            /*echo $updateSchaap.'<br>';*/    mysqli_query($db, $updateSchaap) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
+
+            $schaap_gateway->update_transponder_tblSchaap($tran_rd, $schaapId_db);
         }
-    }
 // Einde Transponder nummer inlezen als deze nog niet bestaat in tblSchaap
+
 // (extra) controle of readerregel reeds is verwerkt. Voor als de pagina 2x wordt verstuurd bij fouten op de pagina
     unset($verwerkt);
-    if ($reader == 'Agrident') {
-        $zoek_readerRegel_verwerkt = mysqli_query($db, "
-SELECT verwerkt
-FROM impAgrident
-WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
-    } else {
-        $zoek_readerRegel_verwerkt = mysqli_query($db, "
-SELECT verwerkt
-FROM impReader
-WHERE readId = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
-    }
-    while ($verw = mysqli_fetch_array($zoek_readerRegel_verwerkt)) {
-        $verwerkt = $verw['verwerkt'];
-    }
+$verwerkt = $impagrident_gateway->zoek_readerRegel_verwerkt($recId);
 // Einde (extra) controle of readerregel reeds is verwerkt.
+
     if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt)) {
      // isset($verwerkt) is een extra controle om dubbele invoer te voorkomen
-    // CONTROLE op alle verplichten velden bij medicatie
-        if (isset($fldDay) && isset($fldToedat) && isset($fldArtId)) {
-            if ($reader == 'Agrident') {
-                $zoek_stalId = mysqli_query($db, "
-SELECT max(stalId) stalId
-FROM tblStal st
- join tblSchaap s on (st.schaapId = s.schaapId)
- join impAgrident rd on (rd.levensnummer = s.levensnummer)
-WHERE rd.Id = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
-            } else {
-                $zoek_stalId = mysqli_query($db, "
-SELECT max(stalId) stalId
-FROM tblStal st
- join tblSchaap s on (st.schaapId = s.schaapId)
- join impReader rd on (rd.levnr_pil = s.levensnummer)
-WHERE rd.readId = '" . mysqli_real_escape_string($db, $recId) . "'
-") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
-            }
-            while ($st = mysqli_fetch_assoc($zoek_stalId)) {
-                $stalId = $st['stalId'];
-            }
+
+// Controle op uitgeschaarde schapen (moederdieren)
+unset($actId, $stalSchaarId, $stalId, $ubnId, $ubn);
+
+if(isset($schaapId_db)) {
+    [$actId, $relId, $stalSchaarId] = $stal_gateway->zoek_uitgeschaarde_schaap($lidId, $schaapId_db);
+}
+
+if(isset($stalSchaarId)) { $stalId = $stalSchaarId; }
+if(isset($actId) && !isset($stalSchaarId)) { //schaap is uitgeschaard en heeft nog geen stalmoment van die lokatie
+// Maak stalmoment van uitgeschaarde lokatie
+[$ubn, $ubnId] = $stal_gateway->zoek_ubn_uitgeschaarde_lokatie($lidId, $relId);
+
+If(!isset($ubnId)) { //Als de externe lokatie (ubn) nog niet voorkomt in tblUbn bij deze gebruiker
+
+$ubnId = $ubn_gateway->insert($lidId, $ubn, 0);
+}
+
+$stalId = $stal_gateway->setAanvoer($ubnId, $schaapId_db, 4); // 4 is een niet bestaand relId omdat de herkomst van de uitgeschaarde lokatie niet relevant is. Het vullen van het veld rel_herk is zo wel eenduidig in tblStal
+
+} // Einde Maak stalmoment van uitgeschaarde lokatie
+// Einde Controle op uitgeschaarde schapen (moederdieren)
+
+// CONTROLE op alle verplichten velden bij medicatie
+if (isset($fldDay) && isset($fldToedat) && isset($fldArtId)) 
+{
+
+$stalId = $stal_gateway->zoek_stalId($schaapId_db, $lidId);
         /* CONTROLE */
         // Controle op afvoerdatum
-            unset($dmafv);
-            $zoek_afvoerdatum = mysqli_query($db, "
-SELECT h.datum date, date_format(h.datum,'%d-%m-%Y') datum
-FROM tblHistorie h
- join tblActie a on (a.actId = h.actId)
-WHERE h.stalId = '" . mysqli_real_escape_string($db, $stalId) . "' and a.af = 1
-") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
-            while ($afv = mysqli_fetch_assoc($zoek_afvoerdatum)) {
-                $dmafv = $afv['date'];
-                $afvdm = $afv['datum'];
-            }
+
+unset($dmafv);
+[$dmafv, $advdm]  = $historie_gateway->zoek_afvoerdatum($stalId);
+
         // Einde Controle op afvoerdatum
             if (isset($dmafv) && $dmafv <= $fldDay) {
-                $zoek_levensnummer = mysqli_query($db, "
-SELECT s.levensnummer
-FROM tblSchaap s
- join tblStal st on (s.schaapId = st.schaapId)
-WHERE st.stalId = '" . mysqli_real_escape_string($db, $stalId) . "'
-") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
-                while ($lev = mysqli_fetch_assoc($zoek_levensnummer)) {
-                    $levnr = $lev['levensnummer'];
-                }
+                $levnr = $schaap_gateway->zoek_levensnummer($stalId);
                     $fout = 'De datum bij ' . $levnr . ' moet voor ' . $afvdm . ' liggen.';
             }
          /* EINDE CONTROLE */
             else {
              /* INVOEREN */
-                $zoek_artikel_gegevens = mysqli_query($db, "
-SELECT a.naam, a.stdat
-FROM tblArtikel a
-WHERE artId = '" . mysqli_real_escape_string($db, $fldArtId) . "'
-") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
-                while ($std = mysqli_fetch_assoc($zoek_artikel_gegevens)) {
-                    $naam = $std['naam'];
-                    $stdat = $std['stdat'];
-                }
-                $toedtotal = $fldToedat * $stdat;
-                $zoek_totale_voorraad = mysqli_query($db, "
-SELECT sum(i.inkat) - sum(coalesce(n.nutat,0)) vrdat
-FROM tblInkoop i
- left join (
-     SELECT inkId, sum(nutat*stdat) nutat
-     FROM tblNuttig 
-     GROUP BY inkId
- ) n on (i.inkId = n.inkId)
-WHERE i.artId = '" . mysqli_real_escape_string($db, $fldArtId) . "'
-") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
-                while ($check = mysqli_fetch_assoc($zoek_totale_voorraad)) {
-                    $tot_vrd = $check['vrdat'];
-                }
+     [$naam, $stdat] = $artikel_gateway->zoek_artikel($fldArtId);
+
+        $toedtotal = $fldToedat * $stdat;
+
+        $tot_vrd = $artikel_gateway->zoek_totale_voorraad($fldArtId);
+                
                 if ($tot_vrd < $toedtotal) {
                     $fout = "De voorraad van " . $naam . " is niet toereikend";
                 } else {
-                    $insert_tblHistorie = "INSERT INTO tblHistorie set stalId = '" . mysqli_real_escape_string($db, $stalId) . "', datum = '" . mysqli_real_escape_string($db, $fldDay) . "', actId = 8 ";
-                /*echo $insert_tblHistorie.'<br>';*/        mysqli_query($db, $insert_tblHistorie) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
-                    $zoek_hisId = mysqli_query($db, "
-SELECT max(hisId) hisId
-FROM tblHistorie
-WHERE actId = 8 and stalId = '" . mysqli_real_escape_string($db, $stalId) . "'
-") or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
-                    while ($hi = mysqli_fetch_assoc($zoek_hisId)) {
-                        $hisId = $hi['hisId'];
-                    }
+                    
+                    $hisId = $historie_gateway->insert_tblHistorie($stalId, $fldDay, 8);
+
                     inlezen_pil($hisId, $fldArtId, $fldToedat, $fldDay, $fldReden);
-                    if ($reader == 'Agrident') {
-                        $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "' " ;
-                    } else {
-                        $updateReader = "UPDATE impReader SET verwerkt = 1 WHERE readId = '" . mysqli_real_escape_string($db, $recId) . "' " ;
-                    }
-                /*echo $updateReader.'<br>';*/    mysqli_query($db, $updateReader) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
+
+                    $impagrident_gateway->set_verwerkt($recId);
+
                 }
-            }
-         /* EINDE INVOEREN  EINDE */
-        }
-     // CONTROLE op alle verplichten velden bij medicatie
-    }
- // Einde if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt))
-    if ($fldKies == 0 && $fldDel == 1) {
-        if ($reader == 'Agrident') {
-            $updateReader = "UPDATE impAgrident set verwerkt = 1 WHERE Id = '" . mysqli_real_escape_string($db, $recId) . "' " ;
-        } else {
-            $updateReader = "UPDATE impReader set verwerkt = 1 WHERE readId = '" . mysqli_real_escape_string($db, $recId) . "' " ;
-        }
-        /*echo $updateReader.'<br>';*/        mysqli_query($db, $updateReader) or die(__FILE__ . ' (' . __LINE__ . ') ' . mysqli_error($db));
-    }
+            } /* EINDE INVOEREN  EINDE */
+         
+        } // CONTROLE op alle verplichten velden bij medicatie
+     
+    } // Einde if ($fldKies == 1 && $fldDel == 0 && !isset($verwerkt))
+    
+if ($fldKies == 0 && $fldDel == 1) {  $impagrident_gateway->set_verwerkt($recId);  }
+
 //echo '<br>'.'einde '.$recId.'<br>';
 }

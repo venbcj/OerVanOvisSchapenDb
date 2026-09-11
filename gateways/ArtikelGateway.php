@@ -2,6 +2,18 @@
 
 class ArtikelGateway extends Gateway {
 
+    public function zoek_artikel($artId) {
+        $sql = <<<SQL
+SELECT a.naam, a.stdat
+FROM tblArtikel a
+WHERE artId = :artId
+         SQL;
+$args = [':artId', $artId, Type::INT];
+
+return $this->first_row($sql, $qrgs);
+    }
+
+
     public function pilForLid($lidId) {
         return $this->run_query(
             <<<SQL
@@ -701,4 +713,20 @@ SQL;
         return $this->run_query($sql, $args);
     }
 
+    public function zoek_totale_voorraad($artId){
+        return $this->first_field(
+<<<SQL
+SELECT sum(i.inkat) - sum(coalesce(n.nutat,0)) vrdat
+FROM tblInkoop i
+ left join (
+     SELECT inkId, sum(nutat*stdat) nutat
+     FROM tblNuttig 
+     GROUP BY inkId
+ ) n on (i.inkId = n.inkId)
+WHERE i.artId = :artId
+SQL 
+    , [':artId', $artId, Type::INT]
+        );
+    }
+    
 }
