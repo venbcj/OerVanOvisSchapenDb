@@ -656,9 +656,10 @@ SQL
     public function zoek_laatste_stal_medicijn($schaapId) {
         return $this->first_field(
             <<<SQL
-SELECT max(stalId) stalId
-FROM tblStal
-WHERE schaapId = :schaapId
+SELECT max(st.stalId) stalId
+FROM tblStal st
+ join tblUbn u USING (ubnId)
+WHERE u.lidubn = 1 and st.schaapId = :schaapId
 SQL
         , [[':schaapId', $schaapId, Type::INT]]
         );
