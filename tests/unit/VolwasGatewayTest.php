@@ -48,13 +48,6 @@ class VolwasGatewayTest extends GatewayCase {
         $this->assertNotFalse($result);
     }
 
-    public function test_zoek_ouders() {
-        $mdrId = null;
-        $vdrId = null;
-        $result = $this->sut->zoek_ouders($mdrId, $vdrId);
-        $this->assertNotFalse($result);
-    }
-
     public function test_zoek_actuele_worp() {
         $mdrId = null;
         $datum = null;

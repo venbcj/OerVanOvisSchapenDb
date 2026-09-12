@@ -287,9 +287,7 @@ if(!empty($_POST['kzlRam']) && ((isset($vdr_db) && $_POST['kzlRam'] <> $vdr_db) 
     $newmdrId = $_POST['kzlOoi'];
     $newvdrId = $_POST['kzlRam'];
 // invoer moeder en/of vader
-    $volwas_gateway->maak_koppel($newmdrId, $newvdrId);
-
-    $volwId = $volwas_gateway->zoek_ouders($newmdrId, $newvdrId);
+    $volwId = $volwas_gateway->maak_koppel($newmdrId, $newvdrId);
 // Einde invoer moeder en/of vader
     if(isset($volwId)) { // $volwId hoeft niet te bestaan als dier geen ouders heeft en kzlOoi is leeg en kzlRam is leeg.
     // #0004185 liever op basis van een leesbare beslissing ipv isset()

@@ -12,11 +12,12 @@ $base = str_replace('\\', '/', __DIR__);
 
 $app_folders = [
     $base . '/classes',
+    $base . '/domain',
+    $base . '/fpdf_stub',
     $base . '/legacy',
     $base . '/templates',
-    $base . '/fpdf_stub',
     $base . '/gateways',
-    $bas . '/records'
+    $base . '/records'
 ];
 
 set_include_path(implode(PATH_SEPARATOR, $app_folders));

@@ -63,6 +63,9 @@ if (Auth::is_logged_in()) {
     if (empty($schaap_gateway)) {
         $schaap_gateway = new SchaapGateway();
     }
+
+    $schaap = new Schaap();
+
     $stal_gateway = new StalGateway();
     $volwas_gateway = new VolwasGateway();
     $bezet_gateway = new BezetGateway();
@@ -303,26 +306,7 @@ else if ($modtech == 1 && isset($levnr) && !isset($txtGebkg) && $kzlFase == 'lam
             // ********************
 
             if ($modtech == 1 && !isset($levnr_db) && $kzlFase == 'lam') { // Als levnr niet bestaat in database en het is geen aanvoer
-                $volwId = $volwas_gateway->zoek_actuele_worp($kzlOoi, $txtDmgeb);
-                if (!isset($volwId)) {
-                    $lst_volwId = $volwas_gateway->zoek_vorige_worp($kzlOoi, $txtDmgeb);
-                    $volwId = $volwas_gateway->zoek_actuele_dracht($kzlOoi, $lst_volwId);
-                }
-                if (!isset($volwId)) {
-                    $volwId = $volwas_gateway->zoek_actuele_dekking($kzlOoi, $lst_volwId);
-                }
-                if (isset($volwId) && isset($kzlRam)) {
-                    // Als er een actuele volwId bestaat kan hier eventueel alsnog een vader worden toegevoegd aan het koppel
-                    $vdrId = $volwas_gateway->zoek_vader_uit_koppel($volwId);
-                    if (!isset($vdrId)) {
-                        $volwas_gateway->update_koppel($kzlRam, $volwId);
-                    }
-                }
-                if (!isset($volwId)) {
-                    $volwas_gateway->maak_koppel($kzlOoi, $kzlRam);
-                    // TODO laat de insert-query een aangemaakt id teruggeven
-                    $volwId = $volwas_gateway->zoek_recentste_id($kzlOoi);
-                }
+               $volwId = $schaap->bepaalVolwId($kzlOoi, $txtDmgeb, $kzlRam);
             }
 
             // Einde Bepaal volwId bij geboren lam
@@ -360,9 +344,7 @@ else if ($modtech == 1 && isset($levnr) && !isset($txtGebkg) && $kzlFase == 'lam
                 } elseif (isset($verschil_volgende_worp) && $dagen_volgende_worp < 183) {
                     $fout = "De volgende worp van dit moederdier is " . $volgend_worpdm . ". Een ooi kan 1x in het half jaar werpen.";
                 } else {
-                    $volwas_gateway->maak_koppel($kzlOoi, $kzlRam);
-                    // TODO laat de insert-query een aangemaakt id teruggeven
-                    $volwId = $volwas_gateway->zoek_recentste_id($kzlOoi);
+                    $volwId = $volwas_gateway->maak_koppel($kzlOoi, $kzlRam);
                 }
             }
             // Einde Bepaal volwId bij aanvoer

@@ -156,19 +156,6 @@ SQL
         );
     }
 
-    public function zoek_ouders($mdrId, $vdrId) {
-        return $this->first_field(
-            <<<SQL
-        SELECT max(volwId) volwId
-        FROM tblVolwas
-        WHERE mdrId = :mdrId
- and vdrId = :vdrId
-SQL
-        ,
-            [[':mdrId', $mdrId, Type::INT], [':vdrId', $vdrId, Type::INT]]
-        );
-    }
-
     public function zoek_actuele_worp($mdrId, $datum) {
         return $this->first_field(
             <<<SQL
@@ -289,6 +276,7 @@ SQL
         ,
             [[':mdrId', $mdrId, Type::INT], [':vdrId', $vdrId, Type::INT]]
         );
+        return $this->db->insert_id;
     }
 
     public function insert($recId, $mdrId) {
