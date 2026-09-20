@@ -781,4 +781,15 @@ SQL;
         return $this->run_query($sql, $args);
     }
 
+    public function zoekKoppel($volwId)
+    {
+        return $this->first_row(
+            <<<SQL
+SELECT volwId, mdrId, vdrId
+FROM tblVolwas
+WHERE volwId = :volwId
+SQL
+        ,[[':volwId', $volwId, Type::INT]]
+        );
+    }
 }
