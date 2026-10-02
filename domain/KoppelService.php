@@ -10,14 +10,57 @@ class KoppelService
 		$this->volwas_gateway = $volwas_gateway ?? new VolwasGateway();
 	}
 
-	public function vindKoppelVanWorp($moeder, $datum)
+	private function vindKoppelVanWorp($moeder, $datum)
 	{
-		$volwId = $this->volwas_gateway->zoek_actuele_worp($moeder, $datum);
+		return $this->volwas_gateway->zoek_actuele_worp($moeder, $datum);
+	}
 
-		if(!$volwId) {
-			return null;
+	private function vindVorigeKoppel($moeder, $datum)
+	{
+		return $this->volwas_gateway->zoek_vorige_worp($moeder, $datum);
+	}
+
+	private function vindKoppelVanDracht($moeder, $datum)
+	{
+		$vorige_koppel = $this->vindVorigeKoppel($moeder, $datum);
+		
+		if($vorige_koppel) {
+			return $this->volwas_gateway->zoek_actuele_dracht($moeder, $vorige_koppel);
+		}
+	}
+
+	private function vindKoppelVanDekking($moeder, $datum)
+	{
+		$vorige_koppel = $this->vindVorigeKoppel($moeder, $datum);
+
+		if($vorige_koppel) {
+			return $this->volwas_gateway->zoek_actuele_dekking($moeder, $vorige_koppel);
+		}
+	}
+
+	private function maakNieuwKoppel($moeder, $vader)
+	{
+		return $this->volwas_gateway->maak_koppel($moeder, $vader);
+	}
+
+	public function bepaalKoppel($moeder, $datum, $vader = null)
+	{
+		$koppelnr = $this->vindKoppelVanWorp($moeder, $datum);
+
+		if(!$koppelnr) {
+			$koppelnr = $this->vindKoppelVanDracht($moeder, $datum);
 		}
 
-		return null;
+		if(!$koppelnr){
+			$koppelnr = $this->vindKoppelVanDekking($moeder, $datum);
+		}
+
+		if(!$koppelnr){
+			$koppelnr = $this->maakNieuwKoppel($moeder, $vader);
+		}
+
+		[$koppelnr, $moeder, $vader] = $this->volwas_gateway->zoekKoppel($koppelnr);
+
+		return new Koppel($koppelnr, $moeder, $vader);
 	}
 }
