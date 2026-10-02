@@ -99,6 +99,9 @@ class TestVolwasGateway_MaakKoppel
 }
 
 class KoppelServiceTest extends UnitCase{
+
+    private const ACTUEEL_KOPPEL = 123;
+
     public function test_aanmaken()
     {
         $service = new KoppelService(new TestVolwasGateway_VindKoppelVanWorp()); // maak een instantie/object aan van de class KoppelService
@@ -109,14 +112,14 @@ class KoppelServiceTest extends UnitCase{
     public function test_bepaalKoppel_vindt_actuele_worp()
     {
         $stub = $this->createStub(VolwasGateway::class);
-        $stub->method('zoek_actuele_worp')->willReturn(123);
-        $stub->method('zoekKoppel')->willReturn([123, 10, 20]);
+        $stub->method('zoek_actuele_worp')->willReturn(self::ACTUEEL_KOPPEL);
+        $stub->method('zoekKoppel')->willReturn([self::ACTUEEL_KOPPEL, 10, 20]);
 
         $service = new KoppelService($stub);
 
         $koppel = $service->bepaalKoppel(10, '2026-09-26');
 
-        $this->assertEquals(123, $koppel->koppelnr());
+        $this->assertEquals(self::ACTUEEL_KOPPEL, $koppel->koppelnr());
     }
 
     public function test_bepaalKoppel_vindt_actuele_dracht()
