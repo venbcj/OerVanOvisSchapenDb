@@ -207,41 +207,55 @@ SQL
         );
     }
 
-    public function zoek_actuele_dracht($mdrId, $volwId) {
+    public function zoek_actuele_dracht($mdrId, $datum) {
         return $this->first_field(
             <<<SQL
 SELECT v.volwId
 FROM tblVolwas v
- join tblDracht d on (d.volwId = v.volwId)
- join tblHistorie h on (h.hisId = d.hisId)
-WHERE h.skip = 0
- and v.mdrId = :mdrId
- and v.volwId > :volwId
+ join tblDracht d USING (volwId)
+ join tblHistorie h USING (hisId)
+WHERE v.mdrId = :mdrId
+ and (h.datum + interval 145 day) >= :datum
+ and h.skip = 0
+ORDER BY h.datum DESC
 SQL
         ,
             [
                 [':mdrId', $mdrId, Type::INT],
-                [':volwId', $volwId, Type::INT],
+                [':datum', $datum, Type::DATE],
             ]
         );
     }
 
-    public function zoek_actuele_dekking($mdrId, $volwId) {
+    public function zoek_actuele_dekking($mdrId, $datum) {
         return $this->first_field(
             <<<SQL
-SELECT max(v.volwId) volwId
+SELECT v.volwId
 FROM tblVolwas v
  join tblHistorie h on (h.hisId = v.hisId)
-WHERE h.skip = 0
- and v.mdrId = :mdrId
- and v.volwId > :volwId
+WHERE v.mdrId = :mdrId
+ and (h.datum + interval 145 day) >= :datum
+ and h.skip = 0
+ORDER BY h.datum DESC
 SQL
         ,
             [
                 [':mdrId', $mdrId, Type::INT],
-                [':volwId', $volwId, Type::INT],
+                [':datum', $datum, Type::DATE],
             ]
         );
+    }
+
+    public function zoek_actuele_dekking_binnen_145dagen($mdrId, $datum) {
+        $sql = <<<SQL
+SELECT max(v.volwId) volwId
+FROM tblVolwas v
+ join tblHistorie h on (v.hisId = h.hisId)
+ left join tblSchaap s on (s.volwId = v.volwId)
+WHERE h.skip = 0 and v.mdrId = :mdrId and isnull(s.volwId) and date_add(h.datum, interval 145 day) > :datum
+SQL;
+        $args = [[':mdrId', $mdrId, Type::INT], [':datum', $datum, Type::DATE]];
+        return $this->first_field($sql, $args);
     }
 
     public function zoek_vader_uit_koppel($volwId) {
@@ -738,18 +752,6 @@ SQL;
 SQL;
         $args = [[':recId', $recId, Type::INT]];
         $this->run_query($sql, $args);
-    }
-
-    public function zoek_actuele_dekking_binnen_145dagen($mdrId, $fldDag) {
-        $sql = <<<SQL
-      SELECT max(v.volwId) volwId
-      FROM tblVolwas v
-       join tblHistorie h on (v.hisId = h.hisId)
-       left join tblSchaap s on (s.volwId = v.volwId)
-      WHERE h.skip = 0 and v.mdrId = :mdrId and isnull(s.volwId) and date_add(h.datum, interval 145 day) > :fldDag
-SQL;
-        $args = [[':mdrId', $mdrId, Type::INT], [':fldDag', $fldDag]];
-        return $this->first_field($sql, $args);
     }
 
     public function insert_tblVolwas($hisId, $mdrId) {

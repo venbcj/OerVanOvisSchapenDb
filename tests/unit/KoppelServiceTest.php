@@ -1,110 +1,16 @@
 <?php
 
-class TestVolwasGateway_VindKoppelVanWorp
-{
-    public function zoek_actuele_worp($moeder, $datum)
-    {
-        return 123;
-    }
-
-    public function zoekKoppel($koppelnr)
-    {
-        return [$koppelnr, 10, 20];
-    }
-}
-
-
-class TestVolwasGateway_VindKoppelVanDracht
-{
-    public function zoek_actuele_worp($moeder, $datum)
-    {
-        return null;
-    }
-
-    public function zoek_vorige_worp($moeder, $datum)
-    {
-        return 456;
-    }
-
-    public function zoek_actuele_dracht($moeder, $vorige_koppel)
-    {
-        return 789;
-    }
-    
-    public function zoekKoppel($koppelnr)
-    {
-        return [$koppelnr, 10, 20];
-    }
-}
-
-class TestVolwasGateway_VindKoppelVanDekking
-{
-    public function zoek_actuele_worp($moeder, $datum)
-    {
-        return null;
-    }
-
-    public function zoek_vorige_worp($moeder, $datum)
-    {
-        return 654;
-    }
-
-    public function zoek_actuele_dracht($moeder, $vorige_koppel)
-    {
-        return null;
-    }
-
-    public function zoek_actuele_dekking($moeder, $vorige_koppel)
-    {
-        return 987;
-    }
-
-    public function zoekKoppel($koppelnr)
-    {
-        return [$koppelnr, 10, 20];
-    }
-}
-
-class TestVolwasGateway_MaakKoppel
-{
-    public function zoek_actuele_worp($moeder, $datum)
-    {
-        return null;
-    }
-
-    public function zoek_vorige_worp($moeder, $datum)
-    {
-        return 654;
-    }
-
-    public function zoek_actuele_dracht($moeder, $vorige_koppel)
-    {
-        return null;
-    }
-
-    public function zoek_actuele_dekking($moeder, $vorige_koppel)
-    {
-        return null;
-    }
-
-    public function maak_koppel($moeder, $vader)
-    {
-        return 1234;
-    }
-
-    public function zoekKoppel($koppelnr)
-    {
-        return [$koppelnr, 10, 20];
-    }
-}
-
 class KoppelServiceTest extends UnitCase{
 
     private const ACTUEEL_KOPPEL = 123;
+    private const NIEUW_KOPPEL = 456;
+    private const MOEDER = 10;
+    private const VADER = 20;
+    private const DATUM = '2026-10-04';
 
     public function test_aanmaken()
     {
-        $service = new KoppelService(new TestVolwasGateway_VindKoppelVanWorp()); // maak een instantie/object aan van de class KoppelService
+        $service = new KoppelService(); // maak een instantie/object aan van de class KoppelService
 
         $this->assertInstanceOf(KoppelService::class, $service);  //Controleer of $service een instantie is van de class KoppelService
     }
@@ -113,42 +19,57 @@ class KoppelServiceTest extends UnitCase{
     {
         $stub = $this->createStub(VolwasGateway::class);
         $stub->method('zoek_actuele_worp')->willReturn(self::ACTUEEL_KOPPEL);
-        $stub->method('zoekKoppel')->willReturn([self::ACTUEEL_KOPPEL, 10, 20]);
+        $stub->method('zoekKoppel')->willReturn([self::ACTUEEL_KOPPEL, self::MOEDER, self::VADER]);
 
         $service = new KoppelService($stub);
 
-        $koppel = $service->bepaalKoppel(10, '2026-09-26');
+        $koppel = $service->bepaalKoppel(self::MOEDER, self::DATUM);
 
         $this->assertEquals(self::ACTUEEL_KOPPEL, $koppel->koppelnr());
     }
 
     public function test_bepaalKoppel_vindt_actuele_dracht()
     {
-        $service = new KoppelService(new TestVolwasGateway_VindKoppelVanDracht());
+ 		$stub = $this->createStub(VolwasGateway::class);
+ 		$stub->method('zoek_actuele_worp')->willReturn(null);
+ 		$stub->method('zoek_actuele_dracht')->willReturn(self::ACTUEEL_KOPPEL);
+ 		$stub->method('zoekKoppel')->willReturn([self::ACTUEEL_KOPPEL, self::MOEDER, null]);
 
-        $koppel = $service->bepaalKoppel(10, '2026-09-26');
+        $service = new KoppelService($stub);
 
-        $this->assertInstanceOf(Koppel::class, $koppel);
-        $this->assertEquals(789, $koppel->koppelnr());
+        $koppel = $service->bepaalKoppel(self::MOEDER, self::DATUM);
+
+        $this->assertEquals(self::ACTUEEL_KOPPEL, $koppel->koppelnr());
     }
 
     public function test_bepaalKoppel_vindt_actuele_dekking()
     {
-        $service = new KoppelService(new TestVolwasGateway_VindKoppelVanDekking());
+    	$stub = $this->createStub(VolwasGateway::class);
+    	$stub->method('zoek_actuele_worp')->willReturn(null);
+    	$stub->method('zoek_actuele_dracht')->willReturn(null);
+    	$stub->method('zoek_actuele_dekking')->willReturn(self::ACTUEEL_KOPPEL);
+    	$stub->method('zoekKoppel')->willReturn([self::ACTUEEL_KOPPEL, self::MOEDER, null]);
 
-        $koppel = $service->bepaalKoppel(10, '2026-09-29');
+        $service = new KoppelService($stub);
 
-        $this->assertInstanceOf(Koppel::class, $koppel);
-        $this->assertEquals(987, $koppel->koppelnr());
+        $koppel = $service->bepaalKoppel(self::MOEDER, self::DATUM);
+
+        $this->assertEquals(self::ACTUEEL_KOPPEL, $koppel->koppelnr());
     }
 
     public function test_maakKoppel()
     {
-        $service = new KoppelService(new TestVolwasGateway_MaakKoppel());
+        $stub = $this->createStub(VolwasGateway::class);
+        $stub->method('zoek_actuele_worp')->willReturn(null);
+        $stub->method('zoek_actuele_dracht')->willReturn(null);
+        $stub->method('zoek_actuele_dekking')->willReturn(null);
+        $stub->method('maak_koppel')->willReturn(self::NIEUW_KOPPEL);
+        $stub->method('zoekKoppel')->willReturn([self::NIEUW_KOPPEL, self::MOEDER, null]);
 
-        $koppel = $service->bepaalKoppel(10, '2026-09-30', 20);
+        $service = new KoppelService($stub);
 
-        $this->assertInstanceOf(Koppel::class, $koppel);
-        $this->assertEquals(1234, $koppel->koppelnr());
+        $koppel = $service->bepaalKoppel(self::MOEDER, self::DATUM, null);
+
+        $this->assertEquals(self::NIEUW_KOPPEL, $koppel->koppelnr());
     }
 }

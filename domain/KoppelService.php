@@ -15,27 +15,14 @@ class KoppelService
 		return $this->volwas_gateway->zoek_actuele_worp($moeder, $datum);
 	}
 
-	private function vindVorigeKoppel($moeder, $datum)
-	{
-		return $this->volwas_gateway->zoek_vorige_worp($moeder, $datum);
-	}
-
 	private function vindKoppelVanDracht($moeder, $datum)
 	{
-		$vorige_koppel = $this->vindVorigeKoppel($moeder, $datum);
-		
-		if($vorige_koppel) {
-			return $this->volwas_gateway->zoek_actuele_dracht($moeder, $vorige_koppel);
-		}
+		return $this->volwas_gateway->zoek_actuele_dracht($moeder, $datum);
 	}
 
 	private function vindKoppelVanDekking($moeder, $datum)
 	{
-		$vorige_koppel = $this->vindVorigeKoppel($moeder, $datum);
-
-		if($vorige_koppel) {
-			return $this->volwas_gateway->zoek_actuele_dekking($moeder, $vorige_koppel);
-		}
+		return $this->volwas_gateway->zoek_actuele_dekking($moeder, $datum);
 	}
 
 	private function maakNieuwKoppel($moeder, $vader)
