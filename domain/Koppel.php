@@ -22,4 +22,14 @@ class Koppel {
 	{
 		return $this->vader !== null;
 	}
+
+	public function vader()
+	{
+		return $this->vader;
+	}
+
+	public function voegVaderToe($vader)
+	{
+		$this->vader = $vader;
+	}
 }

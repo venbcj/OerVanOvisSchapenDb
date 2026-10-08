@@ -269,7 +269,7 @@ SQL
         );
     }
 
-    public function update_koppel($vdrId, $volwId) {
+    public function update_vader_van_koppel($vdrId, $volwId) {
         $this->run_query(
             <<<SQL
 UPDATE tblVolwas set vdrId = :vdrId WHERE volwId = :volwId

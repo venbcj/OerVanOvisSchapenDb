@@ -82,10 +82,10 @@ class VolwasGatewayTest extends GatewayCase {
         $this->assertNotFalse($result);
     }
 
-    public function test_update_koppel() {
+    public function test_update_vader_van_koppel() {
         $vdrId = null;
         $volwId = null;
-        $result = $this->sut->update_koppel($vdrId, $volwId);
+        $result = $this->sut->update_vader_van_koppel($vdrId, $volwId);
         $this->assertNotFalse($result);
     }
 

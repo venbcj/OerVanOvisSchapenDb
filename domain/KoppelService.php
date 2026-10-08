@@ -5,9 +5,10 @@ class KoppelService
 
 	private $volwas_gateway;
 
-	public function __CONSTRUCT($volwas_gateway = null)
+	public function __CONSTRUCT($volwas_gateway = null, $koppel = null)
 	{
 		$this->volwas_gateway = $volwas_gateway ?? new VolwasGateway();
+
 	}
 
 	private function vindKoppelVanWorp($moeder, $datum)
@@ -42,12 +43,38 @@ class KoppelService
 			$koppelnr = $this->vindKoppelVanDekking($moeder, $datum);
 		}
 
+		$nieuwKoppel = false;
+
 		if(!$koppelnr){
 			$koppelnr = $this->maakNieuwKoppel($moeder, $vader);
+			$nieuwKoppel = true;
 		}
 
-		[$koppelnr, $moeder, $vader] = $this->volwas_gateway->zoekKoppel($koppelnr);
+		[$koppelnr, $koppelmdr, $koppelvdr] = $this->volwas_gateway->zoekKoppel($koppelnr);
 
-		return new Koppel($koppelnr, $moeder, $vader);
+		$koppel = new Koppel($koppelnr, $koppelmdr, $koppelvdr);
+
+		if($vader !== null && !$nieuwKoppel)
+		{
+			$this->vaderMetKoppelVerenigen($koppel, $vader);
+		}
+
+		return $koppel;
+	}
+
+	private function vaderMetKoppelVerenigen($koppel, $vader)
+	{
+		$koppelHeeftVader = $koppel->heeftVader();
+
+		if(!$koppelHeeftVader)
+		{
+			$koppel->voegVaderToe($vader);
+			return $this->volwas_gateway->update_vader_van_koppel($koppel->koppelnr(), $vader);
+		}
+		
+		if($koppel->vader() != $vader)
+		{
+			//melding .....
+		}
 	}
 }

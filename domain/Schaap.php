@@ -26,7 +26,7 @@ class Schaap {
             $vader_bestaand = $this->volwas_gateway->zoek_vader_uit_koppel($volwId);
 
             if (!isset($vader_bestaand)) {
-                $this->volwas_gateway->update_koppel($vader, $volwId);
+                $this->volwas_gateway->update_vader_van_koppel($vader, $volwId);
             }
 		}
 
