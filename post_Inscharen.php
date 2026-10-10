@@ -47,7 +47,7 @@ if(!isset($fldUbn))
  }
 }
 
-if ($fldKies == 1 && $fldDel == 0) {
+if ($fldKies == 1) {
 
 // Levensnummer ophalen
 $zoek_levnr = mysqli_query($db,"
@@ -148,7 +148,7 @@ include "maak_request.php";
 unset($schaapId); }
 // EINDE CONTROLE op alle verplichten velden
 
-	} // Einde if ($fldKies == 1 && $fldDel == 0)
+	} // Einde if ($fldKies == 1)
 
 unset($levnr);
 	} // Einde foreach($array as $schaapId => $id)

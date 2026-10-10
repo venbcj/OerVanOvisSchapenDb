@@ -178,16 +178,6 @@ if(isset($data))  {
 
 	foreach($data as $key => $array)
 	{
-		$var = $array['datum'];
-$delimiter = str_replace('/', '-', $var);
-//$gebdatum = date('d-m-Y', strtotime($delimiter)-365*60*60*24);
-$datum = date('d-m-Y', strtotime($delimiter));
-if (!empty($array['uit_vmdm'])) {
-		$varuitv = $array['uit_vmdm'];
-$delimiter2 = str_replace('/', '-', $varuitv);
-$uitvdm = date('d-m-Y', strtotime($delimiter2));
-		} else { $uitvdm = '' ; } 
-	
 	$Id = $array['Id'];
 	$levnr = $array['levnr'];
 
@@ -313,6 +303,7 @@ if (isset($_POST['knpVervers_'])) {
  }
 
  if (isset($_POST['knpKeuzeAll_'])) {
+	$datum = $_POST["txtDatumAll_"];
 	$datum_all = $_POST["txtDatumAll_"];
 	$date = date('Y-m-d', strtotime($datum_all));
 	$kzlUbn = $kzlUbn_all;

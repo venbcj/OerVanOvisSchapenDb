@@ -501,18 +501,6 @@ tblSchaap s
      WHERE u.lidId = :lidId
      GROUP BY st.schaapId
   ) mst on (mst.schaapId = s.schaapId)
- left join (
-     SELECT st.schaapId, h.datum
-     FROM tblHistorie h
-      join tblStal st on (st.stalId = h.stalId)
-     WHERE h.actId = 1 and h.skip = 0
- ) hg on (s.schaapId = hg.schaapId)
- left join (
-    SELECT st.schaapId, datum
-    FROM tblStal st
-     join tblHistorie h on (st.stalId = h.stalId)
-    WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = s.schaapId)
  join tblStal st on (st.stalId = mst.stalId)
  join tblUbn u on (st.ubnId = u.ubnId)
  join (
