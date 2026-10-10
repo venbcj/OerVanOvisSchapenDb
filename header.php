@@ -88,6 +88,7 @@ if($num_rows == 0){  $color_RVO = 'black'; } else { $color_RVO = 'red'; }
 			<a href='<?php echo $url;?>InvSchaap.php' style = 'color : black'>Aanvoer schaap</a></br></br>
 			<a href='<?php echo $url;?>Med_registratie.php' style = "color : <?php echo $colorTech; ?> ;" >Medicijn toediening</a></br></br>
 			<a href='<?php echo $url;?>Dekkingen.php' style = "color : <?php echo $colorTech; ?> ;" >Dekkingen / Dracht</a></br></br>
+			<a href='<?php echo $url;?>Inscharen.php' style = "color : <?php echo $colorTech; ?> ;" >Terug van Uitscharen</a></br></br>
 		</div>
 	</li>
 

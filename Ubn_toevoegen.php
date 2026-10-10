@@ -41,7 +41,7 @@ WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and ubn = '".mysqli_re
 	else 
 	{
 $ubn_toevoegen = "
-  INSERT INTO tblUbn SET lidId = '".mysqli_real_escape_string($db,$lidId)."', ubn = '".mysqli_real_escape_string($db,$new_ubn)."', adres = ".db_null_input($new_adres).", plaats = ".db_null_input($new_plaats) ;
+  INSERT INTO tblUbn SET lidId = '".mysqli_real_escape_string($db,$lidId)."', ubn = '".mysqli_real_escape_string($db,$new_ubn)."', adres = ".db_null_input($new_adres).", plaats = ".db_null_input($new_plaats).", lidubn = 1" ;
 		
 				/*echo $ubn_toevoegen; */ mysqli_query($db,$ubn_toevoegen) or die (mysqli_error($db));
 	}

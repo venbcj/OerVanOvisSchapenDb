@@ -115,7 +115,7 @@ $zoek_stalId = mysqli_query($db,"
 SELECT st.stalId
 FROM tblStal st
  join tblUbn u on (st.ubnId = u.ubnId)
-WHERE u.lidId = '".mysqli_real_escape_string($db,$LIDID)."' and st.schaapId = '".mysqli_real_escape_string($db,$Schaapid)."' and isnull(rel_best)
+WHERE u.lidId = '".mysqli_real_escape_string($db,$LIDID)."' and u.lidubn = 1 and st.schaapId = '".mysqli_real_escape_string($db,$Schaapid)."' and isnull(rel_best)
 ") or die (mysqli_error($db));
 
 while ( $zst = mysqli_fetch_assoc($zoek_stalId)) { $stalId = $zst['stalId']; }
