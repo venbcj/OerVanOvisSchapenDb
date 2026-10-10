@@ -84,7 +84,7 @@ $ubn_toevoegen = "
 $zoek_ubn = mysqli_query($db,"
 SELECT ubnId, ubn, adres, plaats, actief
 FROM tblUbn
-WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
+WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."' and lidubn = 1
 ORDER BY actief desc, ubn
 ") or die (mysqli_error($db));
 
@@ -97,15 +97,15 @@ ORDER BY actief desc, ubn
 	  $actief = $row['actief'];
 
 
-$zoek_db_tabelrelaties =	mysqli_query($db,"
+$zoek_ubn_in_gebruik =	mysqli_query($db,"
 SELECT u.ubnId
 FROM tblUbn u
  left join tblStal st on (st.ubnId = u.ubnId)
 WHERE u.ubnId = '".mysqli_real_escape_string($db,$Id)."' and isnull(st.stalId)
 ") or die (mysqli_error($db));
 
-	while($zdr = mysqli_fetch_assoc($zoek_db_tabelrelaties))
-	{ $dbRelatie = $zdr['ubnId']; }  
+	while($zdr = mysqli_fetch_assoc($zoek_ubn_in_gebruik))
+	{ $inGebruik = $zdr['ubnId']; }  
 
 
 If(!isset($_POST['txtAdres'])) { $txtAdres = $adres; } else { $txtAdres = $_POST['txtAdres']; } 
@@ -121,9 +121,9 @@ if($actief == 0) { $color = '#E2E2E2'; } else { $color = 'black'; }
 	<input type = "checkbox" name = <?php echo "chbActief_$Id"; ?> id="c1" value= 1 <?php echo $actief == 1 ? 'checked' : ''; ?> 		title = "Is ubn te gebruiken ja/nee ?">
  </td>
  <td align="center">
- 	<?php if(isset($dbRelatie)) { ?>
+ 	<?php if(isset($inGebruik)) { ?>
  	<input type="checkbox" name= <?php echo "chbDel_$Id"; ?> >
- <?php } unset($dbRelatie); ?>
+ <?php } unset($inGebruik); ?>
  </td>
  <td style = "color : <?php echo $color; ?> ;" >
 <?php if($actief == 0) { echo $txtAdres; } else { ?> 
