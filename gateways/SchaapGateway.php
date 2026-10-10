@@ -437,7 +437,7 @@ SQL
         $FROM = $this->FROMUitgeschaarden();
         return $this->run_query(
             <<<SQL
-SELECT s.levensnummer, right(s.levensnummer, $Karwerk) werknum, s.transponder,
+SELECT s.schaapId, s.levensnummer, right(s.levensnummer, $Karwerk) werknum, s.transponder,
 date_format(hg.datum, '%Y%m%d') gebdm_sort, date_format(hg.datum, '%d-%m-%Y') gebdm,
 s.geslacht, prnt.datum aanw, best.naam, haf.actId
     $FROM
@@ -488,6 +488,56 @@ WHERE u.lidId = :lidId
  and haf.actId = 10
 SQL
         ;
+    }
+
+
+    public function getInscharenFrom() {
+        return <<<SQL
+tblSchaap s
+ join (
+     SELECT st.schaapId, max(st.stalId) stalId
+     FROM tblStal st
+      join tblUbn u on (st.ubnId = u.ubnId)
+     WHERE u.lidId = :lidId
+     GROUP BY st.schaapId
+  ) mst on (mst.schaapId = s.schaapId)
+ left join (
+     SELECT st.schaapId, h.datum
+     FROM tblHistorie h
+      join tblStal st on (st.stalId = h.stalId)
+     WHERE h.actId = 1 and h.skip = 0
+ ) hg on (s.schaapId = hg.schaapId)
+ left join (
+    SELECT st.schaapId, datum
+    FROM tblStal st
+     join tblHistorie h on (st.stalId = h.stalId)
+    WHERE h.actId = 3 and h.skip = 0
+ ) prnt on (prnt.schaapId = s.schaapId)
+ join tblStal st on (st.stalId = mst.stalId)
+ join tblUbn u on (st.ubnId = u.ubnId)
+ join (
+     SELECT relId, naam
+     FROM tblPartij p
+      join tblRelatie r on (p.partId = r.partId)
+     WHERE p.lidId = :lidId
+ ) best on (best.relId = st.rel_best)
+ join (
+     SELECT h.stalId, h.actId
+     FROM tblHistorie h
+      join tblStal st on (h.stalId = st.stalId)
+      join tblActie a on (h.actId = a.actId)
+     WHERE a.af = 1 and h.skip = 0
+ ) haf on (haf.stalId = st.stalId)
+WHERE u.lidId = :lidId
+ and haf.actId = 10
+SQL;
+    }
+
+    public function getInscharenWhere($lidId) {
+        return [
+            "WHERE st.lidId = :lidId and haf.actId = 10",
+            [[':lidId', $lidId, Type::INT]]
+        ];
     }
 
     public function aanwezigen($lidId, $Karwerk) {

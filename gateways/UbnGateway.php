@@ -127,6 +127,7 @@ SELECT count(ubnId) aant_ubn
 FROM tblUbn 
 WHERE lidId = :lidId
  and lidubn = 1
+ and actief = 1
 SQL
         , [[':lidId', $lidId, Type::INT]]
         );

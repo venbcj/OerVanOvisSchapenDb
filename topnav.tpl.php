@@ -5,6 +5,7 @@
             <?php echo View::link_to('Aanvoer schaap', 'InvSchaap.php', ['class' => 'black']); ?>
             <?php echo View::link_to('Medicijn toediening', 'Med_registratie.php', ['class' => $tech_color]); ?>
             <?php echo View::link_to('Dekkingen / Dracht', 'Dekkingen.php', ['class' => $tech_color]); ?>
+            <?php echo View::link_to('Inscharen', 'Inscharen.php', ['class' => $tech_color]); ?>
         </div>
     </li>
 
