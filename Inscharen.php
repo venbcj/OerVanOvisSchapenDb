@@ -13,7 +13,7 @@ $versie = '09-08-2025'; /* Veld Ubn toegevoegd. Betreft eigen ubn van gebruiker.
 <body>
 
 <?php
-$titel = 'Terug van uitscharen';
+$titel = 'Inscharen';
 $file = "Inscharen.php";
 Include "login.php"; 
 include "kalender.php"; ?>
@@ -27,7 +27,7 @@ if ($modmeld == 1 ) { include "maak_request_func.php"; }
 
 If (isset($_POST['knpInsert_']))  {
 	//Include "url.php";
-	Include "post_TvUitsch.php"; #Deze include moet voor de vervversing in de functie header()
+	Include "post_Inscharen.php"; #Deze include moet voor de vervversing in de functie header()
 	//header("Location: ".$url."Inscharen.php"); 
 	}
 
@@ -35,7 +35,7 @@ function numeriek($subject) {
 	if (preg_match('/([[a-zA-Z])/', $subject, $matches)) {  /*var_dump($matches[1]); */ return 1; }
 }
 
-$velden = "s.schaapId Id, date_format(sysdate(),'%d-%m-%Y') datum, NULL ubnId_rd, s.levensnummer levnr ";
+$velden = "s.schaapId Id, NULL ubnId_rd, s.levensnummer levnr ";
 
 $tabel = "
 tblSchaap s
@@ -45,18 +45,6 @@ tblSchaap s
  	WHERE lidId = '".mysqli_real_escape_string($db,$lidId)."'
  	GROUP BY schaapId
   ) mst on (mst.schaapId = s.schaapId)
- left join (
- 	SELECT st.schaapId, h.datum
- 	FROM tblHistorie h
- 	 join tblStal st on (st.stalId = h.stalId)
- 	WHERE h.actId = 1 and h.skip = 0
- ) hg on (s.schaapId = hg.schaapId) 
- left join (
-	SELECT st.schaapId, datum
-	FROM tblStal st
-	 join tblHistorie h on (st.stalId = h.stalId)
-	WHERE h.actId = 3 and h.skip = 0
- ) prnt on (prnt.schaapId = s.schaapId)
  join tblStal st on (st.stalId = mst.stalId)
  join (
  	SELECT relId, naam
@@ -251,19 +239,8 @@ if(isset($data))  {
 
 	foreach($data as $key => $array)
 	{
-		$var = $array['datum'];
-$delimiter = str_replace('/', '-', $var);
-//$gebdatum = date('d-m-Y', strtotime($delimiter)-365*60*60*24);
-$datum = date('d-m-Y', strtotime($delimiter));
-if (!empty($array['uit_vmdm'])) {
-		$varuitv = $array['uit_vmdm'];
-$delimiter2 = str_replace('/', '-', $varuitv);
-$uitvdm = date('d-m-Y', strtotime($delimiter2));
-		} else { $uitvdm = '' ; } 
-	
 	$Id = $array['Id'];
 	$levnr = $array['levnr'];
-
 
 unset($schaapId);
 
@@ -386,6 +363,7 @@ if (isset($_POST['knpVervers_'])) {
  }
 
  if (isset($_POST['knpKeuzeAll_'])) {
+	$datum = $_POST["txtDatumAll_"];
 	$datum_all = $_POST["txtDatumAll_"];
 	$date = date('Y-m-d', strtotime($datum_all));
 	$kzlUbn = $kzlUbn_all;
