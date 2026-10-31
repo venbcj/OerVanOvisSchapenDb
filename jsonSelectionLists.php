@@ -260,9 +260,8 @@ ORDER BY a.naamreader, a.naam
 $n = 0;
 
 unset($opties);
-$rows = mysqli_num_rows($result);
 
-if(isset($result) && $rows > 0) {
+if(isset($result) && mysqli_num_rows($result) > 0) {
 while($row = mysqli_fetch_array($result))
 		{
 			//echo $row['hokId'].' - '.$row['hoknr'].'<br>';
