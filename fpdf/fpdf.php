@@ -1040,7 +1040,7 @@ protected function _dochecks()
 	if(ini_get('mbstring.func_overload') & 2)
 		$this->Error('mbstring overloading must be disabled');
 	// Ensure runtime magic quotes are disabled
-	if(get_magic_quotes_runtime())
+	if(function_exists('get_magic_quotes_runtime') && get_magic_quotes_runtime())
 		@set_magic_quotes_runtime(0);
 }
 
@@ -1211,10 +1211,14 @@ protected function _UTF8toUTF16($s)
 protected function _escape($s)
 {
 	// Escape special characters
-	if(strpos($s,'(')!==false || strpos($s,')')!==false || strpos($s,'\\')!==false || strpos($s,"\r")!==false)
-		return str_replace(array('\\','(',')',"\r"), array('\\\\','\\(','\\)','\\r'), $s);
-	else
-		return $s;
+    if ($s === null) {
+        $s = '';
+    }
+
+    if(strpos($s,'(')!==false || strpos($s,')')!==false || strpos($s,'\\')!==false || strpos($s,"\r")!==false)
+        return str_replace(array('\\','(',')',"\r"), array('\\\\','\\(','\\)','\\r'), $s);
+    else
+        return $s;
 }
 
 protected function _textstring($s)
